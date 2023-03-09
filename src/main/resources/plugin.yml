@@ -1,0 +1,32 @@
+name: DonateCase
+main: net.jodexindustries.dc.DonateCase
+author: _Jodex__
+version: 2.0.2
+depend: [Vault, PlaceholderAPI]
+api-version: 1.13
+commands:
+  donatecase:
+    usage: /donatecase
+    aliases: [dc]
+permissions:
+  donatecase.player:
+    description: Allow players commands
+    default: true
+  donatecase.mod:
+    description: Allow mod commands
+    default: op
+    children:
+      donatecase.player: true
+  donatecase.admin:
+    description: Allow admin commands
+    default: op
+    children:
+      donatecase.player: true
+      donatecase.mod: true
+  donatecase.*:
+    description: All permissions
+    default: op
+    children:
+      donatecase.player: true
+      donatecase.mod: true
+      donatecase.admin: true

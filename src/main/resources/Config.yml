@@ -1,0 +1,79 @@
+config: '1.2' #DON'T CHANGE THIS PLEASE
+
+DonatCase:
+  #Do I need to check for plugin updates?
+  UpdateChecker: true
+  #MySQL Settings
+  MySql:
+    Enabled: false
+    Host: 'localhost'
+    Port: 3306
+    DataBase: 'nameDataBase'
+    User: 'root'
+    Password: 'password'
+  Languages: en #ru/en/ua
+  #Are messages to the player about adding keys included?
+  SetKeysTargetMessage: true
+  Title:
+    Title: '%group'
+    SubTitle: ''
+  Cases:
+    case:
+      Title: '&c&lDonate-&a&lCase'
+      Gui:
+        DisplayName: '&bOpen Case'
+        Lore:
+          - '&6The case can be bought on the website: &cDonateCase.com'
+          - ''
+          - '&7Keys: %keys'
+          - ''
+          - '&6Drops out:'
+          - '&7[&aCreative&7] - &b&n65%'
+          - '&7[&bAdmin&7] - &b&n60'
+          - '&7[&eHelper&7] - &b&n50'
+          - '&7[&bModerator&7] - &b&n40'
+          - '§6§l§m✖§b§lOwner§6§l§m✖&6 - &b&n25'
+          - '§8§l[§3§lAdministrator§a§l✔§8§l] - &b&n15'
+          - '§8§l[§b§lAdministrator§8§l] §8§l[§c§lPRO§b§l✔§8§l] - &b&n10'
+          - ''
+      Items:
+        VIP:
+          Group: vip
+          Chance: 50
+          Item:
+            ID: IRON_SWORD
+            DisplayName: '&7&l[&aVIP&7&l]'
+          Commands:
+            - lp user %player group set %group
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        VIPPLUS:
+          Group: vipplus
+          Chance: 25
+          Item:
+            ID: GOLDEN_SWORD
+            DisplayName: '&7&l[&bVIP&6+&7&l]'
+          Commands:
+            - lp user %player group set %group
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        Deluxe:
+          Group: deluxe
+          Chance: 15
+          Item:
+            ID: DIAMOND_SWORD
+            DisplayName: '&7&l[&5Deluxe&7&l]'
+          Commands:
+            - lp user %player group set %group
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        Legend:
+          Group: legend
+          Chance: 10
+          Item:
+            ID: NETHERITE_SWORD
+            DisplayName: '&7&l[&dLegend&7&l]'
+          Commands:
+            - lp user %player group set %group
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
