@@ -11,12 +11,14 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Objects;
 
 public class GuiDonatCase {
     public GuiDonatCase(Player p, String c) {
         String title = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
+        assert title != null;
         Inventory inv = Bukkit.createInventory(null, 45, DonateCase.t.rc(title));
-        final String materialID = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial").toUpperCase();
+        final String materialID = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial")).toUpperCase();
         Material material;
         material = Material.getMaterial(materialID);
         if (material == null) {
@@ -37,20 +39,16 @@ public class GuiDonatCase {
 
         int var10001 = DonateCase.t.c(5, 3);
         Tools var10002 = DonateCase.t;
-        final String opencasematerialID = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterial").toUpperCase();
+        final String opencasematerialID = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterial")).toUpperCase();
         Material opencasematerial;
         opencasematerial = Material.getMaterial(opencasematerialID);
         if (opencasematerial == null) {
             opencasematerial = Material.STONE;
         }
-        Material var10003 = opencasematerial;
-        String var10004 = DonateCase.t.rc(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName").replace("<key>", String.valueOf(Case.getKeys(c, p.getName()))));
-        Tools var10005 = DonateCase.t;
-        List var10006 = CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");
-        String[] var10007 = new String[]{"%case:" + c, null};
-        int var10010 = Case.getKeys(c, p.getName());
-        var10007[1] = "%keys:" + var10010;
-        inv.setItem(var10001, var10002.createItem(var10003, var10004, var10005.rt(var10006, var10007)));
+        String displayname = DonateCase.t.rc(Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName")).replace("<key>", String.valueOf(Case.getKeys(c, p.getName()))));
+        List<String> lore = CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");
+        int keys = Case.getKeys(c, p.getName());
+        inv.setItem(var10001, var10002.createItem(opencasematerial, displayname, DonateCase.t.rt(lore, "%case:" + c, "%keys:" + keys)));
         p.openInventory(inv);
     }
 }
