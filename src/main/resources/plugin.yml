@@ -1,7 +1,7 @@
 name: DonateCase
 main: net.jodexindustries.dc.DonateCase
 author: _Jodex__
-version: 2.0.2
+version: '${project.version}'
 depend: [Vault, PlaceholderAPI]
 api-version: 1.13
 commands:

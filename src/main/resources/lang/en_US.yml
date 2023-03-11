@@ -27,8 +27,8 @@ DestoryDonatCase: '&cDonat Case is forbidden to break'
 NoKey: "&cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.com"
 HaveOpenCase: '&cPlease wait this case is opening'
 ReloadConfig: '&aConfig reloaded!'
-TitleWin: '&aCongratulations! '
-SubTitleWin: '&5you won '
+TitleWin: '&aCongratulations! ' # Placeholders: %group - group name; %groupdisplayname - group display name
+SubTitleWin: '&5you won %groupdisplayname'
 Help:
   - '&9/%cmd help &3- &2Help for the plugin'
   - '&9/%cmd keys &7(&aPlayer&7) &3- &2Show keys'

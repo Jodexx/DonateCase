@@ -26,15 +26,12 @@ public class DonateCase extends JavaPlugin {
     public static DonateCase instance;
     public static Permission permission = null;
     public static boolean Tconfig = true;
-    public static boolean LevelGroup = true;
     public static List<ArmorStand> listAR = new ArrayList();
     public static HashMap<Player, Location> openCase = new HashMap();
     public static HashMap<Location, String> ActiveCase = new HashMap();
-    public static HashMap<String, Integer> levelGroup = new HashMap();
     public static Tools t;
     public static FileConfiguration lang;
     public static MySQL mysql;
-    public static String[] title = new String[2];
 
     public DonateCase() {
         instance = this;
@@ -100,7 +97,7 @@ public class DonateCase extends JavaPlugin {
                 if (this.getDescription().getVersion().equals(version)) {
                     this.getLogger().info("There is not a new update available.");
                 } else {
-                    this.getLogger().info("There is a new update available.");
+                    this.getLogger().info("There is a new update " + version +  " available.");
                     this.getLogger().info("Download - https://www.spigotmc.org/resources/donatecase.106701/");
                 }
 
@@ -137,8 +134,6 @@ public class DonateCase extends JavaPlugin {
         }
 
         Tconfig = CustomConfig.getConfig().getString("DonatCase.MySql.Enabled").equalsIgnoreCase("false");
-        title[0] = CustomConfig.getConfig().getString("DonatCase.Title.Title");
-        title[1] = CustomConfig.getConfig().getString("DonatCase.Title.SubTitle");
         instance.setupPermissions();
         if (!Tconfig) {
             String base = CustomConfig.getConfig().getString("DonatCase.MySql.DataBase");

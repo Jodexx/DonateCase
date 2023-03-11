@@ -16,7 +16,13 @@ public class GuiDonatCase {
     public GuiDonatCase(Player p, String c) {
         String title = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
         Inventory inv = Bukkit.createInventory(null, 45, DonateCase.t.rc(title));
-        ItemStack f = DonateCase.t.createItem(Material.WHITE_STAINED_GLASS_PANE, 1, 1, " ");
+        final String materialID = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial").toUpperCase();
+        Material material;
+        material = Material.getMaterial(materialID);
+        if (material == null) {
+            material = Material.STONE;
+        }
+        ItemStack f = DonateCase.t.createItem(material, 1, 1, " ");
 
         for(int a = 0; a < 2; ++a) {
             int var7;
@@ -31,7 +37,13 @@ public class GuiDonatCase {
 
         int var10001 = DonateCase.t.c(5, 3);
         Tools var10002 = DonateCase.t;
-        Material var10003 = Material.TRIPWIRE_HOOK;
+        final String opencasematerialID = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterial").toUpperCase();
+        Material opencasematerial;
+        opencasematerial = Material.getMaterial(opencasematerialID);
+        if (opencasematerial == null) {
+            opencasematerial = Material.STONE;
+        }
+        Material var10003 = opencasematerial;
         String var10004 = DonateCase.t.rc(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName").replace("<key>", String.valueOf(Case.getKeys(c, p.getName()))));
         Tools var10005 = DonateCase.t;
         List var10006 = CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");

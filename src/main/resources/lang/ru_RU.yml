@@ -27,8 +27,8 @@ DestoryDonatCase: '&cДонат Кейс ломать запрещено'
 NoKey: '&cУ вас нет ключей для этого кейса. Можете купить их тут >>> &6JodexIndustries.ru'
 HaveOpenCase: '&cПодождите этот кейс открывается'
 ReloadConfig: '&aКонфиг перезагружен!'
-TitleWin: '&aПоздравляем! '
-SubTitleWin: '&5вы выиграли '
+TitleWin: '&aПоздравляем! '# Плейсхолдеры: %group - имя группы; %groupdisplayname - отображаемое имя группы
+SubTitleWin: '&5вы выиграли %groupdisplayname'
 Help:
   - '&9/%cmd help &3- &2Помощь по плагину'
   - '&9/%cmd keys &7(&aИгрок&7)&3- &2Показать ключи'
