@@ -1,4 +1,4 @@
-config: '1.2' #DON'T CHANGE THIS PLEASE
+config: '2.0' #DON'T CHANGE THIS PLEASE
 
 DonatCase:
   #Do I need to check for plugin updates?
@@ -16,7 +16,8 @@ DonatCase:
   SetKeysTargetMessage: true
   Cases:
     case:
-      Animation: SHAPE
+      Animation: SHAPE #SHAPE, FIREWORK
+      AnimationSound: ENTITY_EXPERIENCE_ORB_PICKUP # remove this line if you don't want to play sound
       Title: '&c&lDonate-&a&lCase'
       Gui:
         GuiMaterial: WHITE_STAINED_GLASS_PANE

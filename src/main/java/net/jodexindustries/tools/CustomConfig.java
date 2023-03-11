@@ -55,10 +55,6 @@ public class CustomConfig {
 
     }
 
-    public static void reload() {
-        setup();
-    }
-
     public static FileConfiguration getCases() {
         return Cases;
     }

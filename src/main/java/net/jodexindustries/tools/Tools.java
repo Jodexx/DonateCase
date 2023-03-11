@@ -29,7 +29,7 @@ public class Tools {
         Firework fw = (Firework)l.getWorld().spawnEntity(l.subtract(new Vector(0.0, 0.5, 0.0)), EntityType.FIREWORK);
         FireworkMeta meta = fw.getFireworkMeta();
         Color[] c = new Color[]{Color.RED, Color.AQUA, Color.GREEN, Color.ORANGE, Color.LIME, Color.BLUE, Color.MAROON, Color.WHITE};
-        meta.addEffect(FireworkEffect.builder().flicker(false).with(Type.BALL).trail(false).withColor(new Color[]{c[r.nextInt(c.length)], c[r.nextInt(c.length)], c[r.nextInt(c.length)]}).build());
+        meta.addEffect(FireworkEffect.builder().flicker(false).with(Type.BALL).trail(false).withColor(c[r.nextInt(c.length)], c[r.nextInt(c.length)], c[r.nextInt(c.length)]).build());
         fw.setFireworkMeta(meta);
         fw.setMetadata("case", new FixedMetadataValue(DonateCase.instance, "case"));
         fw.detonate();

@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class Shape {
     public static List<Player> caseOpen = new ArrayList();
@@ -47,6 +48,7 @@ public class Shape {
             public void run() {
                 Material material;
                 material = Material.getMaterial(winGroupId);
+                String sound;
                 if (material == null) {
                     material = Material.STONE;
                 }
@@ -66,21 +68,21 @@ public class Shape {
                         String reptitleWin =DonateCase.t.rt(titleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
                         String repsubTitleWin = DonateCase.t.rt(subTitleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
                         player.sendTitle(DonateCase.t.rc(reptitleWin), DonateCase.t.rc(repsubTitleWin), 5, 60, 5);
-                        Iterator var6 = CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Commands").iterator();
-
-                        while(var6.hasNext()) {
-                            String cmd = (String)var6.next();
+                        for (String cmd : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Commands")) {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), DonateCase.t.rt(cmd, "%player:" + player.getName(), "%group:" + winGroupGroup));
                         }
-
-                        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_TRADE, 1.0F, 5.0F);
-                        var6 = Bukkit.getOnlinePlayers().iterator();
-
-                        while(var6.hasNext()) {
-                            Player pl = (Player)var6.next();
-
-                            for (String cmd2 : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Broadcast")) {
-                                DonateCase.t.msg_(pl, DonateCase.t.rt(cmd2, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + casetitle));
+                        if(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".AnimationSound") != null) {
+                            sound = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".AnimationSound"));
+                            Sound sound1;
+                            sound1 = Sound.valueOf(sound.toUpperCase());
+                            if (sound1 == null) {
+                                sound1 = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+                            }
+                            player.playSound(player.getLocation(), sound1, 1.0F, 5.0F);
+                        }
+                        for (Player pl : Bukkit.getOnlinePlayers()) {
+                            for (String msg : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Broadcast")) {
+                                DonateCase.t.msg_(pl, DonateCase.t.rt(msg, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + casetitle));
                             }
                         }
                     }
