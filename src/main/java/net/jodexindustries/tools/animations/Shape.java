@@ -11,12 +11,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 public class Shape {
-    public static List<Player> caseOpen = new ArrayList();
+    public static List<Player> caseOpen = new ArrayList<>();
     public Shape(final Player player, Location location, final String c) {
         final Location lAC = location.clone();
         final String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");

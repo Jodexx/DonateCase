@@ -1,6 +1,8 @@
 package net.jodexindustries.tools;
 
 import java.io.File;
+import java.util.Objects;
+
 import net.jodexindustries.dc.DonateCase;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -10,7 +12,7 @@ public class Languages {
     public Languages(String lang) {
         File path = new File(DonateCase.instance.getDataFolder(), "lang");
         File[] listFiles;
-        int length = (listFiles = path.listFiles()).length;
+        int length = (Objects.requireNonNull(listFiles = path.listFiles())).length;
 
         for(int i = 0; i < length; ++i) {
             File l = listFiles[i];

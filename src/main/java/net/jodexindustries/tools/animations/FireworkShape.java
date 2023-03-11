@@ -13,12 +13,11 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 public class FireworkShape {
-    public static List<Player> caseOpen = new ArrayList();
+    public static List<Player> caseOpen = new ArrayList<>();
     public FireworkShape(final Player player, Location location, final String c) {
         final Location lAC = location.clone();
         final String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
