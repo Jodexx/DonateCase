@@ -118,7 +118,10 @@ public class FireworkShape {
                     Firework firework = loc.getWorld().spawn(loc, Firework.class);
                     FireworkMeta data = firework.getFireworkMeta();
                     data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
-                    data.setPower(0);
+                    for (String color : CustomConfig.getAnimations().getStringList("Firework.FireworkColors")) {
+                        data.addEffect(FireworkEffect.builder().withColor(DonateCase.t.parseColor(color)).build());
+                    }
+                    data.setPower(CustomConfig.getAnimations().getInt("FireWork.Power"));
                     firework.setFireworkMeta(data);
                 }
 

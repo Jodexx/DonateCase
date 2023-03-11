@@ -60,6 +60,10 @@ public class DonateCase extends JavaPlugin {
         if (!(new File(this.getDataFolder(), "Keys.yml")).exists()) {
             this.saveResource("Keys.yml", false);
         }
+        if (!(new File(this.getDataFolder(), "Animations.yml")).exists()) {
+            this.saveResource("Animations.yml", false);
+        }
+
 
         if (!(new File(this.getDataFolder(), "lang/ru_RU.yml")).exists()) {
             this.saveResource("lang/ru_RU.yml", false);

@@ -1,0 +1,9 @@
+Shape: #Soon.....
+
+Firework:
+  Power: 0 # Firework power
+  FireworkColors:
+    - RED
+    - BLUE
+    - GREEN
+    - YELLOW
