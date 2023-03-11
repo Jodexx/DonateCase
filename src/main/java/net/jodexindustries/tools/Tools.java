@@ -12,13 +12,11 @@ import org.bukkit.entity.Firework;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Tools {
     public Tools() {
@@ -117,6 +115,33 @@ public class Tools {
 
     public ItemStack createItem(Material ma, String dn, List<String> lore) {
         return this.createItem(ma, 0, 1, dn, lore);
+    }
+
+    public ItemStack getPlayerHead(String player, String displayname) {
+        Material type = Material.PLAYER_HEAD;
+        ItemStack item = new ItemStack(type, 1);
+        SkullMeta meta = (SkullMeta) item.getItemMeta();
+        Objects.requireNonNull(meta).setOwner(player);
+        item.setItemMeta(meta);
+        ItemMeta itemmeta = item.getItemMeta();
+        Objects.requireNonNull(itemmeta).setDisplayName(this.rc(displayname));
+        item.setItemMeta(itemmeta);
+
+        return item;
+    }
+
+    public ItemStack getPlayerHead(String player, String displayname, List<String> lore) {
+        Material type = Material.PLAYER_HEAD;
+        ItemStack item = new ItemStack(type, 1);
+        SkullMeta meta = (SkullMeta) item.getItemMeta();
+        Objects.requireNonNull(meta).setOwner(player);
+        item.setItemMeta(meta);
+        ItemMeta itemmeta = item.getItemMeta();
+        Objects.requireNonNull(itemmeta).setDisplayName(this.rc(displayname));
+        itemmeta.setLore(this.rc(lore));
+        item.setItemMeta(itemmeta);
+
+        return item;
     }
 
     public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore) {

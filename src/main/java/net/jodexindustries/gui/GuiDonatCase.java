@@ -3,7 +3,6 @@ package net.jodexindustries.gui;
 import net.jodexindustries.dc.Case;
 import net.jodexindustries.dc.DonateCase;
 import net.jodexindustries.tools.CustomConfig;
-import net.jodexindustries.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,12 +18,20 @@ public class GuiDonatCase {
         assert title != null;
         Inventory inv = Bukkit.createInventory(null, 45, DonateCase.t.rc(title));
         final String materialID = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial")).toUpperCase();
+        final String materialNAME = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterialName"));
         Material material;
-        material = Material.getMaterial(materialID);
-        if (material == null) {
-            material = Material.STONE;
+        ItemStack f = null;
+        if(!materialID.startsWith("HEAD")) {
+            material = Material.getMaterial(materialID);
+            if (material == null) {
+                material = Material.STONE;
+            }
+            f = DonateCase.t.createItem(material, 1, 1, materialNAME);
         }
-        ItemStack f = DonateCase.t.createItem(material, 1, 1, " ");
+        if(materialID.startsWith("HEAD")) {
+            String[] parts = materialID.split(":");
+            f = DonateCase.t.getPlayerHead(parts[1], materialNAME);
+        }
 
         for(int a = 0; a < 2; ++a) {
             int var7;
@@ -37,20 +44,26 @@ public class GuiDonatCase {
             }
         }
 
-        int var10001 = DonateCase.t.c(5, 3);
-        Tools var10002 = DonateCase.t;
         final String opencasematerialID = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterial")).toUpperCase();
         Material opencasematerial;
-        opencasematerial = Material.getMaterial(opencasematerialID);
-        if (opencasematerial == null) {
-            opencasematerial = Material.STONE;
-        }
+        ItemStack opencaseitemstack = null;
         String displayname;
+        int keys = Case.getKeys(c, p.getName());
+        List<String> lore = CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");
         displayname = DonateCase.t.rc(Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName"))
                 .replace("<key>", String.valueOf(Case.getKeys(c, p.getName()))));
-        List<String> lore = CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");
-        int keys = Case.getKeys(c, p.getName());
-        inv.setItem(var10001, var10002.createItem(opencasematerial, displayname, DonateCase.t.rt(lore, "%case:" + c, "%keys:" + keys)));
+        if(!opencasematerialID.startsWith("HEAD")) {
+            opencasematerial = Material.getMaterial(opencasematerialID);
+            if (opencasematerial == null) {
+                opencasematerial = Material.STONE;
+            }
+            opencaseitemstack = DonateCase.t.createItem(opencasematerial, 1, 1, displayname, DonateCase.t.rt(lore,"%case:" + c, "%keys:" + keys ));
+        }
+        if(opencasematerialID.startsWith("HEAD")) {
+            String[] parts = opencasematerialID.split(":");
+            opencaseitemstack = DonateCase.t.getPlayerHead(parts[1], displayname, DonateCase.t.rt(lore,"%case:" + c, "%keys:" + keys));
+        }
+        inv.setItem(DonateCase.t.c(5, 3), opencaseitemstack);
         p.openInventory(inv);
     }
 }

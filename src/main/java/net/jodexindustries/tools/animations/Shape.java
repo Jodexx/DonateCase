@@ -46,13 +46,19 @@ public class Shape {
 
             public void run() {
                 Material material;
-                material = Material.getMaterial(winGroupId);
+                ItemStack winItem = null;
                 String sound;
-                if (material == null) {
-                    material = Material.STONE;
+                if(!winGroupId.startsWith("HEAD")) {
+                    material = Material.getMaterial(winGroupId);
+                    if (material == null) {
+                        material = Material.STONE;
+                    }
+                    winItem = DonateCase.t.createItem(material, 1, 0, winGroupDisplayName);
                 }
-
-                ItemStack winItem = DonateCase.t.createItem(material, 1, 0, winGroupDisplayName);
+                if(winGroupId.startsWith("HEAD")) {
+                    String[] parts = winGroupId.split(":");
+                    winItem = DonateCase.t.getPlayerHead(parts[1], winGroupDisplayName);
+                }
                 if (this.i == 0) {
                     this.l = as.getLocation();
                 }
@@ -97,8 +103,21 @@ public class Shape {
 
                 if (this.i <= 15) {
                     final String winGroup2 = DonateCase.t.getRandomGroup(c);
+                    ItemStack winItem2 = null;
+                    Material material2;
                     final String winGroupDisplayName2 = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
-                    ItemStack winItem2 = DonateCase.t.createItem(material, 1, 0, winGroupDisplayName2);
+                    final String winGroup2Id = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.ID").toUpperCase();
+                    if(!winGroup2Id.startsWith("HEAD")) {
+                        material2 = Material.getMaterial(winGroup2Id);
+                        if (material2 == null) {
+                            material2 = Material.STONE;
+                        }
+                        winItem2 = DonateCase.t.createItem(material2, 1, 0, winGroupDisplayName2);
+                    }
+                    if(winGroup2Id.startsWith("HEAD")) {
+                        String[] parts = winGroup2Id.split(":");
+                        winItem2 = DonateCase.t.getPlayerHead(parts[1], winGroupDisplayName2);
+                    }
                     as.setHelmet(winItem2);
                     as.setCustomName(winItem2.getItemMeta().getDisplayName());
                     if (this.i <= 8) {

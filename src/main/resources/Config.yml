@@ -1,4 +1,4 @@
-config: '2.0' #DON'T CHANGE THIS PLEASE
+config: '2.1' #DON'T CHANGE THIS PLEASE
 
 DonatCase:
   #Do I need to check for plugin updates?
@@ -20,8 +20,9 @@ DonatCase:
       AnimationSound: ENTITY_EXPERIENCE_ORB_PICKUP # remove this line if you don't want to play sound
       Title: '&c&lDonate-&a&lCase' # If you want to make another case, then the Title needs to be changed
       Gui:
-        GuiMaterial: WHITE_STAINED_GLASS_PANE
-        GuiOpenCaseMaterial: TRIPWIRE_HOOK
+        GuiMaterial: WHITE_STAINED_GLASS_PANE # you can use player head, example: HEAD:_Jodex__
+        GuiMaterialName: "&cDonateCase.com"
+        GuiOpenCaseMaterial: TRIPWIRE_HOOK # you can use player head, example: HEAD:_Jodex__
         DisplayName: '&bOpen Case'
         Lore:
           - '&6The case can be bought on the website: &cDonateCase.com'
@@ -39,7 +40,7 @@ DonatCase:
           Group: vip
           Chance: 50
           Item:
-            ID: IRON_SWORD
+            ID: IRON_SWORD # you can use player head, example: HEAD:_Jodex__
             DisplayName: '&7&l[&aVIP&7&l]'
           Commands:
             - lp user %player parent add %group
@@ -49,7 +50,7 @@ DonatCase:
           Group: vipplus
           Chance: 25
           Item:
-            ID: GOLDEN_SWORD
+            ID: GOLDEN_SWORD # you can use player head, example: HEAD:_Jodex__
             DisplayName: '&7&l[&bVIP&6+&7&l]'
           Commands:
             - lp user %player parent add %group
@@ -59,7 +60,7 @@ DonatCase:
           Group: deluxe
           Chance: 15
           Item:
-            ID: DIAMOND_SWORD
+            ID: DIAMOND_SWORD # you can use player head, example: HEAD:_Jodex__
             DisplayName: '&7&l[&5Deluxe&7&l]'
           Commands:
             - lp user %player parent add %group
@@ -69,7 +70,7 @@ DonatCase:
           Group: legend
           Chance: 10
           Item:
-            ID: NETHERITE_SWORD
+            ID: NETHERITE_SWORD # you can use player head, example: HEAD:_Jodex__
             DisplayName: '&7&l[&dLegend&7&l]'
           Commands:
             - lp user %player parent add %group

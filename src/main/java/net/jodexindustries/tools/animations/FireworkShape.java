@@ -48,14 +48,19 @@ public class FireworkShape {
 
             public void run() {
                 Material material;
-                material = Material.getMaterial(winGroupId);
-                if (material == null) {
-                    material = Material.STONE;
-                }
-                // String from config
+                ItemStack winItem = null;
                 String sound;
-
-                ItemStack winItem = DonateCase.t.createItem(material, 1, 0, winGroupDisplayName);
+                if(!winGroupId.startsWith("HEAD")) {
+                    material = Material.getMaterial(winGroupId);
+                    if (material == null) {
+                        material = Material.STONE;
+                    }
+                    winItem = DonateCase.t.createItem(material, 1, 0, winGroupDisplayName);
+                }
+                if(winGroupId.startsWith("HEAD")) {
+                    String[] parts = winGroupId.split(":");
+                    winItem = DonateCase.t.getPlayerHead(parts[1], winGroupDisplayName);
+                }
                 if (this.i == 0) {
                     this.l = as.getLocation();
                 }
