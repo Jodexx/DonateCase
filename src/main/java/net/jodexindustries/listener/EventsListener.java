@@ -47,7 +47,7 @@ public class EventsListener implements Listener {
                     String c = Case.getCaseByTitle(title);
                     if (Case.getKeys(casename, pl) >= 1) {
                         if (DonateCase.openCase.containsKey(p)) {
-                            Location block = (Location)DonateCase.openCase.get(p);
+                            Location block = DonateCase.openCase.get(p);
                             Case.removeKeys(casename, pl, 1);
                             new StartAnimation(p, block, c);
                         }
