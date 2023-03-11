@@ -45,7 +45,9 @@ public class GuiDonatCase {
         if (opencasematerial == null) {
             opencasematerial = Material.STONE;
         }
-        String displayname = DonateCase.t.rc(Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName")).replace("<key>", String.valueOf(Case.getKeys(c, p.getName()))));
+        String displayname;
+        displayname = DonateCase.t.rc(Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName"))
+                .replace("<key>", String.valueOf(Case.getKeys(c, p.getName()))));
         List<String> lore = CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");
         int keys = Case.getKeys(c, p.getName());
         inv.setItem(var10001, var10002.createItem(opencasematerial, displayname, DonateCase.t.rt(lore, "%case:" + c, "%keys:" + keys)));
