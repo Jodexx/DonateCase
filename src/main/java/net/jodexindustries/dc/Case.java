@@ -127,10 +127,8 @@ public class Case {
 
     public static boolean hasCaseNameByTitle(String title) {
         ConfigurationSection cases_ = CustomConfig.getCases().getConfigurationSection("DonatCase.Cases");
-        Iterator var2 = cases_.getValues(false).keySet().iterator();
 
-        while(var2.hasNext()) {
-            String name = (String)var2.next();
+        for (String name : cases_.getValues(false).keySet()) {
             if (CustomConfig.getCases().getString("DonatCase.Cases." + name + ".type") != null) {
                 String type = CustomConfig.getCases().getString("DonatCase.Cases." + name + ".type");
                 if (CustomConfig.getConfig().getString("DonatCase.Cases." + type + ".Title").equalsIgnoreCase(title)) {

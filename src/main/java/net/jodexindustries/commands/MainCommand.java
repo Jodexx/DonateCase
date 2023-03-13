@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.jodexindustries.commands.executor.DCCommand;
@@ -45,7 +47,7 @@ public class MainCommand extends DCCommand {
                 }
                 // if sender not player
             } else {
-                DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase &7by &c_Jodex__"));
+                DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
                 for (String string : DonateCase.lang.getStringList("Help")) {
                     DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
                 }
@@ -184,7 +186,8 @@ public class MainCommand extends DCCommand {
                     if (sender.hasPermission("donatecase.player")) {
 
                         for (String string : DonateCase.lang.getStringList("MyKeys")) {
-                            sender.sendMessage(PlaceholderAPI.setPlaceholders(player.getPlayer(), ChatColor.translateAlternateColorCodes('&', string)));
+                            sender.sendMessage(PlaceholderAPI.setPlaceholders(player.getPlayer(),
+                                    ChatColor.translateAlternateColorCodes('&', string)));
                         }
                     }
                 } else {
@@ -194,9 +197,10 @@ public class MainCommand extends DCCommand {
                             DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("PlayerNotFound"), "%player:" + player));
                             return true;
                         }
-
+                        //Get player keys
                         for (String string : DonateCase.lang.getStringList("PlayerKeys")) {
-                            sender.sendMessage(PlaceholderAPI.setPlaceholders(target.getPlayer(), ChatColor.translateAlternateColorCodes('&', string).replace("%player", target.getName())));
+                            sender.sendMessage(PlaceholderAPI.setPlaceholders(target.getPlayer(),
+                                    ChatColor.translateAlternateColorCodes('&', string).replace("%player", target.getName())));
                         }
                     } else {
                         DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("NoPermission")));
@@ -204,6 +208,20 @@ public class MainCommand extends DCCommand {
                 }
                 return false;
             }
+            //cases
+            if (args[0].equalsIgnoreCase("cases")) {
+                    if (sender.hasPermission("donatecase.mod")) {
+                        ConfigurationSection cases_ = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                        int num = 0;
+                        for (String casename : cases_.getValues(false).keySet()) {
+                            num++;
+                            String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                            DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("CasesList"), "%casename:" + casename, "%num:" + num, "%casetitle:" + casetitle));
+                        }
+                    }
+                return false;
+            }
+            //help
             if (args[0].equalsIgnoreCase("help")) {
                 if (sender.hasPermission("donatecase.player")) {
                         DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
@@ -211,11 +229,13 @@ public class MainCommand extends DCCommand {
                         DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
                     }
                 } else if (sender.hasPermission("donatecase.mod") || sender.hasPermission("donatecase.admin")) {
+                    DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
                     for (String string : DonateCase.lang.getStringList("Help")) {
                         DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
                     }
                 }
             }
+            //create
             if (args[0].equalsIgnoreCase("create")) {
                 Player player = (Player)sender;
                 Location l = player.getTargetBlock(null, 5).getLocation();
@@ -244,6 +264,7 @@ public class MainCommand extends DCCommand {
                     DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("NoPermission")));
                 }
             }
+            //delete
             if (args[0].equalsIgnoreCase("delete")) {
                 Player player = (Player)sender;
                 Location l = player.getTargetBlock(null, 5).getLocation();
@@ -277,8 +298,6 @@ public class MainCommand extends DCCommand {
     public ArrayList onTabComplete(CommandSender sender, Player $p, Command $cmd, String $label, String[] args) {
         ArrayList<String> list;
         ArrayList<String> value;
-        Iterator<String> var14;
-        String tmp;
         if (args.length == 1 && sender.hasPermission("donatecase.admin")) {
             list = new ArrayList<>();
             value = new ArrayList<>();
@@ -289,14 +308,12 @@ public class MainCommand extends DCCommand {
             value.add("setkey");
             value.add("reload");
             value.add("keys");
+            value.add("cases");
             value.add("delkey");
             if (args[0].equals("")) {
                 list = value;
             } else {
-                var14 = value.iterator();
-
-                while(var14.hasNext()) {
-                    tmp = var14.next();
+                for (String tmp : value) {
                     if (tmp.startsWith(args[0].toLowerCase())) {
                         list.add(tmp);
                     }
@@ -312,14 +329,12 @@ public class MainCommand extends DCCommand {
             value.add("givekey");
             value.add("setkey");
             value.add("keys");
+            value.add("cases");
             value.add("delkey");
             if (args[0].equals("")) {
                 list = value;
             } else {
-                var14 = value.iterator();
-
-                while(var14.hasNext()) {
-                    tmp = var14.next();
+                for (String tmp : value) {
                     if (tmp.startsWith(args[0].toLowerCase())) {
                         list.add(tmp);
                     }
@@ -336,10 +351,7 @@ public class MainCommand extends DCCommand {
             if (args[0].equals("")) {
                 list = value;
             } else {
-                var14 = value.iterator();
-
-                while(var14.hasNext()) {
-                    tmp = var14.next();
+                for (String tmp : value) {
                     if (tmp.startsWith(args[0].toLowerCase())) {
                         list.add(tmp);
                     }
@@ -352,26 +364,18 @@ public class MainCommand extends DCCommand {
             return new ArrayList();
         } else {
             ConfigurationSection section;
-            Iterator<String> var9;
-            String tmp2;
             if (args[0].equalsIgnoreCase("create") && sender.hasPermission("donatecase.admin")) {
                 list = new ArrayList<>();
                 value = new ArrayList<>();
                 section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                var9 = section.getKeys(false).iterator();
-
-                while(var9.hasNext()) {
-                    tmp2 = var9.next();
+                for (String tmp2 : section.getKeys(false)) {
                     value.add(tmp2.toLowerCase());
                 }
 
                 if (args[1].equals("")) {
                     list = value;
                 } else {
-                    var9 = value.iterator();
-
-                    while(var9.hasNext()) {
-                        tmp2 = var9.next();
+                    for (String tmp2 : value) {
                         if (tmp2.startsWith(args[1].toLowerCase())) {
                             list.add(tmp2.toLowerCase());
                         }
@@ -405,74 +409,25 @@ public class MainCommand extends DCCommand {
                 return new ArrayList();
             } else if (args[0].equalsIgnoreCase("reload")) {
                 return new ArrayList();
-            } else {
-                Player p;
+            } else if (args[0].equalsIgnoreCase("cases")) {
+                return new ArrayList();
+                //givekey gk
+            } else if (args[0].equalsIgnoreCase("givekey") || args[0].equalsIgnoreCase("gk")) {
                 ArrayList<String> b;
-                Iterator var16;
-                if (!args[0].equalsIgnoreCase("givekey") && !args[0].equalsIgnoreCase("setkey") && !args[0].equalsIgnoreCase("gk") && !args[0].equalsIgnoreCase("sk")) {
-                    if (!args[0].equalsIgnoreCase("delkey") && !args[0].equalsIgnoreCase("dk")) {
-                        return (ArrayList) Arrays.asList("help", "create", "delete", "givekey", "setkey", "reload", "mykeys", "delkey");
-                    } else if (args[1].equalsIgnoreCase("all")) {
-                        return new ArrayList<>();
-                    } else {
-                        list = new ArrayList<>();
-                        value = new ArrayList<>();
-                        section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                        var9 = section.getKeys(false).iterator();
-
-                        while(var9.hasNext()) {
-                            tmp2 = var9.next();
-                            value.add(tmp2.toLowerCase());
-                        }
-
-                        if (args.length == 2) {
-                            b = new ArrayList<>();
-                            var16 = ((List)Bukkit.getOnlinePlayers().stream().filter((px) -> px.getName().startsWith(args[1])).collect(Collectors.toList())).iterator();
-
-                            while(var16.hasNext()) {
-                                p = (Player)var16.next();
-                                b.add(p.getName());
-                            }
-
-                            return b;
-                        } else {
-                            if (args[2].equals("")) {
-                                list = value;
-                            } else {
-                                var9 = value.iterator();
-
-                                while(var9.hasNext()) {
-                                    tmp2 = var9.next();
-                                    if (tmp2.startsWith(args[1].toLowerCase())) {
-                                        list.add(tmp2.toLowerCase());
-                                    }
-                                }
-                            }
-
-                            Collections.sort(list);
-                            return list;
-                        }
-                    }
-                } else if (!sender.hasPermission("donatecase.mod")) {
+                if (!sender.hasPermission("donatecase.mod")) {
                     return new ArrayList();
                 } else {
-                    list = new ArrayList<String>();
+                    list = new ArrayList<>();
                     value = new ArrayList<>();
                     section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                    var9 = section.getKeys(false).iterator();
-
-                    while(var9.hasNext()) {
-                        tmp2 = var9.next();
+                    for (String tmp2 : section.getKeys(false)) {
                         value.add(tmp2.toLowerCase());
                     }
-
+                    // playerlist
                     if (args.length == 2) {
                         b = new ArrayList<>();
-                        var16 = ((List)Bukkit.getOnlinePlayers().stream().filter((px) -> px.getName().startsWith(args[1])).collect(Collectors.toList())).iterator();
-
-                        while(var16.hasNext()) {
-                            p = (Player)var16.next();
-                            b.add(p.getName());
+                        for (Player player : Bukkit.getOnlinePlayers().stream().filter((px) -> px.getName().startsWith(args[1])).collect(Collectors.toList())) {
+                            b.add(player.getName());
                         }
 
                         return b;
@@ -480,17 +435,15 @@ public class MainCommand extends DCCommand {
                         if (args[2].equals("")) {
                             list = value;
                         } else {
-                            var9 = value.iterator();
 
-                            while(var9.hasNext()) {
-                                tmp2 = var9.next();
-                                if (tmp2.startsWith(args[1].toLowerCase())) {
+                            for (String tmp2 : value) {
+                                if (tmp2.startsWith(args[2].toLowerCase())) {
                                     list.add(tmp2.toLowerCase());
                                 }
                             }
                         }
 
-                        if (args.length == 4) {
+                        if (args.length >= 4) {
                             return new ArrayList();
                         } else {
                             Collections.sort(list);
@@ -498,6 +451,47 @@ public class MainCommand extends DCCommand {
                         }
                     }
                 }
+            } else if (args[0].equalsIgnoreCase("delkey") || args[0].equalsIgnoreCase("dk")) {
+                // delkey all
+                if (args[1].equalsIgnoreCase("all")) {
+                    return new ArrayList();
+                }
+                ArrayList<String> b;
+                list = new ArrayList<>();
+                value = new ArrayList<>();
+                section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                for (String tmp2 : section.getKeys(false)) {
+                    value.add(tmp2.toLowerCase());
+                }
+
+
+                if (args.length == 2) {
+                    b = new ArrayList<>();
+                    for (Player player: Bukkit.getOnlinePlayers().stream().filter((px) -> px.getName().startsWith(args[1])).collect(Collectors.toList())) {
+                        b.add(player.getName());
+                    }
+
+                    return b;
+                } else {
+                    if (args[2].equals("")) {
+                        list = value;
+                    } else {
+                        for (String tmp2 : value) {
+                            if (tmp2.startsWith(args[2].toLowerCase())) {
+                                list.add(tmp2.toLowerCase());
+                            }
+                        }
+                    }
+
+                    if (args.length >= 4) {
+                        return new ArrayList();
+                    } else {
+                        Collections.sort(list);
+                        return list;
+                    }
+                }
+            } else {
+                return new ArrayList();
             }
         }
     }

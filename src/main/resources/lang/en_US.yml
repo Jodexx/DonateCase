@@ -1,4 +1,4 @@
-config: '2.0' #DON'T CHANGE THIS PLEASE
+config: '2.1' #DON'T CHANGE THIS PLEASE
 
 # Local Placeholders
 # %case - case name
@@ -9,7 +9,7 @@ config: '2.0' #DON'T CHANGE THIS PLEASE
 # Global Placeholders
 # %donatecase_keys_<casename>% - number of keys from a particular case
 
-Prefix: '&7[&5Ultra-Case&7] &e'
+Prefix: '&7[&cDonateCase&7] &e'
 NoPermission: '&cYou do not have permissions!'
 CaseNotExist: '&cCase &6%case &cdoes not exist.'
 PlayerNotFound: '&cPlayer with nickname &6%player &cnot found'
@@ -29,9 +29,11 @@ HaveOpenCase: '&cPlease wait this case is opening'
 ReloadConfig: '&aConfig reloaded!'
 TitleWin: '&aCongratulations! ' # Placeholders: %group - group name; %groupdisplayname - group display name
 SubTitleWin: '&5you won %groupdisplayname'
+CasesList: '&e%num. &6%casename &3- &r%casetitle'
 Help:
   - '&9/%cmd help &3- &2Help for the plugin'
   - '&9/%cmd keys &7(&aPlayer&7) &3- &2Show keys'
+  - '&9/%cmd cases &3- &2Show all possible cases'
   - '&9/%cmd create &7(&aCase type&7) (&aCase name&7) &3- &2Set case &7(&6Look at block&7)'
   - '&9/%cmd delete &7[&aCase name&7]&3- &2Delete case &7(&6Look at case&7)'
   - '&9/%cmd givekey &7(&aPlayer&7) &7(&aCase Type&7) &7(&aKeys&7) &3- &2Give keys to player'
