@@ -3,7 +3,9 @@ package net.jodexindustries.listener;
 import net.jodexindustries.dc.Case;
 import net.jodexindustries.dc.DonateCase;
 import net.jodexindustries.gui.GuiDonatCase;
+import net.jodexindustries.tools.CustomConfig;
 import net.jodexindustries.tools.StartAnimation;
+import net.jodexindustries.tools.UpdateChecker;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -21,10 +23,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 public class EventsListener implements Listener {
-    public EventsListener() {
-    }
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
@@ -32,6 +33,21 @@ public class EventsListener implements Listener {
             event.setCancelled(true);
         }
 
+    }
+
+    @EventHandler
+    public void onAdminJoined(PlayerJoinEvent event) {
+        Player p = event.getPlayer();
+        if (CustomConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
+            if (p.hasPermission("donatecase.admin")) {
+                new UpdateChecker(DonateCase.instance, 106701).getVersion((version) -> {
+                    if (DonateCase.instance.getDescription().getVersion().equals(version)) {
+                        DonateCase.t.msg_(p, DonateCase.t.rt(DonateCase.lang.getString("UpdateCheck"), "%version:" + version));
+                    }
+
+                });
+            }
+        }
     }
 
     @EventHandler
