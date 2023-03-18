@@ -30,4 +30,4 @@ jobs:
     - uses: actions/upload-artifact@v3
       with:
         name: DonateCase
-        path: bootstrap/target/DonateCase.jar
+        path: DonateCase.jar
