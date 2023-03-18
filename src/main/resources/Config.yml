@@ -23,7 +23,7 @@ DonatCase:
     default: 0
   Cases:
     case:
-      Animation: SHAPE #SHAPE, FIREWORK
+      Animation: SHAPE #SHAPE, FIREWORK, #RAINLY
       AnimationSound: ENTITY_EXPERIENCE_ORB_PICKUP # remove this line if you don't want to play sound
       Title: '&c&lDonate-&a&lCase' # If you want to make another case, then the Title needs to be changed
       Gui:
