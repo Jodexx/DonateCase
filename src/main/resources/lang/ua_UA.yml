@@ -1,4 +1,4 @@
-config: '2.1' #DON'T CHANGE THIS PLEASE
+config: '2.2' #DON'T CHANGE THIS PLEASE
 
 # Локальні плейсхолдери
 # %case - назва кейсу
@@ -11,7 +11,7 @@ config: '2.1' #DON'T CHANGE THIS PLEASE
 
 Prefix: '&7[&cDonateCase&7] &e'
 NoPermission: '&cУ вас немає прав'
-UpdateCheck: "&eНове оновлення плагіну &cDonateCase &a%version &eдоступно&e! \n&eЗавантажити &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
+UpdateCheck: "&eНове оновлення плагіну &cDonateCase &a%version &eдоступно&e! &eЗавантажити &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
 CaseNotExist: '&cКейса &6%case &cне існує.'
 PlayerNotFound: '&cГравця з ніком &6%player &cне знайдено'
 HasDonatCase: '&cЦей блок вже донат кейс'

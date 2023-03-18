@@ -13,6 +13,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -35,14 +36,14 @@ public class EventsListener implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.HIGH)
     public void onAdminJoined(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         if (CustomConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             if (p.hasPermission("donatecase.admin")) {
                 new UpdateChecker(DonateCase.instance, 106701).getVersion((version) -> {
-                    if (DonateCase.instance.getDescription().getVersion().equals(version)) {
-                        DonateCase.t.msg_(p, DonateCase.t.rt(DonateCase.lang.getString("UpdateCheck"), "%version:" + version));
+                    if (!DonateCase.instance.getDescription().getVersion().equals(version)) {
+                        DonateCase.t.msg(p, DonateCase.t.rt(DonateCase.lang.getString("UpdateCheck"), "%version:" + version));
                     }
 
                 });
