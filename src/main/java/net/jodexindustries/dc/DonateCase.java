@@ -120,7 +120,7 @@ public class DonateCase extends JavaPlugin {
             this.saveResource("lang/ua_UA.yml", false);
         }
 
-        if (!lang.getString("config").equals("2.1")) {
+        if (!lang.getString("config").equals("2.2")) {
             Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated lang config! Creating a new!");
             file = new File(this.getDataFolder(), "lang/ru_RU.yml");
             file.renameTo(new File(this.getDataFolder(), "lang/oldru_RU.yml"));
