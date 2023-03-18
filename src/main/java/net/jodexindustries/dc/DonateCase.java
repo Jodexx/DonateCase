@@ -97,7 +97,7 @@ public class DonateCase extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new EventsListener(), this);
         if (CustomConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
-            (new UpdateChecker(this, 106701)).getVersion((version) -> {
+            new UpdateChecker(this, 106701).getVersion((version) -> {
                 if (this.getDescription().getVersion().equals(version)) {
                     this.getLogger().info("There is not a new update available.");
                 } else {
