@@ -1,4 +1,4 @@
-config: '2.1' #DON'T CHANGE THIS PLEASE
+config: '2.2' #DON'T CHANGE THIS PLEASE
 
 # Локальные плейсхолдеры
 # %case - название кейса
