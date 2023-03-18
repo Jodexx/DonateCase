@@ -16,7 +16,8 @@
 
   <!-- Build -->
     <build>
-        <directory>DonateCase build</directory>
+        <finalName>DonateCase</finalName>
+        <directory>build</directory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
