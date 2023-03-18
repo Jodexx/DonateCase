@@ -1,4 +1,4 @@
-config: '2.1' #DON'T CHANGE THIS PLEASE
+config: '2.2' #DON'T CHANGE THIS PLEASE
 
 DonatCase:
   #Do I need to check for plugin updates?
@@ -14,6 +14,13 @@ DonatCase:
   Languages: en #ru/en/ua
   #Are messages to the player about adding keys included?
   SetKeysTargetMessage: true
+  LevelGroup: true
+  LevelGroups:
+    legend: 4
+    deluxe: 3
+    vipplus: 2
+    vip: 1
+    default: 0
   Cases:
     case:
       Animation: SHAPE #SHAPE, FIREWORK
@@ -42,8 +49,9 @@ DonatCase:
           Item:
             ID: IRON_SWORD # you can use player head, example: HEAD:_Jodex__
             DisplayName: '&7&l[&aVIP&7&l]'
+          GiveCommand: lp user %player parent set %group
           Commands:
-            - lp user %player parent add %group
+            - some commands here
           Broadcast:
             - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
         VIPPLUS:
@@ -52,8 +60,9 @@ DonatCase:
           Item:
             ID: GOLDEN_SWORD # you can use player head, example: HEAD:_Jodex__
             DisplayName: '&7&l[&bVIP&6+&7&l]'
+          GiveCommand: lp user %player parent set %group
           Commands:
-            - lp user %player parent add %group
+            - some commands here
           Broadcast:
             - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
         Deluxe:
@@ -62,8 +71,9 @@ DonatCase:
           Item:
             ID: DIAMOND_SWORD # you can use player head, example: HEAD:_Jodex__
             DisplayName: '&7&l[&5Deluxe&7&l]'
+          GiveCommand: lp user %player parent set %group
           Commands:
-            - lp user %player parent add %group
+            - some commands here
           Broadcast:
             - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
         Legend:
@@ -72,7 +82,8 @@ DonatCase:
           Item:
             ID: NETHERITE_SWORD # you can use player head, example: HEAD:_Jodex__
             DisplayName: '&7&l[&dLegend&7&l]'
+          GiveCommand: lp user %player parent set %group
           Commands:
-            - lp user %player parent add %group
+            - some commands here
           Broadcast:
             - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
