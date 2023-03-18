@@ -30,9 +30,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Download a Build Artifact
-      uses: actions/download-artifact@v2.1.1
+    - uses: actions/upload-artifact@v3
       with:
-        # Artifact name
         name: DonateCase
-          # Destination path
         path: build/target/DonateCase.jar
