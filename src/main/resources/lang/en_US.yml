@@ -11,6 +11,7 @@ config: '2.1' #DON'T CHANGE THIS PLEASE
 
 Prefix: '&7[&cDonateCase&7] &e'
 NoPermission: '&cYou do not have permissions!'
+UpdateCheck: "&eNew &cDonateCase &a%version &eplugin update available&e! \n&eDownload &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
 CaseNotExist: '&cCase &6%case &cdoes not exist.'
 PlayerNotFound: '&cPlayer with nickname &6%player &cnot found'
 HasDonatCase: '&cThis block is already a donation case'
