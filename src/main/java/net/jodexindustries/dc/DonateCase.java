@@ -87,7 +87,7 @@ public class DonateCase extends JavaPlugin {
             CustomConfig.setup();
         }
 
-        if (!CustomConfig.getConfig().getString("config").equals("2.1")) {
+        if (!CustomConfig.getConfig().getString("config").equals("2.2")) {
             Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated config! Creating a new!");
             file = new File(this.getDataFolder(), "Config.yml");
             file.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
@@ -182,5 +182,8 @@ public class DonateCase extends JavaPlugin {
         }
 
         return permission != null;
+    }
+    public static Permission getPermissions() {
+        return permission;
     }
 }
