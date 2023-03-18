@@ -44,10 +44,6 @@ public class DonateCase extends JavaPlugin {
         }
 
         t = new Tools();
-        if (Bukkit.getVersion().contains("1.12") || Bukkit.getVersion().contains("1.11") || Bukkit.getVersion().contains("1.10") || Bukkit.getVersion().contains("1.9") || Bukkit.getVersion().contains("1.8")) {
-            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cPlugin does not support server versions <1.13");
-            Bukkit.getPluginManager().disablePlugin(this);
-        }
 
         if (!(new File(this.getDataFolder(), "Config.yml")).exists()) {
             this.saveResource("Config.yml", false);
