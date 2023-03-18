@@ -75,7 +75,20 @@ public class FireworkShape {
                         String reptitleWin =DonateCase.t.rt(titleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
                         String repsubTitleWin = DonateCase.t.rt(subTitleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
                         player.sendTitle(DonateCase.t.rc(reptitleWin), DonateCase.t.rc(repsubTitleWin), 5, 60, 5);
-                        // Commands
+                        // givecommand
+                        String playergroup = DonateCase.getPermissions().getPrimaryGroup(player).toLowerCase();
+                        String givecommand = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".GiveCommand");
+                        if (CustomConfig.getConfig().getBoolean("DonatCase.LevelGroup")) {
+                            if (CustomConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) &&
+                                    CustomConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) >=
+                                            CustomConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {
+                            } else {
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), DonateCase.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                            }
+                        } else {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), DonateCase.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                        }
+                        // customcommands
                         for (String cmd : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Commands")) {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), DonateCase.t.rt(cmd, "%player:" + player.getName(), "%group:" + winGroupGroup));
                         }
