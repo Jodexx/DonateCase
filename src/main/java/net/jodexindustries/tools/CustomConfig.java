@@ -1,4 +1,4 @@
-package net.jodexindustries.tools;
+package com.jodexindustries.uckyversioncheck;
 
 import java.io.File;
 import java.io.IOException;
