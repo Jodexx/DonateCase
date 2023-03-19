@@ -1,10 +1,12 @@
-package net.jodexindustries.dc;
+package net.jodexindustries.tools;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import net.jodexindustries.dc.DonateCase;
 import org.bukkit.Bukkit;
 
 public class MySQL {
