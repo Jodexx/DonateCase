@@ -294,7 +294,7 @@ public class MainCommand extends DCCommand {
                 list = value;
             } else {
                 for (String tmp : value) {
-                    if (tmp.startsWith(args[0].toLowerCase())) {
+                    if (tmp.startsWith(args[0])) {
                         list.add(tmp);
                     }
                 }
@@ -315,7 +315,7 @@ public class MainCommand extends DCCommand {
                 list = value;
             } else {
                 for (String tmp : value) {
-                    if (tmp.startsWith(args[0].toLowerCase())) {
+                    if (tmp.startsWith(args[0])) {
                         list.add(tmp);
                     }
                 }
@@ -332,7 +332,7 @@ public class MainCommand extends DCCommand {
                 list = value;
             } else {
                 for (String tmp : value) {
-                    if (tmp.startsWith(args[0].toLowerCase())) {
+                    if (tmp.startsWith(args[0])) {
                         list.add(tmp);
                     }
                 }
@@ -349,15 +349,15 @@ public class MainCommand extends DCCommand {
                 value = new ArrayList<>();
                 section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
                 for (String tmp2 : section.getKeys(false)) {
-                    value.add(tmp2.toLowerCase());
+                    value.add(tmp2);
                 }
 
                 if (args[1].equals("")) {
                     list = value;
                 } else {
                     for (String tmp2 : value) {
-                        if (tmp2.startsWith(args[1].toLowerCase())) {
-                            list.add(tmp2.toLowerCase());
+                        if (tmp2.startsWith(args[1])) {
+                            list.add(tmp2);
                         }
                     }
                 }
@@ -369,6 +369,15 @@ public class MainCommand extends DCCommand {
                     return list;
                 }
             } else if (args[0].equalsIgnoreCase("delete")) {
+                if(args.length == 2) {
+                    section = CustomConfig.getCases().getConfigurationSection("DonatCase.Cases");
+                    value = new ArrayList<>();
+                    for (String tmp2 : section.getKeys(false)) {
+                        value.add(tmp2);
+                    }
+                    Collections.sort(value);
+                    return value;
+                }
                 return new ArrayList();
             } else if (args[0].equalsIgnoreCase("keys")) {
                 if (args.length != 2) {
@@ -401,7 +410,7 @@ public class MainCommand extends DCCommand {
                     value = new ArrayList<>();
                     section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
                     for (String tmp2 : section.getKeys(false)) {
-                        value.add(tmp2.toLowerCase());
+                        value.add(tmp2);
                     }
                     // playerlist
                     if (args.length == 2) {
@@ -417,8 +426,8 @@ public class MainCommand extends DCCommand {
                         } else {
 
                             for (String tmp2 : value) {
-                                if (tmp2.startsWith(args[2].toLowerCase())) {
-                                    list.add(tmp2.toLowerCase());
+                                if (tmp2.startsWith(args[2])) {
+                                    list.add(tmp2);
                                 }
                             }
                         }
@@ -441,7 +450,7 @@ public class MainCommand extends DCCommand {
                 value = new ArrayList<>();
                 section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
                 for (String tmp2 : section.getKeys(false)) {
-                    value.add(tmp2.toLowerCase());
+                    value.add(tmp2);
                 }
 
 
@@ -457,8 +466,8 @@ public class MainCommand extends DCCommand {
                         list = value;
                     } else {
                         for (String tmp2 : value) {
-                            if (tmp2.startsWith(args[2].toLowerCase())) {
-                                list.add(tmp2.toLowerCase());
+                            if (tmp2.startsWith(args[2])) {
+                                list.add(tmp2);
                             }
                         }
                     }
