@@ -1,4 +1,4 @@
-package net.jodexindustries.commands.executor;
+package com.jodexindustries.commands.executor;
 
 import java.util.List;
 import org.bukkit.command.Command;

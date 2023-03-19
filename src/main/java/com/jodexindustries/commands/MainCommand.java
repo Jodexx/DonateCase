@@ -1,19 +1,15 @@
-package net.jodexindustries.commands;
+package com.jodexindustries.commands;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import com.jodexindustries.commands.executor.DCCommand;
+import com.jodexindustries.dc.Main;
+import com.jodexindustries.tools.CustomConfig;
+import com.jodexindustries.tools.Languages;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.jodexindustries.commands.executor.DCCommand;
-import net.jodexindustries.dc.Case;
-import net.jodexindustries.dc.DonateCase;
-import net.jodexindustries.tools.CustomConfig;
-import net.jodexindustries.tools.Languages;
+import com.jodexindustries.dc.Case;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -31,25 +27,25 @@ public class MainCommand extends DCCommand {
             // if sender is player
             if (sender instanceof Player) {
                 if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.mod")) {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                    for (String string : DonateCase.lang.getStringList("HelpPlayer")) {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                        Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                    for (String string : Main.lang.getStringList("HelpPlayer")) {
+                        Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                     }
                     return false;
                 } else if (sender.hasPermission("donatecase.mod")) {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                    for (String string : DonateCase.lang.getStringList("Help")) {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                        Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                    for (String string : Main.lang.getStringList("Help")) {
+                        Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                     }
                     return false;
                 } else {
-                    DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("NoPermission")));
+                    Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                 }
                 // if sender not player
             } else {
-                DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                for (String string : DonateCase.lang.getStringList("Help")) {
-                    DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                for (String string : Main.lang.getStringList("Help")) {
+                    Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                 }
             }
         }
@@ -58,10 +54,10 @@ public class MainCommand extends DCCommand {
             if (args[0].equalsIgnoreCase("reload")) {
                 if (sender.hasPermission("donatecase.admin")) {
                     CustomConfig.setup();
-                    DonateCase.lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
-                    DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.lang.getString("ReloadConfig")));
+                    Main.lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
+                    Main.t.msg(sender, Main.t.rt(Main.lang.getString("ReloadConfig")));
                 } else {
-                    DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("NoPermission")));
+                    Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                 }
             }
             //givekey command
@@ -76,47 +72,47 @@ public class MainCommand extends DCCommand {
                                 if (Case.hasCaseByName(casename)) {
                                     String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
                                     Case.addKeys(casename, player, keys);
-                                    DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.lang.getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
+                                    Main.t.msg(sender, Main.t.rt(Main.lang.getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
                                     if (CustomConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                                        DonateCase.t.msg(target, DonateCase.t.rt(DonateCase.lang.getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
+                                        Main.t.msg(target, Main.t.rt(Main.lang.getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
                                     }
                                 } else {
-                                    DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.lang.getString("CaseNotExist"), "%case:" + casename));
+                                    Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
                                 }
                             } catch (Exception var12) {
-                                    DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                                for (String string : DonateCase.lang.getStringList("Help")) {
-                                    DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                                    Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                                for (String string : Main.lang.getStringList("Help")) {
+                                    Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                                 }
                             }
                         } else {
-                                DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                            for (String string : DonateCase.lang.getStringList("Help")) {
-                                DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                                Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                            for (String string : Main.lang.getStringList("Help")) {
+                                Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                             }
                         }
                 } else {
-                    DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("NoPermission")));
+                    Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                 }
             }
             //delkey
             if(args[0].equalsIgnoreCase("delkey") || args[0].equalsIgnoreCase("dk")) {
                 if (sender.hasPermission("donatecase.admin") || sender.hasPermission("donatecase.mod")) {
                     if(args.length == 1) {
-                            DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                        for (String string : DonateCase.lang.getStringList("Help")) {
-                            DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                            Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                        for (String string : Main.lang.getStringList("Help")) {
+                            Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                         }
                         return false;
                     }
                     if (args[1].equalsIgnoreCase("all")) {
-                        if (DonateCase.Tconfig) {
+                        if (Main.Tconfig) {
                             CustomConfig.getKeys().set("DonatCase.Cases", null);
                             CustomConfig.saveKeys();
-                            DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.lang.getString("ClearAllKeys"), new String[0]));
+                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys"), new String[0]));
                         } else {
-                            DonateCase.mysql.delAllKey();
-                            DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.lang.getString("ClearAllKeys"), new String[0]));
+                            Main.mysql.delAllKey();
+                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys"), new String[0]));
                         }
                         return false;
                     }
@@ -128,27 +124,27 @@ public class MainCommand extends DCCommand {
                         if (Case.hasCaseByName(casename)) {
                             String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
                             Case.setNullKeys(casename, player);
-                            DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.lang.getString("ClearKeys"), "%player:" + player, "%casetitle:" + casetitle, "%case:" + casename));
+                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearKeys"), "%player:" + player, "%casetitle:" + casetitle, "%case:" + casename));
                         } else {
-                            DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.lang.getString("CaseNotExist"), "%case:" + casename));
+                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
                         }
                     } catch (Exception var11) {
-                            DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                        for (String string : DonateCase.lang.getStringList("Help")) {
-                            DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                            Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                        for (String string : Main.lang.getStringList("Help")) {
+                            Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                         }
                     }
                 } else {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                    for (String string : DonateCase.lang.getStringList("Help")) {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                        Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                    for (String string : Main.lang.getStringList("Help")) {
+                        Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                     }
                 }
             }
             //setkey
             if(args[0].equalsIgnoreCase("setkey") || args[0].equalsIgnoreCase("sk")) {
                 if (!sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
-                    DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("NoPermission")));
+                    Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                 } else if (args.length >= 4) {
                     try {
                         String player = args[1];
@@ -158,23 +154,23 @@ public class MainCommand extends DCCommand {
                         if (Case.hasCaseByName(casename)) {
                             String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
                             Case.setKeys(casename, player, keys);
-                            DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.lang.getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
+                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
                             if (CustomConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                                DonateCase.t.msg(target, DonateCase.t.rt(DonateCase.lang.getString("SetKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
+                                Main.t.msg(target, Main.t.rt(Main.lang.getString("SetKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
                             }
                         } else {
-                            DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.lang.getString("CaseNotExist"), "%case:" + casename));
+                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
                         }
                     } catch (Exception var10) {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                        for (String string : DonateCase.lang.getStringList("Help")) {
-                            DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                        Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                        for (String string : Main.lang.getStringList("Help")) {
+                            Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                         }
                     }
                 } else {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                    for (String string : DonateCase.lang.getStringList("Help")) {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                        Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                    for (String string : Main.lang.getStringList("Help")) {
+                        Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                     }
                 }
                 return false;
@@ -185,7 +181,7 @@ public class MainCommand extends DCCommand {
                 if (args.length < 2) {
                     if (sender.hasPermission("donatecase.player")) {
 
-                        for (String string : DonateCase.lang.getStringList("MyKeys")) {
+                        for (String string : Main.lang.getStringList("MyKeys")) {
                             sender.sendMessage(PlaceholderAPI.setPlaceholders(player.getPlayer(),
                                     ChatColor.translateAlternateColorCodes('&', string)));
                         }
@@ -194,16 +190,16 @@ public class MainCommand extends DCCommand {
                     if (sender.hasPermission("donatecase.mod")) {
                         Player target = Bukkit.getPlayer(args[1]);
                         if (target == null) {
-                            DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("PlayerNotFound"), "%player:" + player));
+                            Main.t.msg_(sender, Main.t.rt(Main.lang.getString("PlayerNotFound"), "%player:" + player));
                             return true;
                         }
                         //Get player keys
-                        for (String string : DonateCase.lang.getStringList("PlayerKeys")) {
+                        for (String string : Main.lang.getStringList("PlayerKeys")) {
                             sender.sendMessage(PlaceholderAPI.setPlaceholders(target.getPlayer(),
                                     ChatColor.translateAlternateColorCodes('&', string).replace("%player", target.getName())));
                         }
                     } else {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("NoPermission")));
+                        Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                     }
                 }
                 return false;
@@ -216,7 +212,7 @@ public class MainCommand extends DCCommand {
                         for (String casename : cases_.getValues(false).keySet()) {
                             num++;
                             String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
-                            DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("CasesList"), "%casename:" + casename, "%num:" + num, "%casetitle:" + casetitle));
+                            Main.t.msg_(sender, Main.t.rt(Main.lang.getString("CasesList"), "%casename:" + casename, "%num:" + num, "%casetitle:" + casetitle));
                         }
                     }
                 return false;
@@ -224,14 +220,14 @@ public class MainCommand extends DCCommand {
             //help
             if (args[0].equalsIgnoreCase("help")) {
                 if (sender.hasPermission("donatecase.player")) {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                    for (String string : DonateCase.lang.getStringList("HelpPlayer")) {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                        Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                    for (String string : Main.lang.getStringList("HelpPlayer")) {
+                        Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                     }
                 } else if (sender.hasPermission("donatecase.mod") || sender.hasPermission("donatecase.admin")) {
-                    DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                    for (String string : DonateCase.lang.getStringList("Help")) {
-                        DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                    Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                    for (String string : Main.lang.getStringList("Help")) {
+                        Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                     }
                 }
             }
@@ -246,22 +242,22 @@ public class MainCommand extends DCCommand {
                         String casename = args[2];
                         if (Case.hasCaseByName(casetype)) {
                             if (Case.hasCaseByLocation(locat)) {
-                                DonateCase.t.msg(sender, DonateCase.lang.getString("HasDonatCase"));
+                                Main.t.msg(sender, Main.lang.getString("HasDonatCase"));
                             } else {
                                 Case.saveLocation(casename, casetype, locat);
-                                DonateCase.t.msg(sender, DonateCase.lang.getString("AddDonatCase"));
+                                Main.t.msg(sender, Main.lang.getString("AddDonatCase"));
                             }
                         } else {
-                            DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.lang.getString("CaseNotExist"), "%case:" + casetype));
+                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casetype));
                         }
                     } else {
-                            DonateCase.t.msg_(sender, DonateCase.t.rt("&aDonateCase " + DonateCase.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                        for (String string : DonateCase.lang.getStringList("Help")) {
-                            DonateCase.t.msg_(sender, DonateCase.t.rt(string, "%cmd:" + label));
+                            Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                        for (String string : Main.lang.getStringList("Help")) {
+                            Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                         }
                     }
                 } else {
-                    DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("NoPermission")));
+                    Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                 }
             }
             //delete
@@ -274,22 +270,22 @@ public class MainCommand extends DCCommand {
                         if (Case.hasCaseByLocation(locat)) {
                             CustomConfig.getCases().set("DonatCase.Cases." + Case.getCaseNameByLocation(locat), null);
                             CustomConfig.saveCases();
-                            DonateCase.t.msg(sender, DonateCase.lang.getString("RemoveDonatCase"));
+                            Main.t.msg(sender, Main.lang.getString("RemoveDonatCase"));
                         } else {
-                            DonateCase.t.msg(sender, DonateCase.lang.getString("BlockDontDonatCase"));
+                            Main.t.msg(sender, Main.lang.getString("BlockDontDonatCase"));
                         }
                     } else if (args.length == 2) {
                         String name = args[1];
                         if (Case.hasCaseDataByName(name)) {
                             CustomConfig.getCases().set("DonatCase.Cases." + name, null);
                             CustomConfig.saveCases();
-                            DonateCase.t.msg(sender, DonateCase.lang.getString("RemoveDonatCase"));
+                            Main.t.msg(sender, Main.lang.getString("RemoveDonatCase"));
                         } else {
-                            DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.lang.getString("CaseNotExist"), "%case:" + name));
+                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + name));
                         }
                     }
                 } else {
-                    DonateCase.t.msg_(sender, DonateCase.t.rt(DonateCase.lang.getString("NoPermission")));
+                    Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                 }
             }
         }

@@ -1,10 +1,12 @@
-package net.jodexindustries.dc;
+package com.jodexindustries.tools;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import com.jodexindustries.dc.Main;
 import org.bukkit.Bukkit;
 
 public class MySQL {
@@ -21,7 +23,7 @@ public class MySQL {
             this.stmt = this.con.createStatement();
         } catch (SQLException var5) {
             var5.printStackTrace();
-            Bukkit.getPluginManager().disablePlugin(DonateCase.instance);
+            Bukkit.getPluginManager().disablePlugin(Main.instance);
         }
 
     }
@@ -53,10 +55,10 @@ public class MySQL {
         try {
             player = player.toLowerCase();
             if (!this.hasField("donate_cases", "player='" + player + "' AND case_name='" + name + "'")) {
-                this.stmt.executeUpdate(DonateCase.t.rt("INSERT INTO `donate_cases` (`player`, `case_name`, `keys_count`) VALUES ('%player', '%case', '%keys')",
+                this.stmt.executeUpdate(Main.t.rt("INSERT INTO `donate_cases` (`player`, `case_name`, `keys_count`) VALUES ('%player', '%case', '%keys')",
                         "%player:" + player, "%keys:" + keys, "%case:" + name));
             } else {
-                this.stmt.executeUpdate(DonateCase.t.rt("UPDATE `donate_cases` SET keys_count='%keys' WHERE player='%player' AND case_name='%case'",
+                this.stmt.executeUpdate(Main.t.rt("UPDATE `donate_cases` SET keys_count='%keys' WHERE player='%player' AND case_name='%case'",
                         "%player:" + player, "%keys:" + keys, "%case:" + name));
             }
         } catch (SQLException var5) {
@@ -67,7 +69,7 @@ public class MySQL {
 
     public void delAllKey() {
         try {
-            this.stmt.executeUpdate(DonateCase.t.rt("DELETE FROM `donate_cases`", new String[0]));
+            this.stmt.executeUpdate(Main.t.rt("DELETE FROM `donate_cases`", new String[0]));
         } catch (SQLException var2) {
             var2.printStackTrace();
         }

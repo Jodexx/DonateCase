@@ -1,6 +1,6 @@
-package net.jodexindustries.tools;
+package com.jodexindustries.tools;
 
-import net.jodexindustries.dc.DonateCase;
+import com.jodexindustries.dc.Main;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
@@ -31,7 +31,7 @@ public class Tools {
         Color[] c = new Color[]{Color.RED, Color.AQUA, Color.GREEN, Color.ORANGE, Color.LIME, Color.BLUE, Color.MAROON, Color.WHITE};
         meta.addEffect(FireworkEffect.builder().flicker(false).with(Type.BALL).trail(false).withColor(c[r.nextInt(c.length)], c[r.nextInt(c.length)], c[r.nextInt(c.length)]).build());
         fw.setFireworkMeta(meta);
-        fw.setMetadata("case", new FixedMetadataValue(DonateCase.instance, "case"));
+        fw.setMetadata("case", new FixedMetadataValue(Main.instance, "case"));
         fw.detonate();
     }
 
@@ -69,7 +69,7 @@ public class Tools {
     }
 
     public void msg(CommandSender s, String msg) {
-        String var10002 = String.valueOf(String.valueOf(String.valueOf(DonateCase.lang.getString("Prefix"))));
+        String var10002 = String.valueOf(String.valueOf(String.valueOf(Main.lang.getString("Prefix"))));
         this.msg_(s, var10002 + msg);
     }
 
