@@ -113,7 +113,7 @@ public class Case {
             }
         }
 
-        return true;
+        return false;
     }
 
     public static String getCaseByTitle(String title) {
