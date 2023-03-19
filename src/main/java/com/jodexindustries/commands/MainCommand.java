@@ -64,26 +64,19 @@ public class MainCommand extends DCCommand {
             if (args[0].equalsIgnoreCase("givekey") || args[0].equalsIgnoreCase("gk")) {
                 if(sender.hasPermission("donatecase.mod")) {
                         if (args.length >= 4) {
-                            try {
-                                String player = args[1];
-                                String casename = args[2];
-                                Player target = Bukkit.getPlayer(player);
-                                int keys = Integer.parseInt(args[3]);
-                                if (Case.hasCaseByName(casename)) {
-                                    String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
-                                    Case.addKeys(casename, player, keys);
-                                    Main.t.msg(sender, Main.t.rt(Main.lang.getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
-                                    if (CustomConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                                        Main.t.msg(target, Main.t.rt(Main.lang.getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
-                                    }
-                                } else {
-                                    Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
+                            String player = args[1];
+                            String casename = args[2];
+                            Player target = Bukkit.getPlayer(player);
+                            int keys = Integer.parseInt(args[3]);
+                            if (Case.hasCaseByName(casename)) {
+                                String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                                Case.addKeys(casename, player, keys);
+                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
+                                if (CustomConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
+                                    Main.t.msg(target, Main.t.rt(Main.lang.getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
                                 }
-                            } catch (Exception var12) {
-                                    Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                                for (String string : Main.lang.getStringList("Help")) {
-                                    Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
-                                }
+                            } else {
+                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
                             }
                         } else {
                                 Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
@@ -118,21 +111,14 @@ public class MainCommand extends DCCommand {
                     }
                 }
                 if (args.length >= 3) {
-                    try {
-                        String player = args[1];
-                        String casename = args[2];
-                        if (Case.hasCaseByName(casename)) {
-                            String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
-                            Case.setNullKeys(casename, player);
-                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearKeys"), "%player:" + player, "%casetitle:" + casetitle, "%case:" + casename));
-                        } else {
-                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
-                        }
-                    } catch (Exception var11) {
-                            Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                        for (String string : Main.lang.getStringList("Help")) {
-                            Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
-                        }
+                    String player = args[1];
+                    String casename = args[2];
+                    if (Case.hasCaseByName(casename)) {
+                        String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                        Case.setNullKeys(casename, player);
+                        Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearKeys"), "%player:" + player, "%casetitle:" + casetitle, "%case:" + casename));
+                    } else {
+                        Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
                     }
                 } else {
                         Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
@@ -146,26 +132,19 @@ public class MainCommand extends DCCommand {
                 if (!sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
                     Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                 } else if (args.length >= 4) {
-                    try {
-                        String player = args[1];
-                        String casename = args[2];
-                        Player target = Bukkit.getPlayer(player);
-                        int keys = Integer.parseInt(args[3]);
-                        if (Case.hasCaseByName(casename)) {
-                            String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
-                            Case.setKeys(casename, player, keys);
-                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
-                            if (CustomConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                                Main.t.msg(target, Main.t.rt(Main.lang.getString("SetKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
-                            }
-                        } else {
-                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
+                    String player = args[1];
+                    String casename = args[2];
+                    Player target = Bukkit.getPlayer(player);
+                    int keys = Integer.parseInt(args[3]);
+                    if (Case.hasCaseByName(casename)) {
+                        String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                        Case.setKeys(casename, player, keys);
+                        Main.t.msg(sender, Main.t.rt(Main.lang.getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
+                        if (CustomConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
+                            Main.t.msg(target, Main.t.rt(Main.lang.getString("SetKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
                         }
-                    } catch (Exception var10) {
-                        Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                        for (String string : Main.lang.getStringList("Help")) {
-                            Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
-                        }
+                    } else {
+                        Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
                     }
                 } else {
                         Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
@@ -177,20 +156,21 @@ public class MainCommand extends DCCommand {
             }
             //keys
             if (args[0].equalsIgnoreCase("keys")) {
-                Player player = (Player) sender;
                 if (args.length < 2) {
-                    if (sender.hasPermission("donatecase.player")) {
-
-                        for (String string : Main.lang.getStringList("MyKeys")) {
-                            sender.sendMessage(PlaceholderAPI.setPlaceholders(player.getPlayer(),
-                                    ChatColor.translateAlternateColorCodes('&', string)));
+                    if (sender instanceof Player) {
+                        Player player = (Player) sender;
+                        if (sender.hasPermission("donatecase.player")) {
+                            for (String string : Main.lang.getStringList("MyKeys")) {
+                                sender.sendMessage(PlaceholderAPI.setPlaceholders(player.getPlayer(),
+                                        ChatColor.translateAlternateColorCodes('&', string)));
+                            }
                         }
                     }
                 } else {
                     if (sender.hasPermission("donatecase.mod")) {
                         Player target = Bukkit.getPlayer(args[1]);
                         if (target == null) {
-                            Main.t.msg_(sender, Main.t.rt(Main.lang.getString("PlayerNotFound"), "%player:" + player));
+                            Main.t.msg_(sender, Main.t.rt(Main.lang.getString("PlayerNotFound"), "%player:" + args[1]));
                             return true;
                         }
                         //Get player keys
@@ -233,46 +213,50 @@ public class MainCommand extends DCCommand {
             }
             //create
             if (args[0].equalsIgnoreCase("create")) {
-                Player player = (Player)sender;
-                Location l = player.getTargetBlock(null, 5).getLocation();
-                String locat = l.toString();
-                if (sender.hasPermission("donatecase.admin")) {
-                    if (args.length >= 3) {
-                        String casetype = args[1];
-                        String casename = args[2];
-                        if (Case.hasCaseByName(casetype)) {
-                            if (Case.hasCaseByLocation(locat)) {
-                                Main.t.msg(sender, Main.lang.getString("HasDonatCase"));
+                if(sender instanceof Player) {
+                    Player player = (Player) sender;
+                    Location l = player.getTargetBlock(null, 5).getLocation();
+                    String locat = l.toString();
+                    if (sender.hasPermission("donatecase.admin")) {
+                        if (args.length >= 3) {
+                            String casetype = args[1];
+                            String casename = args[2];
+                            if (Case.hasCaseByName(casetype)) {
+                                if (Case.hasCaseByLocation(locat)) {
+                                    Main.t.msg(sender, Main.lang.getString("HasDonatCase"));
+                                } else {
+                                    Case.saveLocation(casename, casetype, locat);
+                                    Main.t.msg(sender, Main.lang.getString("AddDonatCase"));
+                                }
                             } else {
-                                Case.saveLocation(casename, casetype, locat);
-                                Main.t.msg(sender, Main.lang.getString("AddDonatCase"));
+                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casetype));
                             }
                         } else {
-                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casetype));
+                            Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                            for (String string : Main.lang.getStringList("Help")) {
+                                Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
+                            }
                         }
                     } else {
-                            Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                        for (String string : Main.lang.getStringList("Help")) {
-                            Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
-                        }
+                        Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                     }
-                } else {
-                    Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                 }
             }
             //delete
             if (args[0].equalsIgnoreCase("delete")) {
-                Player player = (Player)sender;
-                Location l = player.getTargetBlock(null, 5).getLocation();
-                String locat = l.toString();
                 if (sender.hasPermission("donatecase.admin")) {
                     if (args.length == 1) {
-                        if (Case.hasCaseByLocation(locat)) {
-                            CustomConfig.getCases().set("DonatCase.Cases." + Case.getCaseNameByLocation(locat), null);
-                            CustomConfig.saveCases();
-                            Main.t.msg(sender, Main.lang.getString("RemoveDonatCase"));
-                        } else {
-                            Main.t.msg(sender, Main.lang.getString("BlockDontDonatCase"));
+                        if (sender instanceof Player) {
+                            Player player = (Player) sender;
+                            Location l = player.getTargetBlock(null, 5).getLocation();
+                            String locat = l.toString();
+                            if (Case.hasCaseByLocation(locat)) {
+                                CustomConfig.getCases().set("DonatCase.Cases." + Case.getCaseNameByLocation(locat), null);
+                                CustomConfig.saveCases();
+                                Main.t.msg(sender, Main.lang.getString("RemoveDonatCase"));
+                            } else {
+                                Main.t.msg(sender, Main.lang.getString("BlockDontDonatCase"));
+                            }
                         }
                     } else if (args.length == 2) {
                         String name = args[1];

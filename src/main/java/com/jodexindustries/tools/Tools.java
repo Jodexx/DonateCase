@@ -69,12 +69,15 @@ public class Tools {
     }
 
     public void msg(CommandSender s, String msg) {
-        String var10002 = String.valueOf(String.valueOf(String.valueOf(Main.lang.getString("Prefix"))));
-        this.msg_(s, var10002 + msg);
+        if (s != null) {
+            this.msg_(s, Main.lang.getString("Prefix") + msg);
+        }
     }
 
     public void msg_(CommandSender s, String msg) {
-        s.sendMessage(this.rc(msg));
+        if (s != null) {
+            s.sendMessage(this.rc(msg));
+        }
     }
 
     public String rc(String t) {
