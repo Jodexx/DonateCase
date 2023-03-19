@@ -24,17 +24,20 @@ public class Placeholder extends PlaceholderExpansion {
         return Main.instance.getDescription().getVersion();
     }
 
+    public boolean persist() {
+        return true;
+    }
+
     public String onRequest(OfflinePlayer player, String params) {
         if (params.startsWith("keys_")) {
             String[] parts = params.split("_", 2);
             int s;
             if (Main.Tconfig) {
                 s = CustomConfig.getKeys().getInt("DonatCase.Cases." + parts[1] + "." + Objects.requireNonNull(player.getName()).toLowerCase());
-                return NumberFormat.getNumberInstance().format(s);
             } else {
                 s = Main.mysql.getKey(parts[1], Objects.requireNonNull(player.getName()).toLowerCase());
-                return NumberFormat.getNumberInstance().format(s);
             }
+            return NumberFormat.getNumberInstance().format(s);
         } else {
             return null;
         }
