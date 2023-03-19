@@ -26,6 +26,8 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.logging.Level;
+
 public class EventsListener implements Listener {
 
     @EventHandler

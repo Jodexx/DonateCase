@@ -1,6 +1,7 @@
 package com.jodexindustries.dc;
 
 import java.util.Iterator;
+import java.util.logging.Level;
 
 import com.jodexindustries.tools.CustomConfig;
 import org.bukkit.configuration.ConfigurationSection;
@@ -57,21 +58,24 @@ public class Case {
             return false;
         }
         for (String name : cases_.getValues(false).keySet()) {
-            if(CustomConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null || !CustomConfig.getCases().getString("DonatCase.Cases." + name + ".location").equalsIgnoreCase(loc)) {
+            if(CustomConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
                 return false;
+            } else
+            if(CustomConfig.getCases().getString("DonatCase.Cases." + name + ".location").equalsIgnoreCase(loc)) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     public static String getCaseByLocation(String loc) {
         ConfigurationSection cases_ = CustomConfig.getCases().getConfigurationSection("DonatCase.Cases");
 
         for(String name : cases_.getValues(false).keySet()) {
-            if(CustomConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null || !CustomConfig.getCases().getString("DonatCase.Cases." + name + ".location").equalsIgnoreCase(loc)) {
+            if(CustomConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
                 return null;
-            } else {
+            } else if (CustomConfig.getCases().getString("DonatCase.Cases." + name + ".location").equalsIgnoreCase(loc)) {
                 return CustomConfig.getCases().getString("DonatCase.Cases." + name + ".type");
             }
         }
@@ -81,9 +85,9 @@ public class Case {
     public static String getCaseNameByLocation(String loc) {
         ConfigurationSection cases_ = CustomConfig.getCases().getConfigurationSection("DonatCase.Cases");
         for (String name : cases_.getValues(false).keySet()) {
-            if(CustomConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null || !CustomConfig.getCases().getString("DonatCase.Cases." + name + ".location").equalsIgnoreCase(loc)) {
+            if(CustomConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
                 return null;
-            } else {
+            } else if(CustomConfig.getCases().getString("DonatCase.Cases." + name + ".location").equalsIgnoreCase(loc)) {
                 return name;
             }
         }
@@ -102,20 +106,22 @@ public class Case {
     public static boolean hasCaseByTitle(String title) {
         ConfigurationSection cases_ = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
         for (String name : cases_.getValues(false).keySet()) {
-            if(CustomConfig.getConfig().getString("DonatCase.Cases." + name + ".Title") == null || !Main.t.rc(CustomConfig.getConfig().getString("DonatCase.Cases." + name + ".Title")).equalsIgnoreCase(title)) {
+            if(CustomConfig.getConfig().getString("DonatCase.Cases." + name + ".Title") == null) {
                 return false;
+            } else if (Main.t.rc(CustomConfig.getConfig().getString("DonatCase.Cases." + name + ".Title")).equalsIgnoreCase(title)) {
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     public static String getCaseByTitle(String title) {
         ConfigurationSection cases_ = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
         for (String name : cases_.getValues(false).keySet()) {
-            if(CustomConfig.getConfig().getString("DonatCase.Cases." + name + ".Title") == null || !Main.t.rc(CustomConfig.getConfig().getString("DonatCase.Cases." + name + ".Title")).equalsIgnoreCase(title)) {
+            if(CustomConfig.getConfig().getString("DonatCase.Cases." + name + ".Title") == null) {
                 return null;
-            } else {
+            } else if (Main.t.rc(CustomConfig.getConfig().getString("DonatCase.Cases." + name + ".Title")).equalsIgnoreCase(title)) {
                 return name;
             }
         }

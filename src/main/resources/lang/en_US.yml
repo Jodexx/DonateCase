@@ -24,7 +24,7 @@ SetKeys: '&ePlayer &6%player &eset &c%key &ekey(s)'
 SetKeysTarget: '&eYou have been set &c%key &ecase keys &6%casetitle'
 ClearKeys: '&ePlayer &6%player &ehad all the keys of case &6%case &eremoved'
 ClearAllKeys: '&eAll player keys have been removed'
-DestoryDonatCase: '&cDonat Case is forbidden to break'
+DestoryDonatCase: '&cDonate Case is forbidden to break'
 NoKey: "&cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.com"
 HaveOpenCase: '&cPlease wait this case is opening'
 ReloadConfig: '&aConfig reloaded!'
