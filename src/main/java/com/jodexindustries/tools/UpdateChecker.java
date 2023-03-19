@@ -1,4 +1,4 @@
-package net.jodexindustries.tools;
+package com.jodexindustries.tools;
 
 import java.io.IOException;
 import java.io.InputStream;

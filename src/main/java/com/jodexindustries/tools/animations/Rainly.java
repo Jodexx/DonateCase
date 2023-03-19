@@ -1,8 +1,8 @@
-package net.jodexindustries.tools.animations;
+package com.jodexindustries.tools.animations;
 
-import net.jodexindustries.dc.DonateCase;
-import net.jodexindustries.tools.CustomConfig;
-import net.jodexindustries.tools.StartAnimation;
+import com.jodexindustries.dc.Main;
+import com.jodexindustries.tools.CustomConfig;
+import com.jodexindustries.tools.StartAnimation;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -12,23 +12,21 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.logging.Level;
 
 public class Rainly {
     public static List<Player> caseOpen = new ArrayList<>();
     public Rainly(final Player player, Location location, final String c) {
         final Location lAC = location.clone();
         final String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
-        DonateCase.ActiveCase.put(lAC, c);
+        Main.ActiveCase.put(lAC, c);
         caseOpen.add(player);
 
         for (Player pl : Bukkit.getOnlinePlayers()) {
-            if (DonateCase.openCase.containsKey(pl) && DonateCase.t.isHere(location, DonateCase.openCase.get(pl))) {
+            if (Main.openCase.containsKey(pl) && Main.t.isHere(location, Main.openCase.get(pl))) {
                 pl.closeInventory();
             }
         }
-        final String winGroup = DonateCase.t.getRandomGroup(c);
+        final String winGroup = Main.t.getRandomGroup(c);
         final String winGroupId = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
         final String winGroupDisplayName = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
         final String winGroupGroup = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Group");
@@ -44,7 +42,7 @@ public class Rainly {
         location.setYaw(-70.0F);
         final ArmorStand as = (ArmorStand) player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         as.setVisible(false);
-        DonateCase.listAR.add(as);
+        Main.listAR.add(as);
         as.setGravity(false);
         as.setSmall(true);
         as.setCustomNameVisible(true);
@@ -56,7 +54,6 @@ public class Rainly {
             public void run() {
                 Material material;
                 ItemStack winItem = null;
-                String sound;
                 lAC.getWorld().spawnParticle(Particle.FALLING_WATER, rain1, 1);
                 lAC.getWorld().spawnParticle(Particle.FALLING_WATER, rain2, 1);
                 lAC.getWorld().spawnParticle(Particle.FALLING_WATER, rain3, 1);
@@ -73,11 +70,11 @@ public class Rainly {
                     if (material == null) {
                         material = Material.STONE;
                     }
-                    winItem = DonateCase.t.createItem(material, 1, 0, winGroupDisplayName);
+                    winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName);
                 }
                 if(winGroupId.startsWith("HEAD")) {
                     String[] parts = winGroupId.split(":");
-                    winItem = DonateCase.t.getPlayerHead(parts[1], winGroupDisplayName);
+                    winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
                 }
                 if (this.i == 0) {
                     this.l = as.getLocation();
@@ -88,43 +85,33 @@ public class Rainly {
                         // win item and title
                         as.setHelmet(winItem);
                         as.setCustomName(winItem.getItemMeta().getDisplayName());
-                        String titleWin = DonateCase.lang.getString(ChatColor.translateAlternateColorCodes('&', "TitleWin"));
-                        String subTitleWin = DonateCase.lang.getString(ChatColor.translateAlternateColorCodes('&', "SubTitleWin"));
-                        String reptitleWin = DonateCase.t.rt(titleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
-                        String repsubTitleWin = DonateCase.t.rt(subTitleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
-                        player.sendTitle(DonateCase.t.rc(reptitleWin), DonateCase.t.rc(repsubTitleWin), 5, 60, 5);
+                        String titleWin = Main.lang.getString(ChatColor.translateAlternateColorCodes('&', "TitleWin"));
+                        String subTitleWin = Main.lang.getString(ChatColor.translateAlternateColorCodes('&', "SubTitleWin"));
+                        String reptitleWin = Main.t.rt(titleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
+                        String repsubTitleWin = Main.t.rt(subTitleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
+                        player.sendTitle(Main.t.rc(reptitleWin), Main.t.rc(repsubTitleWin), 5, 60, 5);
                         // givecommand
-                        String playergroup = DonateCase.getPermissions().getPrimaryGroup(player).toLowerCase();
+                        String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
                         String givecommand = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".GiveCommand");
                         if (CustomConfig.getConfig().getBoolean("DonatCase.LevelGroup")) {
                             if (CustomConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) &&
                                     CustomConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) >=
                                             CustomConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {
                             } else {
-                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), DonateCase.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
                             }
                         } else {
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), DonateCase.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
                         }
                         // customcommands
                         for (String cmd : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Commands")) {
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), DonateCase.t.rt(cmd, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(cmd, "%player:" + player.getName(), "%group:" + winGroupGroup));
                         }
-                        // sound
-//                        if (CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".AnimationSound") != null) {
-//                            sound = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".AnimationSound");
-//                            Sound sound1;
-//                            sound1 = Sound.valueOf(sound.toUpperCase());
-//                            if (sound == null) {
-//                                sound1 = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
-//                            }
-//                            player.playSound(player.getLocation(), sound1, 1.0F, 5.0F);
-//                        }
                         lAC.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, lAC, 0);
                         lAC.getWorld().playSound(lAC, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                         for (Player pl : Bukkit.getOnlinePlayers()) {
                             for (String msg : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Broadcast")) {
-                                DonateCase.t.msg_(pl, DonateCase.t.rt(msg, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + casetitle));
+                                Main.t.msg_(pl, Main.t.rt(msg, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + casetitle));
                             }
                         }
                     }
@@ -132,7 +119,7 @@ public class Rainly {
 
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0 )) {
-                    final String winGroup2 = DonateCase.t.getRandomGroup(c);
+                    final String winGroup2 = Main.t.getRandomGroup(c);
                     ItemStack winItem2 = null;
                     Material material2;
                     final String winGroupDisplayName2 = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
@@ -142,11 +129,11 @@ public class Rainly {
                         if (material2 == null) {
                             material2 = Material.STONE;
                         }
-                        winItem2 = DonateCase.t.createItem(material2, 1, 0, winGroupDisplayName2);
+                        winItem2 = Main.t.createItem(material2, 1, 0, winGroupDisplayName2);
                     }
                     if(winGroup2Id.startsWith("HEAD")) {
                         String[] parts = winGroup2Id.split(":");
-                        winItem2 = DonateCase.t.getPlayerHead(parts[1], winGroupDisplayName2);
+                        winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
                     }
                     as.setHelmet(winItem2);
                     as.setCustomName(winItem2.getItemMeta().getDisplayName());
@@ -172,13 +159,13 @@ public class Rainly {
                 if (this.i >= 70) {
                     as.remove();
                     this.cancel();
-                    DonateCase.ActiveCase.remove(lAC);
-                    DonateCase.listAR.remove(as);
+                    Main.ActiveCase.remove(lAC);
+                    Main.listAR.remove(as);
                     StartAnimation.caseOpen.remove(player);
                 }
 
                 ++this.i;
             }
-        }).runTaskTimer(DonateCase.instance, 0L, 2L);
+        }).runTaskTimer(Main.instance, 0L, 2L);
     }
 }

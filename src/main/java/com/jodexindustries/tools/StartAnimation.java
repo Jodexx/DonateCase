@@ -1,9 +1,9 @@
-package net.jodexindustries.tools;
+package com.jodexindustries.tools;
 
-import net.jodexindustries.dc.DonateCase;
-import net.jodexindustries.tools.animations.FireworkShape;
-import net.jodexindustries.tools.animations.Rainly;
-import net.jodexindustries.tools.animations.Shape;
+import com.jodexindustries.tools.animations.FireworkShape;
+import com.jodexindustries.tools.animations.Shape;
+import com.jodexindustries.dc.Main;
+import com.jodexindustries.tools.animations.Rainly;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -25,10 +25,9 @@ public class StartAnimation {
         if (animation.equalsIgnoreCase("RAINLY")) {
             new Rainly(player, location, c);
         } else {
-            DonateCase.t.msg(player, DonateCase.t.rc("&cAn error occurred while opening the case!"));
-            DonateCase.t.msg(player, DonateCase.t.rc("&cContact the project administration!"));
-            DonateCase.instance.getLogger().log(Level.WARNING, "Case animation name does not exist!");
-            DonateCase.instance.getLogger().log(Level.INFO, animation);
+            Main.t.msg(player, Main.t.rc("&cAn error occurred while opening the case!"));
+            Main.t.msg(player, Main.t.rc("&cContact the project administration!"));
+            Main.instance.getLogger().log(Level.WARNING, "Case animation name does not exist!");
         }
     }
 }

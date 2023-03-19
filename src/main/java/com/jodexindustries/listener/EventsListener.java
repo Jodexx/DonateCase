@@ -1,11 +1,11 @@
-package net.jodexindustries.listener;
+package com.jodexindustries.listener;
 
-import net.jodexindustries.dc.Case;
-import net.jodexindustries.dc.DonateCase;
-import net.jodexindustries.gui.GuiDonatCase;
-import net.jodexindustries.tools.CustomConfig;
-import net.jodexindustries.tools.StartAnimation;
-import net.jodexindustries.tools.UpdateChecker;
+import com.jodexindustries.gui.GuiDonatCase;
+import com.jodexindustries.dc.Case;
+import com.jodexindustries.dc.Main;
+import com.jodexindustries.tools.CustomConfig;
+import com.jodexindustries.tools.StartAnimation;
+import com.jodexindustries.tools.UpdateChecker;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -41,9 +41,9 @@ public class EventsListener implements Listener {
         Player p = event.getPlayer();
         if (CustomConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             if (p.hasPermission("donatecase.admin")) {
-                new UpdateChecker(DonateCase.instance, 106701).getVersion((version) -> {
-                    if (!DonateCase.instance.getDescription().getVersion().equals(version)) {
-                        DonateCase.t.msg(p, DonateCase.t.rt(DonateCase.lang.getString("UpdateCheck"), "%version:" + version));
+                new UpdateChecker(Main.instance, 106701).getVersion((version) -> {
+                    if (!Main.instance.getDescription().getVersion().equals(version)) {
+                        Main.t.msg(p, Main.t.rt(Main.lang.getString("UpdateCheck"), "%version:" + version));
                     }
 
                 });
@@ -60,11 +60,11 @@ public class EventsListener implements Listener {
             String casename = Case.getCaseByTitle(title);
             if (Case.hasCaseByTitle(title)) {
                 e.setCancelled(true);
-                if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && e.getRawSlot() == DonateCase.t.c(5, 3)) {
+                if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && e.getRawSlot() == Main.t.c(5, 3)) {
                     String c = Case.getCaseByTitle(title);
                     if (Case.getKeys(casename, pl) >= 1) {
-                        if (DonateCase.openCase.containsKey(p)) {
-                            Location block = DonateCase.openCase.get(p);
+                        if (Main.openCase.containsKey(p)) {
+                            Location block = Main.openCase.get(p);
                             Case.removeKeys(casename, pl, 1);
                             new StartAnimation(p, block, c);
                         }
@@ -73,7 +73,7 @@ public class EventsListener implements Listener {
                     } else {
                         p.closeInventory();
                         p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 0.4F);
-                        DonateCase.t.msg(p, DonateCase.lang.getString("NoKey"));
+                        Main.t.msg(p, Main.lang.getString("NoKey"));
                     }
                 }
             }
@@ -84,7 +84,7 @@ public class EventsListener implements Listener {
     @EventHandler
     public void PlayerInteractEntity(PlayerInteractAtEntityEvent e) {
         Entity entity = e.getRightClicked();
-        if (entity.getType() == EntityType.ARMOR_STAND && DonateCase.listAR.contains(entity)) {
+        if (entity.getType() == EntityType.ARMOR_STAND && Main.listAR.contains(entity)) {
             e.setCancelled(true);
         }
 
@@ -99,11 +99,11 @@ public class EventsListener implements Listener {
             if (Case.hasCaseByLocation(loca)) {
                 e.setCancelled(true);
                 if (!StartAnimation.caseOpen.contains(p)) {
-                    if (!DonateCase.ActiveCase.containsKey(loc)) {
-                        DonateCase.openCase.put(p, loc.clone());
+                    if (!Main.ActiveCase.containsKey(loc)) {
+                        Main.openCase.put(p, loc.clone());
                         new GuiDonatCase(p, Case.getCaseByLocation(loca));
                     } else {
-                        DonateCase.t.msg(p, DonateCase.lang.getString("HaveOpenCase"));
+                        Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
                     }
                 }
             }
@@ -114,8 +114,8 @@ public class EventsListener implements Listener {
     @EventHandler
     public void InventoryClose(InventoryCloseEvent e) {
         Player p = (Player)e.getPlayer();
-        if (Case.hasCaseByTitle(e.getView().getTitle()) && DonateCase.openCase.containsKey(p)) {
-            DonateCase.openCase.remove(p);
+        if (Case.hasCaseByTitle(e.getView().getTitle()) && Main.openCase.containsKey(p)) {
+            Main.openCase.remove(p);
         }
 
     }
@@ -126,7 +126,7 @@ public class EventsListener implements Listener {
         String loca = loc.toString();
         if (Case.hasCaseByLocation(loca)) {
             e.setCancelled(true);
-            DonateCase.t.msg(e.getPlayer(), DonateCase.lang.getString("DestoryDonatCase"));
+            Main.t.msg(e.getPlayer(), Main.lang.getString("DestoryDonatCase"));
         }
 
     }

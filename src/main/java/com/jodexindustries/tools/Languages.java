@@ -1,16 +1,16 @@
-package net.jodexindustries.tools;
+package com.jodexindustries.tools;
 
 import java.io.File;
 import java.util.Objects;
 
-import net.jodexindustries.dc.DonateCase;
+import com.jodexindustries.dc.Main;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Languages {
     public YamlConfiguration lang;
 
     public Languages(String lang) {
-        File path = new File(DonateCase.instance.getDataFolder(), "lang");
+        File path = new File(Main.instance.getDataFolder(), "lang");
         File[] listFiles;
         int length = (Objects.requireNonNull(listFiles = path.listFiles())).length;
 

@@ -1,7 +1,10 @@
-package com.jodexindustries.uckyversioncheck;
+package com.jodexindustries.tools;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+
+import com.jodexindustries.dc.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -37,7 +40,7 @@ public class CustomConfig {
         try {
             Cases.save(filec);
         } catch (IOException var1) {
-            System.out.println("Couldn't save Cases.yml");
+            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Cases.yml");
         }
 
     }
@@ -46,7 +49,7 @@ public class CustomConfig {
         try {
             Config.save(filecon);
         } catch (IOException var1) {
-            System.out.println("Couldn't save Config.yml");
+            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Config.yml");
         }
 
     }
@@ -55,7 +58,7 @@ public class CustomConfig {
         try {
             Keys.save(filek);
         } catch (IOException var1) {
-            System.out.println("Couldn't save Keys.yml");
+            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Keys.yml");
         }
 
     }

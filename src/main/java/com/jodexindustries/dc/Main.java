@@ -1,12 +1,13 @@
-package net.jodexindustries.dc;
+package com.jodexindustries.dc;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import net.jodexindustries.commands.MainCommand;
-import net.jodexindustries.listener.EventsListener;
-import net.jodexindustries.tools.*;
+
+import com.jodexindustries.listener.EventsListener;
+import com.jodexindustries.tools.*;
+import com.jodexindustries.commands.MainCommand;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,18 +18,18 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class DonateCase extends JavaPlugin {
-    public static DonateCase instance;
+public class Main extends JavaPlugin {
+    public static Main instance;
     public static Permission permission = null;
     public static boolean Tconfig = true;
-    public static List<ArmorStand> listAR = new ArrayList();
-    public static HashMap<Player, Location> openCase = new HashMap();
-    public static HashMap<Location, String> ActiveCase = new HashMap();
+    public static List<ArmorStand> listAR = new ArrayList<>();
+    public static HashMap<Player, Location> openCase = new HashMap<>();
+    public static HashMap<Location, String> ActiveCase = new HashMap<>();
     public static Tools t;
     public static FileConfiguration lang;
     public static MySQL mysql;
 
-    public DonateCase() {
+    public Main() {
         instance = this;
     }
 
@@ -70,6 +71,8 @@ public class DonateCase extends JavaPlugin {
 
         CustomConfig.setup();
         File file;
+        File file2;
+        File file3;
         if (CustomConfig.getConfig().getString("config") == null) {
             Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated config! Creating a new!");
             file = new File(this.getDataFolder(), "Config.yml");
@@ -100,32 +103,19 @@ public class DonateCase extends JavaPlugin {
         }
 
         lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
-        File file2;
-        File file3;
-        if (lang.getString("config") == null) {
+        if (lang.getString("config") == null || !lang.getString("config").equals("2.2")) {
             Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated lang config! Creating a new!");
             file = new File(this.getDataFolder(), "lang/ru_RU.yml");
-            file.renameTo(new File(this.getDataFolder(), "lang/oldru_RU.yml"));
+            file.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));
             this.saveResource("lang/ru_RU.yml", false);
             file2 = new File(this.getDataFolder(), "lang/en_US.yml");
-            file2.renameTo(new File(this.getDataFolder(), "lang/olden_US.yml"));
+            file2.renameTo(new File(this.getDataFolder(), "lang/en_US.yml.old"));
             this.saveResource("lang/en_US.yml", false);
             file3 = new File(this.getDataFolder(), "lang/ua_UA.yml");
-            file3.renameTo(new File(this.getDataFolder(), "lang/oldua_UA.yml"));
+            file3.renameTo(new File(this.getDataFolder(), "lang/ua_UA.yml.old"));
             this.saveResource("lang/ua_UA.yml", false);
-        }
-
-        if (!lang.getString("config").equals("2.2")) {
-            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated lang config! Creating a new!");
-            file = new File(this.getDataFolder(), "lang/ru_RU.yml");
-            file.renameTo(new File(this.getDataFolder(), "lang/oldru_RU.yml"));
-            this.saveResource("lang/ru_RU.yml", false);
-            file2 = new File(this.getDataFolder(), "lang/en_US.yml");
-            file2.renameTo(new File(this.getDataFolder(), "lang/olden_US.yml"));
-            this.saveResource("lang/en_US.yml", false);
-            file3 = new File(this.getDataFolder(), "lang/ua_UA.yml");
-            file3.renameTo(new File(this.getDataFolder(), "lang/oldua_UA.yml"));
-            this.saveResource("lang/ua_UA.yml", false);
+            CustomConfig.setup();
+            lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
         }
 
         Tconfig = CustomConfig.getConfig().getString("DonatCase.MySql.Enabled").equalsIgnoreCase("false");
@@ -139,9 +129,9 @@ public class DonateCase extends JavaPlugin {
             final String password = CustomConfig.getConfig().getString("DonatCase.MySql.Password");
             (new BukkitRunnable() {
                 public void run() {
-                    DonateCase.mysql = new MySQL(host, user, password);
-                    if (!DonateCase.mysql.hasTable("donate_cases")) {
-                        DonateCase.mysql.createTable();
+                    Main.mysql = new MySQL(host, user, password);
+                    if (!Main.mysql.hasTable("donate_cases")) {
+                        Main.mysql.createTable();
                     }
 
                 }
@@ -152,7 +142,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     public void onDisable() {
-        (new Placeholder()).unregister();
+        new Placeholder().unregister();
 
         for (ArmorStand as : listAR) {
             if (as != null) {
@@ -166,13 +156,11 @@ public class DonateCase extends JavaPlugin {
 
     }
 
-    private boolean setupPermissions() {
+    private void setupPermissions() {
         RegisteredServiceProvider<Permission> permissionProvider = this.getServer().getServicesManager().getRegistration(Permission.class);
         if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
         }
-
-        return permission != null;
     }
     public static Permission getPermissions() {
         return permission;
