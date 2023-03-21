@@ -32,6 +32,9 @@ public class Main extends JavaPlugin {
     public Main() {
         instance = this;
     }
+    File file;
+    File file2;
+    File file3;
 
     public void onEnable() {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -40,83 +43,24 @@ public class Main extends JavaPlugin {
         }
 
         t = new Tools();
+        setupConfigs();
 
-        if (!(new File(this.getDataFolder(), "Config.yml")).exists()) {
-            this.saveResource("Config.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "Cases.yml")).exists()) {
-            this.saveResource("Cases.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "Keys.yml")).exists()) {
-            this.saveResource("Keys.yml", false);
-        }
-        if (!(new File(this.getDataFolder(), "Animations.yml")).exists()) {
-            this.saveResource("Animations.yml", false);
-        }
-
-
-        if (!(new File(this.getDataFolder(), "lang/ru_RU.yml")).exists()) {
-            this.saveResource("lang/ru_RU.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "lang/en_US.yml")).exists()) {
-            this.saveResource("lang/en_US.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "lang/ua_UA.yml")).exists()) {
-            this.saveResource("lang/ua_UA.yml", false);
-        }
-
-        CustomConfig.setup();
-        File file;
-        File file2;
-        File file3;
-        if (CustomConfig.getConfig().getString("config") == null) {
-            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated config! Creating a new!");
-            file = new File(this.getDataFolder(), "Config.yml");
-            file.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
-            this.saveResource("Config.yml", false);
-            CustomConfig.setup();
-        }
-
-        if (!CustomConfig.getConfig().getString("config").equals("2.2")) {
-            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated config! Creating a new!");
-            file = new File(this.getDataFolder(), "Config.yml");
-            file.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
-            this.saveResource("Config.yml", false);
-            CustomConfig.setup();
-        }
 
         Bukkit.getPluginManager().registerEvents(new EventsListener(), this);
         if (CustomConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
-                if (this.getDescription().getVersion().equals(version)) {
-                    this.getLogger().info("There is not a new update available.");
+                if (getDescription().getVersion().equals(version)) {
+                    getLogger().info("There is not a new update available.");
                 } else {
-                    this.getLogger().info("There is a new update " + version +  " available.");
-                    this.getLogger().info("Download - https://www.spigotmc.org/resources/donatecase.106701/");
+                    getLogger().info("There is a new update " + version +  " available.");
+                    getLogger().info("Download - https://www.spigotmc.org/resources/donatecase.106701/");
                 }
 
             });
         }
 
-        lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
-        if (lang.getString("config") == null || !lang.getString("config").equals("2.2")) {
-            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated lang config! Creating a new!");
-            file = new File(this.getDataFolder(), "lang/ru_RU.yml");
-            file.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));
-            this.saveResource("lang/ru_RU.yml", false);
-            file2 = new File(this.getDataFolder(), "lang/en_US.yml");
-            file2.renameTo(new File(this.getDataFolder(), "lang/en_US.yml.old"));
-            this.saveResource("lang/en_US.yml", false);
-            file3 = new File(this.getDataFolder(), "lang/ua_UA.yml");
-            file3.renameTo(new File(this.getDataFolder(), "lang/ua_UA.yml.old"));
-            this.saveResource("lang/ua_UA.yml", false);
-            CustomConfig.setup();
-            lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
-        }
+        setupLangs();
+
 
         Tconfig = CustomConfig.getConfig().getString("DonatCase.MySql.Enabled").equalsIgnoreCase("false");
         instance.setupPermissions();
@@ -160,6 +104,71 @@ public class Main extends JavaPlugin {
         RegisteredServiceProvider<Permission> permissionProvider = this.getServer().getServicesManager().getRegistration(Permission.class);
         if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
+        }
+    }
+
+    public void setupConfigs() {
+        if (!(new File(this.getDataFolder(), "Config.yml")).exists()) {
+            this.saveResource("Config.yml", false);
+        }
+
+        if (!(new File(this.getDataFolder(), "Cases.yml")).exists()) {
+            this.saveResource("Cases.yml", false);
+        }
+
+        if (!(new File(this.getDataFolder(), "Keys.yml")).exists()) {
+            this.saveResource("Keys.yml", false);
+        }
+        if (!(new File(this.getDataFolder(), "Animations.yml")).exists()) {
+            this.saveResource("Animations.yml", false);
+        }
+
+
+        if (!(new File(this.getDataFolder(), "lang/ru_RU.yml")).exists()) {
+            this.saveResource("lang/ru_RU.yml", false);
+        }
+
+        if (!(new File(this.getDataFolder(), "lang/en_US.yml")).exists()) {
+            this.saveResource("lang/en_US.yml", false);
+        }
+
+        if (!(new File(this.getDataFolder(), "lang/ua_UA.yml")).exists()) {
+            this.saveResource("lang/ua_UA.yml", false);
+        }
+
+        CustomConfig.setup();
+        if (CustomConfig.getConfig().getString("config") == null) {
+            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated config! Creating a new!");
+            file = new File(this.getDataFolder(), "Config.yml");
+            file.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
+            this.saveResource("Config.yml", false);
+            CustomConfig.setup();
+        }
+
+        if (!CustomConfig.getConfig().getString("config").equals("2.2")) {
+            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated config! Creating a new!");
+            file = new File(this.getDataFolder(), "Config.yml");
+            file.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
+            this.saveResource("Config.yml", false);
+            CustomConfig.setup();
+        }
+    }
+
+    public void setupLangs() {
+        lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
+        if (lang.getString("config") == null || !lang.getString("config").equals("2.3")) {
+            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated lang config! Creating a new!");
+            file = new File(this.getDataFolder(), "lang/ru_RU.yml");
+            file.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));
+            this.saveResource("lang/ru_RU.yml", false);
+            file2 = new File(this.getDataFolder(), "lang/en_US.yml");
+            file2.renameTo(new File(this.getDataFolder(), "lang/en_US.yml.old"));
+            this.saveResource("lang/en_US.yml", false);
+            file3 = new File(this.getDataFolder(), "lang/ua_UA.yml");
+            file3.renameTo(new File(this.getDataFolder(), "lang/ua_UA.yml.old"));
+            this.saveResource("lang/ua_UA.yml", false);
+            CustomConfig.setup();
+            lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
         }
     }
     public static Permission getPermissions() {

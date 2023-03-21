@@ -53,8 +53,8 @@ public class MainCommand extends DCCommand {
             //reload command
             if (args[0].equalsIgnoreCase("reload")) {
                 if (sender.hasPermission("donatecase.admin")) {
-                    CustomConfig.setup();
-                    Main.lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
+                    Main.instance.setupConfigs();
+                    Main.instance.setupLangs();
                     Main.t.msg(sender, Main.t.rt(Main.lang.getString("ReloadConfig")));
                 } else {
                     Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
@@ -229,8 +229,12 @@ public class MainCommand extends DCCommand {
                                 if (Case.hasCaseByLocation(locat)) {
                                     Main.t.msg(sender, Main.lang.getString("HasDonatCase"));
                                 } else {
-                                    Case.saveLocation(casename, casetype, locat);
-                                    Main.t.msg(sender, Main.lang.getString("AddDonatCase"));
+                                    if(!Case.hasCaseByCaseName(casename)) {
+                                        Case.saveLocation(casename, casetype, locat);
+                                        Main.t.msg(sender, Main.lang.getString("AddDonatCase"));
+                                    } else {
+                                        Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseAlreadyHasByName"), "%casename:" + casename));
+                                    }
                                 }
                             } else {
                                 Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casetype));
