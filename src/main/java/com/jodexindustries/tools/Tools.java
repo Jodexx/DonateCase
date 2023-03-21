@@ -85,10 +85,13 @@ public class Tools {
     }
 
     public String rt(String text, String... repl) {
-
         for (String s : repl) {
             int l = s.split(":")[0].length();
-            text = text.replace(s.substring(0, l), s.substring(l + 1));
+            if(text != null) {
+                text = text.replace(s.substring(0, l), s.substring(l + 1));
+            } else {
+                text = "§cMessage not found! Update lang file!";
+            }
         }
 
         return text;

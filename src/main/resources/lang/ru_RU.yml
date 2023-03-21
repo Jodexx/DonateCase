@@ -13,6 +13,7 @@ Prefix: '&7[&cDonateCase&7] &e'
 NoPermission: '&cУ вас нет прав'
 UpdateCheck: "&eНовое обновление плагина &cDonateCase &a%version &eдоступно! &eСкачать &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
 CaseNotExist: '&cКейса &6%case &cне существует.'
+CaseAlreadyHasByName: "&cКейс с названием &6%casename &cуже существует!"
 PlayerNotFound: '&cИгрок с ником &6%player &cне найден'
 HasDonatCase: '&cЭтот блок уже донат кейс'
 AddDonatCase: '&eНовый кейс создан'

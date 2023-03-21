@@ -13,6 +13,7 @@ Prefix: '&7[&cDonateCase&7] &e'
 NoPermission: '&cYou do not have permissions!'
 UpdateCheck: "&eNew &cDonateCase &a%version &eplugin update available&e! &eDownload &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
 CaseNotExist: '&cCase &6%case &cdoes not exist.'
+CaseAlreadyHasByName: "&cCase with name &6%casename &calready exists!"
 PlayerNotFound: '&cPlayer with nickname &6%player &cnot found'
 HasDonatCase: '&cThis block is already a donation case'
 AddDonatCase: '&eNew case created'

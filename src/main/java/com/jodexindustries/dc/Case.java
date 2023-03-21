@@ -95,6 +95,9 @@ public class Case {
     public static boolean hasCaseByName(String name) {
         return CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases").contains(name);
     }
+    public static boolean hasCaseByCaseName(String name) {
+        return CustomConfig.getCases().getConfigurationSection("DonatCase.Cases").contains(name);
+    }
 
     public static boolean hasCaseDataByName(String name) {
         return CustomConfig.getCases().getConfigurationSection("DonatCase.Cases").contains(name);
