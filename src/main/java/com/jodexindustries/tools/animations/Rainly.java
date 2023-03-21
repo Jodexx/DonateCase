@@ -26,6 +26,7 @@ public class Rainly {
                 pl.closeInventory();
             }
         }
+        final String FallingParticle = CustomConfig.getAnimations().getString("Rainly.FallingParticle");
         final String winGroup = Main.t.getRandomGroup(c);
         final String winGroupId = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
         final String winGroupDisplayName = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
@@ -54,10 +55,10 @@ public class Rainly {
             public void run() {
                 Material material;
                 ItemStack winItem = null;
-                lAC.getWorld().spawnParticle(Particle.FALLING_WATER, rain1, 1);
-                lAC.getWorld().spawnParticle(Particle.FALLING_WATER, rain2, 1);
-                lAC.getWorld().spawnParticle(Particle.FALLING_WATER, rain3, 1);
-                lAC.getWorld().spawnParticle(Particle.FALLING_WATER, rain4, 1);
+                lAC.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain1, 1);
+                lAC.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain2, 1);
+                lAC.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain3, 1);
+                lAC.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain4, 1);
                 lAC.getWorld().spawnParticle(Particle.CLOUD, cloud1, 0);
                 lAC.getWorld().spawnParticle(Particle.CLOUD, cloud2, 0);
                 lAC.getWorld().spawnParticle(Particle.CLOUD, cloud3, 0);

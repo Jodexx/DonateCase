@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import com.jodexindustries.listener.EventsListener;
 import com.jodexindustries.tools.*;
@@ -81,8 +82,8 @@ public class Main extends JavaPlugin {
                 }
             }).runTaskTimer(instance, 0L, 12000L);
         }
-
-        this.getCommand("donatecase").setExecutor(new Command());
+        Objects.requireNonNull(getCommand("donatecase")).setExecutor(new CommandEx());
+        Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
     }
 
     public void onDisable() {
