@@ -49,11 +49,11 @@ public class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EventsListener(), this);
         if (CustomConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
-                if (this.getDescription().getVersion().equals(version)) {
-                    this.getLogger().info("There is not a new update available.");
+                if (getDescription().getVersion().equals(version)) {
+                    getLogger().info("There is not a new update available.");
                 } else {
-                    this.getLogger().info("There is a new update " + version +  " available.");
-                    this.getLogger().info("Download - https://www.spigotmc.org/resources/donatecase.106701/");
+                    getLogger().info("There is a new update " + version +  " available.");
+                    getLogger().info("Download - https://www.spigotmc.org/resources/donatecase.106701/");
                 }
 
             });
@@ -156,7 +156,7 @@ public class Main extends JavaPlugin {
 
     public void setupLangs() {
         lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
-        if (lang.getString("config") == null || !lang.getString("config").equals("2.2")) {
+        if (lang.getString("config") == null || !lang.getString("config").equals("2.3")) {
             Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated lang config! Creating a new!");
             file = new File(this.getDataFolder(), "lang/ru_RU.yml");
             file.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));
