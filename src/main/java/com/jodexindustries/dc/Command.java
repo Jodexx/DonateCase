@@ -1,28 +1,25 @@
-package com.jodexindustries.commands;
+package com.jodexindustries.dc;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.stream.Collectors;
-
-import com.jodexindustries.commands.executor.DCCommand;
-import com.jodexindustries.dc.Main;
 import com.jodexindustries.tools.CustomConfig;
-import com.jodexindustries.tools.Languages;
 import me.clip.placeholderapi.PlaceholderAPI;
-import com.jodexindustries.dc.Case;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-public class MainCommand extends DCCommand {
-    public MainCommand() {
-        super("donatcase");
-    }
-    public boolean run(CommandSender sender, Command cmd, String label, String[] args) {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class Command implements CommandExecutor, TabCompleter {
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command cmd, @NotNull String label, String[] args) {
         if (args.length == 0) {
             // if sender is player
             if (sender instanceof Player) {
@@ -283,7 +280,10 @@ public class MainCommand extends DCCommand {
         }
         return false;
     }
-    public ArrayList onTabComplete(CommandSender sender, Player p, Command $cmd, String $label, String[] args) {
+
+
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command cmd, @NotNull String label, String[] args) {
         ArrayList<String> list;
         ArrayList<String> value = null;
         if (args.length == 1 && sender.hasPermission("donatecase.admin")) {
@@ -492,4 +492,5 @@ public class MainCommand extends DCCommand {
             }
         }
     }
+
 }
