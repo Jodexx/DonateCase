@@ -8,6 +8,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -39,10 +40,12 @@ public class Shape {
         as.setSmall(true);
         as.setVisible(false);
         as.setCustomNameVisible(true);
+        final double[] y = {0};
         (new BukkitRunnable() {
             int i; //ticks count
             double t;
             Location l;
+            Location trail;
 
             public void run() {
                 Material material;
@@ -105,14 +108,6 @@ public class Shape {
                             }
                         }
                     }
-
-                    if (this.i >= 40) {
-                        as.remove();
-                        this.cancel();
-                        Main.ActiveCase.remove(lAC);
-                        Main.listAR.remove(as);
-                        StartAnimation.caseOpen.remove(player);
-                    }
                 }
 
                 if (this.i <= 15) {
@@ -143,28 +138,35 @@ public class Shape {
                 Location las = as.getLocation().clone();
                 las.setYaw(las.getYaw() + 20.0F);
                 as.teleport(las);
-                this.l = this.l.add(0.0, 0.14, 0.0);
+                this.l = this.l.add(0.0, 0.13, 0.0);
                 if (this.i <= 7) {
                     this.l.setYaw(las.getYaw());
                     as.teleport(this.l);
                 }
-
+                //white trail
                 if (this.i <= 15) {
-                    this.t += 0.241660973353061;
+                    this.t += 0.25;
                     Location loc = this.l.clone();
-                    loc = loc.add(0.0, 0.6000000000000001, 0.0);
-
-                    for(double phi = 0.0; phi <= 9.42477796076938; ++phi) {
-                        double x = 0.09 * (9.42477796076938 - this.t * 2.5) * Math.cos(this.t + phi);
-                        double z = 0.09 * (9.42477796076938 - this.t * 2.5) * Math.sin(this.t + phi);
+                    loc = loc.add(0.0, 0.5, 0.0);
+                    for (double phi = 0.0; phi <= 9.4; phi += 1) {
+                        final double x = 0.09 * (9.5 - this.t * 2.5) * Math.cos(this.t + phi);
+                        final double z = 0.09 * (9.5 - this.t * 2.5) * Math.sin(this.t + phi);
                         loc.add(x, 0.0, z);
                         this.l.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, this.l.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0);
                         loc.subtract(x, 0.0, z);
-                        if (this.t >= 21.991148575128552) {
+                        if (this.t >= 22) {
                             loc.add(x, 0.0, z);
                             this.t = 0.0;
                         }
                     }
+                }
+                //end
+                if (this.i >= 40) {
+                    as.remove();
+                    this.cancel();
+                    Main.ActiveCase.remove(lAC);
+                    Main.listAR.remove(as);
+                    StartAnimation.caseOpen.remove(player);
                 }
 
                 ++this.i;

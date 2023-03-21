@@ -102,10 +102,10 @@ public class MainCommand extends DCCommand {
                         if (Main.Tconfig) {
                             CustomConfig.getKeys().set("DonatCase.Cases", null);
                             CustomConfig.saveKeys();
-                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys"), new String[0]));
+                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys")));
                         } else {
                             Main.mysql.delAllKey();
-                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys"), new String[0]));
+                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys")));
                         }
                         return false;
                     }
@@ -189,10 +189,14 @@ public class MainCommand extends DCCommand {
                     if (sender.hasPermission("donatecase.mod")) {
                         ConfigurationSection cases_ = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
                         int num = 0;
-                        for (String casename : cases_.getValues(false).keySet()) {
-                            num++;
-                            String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
-                            Main.t.msg_(sender, Main.t.rt(Main.lang.getString("CasesList"), "%casename:" + casename, "%num:" + num, "%casetitle:" + casetitle));
+                        if (cases_ != null) {
+                            for (String casename : cases_.getValues(false).keySet()) {
+                                num++;
+                                String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                                Main.t.msg_(sender, Main.t.rt(Main.lang.getString("CasesList"), "%casename:" + casename, "%num:" + num, "%casetitle:" + casetitle));
+                            }
+                        } else {
+                            Main.t.msg_(sender, "null");
                         }
                     }
                 return false;
@@ -275,9 +279,9 @@ public class MainCommand extends DCCommand {
         }
         return false;
     }
-    public ArrayList onTabComplete(CommandSender sender, Player $p, Command $cmd, String $label, String[] args) {
+    public ArrayList onTabComplete(CommandSender sender, Player p, Command $cmd, String $label, String[] args) {
         ArrayList<String> list;
-        ArrayList<String> value;
+        ArrayList<String> value = null;
         if (args.length == 1 && sender.hasPermission("donatecase.admin")) {
             list = new ArrayList<>();
             value = new ArrayList<>();
@@ -346,10 +350,11 @@ public class MainCommand extends DCCommand {
             ConfigurationSection section;
             if (args[0].equalsIgnoreCase("create") && sender.hasPermission("donatecase.admin")) {
                 list = new ArrayList<>();
-                value = new ArrayList<>();
                 section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                for (String tmp2 : section.getKeys(false)) {
-                    value.add(tmp2);
+                if (section != null) {
+                    value = new ArrayList<>(section.getKeys(false));
+                } else {
+                    value = new ArrayList<>();
                 }
 
                 if (args[1].equals("")) {
@@ -371,12 +376,13 @@ public class MainCommand extends DCCommand {
             } else if (args[0].equalsIgnoreCase("delete")) {
                 if(args.length == 2) {
                     section = CustomConfig.getCases().getConfigurationSection("DonatCase.Cases");
-                    value = new ArrayList<>();
-                    for (String tmp2 : section.getKeys(false)) {
-                        value.add(tmp2);
+                    if(section != null) {
+                        value = new ArrayList<>(section.getKeys(false));
+                        Collections.sort(value);
+                        return value;
+                    } else {
+                        return new ArrayList();
                     }
-                    Collections.sort(value);
-                    return value;
                 }
                 return new ArrayList();
             } else if (args[0].equalsIgnoreCase("keys")) {
@@ -388,8 +394,7 @@ public class MainCommand extends DCCommand {
                     list = new ArrayList<>();
 
                     for (Player o : Bukkit.getOnlinePlayers().stream().filter((px) -> px.getName().startsWith(args[1])).collect(Collectors.toList())) {
-                        Player p = o;
-                        list.add(p.getName());
+                        list.add(o.getName());
                     }
 
                     return list;
@@ -409,8 +414,8 @@ public class MainCommand extends DCCommand {
                     list = new ArrayList<>();
                     value = new ArrayList<>();
                     section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                    for (String tmp2 : section.getKeys(false)) {
-                        value.add(tmp2);
+                    if (section != null) {
+                        value.addAll(section.getKeys(false));
                     }
                     // playerlist
                     if (args.length == 2) {
@@ -447,10 +452,9 @@ public class MainCommand extends DCCommand {
                 }
                 ArrayList<String> b;
                 list = new ArrayList<>();
-                value = new ArrayList<>();
                 section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                for (String tmp2 : section.getKeys(false)) {
-                    value.add(tmp2);
+                if (section != null) {
+                    value = new ArrayList<>(section.getKeys(false));
                 }
 
 

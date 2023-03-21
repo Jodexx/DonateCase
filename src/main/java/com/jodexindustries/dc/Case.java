@@ -1,8 +1,5 @@
 package com.jodexindustries.dc;
 
-import java.util.Iterator;
-import java.util.logging.Level;
-
 import com.jodexindustries.tools.CustomConfig;
 import org.bukkit.configuration.ConfigurationSection;
 

@@ -1,14 +1,13 @@
 package com.jodexindustries.tools;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-
 import com.jodexindustries.dc.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.yaml.snakeyaml.Yaml;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
 
 public class CustomConfig {
     private static File filec;
@@ -61,6 +60,14 @@ public class CustomConfig {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Keys.yml");
         }
 
+    }
+
+    public static void saveAnimations() {
+        try {
+            Animations.save(fileanim);
+        } catch (IOException var1) {
+            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
+        }
     }
 
     public static FileConfiguration getCases() {
