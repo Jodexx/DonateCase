@@ -63,6 +63,25 @@ public class FireworkShape {
                 if (this.i == 0) {
                     this.l = as.getLocation();
                 }
+                if (this.i == 1) {
+                    Location loc = this.l.clone().add(0.0, 1.0, 0);
+                    Firework firework = loc.getWorld().spawn(loc, Firework.class);
+                    FireworkMeta data = firework.getFireworkMeta();
+                    data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
+                    for (String color : CustomConfig.getAnimations().getStringList("Firework.FireworkColors")) {
+                        data.addEffect(FireworkEffect.builder().withColor(Main.t.parseColor(color)).build());
+                    }
+                    data.setPower(CustomConfig.getAnimations().getInt("FireWork.Power"));
+                    firework.setFireworkMeta(data);
+                }
+                Location las = as.getLocation().clone();
+                las.setYaw(las.getYaw() + 20.0F);
+                as.teleport(las);
+                this.l = this.l.add(0.0, 0.14, 0.0);
+                if (this.i <= 7) {
+                    this.l.setYaw(las.getYaw());
+                    as.teleport(this.l);
+                }
 
                 if (this.i >= 7) {
                     if (this.i == 10) {
@@ -105,7 +124,7 @@ public class FireworkShape {
                             Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(cmd2, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + casetitle)));
                         }
                     }
-
+                    // end
                     if (this.i >= 30) {
                         as.remove();
                         this.cancel();
@@ -115,26 +134,7 @@ public class FireworkShape {
                     }
                 }
 
-                Location las = as.getLocation().clone();
-                las.setYaw(las.getYaw() + 20.0F);
-                as.teleport(las);
-                this.l = this.l.add(0.0, 0.14, 0.0);
-                if (this.i <= 7) {
-                    this.l.setYaw(las.getYaw());
-                    as.teleport(this.l);
-                }
 
-                if (this.i == 1) {
-                    Location loc = this.l.clone().add(0.0, 1.0, 0);
-                    Firework firework = loc.getWorld().spawn(loc, Firework.class);
-                    FireworkMeta data = firework.getFireworkMeta();
-                    data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
-                    for (String color : CustomConfig.getAnimations().getStringList("Firework.FireworkColors")) {
-                        data.addEffect(FireworkEffect.builder().withColor(Main.t.parseColor(color)).build());
-                    }
-                    data.setPower(CustomConfig.getAnimations().getInt("FireWork.Power"));
-                    firework.setFireworkMeta(data);
-                }
 
                 ++this.i;
             }

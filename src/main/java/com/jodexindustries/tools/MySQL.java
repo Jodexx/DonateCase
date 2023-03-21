@@ -69,7 +69,7 @@ public class MySQL {
 
     public void delAllKey() {
         try {
-            this.stmt.executeUpdate(Main.t.rt("DELETE FROM `donate_cases`", new String[0]));
+            this.stmt.executeUpdate(Main.t.rt("DELETE FROM `donate_cases`"));
         } catch (SQLException var2) {
             var2.printStackTrace();
         }
