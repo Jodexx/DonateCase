@@ -346,7 +346,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             Collections.sort(list);
             return list;
         } else if (args.length >= 1 && !sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
-            return new ArrayList();
+            return new ArrayList<>();
         } else {
             ConfigurationSection section;
             if (args[0].equalsIgnoreCase("create") && sender.hasPermission("donatecase.admin")) {
@@ -369,7 +369,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 }
 
                 if (args.length == 3) {
-                    return new ArrayList();
+                    return new ArrayList<>();
                 } else {
                     Collections.sort(list);
                     return list;
@@ -382,15 +382,15 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         Collections.sort(value);
                         return value;
                     } else {
-                        return new ArrayList();
+                        return new ArrayList<>();
                     }
                 }
-                return new ArrayList();
+                return new ArrayList<>();
             } else if (args[0].equalsIgnoreCase("keys")) {
                 if (args.length != 2) {
-                    return new ArrayList();
+                    return new ArrayList<>();
                 } else if (!sender.hasPermission("donatecase.mod")) {
-                    return new ArrayList();
+                    return new ArrayList<>();
                 } else {
                     list = new ArrayList<>();
 
@@ -401,16 +401,16 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     return list;
                 }
             } else if (args[0].equalsIgnoreCase("help")) {
-                return new ArrayList();
+                return new ArrayList<>();
             } else if (args[0].equalsIgnoreCase("reload")) {
-                return new ArrayList();
+                return new ArrayList<>();
             } else if (args[0].equalsIgnoreCase("cases")) {
-                return new ArrayList();
+                return new ArrayList<>();
                 //givekey gk
             } else if (args[0].equalsIgnoreCase("givekey") || args[0].equalsIgnoreCase("gk")) {
                 ArrayList<String> b;
                 if (!sender.hasPermission("donatecase.mod")) {
-                    return new ArrayList();
+                    return new ArrayList<>();
                 } else {
                     list = new ArrayList<>();
                     value = new ArrayList<>();
@@ -439,7 +439,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         }
 
                         if (args.length >= 4) {
-                            return new ArrayList();
+                            return new ArrayList<>();
                         } else {
                             Collections.sort(list);
                             return list;
@@ -450,7 +450,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             else if (args[0].equalsIgnoreCase("setkey") || args[0].equalsIgnoreCase("sk")) {
                 ArrayList<String> b;
                 if (!sender.hasPermission("donatecase.mod")) {
-                    return new ArrayList();
+                    return new ArrayList<>();
                 } else {
                     list = new ArrayList<>();
                     value = new ArrayList<>();
@@ -479,7 +479,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         }
 
                         if (args.length >= 4) {
-                            return new ArrayList();
+                            return new ArrayList<>();
                         } else {
                             Collections.sort(list);
                             return list;
@@ -490,7 +490,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             else if (args[0].equalsIgnoreCase("delkey") || args[0].equalsIgnoreCase("dk")) {
                 // delkey all
                 if (args[1].equalsIgnoreCase("all")) {
-                    return new ArrayList();
+                    return new ArrayList<>();
                 }
                 ArrayList<String> b;
                 list = new ArrayList<>();
@@ -519,14 +519,14 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     }
 
                     if (args.length >= 4) {
-                        return new ArrayList();
+                        return new ArrayList<>();
                     } else {
                         Collections.sort(list);
                         return list;
                     }
                 }
             } else {
-                return new ArrayList();
+                return new ArrayList<>();
             }
         }
     }
