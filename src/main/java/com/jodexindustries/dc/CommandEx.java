@@ -1,28 +1,26 @@
-package com.jodexindustries.commands;
+package com.jodexindustries.dc;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.stream.Collectors;
-
-import com.jodexindustries.commands.executor.DCCommand;
-import com.jodexindustries.dc.Main;
 import com.jodexindustries.tools.CustomConfig;
-import com.jodexindustries.tools.Languages;
 import me.clip.placeholderapi.PlaceholderAPI;
-import com.jodexindustries.dc.Case;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-public class MainCommand extends DCCommand {
-    public MainCommand() {
-        super("donatcase");
-    }
-    public boolean run(CommandSender sender, Command cmd, String label, String[] args) {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class CommandEx implements CommandExecutor, TabCompleter {
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
         if (args.length == 0) {
             // if sender is player
             if (sender instanceof Player) {
@@ -31,13 +29,11 @@ public class MainCommand extends DCCommand {
                     for (String string : Main.lang.getStringList("HelpPlayer")) {
                         Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                     }
-                    return false;
                 } else if (sender.hasPermission("donatecase.mod")) {
                         Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
                     for (String string : Main.lang.getStringList("Help")) {
                         Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                     }
-                    return false;
                 } else {
                     Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                 }
@@ -91,39 +87,39 @@ public class MainCommand extends DCCommand {
             //delkey
             if(args[0].equalsIgnoreCase("delkey") || args[0].equalsIgnoreCase("dk")) {
                 if (sender.hasPermission("donatecase.admin") || sender.hasPermission("donatecase.mod")) {
-                    if(args.length == 1) {
-                            Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                    if (args.length == 1) {
+                        Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
                         for (String string : Main.lang.getStringList("Help")) {
                             Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                         }
-                        return false;
-                    }
-                    if (args[1].equalsIgnoreCase("all")) {
-                        if (Main.Tconfig) {
-                            CustomConfig.getKeys().set("DonatCase.Cases", null);
-                            CustomConfig.saveKeys();
-                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys")));
-                        } else {
-                            Main.mysql.delAllKey();
-                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys")));
+                    } else
+                    if (args.length == 2) {
+                        if (args[1].equalsIgnoreCase("all")) {
+                            if (Main.Tconfig) {
+                                CustomConfig.getKeys().set("DonatCase.Cases", null);
+                                CustomConfig.saveKeys();
+                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys")));
+                            } else {
+                                Main.mysql.delAllKey();
+                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys")));
+                            }
                         }
-                        return false;
-                    }
-                }
-                if (args.length >= 3) {
-                    String player = args[1];
-                    String casename = args[2];
-                    if (Case.hasCaseByName(casename)) {
-                        String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
-                        Case.setNullKeys(casename, player);
-                        Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearKeys"), "%player:" + player, "%casetitle:" + casetitle, "%case:" + casename));
+                    } else
+                    if (args.length >= 3) {
+                        String player = args[1];
+                        String casename = args[2];
+                        if (Case.hasCaseByName(casename)) {
+                            String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                            Case.setNullKeys(casename, player);
+                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearKeys"), "%player:" + player, "%casetitle:" + casetitle, "%case:" + casename));
+                        } else {
+                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
+                        }
                     } else {
-                        Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
-                    }
-                } else {
                         Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-                    for (String string : Main.lang.getStringList("Help")) {
-                        Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
+                        for (String string : Main.lang.getStringList("Help")) {
+                            Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
+                        }
                     }
                 }
             }
@@ -152,7 +148,6 @@ public class MainCommand extends DCCommand {
                         Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                     }
                 }
-                return false;
             }
             //keys
             if (args[0].equalsIgnoreCase("keys")) {
@@ -182,7 +177,6 @@ public class MainCommand extends DCCommand {
                         Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                     }
                 }
-                return false;
             }
             //cases
             if (args[0].equalsIgnoreCase("cases")) {
@@ -199,11 +193,10 @@ public class MainCommand extends DCCommand {
                             Main.t.msg_(sender, "null");
                         }
                     }
-                return false;
             }
             //help
             if (args[0].equalsIgnoreCase("help")) {
-                if (sender.hasPermission("donatecase.player")) {
+                if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.mod")) {
                         Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
                     for (String string : Main.lang.getStringList("HelpPlayer")) {
                         Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
@@ -229,7 +222,7 @@ public class MainCommand extends DCCommand {
                                 if (Case.hasCaseByLocation(locat)) {
                                     Main.t.msg(sender, Main.lang.getString("HasDonatCase"));
                                 } else {
-                                    if(!Case.hasCaseByCaseName(casename)) {
+                                    if(!Case.hasCaseDataByName(casename)) {
                                         Case.saveLocation(casename, casetype, locat);
                                         Main.t.msg(sender, Main.lang.getString("AddDonatCase"));
                                     } else {
@@ -281,9 +274,13 @@ public class MainCommand extends DCCommand {
                 }
             }
         }
-        return false;
+        return true;
     }
-    public ArrayList onTabComplete(CommandSender sender, Player p, Command $cmd, String $label, String[] args) {
+
+
+
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         ArrayList<String> list;
         ArrayList<String> value = null;
         if (args.length == 1 && sender.hasPermission("donatecase.admin")) {
@@ -349,7 +346,7 @@ public class MainCommand extends DCCommand {
             Collections.sort(list);
             return list;
         } else if (args.length >= 1 && !sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
-            return new ArrayList();
+            return new ArrayList<>();
         } else {
             ConfigurationSection section;
             if (args[0].equalsIgnoreCase("create") && sender.hasPermission("donatecase.admin")) {
@@ -372,7 +369,7 @@ public class MainCommand extends DCCommand {
                 }
 
                 if (args.length == 3) {
-                    return new ArrayList();
+                    return new ArrayList<>();
                 } else {
                     Collections.sort(list);
                     return list;
@@ -385,15 +382,15 @@ public class MainCommand extends DCCommand {
                         Collections.sort(value);
                         return value;
                     } else {
-                        return new ArrayList();
+                        return new ArrayList<>();
                     }
                 }
-                return new ArrayList();
+                return new ArrayList<>();
             } else if (args[0].equalsIgnoreCase("keys")) {
                 if (args.length != 2) {
-                    return new ArrayList();
+                    return new ArrayList<>();
                 } else if (!sender.hasPermission("donatecase.mod")) {
-                    return new ArrayList();
+                    return new ArrayList<>();
                 } else {
                     list = new ArrayList<>();
 
@@ -404,16 +401,16 @@ public class MainCommand extends DCCommand {
                     return list;
                 }
             } else if (args[0].equalsIgnoreCase("help")) {
-                return new ArrayList();
+                return new ArrayList<>();
             } else if (args[0].equalsIgnoreCase("reload")) {
-                return new ArrayList();
+                return new ArrayList<>();
             } else if (args[0].equalsIgnoreCase("cases")) {
-                return new ArrayList();
+                return new ArrayList<>();
                 //givekey gk
             } else if (args[0].equalsIgnoreCase("givekey") || args[0].equalsIgnoreCase("gk")) {
                 ArrayList<String> b;
                 if (!sender.hasPermission("donatecase.mod")) {
-                    return new ArrayList();
+                    return new ArrayList<>();
                 } else {
                     list = new ArrayList<>();
                     value = new ArrayList<>();
@@ -442,17 +439,58 @@ public class MainCommand extends DCCommand {
                         }
 
                         if (args.length >= 4) {
-                            return new ArrayList();
+                            return new ArrayList<>();
                         } else {
                             Collections.sort(list);
                             return list;
                         }
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("delkey") || args[0].equalsIgnoreCase("dk")) {
+            }
+            else if (args[0].equalsIgnoreCase("setkey") || args[0].equalsIgnoreCase("sk")) {
+                ArrayList<String> b;
+                if (!sender.hasPermission("donatecase.mod")) {
+                    return new ArrayList<>();
+                } else {
+                    list = new ArrayList<>();
+                    value = new ArrayList<>();
+                    section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                    if (section != null) {
+                        value.addAll(section.getKeys(false));
+                    }
+                    // playerlist
+                    if (args.length == 2) {
+                        b = new ArrayList<>();
+                        for (Player player : Bukkit.getOnlinePlayers().stream().filter((px) -> px.getName().startsWith(args[1])).collect(Collectors.toList())) {
+                            b.add(player.getName());
+                        }
+
+                        return b;
+                    } else {
+                        if (args[2].equals("")) {
+                            list = value;
+                        } else {
+
+                            for (String tmp2 : value) {
+                                if (tmp2.startsWith(args[2])) {
+                                    list.add(tmp2);
+                                }
+                            }
+                        }
+
+                        if (args.length >= 4) {
+                            return new ArrayList<>();
+                        } else {
+                            Collections.sort(list);
+                            return list;
+                        }
+                    }
+                }
+            }
+            else if (args[0].equalsIgnoreCase("delkey") || args[0].equalsIgnoreCase("dk")) {
                 // delkey all
                 if (args[1].equalsIgnoreCase("all")) {
-                    return new ArrayList();
+                    return new ArrayList<>();
                 }
                 ArrayList<String> b;
                 list = new ArrayList<>();
@@ -481,15 +519,16 @@ public class MainCommand extends DCCommand {
                     }
 
                     if (args.length >= 4) {
-                        return new ArrayList();
+                        return new ArrayList<>();
                     } else {
                         Collections.sort(list);
                         return list;
                     }
                 }
             } else {
-                return new ArrayList();
+                return new ArrayList<>();
             }
         }
     }
+
 }
