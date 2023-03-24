@@ -93,6 +93,7 @@ public class Shape {
                         for (String cmd : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Commands")) {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(cmd, "%player:" + player.getName(), "%group:" + winGroupGroup));
                         }
+                        // Sound
                         if(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".AnimationSound") != null) {
                             sound = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".AnimationSound"));
                             Sound sound1;
@@ -101,7 +102,7 @@ public class Shape {
                                 sound1 = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
                             }
                             player.playSound(player.getLocation(), sound1, 1.0F, 5.0F);
-                        }
+                        } // Broadcast
                         for (Player pl : Bukkit.getOnlinePlayers()) {
                             for (String msg : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Broadcast")) {
                                 Main.t.msg_(pl, Main.t.rt(msg, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + casetitle));

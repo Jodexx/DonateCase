@@ -222,7 +222,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                 if (Case.hasCaseByLocation(locat)) {
                                     Main.t.msg(sender, Main.lang.getString("HasDonatCase"));
                                 } else {
-                                    if(!Case.hasCaseByCaseName(casename)) {
+                                    if(!Case.hasCaseDataByName(casename)) {
                                         Case.saveLocation(casename, casetype, locat);
                                         Main.t.msg(sender, Main.lang.getString("AddDonatCase"));
                                     } else {

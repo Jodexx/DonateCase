@@ -78,6 +78,7 @@ public class FireworkShape {
                 las.setYaw(las.getYaw() + 20.0F);
                 as.teleport(las);
                 this.l = this.l.add(0.0, 0.14, 0.0);
+                // armor stand up :D
                 if (this.i <= 7) {
                     this.l.setYaw(las.getYaw());
                     as.teleport(this.l);
@@ -110,6 +111,7 @@ public class FireworkShape {
                         for (String cmd : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Commands")) {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(cmd, "%player:" + player.getName(), "%group:" + winGroupGroup));
                         }
+                        // Sound
                         if(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".AnimationSound") != null) {
                             sound = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".AnimationSound"));
                             Sound sound1;

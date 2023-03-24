@@ -26,8 +26,6 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.logging.Level;
-
 public class EventsListener implements Listener {
 
     @EventHandler
@@ -103,7 +101,7 @@ public class EventsListener implements Listener {
                 if (!StartAnimation.caseOpen.contains(p)) {
                     if (!Main.ActiveCase.containsKey(loc)) {
                         Main.openCase.put(p, loc.clone());
-                        new GuiDonatCase(p, Case.getCaseByLocation(loca));
+                        new GuiDonatCase(p, Case.getCaseTypeByLocation(loca));
                     } else {
                         Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
                     }

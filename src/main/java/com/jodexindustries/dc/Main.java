@@ -33,6 +33,7 @@ public class Main extends JavaPlugin {
         instance = this;
     }
     File ConfigFile;
+    File AnimationsFile;
     File langRu;
     File langEn;
     File langUa;
@@ -138,8 +139,9 @@ public class Main extends JavaPlugin {
         }
 
         CustomConfig.setup();
+        // Config.yml ver check
         if (CustomConfig.getConfig().getString("config") == null) {
-            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated config! Creating a new!");
+            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated Config.yml! Creating a new!");
             ConfigFile = new File(this.getDataFolder(), "Config.yml");
             ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
             this.saveResource("Config.yml", false);
@@ -147,10 +149,26 @@ public class Main extends JavaPlugin {
         }
 
         if (!CustomConfig.getConfig().getString("config").equals("2.2")) {
-            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated config! Creating a new!");
+            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated Config.yml! Creating a new!");
             ConfigFile = new File(this.getDataFolder(), "Config.yml");
             ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
             this.saveResource("Config.yml", false);
+            CustomConfig.setup();
+        }
+        // Animations.yml ver check
+        if (CustomConfig.getAnimations().getString("config") == null) {
+            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated Animations.yml! Creating a new!");
+            AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
+            AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
+            this.saveResource("Animations.yml", false);
+            CustomConfig.setup();
+        }
+
+        if (!CustomConfig.getAnimations().getString("config").equals("1.0")) {
+            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated Animations.yml! Creating a new!");
+            AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
+            AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
+            this.saveResource("Animations.yml", false);
             CustomConfig.setup();
         }
     }

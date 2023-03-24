@@ -110,6 +110,7 @@ public class Rainly {
                         }
                         lAC.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, lAC, 0);
                         lAC.getWorld().playSound(lAC, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
+                        // broadcast
                         for (Player pl : Bukkit.getOnlinePlayers()) {
                             for (String msg : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Broadcast")) {
                                 Main.t.msg_(pl, Main.t.rt(msg, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + casetitle));
