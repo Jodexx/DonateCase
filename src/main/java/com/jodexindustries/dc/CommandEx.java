@@ -180,19 +180,54 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             }
             //cases
             if (args[0].equalsIgnoreCase("cases")) {
-                    if (sender.hasPermission("donatecase.mod")) {
-                        ConfigurationSection cases_ = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                        int num = 0;
-                        if (cases_ != null) {
-                            for (String casename : cases_.getValues(false).keySet()) {
-                                num++;
-                                String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
-                                Main.t.msg_(sender, Main.t.rt(Main.lang.getString("CasesList"), "%casename:" + casename, "%num:" + num, "%casetitle:" + casetitle));
+                if (sender.hasPermission("donatecase.mod")) {
+                    ConfigurationSection cases_ = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                    int num = 0;
+                    if (cases_ != null) {
+                        for (String casename : cases_.getValues(false).keySet()) {
+                            num++;
+                            String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                            Main.t.msg_(sender, Main.t.rt(Main.lang.getString("CasesList"), "%casename:" + casename, "%num:" + num, "%casetitle:" + casetitle));
+                        }
+                    } else {
+                        Main.t.msg_(sender, "null");
+                    }
+                }
+            }
+            // opencase
+            if (args[0].equalsIgnoreCase("opencase")) {
+                if (sender instanceof Player) {
+                    String playername = sender.getName();
+                    Player player = (Player) sender;
+                    if (sender.hasPermission("donatecase.player")) {
+                        if (args.length == 2) {
+                            String casename = args[1];
+                            if (Case.hasCaseByName(casename)) {
+                                int keys = Case.getKeys(casename, playername);
+                                if (keys >= 1) {
+                                    Case.removeKeys(casename, playername, 1);
+                                    Main.t.onCaseOpenFinish(casename, player, true);
+                                } else {
+                                    Main.t.msg(player, Main.lang.getString("NoKey"));
+                                }
+                            } else {
+                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
                             }
                         } else {
-                            Main.t.msg_(sender, "null");
+                            if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.mod")) {
+                                Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                                for (String string : Main.lang.getStringList("HelpPlayer")) {
+                                    Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
+                                }
+                            } else if (sender.hasPermission("donatecase.mod") || sender.hasPermission("donatecase.admin")) {
+                                Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                                for (String string : Main.lang.getStringList("Help")) {
+                                    Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
+                                }
+                            }
                         }
                     }
+                }
             }
             //help
             if (args[0].equalsIgnoreCase("help")) {

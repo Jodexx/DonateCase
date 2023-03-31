@@ -14,8 +14,5 @@
         <module name="DonateCase" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="DonateCase" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>
