@@ -328,6 +328,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value.add("setkey");
             value.add("reload");
             value.add("keys");
+            value.add("opencase");
             value.add("cases");
             value.add("delkey");
             if (args[0].equals("")) {
@@ -350,6 +351,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value.add("setkey");
             value.add("keys");
             value.add("cases");
+            value.add("opencase");
             value.add("delkey");
             if (args[0].equals("")) {
                 list = value;
@@ -368,6 +370,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value = new ArrayList<>();
             value.add("help");
             value.add("keys");
+            value.add("opencase");
             if (args[0].equals("")) {
                 list = value;
             } else {
@@ -409,7 +412,31 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     Collections.sort(list);
                     return list;
                 }
-            } else if (args[0].equalsIgnoreCase("delete")) {
+            } else if (args[0].equalsIgnoreCase("opencase") && sender.hasPermission("donatecase.player")) {
+                list = new ArrayList<>();
+                section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                if (section != null) {
+                    value = new ArrayList<>(section.getKeys(false));
+                } else {
+                    value = new ArrayList<>();
+                }
+                if (args[1].equals("")) {
+                    list = value;
+                } else {
+                    for (String tmp2 : value) {
+                        if (tmp2.startsWith(args[1])) {
+                            list.add(tmp2);
+                        }
+                    }
+                }
+                if (args.length == 3) {
+                    return new ArrayList<>();
+                } else {
+                    Collections.sort(list);
+                    return list;
+                }
+            }
+            else if (args[0].equalsIgnoreCase("delete")) {
                 if(args.length == 2) {
                     section = CustomConfig.getCases().getConfigurationSection("DonatCase.Cases");
                     if(section != null) {
