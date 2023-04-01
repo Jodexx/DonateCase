@@ -1,14 +1,12 @@
 package com.jodexindustries.tools;
 
 import com.jodexindustries.dc.Main;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
+import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -223,5 +221,49 @@ public class Tools {
 
         item.setItemMeta(m);
         return item;
+    }
+
+    public void onCaseOpenFinish(String casename, Player player, boolean needsound, String winGroup) {
+        String sound;
+        String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+        String winGroupDisplayName = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".Item.DisplayName");
+        String winGroupGroup = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".Group");String titleWin = Main.lang.getString(org.bukkit.ChatColor.translateAlternateColorCodes('&', "TitleWin"));
+        String subTitleWin = Main.lang.getString(org.bukkit.ChatColor.translateAlternateColorCodes('&', "SubTitleWin"));
+        String reptitleWin = Main.t.rt(titleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
+        String repsubTitleWin = Main.t.rt(subTitleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
+        player.sendTitle(Main.t.rc(reptitleWin), Main.t.rc(repsubTitleWin), 5, 60, 5);
+        // Give command
+        String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
+        String givecommand = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommand");
+        if (CustomConfig.getConfig().getBoolean("DonatCase.LevelGroup")) {
+            if (CustomConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) &&
+                    CustomConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) >=
+                            CustomConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {
+            } else {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+            }
+        } else {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+        }
+        // Custom commands
+        for (String command : CustomConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".Commands")) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player:" + player.getName(), "%group:" + winGroupGroup));
+        }
+        // Sound
+        if(needsound) {
+            if (CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".AnimationSound") != null) {
+                sound = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".AnimationSound"));
+                Sound sound1;
+                sound1 = Sound.valueOf(sound.toUpperCase());
+                if (sound1 == null) {
+                    sound1 = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+                }
+                player.playSound(player.getLocation(), sound1, 1.0F, 5.0F);
+            }
+        }
+        // Broadcast
+        for (String cmd2 : CustomConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".Broadcast")) {
+            Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(cmd2, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + casetitle)));
+        }
     }
 }

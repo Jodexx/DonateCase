@@ -180,19 +180,55 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             }
             //cases
             if (args[0].equalsIgnoreCase("cases")) {
-                    if (sender.hasPermission("donatecase.mod")) {
-                        ConfigurationSection cases_ = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                        int num = 0;
-                        if (cases_ != null) {
-                            for (String casename : cases_.getValues(false).keySet()) {
-                                num++;
-                                String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
-                                Main.t.msg_(sender, Main.t.rt(Main.lang.getString("CasesList"), "%casename:" + casename, "%num:" + num, "%casetitle:" + casetitle));
+                if (sender.hasPermission("donatecase.mod")) {
+                    ConfigurationSection cases_ = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                    int num = 0;
+                    if (cases_ != null) {
+                        for (String casename : cases_.getValues(false).keySet()) {
+                            num++;
+                            String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                            Main.t.msg_(sender, Main.t.rt(Main.lang.getString("CasesList"), "%casename:" + casename, "%num:" + num, "%casetitle:" + casetitle));
+                        }
+                    } else {
+                        Main.t.msg_(sender, "null");
+                    }
+                }
+            }
+            // opencase
+            if (args[0].equalsIgnoreCase("opencase")) {
+                if (sender instanceof Player) {
+                    String playername = sender.getName();
+                    Player player = (Player) sender;
+                    if (sender.hasPermission("donatecase.player")) {
+                        if (args.length == 2) {
+                            String casename = args[1];
+                            if (Case.hasCaseByName(casename)) {
+                                int keys = Case.getKeys(casename, playername);
+                                if (keys >= 1) {
+                                    Case.removeKeys(casename, playername, 1);
+                                    String winGroup = Main.t.getRandomGroup(casename);
+                                    Main.t.onCaseOpenFinish(casename, player, true, winGroup);
+                                } else {
+                                    Main.t.msg(player, Main.lang.getString("NoKey"));
+                                }
+                            } else {
+                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + casename));
                             }
                         } else {
-                            Main.t.msg_(sender, "null");
+                            if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.mod")) {
+                                Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                                for (String string : Main.lang.getStringList("HelpPlayer")) {
+                                    Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
+                                }
+                            } else if (sender.hasPermission("donatecase.mod") || sender.hasPermission("donatecase.admin")) {
+                                Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+                                for (String string : Main.lang.getStringList("Help")) {
+                                    Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
+                                }
+                            }
                         }
                     }
+                }
             }
             //help
             if (args[0].equalsIgnoreCase("help")) {
@@ -293,6 +329,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value.add("setkey");
             value.add("reload");
             value.add("keys");
+            value.add("opencase");
             value.add("cases");
             value.add("delkey");
             if (args[0].equals("")) {
@@ -315,6 +352,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value.add("setkey");
             value.add("keys");
             value.add("cases");
+            value.add("opencase");
             value.add("delkey");
             if (args[0].equals("")) {
                 list = value;
@@ -333,6 +371,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value = new ArrayList<>();
             value.add("help");
             value.add("keys");
+            value.add("opencase");
             if (args[0].equals("")) {
                 list = value;
             } else {
@@ -374,7 +413,31 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     Collections.sort(list);
                     return list;
                 }
-            } else if (args[0].equalsIgnoreCase("delete")) {
+            } else if (args[0].equalsIgnoreCase("opencase") && sender.hasPermission("donatecase.player")) {
+                list = new ArrayList<>();
+                section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                if (section != null) {
+                    value = new ArrayList<>(section.getKeys(false));
+                } else {
+                    value = new ArrayList<>();
+                }
+                if (args[1].equals("")) {
+                    list = value;
+                } else {
+                    for (String tmp2 : value) {
+                        if (tmp2.startsWith(args[1])) {
+                            list.add(tmp2);
+                        }
+                    }
+                }
+                if (args.length == 3) {
+                    return new ArrayList<>();
+                } else {
+                    Collections.sort(list);
+                    return list;
+                }
+            }
+            else if (args[0].equalsIgnoreCase("delete")) {
                 if(args.length == 2) {
                     section = CustomConfig.getCases().getConfigurationSection("DonatCase.Cases");
                     if(section != null) {
