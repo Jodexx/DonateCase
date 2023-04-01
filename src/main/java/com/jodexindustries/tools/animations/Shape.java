@@ -71,43 +71,8 @@ public class Shape {
                         as.setHelmet(winItem);
                         as.setCustomName(winItem.getItemMeta().getDisplayName());
                         Main.t.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
-                        String titleWin = Main.lang.getString(ChatColor.translateAlternateColorCodes('&', "TitleWin"));
-                        String subTitleWin = Main.lang.getString(ChatColor.translateAlternateColorCodes('&', "SubTitleWin"));
-                        String reptitleWin = Main.t.rt(titleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
-                        String repsubTitleWin = Main.t.rt(subTitleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
-                        player.sendTitle(Main.t.rc(reptitleWin), Main.t.rc(repsubTitleWin), 5, 60, 5);
-                        // givecommand
-                        String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
-                        String givecommand = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".GiveCommand");
-                        if (CustomConfig.getConfig().getBoolean("DonatCase.LevelGroup")) {
-                            if (CustomConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) &&
-                                    CustomConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) >=
-                                            CustomConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {
-                            } else {
-                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
-                            }
-                        } else {
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
-                        }
-                        // customcommands
-                        for (String cmd : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Commands")) {
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(cmd, "%player:" + player.getName(), "%group:" + winGroupGroup));
-                        }
-                        // Sound
-                        if(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".AnimationSound") != null) {
-                            sound = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".AnimationSound"));
-                            Sound sound1;
-                            sound1 = Sound.valueOf(sound.toUpperCase());
-                            if (sound1 == null) {
-                                sound1 = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
-                            }
-                            player.playSound(player.getLocation(), sound1, 1.0F, 5.0F);
-                        } // Broadcast
-                        for (Player pl : Bukkit.getOnlinePlayers()) {
-                            for (String msg : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Items." + winGroup + ".Broadcast")) {
-                                Main.t.msg_(pl, Main.t.rt(msg, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + casetitle));
-                            }
-                        }
+                        Main.t.onCaseOpenFinish(c, player, true, winGroup);
+
                     }
                 }
 

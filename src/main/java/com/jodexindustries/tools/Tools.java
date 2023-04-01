@@ -223,10 +223,9 @@ public class Tools {
         return item;
     }
 
-    public void onCaseOpenFinish(String casename, Player player, boolean needsound) {
+    public void onCaseOpenFinish(String casename, Player player, boolean needsound, String winGroup) {
         String sound;
         String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
-        String winGroup = Main.t.getRandomGroup(casename);
         String winGroupDisplayName = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".Item.DisplayName");
         String winGroupGroup = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".Group");String titleWin = Main.lang.getString(org.bukkit.ChatColor.translateAlternateColorCodes('&', "TitleWin"));
         String subTitleWin = Main.lang.getString(org.bukkit.ChatColor.translateAlternateColorCodes('&', "SubTitleWin"));

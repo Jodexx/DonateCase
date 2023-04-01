@@ -86,7 +86,7 @@ public class Rainly {
                         // win item and title
                         as.setHelmet(winItem);
                         as.setCustomName(winItem.getItemMeta().getDisplayName());
-                        Main.t.onCaseOpenFinish(c, player, false);
+                        Main.t.onCaseOpenFinish(c, player, false, winGroup);
                         lAC.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, lAC, 0);
                         lAC.getWorld().playSound(lAC, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                     }

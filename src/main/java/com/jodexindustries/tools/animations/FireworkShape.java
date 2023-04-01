@@ -87,7 +87,7 @@ public class FireworkShape {
                         as.setCustomNameVisible(true);
                         as.setHelmet(winItem);
                         as.setCustomName(winItem.getItemMeta().getDisplayName());
-                        Main.t.onCaseOpenFinish(c, player, true);
+                        Main.t.onCaseOpenFinish(c, player, true, winGroup);
                     }
                     // end
                     if (this.i >= 30) {

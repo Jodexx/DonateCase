@@ -206,7 +206,8 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                 int keys = Case.getKeys(casename, playername);
                                 if (keys >= 1) {
                                     Case.removeKeys(casename, playername, 1);
-                                    Main.t.onCaseOpenFinish(casename, player, true);
+                                    String winGroup = Main.t.getRandomGroup(casename);
+                                    Main.t.onCaseOpenFinish(casename, player, true, winGroup);
                                 } else {
                                     Main.t.msg(player, Main.lang.getString("NoKey"));
                                 }
