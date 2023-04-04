@@ -92,10 +92,16 @@ public class Case {
     }
     //has case by name in Config.yml
     public static boolean hasCaseByName(String name) {
+        if(CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases") == null) {
+            return false;
+        }
         return CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases").contains(name);
     }
     // has case data in Cases.yml
     public static boolean hasCaseDataByName(String name) {
+        if(CustomConfig.getCases().getConfigurationSection("DonatCase.Cases") == null) {
+            return false;
+        } else
         return CustomConfig.getCases().getConfigurationSection("DonatCase.Cases").contains(name);
     }
 
