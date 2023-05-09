@@ -175,7 +175,7 @@ public class Main extends JavaPlugin {
 
     public void setupLangs() {
         lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
-        if (lang.getString("config") == null || !lang.getString("config").equals("2.3")) {
+        if (lang.getString("config") == null || !lang.getString("config").equals("2.4")) {
             Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §cOutdated lang config! Creating a new!");
             langRu = new File(this.getDataFolder(), "lang/ru_RU.yml");
             langRu.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));

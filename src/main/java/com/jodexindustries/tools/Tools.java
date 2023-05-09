@@ -1,6 +1,8 @@
 package com.jodexindustries.tools;
 
 import com.jodexindustries.dc.Main;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.command.CommandSender;
@@ -15,6 +17,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
@@ -49,7 +53,8 @@ public class Tools {
         int from = 0;
 
         String item;
-        for(Iterator<String> var5 = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getValues(true).keySet().iterator(); var5.hasNext(); maxChance += CustomConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance")) {
+        for(Iterator<String> var5 = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getValues(true).keySet().iterator();
+            var5.hasNext(); maxChance += CustomConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance")) {
             item = var5.next();
         }
 
@@ -206,6 +211,31 @@ public class Tools {
         item.setItemMeta(itemmeta);
 
         return item;
+    }
+    public ItemStack getCustomSkull(String base64, String displayname, List<String> lore) {
+
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        if (base64.isEmpty()) return head;
+
+        SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+
+        profile.getProperties().put("textures", new Property("textures", base64));
+
+        try {
+            Method mtd = skullMeta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
+            mtd.setAccessible(true);
+            mtd.invoke(skullMeta, profile);
+        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
+            ex.printStackTrace();
+        }
+
+        head.setItemMeta(skullMeta);
+        ItemMeta itemmeta = head.getItemMeta();
+        Objects.requireNonNull(itemmeta).setDisplayName(this.rc(displayname));
+        itemmeta.setLore(this.rc(lore));
+        head.setItemMeta(itemmeta);
+        return head;
     }
 
     public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore) {

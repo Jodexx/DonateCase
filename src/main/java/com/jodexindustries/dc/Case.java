@@ -94,7 +94,7 @@ public class Case {
     public static boolean hasCaseByName(String name) {
         if(CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases") == null) {
             return false;
-        }
+        } else
         return CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases").contains(name);
     }
     // has case data in Cases.yml
