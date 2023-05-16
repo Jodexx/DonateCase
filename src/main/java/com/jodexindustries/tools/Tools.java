@@ -3,8 +3,10 @@ package com.jodexindustries.tools;
 import com.jodexindustries.dc.Main;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.block.Skull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -20,6 +22,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.*;
 
 public class Tools {
@@ -132,13 +136,38 @@ public class Tools {
         Material type = Material.PLAYER_HEAD;
         ItemStack item = new ItemStack(type, 1);
         SkullMeta meta = (SkullMeta) item.getItemMeta();
-        Objects.requireNonNull(meta).setOwner(player);
+        meta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(player)));
         item.setItemMeta(meta);
         ItemMeta itemmeta = item.getItemMeta();
         Objects.requireNonNull(itemmeta).setDisplayName(this.rc(displayname));
         item.setItemMeta(itemmeta);
 
         return item;
+    }
+    public ItemStack getCustomSkull(String base64, String displayname) {
+
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        if (base64.isEmpty()) return head;
+
+        SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+        byte[] encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", base64).getBytes());
+        profile.getProperties().put("textures", new Property("textures", new String(encodedData)));
+        Field profileField = null;
+        try {
+            assert skullMeta != null;
+            profileField = skullMeta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(skullMeta, profile);
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e1) {
+            e1.printStackTrace();
+        }
+
+        head.setItemMeta(skullMeta);
+        ItemMeta itemmeta = head.getItemMeta();
+        Objects.requireNonNull(itemmeta).setDisplayName(this.rc(displayname));
+        head.setItemMeta(itemmeta);
+        return head;
     }
 
     public Color parseColor(String s) {
@@ -212,30 +241,47 @@ public class Tools {
 
         return item;
     }
-    public ItemStack getCustomSkull(String base64, String displayname, List<String> lore) {
-
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-        if (base64.isEmpty()) return head;
-
-        SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-
-        profile.getProperties().put("textures", new Property("textures", base64));
-
+    public ItemStack getHDBSkull(String id, String displayname, List<String> lore) {
+        HeadDatabaseAPI api = new HeadDatabaseAPI();
+        ItemStack item = new ItemStack(Material.STONE);
         try {
-            Method mtd = skullMeta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
-            mtd.setAccessible(true);
-            mtd.invoke(skullMeta, profile);
-        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException ex) {
-            ex.printStackTrace();
+            item = api.getItemHead(id);
+        } catch (NullPointerException nullPointerException) {
+            Main.instance.getLogger().info("Could not find the head you were looking for");
         }
-
-        head.setItemMeta(skullMeta);
-        ItemMeta itemmeta = head.getItemMeta();
-        Objects.requireNonNull(itemmeta).setDisplayName(this.rc(displayname));
-        itemmeta.setLore(this.rc(lore));
-        head.setItemMeta(itemmeta);
-        return head;
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(this.rc(displayname));
+        if(lore != null) {
+            itemMeta.setLore(this.rc(lore));
+        }
+        item.setItemMeta(itemMeta);
+        return item;
+    }
+    public ItemStack getHDBSkull(String id, String displayname) {
+        HeadDatabaseAPI api = new HeadDatabaseAPI();
+        ItemStack item = new ItemStack(Material.STONE);
+        try {
+            item = api.getItemHead(id);
+        } catch (NullPointerException nullPointerException) {
+            Main.instance.getLogger().info("Could not find the head you were looking for");
+        }
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(this.rc(displayname));
+        item.setItemMeta(itemMeta);
+        return item;
+    }
+    public ItemStack getCustomSkull(String base64, String displayname, List<String> lore) {
+        ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+            var playerProfile = Bukkit.createPlayerProfile(UUID.randomUUID());
+        try {
+            playerProfile.getTextures().setSkin(URI.create(base64).toURL());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        skullMeta.setOwnerProfile(playerProfile);
+            itemStack.setItemMeta(skullMeta);
+        return itemStack;
     }
 
     public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore) {
@@ -263,9 +309,9 @@ public class Tools {
         String repsubTitleWin = Main.t.rt(subTitleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
         player.sendTitle(Main.t.rc(reptitleWin), Main.t.rc(repsubTitleWin), 5, 60, 5);
         // Give command
-        String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
         String givecommand = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommand");
         if (CustomConfig.getConfig().getBoolean("DonatCase.LevelGroup")) {
+            String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
             if (CustomConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) &&
                     CustomConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) >=
                             CustomConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {

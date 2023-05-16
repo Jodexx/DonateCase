@@ -22,8 +22,8 @@ public class GuiDonatCase {
         if(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial") != null && !materialID.equalsIgnoreCase("AIR")) {
             final String materialNAME = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterialName"));
             Material material;
-            ItemStack f = null;
-            if (!materialID.startsWith("HEAD")) {
+            ItemStack f = new ItemStack(Material.STRUCTURE_VOID);
+            if (!materialID.startsWith("HEAD") && !materialID.startsWith("BASE64")) {
                 material = Material.getMaterial(materialID);
                 if (material == null) {
                     material = Material.STONE;
@@ -33,6 +33,19 @@ public class GuiDonatCase {
             if (materialID.startsWith("HEAD")) {
                 String[] parts = materialID.split(":");
                 f = Main.t.getPlayerHead(parts[1], materialNAME);
+            }
+            if (materialID.startsWith("BASE64")) {
+                String[] parts = materialID.split(":");
+                f = Main.t.getCustomSkull(parts[1], materialNAME);
+            }
+            if(materialID.startsWith("HDB")) {
+                String[] parts = materialID.split(":");
+                String id = parts[1];
+                if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                    f  = Main.t.getHDBSkull(id, materialNAME);
+                } else {
+                    f = new ItemStack(Material.STONE);
+                }
             }
             for (int a = 0; a < 2; ++a) {
                 int i;
@@ -61,7 +74,7 @@ public class GuiDonatCase {
             }
             opencaseitemstack = Main.t.createItem(opencasematerial, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys ));
         }
-        if(opencasematerialID.startsWith("HEAD") && !opencasematerialID.startsWith("BASE64")) {
+        if(opencasematerialID.startsWith("HEAD")) {
             String[] parts = opencasematerialID.split(":");
             opencaseitemstack = Main.t.getPlayerHead(parts[1], displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys));
         }
@@ -69,6 +82,12 @@ public class GuiDonatCase {
             String[] parts = opencasematerialID.split(":");
             String base64 = parts[1];
             opencaseitemstack = Main.t.getCustomSkull(base64, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
+        }
+        if(opencasematerialID.startsWith("HDB")) {
+            String[] parts = opencasematerialID.split(":");
+            String id = parts[1];
+            if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase"))
+            opencaseitemstack = Main.t.getHDBSkull(id, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
         }
         inv.setItem(Main.t.c(5, 3), opencaseitemstack);
         p.openInventory(inv);
