@@ -47,7 +47,7 @@ public class FireworkShape {
             public void run() {
                 Material material;
                 ItemStack winItem = null;
-                if(!winGroupId.startsWith("HEAD")) {
+                if(!winGroupId.startsWith("HEAD") && !winGroupId.startsWith("BASE64")) {
                     material = Material.getMaterial(winGroupId);
                     if (material == null) {
                         material = Material.STONE;
@@ -57,6 +57,19 @@ public class FireworkShape {
                 if(winGroupId.startsWith("HEAD")) {
                     String[] parts = winGroupId.split(":");
                     winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
+                }
+                if(winGroupId.startsWith("BASE64")) {
+                    String[] parts = winGroupId.split(":");
+                    winItem = Main.t.getCustomSkull(parts[1], winGroupDisplayName);
+                }
+                if(winGroupId.startsWith("HDB")) {
+                    String[] parts = winGroupId.split(":");
+                    String id = parts[1];
+                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                        winItem  = Main.t.getHDBSkull(id, winGroupDisplayName);
+                    } else {
+                        winItem = new ItemStack(Material.STONE);
+                    }
                 }
                 if (this.i == 0) {
                     this.l = as.getLocation();

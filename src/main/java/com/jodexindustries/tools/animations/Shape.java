@@ -51,7 +51,7 @@ public class Shape {
                 Material material;
                 ItemStack winItem = null;
                 String sound;
-                if(!winGroupId.startsWith("HEAD")) {
+                if(!winGroupId.startsWith("HEAD") && !winGroupId.startsWith("HEAD")) {
                     material = Material.getMaterial(winGroupId);
                     if (material == null) {
                         material = Material.STONE;
@@ -61,6 +61,10 @@ public class Shape {
                 if(winGroupId.startsWith("HEAD")) {
                     String[] parts = winGroupId.split(":");
                     winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
+                }
+                if(winGroupId.startsWith("BASE64")) {
+                    String[] parts = winGroupId.split(":");
+                    winItem = Main.t.getCustomSkull(parts[1], winGroupDisplayName);
                 }
                 if (this.i == 0) {
                     this.l = as.getLocation();
@@ -82,7 +86,7 @@ public class Shape {
                     Material material2;
                     final String winGroupDisplayName2 = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
                     final String winGroup2Id = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.ID").toUpperCase();
-                    if(!winGroup2Id.startsWith("HEAD")) {
+                    if(!winGroup2Id.startsWith("HEAD") && !winGroup2Id.startsWith("BASE64")) {
                         material2 = Material.getMaterial(winGroup2Id);
                         if (material2 == null) {
                             material2 = Material.STONE;
@@ -92,6 +96,19 @@ public class Shape {
                     if(winGroup2Id.startsWith("HEAD")) {
                         String[] parts = winGroup2Id.split(":");
                         winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
+                    }
+                    if(winGroup2Id.startsWith("BASE64")) {
+                        String[] parts = winGroup2Id.split(":");
+                        winItem2 = Main.t.getCustomSkull(parts[1], winGroupDisplayName2);
+                    }
+                    if(winGroup2Id.startsWith("HDB")) {
+                        String[] parts = winGroup2Id.split(":");
+                        String id = parts[1];
+                        if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                            winItem2  = Main.t.getHDBSkull(id, winGroupDisplayName2);
+                        } else {
+                            winItem2 = new ItemStack(Material.STONE);
+                        }
                     }
                     as.setHelmet(winItem2);
                     as.setCustomName(winItem2.getItemMeta().getDisplayName());

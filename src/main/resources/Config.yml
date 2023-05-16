@@ -27,9 +27,9 @@ DonatCase:
       AnimationSound: ENTITY_EXPERIENCE_ORB_PICKUP # remove this line if you don't want to play sound
       Title: '&c&lDonate-&a&lCase' # If you want to make another case, then the Title needs to be changed
       Gui:
-        GuiMaterial: WHITE_STAINED_GLASS_PANE # you can use player head, example: HEAD:_Jodex__
+        GuiMaterial: WHITE_STAINED_GLASS_PANE # you can use player head, example: HEAD:_Jodex__ or HDB:1234
         GuiMaterialName: "&cDonateCase.com"
-        GuiOpenCaseMaterial: TRIPWIRE_HOOK # you can use player head, example: HEAD:_Jodex__
+        GuiOpenCaseMaterial: TRIPWIRE_HOOK # you can use player head, example: HEAD:_Jodex__ or HDB:1234
         DisplayName: '&bOpen Case'
         Lore:
           - '&6The case can be bought on the website: &cDonateCase.com'
@@ -47,7 +47,7 @@ DonatCase:
           Group: vip
           Chance: 50
           Item:
-            ID: IRON_SWORD # you can use player head, example: HEAD:_Jodex__
+            ID: IRON_SWORD # you can use player head, example: HEAD:_Jodex__ or HDB:1234
             DisplayName: '&7&l[&aVIP&7&l]'
           GiveCommand: lp user %player parent set %group
           Commands:
@@ -58,7 +58,7 @@ DonatCase:
           Group: vipplus
           Chance: 25
           Item:
-            ID: GOLDEN_SWORD # you can use player head, example: HEAD:_Jodex__
+            ID: GOLDEN_SWORD # you can use player head, example: HEAD:_Jodex__ or HDB:1234
             DisplayName: '&7&l[&bVIP&6+&7&l]'
           GiveCommand: lp user %player parent set %group
           Commands:
@@ -69,7 +69,7 @@ DonatCase:
           Group: deluxe
           Chance: 15
           Item:
-            ID: DIAMOND_SWORD # you can use player head, example: HEAD:_Jodex__
+            ID: DIAMOND_SWORD # you can use player head, example: HEAD:_Jodex__ or HDB:1234
             DisplayName: '&7&l[&5Deluxe&7&l]'
           GiveCommand: lp user %player parent set %group
           Commands:
@@ -80,7 +80,7 @@ DonatCase:
           Group: legend
           Chance: 10
           Item:
-            ID: NETHERITE_SWORD # you can use player head, example: HEAD:_Jodex__
+            ID: NETHERITE_SWORD # you can use player head, example: HEAD:_Jodex__ or HDB:1234
             DisplayName: '&7&l[&dLegend&7&l]'
           GiveCommand: lp user %player parent set %group
           Commands:
