@@ -1,8 +1,6 @@
 package com.jodexindustries.tools;
 
 import com.jodexindustries.dc.Main;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
@@ -19,8 +17,6 @@ import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.util.*;
 
 public class Tools {
@@ -51,17 +47,14 @@ public class Tools {
         int maxChance = 0;
         int from = 0;
 
-        String item;
-        for(Iterator<String> var5 = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getValues(true).keySet().iterator();
-            var5.hasNext(); maxChance += CustomConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance")) {
-            item = var5.next();
+        for(String item : CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getValues(true).keySet()) {
+            maxChance += CustomConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance");
         }
 
         int rand = random.nextInt(maxChance);
 
-        String item2;
-        for(Iterator<String> var9 = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getValues(true).keySet().iterator(); var9.hasNext(); from += CustomConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item2 + ".Chance")) {
-            item2 = var9.next();
+        for(String item2 : CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getValues(true).keySet()) {
+            from += CustomConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item2 + ".Chance");
             if (from <= rand && rand < from + CustomConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item2 + ".Chance")) {
                 return item2;
             }
@@ -72,13 +65,13 @@ public class Tools {
 
     public void msg(CommandSender s, String msg) {
         if (s != null) {
-            this.msg_(s, Main.lang.getString("Prefix") + msg);
+            msg_(s, Main.lang.getString("Prefix") + msg);
         }
     }
 
     public void msg_(CommandSender s, String msg) {
         if (s != null) {
-            s.sendMessage(this.rc(msg));
+            s.sendMessage(rc(msg));
         }
     }
 
@@ -103,7 +96,7 @@ public class Tools {
         ArrayList<String> rt = new ArrayList<>();
 
         for (String t : text) {
-            rt.add(this.rt(t, repl));
+            rt.add(rt(t, repl));
         }
 
         return rt;
@@ -113,18 +106,18 @@ public class Tools {
         ArrayList<String> a = new ArrayList<>();
 
         for (String s : t) {
-            a.add(this.rc(s));
+            a.add(rc(s));
         }
 
         return a;
     }
 
     public ItemStack createItem(Material ma, int amount, int data, String dn) {
-        return this.createItem(ma, data, amount, dn, null);
+        return createItem(ma, data, amount, dn, null);
     }
 
     public ItemStack createItem(Material ma, String dn, List<String> lore) {
-        return this.createItem(ma, 0, 1, dn, lore);
+        return createItem(ma, 0, 1, dn, lore);
     }
 
     public ItemStack getPlayerHead(String player, String displayname) {
@@ -134,7 +127,7 @@ public class Tools {
         meta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(player)));
         item.setItemMeta(meta);
         ItemMeta itemmeta = item.getItemMeta();
-        Objects.requireNonNull(itemmeta).setDisplayName(this.rc(displayname));
+        Objects.requireNonNull(itemmeta).setDisplayName(rc(displayname));
         item.setItemMeta(itemmeta);
 
         return item;
@@ -162,9 +155,7 @@ public class Tools {
                         if (field.getName().equalsIgnoreCase(s)) {
                             try {
                                 return (Color) field.get(null);
-                            } catch (IllegalArgumentException e1) {
-                                e1.printStackTrace();
-                            } catch (IllegalAccessException e1) {
+                            } catch (IllegalArgumentException | IllegalAccessException e1) {
                                 e1.printStackTrace();
                             }
                         }
@@ -203,8 +194,8 @@ public class Tools {
         Objects.requireNonNull(meta).setOwner(player);
         item.setItemMeta(meta);
         ItemMeta itemmeta = item.getItemMeta();
-        Objects.requireNonNull(itemmeta).setDisplayName(this.rc(displayname));
-        itemmeta.setLore(this.rc(lore));
+        Objects.requireNonNull(itemmeta).setDisplayName(rc(displayname));
+        itemmeta.setLore(rc(lore));
         item.setItemMeta(itemmeta);
 
         return item;
@@ -218,9 +209,9 @@ public class Tools {
             Main.instance.getLogger().info("Could not find the head you were looking for");
         }
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(this.rc(displayname));
+        itemMeta.setDisplayName(rc(displayname));
         if(lore != null) {
-            itemMeta.setLore(this.rc(lore));
+            itemMeta.setLore(rc(lore));
         }
         item.setItemMeta(itemMeta);
         return item;
@@ -234,7 +225,7 @@ public class Tools {
             Main.instance.getLogger().info("Could not find the head you were looking for");
         }
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(this.rc(displayname));
+        itemMeta.setDisplayName(rc(displayname));
         item.setItemMeta(itemMeta);
         return item;
     }
@@ -243,7 +234,7 @@ public class Tools {
         ItemStack item = new ItemStack(ma, amount);
         ItemMeta m = item.getItemMeta();
         if (dn != null) {
-            m.setDisplayName(this.rc(dn));
+            m.setDisplayName(rc(dn));
         }
 
         if (lore != null) {

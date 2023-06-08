@@ -8,6 +8,14 @@ version = '1.0.0'
 repositories {
     mavenCentral()
     maven {
+        name = "placeholderapi"
+        url = "https://repo.extendedclip.com/content/repositories/placeholderapi"
+    }
+    maven {
+        name = "jitpack.io"
+        url = "https://jitpack.io"
+    }
+    maven {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
@@ -19,6 +27,9 @@ repositories {
 
 dependencies {
     compileOnly "io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT"
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+    compileOnly "me.clip:placeholderapi:2.11.2"
+    compileOnly "com.arcaniax:HeadDatabase-API:1.3.1"
 }
 
 def targetJavaVersion = 17
