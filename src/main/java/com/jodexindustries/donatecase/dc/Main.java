@@ -9,12 +9,15 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Main extends JavaPlugin {
@@ -31,6 +34,8 @@ public class Main extends JavaPlugin {
     File langEn;
     File langUa;
     public static CustomConfig customConfig;
+    public static CasesConfig casesConfig;
+
     public void onEnable() {
         long time = System.currentTimeMillis();
         instance = this;
@@ -119,6 +124,11 @@ public class Main extends JavaPlugin {
     }
 
     public void setupConfigs() {
+        if(!(new File(getDataFolder(), "cases").exists())) {
+            new File(getDataFolder(), "cases").mkdir();
+            Logger.log("&cOutdated cases format!");
+            t.convertCases();
+        }
         if (!(new File(this.getDataFolder(), "Config.yml")).exists()) {
             this.saveResource("Config.yml", false);
         }
@@ -181,6 +191,7 @@ public class Main extends JavaPlugin {
             this.saveResource("Animations.yml", false);
             customConfig = new CustomConfig();
         }
+        casesConfig = new CasesConfig();
     }
 
     public void setupLangs() {

@@ -1,0 +1,141 @@
+case:
+  Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL, FULLWHEEL see: https://wiki.jodexindustries.space/docs/DonateCase/animations
+  AnimationSound: ENTITY_EXPERIENCE_ORB_PICKUP # remove this line if you don't want to play sound
+  Sound:
+    Volume: 10
+    Pitch: 5
+  Title: '&c&lDonate-&a&lCase' # If you want to make another case, then the Title needs to be changed
+  Gui:
+    GuiMaterial: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+    GuiMaterialName: "&cDonateCase.com"
+    GuiMaterialEnchant: false
+    GuiMaterialLore:
+      - "&f       &f"
+      - "&f       &f"
+    GuiOpenCaseMaterial: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+    GuiOpenCaseMaterialEnchant: false
+    DisplayName: '&bOpen Case'
+    Lore:
+      - '&6The case can be bought on the website: &cDonateCase.com'
+      - ''
+      - '&7Keys: %keys'
+      - ''
+      - '&6Drops:'
+      - '&7&l[&aVIP&7&l] - &b&n50%'
+      - '&7&l[&bVIP&6+&7&l] - &b&n25%'
+      - '&7&l[&5Deluxe&7&l] - &b&n15%'
+      - '&7&l[&dLegend&7&l] - &b&n10%'
+      - ''
+  Items:
+    VIP:
+      Group: vip
+      Chance: 50
+      Item:
+        ID: IRON_SWORD # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+        DisplayName: '&7&l[&aVIP&7&l]'
+        Enchanted: false
+      GiveType: ONE # or RANDOM
+      GiveCommand: lp user %player parent set %group #  GiveType: ONE
+      GiveCommands: # GiveType: RANDOM
+        first:
+          Chance: 50
+          Commands:
+            - ""
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        second:
+          Chance: 50
+          Commands:
+            - ""
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+      Commands: #  GiveType: ONE
+        - some commands here
+      Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
+      SubTitle: "&5you won %groupdisplayname"
+      Broadcast:
+        - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+    VIPPLUS:
+      Group: vipplus
+      Chance: 25
+      Item:
+        ID: GOLDEN_SWORD # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+        DisplayName: '&7&l[&bVIP&6+&7&l]'
+        Enchanted: false
+      GiveType: ONE # or RANDOM
+      GiveCommand: lp user %player parent set %group #  GiveType: ONE
+      GiveCommands: # GiveType: RANDOM
+        first:
+          Chance: 50
+          Commands:
+            - ""
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        second:
+          Chance: 50
+          Commands:
+            - ""
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+      Commands: #  GiveType: ONE
+      #            - some commands here
+      Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
+      SubTitle: "&5you won %groupdisplayname"
+      Broadcast:
+        - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+    Deluxe:
+      Group: deluxe
+      Chance: 15
+      Item:
+        ID: DIAMOND_SWORD # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+        DisplayName: '&7&l[&5Deluxe&7&l]'
+        Enchanted: false
+      GiveType: ONE # or RANDOM
+      GiveCommand: lp user %player parent set %group #  GiveType: ONE
+      GiveCommands: # GiveType: RANDOM
+        first:
+          Chance: 50
+          Commands:
+            - ""
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        second:
+          Chance: 50
+          Commands:
+            - ""
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+      Commands: #  GiveType: ONE
+      #            - some commands here
+      Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
+      SubTitle: "&5you won %groupdisplayname"
+      Broadcast:
+        - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+    Legend:
+      Group: legend
+      Chance: 10
+      Item:
+        ID: NETHERITE_SWORD # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+        DisplayName: '&7&l[&dLegend&7&l]'
+        Enchanted: false
+      GiveType: ONE # or RANDOM
+      GiveCommand: lp user %player parent set %group #  GiveType: ONE
+      GiveCommands: # GiveType: RANDOM
+        first:
+          Chance: 50
+          Commands:
+            - ""
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        second:
+          Chance: 50
+          Commands:
+            - ""
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+      Commands: #  GiveType: ONE
+      #            - some commands here
+      Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
+      SubTitle: "&5you won %groupdisplayname"
+      Broadcast:
+        - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'

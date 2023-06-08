@@ -49,6 +49,14 @@ public class CustomConfig {
         }
 
     }
+    public void saveConfig() {
+        try {
+            Config.save(filecon);
+        } catch (IOException var1) {
+            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Config.yml");
+        }
+
+    }
 
     public void saveKeys() {
         try {

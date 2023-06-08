@@ -8,12 +8,12 @@ import org.bukkit.entity.Player;
 
 import java.util.logging.Level;
 
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
+import static com.jodexindustries.donatecase.dc.Main.casesConfig;
 
 public class StartAnimation {
 
     public StartAnimation(final Player player, Location location, final String c) {
-        String animation = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Animation");
+        String animation = casesConfig.getCase(c).getString("case.Animation");
         if(animation != null) {
             Case.caseOpen.add(player);
             if(AnimationManager.isRegistered(animation)) {

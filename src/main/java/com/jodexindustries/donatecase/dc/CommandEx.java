@@ -1,9 +1,6 @@
 package com.jodexindustries.donatecase.dc;
 
-import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.SubCommand;
-import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.SubCommandType;
+import com.jodexindustries.donatecase.api.*;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import net.md_5.bungee.api.ChatColor;
@@ -22,8 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.jodexindustries.donatecase.api.SubCommandManager.*;
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
-import static com.jodexindustries.donatecase.dc.Main.t;
+import static com.jodexindustries.donatecase.dc.Main.*;
 
 public class CommandEx implements CommandExecutor, TabCompleter {
 
@@ -74,7 +70,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             Player target = Bukkit.getPlayer(player);
                             int keys = Integer.parseInt(args[3]);
                             if (com.jodexindustries.donatecase.api.Case.hasCaseByName(casename)) {
-                                String casetitle = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                                String casetitle = Case.getCaseTitle(casename);
                                 com.jodexindustries.donatecase.api.Case.addKeys(casename, player, keys);
                                 Main.t.msg(sender, Main.t.rt(Main.lang.getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
                                 if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
@@ -118,7 +114,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         String player = args[1];
                         String casename = args[2];
                         if (com.jodexindustries.donatecase.api.Case.hasCaseByName(casename)) {
-                            String casetitle = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                            String casetitle = Case.getCaseTitle(casename);
                             com.jodexindustries.donatecase.api.Case.setNullKeys(casename, player);
                             Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearKeys"), "%player:" + player, "%casetitle:" + casetitle, "%case:" + casename));
                         } else {
@@ -142,7 +138,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     Player target = Bukkit.getPlayer(player);
                     int keys = Integer.parseInt(args[3]);
                     if (com.jodexindustries.donatecase.api.Case.hasCaseByName(casename)) {
-                        String casetitle = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                        String casetitle = Case.getCaseTitle(casename);
                         com.jodexindustries.donatecase.api.Case.setKeys(casename, player, keys);
                         Main.t.msg(sender, Main.t.rt(Main.lang.getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
                         if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
@@ -220,17 +216,12 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             //cases
             if (args[0].equalsIgnoreCase("cases")) {
                 if (sender.hasPermission("donatecase.mod")) {
-                    ConfigurationSection cases_ = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
                     int num = 0;
-                    if (cases_ != null) {
-                        for (String casename : cases_.getValues(false).keySet()) {
+                        for (String casename : casesConfig.getCases().keySet()) {
                             num++;
-                            String casetitle = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                            String casetitle = Case.getCaseTitle(casename);
                             Main.t.msg_(sender, Main.t.rt(Main.lang.getString("CasesList"), "%casename:" + casename, "%num:" + num, "%casetitle:" + casetitle));
                         }
-                    } else {
-                        Main.t.msg_(sender, "null");
-                    }
                 }
             }
             // opencase
@@ -325,8 +316,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             Player player = (Player) sender;
                             Location l = player.getTargetBlock(null, 5).getLocation();
                             if (Case.hasCaseByLocation(l)) {
-                                customConfig.getCases().set("DonatCase.Cases." + Case.getCaseNameByLocation(l), null);
-                                customConfig.saveCases();
+                                Case.deleteCaseByLocation(l);
                                 Main.t.msg(sender, Main.lang.getString("RemoveDonatCase"));
                             } else {
                                 Main.t.msg(sender, Main.lang.getString("BlockDontDonatCase"));
@@ -334,9 +324,8 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         }
                     } else if (args.length == 2) {
                         String name = args[1];
-                        if (com.jodexindustries.donatecase.api.Case.hasCaseDataByName(name)) {
-                            customConfig.getCases().set("DonatCase.Cases." + name, null);
-                            customConfig.saveCases();
+                        if (Case.hasCaseDataByName(name)) {
+                            Case.deleteCaseByName(name);
                             Main.t.msg(sender, Main.lang.getString("RemoveDonatCase"));
                         } else {
                             Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + name));
@@ -453,12 +442,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             ConfigurationSection section;
             if (args[0].equalsIgnoreCase("create") && sender.hasPermission("donatecase.admin")) {
                 list = new ArrayList<>();
-                section = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                if (section != null) {
-                    value = new ArrayList<>(section.getKeys(false));
-                } else {
-                    value = new ArrayList<>();
-                }
+                value = new ArrayList<>(casesConfig.getCases().keySet());
 
                 if (args[1].equals("")) {
                     list = value;
@@ -478,12 +462,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 }
             } else if (args[0].equalsIgnoreCase("opencase") && sender.hasPermission("donatecase.player")) {
                 list = new ArrayList<>();
-                section = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                if (section != null) {
-                    value = new ArrayList<>(section.getKeys(false));
-                } else {
-                    value = new ArrayList<>();
-                }
+                value = new ArrayList<>(casesConfig.getCases().keySet());
                 if (args[1].equals("")) {
                     list = value;
                 } else {
@@ -539,11 +518,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     return new ArrayList<>();
                 } else {
                     list = new ArrayList<>();
-                    value = new ArrayList<>();
-                    section = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                    if (section != null) {
-                        value.addAll(section.getKeys(false));
-                    }
+                    value = new ArrayList<>(casesConfig.getCases().keySet());
                     // playerlist
                     if (args.length == 2) {
                         b = new ArrayList<>();
@@ -579,11 +554,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     return new ArrayList<>();
                 } else {
                     list = new ArrayList<>();
-                    value = new ArrayList<>();
-                    section = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                    if (section != null) {
-                        value.addAll(section.getKeys(false));
-                    }
+                    value = new ArrayList<>(casesConfig.getCases().keySet());
                     // playerlist
                     if (args.length == 2) {
                         b = new ArrayList<>();
@@ -620,10 +591,8 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 }
                 ArrayList<String> b;
                 list = new ArrayList<>();
-                section = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-                if (section != null) {
-                    value = new ArrayList<>(section.getKeys(false));
-                }
+                value = new ArrayList<>(casesConfig.getCases().keySet());
+
 
 
                 if (args.length == 2) {

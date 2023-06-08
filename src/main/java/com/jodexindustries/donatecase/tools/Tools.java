@@ -10,6 +10,7 @@ import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -22,33 +23,36 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
-import static com.jodexindustries.donatecase.dc.Main.t;
+import static com.jodexindustries.donatecase.dc.Main.*;
 
 public class Tools {
 
 
-    public static String getRandomGroup(String casename) {
+    public static String getRandomGroup(String c) {
         Random random = new Random();
         int maxChance = 0;
         int from = 0;
 
-        Set<String> itemKeys = customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getKeys(false);
+        Set<String> itemKeys = casesConfig.getCase(c).getConfigurationSection("case.Items").getKeys(false);
 
         for (String item : itemKeys) {
-            maxChance += customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance");
+            maxChance += casesConfig.getCase(c).getInt("case.Items." + item + ".Chance");
         }
 
         int rand = random.nextInt(maxChance);
 
         for (String item : itemKeys) {
-            int itemChance = customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance");
+            int itemChance = casesConfig.getCase(c).getInt("case.Items." + item + ".Chance");
             if (from <= rand && rand < from + itemChance) {
                 return item;
             }
@@ -144,6 +148,31 @@ public class Tools {
         customConfig.getCases().set("config", "1.0");
         customConfig.saveCases();
         Logger.log("&aConversion successful!");
+    }
+
+    public void convertCases() {
+        ConfigurationSection cases = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+        for (String caseName : cases.getKeys(false)) {
+            File folder = new File(Main.instance.getDataFolder(), "cases");
+            File caseFile;
+            try {
+                caseFile = new File(folder, caseName + ".yml");
+                caseFile.createNewFile();
+                YamlConfiguration caseConfig = YamlConfiguration.loadConfiguration(caseFile);
+                caseConfig.set("case", customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + caseName));
+                caseConfig.save(caseFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        customConfig.getConfig().set("DonatCase.Cases", null);
+        customConfig.saveConfig();
+    }
+    public List<File> getCasesInFolder() {
+        List<File> files = new ArrayList<>();
+        File directory = new File(Main.instance.getDataFolder(), "cases");
+        Collections.addAll(files, directory.listFiles());
+        return files;
     }
     public Location fromString(String str) {
         String regex = "Location\\{world=CraftWorld\\{name=(.*?)},x=(.*?),y=(.*?),z=(.*?),pitch=(.*?),yaw=(.*?)}";

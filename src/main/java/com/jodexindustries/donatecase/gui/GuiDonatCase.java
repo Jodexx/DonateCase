@@ -14,26 +14,24 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
-
 public class GuiDonatCase {
 
     public GuiDonatCase(Player p, String c) {
-        String title = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
+        String title = Case.getCaseTitle(c);
         assert title != null;
         Inventory inv = Bukkit.createInventory(null, 45, Main.t.rc(title));
-        String materialID = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial");
+        String materialID = Main.casesConfig.getCase(c).getString("case.Gui.GuiMaterial");
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             materialID = PAPISupport.setPlaceholders(p, materialID);
         }
-        boolean materialEnchant = customConfig.getConfig().getBoolean("DonatCase.Cases." + c + ".Gui.GuiMaterialEnchant");
-        if(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial") != null && !materialID.equalsIgnoreCase("AIR")) {
-            String materialNAME = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterialName"));
+        boolean materialEnchant = Main.casesConfig.getCase(c).getBoolean("case.Gui.GuiMaterialEnchant");
+        if(Main.casesConfig.getCase(c).getString("case.Gui.GuiMaterial") != null && !materialID.equalsIgnoreCase("AIR")) {
+            String materialNAME = Objects.requireNonNull(Main.casesConfig.getCase(c).getString("case.Gui.GuiMaterialName"));
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 materialNAME = PAPISupport.setPlaceholders(p, materialNAME);
             }
             List<String> materialLORE = new ArrayList<>();
-            for(String line : customConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.GuiMaterialLore")) {
+            for(String line : Main.casesConfig.getCase(c).getStringList("case.Gui.GuiMaterialLore")) {
                 if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                     line = PAPISupport.setPlaceholders(p, line);
                 }
@@ -97,17 +95,17 @@ public class GuiDonatCase {
             }
         }
 
-        String opencasematerialID = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterial").toUpperCase();
+        String opencasematerialID = Main.casesConfig.getCase(c).getString("case.Gui.GuiOpenCaseMaterial").toUpperCase();
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             opencasematerialID = PAPISupport.setPlaceholders(p, opencasematerialID);
         }
-        boolean opencasematerialEnchant = customConfig.getConfig().getBoolean("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterialEnchant");
+        boolean opencasematerialEnchant = Main.casesConfig.getCase(c).getBoolean("case.Gui.GuiOpenCaseMaterialEnchant");
         Material opencasematerial;
         ItemStack opencaseitemstack;
         String displayname;
         int keys = Case.getKeys(c, p.getName());
-        List<String> lore = customConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");
-        displayname = Main.t.rc(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName")
+        List<String> lore = Main.casesConfig.getCase(c).getStringList("case.Gui.Lore");
+        displayname = Main.t.rc(Main.casesConfig.getCase(c).getString("case.Gui.DisplayName")
                 .replace("<key>", String.valueOf(Case.getKeys(c, p.getName()))));
         if(!opencasematerialID.contains(":")) {
             opencasematerial = Material.getMaterial(opencasematerialID);
