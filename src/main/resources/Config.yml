@@ -1,0 +1,89 @@
+config: '2.2' #DON'T CHANGE THIS PLEASE
+
+DonatCase:
+  #Do I need to check for plugin updates?
+  UpdateChecker: true
+  #MySQL Settings
+  MySql:
+    Enabled: false
+    Host: 'localhost'
+    Port: 3306
+    DataBase: 'nameDataBase'
+    User: 'root'
+    Password: 'password'
+  Languages: en #ru/en/ua
+  #Are messages to the player about adding keys included?
+  SetKeysTargetMessage: true
+  LevelGroup: false #Enable if you use PermissionEX, if you use LuckPerms, don't enable if you use "parent add"
+  LevelGroups:
+    legend: 4
+    deluxe: 3
+    vipplus: 2
+    vip: 1
+    default: 0
+  Cases:
+    case:
+      Animation: SHAPE #SHAPE, FIREWORK, #RAINLY
+      AnimationSound: ENTITY_EXPERIENCE_ORB_PICKUP # remove this line if you don't want to play sound
+      Title: '&c&lDonate-&a&lCase' # If you want to make another case, then the Title needs to be changed
+      Gui:
+        GuiMaterial: WHITE_STAINED_GLASS_PANE # you can use player head, example: HEAD:_Jodex__ or HDB:1234
+        GuiMaterialName: "&cDonateCase.com"
+        GuiOpenCaseMaterial: TRIPWIRE_HOOK # you can use player head, example: HEAD:_Jodex__ or HDB:1234
+        DisplayName: '&bOpen Case'
+        Lore:
+          - '&6The case can be bought on the website: &cDonateCase.com'
+          - ''
+          - '&7Keys: %keys'
+          - ''
+          - '&6Drops:'
+          - '&7&l[&aVIP&7&l] - &b&n50%'
+          - '&7&l[&bVIP&6+&7&l] - &b&n25%'
+          - '&7&l[&5Deluxe&7&l] - &b&n15%'
+          - '&7&l[&dLegend&7&l] - &b&n10%'
+          - ''
+      Items:
+        VIP:
+          Group: vip
+          Chance: 50
+          Item:
+            ID: IRON_SWORD # you can use player head, example: HEAD:_Jodex__ or HDB:1234
+            DisplayName: '&7&l[&aVIP&7&l]'
+          GiveCommand: lp user %player parent set %group
+          Commands:
+            - some commands here
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        VIPPLUS:
+          Group: vipplus
+          Chance: 25
+          Item:
+            ID: GOLDEN_SWORD # you can use player head, example: HEAD:_Jodex__ or HDB:1234
+            DisplayName: '&7&l[&bVIP&6+&7&l]'
+          GiveCommand: lp user %player parent set %group
+          Commands:
+            - some commands here
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        Deluxe:
+          Group: deluxe
+          Chance: 15
+          Item:
+            ID: DIAMOND_SWORD # you can use player head, example: HEAD:_Jodex__ or HDB:1234
+            DisplayName: '&7&l[&5Deluxe&7&l]'
+          GiveCommand: lp user %player parent set %group
+          Commands:
+            - some commands here
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        Legend:
+          Group: legend
+          Chance: 10
+          Item:
+            ID: NETHERITE_SWORD # you can use player head, example: HEAD:_Jodex__ or HDB:1234
+            DisplayName: '&7&l[&dLegend&7&l]'
+          GiveCommand: lp user %player parent set %group
+          Commands:
+            - some commands here
+          Broadcast:
+            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'

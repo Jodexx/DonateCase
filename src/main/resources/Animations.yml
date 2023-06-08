@@ -1,0 +1,19 @@
+config: "1.0"
+Shape: #Soon.....
+
+Rainly:
+  FallingParticle: FALLING_WATER # you can use all particles, full list: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
+  # FALLING_WATER
+  # FALLING_LAVA
+  # FALLING_DUST
+  # FALLING_HONEY   1.16+
+  # FALLING_NECTAR  1.16+
+  # FALLING_OBSIDIAN_TEAR
+
+Firework:
+  Power: 0 # Firework power
+  FireworkColors:
+    - RED
+    - BLUE
+    - GREEN
+    - YELLOW
