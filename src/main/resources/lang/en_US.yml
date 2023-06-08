@@ -29,7 +29,7 @@ DestoryDonatCase: '&cDonate Case is forbidden to break'
 NoKey: "&cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.com"
 HaveOpenCase: '&cPlease wait this case is opening'
 ReloadConfig: '&aConfig reloaded!'
-TitleWin: '&aCongratulations! ' # Placeholders: %group - group name; %groupdisplayname - group display name
+TitleWin: '&aCongratulations! '
 SubTitleWin: '&5you won %groupdisplayname'
 CasesList: '&e%num. &6%casename &3- &r%casetitle'
 Help:

@@ -29,8 +29,6 @@ DestoryDonatCase: '&cДонат Кейс ломати заборонено'
 NoKey: '&cУ вас немає ключів для цього кейсу. Можете купити їх тут >>> &6JodexIndustries.ua'
 HaveOpenCase: '&cЗачекайте, цей кейс відкривається'
 ReloadConfig: '&aКонфіг перезавантажено!'
-TitleWin: '&aВітаємо! ' # Плейсхолдери: %group - ім'я групи; %groupdisplayname - відображаєме ім'я групи
-SubTitleWin: '&5ви виграли %groupdisplayname'
 CasesList: '&e%num. &6%casename &3- &r%casetitle'
 Help:
   - '&9/%cmd help &3- &2Допомога по плагіну'

@@ -88,7 +88,7 @@ public class Tools {
             if(text != null) {
                 text = text.replace(s.substring(0, l), s.substring(l + 1));
             } else {
-                text = rc("§cMessage not found! Update lang file!");
+                text = rc("&cMessage not found! Update lang file!");
             }
         }
 
@@ -252,11 +252,7 @@ public class Tools {
         String sound;
         String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
         String winGroupDisplayName = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".Item.DisplayName");
-        String winGroupGroup = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".Group");String titleWin = Main.lang.getString(org.bukkit.ChatColor.translateAlternateColorCodes('&', "TitleWin"));
-        String subTitleWin = Main.lang.getString(org.bukkit.ChatColor.translateAlternateColorCodes('&', "SubTitleWin"));
-        String reptitleWin = Main.t.rt(titleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
-        String repsubTitleWin = Main.t.rt(subTitleWin, "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup);
-        player.sendTitle(Main.t.rc(reptitleWin), Main.t.rc(repsubTitleWin), 5, 60, 5);
+        String winGroupGroup = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".Group");
         // Give command
         String givecommand = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommand");
         if (CustomConfig.getConfig().getBoolean("DonatCase.LevelGroup")) {
@@ -275,7 +271,7 @@ public class Tools {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player:" + player.getName(), "%group:" + winGroupGroup));
         }
         // Sound
-        if(needsound) {
+        if (needsound) {
             if (CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".AnimationSound") != null) {
                 sound = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".AnimationSound"));
                 Sound sound1;
@@ -286,6 +282,24 @@ public class Tools {
                 player.playSound(player.getLocation(), sound1, 1.0F, 5.0F);
             }
         }
+        // Title && SubTitle
+        String title;
+        if (CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Item." + winGroup + ".Title") != null) {
+
+            title = Main.t.rc(Main.t.rt(CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Item." + winGroup + ".Title"),
+                    "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup));
+        } else {
+            title = "";
+        }
+        String subtitle;
+        if (CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Item." + winGroup + ".Title") != null) {
+            subtitle = Main.t.rc(Main.t.rt(CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Item." + winGroup + ".SubTitle"),
+                    "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup));
+        } else {
+            subtitle = "";
+        }
+        player.sendTitle(title, subtitle, 5, 60, 5);
+
         // Broadcast
         for (String cmd2 : CustomConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".Broadcast")) {
             Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(cmd2, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + casetitle)));

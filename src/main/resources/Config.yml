@@ -1,4 +1,4 @@
-config: '2.2' #DON'T CHANGE THIS PLEASE
+config: '2.3' #DON'T CHANGE THIS PLEASE
 
 DonatCase:
   #Do I need to check for plugin updates?
@@ -52,6 +52,8 @@ DonatCase:
           GiveCommand: lp user %player parent set %group
           Commands:
             - some commands here
+          Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
+          SubTitle: "&5you won %groupdisplayname"
           Broadcast:
             - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
         VIPPLUS:
@@ -63,6 +65,8 @@ DonatCase:
           GiveCommand: lp user %player parent set %group
           Commands:
             - some commands here
+          Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
+          SubTitle: "&5you won %groupdisplayname"
           Broadcast:
             - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
         Deluxe:
@@ -74,6 +78,8 @@ DonatCase:
           GiveCommand: lp user %player parent set %group
           Commands:
             - some commands here
+          Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
+          SubTitle: "&5you won %groupdisplayname"
           Broadcast:
             - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
         Legend:
@@ -85,5 +91,7 @@ DonatCase:
           GiveCommand: lp user %player parent set %group
           Commands:
             - some commands here
+          Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
+          SubTitle: "&5you won %groupdisplayname"
           Broadcast:
             - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
