@@ -3,6 +3,8 @@ package com.jodexindustries.dc;
 import com.jodexindustries.tools.CustomConfig;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.Objects;
+
 public class Case {
 
     public static void saveLocation(String name, String type, String lv) {
@@ -95,14 +97,14 @@ public class Case {
         if(CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases") == null) {
             return false;
         } else
-        return CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases").contains(name);
+            return Objects.requireNonNull(CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases")).contains(name);
     }
     // has case data in Cases.yml
     public static boolean hasCaseDataByName(String name) {
         if(CustomConfig.getCases().getConfigurationSection("DonatCase.Cases") == null) {
             return false;
         } else
-        return CustomConfig.getCases().getConfigurationSection("DonatCase.Cases").contains(name);
+            return Objects.requireNonNull(CustomConfig.getCases().getConfigurationSection("DonatCase.Cases")).contains(name);
     }
 
     // has case by title in Config.yml
@@ -111,7 +113,7 @@ public class Case {
         for (String name : cases_.getValues(false).keySet()) {
             if(CustomConfig.getConfig().getString("DonatCase.Cases." + name + ".Title") == null) {
                 return false;
-            } else if (Main.t.rc(CustomConfig.getConfig().getString("DonatCase.Cases." + name + ".Title")).equalsIgnoreCase(title)) {
+            } else if (Main.t.rc(Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + name + ".Title"))).equalsIgnoreCase(title)) {
                 return true;
             }
         }

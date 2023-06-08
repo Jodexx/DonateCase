@@ -39,12 +39,12 @@ public class Main extends JavaPlugin {
     File langUa;
 
     public void onEnable() {
+        t = new Tools();
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             (new Placeholder()).register();
-            Bukkit.getServer().getConsoleSender().sendMessage("[DonateCase] §aPlaceholders registered!");
+            Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &aPlaceholders registered!"));
         }
 
-        t = new Tools();
         setupConfigs();
 
 

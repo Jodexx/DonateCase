@@ -47,17 +47,20 @@ public class Tools {
         int maxChance = 0;
         int from = 0;
 
-        for(String item : CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getValues(true).keySet()) {
+        Set<String> itemKeys = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getKeys(false);
+
+        for (String item : itemKeys) {
             maxChance += CustomConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance");
         }
 
         int rand = random.nextInt(maxChance);
 
-        for(String item2 : CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getValues(true).keySet()) {
-            from += CustomConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item2 + ".Chance");
-            if (from <= rand && rand < from + CustomConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item2 + ".Chance")) {
-                return item2;
+        for (String item : itemKeys) {
+            int itemChance = CustomConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance");
+            if (from <= rand && rand < from + itemChance) {
+                return item;
             }
+            from += itemChance;
         }
 
         return null;
@@ -76,7 +79,7 @@ public class Tools {
     }
 
     public String rc(String t) {
-        return t.replace("&", "§");
+        return ChatColor.translateAlternateColorCodes('&', t);
     }
 
     public String rt(String text, String... repl) {
@@ -85,7 +88,7 @@ public class Tools {
             if(text != null) {
                 text = text.replace(s.substring(0, l), s.substring(l + 1));
             } else {
-                text = "§cMessage not found! Update lang file!";
+                text = rc("§cMessage not found! Update lang file!");
             }
         }
 
