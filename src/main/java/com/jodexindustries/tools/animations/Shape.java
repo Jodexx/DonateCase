@@ -8,7 +8,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -28,9 +27,8 @@ public class Shape {
             }
         }
         final String winGroup = Main.t.getRandomGroup(c);
-        final String winGroupId = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
+        final String winGroupId = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID")).toUpperCase();
         final String winGroupDisplayName = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
-        final String winGroupGroup = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Group");
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
         final ArmorStand as = (ArmorStand)player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
@@ -65,7 +63,7 @@ public class Shape {
                 if (this.i >= 7) {
                     if (this.i == 16) {
                         as.setHelmet(winItem);
-                        as.setCustomName(winItem.getItemMeta().getDisplayName());
+                        as.setCustomName(winItem != null ? Objects.requireNonNull(winItem.getItemMeta()).getDisplayName() : null);
                         Main.t.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
                         Main.t.onCaseOpenFinish(c, player, true, winGroup);
 
@@ -77,7 +75,7 @@ public class Shape {
                     ItemStack winItem2 = null;
                     Material material2;
                     final String winGroupDisplayName2 = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
-                    final String winGroup2Id = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.ID").toUpperCase();
+                    final String winGroup2Id = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.ID")).toUpperCase();
                     if(!winGroup2Id.startsWith("HEAD") && !winGroup2Id.startsWith("BASE64")) {
                         material2 = Material.getMaterial(winGroup2Id);
                         if (material2 == null) {
@@ -99,10 +97,10 @@ public class Shape {
                         }
                     }
                     as.setHelmet(winItem2);
-                    as.setCustomName(winItem2.getItemMeta().getDisplayName());
+                    as.setCustomName(Objects.requireNonNull(winItem2 != null ? winItem2.getItemMeta() : null).getDisplayName());
                     if (this.i <= 8) {
                         Particle.DustOptions dustOptions = new Particle.DustOptions(Color.ORANGE, 1.0F);
-                        this.l.getWorld().spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
+                        Objects.requireNonNull(this.l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
                     }
                 }
 
@@ -123,7 +121,7 @@ public class Shape {
                         final double x = 0.09 * (9.5 - this.t * 2.5) * Math.cos(this.t + phi);
                         final double z = 0.09 * (9.5 - this.t * 2.5) * Math.sin(this.t + phi);
                         loc.add(x, 0.0, z);
-                        this.l.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, this.l.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0);
+                        Objects.requireNonNull(this.l.getWorld()).spawnParticle(Particle.FIREWORKS_SPARK, this.l.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0);
                         loc.subtract(x, 0.0, z);
                         if (this.t >= 22) {
                             loc.add(x, 0.0, z);

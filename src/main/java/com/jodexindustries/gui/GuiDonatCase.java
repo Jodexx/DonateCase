@@ -5,7 +5,6 @@ import com.jodexindustries.dc.Main;
 import com.jodexindustries.tools.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
