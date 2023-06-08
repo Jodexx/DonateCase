@@ -8,18 +8,15 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Shape {
     public static List<Player> caseOpen = new ArrayList<>();
     public Shape(final Player player, Location location, final String c) {
         final Location lAC = location.clone();
-        final String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
         Main.ActiveCase.put(lAC, c);
         caseOpen.add(player);
 
@@ -40,17 +37,14 @@ public class Shape {
         as.setSmall(true);
         as.setVisible(false);
         as.setCustomNameVisible(true);
-        final double[] y = {0};
         (new BukkitRunnable() {
             int i; //ticks count
             double t;
             Location l;
-            Location trail;
 
             public void run() {
                 Material material;
                 ItemStack winItem = null;
-                String sound;
                 if(!winGroupId.startsWith("HEAD") && !winGroupId.startsWith("HEAD")) {
                     material = Material.getMaterial(winGroupId);
                     if (material == null) {
@@ -61,10 +55,6 @@ public class Shape {
                 if(winGroupId.startsWith("HEAD")) {
                     String[] parts = winGroupId.split(":");
                     winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
-                }
-                if(winGroupId.startsWith("BASE64")) {
-                    String[] parts = winGroupId.split(":");
-                    winItem = Main.t.getCustomSkull(parts[1], winGroupDisplayName);
                 }
                 if (this.i == 0) {
                     this.l = as.getLocation();
@@ -96,10 +86,6 @@ public class Shape {
                     if(winGroup2Id.startsWith("HEAD")) {
                         String[] parts = winGroup2Id.split(":");
                         winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
-                    }
-                    if(winGroup2Id.startsWith("BASE64")) {
-                        String[] parts = winGroup2Id.split(":");
-                        winItem2 = Main.t.getCustomSkull(parts[1], winGroupDisplayName2);
                     }
                     if(winGroup2Id.startsWith("HDB")) {
                         String[] parts = winGroup2Id.split(":");

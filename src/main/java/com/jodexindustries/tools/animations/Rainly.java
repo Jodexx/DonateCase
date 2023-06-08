@@ -17,7 +17,6 @@ public class Rainly {
     public static List<Player> caseOpen = new ArrayList<>();
     public Rainly(final Player player, Location location, final String c) {
         final Location lAC = location.clone();
-        final String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
         Main.ActiveCase.put(lAC, c);
         caseOpen.add(player);
 
@@ -30,7 +29,6 @@ public class Rainly {
         final String winGroup = Main.t.getRandomGroup(c);
         final String winGroupId = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
         final String winGroupDisplayName = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
-        final String winGroupGroup = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Group");
         location.add(0.5, 1, 0.5);
         Location rain1 = lAC.clone().add(-1.5, 3, -1.5);
         Location rain2 = lAC.clone().add(2.5, 3, -1.5);
@@ -77,10 +75,6 @@ public class Rainly {
                     String[] parts = winGroupId.split(":");
                     winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
                 }
-                if(winGroupId.startsWith("BASE64")) {
-                    String[] parts = winGroupId.split(":");
-                    winItem = Main.t.getCustomSkull(parts[1], winGroupDisplayName);
-                }
                 if(winGroupId.startsWith("HDB")) {
                     String[] parts = winGroupId.split(":");
                     String id = parts[1];
@@ -122,10 +116,6 @@ public class Rainly {
                     if(winGroup2Id.startsWith("HEAD")) {
                         String[] parts = winGroup2Id.split(":");
                         winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
-                    }
-                    if(winGroup2Id.startsWith("BASE64")) {
-                        String[] parts = winGroup2Id.split(":");
-                        winItem2 = Main.t.getCustomSkull(parts[1], winGroupDisplayName2);
                     }
                     if(winGroup2Id.startsWith("HDB")) {
                         String[] parts = winGroup2Id.split(":");

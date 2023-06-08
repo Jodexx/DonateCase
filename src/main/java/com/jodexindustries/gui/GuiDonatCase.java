@@ -5,7 +5,6 @@ import com.jodexindustries.dc.Main;
 import com.jodexindustries.tools.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -33,10 +32,6 @@ public class GuiDonatCase {
             if (materialID.startsWith("HEAD")) {
                 String[] parts = materialID.split(":");
                 f = Main.t.getPlayerHead(parts[1], materialNAME);
-            }
-            if (materialID.startsWith("BASE64")) {
-                String[] parts = materialID.split(":");
-                f = Main.t.getCustomSkull(parts[1], materialNAME);
             }
             if(materialID.startsWith("HDB")) {
                 String[] parts = materialID.split(":");
@@ -67,7 +62,7 @@ public class GuiDonatCase {
         List<String> lore = CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");
         displayname = Main.t.rc(Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName"))
                 .replace("<key>", String.valueOf(Case.getKeys(c, p.getName()))));
-        if(!opencasematerialID.startsWith("HEAD") && !opencasematerialID.startsWith("BASE64")) {
+        if(!opencasematerialID.startsWith("HEAD") && !opencasematerialID.startsWith("BASE64") && !opencasematerialID.startsWith("HDB")) {
             opencasematerial = Material.getMaterial(opencasematerialID);
             if (opencasematerial == null) {
                 opencasematerial = Material.STONE;
@@ -78,16 +73,14 @@ public class GuiDonatCase {
             String[] parts = opencasematerialID.split(":");
             opencaseitemstack = Main.t.getPlayerHead(parts[1], displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys));
         }
-        if(opencasematerialID.startsWith("BASE64")) {
-            String[] parts = opencasematerialID.split(":");
-            String base64 = parts[1];
-            opencaseitemstack = Main.t.getCustomSkull(base64, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
-        }
         if(opencasematerialID.startsWith("HDB")) {
             String[] parts = opencasematerialID.split(":");
             String id = parts[1];
-            if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase"))
-            opencaseitemstack = Main.t.getHDBSkull(id, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
+            if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                opencaseitemstack = Main.t.getHDBSkull(id, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
+            } else {
+                opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys));
+            }
         }
         inv.setItem(Main.t.c(5, 3), opencaseitemstack);
         p.openInventory(inv);

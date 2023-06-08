@@ -33,7 +33,6 @@ public class EventsListener implements Listener {
         if (event.getDamager() instanceof Firework && event.getEntity() instanceof Player && event.getDamager().hasMetadata("case")) {
             event.setCancelled(true);
         }
-
     }
 
     @EventHandler (priority = EventPriority.HIGH)
