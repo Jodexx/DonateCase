@@ -62,7 +62,8 @@ public class Main extends JavaPlugin {
         }
 
         setupLangs();
-
+        Metrics metrics = new Metrics(this, 18709);
+        metrics.addCustomChart(new Metrics.SimplePie("language", () -> CustomConfig.getConfig().getString("DonatCase.Languages")));
 
         Tconfig = CustomConfig.getConfig().getString("DonatCase.MySql.Enabled").equalsIgnoreCase("false");
         instance.setupPermissions();
