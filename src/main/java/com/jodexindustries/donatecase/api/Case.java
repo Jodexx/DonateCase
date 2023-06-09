@@ -1,6 +1,7 @@
-package com.jodexindustries.dc;
+package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.tools.CustomConfig;
+import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.CustomConfig;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Objects;

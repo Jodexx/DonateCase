@@ -1,4 +1,4 @@
-package com.jodexindustries.tools;
+package com.jodexindustries.donatecase.tools;
 
 import java.io.IOException;
 import java.io.InputStream;

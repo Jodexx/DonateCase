@@ -1,9 +1,10 @@
-package com.jodexindustries.tools;
+package com.jodexindustries.donatecase.tools;
 
-import com.jodexindustries.tools.animations.FireworkShape;
-import com.jodexindustries.tools.animations.Shape;
-import com.jodexindustries.dc.Main;
-import com.jodexindustries.tools.animations.Rainly;
+import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.animations.FireworkShape;
+import com.jodexindustries.donatecase.tools.animations.Rainly;
+import com.jodexindustries.donatecase.tools.animations.Shape;
+import com.jodexindustries.donatecase.tools.animations.Wheel;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -23,6 +24,8 @@ public class StartAnimation {
                 new FireworkShape(player, location, c);
             } else if (animation.equalsIgnoreCase("RAINLY")) {
                 new Rainly(player, location, c);
+            } else if (animation.equalsIgnoreCase("WHEEL")) {
+                new Wheel(player, location, c);
             } else {
                 Main.t.msg(player, Main.t.rc("&cAn error occurred while opening the case!"));
                 Main.t.msg(player, Main.t.rc("&cContact the project administration!"));

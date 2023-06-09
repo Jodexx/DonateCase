@@ -1,9 +1,9 @@
-package com.jodexindustries.tools;
+package com.jodexindustries.donatecase.tools;
 
 import java.io.File;
 import java.util.Objects;
 
-import com.jodexindustries.dc.Main;
+import com.jodexindustries.donatecase.dc.Main;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Languages {

@@ -1,6 +1,6 @@
-package com.jodexindustries.tools;
+package com.jodexindustries.donatecase.tools;
 
-import com.jodexindustries.dc.Main;
+import com.jodexindustries.donatecase.dc.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

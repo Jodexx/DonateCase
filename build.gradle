@@ -1,14 +1,16 @@
 plugins {
     id 'java'
     id 'com.rikonardo.papermake' version '1.0.6'
-
 }
 
-group = 'com.jodexindustries'
-version = '2.0.9.8'
+group = 'com.jodexindustries.donatecase'
+version = '2.0.9.9'
 
 repositories {
     mavenCentral()
+    flatDir {
+        dirs("libs")
+    }
     maven {
         name = "placeholderapi"
         url = "https://repo.extendedclip.com/content/repositories/placeholderapi"
@@ -31,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:24.0.0'
+    compileOnly 'org.jetbrains:annotations:24.0.0'
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     compileOnly "me.clip:placeholderapi:2.11.2"

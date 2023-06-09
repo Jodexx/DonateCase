@@ -1,10 +1,10 @@
-package com.jodexindustries.tools;
+package com.jodexindustries.donatecase.tools;
 
 import java.text.NumberFormat;
 import java.util.Objects;
 
+import com.jodexindustries.donatecase.dc.Main;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import com.jodexindustries.dc.Main;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 

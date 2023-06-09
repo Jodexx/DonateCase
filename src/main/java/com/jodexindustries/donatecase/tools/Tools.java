@@ -1,6 +1,6 @@
-package com.jodexindustries.tools;
+package com.jodexindustries.donatecase.tools;
 
-import com.jodexindustries.dc.Main;
+import com.jodexindustries.donatecase.dc.Main;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;

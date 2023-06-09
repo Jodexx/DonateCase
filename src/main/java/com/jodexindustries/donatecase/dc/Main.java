@@ -1,4 +1,4 @@
-package com.jodexindustries.dc;
+package com.jodexindustries.donatecase.dc;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import com.jodexindustries.listener.EventsListener;
-import com.jodexindustries.tools.*;
+import com.jodexindustries.donatecase.listener.EventsListener;
+import com.jodexindustries.donatecase.tools.*;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

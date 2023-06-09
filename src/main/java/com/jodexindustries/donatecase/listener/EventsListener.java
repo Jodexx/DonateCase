@@ -1,11 +1,11 @@
-package com.jodexindustries.listener;
+package com.jodexindustries.donatecase.listener;
 
-import com.jodexindustries.gui.GuiDonatCase;
-import com.jodexindustries.dc.Case;
-import com.jodexindustries.dc.Main;
-import com.jodexindustries.tools.CustomConfig;
-import com.jodexindustries.tools.StartAnimation;
-import com.jodexindustries.tools.UpdateChecker;
+import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.StartAnimation;
+import com.jodexindustries.donatecase.tools.UpdateChecker;
+import com.jodexindustries.donatecase.gui.GuiDonatCase;
+import com.jodexindustries.donatecase.tools.CustomConfig;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;

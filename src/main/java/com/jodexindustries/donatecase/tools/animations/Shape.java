@@ -1,8 +1,8 @@
-package com.jodexindustries.tools.animations;
+package com.jodexindustries.donatecase.tools.animations;
 
-import com.jodexindustries.dc.Main;
-import com.jodexindustries.tools.CustomConfig;
-import com.jodexindustries.tools.StartAnimation;
+import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.CustomConfig;
+import com.jodexindustries.donatecase.tools.StartAnimation;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;

@@ -1,4 +1,4 @@
-package com.jodexindustries.tools;
+package com.jodexindustries.donatecase.tools;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.jodexindustries.dc.Main;
+import com.jodexindustries.donatecase.dc.Main;
 import org.bukkit.Bukkit;
 
 public class MySQL {

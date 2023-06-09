@@ -1,6 +1,7 @@
-package com.jodexindustries.dc;
+package com.jodexindustries.donatecase.dc;
 
-import com.jodexindustries.tools.CustomConfig;
+import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.tools.CustomConfig;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;

@@ -1,8 +1,8 @@
-package com.jodexindustries.gui;
+package com.jodexindustries.donatecase.gui;
 
-import com.jodexindustries.dc.Case;
-import com.jodexindustries.dc.Main;
-import com.jodexindustries.tools.CustomConfig;
+import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

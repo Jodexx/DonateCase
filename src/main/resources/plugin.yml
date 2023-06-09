@@ -1,5 +1,5 @@
 name: DonateCase
-main: com.jodexindustries.dc.Main
+main: com.jodexindustries.donatecase.dc.Main
 author: _Jodex__
 version: '${version}'
 depend: [Vault, PlaceholderAPI]
