@@ -149,7 +149,7 @@ public class Main extends JavaPlugin {
             CustomConfig.setup();
         }
 
-        if (!CustomConfig.getConfig().getString("config").equals("2.3")) {
+        if (!CustomConfig.getConfig().getString("config").equals("2.4")) {
             Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated Config.yml! Creating a new!"));
             ConfigFile = new File(this.getDataFolder(), "Config.yml");
             ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));

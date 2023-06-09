@@ -1,4 +1,4 @@
-config: '2.3' #DON'T CHANGE THIS PLEASE
+config: '2.4' #DON'T CHANGE THIS PLEASE
 
 DonatCase:
   #Do I need to check for plugin updates?
@@ -29,6 +29,9 @@ DonatCase:
       Gui:
         GuiMaterial: WHITE_STAINED_GLASS_PANE # you can use player head, example: HEAD:_Jodex__ or HDB:1234
         GuiMaterialName: "&cDonateCase.com"
+        GuiMaterialLore:
+          - "&f       &f"
+          - "&f       &f"
         GuiOpenCaseMaterial: TRIPWIRE_HOOK # you can use player head, example: HEAD:_Jodex__ or HDB:1234
         DisplayName: '&bOpen Case'
         Lore:

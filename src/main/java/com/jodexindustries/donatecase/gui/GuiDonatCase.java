@@ -4,11 +4,13 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.CustomConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,6 +22,10 @@ public class GuiDonatCase {
         final String materialID = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial")).toUpperCase();
         if(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial") != null && !materialID.equalsIgnoreCase("AIR")) {
             final String materialNAME = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterialName"));
+            List<String> materialLORE = new ArrayList<>();
+            for(String line : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.GuiMaterialLore")) {
+                materialLORE.add(ChatColor.translateAlternateColorCodes('&', line));
+            }
             Material material;
             ItemStack f = new ItemStack(Material.STRUCTURE_VOID);
             if (!materialID.startsWith("HEAD") && !materialID.startsWith("BASE64")) {
@@ -27,17 +33,17 @@ public class GuiDonatCase {
                 if (material == null) {
                     material = Material.STONE;
                 }
-                f = Main.t.createItem(material, 1, 1, materialNAME);
+                f = Main.t.createItem(material, 1, 1, materialNAME, materialLORE);
             }
             if (materialID.startsWith("HEAD")) {
                 String[] parts = materialID.split(":");
-                f = Main.t.getPlayerHead(parts[1], materialNAME);
+                f = Main.t.getPlayerHead(parts[1], materialNAME, materialLORE);
             }
             if(materialID.startsWith("HDB")) {
                 String[] parts = materialID.split(":");
                 String id = parts[1];
                 if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                    f  = Main.t.getHDBSkull(id, materialNAME);
+                    f  = Main.t.getHDBSkull(id, materialNAME, materialLORE);
                 } else {
                     f = new ItemStack(Material.STONE);
                 }

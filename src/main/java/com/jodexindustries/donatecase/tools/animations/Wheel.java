@@ -71,46 +71,14 @@ public class Wheel {
                 }
                 if (this.i >= 14) {
                     this.l.setYaw(las.getYaw());
-                    if (this.i == 32) {
-                        // win item and title
-                        as.setHelmet(winItem);
-                        as.setCustomName(winItem.getItemMeta().getDisplayName());
-                        Main.t.onCaseOpenFinish(c, player, false, winGroup);
-                        lAC.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, lAC, 0);
-                        lAC.getWorld().playSound(lAC, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
-                    }
                 }
-
-                // change random item
-                if (this.i <= 30 && (this.i % 2 == 0 )) {
-                    final String winGroup2 = Main.t.getRandomGroup(c);
-                    ItemStack winItem2 = null;
-                    Material material2;
-                    final String winGroupDisplayName2 = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
-                    final String winGroup2Id = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.ID").toUpperCase();
-                    if(!winGroup2Id.startsWith("HEAD") && !winGroup2Id.startsWith("BASE64")) {
-                        material2 = Material.getMaterial(winGroup2Id);
-                        if (material2 == null) {
-                            material2 = Material.STONE;
-                        }
-                        winItem2 = Main.t.createItem(material2, 1, 0, winGroupDisplayName2);
-                    }
-                    if(winGroup2Id.startsWith("HEAD")) {
-                        String[] parts = winGroup2Id.split(":");
-                        winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
-                    }
-                    if(winGroup2Id.startsWith("HDB")) {
-                        String[] parts = winGroup2Id.split(":");
-                        String id = parts[1];
-                        if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                            winItem2  = Main.t.getHDBSkull(id, winGroupDisplayName2);
-                        } else {
-                            winItem2 = new ItemStack(Material.STONE);
-                        }
-                    }
-                    as.setHelmet(winItem2);
-                    as.setCustomName(winItem2.getItemMeta().getDisplayName());
-                    player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 5.0F);
+                if (this.i == 32) {
+                    // win item and title
+                    as.setHelmet(winItem);
+                    as.setCustomName(winItem.getItemMeta().getDisplayName());
+                    Main.t.onCaseOpenFinish(c, player, false, winGroup);
+                    lAC.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, lAC, 0);
+                    lAC.getWorld().playSound(lAC, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                 }
                 // End
                 if (this.i >= 70) {

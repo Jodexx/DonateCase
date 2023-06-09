@@ -38,6 +38,7 @@ public class CustomConfig {
     public static void saveCases() {
         try {
             Cases.save(filec);
+            Cases = YamlConfiguration.loadConfiguration(filec);
         } catch (IOException var1) {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Cases.yml");
         }
@@ -56,6 +57,7 @@ public class CustomConfig {
     public static void saveKeys() {
         try {
             Keys.save(filek);
+            Keys = YamlConfiguration.loadConfiguration(filek);
         } catch (IOException var1) {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Keys.yml");
         }
