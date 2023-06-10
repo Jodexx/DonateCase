@@ -12,15 +12,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class FireworkShape {
-    public static List<Player> caseOpen = new ArrayList<>();
+    CustomConfig customConfig = new CustomConfig();
+
     public FireworkShape(final Player player, Location location, final String c) {
         final Location lAC = location.clone();
         Main.ActiveCase.put(lAC, c);
-        caseOpen.add(player);
 
         for (Player pl : Bukkit.getOnlinePlayers()) {
             if (Main.openCase.containsKey(pl) && Main.t.isHere(location, Main.openCase.get(pl))) {
@@ -28,8 +25,8 @@ public class FireworkShape {
             }
         }
         final String winGroup = Main.t.getRandomGroup(c);
-        final String winGroupId = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
-        final String winGroupDisplayName = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
+        final String winGroupId = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
+        final String winGroupDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
         final ArmorStand as = (ArmorStand)player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
@@ -73,10 +70,10 @@ public class FireworkShape {
                     Firework firework = loc.getWorld().spawn(loc, Firework.class);
                     FireworkMeta data = firework.getFireworkMeta();
                     data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
-                    for (String color : CustomConfig.getAnimations().getStringList("Firework.FireworkColors")) {
+                    for (String color : customConfig.getAnimations().getStringList("Firework.FireworkColors")) {
                         data.addEffect(FireworkEffect.builder().withColor(Main.t.parseColor(color)).build());
                     }
-                    data.setPower(CustomConfig.getAnimations().getInt("FireWork.Power"));
+                    data.setPower(customConfig.getAnimations().getInt("FireWork.Power"));
                     firework.setFireworkMeta(data);
                 }
                 Location las = as.getLocation().clone();

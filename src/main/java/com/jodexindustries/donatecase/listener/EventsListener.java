@@ -2,10 +2,10 @@ package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.StartAnimation;
-import com.jodexindustries.donatecase.tools.UpdateChecker;
 import com.jodexindustries.donatecase.gui.GuiDonatCase;
 import com.jodexindustries.donatecase.tools.CustomConfig;
+import com.jodexindustries.donatecase.tools.StartAnimation;
+import com.jodexindustries.donatecase.tools.UpdateChecker;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -26,7 +26,10 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+
 public class EventsListener implements Listener {
+    CustomConfig customConfig = new CustomConfig();
+    Case Case = new Case();
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
@@ -38,7 +41,7 @@ public class EventsListener implements Listener {
     @EventHandler (priority = EventPriority.HIGH)
     public void onAdminJoined(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if (CustomConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
+        if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             if (p.hasPermission("donatecase.admin")) {
                 new UpdateChecker(Main.instance, 106701).getVersion((version) -> {
                     if (!Main.instance.getDescription().getVersion().equals(version)) {

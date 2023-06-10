@@ -3,7 +3,10 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.CustomConfig;
 import com.jodexindustries.donatecase.tools.StartAnimation;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -14,83 +17,122 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Wheel {
-    public static List<Player> caseOpen = new ArrayList<>();
-    public Wheel(final Player player, Location location, final String c) {
-        final Location lAC = location.clone();
-        Main.ActiveCase.put(lAC, c);
-        caseOpen.add(player);
+    CustomConfig customConfig = new CustomConfig();
 
+    List<ItemStack> items = new ArrayList<>();
+    List<String> groups = new ArrayList<>();
+    List<ArmorStand> armorStands = new ArrayList<>();
+     public Wheel(final Player player, Location location, final String c) {
+        final Location lAC = location.clone();
+        // make case active
+        Main.ActiveCase.put(lAC, c);
+        // close inventory
         for (Player pl : Bukkit.getOnlinePlayers()) {
             if (Main.openCase.containsKey(pl) && Main.t.isHere(location, Main.openCase.get(pl))) {
                 pl.closeInventory();
             }
         }
-        final String winGroup = Main.t.getRandomGroup(c);
-        final String winGroupId = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
-        final String winGroupDisplayName = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
-        location.add(0.5, 1, 0.5);
-        location.setYaw(-70.0F);
-        final ArmorStand as = (ArmorStand) player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+        // register items
+         int itemscount = customConfig.getAnimations().getInt("Wheel.ItemsCount");;
+        for (int i = 0; i < itemscount; i++) {
+            String winGroup = Main.t.getRandomGroup(c);
+            String winGroupId = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
+            String winGroupDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
+            Material material;
+            ItemStack winItem = null;
+            if (!winGroupId.startsWith("HEAD") && !winGroupId.startsWith("BASE64")) {
+                material = Material.getMaterial(winGroupId);
+                if (material == null) {
+                    material = Material.STONE;
+                }
+                winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName);
+            } else if (winGroupId.startsWith("HEAD")) {
+                String[] parts = winGroupId.split(":");
+                winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
+            } else if (winGroupId.startsWith("HDB")) {
+                String[] parts = winGroupId.split(":");
+                String id = parts[1];
+                if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                    winItem = Main.t.getHDBSkull(id, winGroupDisplayName);
+                } else {
+                    winItem = new ItemStack(Material.STONE);
+                }
+            }
+            items.add(winItem);
+            groups.add(winGroup);
+            armorStands.add(spawnArmorStand(location, i));
+        }
+
+        (new BukkitRunnable() {
+            int ticks = 0;
+
+            // Configurable variables:
+            final double speed = customConfig.getAnimations().getDouble("Wheel.CircleSpeed");; // rotation speed; how many times an element does a whole circle per second
+            final double radius = customConfig.getAnimations().getDouble("Wheel.CircleRadius"); // the radius of the circle, in blocks
+
+            // Constants:
+            final double offset = 2 * Math.PI / itemscount; // 'entities' is your collection of entities
+            Location location = lAC.clone().add(0.5, -1, 0);
+
+            public void run() {
+                ticks++;
+                double angle = ticks / 20.0; // the seconds for which the runnable has been running
+                angle *= speed; // apply speed
+                angle *= 2 * Math.PI; // scale to radians (2PI = 360 degrees = 1 circle)
+                if(ticks < 101) {
+                    for (ArmorStand entity : armorStands) {
+                        double x = radius * Math.sin(angle);
+                        double y = radius * Math.cos(angle);
+
+                        // add the (x, y) to the >center< location,
+                        // as they are an offset, not the resulting location.
+                        // remember to clone the center!
+                        Location newLoc = location.clone().add(x, y, 0);
+                        // teleport to the new offset location
+                        entity.teleport(newLoc);
+
+                        angle += offset; // Update angle
+
+                        double targetAngle = 0.5 * Math.PI; // Adjust this value to the desired angle
+                        double currentAngle = angle % (2 * Math.PI); // Normalize the angle to [0, 2PI)
+                        double threshold = 0.1; // Adjust this value to set the proximity threshold
+                        if (Math.abs(currentAngle - targetAngle) < threshold) {
+                            if(customConfig.getAnimations().getString("Wheel.Scroll.Sound") != null) {
+                                location.getWorld().playSound(location,
+                                        Sound.valueOf(customConfig.getAnimations().getString("Wheel.Scroll.Sound")),
+                                        customConfig.getAnimations().getInt("Wheel.Scroll.Volume"),
+                                        customConfig.getAnimations().getInt("Wheel.Scroll.Pitch"));
+                            }
+                        }
+                    }
+                }
+                if (ticks == 101) {
+                    String winGroup = groups.get(groups.size() / 2);
+                    Main.t.onCaseOpenFinish(c, player, false, winGroup);
+                }
+                // End
+
+                if (this.ticks >= 120) {
+                    this.cancel();
+                    Main.ActiveCase.remove(lAC);
+                    for(ArmorStand stand : armorStands) {
+                        Main.listAR.remove(stand);
+                        stand.remove();
+                    }
+                    StartAnimation.caseOpen.remove(player);
+                }
+            }
+        }).runTaskTimer(Main.instance, 0L, 2L);
+    }
+    private ArmorStand spawnArmorStand(Location location, int index) {
+        ArmorStand as = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         as.setVisible(false);
         Main.listAR.add(as);
         as.setGravity(false);
         as.setSmall(true);
         as.setCustomNameVisible(true);
-        (new BukkitRunnable() {
-            int i; // count of ticks
-            Location l;
-
-            public void run() {
-                Material material;
-                ItemStack winItem = null;
-                Location las = as.getLocation().clone();
-                las.setYaw(las.getYaw() + 20.0F);
-                as.teleport(las);
-                if(!winGroupId.startsWith("HEAD") && !winGroupId.startsWith("BASE64")) {
-                    material = Material.getMaterial(winGroupId);
-                    if (material == null) {
-                        material = Material.STONE;
-                    }
-                    winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName);
-                }
-                if(winGroupId.startsWith("HEAD")) {
-                    String[] parts = winGroupId.split(":");
-                    winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
-                }
-                if(winGroupId.startsWith("HDB")) {
-                    String[] parts = winGroupId.split(":");
-                    String id = parts[1];
-                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                        winItem  = Main.t.getHDBSkull(id, winGroupDisplayName);
-                    } else {
-                        winItem = new ItemStack(Material.STONE);
-                    }
-                }
-                if (this.i == 0) {
-                    this.l = as.getLocation();
-                }
-                if (this.i >= 14) {
-                    this.l.setYaw(las.getYaw());
-                }
-                if (this.i == 32) {
-                    // win item and title
-                    as.setHelmet(winItem);
-                    as.setCustomName(winItem.getItemMeta().getDisplayName());
-                    Main.t.onCaseOpenFinish(c, player, false, winGroup);
-                    lAC.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, lAC, 0);
-                    lAC.getWorld().playSound(lAC, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
-                }
-                // End
-                if (this.i >= 70) {
-                    as.remove();
-                    this.cancel();
-                    Main.ActiveCase.remove(lAC);
-                    Main.listAR.remove(as);
-                    StartAnimation.caseOpen.remove(player);
-                }
-
-                ++this.i;
-            }
-        }).runTaskTimer(Main.instance, 0L, 2L);
+        as.setHelmet(items.get(index));
+        as.setCustomName(items.get(index).getItemMeta().getDisplayName());
+        return as;
     }
 }

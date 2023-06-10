@@ -10,25 +10,21 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Rainly {
-    public static List<Player> caseOpen = new ArrayList<>();
+    CustomConfig customConfig = new CustomConfig();
     public Rainly(final Player player, Location location, final String c) {
         final Location lAC = location.clone();
         Main.ActiveCase.put(lAC, c);
-        caseOpen.add(player);
 
         for (Player pl : Bukkit.getOnlinePlayers()) {
             if (Main.openCase.containsKey(pl) && Main.t.isHere(location, Main.openCase.get(pl))) {
                 pl.closeInventory();
             }
         }
-        final String FallingParticle = CustomConfig.getAnimations().getString("Rainly.FallingParticle");
+        final String FallingParticle = customConfig.getAnimations().getString("Rainly.FallingParticle");
         final String winGroup = Main.t.getRandomGroup(c);
-        final String winGroupId = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
-        final String winGroupDisplayName = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
+        final String winGroupId = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
+        final String winGroupDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
         location.add(0.5, 1, 0.5);
         Location rain1 = lAC.clone().add(-1.5, 3, -1.5);
         Location rain2 = lAC.clone().add(2.5, 3, -1.5);
@@ -104,8 +100,8 @@ public class Rainly {
                     final String winGroup2 = Main.t.getRandomGroup(c);
                     ItemStack winItem2 = null;
                     Material material2;
-                    final String winGroupDisplayName2 = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
-                    final String winGroup2Id = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.ID").toUpperCase();
+                    final String winGroupDisplayName2 = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
+                    final String winGroup2Id = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.ID").toUpperCase();
                     if(!winGroup2Id.startsWith("HEAD") && !winGroup2Id.startsWith("BASE64")) {
                         material2 = Material.getMaterial(winGroup2Id);
                         if (material2 == null) {

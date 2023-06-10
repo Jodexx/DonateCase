@@ -13,10 +13,12 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class StartAnimation {
+
     public static List<Player> caseOpen = new ArrayList<>();
 
     public StartAnimation(final Player player, Location location, final String c) {
-        String animation = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Animation");
+        CustomConfig customConfig = new CustomConfig();
+        String animation = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Animation");
         if(animation != null) {
             if (animation.equalsIgnoreCase("SHAPE")) {
                 new Shape(player, location, c);

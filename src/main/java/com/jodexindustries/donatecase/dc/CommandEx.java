@@ -20,8 +20,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CommandEx implements CommandExecutor, TabCompleter {
+    CustomConfig customConfig = new CustomConfig();
+    Case Case = new Case();
+    
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
+        
         if (args.length == 0) {
             // if sender is player
             if (sender instanceof Player) {
@@ -66,10 +70,10 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             Player target = Bukkit.getPlayer(player);
                             int keys = Integer.parseInt(args[3]);
                             if (Case.hasCaseByName(casename)) {
-                                String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                                String casetitle = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
                                 Case.addKeys(casename, player, keys);
                                 Main.t.msg(sender, Main.t.rt(Main.lang.getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
-                                if (CustomConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
+                                if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
                                     Main.t.msg(target, Main.t.rt(Main.lang.getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
                                 }
                             } else {
@@ -97,8 +101,8 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     if (args.length == 2) {
                         if (args[1].equalsIgnoreCase("all")) {
                             if (Main.Tconfig) {
-                                CustomConfig.getKeys().set("DonatCase.Cases", null);
-                                CustomConfig.saveKeys();
+                                customConfig.getKeys().set("DonatCase.Cases", null);
+                                customConfig.saveKeys();
                                 Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys")));
                             } else {
                                 Main.mysql.delAllKey();
@@ -110,7 +114,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         String player = args[1];
                         String casename = args[2];
                         if (Case.hasCaseByName(casename)) {
-                            String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                            String casetitle = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
                             Case.setNullKeys(casename, player);
                             Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearKeys"), "%player:" + player, "%casetitle:" + casetitle, "%case:" + casename));
                         } else {
@@ -134,10 +138,10 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     Player target = Bukkit.getPlayer(player);
                     int keys = Integer.parseInt(args[3]);
                     if (Case.hasCaseByName(casename)) {
-                        String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                        String casetitle = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
                         Case.setKeys(casename, player, keys);
                         Main.t.msg(sender, Main.t.rt(Main.lang.getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
-                        if (CustomConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
+                        if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
                             Main.t.msg(target, Main.t.rt(Main.lang.getString("SetKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + casetitle, "%case:" + casename));
                         }
                     } else {
@@ -182,12 +186,12 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             //cases
             if (args[0].equalsIgnoreCase("cases")) {
                 if (sender.hasPermission("donatecase.mod")) {
-                    ConfigurationSection cases_ = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                    ConfigurationSection cases_ = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
                     int num = 0;
                     if (cases_ != null) {
                         for (String casename : cases_.getValues(false).keySet()) {
                             num++;
-                            String casetitle = CustomConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+                            String casetitle = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
                             Main.t.msg_(sender, Main.t.rt(Main.lang.getString("CasesList"), "%casename:" + casename, "%num:" + num, "%casetitle:" + casetitle));
                         }
                     } else {
@@ -289,8 +293,8 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             Location l = player.getTargetBlock(null, 5).getLocation();
                             String locat = l.toString();
                             if (Case.hasCaseByLocation(locat)) {
-                                CustomConfig.getCases().set("DonatCase.Cases." + Case.getCaseNameByLocation(locat), null);
-                                CustomConfig.saveCases();
+                                customConfig.getCases().set("DonatCase.Cases." + Case.getCaseNameByLocation(locat), null);
+                                customConfig.saveCases();
                                 Main.t.msg(sender, Main.lang.getString("RemoveDonatCase"));
                             } else {
                                 Main.t.msg(sender, Main.lang.getString("BlockDontDonatCase"));
@@ -299,8 +303,8 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     } else if (args.length == 2) {
                         String name = args[1];
                         if (Case.hasCaseDataByName(name)) {
-                            CustomConfig.getCases().set("DonatCase.Cases." + name, null);
-                            CustomConfig.saveCases();
+                            customConfig.getCases().set("DonatCase.Cases." + name, null);
+                            customConfig.saveCases();
                             Main.t.msg(sender, Main.lang.getString("RemoveDonatCase"));
                         } else {
                             Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + name));
@@ -391,7 +395,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             ConfigurationSection section;
             if (args[0].equalsIgnoreCase("create") && sender.hasPermission("donatecase.admin")) {
                 list = new ArrayList<>();
-                section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                section = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
                 if (section != null) {
                     value = new ArrayList<>(section.getKeys(false));
                 } else {
@@ -416,7 +420,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 }
             } else if (args[0].equalsIgnoreCase("opencase") && sender.hasPermission("donatecase.player")) {
                 list = new ArrayList<>();
-                section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                section = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
                 if (section != null) {
                     value = new ArrayList<>(section.getKeys(false));
                 } else {
@@ -440,7 +444,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             }
             else if (args[0].equalsIgnoreCase("delete")) {
                 if(args.length == 2) {
-                    section = CustomConfig.getCases().getConfigurationSection("DonatCase.Cases");
+                    section = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
                     if(section != null) {
                         value = new ArrayList<>(section.getKeys(false));
                         Collections.sort(value);
@@ -478,7 +482,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 } else {
                     list = new ArrayList<>();
                     value = new ArrayList<>();
-                    section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                    section = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
                     if (section != null) {
                         value.addAll(section.getKeys(false));
                     }
@@ -518,7 +522,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 } else {
                     list = new ArrayList<>();
                     value = new ArrayList<>();
-                    section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                    section = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
                     if (section != null) {
                         value.addAll(section.getKeys(false));
                     }
@@ -558,7 +562,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 }
                 ArrayList<String> b;
                 list = new ArrayList<>();
-                section = CustomConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+                section = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
                 if (section != null) {
                     value = new ArrayList<>(section.getKeys(false));
                 }

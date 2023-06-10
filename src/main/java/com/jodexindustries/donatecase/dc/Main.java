@@ -29,16 +29,16 @@ public class Main extends JavaPlugin {
     public static FileConfiguration lang;
     public static MySQL mysql;
 
-    public Main() {
-        instance = this;
-    }
     File ConfigFile;
     File AnimationsFile;
     File langRu;
     File langEn;
     File langUa;
+    private CustomConfig customConfig;
 
     public void onEnable() {
+        instance = this;
+        customConfig = new CustomConfig();
         t = new Tools();
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             (new Placeholder()).register();
@@ -49,7 +49,7 @@ public class Main extends JavaPlugin {
 
 
         Bukkit.getPluginManager().registerEvents(new EventsListener(), this);
-        if (CustomConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
+        if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
                 if (getDescription().getVersion().equals(version)) {
                     getLogger().info("There is not a new update available.");
@@ -63,17 +63,17 @@ public class Main extends JavaPlugin {
 
         setupLangs();
         Metrics metrics = new Metrics(this, 18709);
-        metrics.addCustomChart(new Metrics.SimplePie("language", () -> CustomConfig.getConfig().getString("DonatCase.Languages")));
+        metrics.addCustomChart(new Metrics.SimplePie("language", () -> customConfig.getConfig().getString("DonatCase.Languages")));
 
-        Tconfig = CustomConfig.getConfig().getString("DonatCase.MySql.Enabled").equalsIgnoreCase("false");
+        Tconfig = customConfig.getConfig().getString("DonatCase.MySql.Enabled").equalsIgnoreCase("false");
         instance.setupPermissions();
         if (!Tconfig) {
-            String base = CustomConfig.getConfig().getString("DonatCase.MySql.DataBase");
-            String port = CustomConfig.getConfig().getString("DonatCase.MySql.Port");
-            String hostname = CustomConfig.getCases().getString("DonatCase.MySql.Host");
+            String base = customConfig.getConfig().getString("DonatCase.MySql.DataBase");
+            String port = customConfig.getConfig().getString("DonatCase.MySql.Port");
+            String hostname = customConfig.getCases().getString("DonatCase.MySql.Host");
             final String host = "jdbc:mysql://" + hostname + ":" + port + "/" + base;
-            final String user = CustomConfig.getConfig().getString("DonatCase.MySql.User");
-            final String password = CustomConfig.getConfig().getString("DonatCase.MySql.Password");
+            final String user = customConfig.getConfig().getString("DonatCase.MySql.User");
+            final String password = customConfig.getConfig().getString("DonatCase.MySql.Password");
             (new BukkitRunnable() {
                 public void run() {
                     Main.mysql = new MySQL(host, user, password);
@@ -139,43 +139,44 @@ public class Main extends JavaPlugin {
             this.saveResource("lang/ua_UA.yml", false);
         }
 
-        CustomConfig.setup();
+        customConfig = new CustomConfig();
         // Config.yml ver check
-        if (CustomConfig.getConfig().getString("config") == null) {
+        if (customConfig.getConfig().getString("config") == null) {
             Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated Config.yml! Creating a new!"));
             ConfigFile = new File(this.getDataFolder(), "Config.yml");
             ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
             this.saveResource("Config.yml", false);
-            CustomConfig.setup();
+            customConfig = new CustomConfig();
+
         }
 
-        if (!CustomConfig.getConfig().getString("config").equals("2.4")) {
+        if (!customConfig.getConfig().getString("config").equals("2.4")) {
             Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated Config.yml! Creating a new!"));
             ConfigFile = new File(this.getDataFolder(), "Config.yml");
             ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
             this.saveResource("Config.yml", false);
-            CustomConfig.setup();
+            customConfig = new CustomConfig();
         }
         // Animations.yml ver check
-        if (CustomConfig.getAnimations().getString("config") == null) {
+        if (customConfig.getAnimations().getString("config") == null) {
             Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated Animations.yml! Creating a new!"));
             AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
             AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
             this.saveResource("Animations.yml", false);
-            CustomConfig.setup();
+            customConfig = new CustomConfig();
         }
 
-        if (!CustomConfig.getAnimations().getString("config").equals("1.0")) {
+        if (!customConfig.getAnimations().getString("config").equals("1.1")) {
             Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated Animations.yml! Creating a new!"));
             AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
             AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
             this.saveResource("Animations.yml", false);
-            CustomConfig.setup();
+            customConfig = new CustomConfig();
         }
     }
 
     public void setupLangs() {
-        lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
+        lang = (new Languages(customConfig.getConfig().getString("DonatCase.Languages"))).getLang();
         if (lang.getString("config") == null || !lang.getString("config").equals("2.4")) {
             Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated lang config! Creating a new!"));
             langRu = new File(this.getDataFolder(), "lang/ru_RU.yml");
@@ -187,8 +188,8 @@ public class Main extends JavaPlugin {
             langUa = new File(this.getDataFolder(), "lang/ua_UA.yml");
             langUa.renameTo(new File(this.getDataFolder(), "lang/ua_UA.yml.old"));
             this.saveResource("lang/ua_UA.yml", false);
-            CustomConfig.setup();
-            lang = (new Languages(CustomConfig.getConfig().getString("DonatCase.Languages"))).getLang();
+            customConfig = new CustomConfig();
+            lang = (new Languages(customConfig.getConfig().getString("DonatCase.Languages"))).getLang();
         }
     }
     public static Permission getPermissions() {

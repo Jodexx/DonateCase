@@ -15,15 +15,17 @@ import java.util.List;
 import java.util.Objects;
 
 public class GuiDonatCase {
+
     public GuiDonatCase(Player p, String c) {
-        String title = CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
+        CustomConfig customConfig = new CustomConfig();
+        String title = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
         assert title != null;
         Inventory inv = Bukkit.createInventory(null, 45, Main.t.rc(title));
-        final String materialID = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial")).toUpperCase();
-        if(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial") != null && !materialID.equalsIgnoreCase("AIR")) {
-            final String materialNAME = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterialName"));
+        final String materialID = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial")).toUpperCase();
+        if(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial") != null && !materialID.equalsIgnoreCase("AIR")) {
+            final String materialNAME = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterialName"));
             List<String> materialLORE = new ArrayList<>();
-            for(String line : CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.GuiMaterialLore")) {
+            for(String line : customConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.GuiMaterialLore")) {
                 materialLORE.add(ChatColor.translateAlternateColorCodes('&', line));
             }
             Material material;
@@ -60,13 +62,14 @@ public class GuiDonatCase {
             }
         }
 
-        final String opencasematerialID = Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterial")).toUpperCase();
+        final String opencasematerialID = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterial")).toUpperCase();
         Material opencasematerial;
         ItemStack opencaseitemstack = null;
         String displayname;
+        Case Case = new Case();
         int keys = Case.getKeys(c, p.getName());
-        List<String> lore = CustomConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");
-        displayname = Main.t.rc(Objects.requireNonNull(CustomConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName"))
+        List<String> lore = customConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");
+        displayname = Main.t.rc(Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName"))
                 .replace("<key>", String.valueOf(Case.getKeys(c, p.getName()))));
         if(!opencasematerialID.startsWith("HEAD") && !opencasematerialID.startsWith("BASE64") && !opencasematerialID.startsWith("HDB")) {
             opencasematerial = Material.getMaterial(opencasematerialID);
