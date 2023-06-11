@@ -44,25 +44,25 @@ public class Shape {
             public void run() {
                 Material material;
                 ItemStack winItem = null;
-                if(!winGroupId.startsWith("HEAD") && !winGroupId.startsWith("CH") && !winGroupId.startsWith("HDB")) {
+                if(!winGroupId.contains(":")) {
                     material = Material.getMaterial(winGroupId);
                     if (material == null) {
                         material = Material.STONE;
                     }
                     winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName);
-                } else
-                if(winGroupId.startsWith("HEAD")) {
-                    String[] parts = winGroupId.split(":");
-                    winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
-                } else if(winGroupId.startsWith("HDB")) {
+                } else {
+                    if (winGroupId.startsWith("HEAD")) {
+                        String[] parts = winGroupId.split(":");
+                        winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
+                    } else if (winGroupId.startsWith("HDB")) {
                         String[] parts = winGroupId.split(":");
                         String id = parts[1];
-                        if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                            winItem  = Main.t.getHDBSkull(id, winGroupDisplayName);
+                        if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                            winItem = Main.t.getHDBSkull(id, winGroupDisplayName);
                         } else {
                             winItem = new ItemStack(Material.STONE);
                         }
-                } else if(winGroupId.startsWith("CH")) {
+                    } else if (winGroupId.startsWith("CH")) {
                         String[] parts = winGroupId.split(":");
                         String category = parts[1];
                         String id = parts[2];
@@ -72,6 +72,7 @@ public class Shape {
                             winItem = new ItemStack(Material.STONE);
                         }
                     }
+                }
                 if (this.i == 0) {
                     this.l = as.getLocation();
                 }
@@ -92,33 +93,33 @@ public class Shape {
                     Material material2;
                     final String winGroupDisplayName2 = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
                     final String winGroup2Id = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.ID")).toUpperCase();
-                    if(!winGroup2Id.startsWith("HEAD") && !winGroup2Id.startsWith("HDB") && !winGroup2Id.startsWith("CH")) {
+                    if(!winGroup2Id.contains(":")) {
                         material2 = Material.getMaterial(winGroup2Id);
                         if (material2 == null) {
                             material2 = Material.STONE;
                         }
                         winItem2 = Main.t.createItem(material2, 1, 0, winGroupDisplayName2);
-                    } else
-                    if(winGroup2Id.startsWith("HEAD")) {
-                        String[] parts = winGroup2Id.split(":");
-                        winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
-                    } else
-                    if(winGroup2Id.startsWith("HDB")) {
-                        String[] parts = winGroup2Id.split(":");
-                        String id = parts[1];
-                        if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                            winItem2  = Main.t.getHDBSkull(id, winGroupDisplayName2);
-                        } else {
-                            winItem2 = new ItemStack(Material.STONE);
-                        }
-                    } else if(winGroupId.startsWith("CH")) {
-                        String[] parts = winGroupId.split(":");
-                        String category = parts[1];
-                        String id = parts[2];
-                        if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                            winItem2 = Main.t.getCHSkull(category, id, winGroupDisplayName);
-                        } else {
-                            winItem2 = new ItemStack(Material.STONE);
+                    } else {
+                        if (winGroup2Id.startsWith("HEAD")) {
+                            String[] parts = winGroup2Id.split(":");
+                            winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
+                        } else if (winGroup2Id.startsWith("HDB")) {
+                            String[] parts = winGroup2Id.split(":");
+                            String id = parts[1];
+                            if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                                winItem2 = Main.t.getHDBSkull(id, winGroupDisplayName2);
+                            } else {
+                                winItem2 = new ItemStack(Material.STONE);
+                            }
+                        } else if (winGroupId.startsWith("CH")) {
+                            String[] parts = winGroupId.split(":");
+                            String category = parts[1];
+                            String id = parts[2];
+                            if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                                winItem2 = Main.t.getCHSkull(category, id, winGroupDisplayName);
+                            } else {
+                                winItem2 = new ItemStack(Material.STONE);
+                            }
                         }
                     }
                     as.setHelmet(winItem2);

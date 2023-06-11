@@ -60,7 +60,7 @@ public class Rainly {
                 Location las = as.getLocation().clone();
                 las.setYaw(las.getYaw() + 20.0F);
                 as.teleport(las);
-                if(!winGroupId.startsWith("HEAD") && !winGroupId.startsWith("BASE64")) {
+                if(!winGroupId.contains(":")) {
                     material = Material.getMaterial(winGroupId);
                     if (material == null) {
                         material = Material.STONE;
@@ -70,23 +70,24 @@ public class Rainly {
                 if(winGroupId.startsWith("HEAD")) {
                     String[] parts = winGroupId.split(":");
                     winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
-                } else
-                if(winGroupId.startsWith("HDB")) {
-                    String[] parts = winGroupId.split(":");
-                    String id = parts[1];
-                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                        winItem  = Main.t.getHDBSkull(id, winGroupDisplayName);
-                    } else {
-                        winItem = new ItemStack(Material.STONE);
-                    }
-                } else if(winGroupId.startsWith("CH")) {
-                    String[] parts = winGroupId.split(":");
-                    String category = parts[1];
-                    String id = parts[2];
-                    if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                        winItem = Main.t.getCHSkull(category, id, winGroupDisplayName);
-                    } else {
-                        winItem = new ItemStack(Material.STONE);
+                } else {
+                    if (winGroupId.startsWith("HDB")) {
+                        String[] parts = winGroupId.split(":");
+                        String id = parts[1];
+                        if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                            winItem = Main.t.getHDBSkull(id, winGroupDisplayName);
+                        } else {
+                            winItem = new ItemStack(Material.STONE);
+                        }
+                    } else if (winGroupId.startsWith("CH")) {
+                        String[] parts = winGroupId.split(":");
+                        String category = parts[1];
+                        String id = parts[2];
+                        if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                            winItem = Main.t.getCHSkull(category, id, winGroupDisplayName);
+                        } else {
+                            winItem = new ItemStack(Material.STONE);
+                        }
                     }
                 }
                 if (this.i == 0) {
@@ -111,33 +112,33 @@ public class Rainly {
                     Material material2;
                     final String winGroupDisplayName2 = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
                     final String winGroup2Id = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.ID").toUpperCase();
-                    if(!winGroup2Id.startsWith("HEAD") && !winGroup2Id.startsWith("BASE64")) {
+                    if(!winGroup2Id.contains(":")) {
                         material2 = Material.getMaterial(winGroup2Id);
                         if (material2 == null) {
                             material2 = Material.STONE;
                         }
                         winItem2 = Main.t.createItem(material2, 1, 0, winGroupDisplayName2);
-                    } else
-                    if(winGroup2Id.startsWith("HEAD")) {
-                        String[] parts = winGroup2Id.split(":");
-                        winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
-                    } else
-                    if(winGroup2Id.startsWith("HDB")) {
-                        String[] parts = winGroup2Id.split(":");
-                        String id = parts[1];
-                        if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                            winItem2  = Main.t.getHDBSkull(id, winGroupDisplayName2);
-                        } else {
-                            winItem2 = new ItemStack(Material.STONE);
-                        }
-                    } else if(winGroupId.startsWith("CH")) {
-                        String[] parts = winGroupId.split(":");
-                        String category = parts[1];
-                        String id = parts[2];
-                        if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                            winItem2 = Main.t.getCHSkull(category, id, winGroupDisplayName);
-                        } else {
-                            winItem2 = new ItemStack(Material.STONE);
+                    } else {
+                        if (winGroup2Id.startsWith("HEAD")) {
+                            String[] parts = winGroup2Id.split(":");
+                            winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
+                        } else if (winGroup2Id.startsWith("HDB")) {
+                            String[] parts = winGroup2Id.split(":");
+                            String id = parts[1];
+                            if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                                winItem2 = Main.t.getHDBSkull(id, winGroupDisplayName2);
+                            } else {
+                                winItem2 = new ItemStack(Material.STONE);
+                            }
+                        } else if (winGroupId.startsWith("CH")) {
+                            String[] parts = winGroupId.split(":");
+                            String category = parts[1];
+                            String id = parts[2];
+                            if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                                winItem2 = Main.t.getCHSkull(category, id, winGroupDisplayName);
+                            } else {
+                                winItem2 = new ItemStack(Material.STONE);
+                            }
                         }
                     }
                     as.setHelmet(winItem2);

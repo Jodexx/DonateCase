@@ -41,31 +41,33 @@ public class Wheel {
             String winGroupDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
             Material material;
             ItemStack winItem = null;
-            if (!winGroupId.startsWith("HEAD") && !winGroupId.startsWith("BASE64")) {
+            if (!winGroupId.contains(":")) {
                 material = Material.getMaterial(winGroupId);
                 if (material == null) {
                     material = Material.STONE;
                 }
                 winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName);
-            } else if (winGroupId.startsWith("HEAD")) {
-                String[] parts = winGroupId.split(":");
-                winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
-            } else if (winGroupId.startsWith("HDB")) {
-                String[] parts = winGroupId.split(":");
-                String id = parts[1];
-                if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                    winItem = Main.t.getHDBSkull(id, winGroupDisplayName);
-                } else {
-                    winItem = new ItemStack(Material.STONE);
-                }
-            } else if(winGroupId.startsWith("CH")) {
-                String[] parts = winGroupId.split(":");
-                String category = parts[1];
-                String id = parts[2];
-                if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                    winItem = Main.t.getCHSkull(category, id, winGroupDisplayName);
-                } else {
-                    winItem = new ItemStack(Material.STONE);
+            } else {
+                if (winGroupId.startsWith("HEAD")) {
+                    String[] parts = winGroupId.split(":");
+                    winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
+                } else if (winGroupId.startsWith("HDB")) {
+                    String[] parts = winGroupId.split(":");
+                    String id = parts[1];
+                    if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                        winItem = Main.t.getHDBSkull(id, winGroupDisplayName);
+                    } else {
+                        winItem = new ItemStack(Material.STONE);
+                    }
+                } else if (winGroupId.startsWith("CH")) {
+                    String[] parts = winGroupId.split(":");
+                    String category = parts[1];
+                    String id = parts[2];
+                    if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                        winItem = Main.t.getCHSkull(category, id, winGroupDisplayName);
+                    } else {
+                        winItem = new ItemStack(Material.STONE);
+                    }
                 }
             }
             items.add(winItem);
@@ -119,10 +121,10 @@ public class Wheel {
                 if (ticks == 101) {
                     String winGroup = groups.get(groups.size() / 2);
                     Main.t.onCaseOpenFinish(c, player, false, winGroup);
-                    if(customConfig.getAnimations().getString("Wheel.Finish.Sound") != null) {
-                        location.getWorld().playSound(location, Sound.valueOf(customConfig.getAnimations().getString("Wheel.Finish.Sound")),
-                                customConfig.getAnimations().getInt("Wheel.Finish.Volume"),
-                                customConfig.getAnimations().getInt("Wheel.Finish.Pitch"));
+                    if(customConfig.getConfig().getString("DonatCase.Cases" + c + ".AnimationSound") != null) {
+                        location.getWorld().playSound(location,
+                                Sound.valueOf(customConfig.getAnimations().getString("DonatCase.Cases" + c + ".AnimationSound")),
+                                10, 1);
                     }
                 }
                 // End

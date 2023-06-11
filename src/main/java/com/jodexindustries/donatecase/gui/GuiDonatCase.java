@@ -30,33 +30,34 @@ public class GuiDonatCase {
             }
             Material material;
             ItemStack f = new ItemStack(Material.STRUCTURE_VOID);
-            if (!materialID.startsWith("HEAD") && !materialID.startsWith("BASE64")) {
+            if (!materialID.contains(":")) {
                 material = Material.getMaterial(materialID);
                 if (material == null) {
                     material = Material.STONE;
                 }
                 f = Main.t.createItem(material, 1, 1, materialNAME, materialLORE);
-            }
-            if (materialID.startsWith("HEAD")) {
-                String[] parts = materialID.split(":");
-                f = Main.t.getPlayerHead(parts[1], materialNAME, materialLORE);
-            }
-            if(materialID.startsWith("HDB")) {
-                String[] parts = materialID.split(":");
-                String id = parts[1];
-                if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                    f  = Main.t.getHDBSkull(id, materialNAME, materialLORE);
-                } else {
-                    f = new ItemStack(Material.STONE);
+            } else {
+                if (materialID.startsWith("HEAD")) {
+                    String[] parts = materialID.split(":");
+                    f = Main.t.getPlayerHead(parts[1], materialNAME, materialLORE);
                 }
-            } else if (materialID.startsWith("CH")) {
-                String[] parts = materialID.split(":");
-                String category = parts[1];
-                String id = parts[2];
-                if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                    f  = Main.t.getCHSkull(category, id, materialNAME, materialLORE);
-                } else {
-                    f = new ItemStack(Material.STONE);
+                if (materialID.startsWith("HDB")) {
+                    String[] parts = materialID.split(":");
+                    String id = parts[1];
+                    if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                        f = Main.t.getHDBSkull(id, materialNAME, materialLORE);
+                    } else {
+                        f = new ItemStack(Material.STONE);
+                    }
+                } else if (materialID.startsWith("CH")) {
+                    String[] parts = materialID.split(":");
+                    String category = parts[1];
+                    String id = parts[2];
+                    if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                        f = Main.t.getCHSkull(category, id, materialNAME, materialLORE);
+                    } else {
+                        f = new ItemStack(Material.STONE);
+                    }
                 }
             }
             for (int a = 0; a < 2; ++a) {
