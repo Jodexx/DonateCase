@@ -120,12 +120,7 @@ public class Wheel {
                 }
                 if (ticks == 101) {
                     String winGroup = groups.get(groups.size() / 2);
-                    Main.t.onCaseOpenFinish(c, player, false, winGroup);
-                    if(customConfig.getConfig().getString("DonatCase.Cases" + c + ".AnimationSound") != null) {
-                        location.getWorld().playSound(location,
-                                Sound.valueOf(customConfig.getAnimations().getString("DonatCase.Cases" + c + ".AnimationSound")),
-                                10, 1);
-                    }
+                    Main.t.onCaseOpenFinish(c, player, true, winGroup);
                 }
                 // End
 
