@@ -58,6 +58,15 @@ public class Wheel {
                 } else {
                     winItem = new ItemStack(Material.STONE);
                 }
+            } else if(winGroupId.startsWith("CH")) {
+                String[] parts = winGroupId.split(":");
+                String category = parts[1];
+                String id = parts[2];
+                if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                    winItem = Main.t.getCHSkull(category, id, winGroupDisplayName);
+                } else {
+                    winItem = new ItemStack(Material.STONE);
+                }
             }
             items.add(winItem);
             groups.add(winGroup);
@@ -110,6 +119,11 @@ public class Wheel {
                 if (ticks == 101) {
                     String winGroup = groups.get(groups.size() / 2);
                     Main.t.onCaseOpenFinish(c, player, false, winGroup);
+                    if(customConfig.getAnimations().getString("Wheel.Finish.Sound") != null) {
+                        location.getWorld().playSound(location, Sound.valueOf(customConfig.getAnimations().getString("Wheel.Finish.Sound")),
+                                customConfig.getAnimations().getInt("Wheel.Finish.Volume"),
+                                customConfig.getAnimations().getInt("Wheel.Finish.Pitch"));
+                    }
                 }
                 // End
 

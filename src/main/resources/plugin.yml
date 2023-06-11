@@ -3,6 +3,9 @@ main: com.jodexindustries.donatecase.dc.Main
 author: _Jodex__
 version: '${version}'
 depend: [Vault, PlaceholderAPI]
+softdepend:
+  - CustomHeads
+  - HeadDataBase
 api-version: 1.13
 commands:
   donatecase:

@@ -1,6 +1,8 @@
 package com.jodexindustries.donatecase.tools;
 
 import com.jodexindustries.donatecase.dc.Main;
+import de.likewhat.customheads.CustomHeads;
+import de.likewhat.customheads.api.CustomHeadsAPI;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
@@ -139,6 +141,7 @@ public class Tools {
         return item;
     }
 
+
     public Color parseColor(String s) {
 
         Color color = null;
@@ -227,6 +230,19 @@ public class Tools {
         ItemStack item = new ItemStack(Material.STONE);
         try {
             item = api.getItemHead(id);
+        } catch (NullPointerException nullPointerException) {
+            Main.instance.getLogger().info("Could not find the head you were looking for");
+        }
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(rc(displayname));
+        item.setItemMeta(itemMeta);
+        return item;
+    }
+    public ItemStack getCHSkull(String category, String id, String displayname) {
+        CustomHeadsAPI  api = CustomHeads.getApi();
+        ItemStack item = new ItemStack(Material.STONE);
+        try {
+            item = api.getHead(category, Integer.parseInt(id));
         } catch (NullPointerException nullPointerException) {
             Main.instance.getLogger().info("Could not find the head you were looking for");
         }
