@@ -44,7 +44,6 @@ public class CustomConfig {
     public void saveCases() {
         try {
             Cases.save(filec);
-            reload();
         } catch (IOException var1) {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Cases.yml");
         }
@@ -54,7 +53,6 @@ public class CustomConfig {
     public void saveConfig() {
         try {
             Config.save(filecon);
-            reload();
         } catch (IOException var1) {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Config.yml");
         }
@@ -64,7 +62,6 @@ public class CustomConfig {
     public void saveKeys() {
         try {
             Keys.save(filek);
-            reload();
         } catch (IOException var1) {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Keys.yml");
         }
@@ -74,7 +71,6 @@ public class CustomConfig {
     public void saveAnimations() {
         try {
             Animations.save(fileanim);
-            reload();
         } catch (IOException var1) {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
         }
