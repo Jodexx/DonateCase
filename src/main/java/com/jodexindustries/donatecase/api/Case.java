@@ -10,8 +10,6 @@ import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
 public class Case {
 
-
-
     public void saveLocation(String name, String type, String lv) {
         customConfig.getCases().set("DonatCase.Cases." + name + ".location", lv);
         customConfig.getCases().set("DonatCase.Cases." + name + ".type", type);

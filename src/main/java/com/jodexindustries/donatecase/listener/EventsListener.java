@@ -1,11 +1,12 @@
 package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.gui.GuiDonatCase;
-import com.jodexindustries.donatecase.tools.CustomConfig;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -99,14 +100,18 @@ public class EventsListener implements Listener {
             Player p = e.getPlayer();
             Location loc = e.getClickedBlock().getLocation();
             String loca = loc.toString();
-            if (Case.hasCaseByLocation(loca)) {
-                e.setCancelled(true);
-                if (!StartAnimation.caseOpen.contains(p)) {
-                    if (!Main.ActiveCase.containsKey(loc)) {
-                        Main.openCase.put(p, loc.clone());
-                        new GuiDonatCase(p, Case.getCaseTypeByLocation(loca));
-                    } else {
-                        Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
+            CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock());
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            if(!event.isCancelled()) {
+                if (Case.hasCaseByLocation(loca)) {
+                    e.setCancelled(true);
+                    if (!StartAnimation.caseOpen.contains(p)) {
+                        if (!Main.ActiveCase.containsKey(loc)) {
+                            Main.openCase.put(p, loc.clone());
+                            new GuiDonatCase(p, Case.getCaseTypeByLocation(loca));
+                        } else {
+                            Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
+                        }
                     }
                 }
             }
