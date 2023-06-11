@@ -157,6 +157,8 @@ public class Main extends JavaPlugin {
             this.saveResource("Config.yml", false);
             customConfig = new CustomConfig();
         }
+        customConfig.getConfig().options().copyDefaults(true);
+        customConfig.saveConfig();
         // Animations.yml ver check
         if (customConfig.getAnimations().getString("config") == null) {
             Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated Animations.yml! Creating a new!"));

@@ -293,13 +293,12 @@ public class Tools {
         // Sound
         if (needsound) {
             if (customConfig.getConfig().getString("DonatCase.Cases." + casename + ".AnimationSound") != null) {
-                sound = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + casename + ".AnimationSound"));
-                Sound sound1;
-                sound1 = Sound.valueOf(sound.toUpperCase());
-                if (sound1 == null) {
-                    sound1 = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+                sound = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".AnimationSound");
+                if (sound != null) {
+                    player.playSound(player.getLocation(), Sound.valueOf(sound),
+                            customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Sound.Volume"),
+                            customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Sound.Pitch"));
                 }
-                player.playSound(player.getLocation(), sound1, 1.0F, 5.0F);
             }
         }
         // Title && SubTitle
