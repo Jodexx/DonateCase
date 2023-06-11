@@ -12,8 +12,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
+import static com.jodexindustries.donatecase.dc.Main.customConfig;
+
 public class Shape {
-    CustomConfig customConfig = new CustomConfig();
 
     public Shape(final Player player, Location location, final String c) {
         final Location lAC = location.clone();

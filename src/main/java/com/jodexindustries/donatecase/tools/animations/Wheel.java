@@ -16,8 +16,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jodexindustries.donatecase.dc.Main.customConfig;
+
 public class Wheel {
-    CustomConfig customConfig = new CustomConfig();
 
     List<ItemStack> items = new ArrayList<>();
     List<String> groups = new ArrayList<>();

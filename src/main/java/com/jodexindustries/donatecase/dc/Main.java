@@ -34,7 +34,7 @@ public class Main extends JavaPlugin {
     File langRu;
     File langEn;
     File langUa;
-    private CustomConfig customConfig;
+    public static CustomConfig customConfig;
 
     public void onEnable() {
         instance = this;

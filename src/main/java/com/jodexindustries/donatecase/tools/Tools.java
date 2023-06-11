@@ -19,8 +19,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
+import static com.jodexindustries.donatecase.dc.Main.customConfig;
+
 public class Tools {
-    CustomConfig customConfig = new CustomConfig();
 
 
     public void launchFirework(Location l) {

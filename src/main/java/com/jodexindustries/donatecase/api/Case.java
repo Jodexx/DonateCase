@@ -1,14 +1,14 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.CustomConfig;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Objects;
 
+import static com.jodexindustries.donatecase.dc.Main.customConfig;
+
 
 public class Case {
-   CustomConfig customConfig = new CustomConfig();
 
 
 

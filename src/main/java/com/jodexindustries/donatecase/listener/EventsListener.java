@@ -26,9 +26,10 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import static com.jodexindustries.donatecase.dc.Main.customConfig;
+
 
 public class EventsListener implements Listener {
-    CustomConfig customConfig = new CustomConfig();
     Case Case = new Case();
 
     @EventHandler

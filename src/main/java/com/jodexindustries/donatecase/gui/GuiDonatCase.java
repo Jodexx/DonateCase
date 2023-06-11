@@ -14,10 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.jodexindustries.donatecase.dc.Main.customConfig;
+
 public class GuiDonatCase {
 
     public GuiDonatCase(Player p, String c) {
-        CustomConfig customConfig = new CustomConfig();
         String title = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
         assert title != null;
         Inventory inv = Bukkit.createInventory(null, 45, Main.t.rc(title));

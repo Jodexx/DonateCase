@@ -10,8 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import static com.jodexindustries.donatecase.dc.Main.customConfig;
+
 public class Rainly {
-    CustomConfig customConfig = new CustomConfig();
     public Rainly(final Player player, Location location, final String c) {
         final Location lAC = location.clone();
         Main.ActiveCase.put(lAC, c);

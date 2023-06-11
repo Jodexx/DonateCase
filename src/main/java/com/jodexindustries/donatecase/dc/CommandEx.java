@@ -19,13 +19,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.jodexindustries.donatecase.dc.Main.customConfig;
+
 public class CommandEx implements CommandExecutor, TabCompleter {
-    CustomConfig customConfig = new CustomConfig();
     Case Case = new Case();
     
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
-        
         if (args.length == 0) {
             // if sender is player
             if (sender instanceof Player) {
@@ -161,7 +161,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         Player player = (Player) sender;
                         if (sender.hasPermission("donatecase.player")) {
                             for (String string : Main.lang.getStringList("MyKeys")) {
-                                sender.sendMessage(PlaceholderAPI.setPlaceholders(player.getPlayer(),
+                                sender.sendMessage(PlaceholderAPI.setPlaceholders(player,
                                         ChatColor.translateAlternateColorCodes('&', string)));
                             }
                         }

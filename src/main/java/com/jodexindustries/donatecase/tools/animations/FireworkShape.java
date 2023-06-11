@@ -12,8 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import static com.jodexindustries.donatecase.dc.Main.customConfig;
+
 public class FireworkShape {
-    CustomConfig customConfig = new CustomConfig();
 
     public FireworkShape(final Player player, Location location, final String c) {
         final Location lAC = location.clone();

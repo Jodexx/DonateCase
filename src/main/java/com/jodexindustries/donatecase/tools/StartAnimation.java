@@ -12,12 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import static com.jodexindustries.donatecase.dc.Main.customConfig;
+
 public class StartAnimation {
 
     public static List<Player> caseOpen = new ArrayList<>();
 
     public StartAnimation(final Player player, Location location, final String c) {
-        CustomConfig customConfig = new CustomConfig();
         String animation = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Animation");
         if(animation != null) {
             if (animation.equalsIgnoreCase("SHAPE")) {
