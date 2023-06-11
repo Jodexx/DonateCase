@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.tools.animations;
 
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.CustomConfig;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
@@ -118,16 +117,25 @@ public class Rainly {
                             material2 = Material.STONE;
                         }
                         winItem2 = Main.t.createItem(material2, 1, 0, winGroupDisplayName2);
-                    }
+                    } else
                     if(winGroup2Id.startsWith("HEAD")) {
                         String[] parts = winGroup2Id.split(":");
                         winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
-                    }
+                    } else
                     if(winGroup2Id.startsWith("HDB")) {
                         String[] parts = winGroup2Id.split(":");
                         String id = parts[1];
                         if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
                             winItem2  = Main.t.getHDBSkull(id, winGroupDisplayName2);
+                        } else {
+                            winItem2 = new ItemStack(Material.STONE);
+                        }
+                    } else if(winGroupId.startsWith("CH")) {
+                        String[] parts = winGroupId.split(":");
+                        String category = parts[1];
+                        String id = parts[2];
+                        if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                            winItem2 = Main.t.getCHSkull(category, id, winGroupDisplayName);
                         } else {
                             winItem2 = new ItemStack(Material.STONE);
                         }

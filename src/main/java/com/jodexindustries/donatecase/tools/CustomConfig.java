@@ -20,18 +20,12 @@ public class CustomConfig {
     public CustomConfig() {
         fileanim = new File(Main.instance.getDataFolder(), "Animations.yml");
         Animations = YamlConfiguration.loadConfiguration(fileanim);
-        Animations.options().copyDefaults(true);
-        saveAnimations();
         filec = new File(Main.instance.getDataFolder(), "Cases.yml");
         Cases = YamlConfiguration.loadConfiguration(filec);
-        Cases.options().copyDefaults(true);
-        saveCases();
         filek = new File(Main.instance.getDataFolder(), "Keys.yml");
         Keys = YamlConfiguration.loadConfiguration(filek);
         filecon = new File(Main.instance.getDataFolder(), "Config.yml");
         Config = YamlConfiguration.loadConfiguration(filecon);
-        Config.options().copyDefaults(true);
-        saveConfig();
     }
 
 

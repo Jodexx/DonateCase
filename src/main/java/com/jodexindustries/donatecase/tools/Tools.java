@@ -1,8 +1,6 @@
 package com.jodexindustries.donatecase.tools;
 
 import com.jodexindustries.donatecase.dc.Main;
-import de.likewhat.customheads.CustomHeads;
-import de.likewhat.customheads.api.CustomHeadsAPI;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
@@ -239,17 +237,20 @@ public class Tools {
         return item;
     }
     public ItemStack getCHSkull(String category, String id, String displayname) {
-        CustomHeadsAPI  api = CustomHeads.getApi();
-        ItemStack item = new ItemStack(Material.STONE);
-        try {
-            item = api.getHead(category, Integer.parseInt(id));
-        } catch (NullPointerException nullPointerException) {
-            Main.instance.getLogger().info("Could not find the head you were looking for");
+        if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+            ItemStack item = new CustomHeadSupport().getSkull(category, id, displayname);
+            return item;
+        } else {
+            return null;
         }
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(rc(displayname));
-        item.setItemMeta(itemMeta);
-        return item;
+    }
+    public ItemStack getCHSkull(String category, String id, String displayname, List<String> lore) {
+        if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+            ItemStack item = new CustomHeadSupport().getSkull(category, id, displayname, lore);
+            return item;
+        } else {
+            return null;
+        }
     }
 
     public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore) {

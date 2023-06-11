@@ -2,7 +2,6 @@ package com.jodexindustries.donatecase.gui;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.CustomConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -50,6 +49,15 @@ public class GuiDonatCase {
                 } else {
                     f = new ItemStack(Material.STONE);
                 }
+            } else if (materialID.startsWith("CH")) {
+                String[] parts = materialID.split(":");
+                String category = parts[1];
+                String id = parts[2];
+                if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                    f  = Main.t.getCHSkull(category, id, materialNAME, materialLORE);
+                } else {
+                    f = new ItemStack(Material.STONE);
+                }
             }
             for (int a = 0; a < 2; ++a) {
                 int i;
@@ -88,6 +96,16 @@ public class GuiDonatCase {
             String id = parts[1];
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
                 opencaseitemstack = Main.t.getHDBSkull(id, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
+            } else {
+                opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys));
+            }
+        }
+        if(opencasematerialID.startsWith("CH")) {
+            String[] parts = opencasematerialID.split(":");
+            String category = parts[1];
+            String id = parts[2];
+            if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                opencaseitemstack = Main.t.getCHSkull(category, id, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
             } else {
                 opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys));
             }
