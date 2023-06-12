@@ -98,17 +98,18 @@ public class EventsListener implements Listener {
     public void PlayerInteract(PlayerInteractEvent e) {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Player p = e.getPlayer();
-            Location loc = e.getClickedBlock().getLocation();
-            String loca = loc.toString();
-            CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock());
-            Bukkit.getServer().getPluginManager().callEvent(event);
-            if(!event.isCancelled()) {
-                if (Case.hasCaseByLocation(loca)) {
-                    e.setCancelled(true);
+            Location blockLocation = e.getClickedBlock().getLocation();
+            String loca = blockLocation.toString();
+            if (Case.hasCaseByLocation(loca)) {
+                String caseType = Case.getCaseTypeByLocation(loca);
+                e.setCancelled(true);
+                CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType);
+                Bukkit.getServer().getPluginManager().callEvent(event);
+                if (!event.isCancelled()) {
                     if (!StartAnimation.caseOpen.contains(p)) {
-                        if (!Main.ActiveCase.containsKey(loc)) {
-                            Main.openCase.put(p, loc.clone());
-                            new GuiDonatCase(p, Case.getCaseTypeByLocation(loca));
+                        if (!Main.ActiveCase.containsKey(blockLocation)) {
+                            Main.openCase.put(p, blockLocation.clone());
+                            new GuiDonatCase(p, caseType);
                         } else {
                             Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
                         }
@@ -116,7 +117,6 @@ public class EventsListener implements Listener {
                 }
             }
         }
-
     }
 
     @EventHandler
