@@ -4,13 +4,10 @@ plugins {
 }
 
 group = 'com.jodexindustries.donatecase'
-version = '2.1.0.5'
+version = '2.1.0.7'
 
 repositories {
     mavenCentral()
-    flatDir {
-        dirs("libs")
-    }
     maven {
         name = "placeholderapi"
         url = "https://repo.extendedclip.com/content/repositories/placeholderapi"
@@ -25,6 +22,10 @@ repositories {
             includeGroup 'org.bukkit'
             includeGroup 'org.spigotmc'
         }
+    }
+    maven {
+        name = "jodexindustries"
+        url = "https://repo.jodexindustries.space/releases"
     }
     maven {
         name = "sonatype"
