@@ -21,7 +21,7 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
         cancel = false;
     }
     public String getCaseType() {
-        return Case.getCaseByTitle(caseType);
+        return caseType;
     }
     public Block getBlock() {
         return block;
