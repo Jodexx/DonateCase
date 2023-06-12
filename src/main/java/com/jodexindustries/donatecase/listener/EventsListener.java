@@ -32,7 +32,6 @@ import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
 
 public class EventsListener implements Listener {
-    Case Case = new Case();
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
@@ -71,8 +70,8 @@ public class EventsListener implements Listener {
                     Bukkit.getServer().getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
                         if (Case.getKeys(casename, pl) >= 1) {
-                            if (Main.openCase.containsKey(p)) {
-                                Location block = Main.openCase.get(p);
+                            if (Case.openCase.containsKey(p)) {
+                                Location block = Case.openCase.get(p);
                                 Case.removeKeys(casename, pl, 1);
                                 new StartAnimation(p, block, c);
                             }
@@ -93,7 +92,7 @@ public class EventsListener implements Listener {
     @EventHandler
     public void PlayerInteractEntity(PlayerInteractAtEntityEvent e) {
         Entity entity = e.getRightClicked();
-        if (entity.getType() == EntityType.ARMOR_STAND && Main.listAR.contains(entity)) {
+        if (entity.getType() == EntityType.ARMOR_STAND && Case.listAR.contains(entity)) {
             e.setCancelled(true);
         }
 
@@ -112,8 +111,8 @@ public class EventsListener implements Listener {
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
                     if (!StartAnimation.caseOpen.contains(p)) {
-                        if (!Main.ActiveCase.containsKey(blockLocation)) {
-                            Main.openCase.put(p, blockLocation.clone());
+                        if (!Case.ActiveCase.containsKey(blockLocation)) {
+                            Case.openCase.put(p, blockLocation.clone());
                             new GuiDonatCase(p, caseType);
                         } else {
                             Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
@@ -127,8 +126,8 @@ public class EventsListener implements Listener {
     @EventHandler
     public void InventoryClose(InventoryCloseEvent e) {
         Player p = (Player)e.getPlayer();
-        if (Case.hasCaseByTitle(e.getView().getTitle()) && Main.openCase.containsKey(p)) {
-            Main.openCase.remove(p);
+        if (Case.hasCaseByTitle(e.getView().getTitle()) && Case.openCase.containsKey(p)) {
+            Case.openCase.remove(p);
         }
 
     }

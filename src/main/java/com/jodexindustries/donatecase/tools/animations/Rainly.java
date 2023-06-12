@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import org.bukkit.*;
@@ -14,10 +15,10 @@ import static com.jodexindustries.donatecase.dc.Main.customConfig;
 public class Rainly {
     public Rainly(final Player player, Location location, final String c) {
         final Location lAC = location.clone();
-        Main.ActiveCase.put(lAC, c);
+        Case.ActiveCase.put(lAC, c);
 
         for (Player pl : Bukkit.getOnlinePlayers()) {
-            if (Main.openCase.containsKey(pl) && Main.t.isHere(location, Main.openCase.get(pl))) {
+            if (Case.openCase.containsKey(pl) && Main.t.isHere(location, Case.openCase.get(pl))) {
                 pl.closeInventory();
             }
         }
@@ -37,7 +38,7 @@ public class Rainly {
         location.setYaw(-70.0F);
         final ArmorStand as = (ArmorStand) player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         as.setVisible(false);
-        Main.listAR.add(as);
+        Case.listAR.add(as);
         as.setGravity(false);
         as.setSmall(true);
         as.setCustomNameVisible(true);
@@ -165,8 +166,8 @@ public class Rainly {
                 if (this.i >= 70) {
                     as.remove();
                     this.cancel();
-                    Main.ActiveCase.remove(lAC);
-                    Main.listAR.remove(as);
+                    Case.ActiveCase.remove(lAC);
+                    Case.listAR.remove(as);
                     StartAnimation.caseOpen.remove(player);
                 }
 

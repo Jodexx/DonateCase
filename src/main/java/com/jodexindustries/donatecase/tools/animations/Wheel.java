@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.CustomConfig;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,10 +26,10 @@ public class Wheel {
      public Wheel(final Player player, Location location, final String c) {
         final Location lAC = location.clone();
         // make case active
-        Main.ActiveCase.put(lAC, c);
+        Case.ActiveCase.put(lAC, c);
         // close inventory
         for (Player pl : Bukkit.getOnlinePlayers()) {
-            if (Main.openCase.containsKey(pl) && Main.t.isHere(location, Main.openCase.get(pl))) {
+            if (Case.openCase.containsKey(pl) && Main.t.isHere(location, Case.openCase.get(pl))) {
                 pl.closeInventory();
             }
         }
@@ -126,9 +126,9 @@ public class Wheel {
 
                 if (this.ticks >= 120) {
                     this.cancel();
-                    Main.ActiveCase.remove(lAC);
+                    Case.ActiveCase.remove(lAC);
                     for(ArmorStand stand : armorStands) {
-                        Main.listAR.remove(stand);
+                        Case.listAR.remove(stand);
                         stand.remove();
                     }
                     StartAnimation.caseOpen.remove(player);
@@ -139,7 +139,7 @@ public class Wheel {
     private ArmorStand spawnArmorStand(Location location, int index) {
         ArmorStand as = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         as.setVisible(false);
-        Main.listAR.add(as);
+        Case.listAR.add(as);
         as.setGravity(false);
         as.setSmall(true);
         as.setCustomNameVisible(true);

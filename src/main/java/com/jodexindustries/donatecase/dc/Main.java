@@ -1,19 +1,15 @@
 package com.jodexindustries.donatecase.dc;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -22,9 +18,6 @@ public class Main extends JavaPlugin {
     public static Main instance;
     public static Permission permission = null;
     public static boolean Tconfig = true;
-    public static List<ArmorStand> listAR = new ArrayList<>();
-    public static HashMap<Player, Location> openCase = new HashMap<>();
-    public static HashMap<Location, String> ActiveCase = new HashMap<>();
     public static Tools t;
     public static FileConfiguration lang;
     public static MySQL mysql;
@@ -91,7 +84,7 @@ public class Main extends JavaPlugin {
     public void onDisable() {
         new Placeholder().unregister();
 
-        for (ArmorStand as : listAR) {
+        for (ArmorStand as : Case.listAR) {
             if (as != null) {
                 as.remove();
             }

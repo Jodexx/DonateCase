@@ -16,11 +16,16 @@ import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
 public class StartAnimation {
 
+
+    /**
+     * Players, who opened cases (started scrolling)
+     */
     public static List<Player> caseOpen = new ArrayList<>();
 
     public StartAnimation(final Player player, Location location, final String c) {
         String animation = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Animation");
         if(animation != null) {
+            caseOpen.add(player);
             if (animation.equalsIgnoreCase("SHAPE")) {
                 new Shape(player, location, c);
             } else if (animation.equalsIgnoreCase("FIREWORK")) {

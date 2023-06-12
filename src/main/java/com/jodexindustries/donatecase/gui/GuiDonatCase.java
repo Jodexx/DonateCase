@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.gui;
 
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
@@ -77,11 +76,10 @@ public class GuiDonatCase {
         Material opencasematerial;
         ItemStack opencaseitemstack = null;
         String displayname;
-        Case Case = new Case();
-        int keys = Case.getKeys(c, p.getName());
+        int keys = com.jodexindustries.donatecase.api.Case.getKeys(c, p.getName());
         List<String> lore = customConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");
         displayname = Main.t.rc(Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName"))
-                .replace("<key>", String.valueOf(Case.getKeys(c, p.getName()))));
+                .replace("<key>", String.valueOf(com.jodexindustries.donatecase.api.Case.getKeys(c, p.getName()))));
         if(!opencasematerialID.startsWith("HEAD") && !opencasematerialID.startsWith("BASE64") && !opencasematerialID.startsWith("HDB")) {
             opencasematerial = Material.getMaterial(opencasematerialID);
             if (opencasematerial == null) {
