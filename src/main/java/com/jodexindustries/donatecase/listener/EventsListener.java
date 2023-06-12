@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
+import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.gui.GuiDonatCase;
 import com.jodexindustries.donatecase.tools.StartAnimation;
@@ -66,18 +67,22 @@ public class EventsListener implements Listener {
                 e.setCancelled(true);
                 if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && e.getRawSlot() == Main.t.c(5, 3)) {
                     String c = Case.getCaseByTitle(title);
-                    if (Case.getKeys(casename, pl) >= 1) {
-                        if (Main.openCase.containsKey(p)) {
-                            Location block = Main.openCase.get(p);
-                            Case.removeKeys(casename, pl, 1);
-                            new StartAnimation(p, block, c);
-                        }
+                    PreOpenCaseEvent event = new PreOpenCaseEvent(p, c);
+                    Bukkit.getServer().getPluginManager().callEvent(event);
+                    if (!event.isCancelled()) {
+                        if (Case.getKeys(casename, pl) >= 1) {
+                            if (Main.openCase.containsKey(p)) {
+                                Location block = Main.openCase.get(p);
+                                Case.removeKeys(casename, pl, 1);
+                                new StartAnimation(p, block, c);
+                            }
 
-                        p.closeInventory();
-                    } else {
-                        p.closeInventory();
-                        p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 0.4F);
-                        Main.t.msg(p, Main.lang.getString("NoKey"));
+                            p.closeInventory();
+                        } else {
+                            p.closeInventory();
+                            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 0.4F);
+                            Main.t.msg(p, Main.lang.getString("NoKey"));
+                        }
                     }
                 }
             }

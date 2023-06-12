@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.gui;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -98,7 +99,16 @@ public class GuiDonatCase {
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
                 opencaseitemstack = Main.t.getHDBSkull(id, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
             } else {
-                opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys));
+                if(!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                    opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
+                } else {
+                    List<String> pLore = new ArrayList<>();
+                    for(String line : lore) {
+                        pLore.add(PlaceholderAPI.setPlaceholders(p, line));
+                    }
+                    opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(pLore, "%case:" + c, "%keys:" + keys));
+
+                }
             }
         }
         if(opencasematerialID.startsWith("CH")) {
