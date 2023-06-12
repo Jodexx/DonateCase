@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.events;
 
 import com.jodexindustries.donatecase.api.Case;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -11,14 +12,19 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     protected boolean cancel;
     String caseType;
+    Block block;
 
-    public PreOpenCaseEvent(@NotNull final Player who, @NotNull final String caseType) {
+    public PreOpenCaseEvent(@NotNull final Player who, @NotNull final String caseType, Block block) {
         super(who);
         this.caseType = caseType;
+        this.block = block;
         cancel = false;
     }
     public String getCaseType() {
         return Case.getCaseByTitle(caseType);
+    }
+    public Block getBlock() {
+        return block;
     }
 
     @NotNull

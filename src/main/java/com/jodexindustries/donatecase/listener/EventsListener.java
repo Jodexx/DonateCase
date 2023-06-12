@@ -66,22 +66,26 @@ public class EventsListener implements Listener {
                 e.setCancelled(true);
                 if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && e.getRawSlot() == Main.t.c(5, 3)) {
                     String c = Case.getCaseByTitle(title);
-                    PreOpenCaseEvent event = new PreOpenCaseEvent(p, c);
-                    Bukkit.getServer().getPluginManager().callEvent(event);
-                    if (!event.isCancelled()) {
-                        if (Case.getKeys(casename, pl) >= 1) {
-                            if (Case.openCase.containsKey(p)) {
-                                Location block = Case.openCase.get(p);
-                                Case.removeKeys(casename, pl, 1);
-                                new StartAnimation(p, block, c);
-                            }
+                    if(c != null) {
+                        if (Case.openCase.containsKey(p)) {
+                            PreOpenCaseEvent event = new PreOpenCaseEvent(p, c, Case.openCase.get(p).getBlock());
+                            Bukkit.getServer().getPluginManager().callEvent(event);
+                            if (!event.isCancelled()) {
+                                if (Case.getKeys(casename, pl) >= 1) {
+                                    Location block = Case.openCase.get(p);
+                                    Case.removeKeys(casename, pl, 1);
+                                    new StartAnimation(p, block, c);
 
-                            p.closeInventory();
-                        } else {
-                            p.closeInventory();
-                            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 0.4F);
-                            Main.t.msg(p, Main.lang.getString("NoKey"));
+                                    p.closeInventory();
+                                } else {
+                                    p.closeInventory();
+                                    p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 0.4F);
+                                    Main.t.msg(p, Main.lang.getString("NoKey"));
+                                }
+                            }
                         }
+                    } else {
+                        Main.t.msg(p, "&cSomething wrong! Contact with server administrator!");
                     }
                 }
             }
@@ -142,4 +146,5 @@ public class EventsListener implements Listener {
         }
 
     }
+
 }
