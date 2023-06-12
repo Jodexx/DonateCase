@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.StartAnimation;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
@@ -140,5 +141,8 @@ public class Case {
             }
         }
         return null;
+    }
+    public static void startAnimation(Player player, Location location, String casename) {
+        new StartAnimation(player, location, casename);
     }
 }
