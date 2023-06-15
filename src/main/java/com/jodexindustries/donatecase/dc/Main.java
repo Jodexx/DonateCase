@@ -40,6 +40,8 @@ public class Main extends JavaPlugin {
 
         setupConfigs();
 
+        customConfig.getConfig().addDefault("DonatCase.NoKeyWarningSound", "ENTITY_ENDERMAN_TELEPORT");
+
 
         Bukkit.getPluginManager().registerEvents(new EventsListener(), this);
         if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {

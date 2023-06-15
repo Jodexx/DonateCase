@@ -79,7 +79,7 @@ public class EventsListener implements Listener {
                                     p.closeInventory();
                                 } else {
                                     p.closeInventory();
-                                    p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0F, 0.4F);
+                                    p.playSound(p.getLocation(), Sound.valueOf(customConfig.getConfig().getString("DonatCase.NoKeyWarningSound")), 1.0F, 0.4F);
                                     Main.t.msg(p, Main.lang.getString("NoKey"));
                                 }
                             }

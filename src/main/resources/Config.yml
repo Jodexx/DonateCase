@@ -21,6 +21,7 @@ DonatCase:
     vipplus: 2
     vip: 1
     default: 0
+  NoKeyWarningSound: ENTITY_ENDERMAN_TELEPORT
   Cases: # WARNING! To create another case, you need to be sure to choose a different name for "Title"
     case:
       Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL
