@@ -3,9 +3,14 @@ package com.jodexindustries.donatecase.dc;
 import java.io.File;
 import java.util.Objects;
 
+import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
+import com.jodexindustries.donatecase.tools.animations.FireworkShape;
+import com.jodexindustries.donatecase.tools.animations.Rainly;
+import com.jodexindustries.donatecase.tools.animations.Shape;
+import com.jodexindustries.donatecase.tools.animations.Wheel;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -85,6 +90,8 @@ public class Main extends JavaPlugin {
         }
         Objects.requireNonNull(getCommand("donatecase")).setExecutor(new CommandEx());
         Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
+
+        registerDefaultAnimations();
     }
 
     public void onDisable() {
@@ -192,6 +199,13 @@ public class Main extends JavaPlugin {
             customConfig = new CustomConfig();
             lang = (new Languages(customConfig.getConfig().getString("DonatCase.Languages"))).getLang();
         }
+    }
+
+    private void registerDefaultAnimations() {
+        AnimationManager.registerAnimation("SHAPE", new Shape());
+        AnimationManager.registerAnimation("WHEEL", new Wheel());
+        AnimationManager.registerAnimation("RAINLY", new Rainly());
+        AnimationManager.registerAnimation("FIREWORK", new FireworkShape());
     }
     public static Permission getPermissions() {
         return permission;

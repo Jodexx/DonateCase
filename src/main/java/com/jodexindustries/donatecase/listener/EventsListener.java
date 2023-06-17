@@ -113,7 +113,7 @@ public class EventsListener implements Listener {
                 CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType);
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    if (!StartAnimation.caseOpen.contains(p)) {
+                    if (!Case.caseOpen.contains(p)) {
                         if (!Case.ActiveCase.containsKey(blockLocation)) {
                             Case.openCase.put(p, Case.getCaseLocationByBlockLocation(blockLocation));
                             new GuiDonatCase(p, caseType);

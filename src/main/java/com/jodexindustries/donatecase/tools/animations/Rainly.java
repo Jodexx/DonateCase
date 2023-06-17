@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.StartAnimation;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -12,20 +12,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
-public class Rainly {
-    public Rainly(final Player player, Location location, final String c) {
+public class Rainly extends Animation {
+    @Override
+    public void start(Player player, Location location, String c) {
         final Location lAC = location.clone();
-        Case.ActiveCase.put(lAC, c);
-
-        for (Player pl : Bukkit.getOnlinePlayers()) {
-            if (Case.openCase.containsKey(pl) && Main.t.isHere(location, Case.openCase.get(pl))) {
-                pl.closeInventory();
-            }
-        }
         final String FallingParticle = customConfig.getAnimations().getString("Rainly.FallingParticle");
-        final String winGroup = Main.t.getRandomGroup(c);
-        final String winGroupId = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
-        final String winGroupDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
+        final String winGroup = Case.getRandomGroup(c);
+        final String winGroupId = Case.getWinGroupId(c, winGroup);
+        final String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
         location.add(0.5, 1, 0.5);
         Location rain1 = lAC.clone().add(-1.5, 3, -1.5);
         Location rain2 = lAC.clone().add(2.5, 3, -1.5);
@@ -100,7 +94,7 @@ public class Rainly {
                         // win item and title
                         as.setHelmet(winItem);
                         as.setCustomName(winItem.getItemMeta().getDisplayName());
-                        Main.t.onCaseOpenFinish(c, player, false, winGroup);
+                        Case.onCaseOpenFinish(c, player, false, winGroup);
                         lAC.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, lAC, 0);
                         lAC.getWorld().playSound(lAC, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                     }
@@ -108,7 +102,7 @@ public class Rainly {
 
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0 )) {
-                    final String winGroup2 = Main.t.getRandomGroup(c);
+                    final String winGroup2 = Case.getRandomGroup(c);
                     ItemStack winItem2 = null;
                     Material material2;
                     final String winGroupDisplayName2 = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
@@ -168,7 +162,7 @@ public class Rainly {
                     this.cancel();
                     Case.ActiveCase.remove(lAC);
                     Case.listAR.remove(as);
-                    StartAnimation.caseOpen.remove(player);
+                    Case.caseOpen.remove(player);
                 }
 
                 ++this.i;

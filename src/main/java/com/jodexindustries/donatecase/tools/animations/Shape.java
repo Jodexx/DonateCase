@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.StartAnimation;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -14,20 +14,15 @@ import java.util.Objects;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
-public class Shape {
+public class Shape extends Animation {
 
-    public Shape(final Player player, Location location, final String c) {
+    @Override
+    public void start(Player player, Location location, String c) {
         final Location lAC = location.clone();
-        Case.ActiveCase.put(lAC, c);
 
-        for (Player pl : Bukkit.getOnlinePlayers()) {
-            if (Case.openCase.containsKey(pl) && Main.t.isHere(location, Case.openCase.get(pl))) {
-                pl.closeInventory();
-            }
-        }
-        final String winGroup = Main.t.getRandomGroup(c);
-        final String winGroupId = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID")).toUpperCase();
-        final String winGroupDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
+        final String winGroup = Case.getRandomGroup(c);
+        final String winGroupId = Case.getWinGroupId(c, winGroup);
+        final String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
         final ArmorStand as = (ArmorStand)player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
@@ -82,13 +77,13 @@ public class Shape {
                         as.setHelmet(winItem);
                         as.setCustomName(winItem != null ? Objects.requireNonNull(winItem.getItemMeta()).getDisplayName() : null);
                         Main.t.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
-                        Main.t.onCaseOpenFinish(c, player, true, winGroup);
+                        Case.onCaseOpenFinish(c, player, true, winGroup);
 
                     }
                 }
 
                 if (this.i <= 15) {
-                    final String winGroup2 = Main.t.getRandomGroup(c);
+                    final String winGroup2 = Case.getRandomGroup(c);
                     ItemStack winItem2 = null;
                     Material material2;
                     final String winGroupDisplayName2 = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
@@ -161,7 +156,7 @@ public class Shape {
                     this.cancel();
                     Case.ActiveCase.remove(lAC);
                     Case.listAR.remove(as);
-                    StartAnimation.caseOpen.remove(player);
+                    Case.caseOpen.remove(player);
                 }
 
                 ++this.i;

@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.StartAnimation;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -14,20 +14,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
-public class FireworkShape {
+public class FireworkShape extends Animation {
 
-    public FireworkShape(final Player player, Location location, final String c) {
+    public void start(Player player, Location location, String c) {
         final Location lAC = location.clone();
-        Case.ActiveCase.put(lAC, c);
-
-        for (Player pl : Bukkit.getOnlinePlayers()) {
-            if (Case.openCase.containsKey(pl) && Main.t.isHere(location, Case.openCase.get(pl))) {
-                pl.closeInventory();
-            }
-        }
-        final String winGroup = Main.t.getRandomGroup(c);
-        final String winGroupId = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
-        final String winGroupDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
+        final String winGroup = Case.getRandomGroup(c);
+        final String winGroupId = Case.getWinGroupId(c, winGroup);
+        final String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
         final ArmorStand as = (ArmorStand)player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
@@ -101,7 +94,7 @@ public class FireworkShape {
                         as.setCustomNameVisible(true);
                         as.setHelmet(winItem);
                         as.setCustomName(winItem.getItemMeta().getDisplayName());
-                        Main.t.onCaseOpenFinish(c, player, true, winGroup);
+                        Case.onCaseOpenFinish(c, player, true, winGroup);
                     }
                     // end
                     if (this.i >= 30) {
@@ -109,7 +102,7 @@ public class FireworkShape {
                         this.cancel();
                         Case.ActiveCase.remove(lAC);
                         Case.listAR.remove(as);
-                        StartAnimation.caseOpen.remove(player);
+                        Case.caseOpen.remove(player);
                     }
                 }
 
