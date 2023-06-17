@@ -6,8 +6,10 @@ import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -159,12 +161,12 @@ public class Tools {
         return a;
     }
 
-    public ItemStack createItem(Material ma, int amount, int data, String dn) {
-        return createItem(ma, data, amount, dn, null);
+    public ItemStack createItem(Material ma, int amount, int data, String dn, boolean enchant) {
+        return createItem(ma, data, amount, dn, null, enchant);
     }
 
-    public ItemStack createItem(Material ma, String dn, List<String> lore) {
-        return createItem(ma, 0, 1, dn, lore);
+    public ItemStack createItem(Material ma, String dn, List<String> lore, boolean enchant) {
+        return createItem(ma, 0, 1, dn, lore, enchant);
     }
 
     public ItemStack getPlayerHead(String player, String displayname) {
@@ -294,7 +296,7 @@ public class Tools {
         }
     }
 
-    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore) {
+    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant) {
         ItemStack item = new ItemStack(ma, amount);
         ItemMeta m = item.getItemMeta();
         if (dn != null) {
@@ -303,6 +305,11 @@ public class Tools {
 
         if (lore != null) {
             m.setLore(this.rc(lore));
+        }
+        if (enchant) {
+            Glow glow = new Glow(NamespacedKey.randomKey());
+            m.addEnchant(glow, 1, true);
+            m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
         item.setItemMeta(m);

@@ -23,9 +23,9 @@ public class AnimationManager {
             try {
                 Animation animation = animationClass.newInstance();
                 animation.start(player, location, c);
-                Case.ActiveCase.put(location, c);
+                Case.ActiveCase.put(location.getBlock().getLocation(), c);
                 for (Player pl : Bukkit.getOnlinePlayers()) {
-                    if (Case.openCase.containsKey(pl) && Main.t.isHere(location, Case.openCase.get(pl))) {
+                    if (Case.openCase.containsKey(pl) && Main.t.isHere(location.getBlock().getLocation(), Case.openCase.get(pl))) {
                         pl.closeInventory();
                     }
                 }

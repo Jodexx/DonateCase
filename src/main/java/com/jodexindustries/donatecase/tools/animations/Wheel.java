@@ -32,6 +32,7 @@ public class Wheel implements Animation {
             String winGroup = Tools.getRandomGroup(c);
             String winGroupId = Case.getWinGroupId(c, winGroup);
             String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
+            boolean winGroupEnchant = Case.getWinGroupEnchant(c, winGroup);
             Material material;
             ItemStack winItem = null;
             if (!winGroupId.contains(":")) {
@@ -39,7 +40,7 @@ public class Wheel implements Animation {
                 if (material == null) {
                     material = Material.STONE;
                 }
-                winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName);
+                winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName, winGroupEnchant);
             } else {
                 if (winGroupId.startsWith("HEAD")) {
                     String[] parts = winGroupId.split(":");

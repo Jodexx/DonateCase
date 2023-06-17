@@ -21,6 +21,7 @@ public class Rainly implements Animation {
         final String winGroup = Tools.getRandomGroup(c);
         final String winGroupId = Case.getWinGroupId(c, winGroup);
         final String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
+        final boolean winGroupEnchant = Case.getWinGroupEnchant(c, winGroup);
         location.add(0.5, 1, 0.5);
         Location rain1 = lAC.clone().add(-1.5, 3, -1.5);
         Location rain2 = lAC.clone().add(2.5, 3, -1.5);
@@ -61,7 +62,7 @@ public class Rainly implements Animation {
                     if (material == null) {
                         material = Material.STONE;
                     }
-                    winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName);
+                    winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName, winGroupEnchant);
                 } else
                 if(winGroupId.startsWith("HEAD")) {
                     String[] parts = winGroupId.split(":");
@@ -108,12 +109,13 @@ public class Rainly implements Animation {
                     Material material2;
                     final String winGroupDisplayName2 = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
                     final String winGroup2Id = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.ID").toUpperCase();
+                    boolean winGroup2Enchant = Case.getWinGroupEnchant(c, winGroup2);
                     if(!winGroup2Id.contains(":")) {
                         material2 = Material.getMaterial(winGroup2Id);
                         if (material2 == null) {
                             material2 = Material.STONE;
                         }
-                        winItem2 = Main.t.createItem(material2, 1, 0, winGroupDisplayName2);
+                        winItem2 = Main.t.createItem(material2, 1, 0, winGroupDisplayName2, winGroup2Enchant);
                     } else {
                         if (winGroup2Id.startsWith("HEAD")) {
                             String[] parts = winGroup2Id.split(":");

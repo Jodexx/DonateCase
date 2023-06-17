@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.dc;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.Objects;
 
 import com.jodexindustries.donatecase.api.AnimationManager;
@@ -13,7 +14,9 @@ import com.jodexindustries.donatecase.tools.animations.Shape;
 import com.jodexindustries.donatecase.tools.animations.Wheel;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -92,6 +95,24 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
 
         registerDefaultAnimations();
+        try {
+            Field f = Enchantment.class.getDeclaredField("acceptingNew");
+            f.setAccessible(true);
+            f.set(null, true);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Glow glow = new Glow(NamespacedKey.randomKey());
+            Enchantment.registerEnchantment(glow);
+        }
+        catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void onDisable() {
@@ -156,7 +177,7 @@ public class Main extends JavaPlugin {
 
         }
 
-        if (!customConfig.getConfig().getString("config").equals("2.4")) {
+        if (!customConfig.getConfig().getString("config").equals("2.5")) {
             Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated Config.yml! Creating a new!"));
             ConfigFile = new File(this.getDataFolder(), "Config.yml");
             ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));

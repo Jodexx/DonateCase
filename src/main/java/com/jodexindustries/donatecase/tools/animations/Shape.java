@@ -27,6 +27,7 @@ public class Shape implements Animation {
         final String winGroup = Tools.getRandomGroup(c);
         final String winGroupId = Case.getWinGroupId(c, winGroup);
         final String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
+        boolean winGroupEnchant = Case.getWinGroupEnchant(c, winGroup);
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
         final ArmorStand as = (ArmorStand)player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
@@ -48,7 +49,7 @@ public class Shape implements Animation {
                     if (material == null) {
                         material = Material.STONE;
                     }
-                    winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName);
+                    winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName, winGroupEnchant);
                 } else {
                     if (winGroupId.startsWith("HEAD")) {
                         String[] parts = winGroupId.split(":");
@@ -97,7 +98,7 @@ public class Shape implements Animation {
                         if (material2 == null) {
                             material2 = Material.STONE;
                         }
-                        winItem2 = Main.t.createItem(material2, 1, 0, winGroupDisplayName2);
+                        winItem2 = Main.t.createItem(material2, 1, 0, winGroupDisplayName2, winGroupEnchant);
                     } else {
                         if (winGroup2Id.startsWith("HEAD")) {
                             String[] parts = winGroup2Id.split(":");

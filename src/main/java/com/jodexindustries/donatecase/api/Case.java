@@ -208,6 +208,9 @@ public class Case {
     public static String getWinGroupDisplayName(String c, String winGroup) {
         return customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
     }
+    public static boolean getWinGroupEnchant(String c, String winGroup) {
+        return customConfig.getConfig().getBoolean("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.Enchanted");
+    }
 
     public static void onCaseOpenFinish(String casename, Player player, boolean needsound, String winGroup) {
         String sound;

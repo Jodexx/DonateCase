@@ -22,6 +22,7 @@ public class GuiDonatCase {
         assert title != null;
         Inventory inv = Bukkit.createInventory(null, 45, Main.t.rc(title));
         final String materialID = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial")).toUpperCase();
+        boolean materialEnchant = customConfig.getConfig().getBoolean("DonatCase.Cases." + c + ".Gui.GuiMaterialEnchant");
         if(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial") != null && !materialID.equalsIgnoreCase("AIR")) {
             final String materialNAME = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterialName"));
             List<String> materialLORE = new ArrayList<>();
@@ -35,7 +36,7 @@ public class GuiDonatCase {
                 if (material == null) {
                     material = Material.STONE;
                 }
-                f = Main.t.createItem(material, 1, 1, materialNAME, materialLORE);
+                f = Main.t.createItem(material, 1, 1, materialNAME, materialLORE, materialEnchant);
             } else {
                 if (materialID.startsWith("HEAD")) {
                     String[] parts = materialID.split(":");
@@ -73,6 +74,7 @@ public class GuiDonatCase {
         }
 
         final String opencasematerialID = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterial")).toUpperCase();
+        boolean opencasematerialEnchant = customConfig.getConfig().getBoolean("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterialEnchant");
         Material opencasematerial;
         ItemStack opencaseitemstack = null;
         String displayname;
@@ -85,7 +87,7 @@ public class GuiDonatCase {
             if (opencasematerial == null) {
                 opencasematerial = Material.STONE;
             }
-            opencaseitemstack = Main.t.createItem(opencasematerial, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys ));
+            opencaseitemstack = Main.t.createItem(opencasematerial, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys), opencasematerialEnchant);
         }
         if(opencasematerialID.startsWith("HEAD")) {
             String[] parts = opencasematerialID.split(":");
@@ -98,13 +100,13 @@ public class GuiDonatCase {
                 opencaseitemstack = Main.t.getHDBSkull(id, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
             } else {
                 if(!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                    opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
+                    opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys), opencasematerialEnchant);
                 } else {
                     List<String> pLore = new ArrayList<>();
                     for(String line : lore) {
                         pLore.add(PlaceholderAPI.setPlaceholders(p, line));
                     }
-                    opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(pLore, "%case:" + c, "%keys:" + keys));
+                    opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(pLore, "%case:" + c, "%keys:" + keys), opencasematerialEnchant);
 
                 }
             }
@@ -116,7 +118,7 @@ public class GuiDonatCase {
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
                 opencaseitemstack = Main.t.getCHSkull(category, id, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
             } else {
-                opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys));
+                opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys), opencasematerialEnchant);
             }
         }
         inv.setItem(Main.t.c(5, 3), opencaseitemstack);
