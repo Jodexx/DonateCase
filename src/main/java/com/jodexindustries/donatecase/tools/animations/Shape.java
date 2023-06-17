@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -14,13 +15,13 @@ import java.util.Objects;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
-public class Shape extends Animation {
+public class Shape implements Animation {
 
     @Override
     public void start(Player player, Location location, String c) {
         final Location lAC = location.clone();
 
-        final String winGroup = Case.getRandomGroup(c);
+        final String winGroup = Tools.getRandomGroup(c);
         final String winGroupId = Case.getWinGroupId(c, winGroup);
         final String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
         location.add(0.5, -0.1, 0.5);
@@ -83,7 +84,7 @@ public class Shape extends Animation {
                 }
 
                 if (this.i <= 15) {
-                    final String winGroup2 = Case.getRandomGroup(c);
+                    final String winGroup2 = Tools.getRandomGroup(c);
                     ItemStack winItem2 = null;
                     Material material2;
                     final String winGroupDisplayName2 = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");

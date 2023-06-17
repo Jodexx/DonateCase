@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -12,12 +13,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
-public class Rainly extends Animation {
+public class Rainly implements Animation {
     @Override
     public void start(Player player, Location location, String c) {
         final Location lAC = location.clone();
         final String FallingParticle = customConfig.getAnimations().getString("Rainly.FallingParticle");
-        final String winGroup = Case.getRandomGroup(c);
+        final String winGroup = Tools.getRandomGroup(c);
         final String winGroupId = Case.getWinGroupId(c, winGroup);
         final String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
         location.add(0.5, 1, 0.5);
@@ -102,7 +103,7 @@ public class Rainly extends Animation {
 
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0 )) {
-                    final String winGroup2 = Case.getRandomGroup(c);
+                    final String winGroup2 = Tools.getRandomGroup(c);
                     ItemStack winItem2 = null;
                     Material material2;
                     final String winGroupDisplayName2 = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");

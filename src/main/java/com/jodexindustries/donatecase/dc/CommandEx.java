@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.dc;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.tools.Tools;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -210,7 +211,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                 int keys = com.jodexindustries.donatecase.api.Case.getKeys(casename, playername);
                                 if (keys >= 1) {
                                     com.jodexindustries.donatecase.api.Case.removeKeys(casename, playername, 1);
-                                    String winGroup = Case.getRandomGroup(casename);
+                                    String winGroup = Tools.getRandomGroup(casename);
                                     Case.onCaseOpenFinish(casename, player, true, winGroup);
                                 } else {
                                     Main.t.msg(player, Main.lang.getString("NoKey"));

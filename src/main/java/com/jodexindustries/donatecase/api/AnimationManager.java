@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AnimationManager {
-    private static final Map<String, Animation> registeredAnimations = new HashMap<>();
+    public static Map<String, Animation> registeredAnimations = new HashMap<>();
     public static void registerAnimation(String name, Animation animation) {
         if(registeredAnimations.get(name) == null) {
             registeredAnimations.put(name, animation);

@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.StartAnimation;
+import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -187,35 +188,15 @@ public class Case {
         new StartAnimation(player, location, casename);
     }
 
-    public static String getRandomGroup(String casename) {
-        Random random = new Random();
-        int maxChance = 0;
-        int from = 0;
-
-        Set<String> itemKeys = customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getKeys(false);
-
-        for (String item : itemKeys) {
-            maxChance += customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance");
-        }
-
-        int rand = random.nextInt(maxChance);
-
-        for (String item : itemKeys) {
-            int itemChance = customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance");
-            if (from <= rand && rand < from + itemChance) {
-                return item;
-            }
-            from += itemChance;
-        }
-
-        return null;
+    public static String getRandomGroup(String c) {
+        return Tools.getRandomGroup(c);
     }
 
     public static String getWinGroupId(String c, String winGroup) {
         return customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
     }
     public static String getWinGroupDisplayName(String c, String winGroup) {
-        return customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName").toUpperCase();
+        return customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
     }
 
     public static void onCaseOpenFinish(String casename, Player player, boolean needsound, String winGroup) {

@@ -26,6 +26,30 @@ import static com.jodexindustries.donatecase.dc.Main.customConfig;
 public class Tools {
 
 
+    public static String getRandomGroup(String casename) {
+        Random random = new Random();
+        int maxChance = 0;
+        int from = 0;
+
+        Set<String> itemKeys = customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getKeys(false);
+
+        for (String item : itemKeys) {
+            maxChance += customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance");
+        }
+
+        int rand = random.nextInt(maxChance);
+
+        for (String item : itemKeys) {
+            int itemChance = customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance");
+            if (from <= rand && rand < from + itemChance) {
+                return item;
+            }
+            from += itemChance;
+        }
+
+        return null;
+    }
+
     public void launchFirework(Location l) {
         Random r = new Random();
         Firework fw = (Firework)l.getWorld().spawnEntity(l.subtract(new Vector(0.0, 0.5, 0.0)), EntityType.FIREWORK);

@@ -3,7 +3,7 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import org.bukkit.Bukkit;
+import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -18,7 +18,7 @@ import java.util.List;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
-public class Wheel extends Animation {
+public class Wheel implements Animation {
 
     List<ItemStack> items = new ArrayList<>();
     List<String> groups = new ArrayList<>();
@@ -29,9 +29,9 @@ public class Wheel extends Animation {
         // register items
          int itemscount = customConfig.getAnimations().getInt("Wheel.ItemsCount");;
         for (int i = 0; i < itemscount; i++) {
-            String winGroup = Case.getRandomGroup(c);
+            String winGroup = Tools.getRandomGroup(c);
             String winGroupId = Case.getWinGroupId(c, winGroup);
-            String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroupId);
+            String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
             Material material;
             ItemStack winItem = null;
             if (!winGroupId.contains(":")) {
@@ -120,6 +120,9 @@ public class Wheel extends Animation {
                         stand.remove();
                     }
                     Case.caseOpen.remove(player);
+                    items.clear();
+                    groups.clear();
+                    armorStands.clear();
                 }
             }
         }).runTaskTimer(Main.instance, 0L, 2L);
