@@ -15,7 +15,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
-public class FireworkShape implements Animation {
+public class FireworkShape extends Animation {
 
     public void start(Player player, Location location, String c) {
         final Location lAC = location.clone();

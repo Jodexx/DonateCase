@@ -3,6 +3,8 @@ package com.jodexindustries.donatecase.dc;
 import java.io.File;
 import java.util.Objects;
 
+import com.jodexindustries.donatecase.api.Animation;
+import com.jodexindustries.donatecase.api.AnimationFactory;
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.listener.EventsListener;
@@ -202,10 +204,10 @@ public class Main extends JavaPlugin {
     }
 
     private void registerDefaultAnimations() {
-        AnimationManager.registerAnimation("SHAPE", new Shape());
-        AnimationManager.registerAnimation("WHEEL", new Wheel());
-        AnimationManager.registerAnimation("RAINLY", new Rainly());
-        AnimationManager.registerAnimation("FIREWORK", new FireworkShape());
+        AnimationManager.registerAnimation("SHAPE", Shape::new);
+        AnimationManager.registerAnimation("WHEEL", Wheel::new);
+        AnimationManager.registerAnimation("RAINLY", Rainly::new);
+        AnimationManager.registerAnimation("FIREWORK", FireworkShape::new);
     }
     public static Permission getPermissions() {
         return permission;

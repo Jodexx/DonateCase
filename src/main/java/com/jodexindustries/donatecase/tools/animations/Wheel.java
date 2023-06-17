@@ -18,7 +18,7 @@ import java.util.List;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
-public class Wheel implements Animation {
+public class Wheel extends Animation {
 
     List<ItemStack> items = new ArrayList<>();
     List<String> groups = new ArrayList<>();

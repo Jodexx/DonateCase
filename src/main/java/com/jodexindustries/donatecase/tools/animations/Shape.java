@@ -15,7 +15,7 @@ import java.util.Objects;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
-public class Shape implements Animation {
+public class Shape extends Animation {
 
     @Override
     public void start(Player player, Location location, String c) {

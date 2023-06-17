@@ -17,7 +17,6 @@ public class StartAnimation {
         if(animation != null) {
             Case.caseOpen.add(player);
             if(AnimationManager.isRegistered(animation)) {
-                AnimationManager.registeredAnimations.put(animation, AnimationManager.getRegisteredAnimations().get(animation));
                 AnimationManager.playAnimation(animation, player, location, c);
             } else {
                 Case.caseOpen.remove(player);
