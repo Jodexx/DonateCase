@@ -42,6 +42,10 @@ public class Main extends JavaPlugin {
 
         customConfig.getConfig().addDefault("DonatCase.NoKeyWarningSound", "ENTITY_ENDERMAN_TELEPORT");
 
+        if(customConfig.getCases().getString("config") == null || !customConfig.getCases().getString("config").equalsIgnoreCase("1.0")) {
+            getLogger().info("Conversion of case locations to a new method of storage...");
+            t.convertCasesLocation();
+        }
 
         Bukkit.getPluginManager().registerEvents(new EventsListener(), this);
         if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {

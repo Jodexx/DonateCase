@@ -252,18 +252,17 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             if (args[0].equalsIgnoreCase("create")) {
                 if(sender instanceof Player) {
                     Player player = (Player) sender;
-                    Location l = player.getTargetBlock(null, 5).getLocation();
-                    String locat = l.toString();
+                    Location l = player.getTargetBlock(null, 5).getLocation().setDirection(player.getLocation().getDirection());
                     if (sender.hasPermission("donatecase.admin")) {
                         if (args.length >= 3) {
                             String casetype = args[1];
                             String casename = args[2];
-                            if (com.jodexindustries.donatecase.api.Case.hasCaseByName(casetype)) {
-                                if (com.jodexindustries.donatecase.api.Case.hasCaseByLocation(locat)) {
+                            if (Case.hasCaseByName(casetype)) {
+                                if (Case.hasCaseByLocation(l)) {
                                     Main.t.msg(sender, Main.lang.getString("HasDonatCase"));
                                 } else {
-                                    if(!com.jodexindustries.donatecase.api.Case.hasCaseDataByName(casename)) {
-                                        com.jodexindustries.donatecase.api.Case.saveLocation(casename, casetype, locat);
+                                    if(!Case.hasCaseDataByName(casename)) {
+                                        Case.saveLocation(casename, casetype, l);
                                         Main.t.msg(sender, Main.lang.getString("AddDonatCase"));
                                     } else {
                                         Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseAlreadyHasByName"), "%casename:" + casename));
@@ -290,9 +289,8 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
                             Location l = player.getTargetBlock(null, 5).getLocation();
-                            String locat = l.toString();
-                            if (com.jodexindustries.donatecase.api.Case.hasCaseByLocation(locat)) {
-                                customConfig.getCases().set("DonatCase.Cases." + com.jodexindustries.donatecase.api.Case.getCaseNameByLocation(locat), null);
+                            if (Case.hasCaseByLocation(l)) {
+                                customConfig.getCases().set("DonatCase.Cases." + Case.getCaseNameByLocation(l), null);
                                 customConfig.saveCases();
                                 Main.t.msg(sender, Main.lang.getString("RemoveDonatCase"));
                             } else {

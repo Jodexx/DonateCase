@@ -2,7 +2,9 @@ package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.StartAnimation;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -21,8 +23,9 @@ public class Case {
     public static HashMap<Player, Location> openCase = new HashMap<>();
     public static HashMap<Location, String> ActiveCase = new HashMap<>();
 
-    public static void saveLocation(String name, String type, String lv) {
-        customConfig.getCases().set("DonatCase.Cases." + name + ".location", lv);
+    public static void saveLocation(String name, String type, Location lv) {
+        String location = lv.getWorld().getName() + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
+        customConfig.getCases().set("DonatCase.Cases." + name + ".location", location);
         customConfig.getCases().set("DonatCase.Cases." + name + ".type", type);
         customConfig.saveCases();
     }
@@ -59,7 +62,7 @@ public class Case {
         return Main.Tconfig ? customConfig.getKeys().getInt("DonatCase.Cases." + name + "." + player) : Main.mysql.getKey(name, player);
     }
 
-    public static boolean hasCaseByLocation(String loc) {
+    public static boolean hasCaseByLocation(Location loc) {
         ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
         if(cases_ == null) {
             return false;
@@ -67,9 +70,13 @@ public class Case {
         for (String name : cases_.getValues(false).keySet()) {
             if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
                 return false;
-            } else
-            if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location").equalsIgnoreCase(loc)) {
-                return true;
+            } else {
+                String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
+                World world = Bukkit.getWorld(location[0]);
+                Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
+                if(temp.equals(loc)) {
+                    return true;
+                }
             }
         }
 
@@ -77,26 +84,58 @@ public class Case {
     }
 
     // get case type by location in Cases.yml
-    public static String getCaseTypeByLocation(String loc) {
+    public static String getCaseTypeByLocation(Location loc) {
         ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
 
         for(String name : cases_.getValues(false).keySet()) {
             if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
                 return null;
-            } else if (customConfig.getCases().getString("DonatCase.Cases." + name + ".location").equalsIgnoreCase(loc)) {
-                return customConfig.getCases().getString("DonatCase.Cases." + name + ".type");
+            } else {
+                String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
+                World world = Bukkit.getWorld(location[0]);
+                Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
+                if (temp.equals(loc)) {
+                    return customConfig.getCases().getString("DonatCase.Cases." + name + ".type");
+                }
             }
         }
         return null;
     }
+
+    public static Location getCaseLocationByBlockLocation(Location blockLocation) {
+        ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+
+        for(String name : cases_.getValues(false).keySet()) {
+            if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
+                return null;
+            } else {
+                String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
+                World world = Bukkit.getWorld(location[0]);
+                Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
+                if (temp.equals(blockLocation)) {
+                    Location result = temp.clone();
+                    result.setPitch(Float.parseFloat(location[4]));
+                    result.setYaw(Float.parseFloat(location[5]));
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+
     // get case name by location in Cases.yml
-    public static String getCaseNameByLocation(String loc) {
+    public static String getCaseNameByLocation(Location loc) {
         ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
         for (String name : cases_.getValues(false).keySet()) {
             if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
                 return null;
-            } else if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location").equalsIgnoreCase(loc)) {
-                return name;
+            } else {
+                String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
+                World world = Bukkit.getWorld(location[0]);
+                Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
+                if (temp.equals(loc)) {
+                    return name;
+                }
             }
         }
 

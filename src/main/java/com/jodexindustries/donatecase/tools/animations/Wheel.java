@@ -12,6 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,36 +79,31 @@ public class Wheel {
         (new BukkitRunnable() {
             int ticks = 0;
 
-            // Configurable variables:
-            final double speed = customConfig.getAnimations().getDouble("Wheel.CircleSpeed");; // rotation speed; how many times an element does a whole circle per second
-            final double radius = customConfig.getAnimations().getDouble("Wheel.CircleRadius"); // the radius of the circle, in blocks
+            final double speed = customConfig.getAnimations().getDouble("Wheel.CircleSpeed");
+            final double radius = customConfig.getAnimations().getDouble("Wheel.CircleRadius");
 
-            // Constants:
-            final double offset = 2 * Math.PI / itemscount; // 'entities' is your collection of entities
-            Location location = lAC.clone().add(0.5, -1, 0);
+            final double offset = 2 * Math.PI / itemscount;
+            final Location location = lAC.clone().add(0.5, -1, 0);
 
             public void run() {
                 ticks++;
-                double angle = ticks / 20.0; // the seconds for which the runnable has been running
-                angle *= speed; // apply speed
-                angle *= 2 * Math.PI; // scale to radians (2PI = 360 degrees = 1 circle)
+                double angle = ticks / 20.0;
+                angle *= speed;
+                angle *= 2 * Math.PI;
+
                 if(ticks < 101) {
                     for (ArmorStand entity : armorStands) {
                         double x = radius * Math.sin(angle);
                         double y = radius * Math.cos(angle);
+                        double z = Math.sin(Math.toRadians(location.getPitch())) * Math.cos(angle);
 
-                        // add the (x, y) to the >center< location,
-                        // as they are an offset, not the resulting location.
-                        // remember to clone the center!
-                        Location newLoc = location.clone().add(x, y, 0);
-                        // teleport to the new offset location
+                        Location newLoc = location.clone().add(location.getDirection().getX() + x, y, 0);
                         entity.teleport(newLoc);
+                        angle += offset;
 
-                        angle += offset; // Update angle
-
-                        double targetAngle = 0.5 * Math.PI; // Adjust this value to the desired angle
-                        double currentAngle = angle % (2 * Math.PI); // Normalize the angle to [0, 2PI)
-                        double threshold = 0.1; // Adjust this value to set the proximity threshold
+                        double targetAngle = 0.5 * Math.PI;
+                        double currentAngle = angle % (2 * Math.PI);
+                        double threshold = 0.1;
                         if (Math.abs(currentAngle - targetAngle) < threshold) {
                             if(customConfig.getAnimations().getString("Wheel.Scroll.Sound") != null) {
                                 location.getWorld().playSound(location,

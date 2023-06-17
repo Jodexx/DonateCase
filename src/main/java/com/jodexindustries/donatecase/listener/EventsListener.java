@@ -107,16 +107,15 @@ public class EventsListener implements Listener {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Player p = e.getPlayer();
             Location blockLocation = e.getClickedBlock().getLocation();
-            String loca = blockLocation.toString();
-            if (Case.hasCaseByLocation(loca)) {
-                String caseType = Case.getCaseTypeByLocation(loca);
+            if (Case.hasCaseByLocation(blockLocation)) {
+                String caseType = Case.getCaseTypeByLocation(blockLocation);
                 e.setCancelled(true);
                 CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType);
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
                     if (!StartAnimation.caseOpen.contains(p)) {
                         if (!Case.ActiveCase.containsKey(blockLocation)) {
-                            Case.openCase.put(p, blockLocation.clone());
+                            Case.openCase.put(p, Case.getCaseLocationByBlockLocation(blockLocation));
                             new GuiDonatCase(p, caseType);
                         } else {
                             Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
@@ -139,8 +138,7 @@ public class EventsListener implements Listener {
     @EventHandler
     public void BlockBreak(BlockBreakEvent e) {
         Location loc = e.getBlock().getLocation();
-        String loca = loc.toString();
-        if (Case.hasCaseByLocation(loca)) {
+        if (Case.hasCaseByLocation(loc)) {
             e.setCancelled(true);
             Main.t.msg(e.getPlayer(), Main.lang.getString("DestoryDonatCase"));
         }

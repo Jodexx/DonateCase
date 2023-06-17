@@ -5,6 +5,7 @@ import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
@@ -18,6 +19,8 @@ import org.bukkit.util.Vector;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
@@ -106,6 +109,45 @@ public class Tools {
         }
 
         return rt;
+    }
+    public void convertCasesLocation() {
+        ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+        for (String name : cases_.getValues(false).keySet()) {
+            if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
+                return;
+            } else {
+                String stringlocation = customConfig.getCases().getString("DonatCase.Cases." + name + ".location");
+                Location lv = fromString(stringlocation);
+                if(lv != null) {
+                    String location = lv.getWorld().getName() + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
+                    customConfig.getCases().set("DonatCase.Cases." + name + ".location", location);
+                }
+            }
+        }
+        customConfig.getCases().set("config", "1.0");
+        customConfig.saveCases();
+        Main.instance.getLogger().info("Conversion successful!");
+    }
+    public Location fromString(String str) {
+        String regex = "Location\\{world=CraftWorld\\{name=(.*?)},x=(.*?),y=(.*?),z=(.*?),pitch=(.*?),yaw=(.*?)}";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(str);
+
+        if (matcher.find()) {
+            World world = null;
+            if (!matcher.group(1).equals("null")) {
+                world = Bukkit.getWorld(matcher.group(1));
+            }
+            double x = Double.parseDouble(matcher.group(2));
+            double y = Double.parseDouble(matcher.group(3));
+            double z = Double.parseDouble(matcher.group(4));
+            float pitch = Float.parseFloat(matcher.group(5));
+            float yaw = Float.parseFloat(matcher.group(6));
+
+            return new Location(world, x, y, z, yaw, pitch);
+        }
+
+        return null;
     }
 
     public List<String> rc(List<String> t) {
