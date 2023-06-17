@@ -18,9 +18,19 @@ import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
 public class Case {
 
+    /**
+     * List of entities currently in use
+     */
     public static List<ArmorStand> listAR = new ArrayList<>();
+    /**
+     * Open cases (active)
+     */
     public static HashMap<Player, Location> openCase = new HashMap<>();
+    /**
+     * Active cases
+     */
     public static HashMap<Location, String> ActiveCase = new HashMap<>();
+
     /**
      * Players, who opened cases (started scrolling)
      */
