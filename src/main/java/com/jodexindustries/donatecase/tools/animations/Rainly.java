@@ -13,7 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
-public class Rainly extends Animation {
+public class Rainly implements Animation {
     @Override
     public void start(Player player, Location location, String c) {
         final Location lAC = location.clone();

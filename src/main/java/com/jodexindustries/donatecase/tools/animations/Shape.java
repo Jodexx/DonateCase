@@ -4,7 +4,10 @@ import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.Tools;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -15,7 +18,7 @@ import java.util.Objects;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
-public class Shape extends Animation {
+public class Shape implements Animation {
 
     @Override
     public void start(Player player, Location location, String c) {

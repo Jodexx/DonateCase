@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AnimationManager {
-    public static Map<String, AnimationFactory> registeredAnimations = new HashMap<>();
-    public static void registerAnimation(String name, AnimationFactory animation) {
+    private static Map<String, Class<? extends Animation>> registeredAnimations = new HashMap<>();
+    public static void registerAnimation(String name, Class<? extends Animation> animation) {
         if(registeredAnimations.get(name) == null) {
             registeredAnimations.put(name, animation);
         } else {
@@ -18,17 +18,20 @@ public class AnimationManager {
         }
     }
     public static void playAnimation(String name, Player player, Location location, String c) {
-        AnimationFactory factory = registeredAnimations.get(name);
-        Animation animation = factory.createAnimation();
-        if (animation != null) {
-            animation.start(player, location, c);
-            Case.ActiveCase.put(location, c);
-            for (Player pl : Bukkit.getOnlinePlayers()) {
-                if (Case.openCase.containsKey(pl) && Main.t.isHere(location, Case.openCase.get(pl))) {
-                    pl.closeInventory();
+        Class<? extends Animation> animationClass = registeredAnimations.get(name);
+        if (animationClass != null) {
+            try {
+                Animation animation = animationClass.newInstance();
+                animation.start(player, location, c);
+                Case.ActiveCase.put(location, c);
+                for (Player pl : Bukkit.getOnlinePlayers()) {
+                    if (Case.openCase.containsKey(pl) && Main.t.isHere(location, Case.openCase.get(pl))) {
+                        pl.closeInventory();
+                    }
                 }
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
             }
-
         } else {
             Bukkit.getLogger().warning("Animation " + name + " not found!");
         }
@@ -36,7 +39,7 @@ public class AnimationManager {
     public static boolean isRegistered(String name) {
         return registeredAnimations.get(name) != null;
     }
-    public static Map<String, AnimationFactory> getRegisteredAnimations() {
+    public static Map<String, Class<? extends Animation>> getRegisteredAnimations() {
         return registeredAnimations;
     }
 }
