@@ -9,6 +9,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -297,6 +298,7 @@ public class Tools {
 
     public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant) {
         ItemStack item = new ItemStack(ma, amount);
+        item.addUnsafeEnchantment(Enchantment.LURE, 1);
         ItemMeta m = item.getItemMeta();
         if (dn != null) {
             m.setDisplayName(rc(dn));
@@ -306,8 +308,7 @@ public class Tools {
             m.setLore(this.rc(lore));
         }
         if (enchant) {
-            item.addUnsafeEnchantment(Enchantment.LUCK, 1);
-            m.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
+            m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
         item.setItemMeta(m);
