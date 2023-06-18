@@ -216,6 +216,11 @@ public class Case {
         return Main.instance;
     }
 
+    public static void animationEnd(Player player, Location location) {
+       ActiveCase.remove(location.getBlock().getLocation());
+       openCase.remove(player);
+    }
+
     public static void onCaseOpenFinish(String casename, Player player, boolean needsound, String winGroup) {
         String sound;
         String casetitle = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");

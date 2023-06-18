@@ -163,10 +163,8 @@ public class Rainly implements Animation {
                 if (this.i >= 70) {
                     as.remove();
                     this.cancel();
-                    Case.ActiveCase.remove(lAC);
-                    Case.listAR.remove(as);
-                    Case.caseOpen.remove(player);
-                }
+                    Case.animationEnd(player, lAC);
+                    Case.listAR.remove(as);}
 
                 ++this.i;
             }

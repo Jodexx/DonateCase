@@ -159,9 +159,8 @@ public class Shape implements Animation {
                 if (this.i >= 40) {
                     as.remove();
                     this.cancel();
-                    Case.ActiveCase.remove(lAC);
+                    Case.animationEnd(player, lAC);
                     Case.listAR.remove(as);
-                    Case.caseOpen.remove(player);
                 }
 
                 ++this.i;

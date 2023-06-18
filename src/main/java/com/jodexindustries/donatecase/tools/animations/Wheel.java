@@ -115,12 +115,11 @@ public class Wheel implements Animation {
 
                 if (this.ticks >= 120) {
                     this.cancel();
-                    Case.ActiveCase.remove(lAC);
                     for(ArmorStand stand : armorStands) {
                         Case.listAR.remove(stand);
                         stand.remove();
                     }
-                    Case.caseOpen.remove(player);
+                    Case.animationEnd(player, lAC);
                     items.clear();
                     groups.clear();
                     armorStands.clear();
