@@ -1,9 +1,5 @@
 package com.jodexindustries.donatecase.dc;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.Objects;
-
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.listener.EventsListener;
@@ -14,13 +10,14 @@ import com.jodexindustries.donatecase.tools.animations.Shape;
 import com.jodexindustries.donatecase.tools.animations.Wheel;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.io.File;
+import java.util.Objects;
 
 public class Main extends JavaPlugin {
     public static Main instance;
@@ -95,24 +92,6 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
 
         registerDefaultAnimations();
-        try {
-            Field f = Enchantment.class.getDeclaredField("acceptingNew");
-            f.setAccessible(true);
-            f.set(null, true);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            Glow glow = new Glow(NamespacedKey.randomKey());
-            Enchantment.registerEnchantment(glow);
-        }
-        catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
     }
 
     public void onDisable() {

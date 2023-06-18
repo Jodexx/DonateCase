@@ -218,7 +218,7 @@ public class Case {
 
     public static void animationEnd(Player player, Location location) {
        ActiveCase.remove(location.getBlock().getLocation());
-       openCase.remove(player);
+       caseOpen.remove(player);
     }
 
     public static void onCaseOpenFinish(String casename, Player player, boolean needsound, String winGroup) {

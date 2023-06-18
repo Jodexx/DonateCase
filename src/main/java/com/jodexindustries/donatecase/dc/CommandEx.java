@@ -207,10 +207,10 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     if (sender.hasPermission("donatecase.player")) {
                         if (args.length == 2) {
                             String casename = args[1];
-                            if (com.jodexindustries.donatecase.api.Case.hasCaseByName(casename)) {
-                                int keys = com.jodexindustries.donatecase.api.Case.getKeys(casename, playername);
+                            if (Case.hasCaseByName(casename)) {
+                                int keys = Case.getKeys(casename, playername);
                                 if (keys >= 1) {
-                                    com.jodexindustries.donatecase.api.Case.removeKeys(casename, playername, 1);
+                                    Case.removeKeys(casename, playername, 1);
                                     String winGroup = Tools.getRandomGroup(casename);
                                     Case.onCaseOpenFinish(casename, player, true, winGroup);
                                 } else {

@@ -9,7 +9,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -307,9 +306,8 @@ public class Tools {
             m.setLore(this.rc(lore));
         }
         if (enchant) {
-            Glow glow = new Glow(NamespacedKey.randomKey());
-            m.addEnchant(glow, 1, true);
-            m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            item.addUnsafeEnchantment(Enchantment.LUCK, 1);
+            m.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
         }
 
         item.setItemMeta(m);
