@@ -15,6 +15,10 @@ import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
 public class Rainly implements Animation {
     @Override
+    public String getName() {
+        return "RAINLY";
+    }
+    @Override
     public void start(Player player, Location location, String c) {
         final Location lAC = location.clone();
         final String FallingParticle = customConfig.getAnimations().getString("Rainly.FallingParticle");
@@ -163,8 +167,9 @@ public class Rainly implements Animation {
                 if (this.i >= 70) {
                     as.remove();
                     this.cancel();
-                    Case.animationEnd(player, lAC);
-                    Case.listAR.remove(as);}
+                    Case.animationEnd(c, getName(), player, lAC);
+                    Case.listAR.remove(as);
+                }
 
                 ++this.i;
             }

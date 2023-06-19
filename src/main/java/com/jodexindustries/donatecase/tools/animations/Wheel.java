@@ -23,6 +23,12 @@ public class Wheel implements Animation {
     List<ItemStack> items = new ArrayList<>();
     List<String> groups = new ArrayList<>();
     List<ArmorStand> armorStands = new ArrayList<>();
+
+    @Override
+    public String getName() {
+        return "WHEEL";
+    }
+
     @Override
      public void start(Player player, Location location, String c) {
         final Location lAC = location.clone();
@@ -119,7 +125,7 @@ public class Wheel implements Animation {
                         Case.listAR.remove(stand);
                         stand.remove();
                     }
-                    Case.animationEnd(player, lAC);
+                    Case.animationEnd(c, getName(), player, lAC);
                     items.clear();
                     groups.clear();
                     armorStands.clear();

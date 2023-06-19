@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
@@ -216,9 +217,11 @@ public class Case {
         return Main.instance;
     }
 
-    public static void animationEnd(Player player, Location location) {
-       ActiveCase.remove(location.getBlock().getLocation());
-       caseOpen.remove(player);
+    public static void animationEnd(String c, String animation, Player player, Location location) {
+        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location);
+        Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
+        ActiveCase.remove(location.getBlock().getLocation());
+        caseOpen.remove(player);
     }
 
     public static void onCaseOpenFinish(String casename, Player player, boolean needsound, String winGroup) {

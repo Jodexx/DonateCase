@@ -17,6 +17,11 @@ import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
 public class FireworkShape implements Animation {
 
+    @Override
+    public String getName() {
+        return "FIREWORK";
+    }
+
     public void start(Player player, Location location, String c) {
         final Location lAC = location.clone();
         final String winGroup = Tools.getRandomGroup(c);
@@ -102,7 +107,7 @@ public class FireworkShape implements Animation {
                     if (this.i >= 30) {
                         as.remove();
                         this.cancel();
-                        Case.animationEnd(player, lAC);
+                        Case.animationEnd(c, getName(), player, lAC);
                         Case.listAR.remove(as);
                     }
                 }
