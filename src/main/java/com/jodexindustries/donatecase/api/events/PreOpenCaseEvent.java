@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.Case;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

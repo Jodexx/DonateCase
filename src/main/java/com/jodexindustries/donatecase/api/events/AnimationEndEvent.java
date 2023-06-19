@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class AnimationEndEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-    protected boolean cancel;
     String caseType;
     Location location;
     String animation;
@@ -18,7 +17,6 @@ public class AnimationEndEvent extends PlayerEvent {
         this.caseType = caseType;
         this.location = location;
         this.animation = animation;
-        cancel = false;
     }
 
     @NotNull
