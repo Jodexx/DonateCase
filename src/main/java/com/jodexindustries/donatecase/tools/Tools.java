@@ -298,7 +298,9 @@ public class Tools {
 
     public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant) {
         ItemStack item = new ItemStack(ma, amount);
-        item.addUnsafeEnchantment(Enchantment.LURE, 1);
+        if(enchant) {
+            item.addUnsafeEnchantment(Enchantment.LURE, 1);
+        }
         ItemMeta m = item.getItemMeta();
         if (dn != null) {
             m.setDisplayName(rc(dn));
