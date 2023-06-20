@@ -119,8 +119,12 @@ public class Tools {
             } else {
                 String stringlocation = customConfig.getCases().getString("DonatCase.Cases." + name + ".location");
                 Location lv = fromString(stringlocation);
+                String world = "Undefined";
                 if(lv != null) {
-                    String location = lv.getWorld().getName() + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
+                    if(lv.getWorld() != null) {
+                        world = lv.getWorld().getName();
+                    }
+                    String location = world + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
                     customConfig.getCases().set("DonatCase.Cases." + name + ".location", location);
                 }
             }

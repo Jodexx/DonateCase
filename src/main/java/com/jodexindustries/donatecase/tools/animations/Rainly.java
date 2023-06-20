@@ -108,11 +108,11 @@ public class Rainly implements Animation {
 
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0 )) {
-                    final String winGroup2 = Tools.getRandomGroup(c);
+                    final String winGroup2 = Case.getRandomGroup(c);
                     ItemStack winItem2 = null;
                     Material material2;
-                    final String winGroupDisplayName2 = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.DisplayName");
-                    final String winGroup2Id = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup2 + ".Item.ID").toUpperCase();
+                    final String winGroupDisplayName2 = Case.getWinGroupDisplayName(c, winGroup2);
+                    final String winGroup2Id = Case.getWinGroupId(c, winGroup2);
                     boolean winGroup2Enchant = Case.getWinGroupEnchant(c, winGroup2);
                     if(!winGroup2Id.contains(":")) {
                         material2 = Material.getMaterial(winGroup2Id);
@@ -132,12 +132,12 @@ public class Rainly implements Animation {
                             } else {
                                 winItem2 = new ItemStack(Material.STONE);
                             }
-                        } else if (winGroupId.startsWith("CH")) {
-                            String[] parts = winGroupId.split(":");
+                        } else if (winGroup2Id.startsWith("CH")) {
+                            String[] parts = winGroup2Id.split(":");
                             String category = parts[1];
                             String id = parts[2];
                             if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                                winItem2 = Main.t.getCHSkull(category, id, winGroupDisplayName);
+                                winItem2 = Main.t.getCHSkull(category, id, winGroupDisplayName2);
                             } else {
                                 winItem2 = new ItemStack(Material.STONE);
                             }
