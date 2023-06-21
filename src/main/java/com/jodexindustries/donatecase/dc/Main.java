@@ -10,6 +10,7 @@ import com.jodexindustries.donatecase.tools.animations.Shape;
 import com.jodexindustries.donatecase.tools.animations.Wheel;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -90,8 +91,11 @@ public class Main extends JavaPlugin {
         }
         Objects.requireNonNull(getCommand("donatecase")).setExecutor(new CommandEx());
         Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
-
+        getLogger().info(ChatColor.GREEN + "Registering default animations...");
+        long time = System.currentTimeMillis();
         registerDefaultAnimations();
+        getLogger().info(ChatColor.GREEN + "Default animations registered in " + (System.currentTimeMillis() - time) + "ms");
+
     }
 
     public void onDisable() {

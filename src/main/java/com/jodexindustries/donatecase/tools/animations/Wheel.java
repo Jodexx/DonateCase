@@ -31,7 +31,7 @@ public class Wheel implements Animation {
 
     @Override
      public void start(Player player, Location location, String c) {
-        final Location lAC = location.clone();
+        final Location loc = location.clone();
         // register items
          int itemscount = customConfig.getAnimations().getInt("Wheel.ItemsCount");;
         for (int i = 0; i < itemscount; i++) {
@@ -82,7 +82,7 @@ public class Wheel implements Animation {
             final double radius = customConfig.getAnimations().getDouble("Wheel.CircleRadius");
 
             final double offset = 2 * Math.PI / itemscount;
-            final Location location = lAC.clone().add(0.5, -1, 0);
+            final Location location = loc.clone().add(loc.getDirection().multiply(-1).getX() + 0.5, -1, loc.getDirection().multiply(-0.5).getZ());
 
             public void run() {
                 ticks++;
@@ -94,9 +94,8 @@ public class Wheel implements Animation {
                     for (ArmorStand entity : armorStands) {
                         double x = radius * Math.sin(angle);
                         double y = radius * Math.cos(angle);
-                        double z = Math.sin(Math.toRadians(location.getPitch())) * Math.cos(angle);
 
-                        Location newLoc = location.clone().add(location.getDirection().getX() + x, y, 0);
+                        Location newLoc = location.clone().add(location.getDirection().multiply(-1).getX() + x, y, 0);
                         entity.teleport(newLoc);
                         angle += offset;
 
@@ -125,7 +124,7 @@ public class Wheel implements Animation {
                         Case.listAR.remove(stand);
                         stand.remove();
                     }
-                    Case.animationEnd(c, getName(), player, lAC);
+                    Case.animationEnd(c, getName(), player, loc);
                     items.clear();
                     groups.clear();
                     armorStands.clear();
