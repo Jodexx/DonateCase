@@ -16,7 +16,7 @@ import static com.jodexindustries.donatecase.dc.Main.customConfig;
 public class Rainly implements Animation {
     @Override
     public String getName() {
-        return "RAINLY";
+        return "DEFAULT RAINLY";
     }
     @Override
     public void start(Player player, Location location, String c) {

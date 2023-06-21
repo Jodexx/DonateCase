@@ -26,7 +26,7 @@ public class Wheel implements Animation {
 
     @Override
     public String getName() {
-        return "WHEEL";
+        return "DEFAULT WHEEL";
     }
 
     @Override

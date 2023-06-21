@@ -1,9 +1,11 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,8 +15,22 @@ public class AnimationManager {
     public static void registerAnimation(String name, Class<? extends Animation> animation) {
         if(registeredAnimations.get(name) == null) {
             registeredAnimations.put(name, animation);
+            String animationName;
+            String animationPluginName;
+            Animation animationClass;
+            boolean isDefault = false;
+            try {
+                animationClass = animation.newInstance();
+                animationName = animationClass.getName();
+                animationPluginName = JavaPlugin.getProvidingPlugin(animationClass.getClass()).getName();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+
+            AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(animationName, animation, animationPluginName, isDefault);
+            Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
         } else {
-            Bukkit.getLogger().warning("Animation with name " + name + " already registered!");
+            Main.instance.getLogger().warning("Animation with name " + name + " already registered!");
         }
     }
     public static void playAnimation(String name, Player player, Location location, String c) {
@@ -33,7 +49,7 @@ public class AnimationManager {
                 e.printStackTrace();
             }
         } else {
-            Bukkit.getLogger().warning("Animation " + name + " not found!");
+            Main.instance.getLogger().warning("Animation " + name + " not found!");
         }
     }
     public static boolean isRegistered(String name) {

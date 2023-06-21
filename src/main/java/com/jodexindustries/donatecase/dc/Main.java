@@ -36,6 +36,7 @@ public class Main extends JavaPlugin {
     public static CustomConfig customConfig;
 
     public void onEnable() {
+        long time = System.currentTimeMillis();
         instance = this;
         customConfig = new CustomConfig();
         t = new Tools();
@@ -59,8 +60,8 @@ public class Main extends JavaPlugin {
                 if (getDescription().getVersion().equals(version)) {
                     getLogger().info("There is not a new update available.");
                 } else {
-                    getLogger().info("There is a new update " + version +  " available.");
-                    getLogger().info("Download - https://www.spigotmc.org/resources/donatecase.106701/");
+                    getLogger().info(ChatColor.GREEN + "There is a new update " + version +  " available.");
+                    getLogger().info(ChatColor.GREEN + "Download - https://www.spigotmc.org/resources/donatecase.106701/");
                 }
 
             });
@@ -91,10 +92,8 @@ public class Main extends JavaPlugin {
         }
         Objects.requireNonNull(getCommand("donatecase")).setExecutor(new CommandEx());
         Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
-        getLogger().info(ChatColor.GREEN + "Registering default animations...");
-        long time = System.currentTimeMillis();
         registerDefaultAnimations();
-        getLogger().info(ChatColor.GREEN + "Default animations registered in " + (System.currentTimeMillis() - time) + "ms");
+        getLogger().info(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
 
     }
 

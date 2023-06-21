@@ -19,7 +19,7 @@ public class FireworkShape implements Animation {
 
     @Override
     public String getName() {
-        return "FIREWORK";
+        return "DEFAULT FIREWORK";
     }
 
     public void start(Player player, Location location, String c) {

@@ -16,13 +16,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
-
 public class Shape implements Animation {
 
     @Override
     public String getName() {
-        return "SHAPE";
+        return "DEFAULT SHAPE";
     }
 
     @Override

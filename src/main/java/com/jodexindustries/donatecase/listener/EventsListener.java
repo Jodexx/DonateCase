@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
 import com.jodexindustries.donatecase.dc.Main;
@@ -8,6 +9,7 @@ import com.jodexindustries.donatecase.gui.GuiDonatCase;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
@@ -99,7 +101,12 @@ public class EventsListener implements Listener {
         if (entity.getType() == EntityType.ARMOR_STAND && Case.listAR.contains(entity)) {
             e.setCancelled(true);
         }
-
+    }
+    @EventHandler
+    public void onAnimationRegistered(AnimationRegisteredEvent e) {
+        if(!e.getAnimationName().startsWith("DEFAULT")) {
+            Main.instance.getLogger().info(ChatColor.GREEN + "Registered new animation with name: " + ChatColor.RED + e.getAnimationName() + ChatColor.GREEN + " from " + ChatColor.RED + e.getAnimationPluginName());
+        }
     }
 
     @EventHandler
@@ -129,7 +136,7 @@ public class EventsListener implements Listener {
     @EventHandler
     public void InventoryClose(InventoryCloseEvent e) {
         Player p = (Player)e.getPlayer();
-        if (Case.hasCaseByTitle(e.getView().getTitle()) && Case.openCase.containsKey(p)) {
+        if (Case.hasCaseByTitle(e.getView().getTitle())) {
             Case.openCase.remove(p);
         }
 
