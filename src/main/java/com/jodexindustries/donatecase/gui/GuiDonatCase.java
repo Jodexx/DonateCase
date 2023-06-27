@@ -22,7 +22,7 @@ public class GuiDonatCase {
         String title = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
         assert title != null;
         Inventory inv = Bukkit.createInventory(null, 45, Main.t.rc(title));
-        final String materialID = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial")).toUpperCase();
+        final String materialID = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial"));
         boolean materialEnchant = customConfig.getConfig().getBoolean("DonatCase.Cases." + c + ".Gui.GuiMaterialEnchant");
         if(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial") != null && !materialID.equalsIgnoreCase("AIR")) {
             final String materialNAME = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterialName"));
@@ -60,6 +60,10 @@ public class GuiDonatCase {
                     } else {
                         f = new ItemStack(Material.STONE);
                     }
+                } else if (materialID.startsWith("BASE64")) {
+                    String[] parts = materialID.split(":");
+                    String base64 = parts[1];
+                    f = Main.t.getBASE64Skull(base64, materialNAME, materialLORE);
                 }
             }
             for (int a = 0; a < 2; ++a) {
@@ -121,6 +125,10 @@ public class GuiDonatCase {
             } else {
                 opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys), opencasematerialEnchant);
             }
+        } else if (materialID.startsWith("BASE64")) {
+            String[] parts = materialID.split(":");
+            String base64 = parts[1];
+            opencaseitemstack = Main.t.getBASE64Skull(base64, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys));
         }
         inv.setItem(Main.t.c(5, 3), opencaseitemstack);
         p.openInventory(inv);

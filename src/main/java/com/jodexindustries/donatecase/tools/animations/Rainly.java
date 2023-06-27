@@ -89,6 +89,10 @@ public class Rainly implements Animation {
                         } else {
                             winItem = new ItemStack(Material.STONE);
                         }
+                    } else if (winGroupId.startsWith("BASE64")) {
+                        String[] parts = winGroupId.split(":");
+                        String base64 = parts[1];
+                        winItem = Main.t.getBASE64Skull(base64, winGroupDisplayName);
                     }
                 }
                 if (this.i == 0) {
@@ -141,6 +145,10 @@ public class Rainly implements Animation {
                             } else {
                                 winItem2 = new ItemStack(Material.STONE);
                             }
+                        } else if (winGroup2Id.startsWith("BASE64")) {
+                            String[] parts = winGroup2Id.split(":");
+                            String base64 = parts[1];
+                            winItem2 = Main.t.getBASE64Skull(base64, winGroupDisplayName2);
                         }
                     }
                     as.setHelmet(winItem2);

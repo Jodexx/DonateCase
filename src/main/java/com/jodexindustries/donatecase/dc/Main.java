@@ -42,7 +42,7 @@ public class Main extends JavaPlugin {
         t = new Tools();
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             (new Placeholder()).register();
-            Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &aPlaceholders registered!"));
+            Logger.log("&aPlaceholders registered!");
         }
 
         setupConfigs();
@@ -50,7 +50,7 @@ public class Main extends JavaPlugin {
         customConfig.getConfig().addDefault("DonatCase.NoKeyWarningSound", "ENTITY_ENDERMAN_TELEPORT");
 
         if(customConfig.getCases().getString("config") == null || !customConfig.getCases().getString("config").equalsIgnoreCase("1.0")) {
-            getLogger().info("Conversion of case locations to a new method of storage...");
+            Logger.log("Conversion of case locations to a new method of storage...");
             t.convertCasesLocation();
         }
 
@@ -58,10 +58,10 @@ public class Main extends JavaPlugin {
         if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
                 if (getDescription().getVersion().equals(version)) {
-                    getLogger().info("There is not a new update available.");
+                    Logger.log("There is not a new update available.");
                 } else {
-                    getLogger().info(ChatColor.GREEN + "There is a new update " + version +  " available.");
-                    getLogger().info(ChatColor.GREEN + "Download - https://www.spigotmc.org/resources/donatecase.106701/");
+                    Logger.log(ChatColor.GREEN + "There is a new update " + version +  " available.");
+                    Logger.log(ChatColor.GREEN + "Download - https://www.spigotmc.org/resources/donatecase.106701/");
                 }
 
             });
@@ -93,7 +93,7 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(getCommand("donatecase")).setExecutor(new CommandEx());
         Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
         registerDefaultAnimations();
-        getLogger().info(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
+        Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
 
     }
 
@@ -151,7 +151,7 @@ public class Main extends JavaPlugin {
         customConfig = new CustomConfig();
         // Config.yml ver check
         if (customConfig.getConfig().getString("config") == null) {
-            Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated Config.yml! Creating a new!"));
+            Logger.log("&cOutdated Config.yml! Creating a new!");
             ConfigFile = new File(this.getDataFolder(), "Config.yml");
             ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
             this.saveResource("Config.yml", false);
@@ -160,7 +160,7 @@ public class Main extends JavaPlugin {
         }
 
         if (!customConfig.getConfig().getString("config").equals("2.5")) {
-            Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated Config.yml! Creating a new!"));
+            Logger.log("&cOutdated Config.yml! Creating a new!");
             ConfigFile = new File(this.getDataFolder(), "Config.yml");
             ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
             this.saveResource("Config.yml", false);
@@ -170,7 +170,7 @@ public class Main extends JavaPlugin {
         customConfig.saveConfig();
         // Animations.yml ver check
         if (customConfig.getAnimations().getString("config") == null) {
-            Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated Animations.yml! Creating a new!"));
+            Logger.log("&cOutdated Animations.yml! Creating a new!");
             AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
             AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
             this.saveResource("Animations.yml", false);
@@ -178,7 +178,7 @@ public class Main extends JavaPlugin {
         }
 
         if (!customConfig.getAnimations().getString("config").equals("1.1")) {
-            Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated Animations.yml! Creating a new!"));
+            Logger.log(" &cOutdated Animations.yml! Creating a new!");
             AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
             AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
             this.saveResource("Animations.yml", false);
@@ -189,7 +189,7 @@ public class Main extends JavaPlugin {
     public void setupLangs() {
         lang = (new Languages(customConfig.getConfig().getString("DonatCase.Languages"))).getLang();
         if (lang.getString("config") == null || !lang.getString("config").equals("2.4")) {
-            Bukkit.getServer().getConsoleSender().sendMessage(t.rc("[DonateCase] &cOutdated lang config! Creating a new!"));
+            Logger.log("&cOutdated lang config! Creating a new!");
             langRu = new File(this.getDataFolder(), "lang/ru_RU.yml");
             langRu.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));
             this.saveResource("lang/ru_RU.yml", false);

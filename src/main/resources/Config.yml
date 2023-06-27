@@ -31,13 +31,13 @@ DonatCase:
         Pitch: 5
       Title: '&c&lDonate-&a&lCase' # If you want to make another case, then the Title needs to be changed
       Gui:
-        GuiMaterial: WHITE_STAINED_GLASS_PANE # you can use player head, example: HEAD:_Jodex__ or HDB:1234 or CH:<category>:<id>
+        GuiMaterial: WHITE_STAINED_GLASS_PANE # you can use player head, see: https://wiki.jodexindustries.space/settings/customheads
         GuiMaterialName: "&cDonateCase.com"
         GuiMaterialEnchant: false
         GuiMaterialLore:
           - "&f       &f"
           - "&f       &f"
-        GuiOpenCaseMaterial: TRIPWIRE_HOOK # you can use player head, example: HEAD:_Jodex__ or HDB:1234 or CH:<category>:<id>
+        GuiOpenCaseMaterial: TRIPWIRE_HOOK # you can use player head, see: https://wiki.jodexindustries.space/settings/customheads
         GuiOpenCaseMaterialEnchant: false
         DisplayName: '&bOpen Case'
         Lore:
@@ -56,7 +56,7 @@ DonatCase:
           Group: vip
           Chance: 50
           Item:
-            ID: IRON_SWORD # you can use player head, example: HEAD:_Jodex__ or HDB:1234 or CH:<category>:<id>
+            ID: IRON_SWORD # you can use player head, see: https://wiki.jodexindustries.space/settings/customheads
             DisplayName: '&7&l[&aVIP&7&l]'
             Enchanted: false
           GiveCommand: lp user %player parent set %group
@@ -70,7 +70,7 @@ DonatCase:
           Group: vipplus
           Chance: 25
           Item:
-            ID: GOLDEN_SWORD # you can use player head, example: HEAD:_Jodex__ or HDB:1234 or CH:<category>:<id>
+            ID: GOLDEN_SWORD # you can use player head, see: https://wiki.jodexindustries.space/settings/customheads
             DisplayName: '&7&l[&bVIP&6+&7&l]'
             Enchanted: false
           GiveCommand: lp user %player parent set %group
@@ -84,7 +84,7 @@ DonatCase:
           Group: deluxe
           Chance: 15
           Item:
-            ID: DIAMOND_SWORD # you can use player head, example: HEAD:_Jodex__ or HDB:1234 or CH:<category>:<id>
+            ID: DIAMOND_SWORD # you can use player head, see: https://wiki.jodexindustries.space/settings/customheads
             DisplayName: '&7&l[&5Deluxe&7&l]'
             Enchanted: false
           GiveCommand: lp user %player parent set %group
@@ -98,7 +98,7 @@ DonatCase:
           Group: legend
           Chance: 10
           Item:
-            ID: NETHERITE_SWORD # you can use player head, example: HEAD:_Jodex__ or HDB:1234 or CH:<category>:<id>
+            ID: NETHERITE_SWORD # you can use player head, see: https://wiki.jodexindustries.space/settings/customheads
             DisplayName: '&7&l[&dLegend&7&l]'
             Enchanted: false
           GiveCommand: lp user %player parent set %group

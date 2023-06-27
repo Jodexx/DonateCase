@@ -68,6 +68,10 @@ public class Wheel implements Animation {
                     } else {
                         winItem = new ItemStack(Material.STONE);
                     }
+                } else if (winGroupId.startsWith("BASE64")) {
+                    String[] parts = winGroupId.split(":");
+                    String base64 = parts[1];
+                    winItem = Main.t.getBASE64Skull(base64, winGroupDisplayName);
                 }
             }
             items.add(winItem);

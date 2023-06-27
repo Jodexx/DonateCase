@@ -17,7 +17,7 @@ public class CustomHeadSupport {
             try {
                 item = api.getHead(category, Integer.parseInt(id));
             } catch (NullPointerException nullPointerException) {
-                Main.instance.getLogger().info("Could not find the head you were looking for");
+                Logger.log("Could not find the head you were looking for");
             }
             ItemMeta itemMeta = item.getItemMeta();
             itemMeta.setDisplayName(Main.t.rc(displayname));
@@ -34,7 +34,7 @@ public class CustomHeadSupport {
             try {
                 item = api.getHead(category, Integer.parseInt(id));
             } catch (NullPointerException nullPointerException) {
-                Main.instance.getLogger().info("Could not find the head you were looking for");
+                Logger.log("Could not find the head you were looking for");
             }
             ItemMeta itemMeta = item.getItemMeta();
             itemMeta.setDisplayName(Main.t.rc(displayname));

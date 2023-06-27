@@ -24,6 +24,10 @@ repositories {
         }
     }
     maven {
+        name = 'authlib'
+        url = 'https://papermc.io/repo/repository/maven-releases/'
+    }
+    maven {
         name = "jodexindustries"
         url = "https://repo.jodexindustries.space/releases"
     }
@@ -40,6 +44,7 @@ dependencies {
     compileOnly "me.clip:placeholderapi:2.11.2"
     compileOnly "com.arcaniax:HeadDatabase-API:1.3.1"
     compileOnly "de.likewhat.customheads:CustomHeads:3.0.7"
+    compileOnly 'com.mojang:authlib:1.5.25'
 
 }
 

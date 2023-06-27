@@ -1,6 +1,8 @@
 package com.jodexindustries.donatecase.tools;
 
 import com.jodexindustries.donatecase.dc.Main;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
@@ -131,7 +133,7 @@ public class Tools {
         }
         customConfig.getCases().set("config", "1.0");
         customConfig.saveCases();
-        Main.instance.getLogger().info("Conversion successful!");
+        Logger.log("&aConversion successful!");
     }
     public Location fromString(String str) {
         String regex = "Location\\{world=CraftWorld\\{name=(.*?)},x=(.*?),y=(.*?),z=(.*?),pitch=(.*?),yaw=(.*?)}";
@@ -254,13 +256,29 @@ public class Tools {
 
         return item;
     }
+    public ItemStack getBASE64Skull(String url, String displayname, List<String> lore) {
+        ItemStack item = MojangHeads.getSkull("http://textures.minecraft.net/texture/" + url);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(rc(displayname));
+        itemMeta.setLore(rc(lore));
+        item.setItemMeta(itemMeta);
+        return item;
+    }
+    public ItemStack getBASE64Skull(String url, String displayname) {
+        ItemStack item = MojangHeads.getSkull("http://textures.minecraft.net/texture/" + url);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(rc(displayname));
+        item.setItemMeta(itemMeta);
+        return item;
+    }
+
     public ItemStack getHDBSkull(String id, String displayname, List<String> lore) {
         HeadDatabaseAPI api = new HeadDatabaseAPI();
         ItemStack item = new ItemStack(Material.STONE);
         try {
             item = api.getItemHead(id);
         } catch (NullPointerException nullPointerException) {
-            Main.instance.getLogger().info("Could not find the head you were looking for");
+            Logger.log("Could not find the head you were looking for");
         }
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(rc(displayname));
@@ -276,7 +294,7 @@ public class Tools {
         try {
             item = api.getItemHead(id);
         } catch (NullPointerException nullPointerException) {
-            Main.instance.getLogger().info("Could not find the head you were looking for");
+            Logger.log("Could not find the head you were looking for");
         }
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName(rc(displayname));

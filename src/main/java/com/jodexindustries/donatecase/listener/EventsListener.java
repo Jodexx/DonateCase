@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.gui.GuiDonatCase;
+import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
 import org.bukkit.Bukkit;
@@ -105,7 +106,7 @@ public class EventsListener implements Listener {
     @EventHandler
     public void onAnimationRegistered(AnimationRegisteredEvent e) {
         if(!e.getAnimationName().startsWith("DEFAULT")) {
-            Main.instance.getLogger().info(ChatColor.GREEN + "Registered new animation with name: " + ChatColor.RED + e.getAnimationName() + ChatColor.GREEN + " from " + ChatColor.RED + e.getAnimationPluginName());
+            Logger.log(ChatColor.GREEN + "Registered new animation with name: " + ChatColor.RED + e.getAnimationName() + ChatColor.GREEN + " from " + ChatColor.RED + e.getAnimationPluginName());
         }
     }
 
