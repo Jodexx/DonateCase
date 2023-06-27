@@ -115,19 +115,21 @@ public class Tools {
     }
     public void convertCasesLocation() {
         ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
-        for (String name : cases_.getValues(false).keySet()) {
-            if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
-                return;
-            } else {
-                String stringlocation = customConfig.getCases().getString("DonatCase.Cases." + name + ".location");
-                Location lv = fromString(stringlocation);
-                String world = "Undefined";
-                if(lv != null) {
-                    if(lv.getWorld() != null) {
-                        world = lv.getWorld().getName();
+        if(cases_ != null) {
+            for (String name : cases_.getValues(false).keySet()) {
+                if (customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
+                    return;
+                } else {
+                    String stringlocation = customConfig.getCases().getString("DonatCase.Cases." + name + ".location");
+                    Location lv = fromString(stringlocation);
+                    String world = "Undefined";
+                    if (lv != null) {
+                        if (lv.getWorld() != null) {
+                            world = lv.getWorld().getName();
+                        }
+                        String location = world + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
+                        customConfig.getCases().set("DonatCase.Cases." + name + ".location", location);
                     }
-                    String location = world + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
-                    customConfig.getCases().set("DonatCase.Cases." + name + ".location", location);
                 }
             }
         }
