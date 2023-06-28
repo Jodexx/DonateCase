@@ -10,9 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
@@ -31,13 +29,13 @@ public class GuiDonatCase {
                 materialLORE.add(ChatColor.translateAlternateColorCodes('&', line));
             }
             Material material;
-            ItemStack f = new ItemStack(Material.STRUCTURE_VOID);
+            ItemStack f;
             if (!materialID.contains(":")) {
                 material = Material.getMaterial(materialID);
                 if (material == null) {
                     material = Material.STONE;
                 }
-                f = Main.t.createItem(material, 1, 1, materialNAME, materialLORE, materialEnchant);
+                f = Main.t.createItem(material, -1, 1, materialNAME, materialLORE, materialEnchant);
             } else {
                 if (materialID.startsWith("HEAD")) {
                     String[] parts = materialID.split(":");
@@ -64,6 +62,17 @@ public class GuiDonatCase {
                     String[] parts = materialID.split(":");
                     String base64 = parts[1];
                     f = Main.t.getBASE64Skull(base64, materialNAME, materialLORE);
+                } else {
+                    String[] parts = materialID.split(":");
+                    byte data = -1;
+                    if(parts[1] != null) {
+                        data = Byte.parseByte(parts[1]);
+                    }
+                    material = Material.getMaterial(parts[0]);
+                    if (material == null) {
+                        material = Material.STONE;
+                    }
+                    f = Main.t.createItem(material, data, 1, materialNAME, materialLORE, materialEnchant);
                 }
             }
             for (int a = 0; a < 2; ++a) {
@@ -92,7 +101,7 @@ public class GuiDonatCase {
             if (opencasematerial == null) {
                 opencasematerial = Material.STONE;
             }
-            opencaseitemstack = Main.t.createItem(opencasematerial, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys), opencasematerialEnchant);
+            opencaseitemstack = Main.t.createItem(opencasematerial, -1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys), opencasematerialEnchant);
         } else
         if(opencasematerialID.startsWith("HEAD")) {
             String[] parts = opencasematerialID.split(":");
@@ -125,10 +134,21 @@ public class GuiDonatCase {
             } else {
                 opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys), opencasematerialEnchant);
             }
-        } else if (materialID.startsWith("BASE64")) {
-            String[] parts = materialID.split(":");
+        } else if (opencasematerialID.startsWith("BASE64")) {
+            String[] parts = opencasematerialID.split(":");
             String base64 = parts[1];
             opencaseitemstack = Main.t.getBASE64Skull(base64, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys));
+        } else {
+            String[] parts = opencasematerialID.split(":");
+            byte data = -1;
+            if(parts[1] != null) {
+                data = Byte.parseByte(parts[1]);
+            }
+            opencasematerial = Material.getMaterial(parts[0]);
+            if (opencasematerial == null) {
+                opencasematerial = Material.STONE;
+            }
+            opencaseitemstack = Main.t.createItem(opencasematerial, data, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys), opencasematerialEnchant);
         }
         inv.setItem(Main.t.c(5, 3), opencaseitemstack);
         p.openInventory(inv);

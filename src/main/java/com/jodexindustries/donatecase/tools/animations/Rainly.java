@@ -66,7 +66,7 @@ public class Rainly implements Animation {
                     if (material == null) {
                         material = Material.STONE;
                     }
-                    winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName, winGroupEnchant);
+                    winItem = Main.t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
                 } else
                 if(winGroupId.startsWith("HEAD")) {
                     String[] parts = winGroupId.split(":");
@@ -93,6 +93,17 @@ public class Rainly implements Animation {
                         String[] parts = winGroupId.split(":");
                         String base64 = parts[1];
                         winItem = Main.t.getBASE64Skull(base64, winGroupDisplayName);
+                    } else {
+                        String[] parts = winGroupId.split(":");
+                        byte data = -1;
+                        if(parts[1] != null) {
+                            data = Byte.parseByte(parts[1]);
+                        }
+                        material = Material.getMaterial(parts[0]);
+                        if (material == null) {
+                            material = Material.STONE;
+                        }
+                        winItem = Main.t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
                     }
                 }
                 if (this.i == 0) {
@@ -123,7 +134,7 @@ public class Rainly implements Animation {
                         if (material2 == null) {
                             material2 = Material.STONE;
                         }
-                        winItem2 = Main.t.createItem(material2, 1, 0, winGroupDisplayName2, winGroup2Enchant);
+                        winItem2 = Main.t.createItem(material2, 1, -1, winGroupDisplayName2, winGroup2Enchant);
                     } else {
                         if (winGroup2Id.startsWith("HEAD")) {
                             String[] parts = winGroup2Id.split(":");
@@ -149,6 +160,17 @@ public class Rainly implements Animation {
                             String[] parts = winGroup2Id.split(":");
                             String base64 = parts[1];
                             winItem2 = Main.t.getBASE64Skull(base64, winGroupDisplayName2);
+                        } else {
+                            String[] parts = winGroup2Id.split(":");
+                            byte data = -1;
+                            if(parts[1] != null) {
+                                data = Byte.parseByte(parts[1]);
+                            }
+                            material = Material.getMaterial(parts[0]);
+                            if (material == null) {
+                                material = Material.STONE;
+                            }
+                            winItem2 = Main.t.createItem(material, data, 1, winGroupDisplayName2, winGroup2Enchant);
                         }
                     }
                     as.setHelmet(winItem2);

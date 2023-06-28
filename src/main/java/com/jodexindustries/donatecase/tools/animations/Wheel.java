@@ -46,7 +46,7 @@ public class Wheel implements Animation {
                 if (material == null) {
                     material = Material.STONE;
                 }
-                winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName, winGroupEnchant);
+                winItem = Main.t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
             } else {
                 if (winGroupId.startsWith("HEAD")) {
                     String[] parts = winGroupId.split(":");
@@ -72,6 +72,17 @@ public class Wheel implements Animation {
                     String[] parts = winGroupId.split(":");
                     String base64 = parts[1];
                     winItem = Main.t.getBASE64Skull(base64, winGroupDisplayName);
+                } else {
+                    String[] parts = winGroupId.split(":");
+                    byte data = -1;
+                    if(parts[1] != null) {
+                        data = Byte.parseByte(parts[1]);
+                    }
+                    material = Material.getMaterial(parts[0]);
+                    if (material == null) {
+                        material = Material.STONE;
+                    }
+                    winItem = Main.t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
                 }
             }
             items.add(winItem);

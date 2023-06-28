@@ -6,6 +6,7 @@ import com.mojang.authlib.properties.Property;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
@@ -16,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
@@ -321,7 +323,12 @@ public class Tools {
     }
 
     public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant) {
-        ItemStack item = new ItemStack(ma, amount);
+        ItemStack item;
+        if(data == -1) {
+            item = new ItemStack(ma, amount);
+        } else {
+            item = new ItemStack(ma, amount, (short) 1, (byte) data);
+        }
         if(enchant) {
             item.addUnsafeEnchantment(Enchantment.LURE, 1);
         }

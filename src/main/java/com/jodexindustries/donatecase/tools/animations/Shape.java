@@ -4,10 +4,7 @@ import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.Tools;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -52,7 +49,7 @@ public class Shape implements Animation {
                     if (material == null) {
                         material = Material.STONE;
                     }
-                    winItem = Main.t.createItem(material, 1, 0, winGroupDisplayName, winGroupEnchant);
+                    winItem = Main.t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
                 } else {
                     if (winGroupId.startsWith("HEAD")) {
                         String[] parts = winGroupId.split(":");
@@ -78,6 +75,17 @@ public class Shape implements Animation {
                         String[] parts = winGroupId.split(":");
                         String base64 = parts[1];
                         winItem = Main.t.getBASE64Skull(base64, winGroupDisplayName);
+                    } else {
+                        String[] parts = winGroupId.split(":");
+                        byte data = -1;
+                        if(parts[1] != null) {
+                            data = Byte.parseByte(parts[1]);
+                        }
+                        material = Material.getMaterial(parts[0]);
+                        if (material == null) {
+                            material = Material.STONE;
+                        }
+                        winItem = Main.t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
                     }
                 }
                 if (this.i == 0) {
@@ -106,7 +114,7 @@ public class Shape implements Animation {
                         if (material2 == null) {
                             material2 = Material.STONE;
                         }
-                        winItem2 = Main.t.createItem(material2, 1, 0, winGroupDisplayName2, winGroupEnchant2);
+                        winItem2 = Main.t.createItem(material2, 1, -1, winGroupDisplayName2, winGroupEnchant2);
                     } else {
                         if (winGroup2Id.startsWith("HEAD")) {
                             String[] parts = winGroup2Id.split(":");
@@ -119,7 +127,7 @@ public class Shape implements Animation {
                             } else {
                                 winItem2 = new ItemStack(Material.STONE);
                             }
-                        } else if (winGroup2Id.startsWith("CH") && winGroup2Id.contains(":")) {
+                        } else if (winGroup2Id.startsWith("CH")) {
                             String[] parts = winGroup2Id.split(":");
                             String category = parts[1];
                             String id = parts[2];
@@ -132,13 +140,28 @@ public class Shape implements Animation {
                             String[] parts = winGroup2Id.split(":");
                             String base64 = parts[1];
                             winItem2 = Main.t.getBASE64Skull(base64, winGroupDisplayName2);
+                        } else {
+                            String[] parts = winGroup2Id.split(":");
+                            byte data = -1;
+                            if(parts[1] != null) {
+                                data = Byte.parseByte(parts[1]);
+                            }
+                            material = Material.getMaterial(parts[0]);
+                            if (material == null) {
+                                material = Material.STONE;
+                            }
+                            winItem2 = Main.t.createItem(material, data, 1, winGroupDisplayName2, winGroupEnchant2);
                         }
                     }
                     as.setHelmet(winItem2);
                     as.setCustomName(Objects.requireNonNull(winItem2 != null ? winItem2.getItemMeta() : null).getDisplayName());
                     if (this.i <= 8) {
-                        Particle.DustOptions dustOptions = new Particle.DustOptions(Color.ORANGE, 1.0F);
-                        Objects.requireNonNull(this.l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
+                        if (!Bukkit.getVersion().contains("1.12")) {
+                            Particle.DustOptions dustOptions = new Particle.DustOptions(Color.ORANGE, 1.0F);
+                            Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
+                        } else {
+                            l.getWorld().spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0);
+                        }
                     }
                 }
 

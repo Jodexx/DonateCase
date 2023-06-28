@@ -166,8 +166,6 @@ public class Main extends JavaPlugin {
             this.saveResource("Config.yml", false);
             customConfig = new CustomConfig();
         }
-        customConfig.getConfig().options().copyDefaults(true);
-        customConfig.saveConfig();
         // Animations.yml ver check
         if (customConfig.getAnimations().getString("config") == null) {
             Logger.log("&cOutdated Animations.yml! Creating a new!");
