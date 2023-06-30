@@ -179,19 +179,6 @@ public class Tools {
         return createItem(ma, 0, 1, dn, lore, enchant);
     }
 
-    public ItemStack getPlayerHead(String player, String displayname) {
-        Material type = Material.PLAYER_HEAD;
-        ItemStack item = new ItemStack(type, 1);
-        SkullMeta meta = (SkullMeta) item.getItemMeta();
-        meta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(player)));
-        item.setItemMeta(meta);
-        ItemMeta itemmeta = item.getItemMeta();
-        Objects.requireNonNull(itemmeta).setDisplayName(rc(displayname));
-        item.setItemMeta(itemmeta);
-
-        return item;
-    }
-
 
     public Color parseColor(String s) {
 
@@ -246,15 +233,38 @@ public class Tools {
 
         return color;
     }
-
-    public ItemStack getPlayerHead(String player, String displayname, List<String> lore) {
-        Material type = Material.PLAYER_HEAD;
+    public ItemStack getPlayerHead(String player, String displayname) {
+        Material type = Material.getMaterial( "SKULL_ITEM" );
+        if (  type == null ) {
+            type = Material.getMaterial( "PLAYER_HEAD" );
+        }
         ItemStack item = new ItemStack(type, 1);
         SkullMeta meta = (SkullMeta) item.getItemMeta();
-        Objects.requireNonNull(meta).setOwner(player);
+        meta.setOwner(player);
         item.setItemMeta(meta);
         ItemMeta itemmeta = item.getItemMeta();
         Objects.requireNonNull(itemmeta).setDisplayName(rc(displayname));
+        item.setItemMeta(itemmeta);
+
+        return item;
+    }
+
+
+    public ItemStack getPlayerHead(String player, String displayname, List<String> lore) {
+        Material type = Material.getMaterial("SKULL_ITEM");
+        ItemStack item;
+        if (type == null) {
+            item = new ItemStack(Material.getMaterial("PLAYER_HEAD"));
+        } else {
+            item = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short) 3);
+        }
+        SkullMeta meta = (SkullMeta) item.getItemMeta();
+        if (meta != null) {
+            meta.setOwner(player);
+        }
+        item.setItemMeta(meta);
+        ItemMeta itemmeta = item.getItemMeta();
+        itemmeta.setDisplayName(rc(displayname));
         itemmeta.setLore(rc(lore));
         item.setItemMeta(itemmeta);
 

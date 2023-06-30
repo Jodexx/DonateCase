@@ -14,7 +14,6 @@ public class MojangHeads {
     public static ItemStack getSkull(String url) {
         Material material = Material.getMaterial( "SKULL_ITEM" );
         if ( material == null ) {
-            // Most likely 1.13 materials
             material = Material.getMaterial( "PLAYER_HEAD" );
         }
         ItemStack head = new ItemStack( material, 1, ( short ) 3 );

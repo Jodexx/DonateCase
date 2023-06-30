@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.dc;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.tools.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
@@ -161,8 +162,10 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         Player player = (Player) sender;
                         if (sender.hasPermission("donatecase.player")) {
                             for (String string : Main.lang.getStringList("MyKeys")) {
-                                sender.sendMessage(PlaceholderAPI.setPlaceholders(player,
-                                        ChatColor.translateAlternateColorCodes('&', string)));
+                                if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                                    string = PAPISupport.setPlaceholders(player, string);
+                                }
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', string));
                             }
                         }
                     }
@@ -175,8 +178,10 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         }
                         //Get player keys
                         for (String string : Main.lang.getStringList("PlayerKeys")) {
-                            sender.sendMessage(PlaceholderAPI.setPlaceholders(target.getPlayer(),
-                                    ChatColor.translateAlternateColorCodes('&', string).replace("%player", target.getName())));
+                            if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                                string = PAPISupport.setPlaceholders(target.getPlayer(), string);
+                            }
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', string).replace("%player", target.getName()));
                         }
                     } else {
                         Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));

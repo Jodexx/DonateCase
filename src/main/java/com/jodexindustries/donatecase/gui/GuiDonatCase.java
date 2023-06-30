@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.gui;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.PAPISupport;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,7 +21,10 @@ public class GuiDonatCase {
         String title = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
         assert title != null;
         Inventory inv = Bukkit.createInventory(null, 45, Main.t.rc(title));
-        final String materialID = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial"));
+        String materialID = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial"));
+        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            materialID = PAPISupport.setPlaceholders(p, materialID);
+        }
         boolean materialEnchant = customConfig.getConfig().getBoolean("DonatCase.Cases." + c + ".Gui.GuiMaterialEnchant");
         if(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial") != null && !materialID.equalsIgnoreCase("AIR")) {
             final String materialNAME = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterialName"));
@@ -40,8 +44,7 @@ public class GuiDonatCase {
                 if (materialID.startsWith("HEAD")) {
                     String[] parts = materialID.split(":");
                     f = Main.t.getPlayerHead(parts[1], materialNAME, materialLORE);
-                }
-                if (materialID.startsWith("HDB")) {
+                } else if (materialID.startsWith("HDB")) {
                     String[] parts = materialID.split(":");
                     String id = parts[1];
                     if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
@@ -87,7 +90,10 @@ public class GuiDonatCase {
             }
         }
 
-        final String opencasematerialID = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterial")).toUpperCase();
+        String opencasematerialID = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterial")).toUpperCase();
+        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            opencasematerialID = PAPISupport.setPlaceholders(p, opencasematerialID);
+        }
         boolean opencasematerialEnchant = customConfig.getConfig().getBoolean("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterialEnchant");
         Material opencasematerial;
         ItemStack opencaseitemstack = null;
@@ -118,7 +124,10 @@ public class GuiDonatCase {
                 } else {
                     List<String> pLore = new ArrayList<>();
                     for(String line : lore) {
-                        pLore.add(PlaceholderAPI.setPlaceholders(p, line));
+                        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                            line = PAPISupport.setPlaceholders(p, line);
+                        }
+                        pLore.add(line);
                     }
                     opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(pLore, "%case:" + c, "%keys:" + keys), opencasematerialEnchant);
 

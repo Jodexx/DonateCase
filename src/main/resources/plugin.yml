@@ -2,8 +2,9 @@ name: DonateCase
 main: com.jodexindustries.donatecase.dc.Main
 author: _Jodex__
 version: '${version}'
-depend: [Vault, PlaceholderAPI]
+depend: [Vault]
 softdepend:
+  - PlaceholderAPI
   - CustomHeads
   - HeadDataBase
 api-version: 1.13
