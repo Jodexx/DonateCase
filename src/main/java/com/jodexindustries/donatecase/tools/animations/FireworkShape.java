@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
@@ -25,7 +26,10 @@ public class FireworkShape implements Animation {
     public void start(Player player, Location location, String c) {
         final Location lAC = location.clone();
         final String winGroup = Tools.getRandomGroup(c);
-        final String winGroupId = Case.getWinGroupId(c, winGroup);
+        String winGroupId = Case.getWinGroupId(c, winGroup);
+        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
+        }
         final String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
         final boolean winGroupEnchant = Case.getWinGroupEnchant(c, winGroup);
         location.add(0.5, -0.1, 0.5);
@@ -36,6 +40,7 @@ public class FireworkShape implements Animation {
         as.setSmall(true);
         as.setVisible(false);
         as.setCustomNameVisible(false);
+        String finalWinGroupId = winGroupId;
         (new BukkitRunnable() {
             int i; //ticks count
             Location l;
@@ -43,26 +48,26 @@ public class FireworkShape implements Animation {
             public void run() {
                 Material material;
                 ItemStack winItem = null;
-                if(!winGroupId.contains(":")) {
-                    material = Material.getMaterial(winGroupId);
+                if(!finalWinGroupId.contains(":")) {
+                    material = Material.getMaterial(finalWinGroupId);
                     if (material == null) {
                         material = Material.STONE;
                     }
                     winItem = Main.t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
                 } else {
-                    if (winGroupId.startsWith("HEAD")) {
-                        String[] parts = winGroupId.split(":");
+                    if (finalWinGroupId.startsWith("HEAD")) {
+                        String[] parts = finalWinGroupId.split(":");
                         winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
-                    } else if (winGroupId.startsWith("HDB")) {
-                        String[] parts = winGroupId.split(":");
+                    } else if (finalWinGroupId.startsWith("HDB")) {
+                        String[] parts = finalWinGroupId.split(":");
                         String id = parts[1];
                         if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
                             winItem = Main.t.getHDBSkull(id, winGroupDisplayName);
                         } else {
                             winItem = new ItemStack(Material.STONE);
                         }
-                    } else if (winGroupId.startsWith("CH")) {
-                        String[] parts = winGroupId.split(":");
+                    } else if (finalWinGroupId.startsWith("CH")) {
+                        String[] parts = finalWinGroupId.split(":");
                         String category = parts[1];
                         String id = parts[2];
                         if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
@@ -70,12 +75,12 @@ public class FireworkShape implements Animation {
                         } else {
                             winItem = new ItemStack(Material.STONE);
                         }
-                    } else if (winGroupId.startsWith("BASE64")) {
-                        String[] parts = winGroupId.split(":");
+                    } else if (finalWinGroupId.startsWith("BASE64")) {
+                        String[] parts = finalWinGroupId.split(":");
                         String base64 = parts[1];
                         winItem = Main.t.getBASE64Skull(base64, winGroupDisplayName);
                     } else {
-                        String[] parts = winGroupId.split(":");
+                        String[] parts = finalWinGroupId.split(":");
                         byte data = -1;
                         if(parts[1] != null) {
                             data = Byte.parseByte(parts[1]);

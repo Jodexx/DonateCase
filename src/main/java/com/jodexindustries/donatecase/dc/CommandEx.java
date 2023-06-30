@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.dc;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -15,12 +16,17 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
+import static com.jodexindustries.donatecase.dc.Main.t;
 
 public class CommandEx implements CommandExecutor, TabCompleter {
 
@@ -165,23 +171,49 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                 if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                                     string = PAPISupport.setPlaceholders(player, string);
                                 }
-                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', string));
+                                String placeholder = t.getLocalPlaceholder(string);
+                                String result = "0";
+                                if(placeholder.startsWith("keys_")) {
+                                    String[] parts = placeholder.split("_");
+                                    String casename = parts[1];
+                                    int keys;
+                                    if (Main.Tconfig) {
+                                        keys = customConfig.getKeys().getInt("DonatCase.Cases." + casename + "." + Objects.requireNonNull(player.getName()));
+                                    } else {
+                                        keys = Main.mysql.getKey(parts[1], Objects.requireNonNull(player.getName()));
+                                    }
+                                    result = NumberFormat.getNumberInstance().format(keys);
+                                }
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', string.replaceAll("%" + placeholder + "%", result)));
                             }
                         }
                     }
                 } else {
                     if (sender.hasPermission("donatecase.mod")) {
-                        Player target = Bukkit.getPlayer(args[1]);
-                        if (target == null) {
-                            Main.t.msg_(sender, Main.t.rt(Main.lang.getString("PlayerNotFound"), "%player:" + args[1]));
-                            return true;
-                        }
+                        String target = args[1];
                         //Get player keys
                         for (String string : Main.lang.getStringList("PlayerKeys")) {
                             if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                                string = PAPISupport.setPlaceholders(target.getPlayer(), string);
+                                Player targetPlayer = Bukkit.getPlayerExact(target);
+                                if(targetPlayer != null) {
+                                    string = PAPISupport.setPlaceholders(targetPlayer, string);
+                                }
                             }
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', string).replace("%player", target.getName()));
+                            String placeholder = t.getLocalPlaceholder(string);
+                            String result = "0";
+                            if(placeholder.startsWith("keys_")) {
+                                String[] parts = placeholder.split("_");
+                                String casename = parts[1];
+                                int keys;
+                                if (Main.Tconfig) {
+                                    keys = customConfig.getKeys().getInt("DonatCase.Cases." + casename + "." + target);
+                                } else {
+                                    keys = Main.mysql.getKey(parts[1], target);
+                                }
+                                result = NumberFormat.getNumberInstance().format(keys);
+                            }
+                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', string).replace("%player", target)
+                                    .replace("%"+placeholder+"%", result));
                         }
                     } else {
                         Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));

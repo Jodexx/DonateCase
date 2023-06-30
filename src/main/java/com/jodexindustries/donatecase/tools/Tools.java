@@ -171,6 +171,18 @@ public class Tools {
         return a;
     }
 
+    public String getLocalPlaceholder(String string) {
+        Pattern pattern = Pattern.compile("%(.*?)%");
+        Matcher matcher = pattern.matcher(string);
+        if (matcher.find()) {
+            int startIndex = string.indexOf("%") + 1;
+            int endIndex = string.lastIndexOf("%");
+            return string.substring(startIndex, endIndex);
+        } else {
+            return "null";
+        }
+    }
+
     public ItemStack createItem(Material ma, int amount, int data, String dn, boolean enchant) {
         return createItem(ma, data, amount, dn, null, enchant);
     }

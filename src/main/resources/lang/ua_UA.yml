@@ -4,6 +4,7 @@ config: '2.4' #DON'T CHANGE THIS PLEASE
 # %case - назва кейсу
 # %casetitle - заголовок кейсу
 # %key - кількість ключів
+# %keys_<casename>% - кількість ключів окремого кейсу
 # %player - нікнейм гравця
 #
 # Глобальні плейсхолдери
@@ -14,7 +15,6 @@ NoPermission: '&cУ вас немає прав'
 UpdateCheck: "&eНове оновлення плагіну &cDonateCase &a%version &eдоступно&e! &eЗавантажити &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
 CaseNotExist: '&cКейса &6%case &cне існує.'
 CaseAlreadyHasByName: "&cКейс з назвою &6%casename &cвже існує!"
-PlayerNotFound: '&cГравця з ніком &6%player &cне знайдено'
 HasDonatCase: '&cЦей блок вже донат кейс'
 AddDonatCase: '&eНовий кейс створено'
 RemoveDonatCase: '&eДонат кейс видалено'
@@ -48,7 +48,7 @@ HelpPlayer:
   - '&9/%cmd opencase &7(&aТип кейсу&7) &3- &2Відкрити кейс'
 MyKeys:
   - "&7Ваші ключі:"
-  - "&c&lДонат-&a&lКейс &7- &a%donatecase_keys_case% &7ключів"
+  - "&c&lДонат-&a&lКейс &7- &a%keys_case% &7ключів"
 PlayerKeys:
   - "&7Ключі %player:"
-  - "&c&lДонат-&a&lКейс &7- &a%donatecase_keys_case% &7ключів"
+  - "&c&lДонат-&a&lКейс &7- &a%keys_case% &7ключів"

@@ -4,6 +4,7 @@ config: '2.4' #DON'T CHANGE THIS PLEASE
 # %case - case name
 # %casetitle - case title
 # %key - number of keys
+# %keys_<casename>% - number of keys
 # %player - player nickname
 #
 # Global Placeholders
@@ -14,7 +15,6 @@ NoPermission: '&cYou do not have permissions!'
 UpdateCheck: "&eNew &cDonateCase &a%version &eplugin update available&e! &eDownload &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
 CaseNotExist: '&cCase &6%case &cdoes not exist.'
 CaseAlreadyHasByName: "&cCase with name &6%casename &calready exists!"
-PlayerNotFound: '&cPlayer with nickname &6%player &cnot found'
 HasDonatCase: '&cThis block is already a donation case'
 AddDonatCase: '&eNew case created'
 RemoveDonatCase: '&eDonate case deleted'
@@ -48,7 +48,7 @@ HelpPlayer:
   - '&9/%cmd opencase &7(&aCase Type&7) &3- &2Open case'
 MyKeys:
   - "&7Your keys:"
-  - "&c&lDonate-&a&lCase &7- &a%donatecase_keys_case% &7keys"
+  - "&c&lDonate-&a&lCase &7- &a%keys_case% &7keys"
 PlayerKeys:
   - "&7%player keys:"
-  - "&c&lDonate-&a&lCase &7- &a%donatecase_keys_case% &7keys"
+  - "&c&lDonate-&a&lCase &7- &a%keys_case% &7keys"

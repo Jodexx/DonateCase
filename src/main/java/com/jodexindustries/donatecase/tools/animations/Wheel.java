@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -37,6 +38,9 @@ public class Wheel implements Animation {
         for (int i = 0; i < itemscount; i++) {
             String winGroup = Tools.getRandomGroup(c);
             String winGroupId = Case.getWinGroupId(c, winGroup);
+            if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
+            }
             String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
             boolean winGroupEnchant = Case.getWinGroupEnchant(c, winGroup);
             Material material;
