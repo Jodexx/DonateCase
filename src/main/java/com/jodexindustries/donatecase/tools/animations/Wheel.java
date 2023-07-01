@@ -95,11 +95,6 @@ public class Wheel implements Animation {
             groups.add(winGroup);
             armorStands.add(spawnArmorStand(location, i));
         }
-        double currentYaw = loc.getYaw();
-        if (currentYaw < 0) {
-            currentYaw += 360;
-        }
-        double newYaw = Math.round(currentYaw / 90) * 90;
         (new BukkitRunnable() {
             int ticks = 0;
 
@@ -119,7 +114,6 @@ public class Wheel implements Animation {
                         double x = radius * Math.sin(angle);
                         double y = radius * Math.cos(angle);
                         Location newLoc = location.clone().add(location.getDirection().multiply(-1).getX() + x, y, 0);
-
                         entity.teleport(newLoc);
                         angle += offset;
 
