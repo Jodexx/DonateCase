@@ -27,9 +27,15 @@ public class GuiDonatCase {
         }
         boolean materialEnchant = customConfig.getConfig().getBoolean("DonatCase.Cases." + c + ".Gui.GuiMaterialEnchant");
         if(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial") != null && !materialID.equalsIgnoreCase("AIR")) {
-            final String materialNAME = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterialName"));
+            String materialNAME = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterialName"));
+            if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                materialNAME = PAPISupport.setPlaceholders(p, materialNAME);
+            }
             List<String> materialLORE = new ArrayList<>();
             for(String line : customConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.GuiMaterialLore")) {
+                if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                    line = PAPISupport.setPlaceholders(p, line);
+                }
                 materialLORE.add(ChatColor.translateAlternateColorCodes('&', line));
             }
             Material material;
@@ -96,7 +102,7 @@ public class GuiDonatCase {
         }
         boolean opencasematerialEnchant = customConfig.getConfig().getBoolean("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterialEnchant");
         Material opencasematerial;
-        ItemStack opencaseitemstack = null;
+        ItemStack opencaseitemstack;
         String displayname;
         int keys = Case.getKeys(c, p.getName());
         List<String> lore = customConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");

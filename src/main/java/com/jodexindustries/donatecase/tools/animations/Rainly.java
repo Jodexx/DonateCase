@@ -25,10 +25,11 @@ public class Rainly implements Animation {
         final String FallingParticle = customConfig.getAnimations().getString("Rainly.FallingParticle");
         final String winGroup = Tools.getRandomGroup(c);
         String winGroupId = Case.getWinGroupId(c, winGroup);
+        String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
+            winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
         }
-        final String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
         final boolean winGroupEnchant = Case.getWinGroupEnchant(c, winGroup);
         location.add(0.5, 1, 0.5);
         Location rain1 = lAC.clone().add(-1.5, 3, -1.5);
@@ -47,6 +48,7 @@ public class Rainly implements Animation {
         as.setSmall(true);
         as.setCustomNameVisible(true);
         String finalWinGroupId = winGroupId;
+        String finalWinGroupDisplayName = winGroupDisplayName;
         (new BukkitRunnable() {
             int i; // count of ticks
             double t;
@@ -71,17 +73,17 @@ public class Rainly implements Animation {
                     if (material == null) {
                         material = Material.STONE;
                     }
-                    winItem = Main.t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
+                    winItem = Main.t.createItem(material, 1, -1, finalWinGroupDisplayName, winGroupEnchant);
                 } else
                 if(finalWinGroupId.startsWith("HEAD")) {
                     String[] parts = finalWinGroupId.split(":");
-                    winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
+                    winItem = Main.t.getPlayerHead(parts[1], finalWinGroupDisplayName);
                 } else {
                     if (finalWinGroupId.startsWith("HDB")) {
                         String[] parts = finalWinGroupId.split(":");
                         String id = parts[1];
                         if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                            winItem = Main.t.getHDBSkull(id, winGroupDisplayName);
+                            winItem = Main.t.getHDBSkull(id, finalWinGroupDisplayName);
                         } else {
                             winItem = new ItemStack(Material.STONE);
                         }
@@ -90,14 +92,14 @@ public class Rainly implements Animation {
                         String category = parts[1];
                         String id = parts[2];
                         if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                            winItem = Main.t.getCHSkull(category, id, winGroupDisplayName);
+                            winItem = Main.t.getCHSkull(category, id, finalWinGroupDisplayName);
                         } else {
                             winItem = new ItemStack(Material.STONE);
                         }
                     } else if (finalWinGroupId.startsWith("BASE64")) {
                         String[] parts = finalWinGroupId.split(":");
                         String base64 = parts[1];
-                        winItem = Main.t.getBASE64Skull(base64, winGroupDisplayName);
+                        winItem = Main.t.getBASE64Skull(base64, finalWinGroupDisplayName);
                     } else {
                         String[] parts = finalWinGroupId.split(":");
                         byte data = -1;
@@ -108,7 +110,7 @@ public class Rainly implements Animation {
                         if (material == null) {
                             material = Material.STONE;
                         }
-                        winItem = Main.t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
+                        winItem = Main.t.createItem(material, data, 1, finalWinGroupDisplayName, winGroupEnchant);
                     }
                 }
                 if (this.i == 0) {
@@ -131,10 +133,11 @@ public class Rainly implements Animation {
                     final String winGroup2 = Case.getRandomGroup(c);
                     ItemStack winItem2 = null;
                     Material material2;
-                    final String winGroupDisplayName2 = Case.getWinGroupDisplayName(c, winGroup2);
+                    String winGroupDisplayName2 = Case.getWinGroupDisplayName(c, winGroup2);
                     String winGroup2Id = Case.getWinGroupId(c, winGroup2);
                     if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                         winGroup2Id = PAPISupport.setPlaceholders(player, winGroup2Id);
+                        winGroupDisplayName2 = PAPISupport.setPlaceholders(player, winGroupDisplayName2);
                     }
                     boolean winGroup2Enchant = Case.getWinGroupEnchant(c, winGroup2);
                     if(!winGroup2Id.contains(":")) {

@@ -27,10 +27,11 @@ public class FireworkShape implements Animation {
         final Location lAC = location.clone();
         final String winGroup = Tools.getRandomGroup(c);
         String winGroupId = Case.getWinGroupId(c, winGroup);
+        String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
+            winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
         }
-        final String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
         final boolean winGroupEnchant = Case.getWinGroupEnchant(c, winGroup);
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
@@ -41,6 +42,7 @@ public class FireworkShape implements Animation {
         as.setVisible(false);
         as.setCustomNameVisible(false);
         String finalWinGroupId = winGroupId;
+        String finalWinGroupDisplayName = winGroupDisplayName;
         (new BukkitRunnable() {
             int i; //ticks count
             Location l;
@@ -53,16 +55,16 @@ public class FireworkShape implements Animation {
                     if (material == null) {
                         material = Material.STONE;
                     }
-                    winItem = Main.t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
+                    winItem = Main.t.createItem(material, 1, -1, finalWinGroupDisplayName, winGroupEnchant);
                 } else {
                     if (finalWinGroupId.startsWith("HEAD")) {
                         String[] parts = finalWinGroupId.split(":");
-                        winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
+                        winItem = Main.t.getPlayerHead(parts[1], finalWinGroupDisplayName);
                     } else if (finalWinGroupId.startsWith("HDB")) {
                         String[] parts = finalWinGroupId.split(":");
                         String id = parts[1];
                         if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                            winItem = Main.t.getHDBSkull(id, winGroupDisplayName);
+                            winItem = Main.t.getHDBSkull(id, finalWinGroupDisplayName);
                         } else {
                             winItem = new ItemStack(Material.STONE);
                         }
@@ -71,14 +73,14 @@ public class FireworkShape implements Animation {
                         String category = parts[1];
                         String id = parts[2];
                         if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                            winItem = Main.t.getCHSkull(category, id, winGroupDisplayName);
+                            winItem = Main.t.getCHSkull(category, id, finalWinGroupDisplayName);
                         } else {
                             winItem = new ItemStack(Material.STONE);
                         }
                     } else if (finalWinGroupId.startsWith("BASE64")) {
                         String[] parts = finalWinGroupId.split(":");
                         String base64 = parts[1];
-                        winItem = Main.t.getBASE64Skull(base64, winGroupDisplayName);
+                        winItem = Main.t.getBASE64Skull(base64, finalWinGroupDisplayName);
                     } else {
                         String[] parts = finalWinGroupId.split(":");
                         byte data = -1;
@@ -89,7 +91,7 @@ public class FireworkShape implements Animation {
                         if (material == null) {
                             material = Material.STONE;
                         }
-                        winItem = Main.t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
+                        winItem = Main.t.createItem(material, data, 1, finalWinGroupDisplayName, winGroupEnchant);
                     }
                 }
                 if (this.i == 0) {

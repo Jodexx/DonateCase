@@ -40,10 +40,11 @@ public class Wheel implements Animation {
         for (int i = 0; i < itemscount; i++) {
             String winGroup = Tools.getRandomGroup(c);
             String winGroupId = Case.getWinGroupId(c, winGroup);
+            String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
+                winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
             }
-            String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
             boolean winGroupEnchant = Case.getWinGroupEnchant(c, winGroup);
             Material material;
             ItemStack winItem = null;
