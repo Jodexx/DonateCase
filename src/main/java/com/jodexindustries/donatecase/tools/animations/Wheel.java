@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Location;
@@ -33,6 +34,7 @@ public class Wheel implements Animation {
     @Override
      public void start(Player player, Location location, String c) {
         final Location loc = location.clone();
+        loc.setZ(loc.getZ() + 0.5);
         // register items
          int itemscount = customConfig.getAnimations().getInt("Wheel.ItemsCount");;
         for (int i = 0; i < itemscount; i++) {
@@ -93,7 +95,11 @@ public class Wheel implements Animation {
             groups.add(winGroup);
             armorStands.add(spawnArmorStand(location, i));
         }
-
+        double currentYaw = loc.getYaw();
+        if (currentYaw < 0) {
+            currentYaw += 360;
+        }
+        double newYaw = Math.round(currentYaw / 90) * 90;
         (new BukkitRunnable() {
             int ticks = 0;
 
@@ -101,8 +107,7 @@ public class Wheel implements Animation {
             final double radius = customConfig.getAnimations().getDouble("Wheel.CircleRadius");
 
             final double offset = 2 * Math.PI / itemscount;
-            final Location location = loc.clone().add(loc.getDirection().multiply(-1).getX() + 0.5, -1, loc.getDirection().multiply(-0.5).getZ());
-
+            final Location location = loc.clone().add(loc.getDirection().multiply(1).getX() + 0.5, -1, 0);
             public void run() {
                 ticks++;
                 double angle = ticks / 20.0;
@@ -113,8 +118,8 @@ public class Wheel implements Animation {
                     for (ArmorStand entity : armorStands) {
                         double x = radius * Math.sin(angle);
                         double y = radius * Math.cos(angle);
-
                         Location newLoc = location.clone().add(location.getDirection().multiply(-1).getX() + x, y, 0);
+
                         entity.teleport(newLoc);
                         angle += offset;
 
