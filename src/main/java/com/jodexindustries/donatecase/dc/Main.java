@@ -72,7 +72,9 @@ public class Main extends JavaPlugin {
         metrics.addCustomChart(new Metrics.SimplePie("language", () -> customConfig.getConfig().getString("DonatCase.Languages")));
 
         Tconfig = customConfig.getConfig().getString("DonatCase.MySql.Enabled").equalsIgnoreCase("false");
-        instance.setupPermissions();
+        if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+            instance.setupPermissions();
+        }
         if (!Tconfig) {
             String base = customConfig.getConfig().getString("DonatCase.MySql.DataBase");
             String port = customConfig.getConfig().getString("DonatCase.MySql.Port");

@@ -231,7 +231,7 @@ public class Case {
         String winGroupGroup = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".Group");
         // Give command
         String givecommand = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommand");
-        if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup")) {
+        if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && Main.getPermissions() != null) {
             String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
             if (customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) &&
                     customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) >=

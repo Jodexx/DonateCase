@@ -14,6 +14,7 @@ DonatCase:
   Languages: en #ru/en/ua
   #Are messages to the player about adding keys included?
   SetKeysTargetMessage: true
+  # Only if Vault enabled
   LevelGroup: false #Enable if you use PermissionEX, if you use LuckPerms, don't enable if you use "parent add"
   LevelGroups:
     legend: 4
