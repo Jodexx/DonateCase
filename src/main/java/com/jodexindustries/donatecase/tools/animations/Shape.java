@@ -56,7 +56,11 @@ public class Shape implements Animation {
                     if (material == null) {
                         material = Material.STONE;
                     }
-                    winItem = Main.t.createItem(material, 1, -1, finalWinGroupDisplayName, winGroupEnchant);
+                    if(!material.isAir()) {
+                        winItem = Main.t.createItem(material, 1, -1, finalWinGroupDisplayName, winGroupEnchant);
+                    } else {
+                        winItem = new ItemStack(Material.AIR);
+                    }
                 } else {
                     if (finalWinGroupId.startsWith("HEAD")) {
                         String[] parts = finalWinGroupId.split(":");
@@ -92,7 +96,11 @@ public class Shape implements Animation {
                         if (material == null) {
                             material = Material.STONE;
                         }
-                        winItem = Main.t.createItem(material, data, 1, finalWinGroupDisplayName, winGroupEnchant);
+                        if(!material.isAir()) {
+                            winItem = Main.t.createItem(material, data, 1, finalWinGroupDisplayName, winGroupEnchant);
+                        } else {
+                            winItem = new ItemStack(Material.AIR);
+                        }
                     }
                 }
                 if (this.i == 0) {
@@ -101,8 +109,10 @@ public class Shape implements Animation {
 
                 if (this.i >= 7) {
                     if (this.i == 16) {
-                        as.setHelmet(winItem);
-                        as.setCustomName(winItem != null ? Objects.requireNonNull(winItem.getItemMeta()).getDisplayName() : null);
+                        if(!winItem.getType().isAir()) {
+                            as.setHelmet(winItem);
+                        }
+                        as.setCustomName(finalWinGroupDisplayName);
                         Main.t.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
                         Case.onCaseOpenFinish(c, player, true, winGroup);
 
@@ -125,7 +135,11 @@ public class Shape implements Animation {
                         if (material2 == null) {
                             material2 = Material.STONE;
                         }
-                        winItem2 = Main.t.createItem(material2, 1, -1, winGroupDisplayName2, winGroupEnchant2);
+                        if(!material2.isAir()) {
+                            winItem2 = Main.t.createItem(material2, 1, -1, winGroupDisplayName2, winGroupEnchant2);
+                        } else {
+                            winItem2 = new ItemStack(Material.AIR);
+                        }
                     } else {
                         if (winGroup2Id.startsWith("HEAD")) {
                             String[] parts = winGroup2Id.split(":");
@@ -164,14 +178,16 @@ public class Shape implements Animation {
                             winItem2 = Main.t.createItem(material, data, 1, winGroupDisplayName2, winGroupEnchant2);
                         }
                     }
-                    as.setHelmet(winItem2);
-                    as.setCustomName(Objects.requireNonNull(winItem2 != null ? winItem2.getItemMeta() : null).getDisplayName());
+                    if(!winItem2.getType().isAir()) {
+                        as.setHelmet(winItem2);
+                    }
+                    as.setCustomName(winGroupDisplayName2);
                     if (this.i <= 8) {
                         if (!Bukkit.getVersion().contains("1.12")) {
                             Particle.DustOptions dustOptions = new Particle.DustOptions(Color.ORANGE, 1.0F);
                             Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
                         } else {
-                            l.getWorld().spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0);
+                            Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0);
                         }
                     }
                 }

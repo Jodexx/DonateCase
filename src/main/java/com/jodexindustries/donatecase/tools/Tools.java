@@ -351,7 +351,7 @@ public class Tools {
         } else {
             item = new ItemStack(ma, amount, (short) 1, (byte) data);
         }
-        if(enchant) {
+        if(enchant && !ma.equals(Material.AIR)) {
             item.addUnsafeEnchantment(Enchantment.LURE, 1);
         }
         ItemMeta m = item.getItemMeta();
@@ -359,10 +359,10 @@ public class Tools {
             m.setDisplayName(rc(dn));
         }
 
-        if (lore != null) {
+        if (lore != null ) {
             m.setLore(this.rc(lore));
         }
-        if (enchant) {
+        if (enchant && !ma.equals(Material.AIR)) {
             m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 

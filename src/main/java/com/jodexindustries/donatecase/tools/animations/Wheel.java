@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Location;
@@ -13,18 +12,22 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
+import static com.jodexindustries.donatecase.dc.Main.t;
 
 public class Wheel implements Animation {
 
     List<ItemStack> items = new ArrayList<>();
     List<String> groups = new ArrayList<>();
     List<ArmorStand> armorStands = new ArrayList<>();
+    Player p;
+    String c;
 
     @Override
     public String getName() {
@@ -33,6 +36,8 @@ public class Wheel implements Animation {
 
     @Override
      public void start(Player player, Location location, String c) {
+        p = player;
+        this.c = c;
         final Location loc = location.clone();
         loc.setZ(loc.getZ() + 0.5);
         // register items
@@ -53,16 +58,22 @@ public class Wheel implements Animation {
                 if (material == null) {
                     material = Material.STONE;
                 }
-                winItem = Main.t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
+                if(!material.isAir()) {
+                    winItem = t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
+                } else {
+                    winItem = new ItemStack(Material.AIR);
+                    ItemMeta meta = winItem.getItemMeta();
+                    winItem.setItemMeta(meta);
+                }
             } else {
                 if (winGroupId.startsWith("HEAD")) {
                     String[] parts = winGroupId.split(":");
-                    winItem = Main.t.getPlayerHead(parts[1], winGroupDisplayName);
+                    winItem = t.getPlayerHead(parts[1], winGroupDisplayName);
                 } else if (winGroupId.startsWith("HDB")) {
                     String[] parts = winGroupId.split(":");
                     String id = parts[1];
                     if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                        winItem = Main.t.getHDBSkull(id, winGroupDisplayName);
+                        winItem = t.getHDBSkull(id, winGroupDisplayName);
                     } else {
                         winItem = new ItemStack(Material.STONE);
                     }
@@ -71,14 +82,14 @@ public class Wheel implements Animation {
                     String category = parts[1];
                     String id = parts[2];
                     if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                        winItem = Main.t.getCHSkull(category, id, winGroupDisplayName);
+                        winItem = t.getCHSkull(category, id, winGroupDisplayName);
                     } else {
                         winItem = new ItemStack(Material.STONE);
                     }
                 } else if (winGroupId.startsWith("BASE64")) {
                     String[] parts = winGroupId.split(":");
                     String base64 = parts[1];
-                    winItem = Main.t.getBASE64Skull(base64, winGroupDisplayName);
+                    winItem = t.getBASE64Skull(base64, winGroupDisplayName);
                 } else {
                     String[] parts = winGroupId.split(":");
                     byte data = -1;
@@ -89,7 +100,7 @@ public class Wheel implements Animation {
                     if (material == null) {
                         material = Material.STONE;
                     }
-                    winItem = Main.t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
+                    winItem = t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
                 }
             }
             items.add(winItem);
@@ -158,8 +169,18 @@ public class Wheel implements Animation {
         as.setGravity(false);
         as.setSmall(true);
         as.setCustomNameVisible(true);
-        as.setHelmet(items.get(index));
-        as.setCustomName(items.get(index).getItemMeta().getDisplayName());
+        if(!items.get(index).getType().isAir()) {
+            as.setHelmet(items.get(index));
+        }
+        if(!items.get(index).getType().isAir()) {
+            as.setCustomName(items.get(index).getItemMeta().getDisplayName());
+        } else {
+            String winGroupDisplayName = Case.getWinGroupDisplayName(c, groups.get(index));
+            if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                winGroupDisplayName = PAPISupport.setPlaceholders(p, winGroupDisplayName);
+            }
+            as.setCustomName(t.rc(winGroupDisplayName));
+        }
         return as;
     }
 }

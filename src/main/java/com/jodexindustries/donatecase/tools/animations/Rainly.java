@@ -73,7 +73,11 @@ public class Rainly implements Animation {
                     if (material == null) {
                         material = Material.STONE;
                     }
-                    winItem = Main.t.createItem(material, 1, -1, finalWinGroupDisplayName, winGroupEnchant);
+                    if(!material.isAir()) {
+                        winItem = Main.t.createItem(material, 1, -1, finalWinGroupDisplayName, winGroupEnchant);
+                    } else {
+                        winItem = new ItemStack(Material.AIR);
+                    }
                 } else
                 if(finalWinGroupId.startsWith("HEAD")) {
                     String[] parts = finalWinGroupId.split(":");
@@ -120,8 +124,10 @@ public class Rainly implements Animation {
                     this.l.setYaw(las.getYaw());
                     if (this.i == 32) {
                         // win item and title
-                        as.setHelmet(winItem);
-                        as.setCustomName(winItem.getItemMeta().getDisplayName());
+                        if(!winItem.getType().isAir()) {
+                            as.setHelmet(winItem);
+                        }
+                        as.setCustomName(finalWinGroupDisplayName);
                         Case.onCaseOpenFinish(c, player, false, winGroup);
                         lAC.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, lAC, 0);
                         lAC.getWorld().playSound(lAC, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
@@ -134,32 +140,36 @@ public class Rainly implements Animation {
                     ItemStack winItem2 = null;
                     Material material2;
                     String winGroupDisplayName2 = Case.getWinGroupDisplayName(c, winGroup2);
-                    String winGroup2Id = Case.getWinGroupId(c, winGroup2);
+                    String winGroupId2 = Case.getWinGroupId(c, winGroup2);
                     if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                        winGroup2Id = PAPISupport.setPlaceholders(player, winGroup2Id);
+                        winGroupId2 = PAPISupport.setPlaceholders(player, winGroupId2);
                         winGroupDisplayName2 = PAPISupport.setPlaceholders(player, winGroupDisplayName2);
                     }
-                    boolean winGroup2Enchant = Case.getWinGroupEnchant(c, winGroup2);
-                    if(!winGroup2Id.contains(":")) {
-                        material2 = Material.getMaterial(winGroup2Id);
+                    boolean winGroupEnchant2 = Case.getWinGroupEnchant(c, winGroup2);
+                    if(!winGroupId2.contains(":")) {
+                        material2 = Material.getMaterial(winGroupId2);
                         if (material2 == null) {
                             material2 = Material.STONE;
                         }
-                        winItem2 = Main.t.createItem(material2, 1, -1, winGroupDisplayName2, winGroup2Enchant);
+                        if(!material2.isAir()) {
+                            winItem2 = Main.t.createItem(material2, 1, -1, winGroupDisplayName2, winGroupEnchant2);
+                        } else {
+                            winItem2 = new ItemStack(Material.AIR);
+                        }
                     } else {
-                        if (winGroup2Id.startsWith("HEAD")) {
-                            String[] parts = winGroup2Id.split(":");
+                        if (winGroupId2.startsWith("HEAD")) {
+                            String[] parts = winGroupId2.split(":");
                             winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
-                        } else if (winGroup2Id.startsWith("HDB")) {
-                            String[] parts = winGroup2Id.split(":");
+                        } else if (winGroupId2.startsWith("HDB")) {
+                            String[] parts = winGroupId2.split(":");
                             String id = parts[1];
                             if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
                                 winItem2 = Main.t.getHDBSkull(id, winGroupDisplayName2);
                             } else {
                                 winItem2 = new ItemStack(Material.STONE);
                             }
-                        } else if (winGroup2Id.startsWith("CH")) {
-                            String[] parts = winGroup2Id.split(":");
+                        } else if (winGroupId2.startsWith("CH")) {
+                            String[] parts = winGroupId2.split(":");
                             String category = parts[1];
                             String id = parts[2];
                             if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
@@ -167,12 +177,12 @@ public class Rainly implements Animation {
                             } else {
                                 winItem2 = new ItemStack(Material.STONE);
                             }
-                        } else if (winGroup2Id.startsWith("BASE64")) {
-                            String[] parts = winGroup2Id.split(":");
+                        } else if (winGroupId2.startsWith("BASE64")) {
+                            String[] parts = winGroupId2.split(":");
                             String base64 = parts[1];
                             winItem2 = Main.t.getBASE64Skull(base64, winGroupDisplayName2);
                         } else {
-                            String[] parts = winGroup2Id.split(":");
+                            String[] parts = winGroupId2.split(":");
                             byte data = -1;
                             if(parts[1] != null) {
                                 data = Byte.parseByte(parts[1]);
@@ -181,11 +191,13 @@ public class Rainly implements Animation {
                             if (material == null) {
                                 material = Material.STONE;
                             }
-                            winItem2 = Main.t.createItem(material, data, 1, winGroupDisplayName2, winGroup2Enchant);
+                            winItem2 = Main.t.createItem(material, data, 1, winGroupDisplayName2, winGroupEnchant2);
                         }
                     }
-                    as.setHelmet(winItem2);
-                    as.setCustomName(winItem2.getItemMeta().getDisplayName());
+                    if(!winItem2.getType().isAir()) {
+                        as.setHelmet(winItem2);
+                    }
+                    as.setCustomName(winGroupDisplayName2);
                     player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 5.0F);
                     // firework particles
                     this.t += 0.25;

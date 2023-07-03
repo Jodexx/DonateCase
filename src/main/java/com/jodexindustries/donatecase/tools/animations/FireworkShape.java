@@ -14,6 +14,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Objects;
+
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
 public class FireworkShape implements Animation {
@@ -91,7 +93,11 @@ public class FireworkShape implements Animation {
                         if (material == null) {
                             material = Material.STONE;
                         }
-                        winItem = Main.t.createItem(material, data, 1, finalWinGroupDisplayName, winGroupEnchant);
+                        if(!material.isAir()) {
+                            winItem = Main.t.createItem(material, data, 1, finalWinGroupDisplayName, winGroupEnchant);
+                        } else {
+                            winItem = new ItemStack(Material.AIR);
+                        }
                     }
                 }
                 if (this.i == 0) {
@@ -99,7 +105,7 @@ public class FireworkShape implements Animation {
                 }
                 if (this.i == 1) {
                     Location loc = this.l.clone().add(0.0, 1.0, 0);
-                    Firework firework = loc.getWorld().spawn(loc, Firework.class);
+                    Firework firework = Objects.requireNonNull(loc.getWorld()).spawn(loc, Firework.class);
                     FireworkMeta data = firework.getFireworkMeta();
                     data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
                     for (String color : customConfig.getAnimations().getStringList("Firework.FireworkColors")) {
@@ -121,8 +127,10 @@ public class FireworkShape implements Animation {
                 if (this.i >= 7) {
                     if (this.i == 10) {
                         as.setCustomNameVisible(true);
-                        as.setHelmet(winItem);
-                        as.setCustomName(winItem.getItemMeta().getDisplayName());
+                        if(!winItem.getType().isAir()) {
+                            as.setHelmet(winItem);
+                        }
+                        as.setCustomName(finalWinGroupDisplayName);
                         Case.onCaseOpenFinish(c, player, true, winGroup);
                     }
                     // end
@@ -133,8 +141,6 @@ public class FireworkShape implements Animation {
                         Case.listAR.remove(as);
                     }
                 }
-
-
 
                 ++this.i;
             }
