@@ -54,7 +54,7 @@ public class Tools {
 
     public void launchFirework(Location l) {
         Random r = new Random();
-        Firework fw = (Firework)l.getWorld().spawnEntity(l.subtract(new Vector(0.0, 0.5, 0.0)), EntityType.FIREWORK);
+        Firework fw = (Firework) Objects.requireNonNull(l.getWorld()).spawnEntity(l.subtract(new Vector(0.0, 0.5, 0.0)), EntityType.FIREWORK);
         FireworkMeta meta = fw.getFireworkMeta();
         Color[] c = new Color[]{Color.RED, Color.AQUA, Color.GREEN, Color.ORANGE, Color.LIME, Color.BLUE, Color.MAROON, Color.WHITE};
         meta.addEffect(FireworkEffect.builder().flicker(false).with(Type.BALL).trail(false).withColor(c[r.nextInt(c.length)], c[r.nextInt(c.length)], c[r.nextInt(c.length)]).build());
@@ -329,7 +329,7 @@ public class Tools {
     }
     public ItemStack getCHSkull(String category, String id, String displayname) {
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-            ItemStack item = new CustomHeadSupport().getSkull(category, id, displayname);
+            ItemStack item = new CustomHeadSupport().getSkull(category, id, rc(displayname));
             return item;
         } else {
             return null;
@@ -337,7 +337,7 @@ public class Tools {
     }
     public ItemStack getCHSkull(String category, String id, String displayname, List<String> lore) {
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-            ItemStack item = new CustomHeadSupport().getSkull(category, id, displayname, lore);
+            ItemStack item = new CustomHeadSupport().getSkull(category, id, rc(displayname), lore);
             return item;
         } else {
             return null;

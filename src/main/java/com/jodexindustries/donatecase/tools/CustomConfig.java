@@ -50,15 +50,6 @@ public class CustomConfig {
 
     }
 
-    public void saveConfig() {
-        try {
-            Config.save(filecon);
-        } catch (IOException var1) {
-            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Config.yml");
-        }
-
-    }
-
     public void saveKeys() {
         try {
             Keys.save(filek);
@@ -66,14 +57,6 @@ public class CustomConfig {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Keys.yml");
         }
 
-    }
-
-    public void saveAnimations() {
-        try {
-            Animations.save(fileanim);
-        } catch (IOException var1) {
-            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
-        }
     }
 
     public YamlConfiguration getCases() {

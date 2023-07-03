@@ -207,7 +207,7 @@ public class Case {
     }
 
     public static String getWinGroupId(String c, String winGroup) {
-        return customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID").toUpperCase();
+        return customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID");
     }
     public static String getWinGroupDisplayName(String c, String winGroup) {
         return customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");

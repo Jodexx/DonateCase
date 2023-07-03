@@ -14,6 +14,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
+import static com.jodexindustries.donatecase.dc.Main.t;
+
 public class Shape implements Animation {
 
     @Override
@@ -27,7 +29,7 @@ public class Shape implements Animation {
 
         final String winGroup = Tools.getRandomGroup(c);
         String winGroupId = Case.getWinGroupId(c, winGroup);
-        String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
+        String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
             winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
@@ -50,7 +52,7 @@ public class Shape implements Animation {
 
             public void run() {
                 Material material;
-                ItemStack winItem = null;
+                ItemStack winItem;
                 if(!finalWinGroupId.contains(":")) {
                     material = Material.getMaterial(finalWinGroupId);
                     if (material == null) {
@@ -121,9 +123,9 @@ public class Shape implements Animation {
 
                 if (this.i <= 15) {
                     final String winGroup2 = Tools.getRandomGroup(c);
-                    ItemStack winItem2 = null;
+                    ItemStack winItem2;
                     Material material2;
-                    String winGroupDisplayName2 = Case.getWinGroupDisplayName(c, winGroup2);
+                    String winGroupDisplayName2 = Main.t.rc(Case.getWinGroupDisplayName(c, winGroup2));
                     String winGroup2Id = Case.getWinGroupId(c, winGroup2);
                     if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                         winGroup2Id = PAPISupport.setPlaceholders(player, winGroup2Id);

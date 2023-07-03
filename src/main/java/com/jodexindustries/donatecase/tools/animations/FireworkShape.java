@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Objects;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
+import static com.jodexindustries.donatecase.dc.Main.t;
 
 public class FireworkShape implements Animation {
 
@@ -29,7 +30,7 @@ public class FireworkShape implements Animation {
         final Location lAC = location.clone();
         final String winGroup = Tools.getRandomGroup(c);
         String winGroupId = Case.getWinGroupId(c, winGroup);
-        String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
+        String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
             winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
@@ -43,63 +44,62 @@ public class FireworkShape implements Animation {
         as.setSmall(true);
         as.setVisible(false);
         as.setCustomNameVisible(false);
-        String finalWinGroupId = winGroupId;
+        Material material;
+        ItemStack winItem;
+        if(!winGroupId.contains(":")) {
+            material = Material.getMaterial(winGroupId);
+            if (material == null) {
+                material = Material.STONE;
+            }
+            winItem = t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
+        } else {
+            if (winGroupId.startsWith("HEAD")) {
+                String[] parts = winGroupId.split(":");
+                winItem = t.getPlayerHead(parts[1], winGroupDisplayName);
+            } else if (winGroupId.startsWith("HDB")) {
+                String[] parts = winGroupId.split(":");
+                String id = parts[1];
+                if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                    winItem = t.getHDBSkull(id, winGroupDisplayName);
+                } else {
+                    winItem = new ItemStack(Material.STONE);
+                }
+            } else if (winGroupId.startsWith("CH")) {
+                String[] parts = winGroupId.split(":");
+                String category = parts[1];
+                String id = parts[2];
+                if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                    winItem = t.getCHSkull(category, id, winGroupDisplayName);
+                } else {
+                    winItem = new ItemStack(Material.STONE);
+                }
+            } else if (winGroupId.startsWith("BASE64")) {
+                String[] parts = winGroupId.split(":");
+                String base64 = parts[1];
+                winItem = t.getBASE64Skull(base64, winGroupDisplayName);
+            } else {
+                String[] parts = winGroupId.split(":");
+                byte data = -1;
+                if(parts[1] != null) {
+                    data = Byte.parseByte(parts[1]);
+                }
+                material = Material.getMaterial(parts[0]);
+                if (material == null) {
+                    material = Material.STONE;
+                }
+                if(!material.isAir()) {
+                    winItem = t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
+                } else {
+                    winItem = new ItemStack(Material.AIR);
+                }
+            }
+        }
         String finalWinGroupDisplayName = winGroupDisplayName;
         (new BukkitRunnable() {
             int i; //ticks count
             Location l;
 
             public void run() {
-                Material material;
-                ItemStack winItem = null;
-                if(!finalWinGroupId.contains(":")) {
-                    material = Material.getMaterial(finalWinGroupId);
-                    if (material == null) {
-                        material = Material.STONE;
-                    }
-                    winItem = Main.t.createItem(material, 1, -1, finalWinGroupDisplayName, winGroupEnchant);
-                } else {
-                    if (finalWinGroupId.startsWith("HEAD")) {
-                        String[] parts = finalWinGroupId.split(":");
-                        winItem = Main.t.getPlayerHead(parts[1], finalWinGroupDisplayName);
-                    } else if (finalWinGroupId.startsWith("HDB")) {
-                        String[] parts = finalWinGroupId.split(":");
-                        String id = parts[1];
-                        if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                            winItem = Main.t.getHDBSkull(id, finalWinGroupDisplayName);
-                        } else {
-                            winItem = new ItemStack(Material.STONE);
-                        }
-                    } else if (finalWinGroupId.startsWith("CH")) {
-                        String[] parts = finalWinGroupId.split(":");
-                        String category = parts[1];
-                        String id = parts[2];
-                        if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                            winItem = Main.t.getCHSkull(category, id, finalWinGroupDisplayName);
-                        } else {
-                            winItem = new ItemStack(Material.STONE);
-                        }
-                    } else if (finalWinGroupId.startsWith("BASE64")) {
-                        String[] parts = finalWinGroupId.split(":");
-                        String base64 = parts[1];
-                        winItem = Main.t.getBASE64Skull(base64, finalWinGroupDisplayName);
-                    } else {
-                        String[] parts = finalWinGroupId.split(":");
-                        byte data = -1;
-                        if(parts[1] != null) {
-                            data = Byte.parseByte(parts[1]);
-                        }
-                        material = Material.getMaterial(parts[0]);
-                        if (material == null) {
-                            material = Material.STONE;
-                        }
-                        if(!material.isAir()) {
-                            winItem = Main.t.createItem(material, data, 1, finalWinGroupDisplayName, winGroupEnchant);
-                        } else {
-                            winItem = new ItemStack(Material.AIR);
-                        }
-                    }
-                }
                 if (this.i == 0) {
                     this.l = as.getLocation();
                 }
@@ -109,7 +109,7 @@ public class FireworkShape implements Animation {
                     FireworkMeta data = firework.getFireworkMeta();
                     data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
                     for (String color : customConfig.getAnimations().getStringList("Firework.FireworkColors")) {
-                        data.addEffect(FireworkEffect.builder().withColor(Main.t.parseColor(color)).build());
+                        data.addEffect(FireworkEffect.builder().withColor(t.parseColor(color)).build());
                     }
                     data.setPower(customConfig.getAnimations().getInt("FireWork.Power"));
                     firework.setFireworkMeta(data);

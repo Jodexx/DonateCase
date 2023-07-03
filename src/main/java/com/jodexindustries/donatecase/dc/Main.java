@@ -13,11 +13,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class Main extends JavaPlugin {
@@ -34,7 +38,6 @@ public class Main extends JavaPlugin {
     File langEn;
     File langUa;
     public static CustomConfig customConfig;
-
     public void onEnable() {
         long time = System.currentTimeMillis();
         instance = this;
@@ -95,6 +98,7 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(getCommand("donatecase")).setExecutor(new CommandEx());
         Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
         registerDefaultAnimations();
+
         Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
 
     }

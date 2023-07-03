@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 import static com.jodexindustries.donatecase.dc.Main.t;
@@ -41,18 +42,18 @@ public class Wheel implements Animation {
         final Location loc = location.clone();
         loc.setZ(loc.getZ() + 0.5);
         // register items
-         int itemscount = customConfig.getAnimations().getInt("Wheel.ItemsCount");;
+         int itemscount = customConfig.getAnimations().getInt("Wheel.ItemsCount");
         for (int i = 0; i < itemscount; i++) {
             String winGroup = Tools.getRandomGroup(c);
             String winGroupId = Case.getWinGroupId(c, winGroup);
-            String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
+            String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
                 winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
             }
             boolean winGroupEnchant = Case.getWinGroupEnchant(c, winGroup);
             Material material;
-            ItemStack winItem = null;
+            ItemStack winItem;
             if (!winGroupId.contains(":")) {
                 material = Material.getMaterial(winGroupId);
                 if (material == null) {
@@ -134,7 +135,7 @@ public class Wheel implements Animation {
                         double threshold = 0.1;
                         if (Math.abs(currentAngle - targetAngle) < threshold) {
                             if(customConfig.getAnimations().getString("Wheel.Scroll.Sound") != null) {
-                                location.getWorld().playSound(location,
+                                Objects.requireNonNull(location.getWorld()).playSound(location,
                                         Sound.valueOf(customConfig.getAnimations().getString("Wheel.Scroll.Sound")),
                                         customConfig.getAnimations().getInt("Wheel.Scroll.Volume"),
                                         customConfig.getAnimations().getInt("Wheel.Scroll.Pitch"));
@@ -163,24 +164,20 @@ public class Wheel implements Animation {
         }).runTaskTimer(Main.instance, 0L, 2L);
     }
     private ArmorStand spawnArmorStand(Location location, int index) {
-        ArmorStand as = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+        ArmorStand as = (ArmorStand) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.ARMOR_STAND);
         as.setVisible(false);
         Case.listAR.add(as);
         as.setGravity(false);
         as.setSmall(true);
         as.setCustomNameVisible(true);
         if(!items.get(index).getType().isAir()) {
-            as.setHelmet(items.get(index));
+                as.setHelmet(items.get(index));
         }
-        if(!items.get(index).getType().isAir()) {
-            as.setCustomName(items.get(index).getItemMeta().getDisplayName());
-        } else {
-            String winGroupDisplayName = Case.getWinGroupDisplayName(c, groups.get(index));
-            if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                winGroupDisplayName = PAPISupport.setPlaceholders(p, winGroupDisplayName);
-            }
-            as.setCustomName(t.rc(winGroupDisplayName));
+        String winGroupDisplayName = Case.getWinGroupDisplayName(c, groups.get(index));
+        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            winGroupDisplayName = PAPISupport.setPlaceholders(p, winGroupDisplayName);
         }
+        as.setCustomName(t.rc(winGroupDisplayName));
         return as;
     }
 }

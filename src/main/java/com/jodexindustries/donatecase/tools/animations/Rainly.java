@@ -12,7 +12,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Objects;
+
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
+import static com.jodexindustries.donatecase.dc.Main.t;
 
 public class Rainly implements Animation {
     @Override
@@ -25,7 +28,7 @@ public class Rainly implements Animation {
         final String FallingParticle = customConfig.getAnimations().getString("Rainly.FallingParticle");
         final String winGroup = Tools.getRandomGroup(c);
         String winGroupId = Case.getWinGroupId(c, winGroup);
-        String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup);
+        String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
             winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
@@ -56,8 +59,8 @@ public class Rainly implements Animation {
 
             public void run() {
                 Material material;
-                ItemStack winItem = null;
-                lAC.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain1, 1);
+                ItemStack winItem;
+                Objects.requireNonNull(lAC.getWorld()).spawnParticle(Particle.valueOf(FallingParticle), rain1, 1);
                 lAC.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain2, 1);
                 lAC.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain3, 1);
                 lAC.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain4, 1);
@@ -137,9 +140,9 @@ public class Rainly implements Animation {
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0 )) {
                     final String winGroup2 = Case.getRandomGroup(c);
-                    ItemStack winItem2 = null;
+                    ItemStack winItem2;
                     Material material2;
-                    String winGroupDisplayName2 = Case.getWinGroupDisplayName(c, winGroup2);
+                    String winGroupDisplayName2 = Main.t.rc(Case.getWinGroupDisplayName(c, winGroup2));
                     String winGroupId2 = Case.getWinGroupId(c, winGroup2);
                     if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                         winGroupId2 = PAPISupport.setPlaceholders(player, winGroupId2);
@@ -208,7 +211,7 @@ public class Rainly implements Animation {
                         double x = 0.09 * (9 - this.t * 2.5) * Math.cos(this.t + phi);
                         double z = 0.09 * (9 - this.t * 2.5) * Math.sin(this.t + phi);
                         loc.add(x, 0.0, z);
-                        this.l.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, this.l.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0);
+                        Objects.requireNonNull(this.l.getWorld()).spawnParticle(Particle.FIREWORKS_SPARK, this.l.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0);
                         loc.subtract(x, 0.0, z);
                         if (this.t >= 22) {
                             loc.add(x, 0.0, z);

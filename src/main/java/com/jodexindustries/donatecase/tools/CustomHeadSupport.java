@@ -20,7 +20,9 @@ public class CustomHeadSupport {
                 Logger.log("Could not find the head you were looking for");
             }
             ItemMeta itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(Main.t.rc(displayname));
+            if (itemMeta != null) {
+                itemMeta.setDisplayName(Main.t.rc(displayname));
+            }
             item.setItemMeta(itemMeta);
             return item;
         } else {
@@ -37,8 +39,10 @@ public class CustomHeadSupport {
                 Logger.log("Could not find the head you were looking for");
             }
             ItemMeta itemMeta = item.getItemMeta();
-            itemMeta.setDisplayName(Main.t.rc(displayname));
-            if(lore != null) {
+            if (itemMeta != null) {
+                itemMeta.setDisplayName(Main.t.rc(displayname));
+            }
+            if(lore != null && itemMeta != null) {
                 itemMeta.setLore(Main.t.rc(lore));
             }
             item.setItemMeta(itemMeta);
