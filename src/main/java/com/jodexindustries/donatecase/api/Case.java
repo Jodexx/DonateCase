@@ -86,11 +86,13 @@ public class Case {
             if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
                 return false;
             } else {
-                String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
-                World world = Bukkit.getWorld(location[0]);
-                Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
-                if(temp.equals(loc)) {
-                    return true;
+                if(hasCaseByName(customConfig.getCases().getString("DonatCase.Cases." + name + ".type"))) {
+                    String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
+                    World world = Bukkit.getWorld(location[0]);
+                    Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
+                    if (temp.equals(loc)) {
+                        return true;
+                    }
                 }
             }
         }

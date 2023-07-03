@@ -86,7 +86,11 @@ public class Tools {
     }
 
     public String rc(String t) {
-        return ChatColor.translateAlternateColorCodes('&', t);
+        if(t != null) {
+            return ChatColor.translateAlternateColorCodes('&', t);
+        } else {
+            return rc("&cMessage not found!");
+        }
     }
 
     public String rt(String text, String... repl) {
