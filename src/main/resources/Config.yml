@@ -23,7 +23,7 @@ DonatCase:
     vip: 1
     default: 0
   NoKeyWarningSound: ENTITY_ENDERMAN_TELEPORT
-  Cases: # WARNING! To create another case, you need to be sure to choose a different name for "Title"
+  Cases:
     case:
       Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL
       AnimationSound: ENTITY_EXPERIENCE_ORB_PICKUP # remove this line if you don't want to play sound
@@ -32,13 +32,13 @@ DonatCase:
         Pitch: 5
       Title: '&c&lDonate-&a&lCase' # If you want to make another case, then the Title needs to be changed
       Gui:
-        GuiMaterial: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.space/settings/item-id
+        GuiMaterial: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
         GuiMaterialName: "&cDonateCase.com"
         GuiMaterialEnchant: false
         GuiMaterialLore:
           - "&f       &f"
           - "&f       &f"
-        GuiOpenCaseMaterial: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.space/settings/item-id
+        GuiOpenCaseMaterial: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
         GuiOpenCaseMaterialEnchant: false
         DisplayName: '&bOpen Case'
         Lore:
@@ -57,7 +57,7 @@ DonatCase:
           Group: vip
           Chance: 50
           Item:
-            ID: IRON_SWORD # see: https://wiki.jodexindustries.space/settings/item-id
+            ID: IRON_SWORD # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
             DisplayName: '&7&l[&aVIP&7&l]'
             Enchanted: false
           GiveCommand: lp user %player parent set %group
@@ -71,7 +71,7 @@ DonatCase:
           Group: vipplus
           Chance: 25
           Item:
-            ID: GOLDEN_SWORD # see: https://wiki.jodexindustries.space/settings/item-id
+            ID: GOLDEN_SWORD # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
             DisplayName: '&7&l[&bVIP&6+&7&l]'
             Enchanted: false
           GiveCommand: lp user %player parent set %group
@@ -85,7 +85,7 @@ DonatCase:
           Group: deluxe
           Chance: 15
           Item:
-            ID: DIAMOND_SWORD # see: https://wiki.jodexindustries.space/settings/item-id
+            ID: DIAMOND_SWORD # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
             DisplayName: '&7&l[&5Deluxe&7&l]'
             Enchanted: false
           GiveCommand: lp user %player parent set %group
@@ -99,7 +99,7 @@ DonatCase:
           Group: legend
           Chance: 10
           Item:
-            ID: NETHERITE_SWORD # see: https://wiki.jodexindustries.space/settings/item-id
+            ID: NETHERITE_SWORD # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
             DisplayName: '&7&l[&dLegend&7&l]'
             Enchanted: false
           GiveCommand: lp user %player parent set %group

@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.CustomConfig;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
@@ -27,17 +28,26 @@ public class Case {
     /**
      * Open cases (active)
      */
-    public static HashMap<Player, Location> openCase = new HashMap<>();
+    public static HashMap<UUID, Location> openCase = new HashMap<>();
     /**
      * Active cases
      */
     public static HashMap<Location, String> ActiveCase = new HashMap<>();
+
+
+    public static HashMap<UUID, String> openCaseName = new HashMap<>();
 
     /**
      * Players, who opened cases (started scrolling)
      */
     public static List<Player> caseOpen = new ArrayList<>();
 
+    /**
+     * Save case location
+     * @param name Case name (custom)
+     * @param type Case type (config)
+     * @param lv Case location
+     */
     public static void saveLocation(String name, String type, Location lv) {
         String location = lv.getWorld().getName() + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
         customConfig.getCases().set("DonatCase.Cases." + name + ".location", location);
@@ -45,6 +55,12 @@ public class Case {
         customConfig.saveCases();
     }
 
+    /**
+     * Set case keys to a specific player
+     * @param casename Case name
+     * @param player Player name
+     * @param keys Number of keys
+     */
     public static void setKeys(String casename, String player, int keys) {
         if (Main.Tconfig) {
             customConfig.getKeys().set("DonatCase.Cases." + casename + "." + player, keys == 0 ? null : keys);
@@ -54,6 +70,7 @@ public class Case {
         }
 
     }
+
 
     public static void setNullKeys(String casename, String player) {
         if (Main.Tconfig) {
@@ -65,13 +82,33 @@ public class Case {
 
     }
 
+    /**
+     * Add case keys to a specific player
+     * @param casename Case name
+     * @param player Player name
+     * @param keys Number of keys
+     */
     public static void addKeys(String casename, String player, int keys) {
         setKeys(casename, player, getKeys(casename, player) + keys);
     }
 
+    /**
+     * Delete case keys for a specific player
+     * @param casename Case name
+     * @param player Player name
+     * @param keys Number of keys
+     */
+
     public static void removeKeys(String casename, String player, int keys) {
         setKeys(casename, player, getKeys(casename, player) - keys);
     }
+
+    /**
+     * Get the keys to a certain player's case
+     * @param name Case name
+     * @param player Player name
+     * @return Number of keys
+     */
 
     public static int getKeys(String name, String player) {
         return Main.Tconfig ? customConfig.getKeys().getInt("DonatCase.Cases." + name + "." + player) : Main.mysql.getKey(name, player);
@@ -187,6 +224,7 @@ public class Case {
         return false;
     }
     // get case by title in Config.yml
+    @Deprecated
     public static String getCaseByTitle(String title) {
         ConfigurationSection cases_ = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
         for (String name : cases_.getValues(false).keySet()) {
@@ -282,4 +320,8 @@ public class Case {
             Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(cmd2, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + casetitle)));
         }
     }
+    public static CustomConfig getCustomConfig() {
+        return customConfig;
+    }
+
 }

@@ -30,6 +30,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
@@ -63,34 +64,32 @@ public class EventsListener implements Listener {
         if (e.getCurrentItem() != null) {
             Player p = (Player)e.getWhoClicked();
             String pl = p.getName();
-            String title = e.getView().getTitle();
-            String casename = Case.getCaseByTitle(title);
-            if (Case.hasCaseByTitle(title)) {
-                e.setCancelled(true);
-                if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && e.getRawSlot() == Main.t.c(5, 3)) {
-                    String c = Case.getCaseByTitle(title);
-                    if(c != null) {
-                        if (Case.openCase.containsKey(p)) {
-                            PreOpenCaseEvent event = new PreOpenCaseEvent(p, c, Case.openCase.get(p).getBlock());
-                            Bukkit.getServer().getPluginManager().callEvent(event);
-                            if (!event.isCancelled()) {
-                                if (Case.getKeys(casename, pl) >= 1) {
-                                    Location block = Case.openCase.get(p);
-                                    Case.removeKeys(casename, pl, 1);
-                                    new StartAnimation(p, block, c);
+            if(Case.openCaseName.get(p.getUniqueId()) != null) {
+                String caseType = Case.openCaseName.get(p.getUniqueId());
+                    e.setCancelled(true);
+                    if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && e.getRawSlot() == Main.t.c(5, 3)) {
+                        if (Case.hasCaseByName(caseType)) {
+                            if (Case.openCase.containsKey(p.getUniqueId())) {
+                                PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, Case.openCase.get(p.getUniqueId()).getBlock());
+                                Bukkit.getServer().getPluginManager().callEvent(event);
+                                if (!event.isCancelled()) {
+                                    if (Case.getKeys(caseType, pl) >= 1) {
+                                        Location block = Case.openCase.get(p.getUniqueId());
+                                        Case.removeKeys(caseType, pl, 1);
+                                        new StartAnimation(p, block, caseType);
 
-                                    p.closeInventory();
-                                } else {
-                                    p.closeInventory();
-                                    p.playSound(p.getLocation(), Sound.valueOf(customConfig.getConfig().getString("DonatCase.NoKeyWarningSound")), 1.0F, 0.4F);
-                                    Main.t.msg(p, Main.lang.getString("NoKey"));
+                                        p.closeInventory();
+                                    } else {
+                                        p.closeInventory();
+                                        p.playSound(p.getLocation(), Sound.valueOf(customConfig.getConfig().getString("DonatCase.NoKeyWarningSound")), 1.0F, 0.4F);
+                                        Main.t.msg(p, Main.lang.getString("NoKey"));
+                                    }
                                 }
                             }
+                        } else {
+                            Main.t.msg(p, "&cSomething wrong! Contact with server administrator!");
                         }
-                    } else {
-                        Main.t.msg(p, "&cSomething wrong! Contact with server administrator!");
                     }
-                }
             }
         }
 
@@ -112,6 +111,7 @@ public class EventsListener implements Listener {
 
     @EventHandler
     public void PlayerInteract(PlayerInteractEvent e) {
+        if(e.getHand() == EquipmentSlot.HAND) return;
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Player p = e.getPlayer();
             Location blockLocation = e.getClickedBlock().getLocation();
@@ -123,12 +123,13 @@ public class EventsListener implements Listener {
                 if (!event.isCancelled()) {
                     if (!Case.caseOpen.contains(p)) {
                         if (!Case.ActiveCase.containsKey(blockLocation)) {
-                            Case.openCase.put(p, Case.getCaseLocationByBlockLocation(blockLocation));
+                            Case.openCase.put(p.getUniqueId(), Case.getCaseLocationByBlockLocation(blockLocation));
+                            Case.openCaseName.put(p.getUniqueId(), caseType);
                             new GuiDonatCase(p, caseType);
                         } else {
                             Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
                         }
-                    }
+                    } // else player already opened case
                 }
             }
         }
@@ -138,7 +139,8 @@ public class EventsListener implements Listener {
     public void InventoryClose(InventoryCloseEvent e) {
         Player p = (Player)e.getPlayer();
         if (Case.hasCaseByTitle(e.getView().getTitle())) {
-            Case.openCase.remove(p);
+            Case.openCase.remove(p.getUniqueId());
+            Case.openCaseName.remove(p.getUniqueId());
         }
 
     }

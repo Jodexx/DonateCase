@@ -213,6 +213,7 @@ public class Main extends JavaPlugin {
         AnimationManager.registerAnimation("WHEEL", Wheel.class);
         AnimationManager.registerAnimation("RAINLY", Rainly.class);
         AnimationManager.registerAnimation("FIREWORK", FireworkShape.class);
+        Logger.log("&aRegistered &c4 &adefault animations");
     }
     public static Permission getPermissions() {
         return permission;
