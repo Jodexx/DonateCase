@@ -87,7 +87,7 @@ public class FireworkShape implements Animation {
                 if (material == null) {
                     material = Material.STONE;
                 }
-                if(!material.isAir()) {
+                if(material != Material.AIR) {
                     winItem = t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
                 } else {
                     winItem = new ItemStack(Material.AIR);
@@ -127,7 +127,7 @@ public class FireworkShape implements Animation {
                 if (this.i >= 7) {
                     if (this.i == 10) {
                         as.setCustomNameVisible(true);
-                        if(!winItem.getType().isAir()) {
+                        if(winItem.getType() != Material.AIR) {
                             as.setHelmet(winItem);
                         }
                         as.setCustomName(finalWinGroupDisplayName);

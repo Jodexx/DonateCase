@@ -58,7 +58,7 @@ public class Shape implements Animation {
                     if (material == null) {
                         material = Material.STONE;
                     }
-                    if(!material.isAir()) {
+                    if(material != Material.AIR) {
                         winItem = Main.t.createItem(material, 1, -1, finalWinGroupDisplayName, winGroupEnchant);
                     } else {
                         winItem = new ItemStack(Material.AIR);
@@ -98,7 +98,7 @@ public class Shape implements Animation {
                         if (material == null) {
                             material = Material.STONE;
                         }
-                        if(!material.isAir()) {
+                        if(material != Material.AIR) {
                             winItem = Main.t.createItem(material, data, 1, finalWinGroupDisplayName, winGroupEnchant);
                         } else {
                             winItem = new ItemStack(Material.AIR);
@@ -111,7 +111,7 @@ public class Shape implements Animation {
 
                 if (this.i >= 7) {
                     if (this.i == 16) {
-                        if(!winItem.getType().isAir()) {
+                        if(winItem.getType() != Material.AIR) {
                             as.setHelmet(winItem);
                         }
                         as.setCustomName(finalWinGroupDisplayName);
@@ -137,7 +137,7 @@ public class Shape implements Animation {
                         if (material2 == null) {
                             material2 = Material.STONE;
                         }
-                        if(!material2.isAir()) {
+                        if(material2 != Material.AIR) {
                             winItem2 = Main.t.createItem(material2, 1, -1, winGroupDisplayName2, winGroupEnchant2);
                         } else {
                             winItem2 = new ItemStack(Material.AIR);
@@ -180,7 +180,7 @@ public class Shape implements Animation {
                             winItem2 = Main.t.createItem(material, data, 1, winGroupDisplayName2, winGroupEnchant2);
                         }
                     }
-                    if(!winItem2.getType().isAir()) {
+                    if(winItem2.getType() != Material.AIR) {
                         as.setHelmet(winItem2);
                     }
                     as.setCustomName(winGroupDisplayName2);

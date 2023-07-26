@@ -59,7 +59,7 @@ public class Wheel implements Animation {
                 if (material == null) {
                     material = Material.STONE;
                 }
-                if(!material.isAir()) {
+                if(material != Material.AIR) {
                     winItem = t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
                 } else {
                     winItem = new ItemStack(Material.AIR);
@@ -170,7 +170,7 @@ public class Wheel implements Animation {
         as.setGravity(false);
         as.setSmall(true);
         as.setCustomNameVisible(true);
-        if(!items.get(index).getType().isAir()) {
+        if(items.get(index).getType() != Material.AIR) {
                 as.setHelmet(items.get(index));
         }
         String winGroupDisplayName = Case.getWinGroupDisplayName(c, groups.get(index));
