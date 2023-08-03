@@ -81,7 +81,7 @@ public class Main extends JavaPlugin {
         if (!Tconfig) {
             String base = customConfig.getConfig().getString("DonatCase.MySql.DataBase");
             String port = customConfig.getConfig().getString("DonatCase.MySql.Port");
-            String hostname = customConfig.getCases().getString("DonatCase.MySql.Host");
+            String hostname = customConfig.getConfig().getString("DonatCase.MySql.Host");
             final String host = "jdbc:mysql://" + hostname + ":" + port + "/" + base;
             final String user = customConfig.getConfig().getString("DonatCase.MySql.User");
             final String password = customConfig.getConfig().getString("DonatCase.MySql.Password");
