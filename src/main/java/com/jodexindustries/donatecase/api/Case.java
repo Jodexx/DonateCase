@@ -13,7 +13,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
@@ -223,6 +225,12 @@ public class Case {
 
         return false;
     }
+
+    public static @NotNull List<String> getCases() {
+        ConfigurationSection cases_ = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+        return new ArrayList<>(cases_ != null ? cases_.getValues(false).keySet() : new ArrayList<>());
+    }
+
     // get case by title in Config.yml
     @Deprecated
     public static String getCaseByTitle(String title) {
