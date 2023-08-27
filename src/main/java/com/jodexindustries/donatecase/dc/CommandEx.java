@@ -1,10 +1,11 @@
 package com.jodexindustries.donatecase.dc;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.tools.Logger;
+import com.jodexindustries.donatecase.api.SubCommand;
+import com.jodexindustries.donatecase.api.SubCommandManager;
+import com.jodexindustries.donatecase.api.SubCommandType;
 import com.jodexindustries.donatecase.tools.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
-import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,20 +18,16 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.jodexindustries.donatecase.api.SubCommandManager.*;
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 import static com.jodexindustries.donatecase.dc.Main.t;
 
 public class CommandEx implements CommandExecutor, TabCompleter {
 
-    
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
         if (args.length == 0) {
@@ -348,6 +345,12 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 } else {
                     Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
                 }
+            } else {
+                String subCommandName = args[0];
+                SubCommand subCommand = subCommands.get(subCommandName.toLowerCase());
+                if(subCommand != null) {
+                    subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
+                }
             }
         }
         return true;
@@ -372,6 +375,12 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value.add("opencase");
             value.add("cases");
             value.add("delkey");
+            for(String subCommandName : SubCommandManager.getSubCommands().keySet()) {
+                SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
+                if(subCommand.getType() == SubCommandType.ADMIN) {
+                    value.add(subCommandName);
+                }
+            }
             if (args[0].equals("")) {
                 list = value;
             } else {
@@ -394,6 +403,12 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value.add("cases");
             value.add("opencase");
             value.add("delkey");
+            for(String subCommandName : SubCommandManager.getSubCommands().keySet()) {
+                SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
+                if(subCommand.getType() == SubCommandType.MODER) {
+                    value.add(subCommandName);
+                }
+            }
             if (args[0].equals("")) {
                 list = value;
             } else {
@@ -412,6 +427,12 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value.add("help");
             value.add("keys");
             value.add("opencase");
+            for(String subCommandName : SubCommandManager.getSubCommands().keySet()) {
+                SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
+                if(subCommand.getType() == SubCommandType.PLAYER) {
+                    value.add(subCommandName);
+                }
+            }
             if (args[0].equals("")) {
                 list = value;
             } else {
@@ -628,6 +649,8 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         return list;
                     }
                 }
+            } else if (SubCommandManager.getSubCommands().get(args[0]) != null){
+                return getTabCompletionsForSubCommand(sender, args[0], Arrays.copyOfRange(args, 1, args.length));
             } else {
                 return new ArrayList<>();
             }
