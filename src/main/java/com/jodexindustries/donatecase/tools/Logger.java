@@ -12,6 +12,6 @@ public class Logger {
 
     public static void debug(String msg) {
         msg = ChatColor.translateAlternateColorCodes('&', "&3[&d" + Main.instance.getName() + "&3]&r " + msg);
-        log("&7[&eDEBUG&7]&r" + msg);
+        Bukkit.getConsoleSender().sendMessage("&7[&eDEBUG&7]&r" + msg);
     }
 }

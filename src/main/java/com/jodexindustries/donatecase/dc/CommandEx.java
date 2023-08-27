@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.SubCommand;
 import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.SubCommandType;
+import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import net.md_5.bungee.api.ChatColor;
@@ -377,7 +378,9 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value.add("delkey");
             for(String subCommandName : SubCommandManager.getSubCommands().keySet()) {
                 SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
-                if(subCommand.getType() == SubCommandType.ADMIN) {
+                if(subCommand.getType() == SubCommandType.ADMIN ||
+                        subCommand.getType() == SubCommandType.MODER ||
+                        subCommand.getType() == SubCommandType.PLAYER) {
                     value.add(subCommandName);
                 }
             }
@@ -405,7 +408,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value.add("delkey");
             for(String subCommandName : SubCommandManager.getSubCommands().keySet()) {
                 SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
-                if(subCommand.getType() == SubCommandType.MODER) {
+                if(subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER) {
                     value.add(subCommandName);
                 }
             }
