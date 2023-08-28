@@ -120,10 +120,10 @@ public class Wheel implements Animation {
         (new BukkitRunnable() {
             int ticks = 0;
             double lastCompletedRotation = 0.0;
-            final double rotationThreshold = Math.PI / 4;
 
             final double speed = customConfig.getAnimations().getDouble("Wheel.CircleSpeed");
             final double radius = customConfig.getAnimations().getDouble("Wheel.CircleRadius");
+            final double rotationThreshold = Math.PI / (itemscount * speed);
 
             final double offset = 2 * Math.PI / itemscount;
             final Location location = loc.clone().add(loc.getDirection().multiply(1).getX() + 0.5, -1, 0);
