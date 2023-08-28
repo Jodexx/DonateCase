@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Location;
@@ -14,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +42,16 @@ public class Wheel implements Animation {
         p = player;
         this.c = c;
         final Location loc = location.clone();
+        float pitch = loc.getPitch();
+        pitch = (float) (Math.round(pitch / 45.0) * 45.0);
+        if (Math.abs(pitch) < 10) {
+            pitch = 90;
+        }
+        pitch = pitch > 180 ? pitch - 360 : pitch;
+        loc.setPitch(pitch);
         loc.setZ(loc.getZ() + 0.5);
         // register items
-         int itemscount = customConfig.getAnimations().getInt("Wheel.ItemsCount");
+        int itemscount = customConfig.getAnimations().getInt("Wheel.ItemsCount");
         for (int i = 0; i < itemscount; i++) {
             String winGroup = Tools.getRandomGroup(c);
             String winGroupId = Case.getWinGroupId(c, winGroup);
@@ -110,6 +119,8 @@ public class Wheel implements Animation {
         }
         (new BukkitRunnable() {
             int ticks = 0;
+            double lastCompletedRotation = 0.0;
+            final double rotationThreshold = Math.PI / 4;
 
             final double speed = customConfig.getAnimations().getDouble("Wheel.CircleSpeed");
             final double radius = customConfig.getAnimations().getDouble("Wheel.CircleRadius");
@@ -121,30 +132,33 @@ public class Wheel implements Animation {
                 double angle = ticks / 20.0;
                 angle *= speed;
                 angle *= 2 * Math.PI;
+                Logger.debug(loc.getDirection().toString());
 
-                if(ticks < 101) {
+                if (ticks < 101) {
+                    double baseAngle = loc.getDirection().angle(new Vector(0, 0, 1));
                     for (ArmorStand entity : armorStands) {
                         double x = radius * Math.sin(angle);
                         double y = radius * Math.cos(angle);
-                        Location newLoc = location.clone().add(location.getDirection().multiply(-1).getX() + x, y, 0);
+
+                        Vector rotationAxis = loc.getDirection().crossProduct(new Vector(0, 1, 0)).normalize();
+                        Location newLoc = location.clone().add(rotationAxis.multiply(x).add(loc.getDirection().multiply(y)));
                         entity.teleport(newLoc);
                         angle += offset;
 
-                        double targetAngle = 0.5 * Math.PI;
-                        double currentAngle = angle % (2 * Math.PI);
-                        double threshold = 0.1;
-                        if (Math.abs(currentAngle - targetAngle) < threshold) {
-                            if(customConfig.getAnimations().getString("Wheel.Scroll.Sound") != null) {
-                                Objects.requireNonNull(location.getWorld()).playSound(location,
+                        double currentAngle = angle - baseAngle;
+                        if (currentAngle - lastCompletedRotation >= rotationThreshold) {
+                            if (customConfig.getAnimations().getString("Wheel.Scroll.Sound") != null) {
+                                location.getWorld().playSound(location,
                                         Sound.valueOf(customConfig.getAnimations().getString("Wheel.Scroll.Sound")),
                                         customConfig.getAnimations().getInt("Wheel.Scroll.Volume"),
                                         customConfig.getAnimations().getInt("Wheel.Scroll.Pitch"));
                             }
+                            lastCompletedRotation = currentAngle;
                         }
                     }
                 }
                 if (ticks == 101) {
-                    String winGroup = groups.get(groups.size() / 2);
+                    String winGroup = groups.get(0);
                     Case.onCaseOpenFinish(c, player, true, winGroup);
                 }
                 // End
