@@ -132,7 +132,6 @@ public class Wheel implements Animation {
                 double angle = ticks / 20.0;
                 angle *= speed;
                 angle *= 2 * Math.PI;
-                Logger.debug(loc.getDirection().toString());
 
                 if (ticks < 101) {
                     double baseAngle = loc.getDirection().angle(new Vector(0, 0, 1));
