@@ -4,7 +4,6 @@ import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.PAPISupport;
-import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -31,6 +30,7 @@ public class FullWheelAnimation implements Animation {
     List<ArmorStand> armorStands = new ArrayList<>();
     Player p;
     String c;
+    Location location;
 
     @Override
     public String getName() {
@@ -42,6 +42,7 @@ public class FullWheelAnimation implements Animation {
         p = player;
         this.c = c;
         final Location loc = location.clone();
+        this.location = loc;
         float pitch = loc.getPitch();
         pitch = (float) (Math.round(pitch / 45.0) * 45.0);
         if (Math.abs(pitch) < 10) {
@@ -54,11 +55,12 @@ public class FullWheelAnimation implements Animation {
         Set<String> configGroups = customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + c + ".Items").getKeys(false);
         int itemscount = configGroups.size();
         final String finalWinGroup = Case.getRandomGroup(c);
-        int i = 0;
+        configGroups.remove(finalWinGroup);
+        int i = 1;
+        // win group
+        addWinGroup(player, finalWinGroup);
+        // another groups
         for (String winGroup : configGroups) {
-            if(winGroup.equalsIgnoreCase(finalWinGroup)) {
-                winGroup = finalWinGroup;
-            }
             String winGroupId = Case.getWinGroupId(c, winGroup);
             String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -163,7 +165,7 @@ public class FullWheelAnimation implements Animation {
                     }
                 }
                 if (ticks == 101) {
-                    Case.onCaseOpenFinish(c, player, true, finalWinGroup);
+                    Case.onCaseOpenFinish(c, player, true, groups.get(0));
                 }
                 // End
 
@@ -197,5 +199,69 @@ public class FullWheelAnimation implements Animation {
         }
         as.setCustomName(t.rc(winGroupDisplayName));
         return as;
+    }
+    private void addWinGroup(Player player, String finalWinGroup) {
+        String winGroupId = Case.getWinGroupId(c, finalWinGroup);
+        String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, finalWinGroup));
+        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
+            winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
+        }
+        boolean winGroupEnchant = Case.getWinGroupEnchant(c, finalWinGroup);
+        Material material;
+        ItemStack winItem;
+        if (!winGroupId.contains(":")) {
+            material = Material.getMaterial(winGroupId);
+            if (material == null) {
+                material = Material.STONE;
+            }
+            if(material != Material.AIR) {
+                winItem = t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
+            } else {
+                winItem = new ItemStack(Material.AIR);
+                ItemMeta meta = winItem.getItemMeta();
+                winItem.setItemMeta(meta);
+            }
+        } else {
+            if (winGroupId.startsWith("HEAD")) {
+                String[] parts = winGroupId.split(":");
+                winItem = t.getPlayerHead(parts[1], winGroupDisplayName);
+            } else if (winGroupId.startsWith("HDB")) {
+                String[] parts = winGroupId.split(":");
+                String id = parts[1];
+                if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                    winItem = t.getHDBSkull(id, winGroupDisplayName);
+                } else {
+                    winItem = new ItemStack(Material.STONE);
+                }
+            } else if (winGroupId.startsWith("CH")) {
+                String[] parts = winGroupId.split(":");
+                String category = parts[1];
+                String id = parts[2];
+                if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                    winItem = t.getCHSkull(category, id, winGroupDisplayName);
+                } else {
+                    winItem = new ItemStack(Material.STONE);
+                }
+            } else if (winGroupId.startsWith("BASE64")) {
+                String[] parts = winGroupId.split(":");
+                String base64 = parts[1];
+                winItem = t.getBASE64Skull(base64, winGroupDisplayName);
+            } else {
+                String[] parts = winGroupId.split(":");
+                byte data = -1;
+                if(parts[1] != null) {
+                    data = Byte.parseByte(parts[1]);
+                }
+                material = Material.getMaterial(parts[0]);
+                if (material == null) {
+                    material = Material.STONE;
+                }
+                winItem = t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
+            }
+        }
+        items.add(winItem);
+        groups.add(finalWinGroup);
+        armorStands.add(spawnArmorStand(location, 0));
     }
 }

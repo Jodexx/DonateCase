@@ -4,10 +4,7 @@ import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
-import com.jodexindustries.donatecase.tools.animations.FireworkAnimation;
-import com.jodexindustries.donatecase.tools.animations.RainlyAnimation;
-import com.jodexindustries.donatecase.tools.animations.ShapeAnimation;
-import com.jodexindustries.donatecase.tools.animations.WheelAnimation;
+import com.jodexindustries.donatecase.tools.animations.*;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -209,7 +206,8 @@ public class Main extends JavaPlugin {
         AnimationManager.registerAnimation("WHEEL", WheelAnimation.class);
         AnimationManager.registerAnimation("RAINLY", RainlyAnimation.class);
         AnimationManager.registerAnimation("FIREWORK", FireworkAnimation.class);
-        Logger.log("&aRegistered &c4 &adefault animations");
+        AnimationManager.registerAnimation("FULLWHEEL", FullWheelAnimation.class);
+        Logger.log("&aRegistered &c5 &adefault animations");
     }
     public static Permission getPermissions() {
         return permission;
