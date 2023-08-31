@@ -1,4 +1,4 @@
-config: "1.1"
+config: "1.2"
 Shape: #Soon.....
 
 Rainly:
@@ -20,6 +20,13 @@ Firework:
 
 Wheel:
   ItemsCount: 6
+  CircleSpeed: 0.5
+  CircleRadius: 1.5
+  Scroll:
+    Sound: UI_BUTTON_CLICK
+    Volume: 10
+    Pitch: 1
+FullWheel:
   CircleSpeed: 0.5
   CircleRadius: 1.5
   Scroll:

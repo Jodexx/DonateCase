@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Location;
@@ -24,7 +23,7 @@ import java.util.Objects;
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 import static com.jodexindustries.donatecase.dc.Main.t;
 
-public class Wheel implements Animation {
+public class WheelAnimation implements Animation {
 
     List<ItemStack> items = new ArrayList<>();
     List<String> groups = new ArrayList<>();

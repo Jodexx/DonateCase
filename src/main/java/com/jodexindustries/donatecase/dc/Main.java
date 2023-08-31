@@ -4,24 +4,20 @@ import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
-import com.jodexindustries.donatecase.tools.animations.FireworkShape;
-import com.jodexindustries.donatecase.tools.animations.Rainly;
-import com.jodexindustries.donatecase.tools.animations.Shape;
-import com.jodexindustries.donatecase.tools.animations.Wheel;
+import com.jodexindustries.donatecase.tools.animations.FireworkAnimation;
+import com.jodexindustries.donatecase.tools.animations.RainlyAnimation;
+import com.jodexindustries.donatecase.tools.animations.ShapeAnimation;
+import com.jodexindustries.donatecase.tools.animations.WheelAnimation;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 public class Main extends JavaPlugin {
@@ -181,7 +177,7 @@ public class Main extends JavaPlugin {
             customConfig = new CustomConfig();
         }
 
-        if (!customConfig.getAnimations().getString("config").equals("1.1")) {
+        if (!customConfig.getAnimations().getString("config").equals("1.2")) {
             Logger.log(" &cOutdated Animations.yml! Creating a new!");
             AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
             AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
@@ -209,10 +205,10 @@ public class Main extends JavaPlugin {
     }
 
     private void registerDefaultAnimations() {
-        AnimationManager.registerAnimation("SHAPE", Shape.class);
-        AnimationManager.registerAnimation("WHEEL", Wheel.class);
-        AnimationManager.registerAnimation("RAINLY", Rainly.class);
-        AnimationManager.registerAnimation("FIREWORK", FireworkShape.class);
+        AnimationManager.registerAnimation("SHAPE", ShapeAnimation.class);
+        AnimationManager.registerAnimation("WHEEL", WheelAnimation.class);
+        AnimationManager.registerAnimation("RAINLY", RainlyAnimation.class);
+        AnimationManager.registerAnimation("FIREWORK", FireworkAnimation.class);
         Logger.log("&aRegistered &c4 &adefault animations");
     }
     public static Permission getPermissions() {

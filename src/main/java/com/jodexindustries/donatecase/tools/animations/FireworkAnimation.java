@@ -19,7 +19,7 @@ import java.util.Objects;
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 import static com.jodexindustries.donatecase.dc.Main.t;
 
-public class FireworkShape implements Animation {
+public class FireworkAnimation implements Animation {
 
     @Override
     public String getName() {
