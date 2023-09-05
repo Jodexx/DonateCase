@@ -26,6 +26,7 @@ Wheel:
     Sound: UI_BUTTON_CLICK
     Volume: 10
     Pitch: 1
+
 FullWheel:
   CircleSpeed: 0.5
   CircleRadius: 1.5

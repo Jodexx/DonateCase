@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.tools;
+package com.jodexindustries.donatecase.tools.support;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;

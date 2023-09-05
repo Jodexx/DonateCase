@@ -3,7 +3,9 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.PAPISupport;
+import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
+import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
+import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
@@ -71,7 +73,7 @@ public class ShapeAnimation implements Animation {
                         String[] parts = finalWinGroupId.split(":");
                         String id = parts[1];
                         if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                            winItem = Main.t.getHDBSkull(id, finalWinGroupDisplayName);
+                            winItem = HeadDatabaseSupport.getSkull(id, finalWinGroupDisplayName);
                         } else {
                             winItem = new ItemStack(Material.STONE);
                         }
@@ -80,7 +82,7 @@ public class ShapeAnimation implements Animation {
                         String category = parts[1];
                         String id = parts[2];
                         if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                            winItem = Main.t.getCHSkull(category, id, finalWinGroupDisplayName);
+                            winItem = CustomHeadSupport.getSkull(category, id, finalWinGroupDisplayName);
                         } else {
                             winItem = new ItemStack(Material.STONE);
                         }
@@ -123,67 +125,12 @@ public class ShapeAnimation implements Animation {
 
                 if (this.i <= 15) {
                     final String winGroup2 = Tools.getRandomGroup(c);
-                    ItemStack winItem2;
-                    Material material2;
-                    String winGroupDisplayName2 = Main.t.rc(Case.getWinGroupDisplayName(c, winGroup2));
-                    String winGroup2Id = Case.getWinGroupId(c, winGroup2);
-                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                        winGroup2Id = PAPISupport.setPlaceholders(player, winGroup2Id);
-                        winGroupDisplayName2 = PAPISupport.setPlaceholders(player, winGroupDisplayName2);
-                    }
-                    final boolean winGroupEnchant2 = Case.getWinGroupEnchant(c, winGroup2);
-                    if(!winGroup2Id.contains(":")) {
-                        material2 = Material.getMaterial(winGroup2Id);
-                        if (material2 == null) {
-                            material2 = Material.STONE;
-                        }
-                        if(material2 != Material.AIR) {
-                            winItem2 = Main.t.createItem(material2, 1, -1, winGroupDisplayName2, winGroupEnchant2);
-                        } else {
-                            winItem2 = new ItemStack(Material.AIR);
-                        }
-                    } else {
-                        if (winGroup2Id.startsWith("HEAD")) {
-                            String[] parts = winGroup2Id.split(":");
-                            winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
-                        } else if (winGroup2Id.startsWith("HDB")) {
-                            String[] parts = winGroup2Id.split(":");
-                            String id = parts[1];
-                            if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                                winItem2 = Main.t.getHDBSkull(id, winGroupDisplayName2);
-                            } else {
-                                winItem2 = new ItemStack(Material.STONE);
-                            }
-                        } else if (winGroup2Id.startsWith("CH")) {
-                            String[] parts = winGroup2Id.split(":");
-                            String category = parts[1];
-                            String id = parts[2];
-                            if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                                winItem2 = Main.t.getCHSkull(category, id, winGroupDisplayName2);
-                            } else {
-                                winItem2 = new ItemStack(Material.STONE);
-                            }
-                        } else if (winGroup2Id.startsWith("BASE64")) {
-                            String[] parts = winGroup2Id.split(":");
-                            String base64 = parts[1];
-                            winItem2 = Main.t.getBASE64Skull(base64, winGroupDisplayName2);
-                        } else {
-                            String[] parts = winGroup2Id.split(":");
-                            byte data = -1;
-                            if(parts[1] != null) {
-                                data = Byte.parseByte(parts[1]);
-                            }
-                            material = Material.getMaterial(parts[0]);
-                            if (material == null) {
-                                material = Material.STONE;
-                            }
-                            winItem2 = Main.t.createItem(material, data, 1, winGroupDisplayName2, winGroupEnchant2);
-                        }
-                    }
+                    ItemStack winItem2 = Main.t.getWinItem(c, winGroup2, player);
                     if(winItem2.getType() != Material.AIR) {
                         as.setHelmet(winItem2);
                     }
-                    as.setCustomName(winGroupDisplayName2);
+                    String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup2);
+                    as.setCustomName(winGroupDisplayName);
                     if (this.i <= 8) {
                         if (!Bukkit.getVersion().contains("1.12")) {
                             Particle.DustOptions dustOptions = new Particle.DustOptions(Color.ORANGE, 1.0F);

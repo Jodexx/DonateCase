@@ -2,8 +2,9 @@ package com.jodexindustries.donatecase.gui;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.PAPISupport;
-import me.clip.placeholderapi.PlaceholderAPI;
+import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
+import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
+import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -54,7 +55,7 @@ public class GuiDonatCase {
                     String[] parts = materialID.split(":");
                     String id = parts[1];
                     if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                        f = Main.t.getHDBSkull(id, materialNAME, materialLORE);
+                        f = HeadDatabaseSupport.getSkull(id, materialNAME, materialLORE);
                     } else {
                         f = new ItemStack(Material.STONE);
                     }
@@ -63,7 +64,7 @@ public class GuiDonatCase {
                     String category = parts[1];
                     String id = parts[2];
                     if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                        f = Main.t.getCHSkull(category, id, materialNAME, materialLORE);
+                        f = CustomHeadSupport.getSkull(category, id, materialNAME, materialLORE);
                     } else {
                         f = new ItemStack(Material.STONE);
                     }
@@ -123,7 +124,7 @@ public class GuiDonatCase {
             String[] parts = opencasematerialID.split(":");
             String id = parts[1];
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                opencaseitemstack = Main.t.getHDBSkull(id, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
+                opencaseitemstack = HeadDatabaseSupport.getSkull(id, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
             } else {
                 if(!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                     opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys), opencasematerialEnchant);
@@ -145,7 +146,7 @@ public class GuiDonatCase {
             String category = parts[1];
             String id = parts[2];
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                opencaseitemstack = Main.t.getCHSkull(category, id, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
+                opencaseitemstack = CustomHeadSupport.getSkull(category, id, displayname, Main.t.rt(lore, "%case:" + c, "%keys:" + keys));
             } else {
                 opencaseitemstack = Main.t.createItem(Material.STONE, 1, 1, displayname, Main.t.rt(lore,"%case:" + c, "%keys:" + keys), opencasematerialEnchant);
             }

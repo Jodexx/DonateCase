@@ -3,7 +3,9 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.PAPISupport;
+import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
+import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
+import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
@@ -90,7 +92,7 @@ public class RainlyAnimation implements Animation {
                         String[] parts = finalWinGroupId.split(":");
                         String id = parts[1];
                         if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                            winItem = Main.t.getHDBSkull(id, finalWinGroupDisplayName);
+                            winItem = HeadDatabaseSupport.getSkull(id, finalWinGroupDisplayName);
                         } else {
                             winItem = new ItemStack(Material.STONE);
                         }
@@ -99,7 +101,7 @@ public class RainlyAnimation implements Animation {
                         String category = parts[1];
                         String id = parts[2];
                         if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                            winItem = Main.t.getCHSkull(category, id, finalWinGroupDisplayName);
+                            winItem = CustomHeadSupport.getSkull(category, id, finalWinGroupDisplayName);
                         } else {
                             winItem = new ItemStack(Material.STONE);
                         }
@@ -140,63 +142,11 @@ public class RainlyAnimation implements Animation {
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0 )) {
                     final String winGroup2 = Case.getRandomGroup(c);
-                    ItemStack winItem2;
-                    Material material2;
                     String winGroupDisplayName2 = Main.t.rc(Case.getWinGroupDisplayName(c, winGroup2));
-                    String winGroupId2 = Case.getWinGroupId(c, winGroup2);
                     if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                        winGroupId2 = PAPISupport.setPlaceholders(player, winGroupId2);
                         winGroupDisplayName2 = PAPISupport.setPlaceholders(player, winGroupDisplayName2);
                     }
-                    boolean winGroupEnchant2 = Case.getWinGroupEnchant(c, winGroup2);
-                    if(!winGroupId2.contains(":")) {
-                        material2 = Material.getMaterial(winGroupId2);
-                        if (material2 == null) {
-                            material2 = Material.STONE;
-                        }
-                        if(material2 != Material.AIR) {
-                            winItem2 = Main.t.createItem(material2, 1, -1, winGroupDisplayName2, winGroupEnchant2);
-                        } else {
-                            winItem2 = new ItemStack(Material.AIR);
-                        }
-                    } else {
-                        if (winGroupId2.startsWith("HEAD")) {
-                            String[] parts = winGroupId2.split(":");
-                            winItem2 = Main.t.getPlayerHead(parts[1], winGroupDisplayName2);
-                        } else if (winGroupId2.startsWith("HDB")) {
-                            String[] parts = winGroupId2.split(":");
-                            String id = parts[1];
-                            if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                                winItem2 = Main.t.getHDBSkull(id, winGroupDisplayName2);
-                            } else {
-                                winItem2 = new ItemStack(Material.STONE);
-                            }
-                        } else if (winGroupId2.startsWith("CH")) {
-                            String[] parts = winGroupId2.split(":");
-                            String category = parts[1];
-                            String id = parts[2];
-                            if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                                winItem2 = Main.t.getCHSkull(category, id, winGroupDisplayName2);
-                            } else {
-                                winItem2 = new ItemStack(Material.STONE);
-                            }
-                        } else if (winGroupId2.startsWith("BASE64")) {
-                            String[] parts = winGroupId2.split(":");
-                            String base64 = parts[1];
-                            winItem2 = Main.t.getBASE64Skull(base64, winGroupDisplayName2);
-                        } else {
-                            String[] parts = winGroupId2.split(":");
-                            byte data = -1;
-                            if(parts[1] != null) {
-                                data = Byte.parseByte(parts[1]);
-                            }
-                            material = Material.getMaterial(parts[0]);
-                            if (material == null) {
-                                material = Material.STONE;
-                            }
-                            winItem2 = Main.t.createItem(material, data, 1, winGroupDisplayName2, winGroupEnchant2);
-                        }
-                    }
+                    ItemStack winItem2 = Main.t.getWinItem(c, winGroup, player);
                     if(winItem2.getType() != Material.AIR) {
                         as.setHelmet(winItem2);
                     }

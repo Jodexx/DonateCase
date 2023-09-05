@@ -1,6 +1,7 @@
-package com.jodexindustries.donatecase.tools;
+package com.jodexindustries.donatecase.tools.support;
 
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.Logger;
 import de.likewhat.customheads.CustomHeads;
 import de.likewhat.customheads.api.CustomHeadsAPI;
 import org.bukkit.Material;
@@ -10,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 public class CustomHeadSupport {
-    public ItemStack getSkull(String category, String id, String displayname) {
+    public static ItemStack getSkull(String category, String id, String displayname) {
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
             CustomHeadsAPI api = CustomHeads.getApi();
             ItemStack item = new ItemStack(Material.STONE);
@@ -29,7 +30,7 @@ public class CustomHeadSupport {
             return null;
         }
     }
-    public ItemStack getSkull(String category, String id, String displayname, List<String> lore) {
+    public static ItemStack getSkull(String category, String id, String displayname, List<String> lore) {
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
             CustomHeadsAPI api = CustomHeads.getApi();
             ItemStack item = new ItemStack(Material.STONE);

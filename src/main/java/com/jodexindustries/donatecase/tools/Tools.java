@@ -1,6 +1,10 @@
 package com.jodexindustries.donatecase.tools;
 
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
+import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
+import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
@@ -9,6 +13,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -24,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
+import static com.jodexindustries.donatecase.dc.Main.t;
 
 public class Tools {
 
@@ -187,11 +193,6 @@ public class Tools {
         return createItem(ma, data, amount, dn, null, enchant);
     }
 
-    public ItemStack createItem(Material ma, String dn, List<String> lore, boolean enchant) {
-        return createItem(ma, 0, 1, dn, lore, enchant);
-    }
-
-
     public Color parseColor(String s) {
 
         Color color = null;
@@ -298,50 +299,67 @@ public class Tools {
         return item;
     }
 
-    public ItemStack getHDBSkull(String id, String displayname, List<String> lore) {
-        HeadDatabaseAPI api = new HeadDatabaseAPI();
-        ItemStack item = new ItemStack(Material.STONE);
-        try {
-            item = api.getItemHead(id);
-        } catch (NullPointerException nullPointerException) {
-            Logger.log("Could not find the head you were looking for");
+    public ItemStack getWinItem(String c, String winGroup, Player player) {
+        String winGroupId = Case.getWinGroupId(c, winGroup);
+        String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
+        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
+            winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
         }
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(rc(displayname));
-        if(lore != null) {
-            itemMeta.setLore(rc(lore));
-        }
-        item.setItemMeta(itemMeta);
-        return item;
-    }
-    public ItemStack getHDBSkull(String id, String displayname) {
-        HeadDatabaseAPI api = new HeadDatabaseAPI();
-        ItemStack item = new ItemStack(Material.STONE);
-        try {
-            item = api.getItemHead(id);
-        } catch (NullPointerException nullPointerException) {
-            Logger.log("Could not find the head you were looking for");
-        }
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(rc(displayname));
-        item.setItemMeta(itemMeta);
-        return item;
-    }
-    public ItemStack getCHSkull(String category, String id, String displayname) {
-        if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-            ItemStack item = new CustomHeadSupport().getSkull(category, id, rc(displayname));
-            return item;
+        boolean winGroupEnchant = Case.getWinGroupEnchant(c, winGroup);
+        Material material;
+        ItemStack winItem;
+        if (!winGroupId.contains(":")) {
+            material = Material.getMaterial(winGroupId);
+            if (material == null) {
+                material = Material.STONE;
+            }
+            if(material != Material.AIR) {
+                winItem = t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
+            } else {
+                winItem = new ItemStack(Material.AIR);
+                ItemMeta meta = winItem.getItemMeta();
+                winItem.setItemMeta(meta);
+            }
         } else {
-            return null;
+            if (winGroupId.startsWith("HEAD")) {
+                String[] parts = winGroupId.split(":");
+                winItem = t.getPlayerHead(parts[1], winGroupDisplayName);
+            } else if (winGroupId.startsWith("HDB")) {
+                String[] parts = winGroupId.split(":");
+                String id = parts[1];
+                if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                    winItem = HeadDatabaseSupport.getSkull(id, winGroupDisplayName);
+                } else {
+                    winItem = new ItemStack(Material.STONE);
+                }
+            } else if (winGroupId.startsWith("CH")) {
+                String[] parts = winGroupId.split(":");
+                String category = parts[1];
+                String id = parts[2];
+                if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                    winItem = CustomHeadSupport.getSkull(category, id, winGroupDisplayName);
+                } else {
+                    winItem = new ItemStack(Material.STONE);
+                }
+            } else if (winGroupId.startsWith("BASE64")) {
+                String[] parts = winGroupId.split(":");
+                String base64 = parts[1];
+                winItem = t.getBASE64Skull(base64, winGroupDisplayName);
+            } else {
+                String[] parts = winGroupId.split(":");
+                byte data = -1;
+                if(parts[1] != null) {
+                    data = Byte.parseByte(parts[1]);
+                }
+                material = Material.getMaterial(parts[0]);
+                if (material == null) {
+                    material = Material.STONE;
+                }
+                winItem = t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
+            }
         }
-    }
-    public ItemStack getCHSkull(String category, String id, String displayname, List<String> lore) {
-        if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-            ItemStack item = new CustomHeadSupport().getSkull(category, id, rc(displayname), lore);
-            return item;
-        } else {
-            return null;
-        }
+        return winItem;
     }
 
     public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant) {
