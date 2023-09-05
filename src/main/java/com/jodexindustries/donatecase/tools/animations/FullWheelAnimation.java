@@ -109,7 +109,6 @@ public class FullWheelAnimation implements Animation {
                     Case.onCaseOpenFinish(c, player, true, groups.get(0));
                 }
                 // End
-
                 if (this.ticks >= 120) {
                     this.cancel();
                     for(ArmorStand stand : armorStands) {

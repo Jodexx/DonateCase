@@ -3,11 +3,12 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
-import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
-import org.bukkit.*;
+import com.jodexindustries.donatecase.tools.support.PAPISupport;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -26,21 +27,18 @@ public class RainlyAnimation implements Animation {
     }
     @Override
     public void start(Player player, Location location, String c) {
-        final Location lAC = location.clone();
+        final Location loc = location.clone();
         final String FallingParticle = customConfig.getAnimations().getString("Rainly.FallingParticle");
         final String winGroup = Tools.getRandomGroup(c);
-        String winGroupId = Case.getWinGroupId(c, winGroup);
         String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
             winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
         }
-        final boolean winGroupEnchant = Case.getWinGroupEnchant(c, winGroup);
         location.add(0.5, 1, 0.5);
-        Location rain1 = lAC.clone().add(-1.5, 3, -1.5);
-        Location rain2 = lAC.clone().add(2.5, 3, -1.5);
-        Location rain3 = lAC.clone().add(2.5, 3, 2.5);
-        Location rain4 = lAC.clone().add(-1.5, 3, 2.5);
+        Location rain1 = loc.clone().add(-1.5, 3, -1.5);
+        Location rain2 = loc.clone().add(2.5, 3, -1.5);
+        Location rain3 = loc.clone().add(2.5, 3, 2.5);
+        Location rain4 = loc.clone().add(-1.5, 3, 2.5);
         Location cloud1 = rain1.clone().add(0, 0.5, 0);
         Location cloud2 = rain2.clone().add(0, 0.5, 0);
         Location cloud3 = rain3.clone().add(0, 0.5, 0);
@@ -52,7 +50,6 @@ public class RainlyAnimation implements Animation {
         as.setGravity(false);
         as.setSmall(true);
         as.setCustomNameVisible(true);
-        String finalWinGroupId = winGroupId;
         String finalWinGroupDisplayName = winGroupDisplayName;
         (new BukkitRunnable() {
             int i; // count of ticks
@@ -60,68 +57,18 @@ public class RainlyAnimation implements Animation {
             Location l;
 
             public void run() {
-                Material material;
-                ItemStack winItem;
-                Objects.requireNonNull(lAC.getWorld()).spawnParticle(Particle.valueOf(FallingParticle), rain1, 1);
-                lAC.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain2, 1);
-                lAC.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain3, 1);
-                lAC.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain4, 1);
-                lAC.getWorld().spawnParticle(Particle.CLOUD, cloud1, 0);
-                lAC.getWorld().spawnParticle(Particle.CLOUD, cloud2, 0);
-                lAC.getWorld().spawnParticle(Particle.CLOUD, cloud3, 0);
-                lAC.getWorld().spawnParticle(Particle.CLOUD, cloud4, 0);
+                Objects.requireNonNull(loc.getWorld()).spawnParticle(Particle.valueOf(FallingParticle), rain1, 1);
+                loc.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain2, 1);
+                loc.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain3, 1);
+                loc.getWorld().spawnParticle(Particle.valueOf(FallingParticle), rain4, 1);
+                loc.getWorld().spawnParticle(Particle.CLOUD, cloud1, 0);
+                loc.getWorld().spawnParticle(Particle.CLOUD, cloud2, 0);
+                loc.getWorld().spawnParticle(Particle.CLOUD, cloud3, 0);
+                loc.getWorld().spawnParticle(Particle.CLOUD, cloud4, 0);
                 Location las = as.getLocation().clone();
                 las.setYaw(las.getYaw() + 20.0F);
                 as.teleport(las);
-                if(!finalWinGroupId.contains(":")) {
-                    material = Material.getMaterial(finalWinGroupId);
-                    if (material == null) {
-                        material = Material.STONE;
-                    }
-                    if(material != Material.AIR) {
-                        winItem = Main.t.createItem(material, 1, -1, finalWinGroupDisplayName, winGroupEnchant);
-                    } else {
-                        winItem = new ItemStack(Material.AIR);
-                    }
-                } else
-                if(finalWinGroupId.startsWith("HEAD")) {
-                    String[] parts = finalWinGroupId.split(":");
-                    winItem = Main.t.getPlayerHead(parts[1], finalWinGroupDisplayName);
-                } else {
-                    if (finalWinGroupId.startsWith("HDB")) {
-                        String[] parts = finalWinGroupId.split(":");
-                        String id = parts[1];
-                        if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                            winItem = HeadDatabaseSupport.getSkull(id, finalWinGroupDisplayName);
-                        } else {
-                            winItem = new ItemStack(Material.STONE);
-                        }
-                    } else if (finalWinGroupId.startsWith("CH")) {
-                        String[] parts = finalWinGroupId.split(":");
-                        String category = parts[1];
-                        String id = parts[2];
-                        if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                            winItem = CustomHeadSupport.getSkull(category, id, finalWinGroupDisplayName);
-                        } else {
-                            winItem = new ItemStack(Material.STONE);
-                        }
-                    } else if (finalWinGroupId.startsWith("BASE64")) {
-                        String[] parts = finalWinGroupId.split(":");
-                        String base64 = parts[1];
-                        winItem = Main.t.getBASE64Skull(base64, finalWinGroupDisplayName);
-                    } else {
-                        String[] parts = finalWinGroupId.split(":");
-                        byte data = -1;
-                        if(parts[1] != null) {
-                            data = Byte.parseByte(parts[1]);
-                        }
-                        material = Material.getMaterial(parts[0]);
-                        if (material == null) {
-                            material = Material.STONE;
-                        }
-                        winItem = Main.t.createItem(material, data, 1, finalWinGroupDisplayName, winGroupEnchant);
-                    }
-                }
+                ItemStack winItem = Main.t.getWinItem(c, winGroup, player);
                 if (this.i == 0) {
                     this.l = as.getLocation();
                 }
@@ -134,8 +81,8 @@ public class RainlyAnimation implements Animation {
                         }
                         as.setCustomName(finalWinGroupDisplayName);
                         Case.onCaseOpenFinish(c, player, false, winGroup);
-                        lAC.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, lAC, 0);
-                        lAC.getWorld().playSound(lAC, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
+                        loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 0);
+                        loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                     }
                 }
 
@@ -173,7 +120,7 @@ public class RainlyAnimation implements Animation {
                 if (this.i >= 70) {
                     as.remove();
                     this.cancel();
-                    Case.animationEnd(c, getName(), player, lAC);
+                    Case.animationEnd(c, getName(), player, loc);
                     Case.listAR.remove(as);
                 }
 
