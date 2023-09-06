@@ -69,7 +69,7 @@ public class ShapeAnimation implements Animation {
                         as.setHelmet(winItem2);
                     }
                     String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup2);
-                    as.setCustomName(winGroupDisplayName);
+                    as.setCustomName(Main.t.rc(winGroupDisplayName));
                     if (this.i <= 8) {
                         if (!Bukkit.getVersion().contains("1.12")) {
                             Particle.DustOptions dustOptions = new Particle.DustOptions(Color.ORANGE, 1.0F);
