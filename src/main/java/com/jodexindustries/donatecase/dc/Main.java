@@ -174,8 +174,8 @@ public class Main extends JavaPlugin {
             customConfig = new CustomConfig();
         }
 
-        if (!customConfig.getAnimations().getString("config").equals("1.2")) {
-            Logger.log(" &cOutdated Animations.yml! Creating a new!");
+        if (!customConfig.getAnimations().getString("config").equals("1.3")) {
+            Logger.log("&cOutdated Animations.yml! Creating a new!");
             AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
             AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
             this.saveResource("Animations.yml", false);
