@@ -120,7 +120,7 @@ public class RainlyAnimation implements Animation {
                 if (this.i >= 70) {
                     as.remove();
                     this.cancel();
-                    Case.animationEnd(c, getName(), player, loc);
+                    Case.animationEnd(c, getName(), player, loc, winGroup);
                     Case.listAR.remove(as);
                 }
 

@@ -85,7 +85,7 @@ public class FireworkAnimation implements Animation {
                     if (this.i >= 30) {
                         as.remove();
                         this.cancel();
-                        Case.animationEnd(c, getName(), player, lAC);
+                        Case.animationEnd(c, getName(), player, lAC, winGroup);
                         Case.listAR.remove(as);
                     }
                 }

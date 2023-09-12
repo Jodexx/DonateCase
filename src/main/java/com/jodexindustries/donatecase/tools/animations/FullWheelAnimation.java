@@ -115,7 +115,7 @@ public class FullWheelAnimation implements Animation {
                         Case.listAR.remove(stand);
                         stand.remove();
                     }
-                    Case.animationEnd(c, getName(), player, loc);
+                    Case.animationEnd(c, getName(), player, loc, groups.get(0));
                     items.clear();
                     groups.clear();
                     armorStands.clear();

@@ -109,7 +109,7 @@ public class ShapeAnimation implements Animation {
                 if (this.i >= 40) {
                     as.remove();
                     this.cancel();
-                    Case.animationEnd(c, getName(), player, loc);
+                    Case.animationEnd(c, getName(), player, loc, winGroup);
                     Case.listAR.remove(as);
                 }
 

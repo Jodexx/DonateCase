@@ -11,12 +11,14 @@ public class AnimationEndEvent extends PlayerEvent {
     String caseType;
     Location location;
     String animation;
+    String winGroup;
 
-    public AnimationEndEvent(@NotNull Player who, String animation, String caseType, Location location) {
+    public AnimationEndEvent(@NotNull Player who, String animation, String caseType, Location location, String winGroup) {
         super(who);
         this.caseType = caseType;
         this.location = location;
         this.animation = animation;
+        this.winGroup = winGroup;
     }
 
     @NotNull
@@ -27,10 +29,14 @@ public class AnimationEndEvent extends PlayerEvent {
     public String getCaseType() {
         return caseType;
     }
+    @NotNull
     public String getAnimation() {
         return animation;
     }
-
+    @NotNull
+    public String getWinGroup() {
+        return winGroup;
+    }
 
     @NotNull
     @Override

@@ -265,8 +265,8 @@ public class Case {
         return Main.instance;
     }
 
-    public static void animationEnd(String c, String animation, Player player, Location location) {
-        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location);
+    public static void animationEnd(String c, String animation, Player player, Location location, String winGroup) {
+        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, winGroup);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
         ActiveCase.remove(location.getBlock().getLocation());
         caseOpen.remove(player);
@@ -281,12 +281,10 @@ public class Case {
         String givecommand = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommand");
         if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && Main.getPermissions() != null) {
             String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
-            if (customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) &&
-                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) >=
-                            customConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {
-            } else {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
-            }
+            if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) ||
+                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                    }
         } else {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
         }
