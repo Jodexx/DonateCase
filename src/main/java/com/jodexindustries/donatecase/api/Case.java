@@ -274,19 +274,70 @@ public class Case {
 
     public static void onCaseOpenFinish(String casename, Player player, boolean needsound, String winGroup) {
         String sound;
-        String casetitle = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
+        String caseTitle = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
         String winGroupDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".Item.DisplayName");
         String winGroupGroup = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".Group");
         // Give command
-        String givecommand = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommand");
+        String giveСommand = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommand");
+        String giveType = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveType", "ONE");
         if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && Main.getPermissions() != null) {
             String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
             if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) ||
                     customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                if (giveType.equalsIgnoreCase("ONE")) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveСommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                } else {
+                    String endCommand = "";
+                    Random random = new Random();
+                    int maxChance = 0;
+                    int from = 0;
+                    for (String command : customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands").getKeys(false)) {
+                        maxChance += customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + command  + ".Chance");
                     }
+                    int rand = random.nextInt(maxChance);
+                    for (String command : customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands").getKeys(false)) {
+                        int itemChance = customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + command + ".Chance");
+                        if (from <= rand && rand < from + itemChance) {
+                            endCommand = command;
+                            break;
+                        }
+                        from += itemChance;
+                    }
+                    for (String command : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + endCommand + ".Commands")) {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                    }
+                    for (String broadcast : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + endCommand + ".Broadcast")) {
+                        Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + caseTitle)));
+                    }
+                }
+            }
         } else {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(givecommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+            if(giveType.equalsIgnoreCase("ONE")) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveСommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+            } else {
+                String endCommand = "";
+                Random random = new Random();
+                int maxChance = 0;
+                int from = 0;
+                for (String command : customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands").getKeys(false)) {
+                    maxChance += customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + command  + ".Chance");
+                }
+                int rand = random.nextInt(maxChance);
+                for (String command : customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands").getKeys(false)) {
+                    int itemChance = customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + command + ".Chance");
+                    if (from <= rand && rand < from + itemChance) {
+                        endCommand = command;
+                        break;
+                    }
+                    from += itemChance;
+                }
+                for (String command : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + endCommand + ".Commands")) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                }
+                for (String broadcast : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + endCommand + ".Broadcast")) {
+                    Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + caseTitle)));
+                }
+            }
         }
         // Custom commands
         for (String command : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".Commands")) {
@@ -322,8 +373,10 @@ public class Case {
         player.sendTitle(title, subtitle, 5, 60, 5);
 
         // Broadcast
-        for (String cmd2 : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".Broadcast")) {
-            Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(cmd2, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + casetitle)));
+        if(giveType.equalsIgnoreCase("ONE")) {
+            for (String cmd2 : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".Broadcast")) {
+                Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(cmd2, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + caseTitle)));
+            }
         }
     }
     public static CustomConfig getCustomConfig() {
