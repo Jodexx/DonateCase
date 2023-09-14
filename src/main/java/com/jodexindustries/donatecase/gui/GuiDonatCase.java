@@ -22,7 +22,7 @@ public class GuiDonatCase {
         String title = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Title");
         assert title != null;
         Inventory inv = Bukkit.createInventory(null, 45, Main.t.rc(title));
-        String materialID = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial"));
+        String materialID = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiMaterial");
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             materialID = PAPISupport.setPlaceholders(p, materialID);
         }
@@ -97,7 +97,7 @@ public class GuiDonatCase {
             }
         }
 
-        String opencasematerialID = Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterial")).toUpperCase();
+        String opencasematerialID = customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.GuiOpenCaseMaterial").toUpperCase();
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             opencasematerialID = PAPISupport.setPlaceholders(p, opencasematerialID);
         }
@@ -107,7 +107,7 @@ public class GuiDonatCase {
         String displayname;
         int keys = Case.getKeys(c, p.getName());
         List<String> lore = customConfig.getConfig().getStringList("DonatCase.Cases." + c + ".Gui.Lore");
-        displayname = Main.t.rc(Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName"))
+        displayname = Main.t.rc(customConfig.getConfig().getString("DonatCase.Cases." + c + ".Gui.DisplayName")
                 .replace("<key>", String.valueOf(Case.getKeys(c, p.getName()))));
         if(!opencasematerialID.contains(":")) {
             opencasematerial = Material.getMaterial(opencasematerialID);

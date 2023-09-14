@@ -59,7 +59,7 @@ public class EventsListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.HIGH)
     public void InventoryClick(InventoryClickEvent e) {
         if (e.getCurrentItem() != null) {
             Player p = (Player)e.getWhoClicked();
