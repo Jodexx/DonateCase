@@ -59,7 +59,7 @@ public class EventsListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.HIGH)
+    @EventHandler (priority = EventPriority.HIGHEST)
     public void InventoryClick(InventoryClickEvent e) {
         if (e.getCurrentItem() != null) {
             Player p = (Player)e.getWhoClicked();
@@ -109,7 +109,7 @@ public class EventsListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.HIGHEST)
     public void PlayerInteract(PlayerInteractEvent e) {
         if(e.getHand() == EquipmentSlot.OFF_HAND) return;
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
