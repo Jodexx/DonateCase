@@ -75,7 +75,7 @@ public class FullWheelAnimation implements Animation {
             final double rotationThreshold = Math.PI / (itemscount * speed);
 
             final double offset = 2 * Math.PI / itemscount;
-            final Location location = loc.clone().add(loc.getDirection().multiply(1).getX() + 0.5, -1 + customConfig.getAnimations().getDouble("Wheel.LiftingAlongY"), 0);
+            final Location location = loc.clone().add(loc.getDirection().multiply(1).getX() + 0.5, -1 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"), 0);
             public void run() {
                 ticks++;
                 double angle = ticks / 20.0;
