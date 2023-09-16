@@ -93,7 +93,7 @@ public class RainlyAnimation implements Animation {
                     if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                         winGroupDisplayName2 = PAPISupport.setPlaceholders(player, winGroupDisplayName2);
                     }
-                    ItemStack winItem2 = Main.t.getWinItem(c, winGroup, player);
+                    ItemStack winItem2 = Main.t.getWinItem(c, winGroup2, player);
                     if(winItem2.getType() != Material.AIR) {
                         as.setHelmet(winItem2);
                     }
