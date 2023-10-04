@@ -185,7 +185,6 @@ public class Main extends JavaPlugin {
             this.saveResource("Animations.yml", false);
             customConfig = new CustomConfig();
         }
-        casesConfig = new CasesConfig();
         if(customConfig.getConfig().getConfigurationSection("DonatCase.Cases") != null) {
             new File(getDataFolder(), "cases").mkdir();
             Logger.log("&cOutdated cases format!");
@@ -194,7 +193,9 @@ public class Main extends JavaPlugin {
             if(casesConfig.getCases().isEmpty()) {
                 saveResource("cases/case.yml", false);
             }
-        }}
+        }
+        casesConfig = new CasesConfig();
+    }
 
     public void setupLangs() {
         lang = (new Languages(customConfig.getConfig().getString("DonatCase.Languages"))).getLang();
