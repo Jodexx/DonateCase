@@ -190,6 +190,10 @@ public class Main extends JavaPlugin {
             Logger.log("&cOutdated cases format!");
             t.convertCases();
         } else {
+            if(!new File(getDataFolder(), "cases").exists()) {
+                new File(getDataFolder(), "cases").mkdir();
+            }
+            casesConfig = new CasesConfig();
             if(casesConfig.getCases().isEmpty()) {
                 saveResource("cases/case.yml", false);
             }
