@@ -8,42 +8,33 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 public class CustomConfig {
-    private File filec;
-    private File filek;
-    private File filecon;
-    private File fileanim;
+    private File fileCases;
+    private File fileKeys;
+    private File fileConfig;
+    private File fileAnimations;
     private YamlConfiguration Cases;
     private YamlConfiguration Keys;
     public YamlConfiguration Config;
     public YamlConfiguration Animations;
 
     public CustomConfig() {
-        fileanim = new File(Main.instance.getDataFolder(), "Animations.yml");
-        Animations = YamlConfiguration.loadConfiguration(fileanim);
-        filec = new File(Main.instance.getDataFolder(), "Cases.yml");
-        Cases = YamlConfiguration.loadConfiguration(filec);
-        filek = new File(Main.instance.getDataFolder(), "Keys.yml");
-        Keys = YamlConfiguration.loadConfiguration(filek);
-        filecon = new File(Main.instance.getDataFolder(), "Config.yml");
-        Config = YamlConfiguration.loadConfiguration(filecon);
+        fileAnimations = new File(Main.instance.getDataFolder(), "Animations.yml");
+        Animations = YamlConfiguration.loadConfiguration(fileAnimations);
+        fileCases = new File(Main.instance.getDataFolder(), "Cases.yml");
+        Cases = YamlConfiguration.loadConfiguration(fileCases);
+        fileKeys = new File(Main.instance.getDataFolder(), "Keys.yml");
+        Keys = YamlConfiguration.loadConfiguration(fileKeys);
+        fileConfig = new File(Main.instance.getDataFolder(), "Config.yml");
+        Config = YamlConfiguration.loadConfiguration(fileConfig);
     }
 
-
     public void reload(){
-        fileanim = new File(Main.instance.getDataFolder(), "Animations.yml");
-        Animations = YamlConfiguration.loadConfiguration(fileanim);
-        filec = new File(Main.instance.getDataFolder(), "Cases.yml");
-        Cases = YamlConfiguration.loadConfiguration(filec);
-        filek = new File(Main.instance.getDataFolder(), "Keys.yml");
-        Keys = YamlConfiguration.loadConfiguration(filek);
-        filecon = new File(Main.instance.getDataFolder(), "Config.yml");
-        Config = YamlConfiguration.loadConfiguration(filecon);
         Main.instance.setupConfigs();
     }
 
     public void saveCases() {
         try {
-            Cases.save(filec);
+            Cases.save(fileCases);
         } catch (IOException var1) {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Cases.yml");
         }
@@ -51,7 +42,7 @@ public class CustomConfig {
     }
     public void saveConfig() {
         try {
-            Config.save(filecon);
+            Config.save(fileConfig);
         } catch (IOException var1) {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Config.yml");
         }
@@ -60,7 +51,7 @@ public class CustomConfig {
 
     public void saveKeys() {
         try {
-            Keys.save(filek);
+            Keys.save(fileKeys);
         } catch (IOException var1) {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Keys.yml");
         }
