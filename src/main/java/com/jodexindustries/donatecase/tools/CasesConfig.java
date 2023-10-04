@@ -11,9 +11,16 @@ public class CasesConfig {
     public Map<String, YamlConfiguration> cases = new HashMap<>();
     public CasesConfig() {
         for (File file : Main.t.getCasesInFolder()) {
-            YamlConfiguration caseConfig = YamlConfiguration.loadConfiguration(file);
-            String name = file.getName().split(".yml")[0];
-            cases.put(name, caseConfig);
+            if(file.getName().contains(".yml")) {
+                String name = file.getName().split(".yml")[0];
+                int index = file.getName().length();
+                if(file.getName().substring(index - 3, index).equalsIgnoreCase("yml")) {
+                    YamlConfiguration caseConfig = YamlConfiguration.loadConfiguration(file);
+                    if(caseConfig.getConfigurationSection("case") != null) {
+                        cases.put(name, caseConfig);
+                    }
+                }
+            }
         }
     }
 
