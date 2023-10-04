@@ -6,26 +6,34 @@ case:
     Pitch: 5
   Title: '&c&lDonate-&a&lCase' # If you want to make another case, then the Title needs to be changed
   Gui:
-    GuiMaterial: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
-    GuiMaterialName: "&cDonateCase.com"
-    GuiMaterialEnchant: false
-    GuiMaterialLore:
-      - "&f       &f"
-      - "&f       &f"
-    GuiOpenCaseMaterial: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
-    GuiOpenCaseMaterialEnchant: false
-    DisplayName: '&bOpen Case'
-    Lore:
-      - '&6The case can be bought on the website: &cDonateCase.com'
-      - ''
-      - '&7Keys: %keys'
-      - ''
-      - '&6Drops:'
-      - '&7&l[&aVIP&7&l] - &b&n50%'
-      - '&7&l[&bVIP&6+&7&l] - &b&n25%'
-      - '&7&l[&5Deluxe&7&l] - &b&n15%'
-      - '&7&l[&dLegend&7&l] - &b&n10%'
-      - ''
+    Items:
+      "1":
+        DisplayName: "&cJodexIndustries.space"
+        Enchanted: false
+        Lore:
+          - ""
+        Slots: # or Slots: 0-10 (range)
+          - 0
+        Material: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+        Type: DEFAULT
+      Open:
+        DisplayName: "&bOpen Case"
+        Enchanted: false
+        Lore:
+        - '&6The case can be bought on the website: &cJodexIndustries.space'
+        - ''
+        - '&7Keys: %keys'
+        - ''
+        - '&6Drops:'
+        - '&7&l[&aVIP&7&l] - &b&n50%'
+        - '&7&l[&bVIP&6+&7&l] - &b&n25%'
+        - '&7&l[&5Deluxe&7&l] - &b&n15%'
+        - '&7&l[&dLegend&7&l] - &b&n10%'
+        - ''
+        Slots: # or Slots: 0-10 (range)
+          - 14
+        Material: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+        Type: OPEN
   Items:
     VIP:
       Group: vip

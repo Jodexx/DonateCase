@@ -124,11 +124,6 @@ public class Main extends JavaPlugin {
     }
 
     public void setupConfigs() {
-        if(!(new File(getDataFolder(), "cases").exists())) {
-            new File(getDataFolder(), "cases").mkdir();
-            Logger.log("&cOutdated cases format!");
-            t.convertCases();
-        }
         if (!(new File(this.getDataFolder(), "Config.yml")).exists()) {
             this.saveResource("Config.yml", false);
         }
@@ -143,7 +138,6 @@ public class Main extends JavaPlugin {
         if (!(new File(this.getDataFolder(), "Animations.yml")).exists()) {
             this.saveResource("Animations.yml", false);
         }
-
 
         if (!(new File(this.getDataFolder(), "lang/ru_RU.yml")).exists()) {
             this.saveResource("lang/ru_RU.yml", false);
@@ -192,7 +186,15 @@ public class Main extends JavaPlugin {
             customConfig = new CustomConfig();
         }
         casesConfig = new CasesConfig();
-    }
+        if(customConfig.getConfig().getConfigurationSection("DonatCase.Cases") != null) {
+            new File(getDataFolder(), "cases").mkdir();
+            Logger.log("&cOutdated cases format!");
+            t.convertCases();
+        } else {
+            if(casesConfig.getCases().isEmpty()) {
+                saveResource("cases/case.yml", false);
+            }
+        }}
 
     public void setupLangs() {
         lang = (new Languages(customConfig.getConfig().getString("DonatCase.Languages"))).getLang();

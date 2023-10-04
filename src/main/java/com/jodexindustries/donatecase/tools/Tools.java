@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.tools;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.MaterialType;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
@@ -415,6 +416,30 @@ public class Tools {
 
         item.setItemMeta(m);
         return item;
+    }
+    public MaterialType getMaterialType(String material) {
+        if (material.contains(":")) {
+            if (material.startsWith("HEAD")) {
+                return MaterialType.HEAD;
+            } else if (material.startsWith("HDB")) {
+                return MaterialType.HDB;
+            } else if (material.startsWith("CH")) {
+                return MaterialType.CH;
+            } else if (material.startsWith("BASE64")) {
+                return MaterialType.BASE64;
+            }
+        }
+        return MaterialType.DEFAULT;
+    }
+    public List<Integer> getOpenMaterialSlots(String c) {
+        List<Integer> slots = new ArrayList<>();
+        for (String item : casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
+            if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type").equalsIgnoreCase("OPEN")) {
+                List<Integer> list = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
+                slots.addAll(list);
+            }
+        }
+        return slots;
     }
 
 }

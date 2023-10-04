@@ -5,7 +5,7 @@ import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.gui.GuiDonatCase;
+import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
@@ -33,6 +33,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
+import static com.jodexindustries.donatecase.dc.Main.t;
 
 
 public class EventsListener implements Listener {
@@ -67,7 +68,7 @@ public class EventsListener implements Listener {
             if(Case.openCaseName.get(p.getUniqueId()) != null) {
                 String caseType = Case.openCaseName.get(p.getUniqueId());
                     e.setCancelled(true);
-                    if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && e.getRawSlot() == Main.t.c(5, 3)) {
+                    if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && t.getOpenMaterialSlots(caseType).contains(e.getRawSlot())) {
                         if (Case.hasCaseByName(caseType)) {
                             if (Case.openCase.containsKey(p.getUniqueId())) {
                                 PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, Case.openCase.get(p.getUniqueId()).getBlock());
@@ -125,7 +126,7 @@ public class EventsListener implements Listener {
                         if (!Case.ActiveCase.containsKey(blockLocation)) {
                             Case.openCase.put(p.getUniqueId(), Case.getCaseLocationByBlockLocation(blockLocation));
                             Case.openCaseName.put(p.getUniqueId(), caseType);
-                            new GuiDonatCase(p, caseType);
+                            new CaseGui(p, caseType);
                         } else {
                             Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
                         }
