@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.listener;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
+import com.jodexindustries.donatecase.api.events.OpenCaseEvent;
 import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.gui.CaseGui;
@@ -71,14 +72,15 @@ public class EventsListener implements Listener {
                     if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && t.getOpenMaterialSlots(caseType).contains(e.getRawSlot())) {
                         if (Case.hasCaseByName(caseType)) {
                             if (Case.openCase.containsKey(p.getUniqueId())) {
-                                PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, Case.openCase.get(p.getUniqueId()).getBlock());
+                                Location block = Case.openCase.get(p.getUniqueId());
+                                PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, block.getBlock());
                                 Bukkit.getServer().getPluginManager().callEvent(event);
                                 if (!event.isCancelled()) {
                                     if (Case.getKeys(caseType, pl) >= 1) {
-                                        Location block = Case.openCase.get(p.getUniqueId());
                                         Case.removeKeys(caseType, pl, 1);
                                         new StartAnimation(p, block, caseType);
-
+                                        OpenCaseEvent openEvent = new OpenCaseEvent(p, caseType, block.getBlock());
+                                        Bukkit.getServer().getPluginManager().callEvent(openEvent);
                                         p.closeInventory();
                                     } else {
                                         p.closeInventory();
