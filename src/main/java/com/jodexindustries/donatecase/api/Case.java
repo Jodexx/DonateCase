@@ -40,6 +40,9 @@ public class Case {
      */
     public static HashMap<UUID, OpenCase> playerOpensCase = new HashMap<>();
 
+    /**
+     * History data massive, key - case name
+     */
     public static HashMap<String, HistoryData[]> historyData = new HashMap<>();
 
 
