@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.CustomConfig;
+import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
@@ -38,6 +39,8 @@ public class Case {
      * Players, who opened cases (open gui)
      */
     public static HashMap<UUID, OpenCase> playerOpensCase = new HashMap<>();
+
+    public static HashMap<String, HistoryData[]> historyData = new HashMap<>();
 
 
     /**
@@ -318,6 +321,22 @@ public class Case {
     public static void animationEnd(String c, String animation, Player player, Location location, String winGroup) {
         AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, winGroup);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
+        HistoryData data = new HistoryData(player.getName(), System.currentTimeMillis(), winGroup);
+        HistoryData[] list = historyData.getOrDefault(c, new HistoryData[10]);
+        System.arraycopy(list, 0, list, 1, list.length - 1);
+        list[0] = data;
+
+        historyData.put(c, list);
+        for (int i = 0; i < list.length; i++) {
+            HistoryData data1 = list[i];
+            if(data1 != null) {
+                customConfig.getData().set("Data." + c + "." + i + ".Player", data1.getPlayerName());
+                customConfig.getData().set("Data." + c + "." + i + ".Time", data1.getTime());
+                customConfig.getData().set("Data." + c + "." + i + ".Group", data1.getGroup());
+            }
+        }
+
+        customConfig.saveData();
         ActiveCase.remove(location.getBlock().getLocation());
     }
 
@@ -325,10 +344,10 @@ public class Case {
      * Case open finish method for custom animations is called to grant a group, send a message, and more
      * @param caseName Case name
      * @param player Player who opened
-     * @param needsound Boolean sound
+     * @param needSound Boolean sound
      * @param winGroup Win group
      */
-    public static void onCaseOpenFinish(String caseName, Player player, boolean needsound, String winGroup) {
+    public static void onCaseOpenFinish(String caseName, Player player, boolean needSound, String winGroup) {
         String sound;
         String caseTitle = casesConfig.getCase(caseName).getString("case.Title");
         String winGroupDisplayName = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Item.DisplayName");
@@ -400,7 +419,7 @@ public class Case {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player:" + player.getName(), "%group:" + winGroupGroup));
         }
         // Sound
-        if (needsound) {
+        if (needSound) {
             if (casesConfig.getCase(caseName).getString("case.AnimationSound") != null) {
                 sound = casesConfig.getCase(caseName).getString("case.AnimationSound");
                 if (sound != null) {

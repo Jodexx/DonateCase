@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.dc;
 
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.HistoryData;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
@@ -102,7 +103,9 @@ public class Main extends JavaPlugin {
     }
 
     public void onDisable() {
-        new Placeholder().unregister();
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new Placeholder().unregister();
+        }
 
         for (ArmorStand as : Case.listAR) {
             if (as != null) {
@@ -135,8 +138,13 @@ public class Main extends JavaPlugin {
         if (!(new File(this.getDataFolder(), "Keys.yml")).exists()) {
             this.saveResource("Keys.yml", false);
         }
+
         if (!(new File(this.getDataFolder(), "Animations.yml")).exists()) {
             this.saveResource("Animations.yml", false);
+        }
+
+        if (!(new File(this.getDataFolder(), "Data.yml")).exists()) {
+            this.saveResource("Data.yml", false);
         }
 
         if (!(new File(this.getDataFolder(), "lang/ru_RU.yml")).exists()) {
@@ -185,6 +193,20 @@ public class Main extends JavaPlugin {
             this.saveResource("Animations.yml", false);
             customConfig = new CustomConfig();
         }
+        if(customConfig.getData().getConfigurationSection("Data") != null) {
+            for (String c : customConfig.getData().getConfigurationSection("Data").getKeys(false)) {
+                HistoryData[] historyData = new HistoryData[10];
+                for (String i : customConfig.getData().getConfigurationSection("Data." + c).getKeys(false)) {
+                    HistoryData data = new HistoryData(customConfig.getData().getString("Data." + c + "." + i + ".Player"),
+                            customConfig.getData().getLong("Data." + c + "." + i + ".Time"),
+                            customConfig.getData().getString("Data." + c + "." + i + ".Group"));
+                    historyData[Integer.parseInt(i)] = data;
+                }
+                Case.historyData.put(c, historyData);
+            }
+        }
+        Logger.log("&aHistory data loaded!");
+
         if(customConfig.getConfig().getConfigurationSection("DonatCase.Cases") != null) {
             new File(getDataFolder(), "cases").mkdir();
             Logger.log("&cOutdated cases format!");

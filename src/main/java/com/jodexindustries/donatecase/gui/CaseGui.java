@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.gui;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.HistoryData;
 import com.jodexindustries.donatecase.api.MaterialType;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
@@ -13,11 +14,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import static com.jodexindustries.donatecase.dc.Main.casesConfig;
-import static com.jodexindustries.donatecase.dc.Main.t;
+import static com.jodexindustries.donatecase.dc.Main.*;
 
 public class CaseGui {
 
@@ -30,6 +33,19 @@ public class CaseGui {
             String displayName = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".DisplayName");
             boolean enchanted = casesConfig.getCase(c).getBoolean("case.Gui.Items." + item + ".Enchanted");
             List<Integer> slots = new ArrayList<>();
+            String itemType = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "DEFAULT");
+            List<String> lore = t.rc(casesConfig.getCase(c).getStringList("case.Gui.Items." + item + ".Lore"));
+            if(itemType.startsWith("HISTORY")) {
+                int index = Integer.parseInt(itemType.split("-")[1]);
+                String[] typeArgs = itemType.split("-");
+                material = "HEAD:" + typeArgs[1];
+                HistoryData data = Case.historyData.get(c)[index];
+                Date date = new Date(data.getTime());
+                DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
+                String dateFormatted = formatter.format(date);
+                displayName = t.rt(displayName, "%time:" + dateFormatted, "%group:" + data.getGroup(), "%player:" + data.getPlayerName());
+                lore = t.rt(lore,"%time:" + dateFormatted, "%group:" + data.getGroup(), "%player:" + data.getPlayerName());
+            }
             if(casesConfig.getCase(c).isList("case.Gui.Items." + item + ".Slots")) {
                 slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
             } else {
@@ -40,7 +56,6 @@ public class CaseGui {
                     slots.add(i);
                 }
             }
-            List<String> lore = t.rc(casesConfig.getCase(c).getStringList("case.Gui.Items." + item + ".Lore"));
             ItemStack itemStack = getItem(material, displayName, lore, c, p, Case.getKeys(c, p.getName()), enchanted);
             for (Integer slot : slots) {
                 inv.setItem(slot, itemStack);

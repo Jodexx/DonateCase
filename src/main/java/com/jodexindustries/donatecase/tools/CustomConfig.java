@@ -8,14 +8,16 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 public class CustomConfig {
-    private File fileCases;
-    private File fileKeys;
-    private File fileConfig;
-    private File fileAnimations;
-    private YamlConfiguration Cases;
-    private YamlConfiguration Keys;
-    public YamlConfiguration Config;
-    public YamlConfiguration Animations;
+    private final File fileCases;
+    private final File fileKeys;
+    private final File fileConfig;
+    private final File fileAnimations;
+    private final File fileData;
+    private final YamlConfiguration Cases;
+    private final YamlConfiguration Keys;
+    private final YamlConfiguration Config;
+    private final YamlConfiguration Animations;
+    private final YamlConfiguration Data;
 
     public CustomConfig() {
         fileAnimations = new File(Main.instance.getDataFolder(), "Animations.yml");
@@ -26,6 +28,8 @@ public class CustomConfig {
         Keys = YamlConfiguration.loadConfiguration(fileKeys);
         fileConfig = new File(Main.instance.getDataFolder(), "Config.yml");
         Config = YamlConfiguration.loadConfiguration(fileConfig);
+        fileData = new File(Main.instance.getDataFolder(), "Data.yml");
+        Data = YamlConfiguration.loadConfiguration(fileData);
     }
 
     public void reload(){
@@ -54,6 +58,24 @@ public class CustomConfig {
             Keys.save(fileKeys);
         } catch (IOException var1) {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Keys.yml");
+        }
+    }
+
+    public void saveAnimations() {
+        try {
+            Animations.save(fileAnimations);
+        } catch (IOException var1) {
+            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
+        }
+
+    }
+
+
+    public void saveData() {
+        try {
+            Data.save(fileData);
+        } catch (IOException var1) {
+            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Data.yml");
         }
 
     }
@@ -84,5 +106,11 @@ public class CustomConfig {
             reload();
         }
         return Animations;
+    }
+    public YamlConfiguration getData() {
+        if(Data == null) {
+            reload();
+        }
+        return Data;
     }
 }

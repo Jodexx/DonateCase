@@ -5,7 +5,7 @@ case:
     Volume: 10
     Pitch: 5
   Title: '&c&lDonate-&a&lCase' # If you want to make another case, then the Title needs to be changed
-  Gui:
+  Gui: # see more about items configuring -> https://wiki.jodexindustries.space/docs/DonateCase/items-settings
     Size: 45
     Items:
       "1":
