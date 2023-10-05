@@ -6,6 +6,7 @@ case:
     Pitch: 5
   Title: '&c&lDonate-&a&lCase' # If you want to make another case, then the Title needs to be changed
   Gui:
+    Size: 45
     Items:
       "1":
         DisplayName: "&cJodexIndustries.space"
@@ -14,6 +15,7 @@ case:
           - ""
         Slots: # or Slots: 0-10 (range)
           - 0
+          - 8
         Material: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
         Type: DEFAULT
       Open:
@@ -58,7 +60,7 @@ case:
           Broadcast:
             - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
       Commands: #  GiveType: ONE
-        - some commands here
+      #- some commands here
       Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
       SubTitle: "&5you won %groupdisplayname"
       Broadcast:
@@ -86,7 +88,7 @@ case:
           Broadcast:
             - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
       Commands: #  GiveType: ONE
-      #            - some commands here
+        #- some commands here
       Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
       SubTitle: "&5you won %groupdisplayname"
       Broadcast:

@@ -161,6 +161,38 @@ public class Tools {
                 caseFile.createNewFile();
                 YamlConfiguration caseConfig = YamlConfiguration.loadConfiguration(caseFile);
                 caseConfig.set("case", customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + caseName));
+                String defaultMaterial = customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiMaterial");
+                String defaultDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiMaterialName");
+                boolean defaultEnchanted = customConfig.getConfig().getBoolean("DonatCase.Cases." + caseName + ".Gui.GuiMaterialEnchant");
+                List<String> defaultLore = customConfig.getConfig().getStringList("DonatCase.Cases." + caseName + ".Gui.GuiMaterialLore");
+                List<Integer> defaultSlots = new ArrayList<>();
+                defaultSlots.add(0);
+                defaultSlots.add(8);
+
+                String openMaterial = customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterial");
+                String openDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.DisplayName");
+                boolean openEnchanted = customConfig.getConfig().getBoolean("DonatCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterialEnchant");
+                List<String> openLore = customConfig.getConfig().getStringList("DonatCase.Cases." + caseName + ".Gui.Lore");
+                List<Integer> openSlots = new ArrayList<>();
+                openSlots.add(14);
+
+                caseConfig.set("case.Gui", null);
+                caseConfig.save(caseFile);
+                caseConfig.set("case.Gui.Items.1.DisplayName", defaultDisplayName);
+                caseConfig.set("case.Gui.Items.1.Enchanted", defaultEnchanted);
+                caseConfig.set("case.Gui.Items.1.Lore", defaultLore);
+                caseConfig.set("case.Gui.Items.1.Material", defaultMaterial);
+                caseConfig.set("case.Gui.Items.1.Type", "DEFAULT");
+                caseConfig.set("case.Gui.Items.1.Slots", defaultSlots);
+
+                caseConfig.set("case.Gui.Items.Open.DisplayName", openDisplayName);
+                caseConfig.set("case.Gui.Items.Open.Enchanted", openEnchanted);
+                caseConfig.set("case.Gui.Items.Open.Lore", openLore);
+                caseConfig.set("case.Gui.Items.Open.Material", openMaterial);
+                caseConfig.set("case.Gui.Items.Open.Type", "OPEN");
+                caseConfig.set("case.Gui.Items.Open.Slots", openSlots);
+
+                caseConfig.set("case.Gui.Size", 45);
                 caseConfig.save(caseFile);
             } catch (IOException e) {
                 throw new RuntimeException(e);

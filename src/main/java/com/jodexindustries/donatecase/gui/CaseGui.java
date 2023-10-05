@@ -23,7 +23,7 @@ public class CaseGui {
 
     public CaseGui(Player p, String c) {
         String title = Case.getCaseTitle(c);
-        Inventory inv = Bukkit.createInventory(null, 45, t.rc(title));
+        Inventory inv = Bukkit.createInventory(null, casesConfig.getCase(c).getInt("case.Gui.Size"), t.rc(title));
         ConfigurationSection items = casesConfig.getCase(c).getConfigurationSection("case.Gui.Items");
         for (String item : items.getKeys(false)) {
             String material = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Material", "STONE");
