@@ -2,12 +2,11 @@ package com.jodexindustries.donatecase.api.events;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class OpenCaseEvent extends PlayerEvent implements Cancellable {
+public class OpenCaseEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     protected boolean cancel;
     String caseType;
@@ -36,13 +35,4 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
-    @Override
-    public boolean isCancelled() {
-        return cancel;
-    }
-
-    @Override
-    public void setCancelled(boolean cancel) {
-        this.cancel = cancel;
-    }
 }
