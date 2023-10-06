@@ -28,42 +28,51 @@ public class CaseGui {
         String title = Case.getCaseTitle(c);
         Inventory inv = Bukkit.createInventory(null, casesConfig.getCase(c).getInt("case.Gui.Size", 45), t.rc(title));
         ConfigurationSection items = casesConfig.getCase(c).getConfigurationSection("case.Gui.Items");
-        for (String item : items.getKeys(false)) {
-            String material = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Material", "STONE");
-            String displayName = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".DisplayName");
-            boolean enchanted = casesConfig.getCase(c).getBoolean("case.Gui.Items." + item + ".Enchanted");
-            List<Integer> slots = new ArrayList<>();
-            String itemType = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "DEFAULT");
-            List<String> lore = t.rc(casesConfig.getCase(c).getStringList("case.Gui.Items." + item + ".Lore"));
-            if(itemType.startsWith("HISTORY")) {
-                int index = Integer.parseInt(itemType.split("-")[1]);
-                String[] typeArgs = itemType.split("-");
-                material = "HEAD:" + typeArgs[1];
-                HistoryData data = Case.historyData.get(c)[index];
-                Date date = new Date(data.getTime());
-                DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
-                String dateFormatted = formatter.format(date);
-                displayName = t.rt(displayName, "%time:" + dateFormatted, "%group:" + data.getGroup(), "%player:" + data.getPlayerName());
-                lore = t.rt(lore,"%time:" + dateFormatted, "%group:" + data.getGroup(), "%player:" + data.getPlayerName());
-            }
-            if(casesConfig.getCase(c).isList("case.Gui.Items." + item + ".Slots")) {
-                slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
-            } else {
-                String[] slotArgs = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Slots", "0-0").split("-");
-                int range1 = Integer.parseInt(slotArgs[0]);
-                int range2 = Integer.parseInt(slotArgs[1]);
-                for (int i = range1; i <= range2; i++) {
-                    slots.add(i);
+        if(items != null) {
+            for (String item : items.getKeys(false)) {
+                String material = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Material", "STONE");
+                String displayName = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".DisplayName");
+                boolean enchanted = casesConfig.getCase(c).getBoolean("case.Gui.Items." + item + ".Enchanted");
+                List<Integer> slots = new ArrayList<>();
+                String itemType = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "DEFAULT");
+                List<String> lore = t.rc(casesConfig.getCase(c).getStringList("case.Gui.Items." + item + ".Lore"));
+                String[] rgb = null;
+                if (material.toUpperCase().startsWith("LEATHER_")) {
+                    String rgbString = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Rgb");
+                    if (rgbString != null) {
+                        rgb = rgbString.split(",");
+                    }
                 }
-            }
-            ItemStack itemStack = getItem(material, displayName, lore, c, p, Case.getKeys(c, p.getName()), enchanted);
-            for (Integer slot : slots) {
-                inv.setItem(slot, itemStack);
+                if (itemType.startsWith("HISTORY")) {
+                    int index = Integer.parseInt(itemType.split("-")[1]);
+                    String[] typeArgs = itemType.split("-");
+                    material = "HEAD:" + typeArgs[1];
+                    HistoryData data = Case.historyData.get(c)[index];
+                    Date date = new Date(data.getTime());
+                    DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
+                    String dateFormatted = formatter.format(date);
+                    displayName = t.rt(displayName, "%time:" + dateFormatted, "%group:" + data.getGroup(), "%player:" + data.getPlayerName());
+                    lore = t.rt(lore, "%time:" + dateFormatted, "%group:" + data.getGroup(), "%player:" + data.getPlayerName());
+                }
+                if (casesConfig.getCase(c).isList("case.Gui.Items." + item + ".Slots")) {
+                    slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
+                } else {
+                    String[] slotArgs = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Slots", "0-0").split("-");
+                    int range1 = Integer.parseInt(slotArgs[0]);
+                    int range2 = Integer.parseInt(slotArgs[1]);
+                    for (int i = range1; i <= range2; i++) {
+                        slots.add(i);
+                    }
+                }
+                ItemStack itemStack = getItem(material, displayName, lore, c, p, Case.getKeys(c, p.getName()), enchanted, rgb);
+                for (Integer slot : slots) {
+                    inv.setItem(slot, itemStack);
+                }
             }
         }
         p.openInventory(inv);
     }
-    private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, int keys, boolean enchanted) {
+    private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, int keys, boolean enchanted, String[] rgb) {
         MaterialType materialType = t.getMaterialType(material);
         Material itemMaterial;
         ItemStack item;
@@ -72,7 +81,7 @@ public class CaseGui {
             if (itemMaterial == null) {
                 itemMaterial = Material.STONE;
             }
-            item = t.createItem(itemMaterial, -1, 1, displayName, t.rt(lore,"%case:" + c, "%keys:" + keys), enchanted);
+            item = t.createItem(itemMaterial, -1, 1, displayName, t.rt(lore,"%case:" + c, "%keys:" + keys), enchanted, rgb);
         } else
         if(materialType == MaterialType.HEAD) {
             String[] parts = material.split(":");
@@ -85,7 +94,7 @@ public class CaseGui {
                 item = HeadDatabaseSupport.getSkull(id, displayName, t.rt(lore, "%case:" + c, "%keys:" + keys));
             } else {
                 if(!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                    item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore, "%case:" + c, "%keys:" + keys), enchanted);
+                    item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore, "%case:" + c, "%keys:" + keys), enchanted, null);
                 } else {
                     List<String> pLore = new ArrayList<>();
                     for(String line : lore) {
@@ -94,7 +103,7 @@ public class CaseGui {
                         }
                         pLore.add(line);
                     }
-                    item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(pLore, "%case:" + c, "%keys:" + keys), enchanted);
+                    item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(pLore, "%case:" + c, "%keys:" + keys), enchanted, null);
 
                 }
             }
@@ -106,7 +115,7 @@ public class CaseGui {
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
                 item = CustomHeadSupport.getSkull(category, id, displayName, t.rt(lore, "%case:" + c, "%keys:" + keys));
             } else {
-                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore,"%case:" + c, "%keys:" + keys), enchanted);
+                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore,"%case:" + c, "%keys:" + keys), enchanted, null);
             }
         } else if (materialType == MaterialType.BASE64) {
             String[] parts = material.split(":");
@@ -122,7 +131,7 @@ public class CaseGui {
             if (itemMaterial == null) {
                 itemMaterial = Material.STONE;
             }
-            item = t.createItem(itemMaterial, data, 1, displayName, t.rt(lore,"%case:" + c, "%keys:" + keys), enchanted);
+            item = t.createItem(itemMaterial, data, 1, displayName, t.rt(lore,"%case:" + c, "%keys:" + keys), enchanted, null);
         }
         return item;
     }

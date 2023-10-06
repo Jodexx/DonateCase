@@ -305,6 +305,21 @@ public class Case {
     public static boolean getWinGroupEnchant(String c, String winGroup) {
         return casesConfig.getCase(c).getBoolean("case.Items." + winGroup + ".Item.Enchanted");
     }
+
+    /**
+     * Get win group Rgb (String massive)
+     * @param c Case name
+     * @param winGroup Group name
+     * @return rgb massive with 3 items
+     */
+    public static String[] getWinGroupRgb(String c, String winGroup) {
+        String[] rgb = null;
+        String rgbString = casesConfig.getCase(c).getString("case.Items." + winGroup + ".Item.Rgb");
+        if(rgbString != null) {
+            rgb = rgbString.replaceAll(" ", "").split(",");
+        }
+        return rgb;
+    }
     /**
      * Get plugin instance
      * @return DonateCase instance

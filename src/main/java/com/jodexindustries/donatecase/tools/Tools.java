@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
@@ -251,8 +252,8 @@ public class Tools {
         }
     }
 
-    public ItemStack createItem(Material ma, int amount, int data, String dn, boolean enchant) {
-        return createItem(ma, data, amount, dn, null, enchant);
+    public ItemStack createItem(Material ma, int amount, int data, String dn, boolean enchant, String[] rgb) {
+        return createItem(ma, data, amount, dn, null, enchant, rgb);
     }
 
     public Color parseColor(String s) {
@@ -362,6 +363,7 @@ public class Tools {
     public ItemStack getWinItem(String c, String winGroup, Player player) {
         String winGroupId = Case.getWinGroupId(c, winGroup);
         String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
+        String[] rgb = Case.getWinGroupRgb(c, winGroup);
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
             winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
@@ -375,7 +377,7 @@ public class Tools {
                 material = Material.STONE;
             }
             if(material != Material.AIR) {
-                winItem = t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
+                winItem = t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant, rgb);
             } else {
                 winItem = new ItemStack(Material.AIR);
                 ItemMeta meta = winItem.getItemMeta();
@@ -416,13 +418,13 @@ public class Tools {
                 if (material == null) {
                     material = Material.STONE;
                 }
-                winItem = t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
+                winItem = t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant, rgb);
             }
         }
         return winItem;
     }
 
-    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant) {
+    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb) {
         ItemStack item;
         if(data == -1) {
             item = new ItemStack(ma, amount);
@@ -445,6 +447,15 @@ public class Tools {
         }
 
         item.setItemMeta(m);
+
+        if(rgb != null && m instanceof LeatherArmorMeta) {
+            LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) m;
+            int r = Integer.parseInt(rgb[0]);
+            int g = Integer.parseInt(rgb[1]);
+            int b = Integer.parseInt(rgb[2]);
+            leatherArmorMeta.setColor(Color.fromRGB(r,g,b));
+            item.setItemMeta(leatherArmorMeta);
+        }
         return item;
     }
     public MaterialType getMaterialType(String material) {
