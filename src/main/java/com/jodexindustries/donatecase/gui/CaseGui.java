@@ -47,7 +47,11 @@ public class CaseGui {
                     int index = Integer.parseInt(itemType.split("-")[1]);
                     String[] typeArgs = itemType.split("-");
                     material = "HEAD:" + typeArgs[1];
-                    HistoryData data = Case.historyData.get(c)[index];
+                    HistoryData[] historyData = Case.historyData.get(c);
+                    HistoryData data = historyData[index];
+                    if(data == null) {
+                        continue;
+                    }
                     Date date = new Date(data.getTime());
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                     String dateFormatted = formatter.format(date);

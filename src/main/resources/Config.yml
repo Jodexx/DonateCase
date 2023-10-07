@@ -23,4 +23,4 @@ DonatCase:
     vip: 1
     default: 0
   NoKeyWarningSound: ENTITY_ENDERMAN_TELEPORT
-  DateFormat: "dd.MM HH:mm:ss";
+  DateFormat: "dd.MM HH:mm:ss"

@@ -33,7 +33,7 @@ case:
         - '&7&l[&dLegend&7&l] - &b&n10%'
         - ''
         Slots: # or Slots: 0-10 (range)
-          - 14
+          - 22
         Material: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
         Type: OPEN
   Items:
