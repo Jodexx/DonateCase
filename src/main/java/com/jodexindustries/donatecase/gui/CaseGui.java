@@ -48,6 +48,9 @@ public class CaseGui {
                     String[] typeArgs = itemType.split("-");
                     material = "HEAD:" + typeArgs[1];
                     HistoryData[] historyData = Case.historyData.get(c);
+                    if(historyData == null) {
+                        continue;
+                    }
                     HistoryData data = historyData[index];
                     if(data == null) {
                         continue;
