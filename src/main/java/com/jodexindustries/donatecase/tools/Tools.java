@@ -336,7 +336,7 @@ public class Tools {
         }
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         if (meta != null) {
-            meta.setOwningPlayer(Bukkit.getOfflinePlayer(player));
+            meta.setOwner(player);
             meta.setDisplayName(rc(displayname));
             meta.setLore(rc(lore));
         }

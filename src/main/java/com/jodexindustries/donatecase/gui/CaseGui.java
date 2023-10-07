@@ -28,7 +28,8 @@ public class CaseGui {
         String title = Case.getCaseTitle(c);
         Inventory inv = Bukkit.createInventory(null, casesConfig.getCase(c).getInt("case.Gui.Size", 45), t.rc(title));
         ConfigurationSection items = casesConfig.getCase(c).getConfigurationSection("case.Gui.Items");
-        if(items != null) {
+        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+        if (items != null) {
             for (String item : items.getKeys(false)) {
                 String material = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Material", "STONE");
                 String displayName = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".DisplayName");
@@ -44,17 +45,18 @@ public class CaseGui {
                     }
                 }
                 if (itemType.startsWith("HISTORY")) {
-                    int index = Integer.parseInt(itemType.split("-")[1]);
                     String[] typeArgs = itemType.split("-");
-                    material = "HEAD:" + typeArgs[1];
+
+                    int index = Integer.parseInt(typeArgs[1]);
                     HistoryData[] historyData = Case.historyData.get(c);
-                    if(historyData == null) {
+                    if (historyData == null) {
                         continue;
                     }
                     HistoryData data = historyData[index];
-                    if(data == null) {
+                    if (data == null) {
                         continue;
                     }
+                    material = "HEAD:" + data.getPlayerName();
                     Date date = new Date(data.getTime());
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                     String dateFormatted = formatter.format(date);
@@ -77,6 +79,7 @@ public class CaseGui {
                 }
             }
         }
+        });
         p.openInventory(inv);
     }
     private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, int keys, boolean enchanted, String[] rgb) {
