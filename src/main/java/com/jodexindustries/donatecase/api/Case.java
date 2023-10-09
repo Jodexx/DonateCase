@@ -378,7 +378,7 @@ public class Case {
             if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) ||
                     customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {
                 if (giveType.equalsIgnoreCase("ONE")) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveСommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveСommand, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
                 } else {
                     String endCommand = "";
                     Random random = new Random();
@@ -397,16 +397,16 @@ public class Case {
                         from += itemChance;
                     }
                     for (String command : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Commands")) {
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
                     }
                     for (String broadcast : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Broadcast")) {
-                        Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + caseTitle)));
+                        Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player%:" + player.getName(), "%group%:" + winGroupDisplayName, "%case%:" + caseTitle)));
                     }
                 }
             }
         } else {
             if(giveType.equalsIgnoreCase("ONE")) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveСommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveСommand, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
             } else {
                 String endCommand = "";
                 Random random = new Random();
@@ -425,16 +425,16 @@ public class Case {
                     from += itemChance;
                 }
                 for (String command : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Commands")) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player:" + player.getName(), "%group:" + winGroupGroup));
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
                 }
                 for (String broadcast : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Broadcast")) {
-                    Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + caseTitle)));
+                    Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player%:" + player.getName(), "%group%:" + winGroupDisplayName, "%case%:" + caseTitle)));
                 }
             }
         }
         // Custom commands
         for (String command : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".Commands")) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player:" + player.getName(), "%group:" + winGroupGroup));
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
         }
         // Sound
         if (needSound) {
@@ -452,14 +452,14 @@ public class Case {
         if (customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Item." + winGroup + ".Title") != null) {
 
             title = Main.t.rc(Main.t.rt(casesConfig.getCase(caseName).getString("case.Item." + winGroup + ".Title"),
-                    "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup));
+                    "%groupdisplayname%:" + winGroupDisplayName, "%group%:" + winGroup));
         } else {
             title = "";
         }
         String subtitle;
         if (casesConfig.getCase(caseName).getString("case.Item." + winGroup + ".Title") != null) {
             subtitle = Main.t.rc(Main.t.rt(casesConfig.getCase(caseName).getString("case.Item." + winGroup + ".SubTitle"),
-                    "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup));
+                    "%groupdisplayname%:" + winGroupDisplayName, "%group%:" + winGroup));
         } else {
             subtitle = "";
         }
@@ -468,7 +468,7 @@ public class Case {
         // Broadcast
         if(giveType.equalsIgnoreCase("ONE")) {
             for (String cmd2 : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".Broadcast")) {
-                Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(cmd2, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + caseTitle)));
+                Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(cmd2, "%player%:" + player.getName(), "%group%:" + winGroupDisplayName, "%case%:" + caseTitle)));
             }
         }
     }
