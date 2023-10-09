@@ -60,8 +60,9 @@ public class CaseGui {
                     Date date = new Date(data.getTime());
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                     String dateFormatted = formatter.format(date);
-                    displayName = t.rt(displayName, "%time:" + dateFormatted, "%group:" + data.getGroup(), "%player:" + data.getPlayerName());
-                    lore = t.rt(lore, "%time:" + dateFormatted, "%group:" + data.getGroup(), "%player:" + data.getPlayerName());
+                    String groupDisplayName = Case.getWinGroupDisplayName(c, data.getGroup());
+                    displayName = t.rt(displayName, "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
+                    lore = t.rt(lore, "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
                 }
                 if (casesConfig.getCase(c).isList("case.Gui.Items." + item + ".Slots")) {
                     slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
@@ -91,20 +92,20 @@ public class CaseGui {
             if (itemMaterial == null) {
                 itemMaterial = Material.STONE;
             }
-            item = t.createItem(itemMaterial, -1, 1, displayName, t.rt(lore,"%case:" + c, "%keys:" + keys), enchanted, rgb);
+            item = t.createItem(itemMaterial, -1, 1, displayName, t.rt(lore,"%case%:" + c, "%keys%:" + keys), enchanted, rgb);
         } else
         if(materialType == MaterialType.HEAD) {
             String[] parts = material.split(":");
-            item = t.getPlayerHead(parts[1], displayName, t.rt(lore,"%case:" + c, "%keys:" + keys));
+            item = t.getPlayerHead(parts[1], displayName, t.rt(lore,"%case%:" + c, "%keys%:" + keys));
         } else
         if(materialType == MaterialType.HDB) {
             String[] parts = material.split(":");
             String id = parts[1];
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                item = HeadDatabaseSupport.getSkull(id, displayName, t.rt(lore, "%case:" + c, "%keys:" + keys));
+                item = HeadDatabaseSupport.getSkull(id, displayName, t.rt(lore, "%case%:" + c, "%keys%:" + keys));
             } else {
                 if(!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                    item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore, "%case:" + c, "%keys:" + keys), enchanted, null);
+                    item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore, "%case%:" + c, "%keys%:" + keys), enchanted, null);
                 } else {
                     List<String> pLore = new ArrayList<>();
                     for(String line : lore) {
@@ -113,7 +114,7 @@ public class CaseGui {
                         }
                         pLore.add(line);
                     }
-                    item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(pLore, "%case:" + c, "%keys:" + keys), enchanted, null);
+                    item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(pLore, "%case%:" + c, "%keys%:" + keys), enchanted, null);
 
                 }
             }
@@ -123,14 +124,14 @@ public class CaseGui {
             String category = parts[1];
             String id = parts[2];
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                item = CustomHeadSupport.getSkull(category, id, displayName, t.rt(lore, "%case:" + c, "%keys:" + keys));
+                item = CustomHeadSupport.getSkull(category, id, displayName, t.rt(lore, "%case%:" + c, "%keys%:" + keys));
             } else {
-                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore,"%case:" + c, "%keys:" + keys), enchanted, null);
+                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore,"%case%:" + c, "%keys%:" + keys), enchanted, null);
             }
         } else if (materialType == MaterialType.BASE64) {
             String[] parts = material.split(":");
             String base64 = parts[1];
-            item = t.getBASE64Skull(base64, displayName, t.rt(lore,"%case:" + c, "%keys:" + keys));
+            item = t.getBASE64Skull(base64, displayName, t.rt(lore,"%case%:" + c, "%keys%:" + keys));
         } else {
             String[] parts = material.split(":");
             byte data = -1;
@@ -141,7 +142,7 @@ public class CaseGui {
             if (itemMaterial == null) {
                 itemMaterial = Material.STONE;
             }
-            item = t.createItem(itemMaterial, data, 1, displayName, t.rt(lore,"%case:" + c, "%keys:" + keys), enchanted, null);
+            item = t.createItem(itemMaterial, data, 1, displayName, t.rt(lore,"%case%:" + c, "%keys%:" + keys), enchanted, null);
         }
         return item;
     }

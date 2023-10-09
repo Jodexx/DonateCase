@@ -24,7 +24,7 @@ case:
         Lore:
         - '&6The case can be bought on the website: &cJodexIndustries.space'
         - ''
-        - '&7Keys: %keys'
+        - '&7Keys: %keys%'
         - ''
         - '&6Drops:'
         - '&7&l[&aVIP&7&l] - &b&n50%'
@@ -45,26 +45,26 @@ case:
         DisplayName: '&7&l[&aVIP&7&l]'
         Enchanted: false
       GiveType: ONE # or RANDOM
-      GiveCommand: lp user %player parent set %group #  GiveType: ONE
+      GiveCommand: lp user %player% parent set %group% #  GiveType: ONE
       GiveCommands: # GiveType: RANDOM
         first:
           Chance: 50
           Commands:
             - ""
           Broadcast:
-            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
         second:
           Chance: 50
           Commands:
             - ""
           Broadcast:
-            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
       Commands: #  GiveType: ONE
       #- some commands here
-      Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
-      SubTitle: "&5you won %groupdisplayname"
+      Title: "&aCongratulations!" # Placeholders: %group% - group name; %groupdisplayname% - group display name
+      SubTitle: "&5you won %groupdisplayname%"
       Broadcast:
-        - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
     VIPPLUS:
       Group: vipplus
       Chance: 25
@@ -73,26 +73,26 @@ case:
         DisplayName: '&7&l[&bVIP&6+&7&l]'
         Enchanted: false
       GiveType: ONE # or RANDOM
-      GiveCommand: lp user %player parent set %group #  GiveType: ONE
+      GiveCommand: lp user %player% parent set %group% #  GiveType: ONE
       GiveCommands: # GiveType: RANDOM
         first:
           Chance: 50
           Commands:
             - ""
           Broadcast:
-            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
         second:
           Chance: 50
           Commands:
             - ""
           Broadcast:
-            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
       Commands: #  GiveType: ONE
         #- some commands here
-      Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
-      SubTitle: "&5you won %groupdisplayname"
+      Title: "&aCongratulations!" # Placeholders: %group% - group name; %groupdisplayname% - group display name
+      SubTitle: "&5you won %groupdisplayname%"
       Broadcast:
-        - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
     Deluxe:
       Group: deluxe
       Chance: 15
@@ -101,26 +101,26 @@ case:
         DisplayName: '&7&l[&5Deluxe&7&l]'
         Enchanted: false
       GiveType: ONE # or RANDOM
-      GiveCommand: lp user %player parent set %group #  GiveType: ONE
+      GiveCommand: lp user %player parent set %group% #  GiveType: ONE
       GiveCommands: # GiveType: RANDOM
         first:
           Chance: 50
           Commands:
             - ""
           Broadcast:
-            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
         second:
           Chance: 50
           Commands:
             - ""
           Broadcast:
-            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
       Commands: #  GiveType: ONE
       #            - some commands here
-      Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
-      SubTitle: "&5you won %groupdisplayname"
+      Title: "&aCongratulations!" # Placeholders: %group% - group name; %groupdisplayname% - group display name
+      SubTitle: "&5you won %groupdisplayname%"
       Broadcast:
-        - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
     Legend:
       Group: legend
       Chance: 10
@@ -129,23 +129,23 @@ case:
         DisplayName: '&7&l[&dLegend&7&l]'
         Enchanted: false
       GiveType: ONE # or RANDOM
-      GiveCommand: lp user %player parent set %group #  GiveType: ONE
+      GiveCommand: lp user %player% parent set %group% #  GiveType: ONE
       GiveCommands: # GiveType: RANDOM
         first:
           Chance: 50
           Commands:
             - ""
           Broadcast:
-            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
         second:
           Chance: 50
           Commands:
             - ""
           Broadcast:
-            - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
       Commands: #  GiveType: ONE
       #            - some commands here
-      Title: "&aCongratulations!" # Placeholders: %group - group name; %groupdisplayname - group display name
-      SubTitle: "&5you won %groupdisplayname"
+      Title: "&aCongratulations!" # Placeholders: %group% - group name; %groupdisplayname% - group display name
+      SubTitle: "&5you won %groupdisplayname%"
       Broadcast:
-        - '&a>&c>&e> &c%player &6won a donate %group &6from &5Ultra-Case.'
+        - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
