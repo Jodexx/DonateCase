@@ -175,7 +175,7 @@ public class Tools {
                 boolean openEnchanted = customConfig.getConfig().getBoolean("DonatCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterialEnchant");
                 List<String> openLore = customConfig.getConfig().getStringList("DonatCase.Cases." + caseName + ".Gui.Lore");
                 List<Integer> openSlots = new ArrayList<>();
-                openSlots.add(14);
+                openSlots.add(22);
 
                 caseConfig.set("case.Gui", null);
                 caseConfig.save(caseFile);
@@ -440,6 +440,7 @@ public class Tools {
         }
 
         if (lore != null ) {
+
             m.setLore(this.rc(lore));
         }
         if (enchant && !ma.equals(Material.AIR)) {

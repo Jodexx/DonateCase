@@ -63,6 +63,14 @@ public class CaseGui {
                     String groupDisplayName = Case.getWinGroupDisplayName(c, data.getGroup());
                     displayName = t.rt(displayName, "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
                     lore = t.rt(lore, "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
+                    List<String> pLore = new ArrayList<>();
+                    for(String line : lore) {
+                        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                            line = PAPISupport.setPlaceholders(p, line);
+                        }
+                        pLore.add(line);
+                    }
+                    lore = t.rc(pLore);
                 }
                 if (casesConfig.getCase(c).isList("case.Gui.Items." + item + ".Slots")) {
                     slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
@@ -104,19 +112,7 @@ public class CaseGui {
             if(Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
                 item = HeadDatabaseSupport.getSkull(id, displayName, t.rt(lore, "%case%:" + c, "%keys%:" + keys));
             } else {
-                if(!Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                    item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore, "%case%:" + c, "%keys%:" + keys), enchanted, null);
-                } else {
-                    List<String> pLore = new ArrayList<>();
-                    for(String line : lore) {
-                        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                            line = PAPISupport.setPlaceholders(p, line);
-                        }
-                        pLore.add(line);
-                    }
-                    item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(pLore, "%case%:" + c, "%keys%:" + keys), enchanted, null);
-
-                }
+                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore, "%case%:" + c, "%keys%:" + keys), enchanted, null);
             }
         } else
         if(materialType == MaterialType.CH) {
