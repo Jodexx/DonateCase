@@ -38,6 +38,14 @@ public class CaseGui {
                 String itemType = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "DEFAULT");
                 List<String> lore = t.rc(casesConfig.getCase(c).getStringList("case.Gui.Items." + item + ".Lore"));
                 String[] rgb = null;
+                List<String> pLore = new ArrayList<>();
+                for(String line : lore) {
+                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                        line = PAPISupport.setPlaceholders(p, line);
+                    }
+                    pLore.add(line);
+                }
+                lore = t.rc(pLore);
                 if (material.toUpperCase().startsWith("LEATHER_")) {
                     String rgbString = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Rgb");
                     if (rgbString != null) {
@@ -63,14 +71,6 @@ public class CaseGui {
                     String groupDisplayName = Case.getWinGroupDisplayName(c, data.getGroup());
                     displayName = t.rt(displayName, "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
                     lore = t.rt(lore, "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
-                    List<String> pLore = new ArrayList<>();
-                    for(String line : lore) {
-                        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                            line = PAPISupport.setPlaceholders(p, line);
-                        }
-                        pLore.add(line);
-                    }
-                    lore = t.rc(pLore);
                 }
                 if (casesConfig.getCase(c).isList("case.Gui.Items." + item + ".Slots")) {
                     slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
