@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.tools.CustomConfig;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -372,6 +373,9 @@ public class Case {
         String winGroupGroup = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Group");
         // Give command
         String giveСommand = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".GiveCommand");
+        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            giveСommand = PAPISupport.setPlaceholders(player, giveСommand);
+        }
         String giveType = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".GiveType", "ONE");
         if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && Main.getPermissions() != null) {
             String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
@@ -400,6 +404,9 @@ public class Case {
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
                     }
                     for (String broadcast : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Broadcast")) {
+                        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                            broadcast = PAPISupport.setPlaceholders(player, broadcast);
+                        }
                         Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player%:" + player.getName(), "%group%:" + winGroupDisplayName, "%case%:" + caseTitle)));
                     }
                 }
@@ -425,15 +432,24 @@ public class Case {
                     from += itemChance;
                 }
                 for (String command : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Commands")) {
+                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                        command = PAPISupport.setPlaceholders(player, command);
+                    }
                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
                 }
                 for (String broadcast : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Broadcast")) {
+                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                        broadcast = PAPISupport.setPlaceholders(player, broadcast);
+                    }
                     Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player%:" + player.getName(), "%group%:" + winGroupDisplayName, "%case%:" + caseTitle)));
                 }
             }
         }
         // Custom commands
         for (String command : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".Commands")) {
+            if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                command = PAPISupport.setPlaceholders(player, command);
+            }
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
         }
         // Sound
@@ -450,7 +466,6 @@ public class Case {
         // Title && SubTitle
         String title;
         if (customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Item." + winGroup + ".Title") != null) {
-
             title = Main.t.rc(Main.t.rt(casesConfig.getCase(caseName).getString("case.Item." + winGroup + ".Title"),
                     "%groupdisplayname%:" + winGroupDisplayName, "%group%:" + winGroup));
         } else {
@@ -468,6 +483,9 @@ public class Case {
         // Broadcast
         if(giveType.equalsIgnoreCase("ONE")) {
             for (String cmd2 : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".Broadcast")) {
+                if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                    cmd2 = PAPISupport.setPlaceholders(player, cmd2);
+                }
                 Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(cmd2, "%player%:" + player.getName(), "%group%:" + winGroupDisplayName, "%case%:" + caseTitle)));
             }
         }

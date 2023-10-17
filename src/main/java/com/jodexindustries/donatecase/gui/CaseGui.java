@@ -33,6 +33,9 @@ public class CaseGui {
             for (String item : items.getKeys(false)) {
                 String material = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Material", "STONE");
                 String displayName = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".DisplayName");
+                if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                    displayName = PAPISupport.setPlaceholders(p, displayName);
+                }
                 boolean enchanted = casesConfig.getCase(c).getBoolean("case.Gui.Items." + item + ".Enchanted");
                 List<Integer> slots = new ArrayList<>();
                 String itemType = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "DEFAULT");
