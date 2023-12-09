@@ -490,7 +490,7 @@ public class Tools {
     }
 
     public String hex(String message) {
-        Pattern pattern = Pattern.compile("&#[a-fA-F0-9]{6}");
+        Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
         Matcher matcher = pattern.matcher(message);
         while (matcher.find()) {
             String hexCode = message.substring(matcher.start(), matcher.end());
