@@ -2,6 +2,8 @@ package com.jodexindustries.donatecase.tools;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.MaterialType;
+import com.jodexindustries.donatecase.api.SubCommand;
+import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;

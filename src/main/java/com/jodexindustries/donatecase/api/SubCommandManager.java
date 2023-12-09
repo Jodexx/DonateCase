@@ -21,7 +21,6 @@ public class SubCommandManager {
             Main.instance.getLogger().warning("Sub command " + commandName + " already registered!");
         }
     }
-
     public static Map<String, SubCommand> getSubCommands() {
         return subCommands;
     }

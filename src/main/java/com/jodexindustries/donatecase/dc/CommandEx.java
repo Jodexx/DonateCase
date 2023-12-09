@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
@@ -302,6 +303,23 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             for (String string : Main.lang.getStringList("Help")) {
                                 Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
                             }
+                            Map<String, Object> addonsMap = new HashMap<>();
+                            for (String subCommandName : SubCommandManager.getSubCommands().keySet()) {
+                                SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
+                                String addonName = JavaPlugin.getProvidingPlugin(subCommand.getClass()).getName();
+                                Object[] object = new Object[2];
+                                object[0] = subCommandName;
+                                object[1] = subCommand;
+                                addonsMap.put(addonName, object);
+                            }
+                            /*
+                             Addon name
+                             /dc addonSubCommand1
+                             /dc addonSubCommand2
+                             Another addon name
+                             /dc addonSubCommand1
+                             /dc addonSubCommand2
+                            */
                         }
                     } else {
                         Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
