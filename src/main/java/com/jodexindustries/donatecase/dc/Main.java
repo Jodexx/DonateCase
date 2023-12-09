@@ -59,7 +59,7 @@ public class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EventsListener(), this);
         if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
-                if (getDescription().getVersion().equals(version)) {
+                if (t.getPluginVersion(getDescription().getVersion()) >= t.getPluginVersion(version)) {
                     Logger.log("There is not a new update available.");
                 } else {
                     Logger.log(ChatColor.GREEN + "There is a new update " + version +  " available.");

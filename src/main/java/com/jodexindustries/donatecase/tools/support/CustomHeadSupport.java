@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 public class CustomHeadSupport {
-    public static ItemStack getSkull(String category, String id, String displayname) {
+    public static ItemStack getSkull(String category, String id, String displayName, List<String> lore) {
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
             CustomHeadsAPI api = CustomHeads.getApi();
             ItemStack item = new ItemStack(Material.STONE);
@@ -22,26 +22,7 @@ public class CustomHeadSupport {
             }
             ItemMeta itemMeta = item.getItemMeta();
             if (itemMeta != null) {
-                itemMeta.setDisplayName(Main.t.rc(displayname));
-            }
-            item.setItemMeta(itemMeta);
-            return item;
-        } else {
-            return null;
-        }
-    }
-    public static ItemStack getSkull(String category, String id, String displayname, List<String> lore) {
-        if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-            CustomHeadsAPI api = CustomHeads.getApi();
-            ItemStack item = new ItemStack(Material.STONE);
-            try {
-                item = api.getHead(category, Integer.parseInt(id));
-            } catch (NullPointerException nullPointerException) {
-                Logger.log("Could not find the head you were looking for");
-            }
-            ItemMeta itemMeta = item.getItemMeta();
-            if (itemMeta != null) {
-                itemMeta.setDisplayName(Main.t.rc(displayname));
+                itemMeta.setDisplayName(Main.t.rc(displayName));
             }
             if(lore != null && itemMeta != null) {
                 itemMeta.setLore(Main.t.rc(lore));

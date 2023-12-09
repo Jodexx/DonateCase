@@ -53,7 +53,7 @@ public class EventsListener implements Listener {
         if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             if (p.hasPermission("donatecase.admin")) {
                 new UpdateChecker(Main.instance, 106701).getVersion((version) -> {
-                    if (!Main.instance.getDescription().getVersion().equals(version)) {
+                    if (t.getPluginVersion(Main.instance.getDescription().getVersion()) < t.getPluginVersion(version)) {
                         Main.t.msg(p, Main.t.rt(Main.lang.getString("UpdateCheck"), "%version:" + version));
                     }
 

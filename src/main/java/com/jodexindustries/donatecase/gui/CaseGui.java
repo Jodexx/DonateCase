@@ -4,8 +4,10 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.HistoryData;
 import com.jodexindustries.donatecase.api.MaterialType;
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
+import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -116,16 +118,30 @@ public class CaseGui {
                 item = HeadDatabaseSupport.getSkull(id, displayName, t.rt(lore, "%case%:" + c, "%keys%:" + keys));
             } else {
                 item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore, "%case%:" + c, "%keys%:" + keys), enchanted, null);
+                instance.getLogger().warning("HeadDataBase not loaded! Item: " + displayName + " Case: " + c);
+
             }
         } else
         if(materialType == MaterialType.CH) {
             String[] parts = material.split(":");
             String category = parts[1];
             String id = parts[2];
-            if(Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+            if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
                 item = CustomHeadSupport.getSkull(category, id, displayName, t.rt(lore, "%case%:" + c, "%keys%:" + keys));
             } else {
-                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore,"%case%:" + c, "%keys%:" + keys), enchanted, null);
+                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore, "%case%:" + c, "%keys%:" + keys), enchanted, null);
+                instance.getLogger().warning("CustomHeads not loaded! Item: " + displayName + " Case: " + c);
+
+            }
+        } else if (materialType == MaterialType.IA) {
+            String[] parts = material.split(":");
+            String namespace = parts[1];
+            String id = parts[2];
+            if(instance.getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
+                item = ItemsAdderSupport.getItem(namespace + ":" + id, displayName,t.rt(lore, "%case%:" + c, "%keys%:" + keys));
+            } else {
+                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(lore, "%case%:" + c, "%keys%:" + keys), enchanted, null);
+                instance.getLogger().warning("ItemsAdder not loaded! Item: " + displayName + " Case: " + c);
             }
         } else if (materialType == MaterialType.BASE64) {
             String[] parts = material.split(":");
