@@ -21,6 +21,15 @@ public class SubCommandManager {
             Main.instance.getLogger().warning("Sub command " + commandName + " already registered!");
         }
     }
+    public static void unregisterSubCommand(String commandName) {
+        if(subCommands.get(commandName.toLowerCase()) != null) {
+            subCommands.remove(commandName.toLowerCase());
+            SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(commandName);
+            Bukkit.getServer().getPluginManager().callEvent(subCommandRegisteredEvent);
+        } else {
+            Main.instance.getLogger().warning("Sub command " + commandName + " already registered!");
+        }
+    }
     public static Map<String, SubCommand> getSubCommands() {
         return subCommands;
     }
