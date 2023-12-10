@@ -306,6 +306,8 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 SubCommand subCommand = subCommands.get(subCommandName.toLowerCase());
                 if(subCommand != null) {
                     subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
+                } else {
+                    sendHelp(sender, label);
                 }
             }
         }
@@ -344,8 +346,10 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 for (String commandName : command.keySet()) {
                     SubCommand subCommand = command.get(commandName);
                     StringBuilder builder = new StringBuilder();
-                    for (String arg : subCommand.getArgs()) {
-                        builder.append(arg).append(" ");
+                    if(subCommand.getArgs() != null) {
+                        for (String arg : subCommand.getArgs()) {
+                            builder.append(arg).append(" ");
+                        }
                     }
                     if(sender.hasPermission("donatecase.admin")) {
                         if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER) {

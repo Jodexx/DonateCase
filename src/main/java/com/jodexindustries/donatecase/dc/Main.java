@@ -3,6 +3,8 @@ package com.jodexindustries.donatecase.dc;
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.HistoryData;
+import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
+import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
@@ -99,10 +101,13 @@ public class Main extends JavaPlugin {
         registerDefaultAnimations();
 
         Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
-
+        DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
+        Bukkit.getServer().getPluginManager().callEvent(donateCaseEnableEvent);
     }
 
     public void onDisable() {
+        DonateCaseDisableEvent donateCaseDisableEvent = new DonateCaseDisableEvent(this);
+        Bukkit.getServer().getPluginManager().callEvent(donateCaseDisableEvent);
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new Placeholder().unregister();
         }
