@@ -325,55 +325,64 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
             }
         }
-
-        Map<String, List<Map<String, SubCommand>>> addonsMap = new HashMap<>();
-        for (String subCommandName : SubCommandManager.getSubCommands().keySet()) {
-            List<Map<String, SubCommand>> list = new ArrayList<>();
-            Map<String, SubCommand> commandMap = new HashMap<>();
-            SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
-            String addonName = JavaPlugin.getProvidingPlugin(subCommand.getClass()).getName();
-            if(addonsMap.get(addonName) != null) {
-                list = addonsMap.get(addonName);
+        if(customConfig.getConfig().getBoolean("DonatCase.AddonsHelp", true)) {
+            Map<String, List<Map<String, SubCommand>>> addonsMap = new HashMap<>();
+            for (String subCommandName : SubCommandManager.getSubCommands().keySet()) {
+                List<Map<String, SubCommand>> list = new ArrayList<>();
+                Map<String, SubCommand> commandMap = new HashMap<>();
+                SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
+                String addonName = JavaPlugin.getProvidingPlugin(subCommand.getClass()).getName();
+                if (addonsMap.get(addonName) != null) {
+                    list = addonsMap.get(addonName);
+                }
+                commandMap.put(subCommandName, subCommand);
+                list.add(commandMap);
+                addonsMap.put(addonName, list);
             }
-            commandMap.put(subCommandName, subCommand);
-            list.add(commandMap);
-            addonsMap.put(addonName, list);
-        }
-        for (String addon : addonsMap.keySet()) {
-            t.msg_(sender, Main.t.rt(lang.getString("HelpAddons.Format.AddonName", "%addon:" + addon)));
-            List<Map<String, SubCommand>> commands = addonsMap.get(addon);
-            for (Map<String, SubCommand> command : commands) {
-                for (String commandName : command.keySet()) {
-                    SubCommand subCommand = command.get(commandName);
-                    StringBuilder builder = new StringBuilder();
-                    if(subCommand.getArgs() != null) {
-                        for (String arg : subCommand.getArgs()) {
-                            builder.append(arg).append(" ");
-                        }
-                    }
-                    if(sender.hasPermission("donatecase.admin")) {
-                        if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER) {
-                            t.msg_(sender, Main.t.rt(lang.getString("HelpAddons.Format.AddonCommand"),
-                                    "%cmd:" + commandName,
-                                    "%args:" + builder,
-                                    "%description:" + subCommand.getDescription()
-                            ));
-                        }
-                    } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
-                        if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER) {
-                            t.msg_(sender, Main.t.rt(lang.getString("HelpAddons.Format.AddonCommand"),
-                                    "%cmd:" + commandName,
-                                    "%args:" + builder,
-                                    "%description:" + subCommand.getDescription()
-                            ));
-                        }
-                    } else if (!sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
-                        if (subCommand.getType() == SubCommandType.PLAYER) {
-                            t.msg_(sender, Main.t.rt(lang.getString("HelpAddons.Format.AddonCommand"),
-                                    "%cmd:" + commandName,
-                                    "%args:" + builder,
-                                    "%description:" + subCommand.getDescription()
-                            ));
+            if (t.isHasCommandForSender(sender, addonsMap)) {
+                for (String addon : addonsMap.keySet()) {
+                    t.msg_(sender, Main.t.rt(lang.getString("HelpAddons.Format.AddonName"), "%addon:" + addon));
+                    List<Map<String, SubCommand>> commands = addonsMap.get(addon);
+                    for (Map<String, SubCommand> command : commands) {
+                        for (String commandName : command.keySet()) {
+                            SubCommand subCommand = command.get(commandName);
+                            String description = subCommand.getDescription();
+                            if (description == null) {
+                                description = "";
+                            } else {
+                                description = Main.t.rt(lang.getString("HelpAddons.Format.AddonDescription"), "%description:" + description);
+                            }
+                            StringBuilder builder = new StringBuilder();
+                            if (subCommand.getArgs() != null) {
+                                for (String arg : subCommand.getArgs()) {
+                                    builder.append(arg).append(" ");
+                                }
+                            }
+                            if (sender.hasPermission("donatecase.admin")) {
+                                if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                                    t.msg_(sender, Main.t.rt(lang.getString("HelpAddons.Format.AddonCommand"),
+                                            "%cmd:" + commandName,
+                                            "%args:" + builder,
+                                            "%description:" + description
+                                    ));
+                                }
+                            } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
+                                if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                                    t.msg_(sender, Main.t.rt(lang.getString("HelpAddons.Format.AddonCommand"),
+                                            "%cmd:" + commandName,
+                                            "%args:" + builder,
+                                            "%description:" + description
+                                    ));
+                                }
+                            } else if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
+                                if (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                                    t.msg_(sender, Main.t.rt(lang.getString("HelpAddons.Format.AddonCommand"),
+                                            "%cmd:" + commandName,
+                                            "%args:" + builder,
+                                            "%description:" + description
+                                    ));
+                                }
+                            }
                         }
                     }
                 }
@@ -404,6 +413,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
                 if(subCommand.getType() == SubCommandType.ADMIN ||
                         subCommand.getType() == SubCommandType.MODER ||
+                        subCommand.getType() == null ||
                         subCommand.getType() == SubCommandType.PLAYER) {
                     value.add(subCommandName);
                 }
@@ -432,7 +442,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value.add("delkey");
             for(String subCommandName : SubCommandManager.getSubCommands().keySet()) {
                 SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
-                if(subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER) {
+                if(subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
                     value.add(subCommandName);
                 }
             }
@@ -456,7 +466,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             value.add("opencase");
             for(String subCommandName : SubCommandManager.getSubCommands().keySet()) {
                 SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
-                if(subCommand.getType() == SubCommandType.PLAYER) {
+                if(subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
                     value.add(subCommandName);
                 }
             }

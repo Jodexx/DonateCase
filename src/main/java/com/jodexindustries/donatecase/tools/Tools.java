@@ -1,9 +1,6 @@
 package com.jodexindustries.donatecase.tools;
 
-import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.MaterialType;
-import com.jodexindustries.donatecase.api.SubCommand;
-import com.jodexindustries.donatecase.api.SubCommandManager;
+import com.jodexindustries.donatecase.api.*;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
@@ -521,6 +518,30 @@ public class Tools {
             builder.append(version);
         }
         return Integer.parseInt(builder.toString());
+    }
+    public boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
+        for (String addon : addonsMap.keySet()) {
+            List<Map<String, SubCommand>> commands = addonsMap.get(addon);
+            for (Map<String, SubCommand> command : commands) {
+                for (String commandName : command.keySet()) {
+                    SubCommand subCommand = command.get(commandName);
+                    if(sender.hasPermission("donatecase.admin")) {
+                        if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                            return true;
+                        }
+                    } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
+                        if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                            return true;
+                        }
+                    } else if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
+                        if (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }

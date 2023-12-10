@@ -46,7 +46,8 @@ Help:
 HelpAddons:
   Format:
     AddonName: "&6%addon"
-    AddonCommand: "&9/dc %cmd %args &3- &2%description"
+    AddonDescription: "&3- &2%description"
+    AddonCommand: "&9/dc %cmd %args %description"
 HelpPlayer:
   - '&9/%cmd help &3- &2Help for the plugin'
   - '&9/%cmd keys &3- &2Show your keys'
