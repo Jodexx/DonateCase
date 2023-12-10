@@ -543,5 +543,27 @@ public class Tools {
         }
         return false;
     }
+    public boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, String addon) {
+            List<Map<String, SubCommand>> commands = addonsMap.get(addon);
+            for (Map<String, SubCommand> command : commands) {
+                for (String commandName : command.keySet()) {
+                    SubCommand subCommand = command.get(commandName);
+                    if (sender.hasPermission("donatecase.admin")) {
+                        if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                            return true;
+                        }
+                    } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
+                        if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                            return true;
+                        }
+                    } else if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
+                        if (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        return false;
+    }
 
 }

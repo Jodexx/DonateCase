@@ -45,7 +45,7 @@ Help:
   - '&9/%cmd reload &3- &2Перезапустити конфіг'
 HelpAddons:
   Format:
-    AddonName: "&6%addon"
+    AddonName: "&6%addon" # Залиште пустим, якщо не хочете відокремлювати команди назвами аддонів
     AddonDescription: "&3- &2%description"
     AddonCommand: "&9/dc %cmd %args %description"
 HelpPlayer:

@@ -45,7 +45,7 @@ Help:
   - '&9/%cmd reload &3- &2Reload config'
 HelpAddons:
   Format:
-    AddonName: "&6%addon"
+    AddonName: "&6%addon" # Leave it blank if you don't want to separate commands with addon names
     AddonDescription: "&3- &2%description"
     AddonCommand: "&9/dc %cmd %args %description"
 HelpPlayer:
