@@ -1,4 +1,4 @@
-config: '2.4' #DON'T CHANGE THIS PLEASE
+config: '2.5' #DON'T CHANGE THIS PLEASE
 
 # Локальні плейсхолдери
 # %case - назва кейсу
@@ -30,6 +30,7 @@ NoKey: '&cУ вас немає ключів для цього кейсу. Мож
 HaveOpenCase: '&cЗачекайте, цей кейс відкривається'
 ReloadConfig: '&aКонфіг перезавантажено!'
 CasesList: '&e%num. &6%casename &3- &r%casetitle'
+NumberFormatException: "&cСтрока %string не являється числом"
 Help:
   - '&9/%cmd help &3- &2Допомога по плагіну'
   - '&9/%cmd keys &7(&aГравець&7)&3- &2Показати ключі'
@@ -42,6 +43,10 @@ Help:
   - '&9/%cmd delkey &7(&aГравець&7) &7(&aТип кейсу&7) &3- &2Видалити всі ключі гравцю'
   - '&9/%cmd delkey all &3- &2Видалити всі ключі всім гравцям'
   - '&9/%cmd reload &3- &2Перезапустити конфіг'
+HelpAddons:
+  Format:
+    AddonName: "&6%addon"
+    AddonCommand: "&9/dc %cmd %args &3- &2%description"
 HelpPlayer:
   - '&9/%cmd help &3- &2Допомога по плагіну'
   - '&9/%cmd keys &3- &2Показати свої ключі'

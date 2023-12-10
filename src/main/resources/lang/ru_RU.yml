@@ -1,4 +1,4 @@
-config: '2.4' #DON'T CHANGE THIS PLEASE
+config: '2.5' #DON'T CHANGE THIS PLEASE
 
 # Локальные плейсхолдеры
 # %case - название кейса
@@ -30,6 +30,7 @@ NoKey: '&cУ вас нет ключей для этого кейса. Может
 HaveOpenCase: '&cПодождите этот кейс открывается'
 ReloadConfig: '&aКонфиг перезагружен!'
 CasesList: '&e%num. &6%casename &3- &r%casetitle'
+NumberFormatException: "&cСтрока %string не является числом"
 Help:
   - '&9/%cmd help &3- &2Помощь по плагину'
   - '&9/%cmd keys &7(&aИгрок&7)&3- &2Показать ключи'
@@ -42,6 +43,10 @@ Help:
   - '&9/%cmd delkey &7(&aИгрок&7) &7(&aТип Кейса&7) &3- &2Удалить все ключи игроку'
   - '&9/%cmd delkey all &3- &2Удалить все ключи всем игрокам'
   - '&9/%cmd reload &3- &2Перезапустить конфиг'
+HelpAddons:
+  Format:
+    AddonName: "&6%addon"
+    AddonCommand: "&9/dc %cmd %args &3- &2%description"
 HelpPlayer:
   - '&9/%cmd help &3- &2Помощь по плагину'
   - '&9/%cmd keys &3- &2Показать свои ключи'

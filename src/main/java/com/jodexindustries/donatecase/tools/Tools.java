@@ -108,11 +108,13 @@ public class Tools {
 
     public String rt(String text, String... repl) {
         for (String s : repl) {
-            int l = s.split(":")[0].length();
-            if(text != null) {
-                text = text.replace(s.substring(0, l), s.substring(l + 1));
-            } else {
-                text = rc("&cMessage not found! Update lang file!");
+            if(s != null) {
+                int l = s.split(":")[0].length();
+                if (text != null) {
+                    text = text.replace(s.substring(0, l), s.substring(l + 1));
+                } else {
+                    text = rc("&cMessage not found! Update lang file!");
+                }
             }
         }
 
