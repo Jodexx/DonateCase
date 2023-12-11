@@ -482,12 +482,35 @@ public class Tools {
     public List<Integer> getOpenMaterialSlots(String c) {
         List<Integer> slots = new ArrayList<>();
         for (String item : casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
-            if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type").equalsIgnoreCase("OPEN")) {
+            if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type").startsWith("OPEN")) {
                 List<Integer> list = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
                 slots.addAll(list);
             }
         }
         return slots;
+    }
+    public Map<List<Integer>, String> getOpenMaterialItemsBySlots(String c) {
+        Map<List<Integer>, String> map = new HashMap<>();
+        for (String item : casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
+            if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type").startsWith("OPEN")) {
+                List<Integer> slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
+                String type = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type");
+                if(type.contains("_")) {
+                    type = type.split("_")[1];
+                }
+                map.put(slots, type);
+            }
+        }
+        return map;
+    }
+    public String getOpenMaterialTypeByMapBySlot(String c, int slot) {
+        Map<List<Integer>, String> map = getOpenMaterialItemsBySlots(c);
+        for (List<Integer> list : map.keySet()) {
+            if(list.contains(slot)) {
+                return map.get(list);
+            }
+        }
+        return null;
     }
 
     public String hex(String message) {
