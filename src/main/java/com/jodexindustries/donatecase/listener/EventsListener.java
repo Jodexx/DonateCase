@@ -34,6 +34,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
+import java.util.logging.Level;
+
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 import static com.jodexindustries.donatecase.dc.Main.t;
 
@@ -71,6 +73,7 @@ public class EventsListener implements Listener {
                 String caseType = Case.playerOpensCase.get(p.getUniqueId()).getName();
                     e.setCancelled(true);
                     if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && t.getOpenMaterialSlots(caseType).contains(e.getRawSlot())) {
+                        caseType = t.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
                         if (Case.hasCaseByName(caseType)) {
                             Location block = Case.playerOpensCase.get(p.getUniqueId()).getLocation();
                             PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, block.getBlock());
@@ -89,7 +92,9 @@ public class EventsListener implements Listener {
                                 }
                             }
                         } else {
+                            p.closeInventory();
                             Main.t.msg(p, "&cSomething wrong! Contact with server administrator!");
+                            Main.instance.getLogger().log(Level.WARNING, "Case with name " + caseType + " not exist!");
                         }
                     }
             }
