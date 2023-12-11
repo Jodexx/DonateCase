@@ -27,7 +27,7 @@ public class SubCommandManager {
             SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(commandName);
             Bukkit.getServer().getPluginManager().callEvent(subCommandRegisteredEvent);
         } else {
-            Main.instance.getLogger().warning("Sub command " + commandName + " already registered!");
+            Main.instance.getLogger().warning("Sub command " + commandName + " already unregistered!");
         }
     }
     public static Map<String, SubCommand> getSubCommands() {
