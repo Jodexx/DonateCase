@@ -35,7 +35,7 @@ case:
         Slots: # or Slots: 0-10 (range)
           - 22
         Material: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
-        Type: OPEN
+        Type: OPEN # or you can use OPEN_<anotherCaseName> for opening another case 
   Items:
     VIP:
       Group: vip
