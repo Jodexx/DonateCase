@@ -494,7 +494,7 @@ public class Tools {
         for (String item : casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
             if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type").startsWith("OPEN")) {
                 List<Integer> slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
-                String type = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type");
+                String type = c;
                 if(type.contains("_")) {
                     type = type.split("_")[1];
                 }
