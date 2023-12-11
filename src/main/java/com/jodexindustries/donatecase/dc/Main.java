@@ -2,6 +2,9 @@ package com.jodexindustries.donatecase.dc;
 
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.HistoryData;
+import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
+import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
@@ -9,12 +12,15 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Main extends JavaPlugin {
@@ -31,6 +37,8 @@ public class Main extends JavaPlugin {
     File langEn;
     File langUa;
     public static CustomConfig customConfig;
+    public static CasesConfig casesConfig;
+
     public void onEnable() {
         long time = System.currentTimeMillis();
         instance = this;
@@ -53,7 +61,7 @@ public class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EventsListener(), this);
         if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
-                if (getDescription().getVersion().equals(version)) {
+                if (t.getPluginVersion(getDescription().getVersion()) >= t.getPluginVersion(version)) {
                     Logger.log("There is not a new update available.");
                 } else {
                     Logger.log(ChatColor.GREEN + "There is a new update " + version +  " available.");
@@ -93,11 +101,16 @@ public class Main extends JavaPlugin {
         registerDefaultAnimations();
 
         Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
-
+        DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
+        Bukkit.getServer().getPluginManager().callEvent(donateCaseEnableEvent);
     }
 
     public void onDisable() {
-        new Placeholder().unregister();
+        DonateCaseDisableEvent donateCaseDisableEvent = new DonateCaseDisableEvent(this);
+        Bukkit.getServer().getPluginManager().callEvent(donateCaseDisableEvent);
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new Placeholder().unregister();
+        }
 
         for (ArmorStand as : Case.listAR) {
             if (as != null) {
@@ -130,10 +143,14 @@ public class Main extends JavaPlugin {
         if (!(new File(this.getDataFolder(), "Keys.yml")).exists()) {
             this.saveResource("Keys.yml", false);
         }
+
         if (!(new File(this.getDataFolder(), "Animations.yml")).exists()) {
             this.saveResource("Animations.yml", false);
         }
 
+        if (!(new File(this.getDataFolder(), "Data.yml")).exists()) {
+            this.saveResource("Data.yml", false);
+        }
 
         if (!(new File(this.getDataFolder(), "lang/ru_RU.yml")).exists()) {
             this.saveResource("lang/ru_RU.yml", false);
@@ -181,11 +198,39 @@ public class Main extends JavaPlugin {
             this.saveResource("Animations.yml", false);
             customConfig = new CustomConfig();
         }
+        if(customConfig.getData().getConfigurationSection("Data") != null) {
+            for (String c : customConfig.getData().getConfigurationSection("Data").getKeys(false)) {
+                HistoryData[] historyData = new HistoryData[10];
+                for (String i : customConfig.getData().getConfigurationSection("Data." + c).getKeys(false)) {
+                    HistoryData data = new HistoryData(customConfig.getData().getString("Data." + c + "." + i + ".Player"),
+                            customConfig.getData().getLong("Data." + c + "." + i + ".Time"),
+                            customConfig.getData().getString("Data." + c + "." + i + ".Group"));
+                    historyData[Integer.parseInt(i)] = data;
+                }
+                Case.historyData.put(c, historyData);
+            }
+        }
+        Logger.log("&aHistory data loaded!");
+
+        if(customConfig.getConfig().getConfigurationSection("DonatCase.Cases") != null) {
+            new File(getDataFolder(), "cases").mkdir();
+            Logger.log("&cOutdated cases format!");
+            t.convertCases();
+        } else {
+            if(!new File(getDataFolder(), "cases").exists()) {
+                new File(getDataFolder(), "cases").mkdir();
+            }
+            casesConfig = new CasesConfig();
+            if(casesConfig.getCases().isEmpty()) {
+                saveResource("cases/case.yml", false);
+            }
+        }
+        casesConfig = new CasesConfig();
     }
 
     public void setupLangs() {
         lang = (new Languages(customConfig.getConfig().getString("DonatCase.Languages"))).getLang();
-        if (lang.getString("config") == null || !lang.getString("config").equals("2.4")) {
+        if (lang.getString("config") == null || !lang.getString("config").equals("2.5")) {
             Logger.log("&cOutdated lang config! Creating a new!");
             langRu = new File(this.getDataFolder(), "lang/ru_RU.yml");
             langRu.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));

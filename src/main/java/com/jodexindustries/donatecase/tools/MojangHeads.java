@@ -18,7 +18,6 @@ public class MojangHeads {
         }
         ItemStack head = new ItemStack( material, 1, ( short ) 3 );
         if(url.isEmpty())return head;
-
         SkullMeta headMeta = (SkullMeta) head.getItemMeta();
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         byte[] encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());

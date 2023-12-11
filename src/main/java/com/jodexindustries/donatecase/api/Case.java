@@ -3,21 +3,24 @@ package com.jodexindustries.donatecase.api;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.CustomConfig;
+import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
+import static com.jodexindustries.donatecase.dc.Main.casesConfig;
 import static com.jodexindustries.donatecase.dc.Main.customConfig;
 
 
@@ -28,81 +31,85 @@ public class Case {
      */
     public static List<ArmorStand> listAR = new ArrayList<>();
     /**
-     * Open cases (active)
-     */
-    public static HashMap<UUID, Location> openCase = new HashMap<>();
-    /**
      * Active cases
      */
     public static HashMap<Location, String> ActiveCase = new HashMap<>();
 
 
-    public static HashMap<UUID, String> openCaseName = new HashMap<>();
+    /**
+     * Players, who opened cases (open gui)
+     */
+    public static HashMap<UUID, OpenCase> playerOpensCase = new HashMap<>();
 
     /**
-     * Players, who opened cases (started scrolling)
+     * History data massive, key - case name
      */
-    public static List<Player> caseOpen = new ArrayList<>();
+    public static HashMap<String, HistoryData[]> historyData = new HashMap<>();
+
 
     /**
      * Save case location
-     * @param name Case name (custom)
+     * @param caseName Case name (custom)
      * @param type Case type (config)
      * @param lv Case location
      */
-    public static void saveLocation(String name, String type, Location lv) {
+    public static void saveLocation(String caseName, String type, Location lv) {
         String location = lv.getWorld().getName() + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
-        customConfig.getCases().set("DonatCase.Cases." + name + ".location", location);
-        customConfig.getCases().set("DonatCase.Cases." + name + ".type", type);
+        customConfig.getCases().set("DonatCase.Cases." + caseName + ".location", location);
+        customConfig.getCases().set("DonatCase.Cases." + caseName + ".type", type);
         customConfig.saveCases();
     }
 
     /**
      * Set case keys to a specific player
-     * @param casename Case name
+     * @param caseName Case name
      * @param player Player name
      * @param keys Number of keys
      */
-    public static void setKeys(String casename, String player, int keys) {
+    public static void setKeys(String caseName, String player, int keys) {
         if (Main.Tconfig) {
-            customConfig.getKeys().set("DonatCase.Cases." + casename + "." + player, keys == 0 ? null : keys);
+            customConfig.getKeys().set("DonatCase.Cases." + caseName + "." + player, keys == 0 ? null : keys);
             customConfig.saveKeys();
         } else {
-            Main.mysql.setKey(casename, player, keys);
+            Main.mysql.setKey(caseName, player, keys);
         }
 
     }
 
-
-    public static void setNullKeys(String casename, String player) {
+    /**
+     * Set null case keys to a specific player
+     * @param caseName Case name
+     * @param player Player name
+     */
+    public static void setNullKeys(String caseName, String player) {
         if (Main.Tconfig) {
-            customConfig.getKeys().set("DonatCase.Cases." + casename + "." + player, 0);
+            customConfig.getKeys().set("DonatCase.Cases." + caseName + "." + player, 0);
             customConfig.saveKeys();
         } else {
-            Main.mysql.setKey(casename, player, 0);
+            Main.mysql.setKey(caseName, player, 0);
         }
 
     }
 
     /**
      * Add case keys to a specific player
-     * @param casename Case name
+     * @param caseName Case name
      * @param player Player name
      * @param keys Number of keys
      */
-    public static void addKeys(String casename, String player, int keys) {
-        setKeys(casename, player, getKeys(casename, player) + keys);
+    public static void addKeys(String caseName, String player, int keys) {
+        setKeys(caseName, player, getKeys(caseName, player) + keys);
     }
 
     /**
      * Delete case keys for a specific player
-     * @param casename Case name
+     * @param caseName Case name
      * @param player Player name
      * @param keys Number of keys
      */
 
-    public static void removeKeys(String casename, String player, int keys) {
-        setKeys(casename, player, getKeys(casename, player) - keys);
+    public static void removeKeys(String caseName, String player, int keys) {
+        setKeys(caseName, player, getKeys(caseName, player) - keys);
     }
 
     /**
@@ -114,6 +121,24 @@ public class Case {
 
     public static int getKeys(String name, String player) {
         return Main.Tconfig ? customConfig.getKeys().getInt("DonatCase.Cases." + name + "." + player) : Main.mysql.getKey(name, player);
+    }
+
+    /**
+     * Delete case by location in Cases.yml
+     * @param loc Case location
+     */
+    public static void deleteCaseByLocation(Location loc) {
+        customConfig.getCases().set("DonatCase.Cases." + Case.getCaseNameByLocation(loc), null);
+        customConfig.saveCases();
+    }
+
+    /**
+     * Delete case by name in Cases.yml
+     * @param name Case name
+     */
+    public static void deleteCaseByName(String name) {
+        customConfig.getCases().set("DonatCase.Cases." + name, null);
+        customConfig.saveCases();
     }
 
     public static boolean hasCaseByLocation(Location loc) {
@@ -139,7 +164,11 @@ public class Case {
         return false;
     }
 
-    // get case type by location in Cases.yml
+    /**
+     * Get case type by location
+     * @param loc Case location
+     * @return Case type
+     */
     public static String getCaseTypeByLocation(Location loc) {
         ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
 
@@ -158,6 +187,315 @@ public class Case {
         return null;
     }
 
+
+    /**
+     * Get case name by location
+     * @param loc Case location
+     * @return Case name
+     */
+    public static String getCaseNameByLocation(Location loc) {
+        ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+        for (String name : cases_.getValues(false).keySet()) {
+            if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
+                return null;
+            } else {
+                String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
+                World world = Bukkit.getWorld(location[0]);
+                Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
+                if (temp.equals(loc)) {
+                    return name;
+                }
+            }
+        }
+
+        return null;
+    }
+    /**
+     * Is there a case with a name?
+     * @param name Case name
+     * @return true/false
+     */
+    public static boolean hasCaseByName(String name) {
+        if(casesConfig.getCases().isEmpty()) {
+            return false;
+        }
+        for (String caseName : casesConfig.getCases().keySet()) {
+            if(caseName.equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * Are there cases that have been created?
+     * @param name Case name
+     * @return true/false
+     */
+    public static boolean hasCaseDataByName(String name) {
+        if(customConfig.getCases().getConfigurationSection("DonatCase.Cases") == null) {
+            return false;
+        } else
+            return Objects.requireNonNull(customConfig.getCases().getConfigurationSection("DonatCase.Cases")).contains(name);
+    }
+
+    /**
+     * Are there cases with a specific title?
+     * @param title Case title
+     * @return true/false
+     */
+    public static boolean hasCaseByTitle(String title) {
+        for (YamlConfiguration caseConfig : casesConfig.getCases().values()) {
+            if(caseConfig.getString("case.Title") == null) {
+                return false;
+            } else if (Main.t.rc(caseConfig.getString("case.Title")).equalsIgnoreCase(title)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    /**
+     * Get all cases in config
+     * @return cases
+     */
+    public static Map<String, YamlConfiguration> getCases() {
+        return casesConfig.getCases();
+    }
+
+    /**
+     * Start animation at a specific location
+     * @param player The player who opened the case
+     * @param location Location where to start the animation
+     * @param caseName Case name
+     */
+    public static void startAnimation(Player player, Location location, String caseName) {
+        new StartAnimation(player, location, caseName);
+    }
+    /**
+     * Get random group from case
+     * @param c Case name
+     * @return Group name (item name)
+     */
+    public static String getRandomGroup(String c) {
+        return Tools.getRandomGroup(c);
+    }
+    /**
+     * Get win group id (item id)
+     * @param c Case name
+     * @param winGroup Group name
+     * @return Group id
+     */
+    public static String getWinGroupId(String c, String winGroup) {
+        return casesConfig.getCase(c).getString("case.Items." + winGroup + ".Item.ID");
+    }
+    /**
+     * Get win group displayname
+     * @param c Case name
+     * @param winGroup Group name
+     * @return Group displayname
+     */
+    public static String getWinGroupDisplayName(String c, String winGroup) {
+        return casesConfig.getCase(c).getString("case.Items." + winGroup + ".Item.DisplayName");
+    }
+    /**
+     * Get win group enchant (boolean)
+     * @param c Case name
+     * @param winGroup Group name
+     * @return true/false
+     */
+    public static boolean getWinGroupEnchant(String c, String winGroup) {
+        return casesConfig.getCase(c).getBoolean("case.Items." + winGroup + ".Item.Enchanted");
+    }
+
+    /**
+     * Get win group Rgb (String massive)
+     * @param c Case name
+     * @param winGroup Group name
+     * @return rgb massive with 3 items
+     */
+    public static String[] getWinGroupRgb(String c, String winGroup) {
+        String[] rgb = null;
+        String rgbString = casesConfig.getCase(c).getString("case.Items." + winGroup + ".Item.Rgb");
+        if(rgbString != null) {
+            rgb = rgbString.replaceAll(" ", "").split(",");
+        }
+        return rgb;
+    }
+    /**
+     * Get plugin instance
+     * @return DonateCase instance
+     */
+    public static JavaPlugin getInstance() {
+        return Main.instance;
+    }
+
+    /**
+     * Animation end method for custom animations is called to completely end the animation
+     * @param winGroup Win group
+     * @param c Case type
+     * @param animation Animation name
+     * @param player Player who opened
+     * @param location Case location
+     */
+    public static void animationEnd(String c, String animation, Player player, Location location, String winGroup) {
+        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, winGroup);
+        Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
+        HistoryData data = new HistoryData(player.getName(), System.currentTimeMillis(), winGroup);
+        HistoryData[] list = historyData.getOrDefault(c, new HistoryData[10]);
+        System.arraycopy(list, 0, list, 1, list.length - 1);
+        list[0] = data;
+
+        historyData.put(c, list);
+        for (int i = 0; i < list.length; i++) {
+            HistoryData data1 = list[i];
+            if(data1 != null) {
+                customConfig.getData().set("Data." + c + "." + i + ".Player", data1.getPlayerName());
+                customConfig.getData().set("Data." + c + "." + i + ".Time", data1.getTime());
+                customConfig.getData().set("Data." + c + "." + i + ".Group", data1.getGroup());
+            }
+        }
+
+        customConfig.saveData();
+        ActiveCase.remove(location.getBlock().getLocation());
+    }
+
+    /**
+     * Case open finish method for custom animations is called to grant a group, send a message, and more
+     * @param caseName Case name
+     * @param player Player who opened
+     * @param needSound Boolean sound
+     * @param winGroup Win group
+     */
+    public static void onCaseOpenFinish(String caseName, Player player, boolean needSound, String winGroup) {
+        String sound;
+        String caseTitle = casesConfig.getCase(caseName).getString("case.Title");
+        String winGroupDisplayName = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Item.DisplayName");
+        String winGroupGroup = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Group");
+        // Give command
+        String giveСommand = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".GiveCommand");
+        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            giveСommand = PAPISupport.setPlaceholders(player, giveСommand);
+        }
+        String giveType = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".GiveType", "ONE");
+        if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && Main.getPermissions() != null) {
+            String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
+            if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) ||
+                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {
+                if (giveType.equalsIgnoreCase("ONE")) {
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveСommand, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
+                } else {
+                    String endCommand = "";
+                    Random random = new Random();
+                    int maxChance = 0;
+                    int from = 0;
+                    for (String command : casesConfig.getCase(caseName).getConfigurationSection("case.Items." + winGroup + ".GiveCommands").getKeys(false)) {
+                        maxChance += casesConfig.getCase(caseName).getInt("case.Items." + winGroup + ".GiveCommands." + command  + ".Chance");
+                    }
+                    int rand = random.nextInt(maxChance);
+                    for (String command : casesConfig.getCase(caseName).getConfigurationSection("case.Items." + winGroup + ".GiveCommands").getKeys(false)) {
+                        int itemChance = casesConfig.getCase(caseName).getInt("case.Items." + winGroup + ".GiveCommands." + command + ".Chance");
+                        if (from <= rand && rand < from + itemChance) {
+                            endCommand = command;
+                            break;
+                        }
+                        from += itemChance;
+                    }
+                    for (String command : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Commands")) {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
+                    }
+                    for (String broadcast : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Broadcast")) {
+                        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                            broadcast = PAPISupport.setPlaceholders(player, broadcast);
+                        }
+                        Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player%:" + player.getName(), "%group%:" + winGroupDisplayName, "%case%:" + caseTitle)));
+                    }
+                }
+            }
+        } else {
+            if(giveType.equalsIgnoreCase("ONE")) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveСommand, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
+            } else {
+                String endCommand = "";
+                Random random = new Random();
+                int maxChance = 0;
+                int from = 0;
+                for (String command : casesConfig.getCase(caseName).getConfigurationSection("case.Items." + winGroup + ".GiveCommands").getKeys(false)) {
+                    maxChance += casesConfig.getCase(caseName).getInt("case.Items." + winGroup + ".GiveCommands." + command  + ".Chance");
+                }
+                int rand = random.nextInt(maxChance);
+                for (String command : casesConfig.getCase(caseName).getConfigurationSection("case.Items." + winGroup + ".GiveCommands").getKeys(false)) {
+                    int itemChance = casesConfig.getCase(caseName).getInt("case.Items." + winGroup + ".GiveCommands." + command + ".Chance");
+                    if (from <= rand && rand < from + itemChance) {
+                        endCommand = command;
+                        break;
+                    }
+                    from += itemChance;
+                }
+                for (String command : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Commands")) {
+                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                        command = PAPISupport.setPlaceholders(player, command);
+                    }
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
+                }
+                for (String broadcast : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Broadcast")) {
+                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                        broadcast = PAPISupport.setPlaceholders(player, broadcast);
+                    }
+                    Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player%:" + player.getName(), "%group%:" + winGroupDisplayName, "%case%:" + caseTitle)));
+                }
+            }
+        }
+        // Custom commands
+        for (String command : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".Commands")) {
+            if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                command = PAPISupport.setPlaceholders(player, command);
+            }
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
+        }
+        // Sound
+        if (needSound) {
+            if (casesConfig.getCase(caseName).getString("case.AnimationSound") != null) {
+                sound = casesConfig.getCase(caseName).getString("case.AnimationSound");
+                if (sound != null) {
+                    player.playSound(player.getLocation(), Sound.valueOf(sound),
+                            casesConfig.getCase(caseName).getInt("case.Sound.Volume"),
+                            casesConfig.getCase(caseName).getInt("case.Sound.Pitch"));
+                }
+            }
+        }
+        // Title && SubTitle
+        String title;
+        if (customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Item." + winGroup + ".Title") != null) {
+            title = Main.t.rc(Main.t.rt(casesConfig.getCase(caseName).getString("case.Item." + winGroup + ".Title"),
+                    "%groupdisplayname%:" + winGroupDisplayName, "%group%:" + winGroup));
+        } else {
+            title = "";
+        }
+        String subtitle;
+        if (casesConfig.getCase(caseName).getString("case.Item." + winGroup + ".Title") != null) {
+            subtitle = Main.t.rc(Main.t.rt(casesConfig.getCase(caseName).getString("case.Item." + winGroup + ".SubTitle"),
+                    "%groupdisplayname%:" + winGroupDisplayName, "%group%:" + winGroup));
+        } else {
+            subtitle = "";
+        }
+        player.sendTitle(title, subtitle, 5, 60, 5);
+
+        // Broadcast
+        if(giveType.equalsIgnoreCase("ONE")) {
+            for (String cmd2 : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".Broadcast")) {
+                if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                    cmd2 = PAPISupport.setPlaceholders(player, cmd2);
+                }
+                Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(cmd2, "%player%:" + player.getName(), "%group%:" + winGroupDisplayName, "%case%:" + caseTitle)));
+            }
+        }
+    }
+
+    /**
+     * Get case location (in Cases.yml) by block location
+     * @param blockLocation Block location
+     * @return case location in Cases.yml (with yaw and pitch)
+     */
     public static Location getCaseLocationByBlockLocation(Location blockLocation) {
         ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
 
@@ -179,208 +517,19 @@ public class Case {
         return null;
     }
 
-    // get case name by location in Cases.yml
-    public static String getCaseNameByLocation(Location loc) {
-        ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
-        for (String name : cases_.getValues(false).keySet()) {
-            if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
-                return null;
-            } else {
-                String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
-                World world = Bukkit.getWorld(location[0]);
-                Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
-                if (temp.equals(loc)) {
-                    return name;
-                }
-            }
-        }
-
-        return null;
-    }
-    //has case by name in Config.yml
-    public static boolean hasCaseByName(String name) {
-        if(customConfig.getConfig().getConfigurationSection("DonatCase.Cases") == null) {
-            return false;
-        } else
-            return Objects.requireNonNull(customConfig.getConfig().getConfigurationSection("DonatCase.Cases")).contains(name);
-    }
-    // has case data in Cases.yml
-    public static boolean hasCaseDataByName(String name) {
-        if(customConfig.getCases().getConfigurationSection("DonatCase.Cases") == null) {
-            return false;
-        } else
-            return Objects.requireNonNull(customConfig.getCases().getConfigurationSection("DonatCase.Cases")).contains(name);
-    }
-
-    // has case by title in Config.yml
-    public static boolean hasCaseByTitle(String title) {
-        ConfigurationSection cases_ = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-        for (String name : cases_.getValues(false).keySet()) {
-            if(customConfig.getConfig().getString("DonatCase.Cases." + name + ".Title") == null) {
-                return false;
-            } else if (Main.t.rc(Objects.requireNonNull(customConfig.getConfig().getString("DonatCase.Cases." + name + ".Title"))).equalsIgnoreCase(title)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static @NotNull List<String> getCases() {
-        ConfigurationSection cases_ = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-        return new ArrayList<>(cases_ != null ? cases_.getValues(false).keySet() : new ArrayList<>());
-    }
-
-    // get case by title in Config.yml
-    @Deprecated
-    public static String getCaseByTitle(String title) {
-        ConfigurationSection cases_ = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
-        for (String name : cases_.getValues(false).keySet()) {
-            if(customConfig.getConfig().getString("DonatCase.Cases." + name + ".Title") == null) {
-                return null;
-            } else if (Main.t.rc(customConfig.getConfig().getString("DonatCase.Cases." + name + ".Title")).equalsIgnoreCase(title)) {
-                return name;
-            }
-        }
-        return null;
-    }
-    public static void startAnimation(Player player, Location location, String casename) {
-        new StartAnimation(player, location, casename);
-    }
-
-    public static String getRandomGroup(String c) {
-        return Tools.getRandomGroup(c);
-    }
-
-    public static String getWinGroupId(String c, String winGroup) {
-        return customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.ID");
-    }
-    public static String getWinGroupDisplayName(String c, String winGroup) {
-        return customConfig.getConfig().getString("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.DisplayName");
-    }
-    public static boolean getWinGroupEnchant(String c, String winGroup) {
-        return customConfig.getConfig().getBoolean("DonatCase.Cases." + c + ".Items." + winGroup + ".Item.Enchanted");
-    }
-    public static JavaPlugin getInstance() {
-        return Main.instance;
-    }
-
-    public static void animationEnd(String c, String animation, Player player, Location location, String winGroup) {
-        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, winGroup);
-        Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
-        ActiveCase.remove(location.getBlock().getLocation());
-        caseOpen.remove(player);
-    }
-
-    public static void onCaseOpenFinish(String casename, Player player, boolean needsound, String winGroup) {
-        String sound;
-        String caseTitle = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Title");
-        String winGroupDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".Item.DisplayName");
-        String winGroupGroup = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".Group");
-        // Give command
-        String giveСommand = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommand");
-        String giveType = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveType", "ONE");
-        if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && Main.getPermissions() != null) {
-            String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
-            if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) ||
-                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {
-                if (giveType.equalsIgnoreCase("ONE")) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveСommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
-                } else {
-                    String endCommand = "";
-                    Random random = new Random();
-                    int maxChance = 0;
-                    int from = 0;
-                    for (String command : customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands").getKeys(false)) {
-                        maxChance += customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + command  + ".Chance");
-                    }
-                    int rand = random.nextInt(maxChance);
-                    for (String command : customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands").getKeys(false)) {
-                        int itemChance = customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + command + ".Chance");
-                        if (from <= rand && rand < from + itemChance) {
-                            endCommand = command;
-                            break;
-                        }
-                        from += itemChance;
-                    }
-                    for (String command : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + endCommand + ".Commands")) {
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player:" + player.getName(), "%group:" + winGroupGroup));
-                    }
-                    for (String broadcast : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + endCommand + ".Broadcast")) {
-                        Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + caseTitle)));
-                    }
-                }
-            }
-        } else {
-            if(giveType.equalsIgnoreCase("ONE")) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveСommand, "%player:" + player.getName(), "%group:" + winGroupGroup));
-            } else {
-                String endCommand = "";
-                Random random = new Random();
-                int maxChance = 0;
-                int from = 0;
-                for (String command : customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands").getKeys(false)) {
-                    maxChance += customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + command  + ".Chance");
-                }
-                int rand = random.nextInt(maxChance);
-                for (String command : customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands").getKeys(false)) {
-                    int itemChance = customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + command + ".Chance");
-                    if (from <= rand && rand < from + itemChance) {
-                        endCommand = command;
-                        break;
-                    }
-                    from += itemChance;
-                }
-                for (String command : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + endCommand + ".Commands")) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player:" + player.getName(), "%group:" + winGroupGroup));
-                }
-                for (String broadcast : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".GiveCommands." + endCommand + ".Broadcast")) {
-                    Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + caseTitle)));
-                }
-            }
-        }
-        // Custom commands
-        for (String command : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".Commands")) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player:" + player.getName(), "%group:" + winGroupGroup));
-        }
-        // Sound
-        if (needsound) {
-            if (customConfig.getConfig().getString("DonatCase.Cases." + casename + ".AnimationSound") != null) {
-                sound = customConfig.getConfig().getString("DonatCase.Cases." + casename + ".AnimationSound");
-                if (sound != null) {
-                    player.playSound(player.getLocation(), Sound.valueOf(sound),
-                            customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Sound.Volume"),
-                            customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Sound.Pitch"));
-                }
-            }
-        }
-        // Title && SubTitle
-        String title;
-        if (customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Item." + winGroup + ".Title") != null) {
-
-            title = Main.t.rc(Main.t.rt(customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Item." + winGroup + ".Title"),
-                    "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup));
-        } else {
-            title = "";
-        }
-        String subtitle;
-        if (customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Item." + winGroup + ".Title") != null) {
-            subtitle = Main.t.rc(Main.t.rt(customConfig.getConfig().getString("DonatCase.Cases." + casename + ".Item." + winGroup + ".SubTitle"),
-                    "%groupdisplayname:" + winGroupDisplayName, "%group:" + winGroup));
-        } else {
-            subtitle = "";
-        }
-        player.sendTitle(title, subtitle, 5, 60, 5);
-
-        // Broadcast
-        if(giveType.equalsIgnoreCase("ONE")) {
-            for (String cmd2 : customConfig.getConfig().getStringList("DonatCase.Cases." + casename + ".Items." + winGroup + ".Broadcast")) {
-                Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(cmd2, "%player:" + player.getName(), "%group:" + winGroupDisplayName, "%case:" + caseTitle)));
-            }
-        }
-    }
-    public static CustomConfig getCustomConfig() {
+    /** Get plugin configuration manager
+     * @return configuration manager instance
+     */
+    public static @NotNull CustomConfig getCustomConfig() {
         return customConfig;
     }
 
+    /**
+     * Get case title
+     * @param caseName Case name
+     * @return case title
+     */
+    public static String getCaseTitle(String caseName) {
+        return casesConfig.getCase(caseName).getString("case.Title");
+    }
 }

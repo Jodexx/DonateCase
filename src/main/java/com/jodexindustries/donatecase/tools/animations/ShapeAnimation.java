@@ -30,6 +30,7 @@ public class ShapeAnimation implements Animation {
         String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
+            winGroupDisplayName = t.rc(winGroupDisplayName);
         }
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
@@ -69,6 +70,9 @@ public class ShapeAnimation implements Animation {
                         as.setHelmet(winItem2);
                     }
                     String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup2);
+                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                        winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
+                    }
                     as.setCustomName(Main.t.rc(winGroupDisplayName));
                     if (this.i <= 8) {
                         if (!Bukkit.getVersion().contains("1.12")) {

@@ -1,15 +1,16 @@
 package com.jodexindustries.donatecase.tools;
 
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.*;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
+import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
-import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -18,37 +19,40 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
-import static com.jodexindustries.donatecase.dc.Main.t;
+import static com.jodexindustries.donatecase.dc.Main.*;
+import static net.md_5.bungee.api.ChatColor.COLOR_CHAR;
 
 public class Tools {
 
 
-    public static String getRandomGroup(String casename) {
+    public static String getRandomGroup(String c) {
         Random random = new Random();
         int maxChance = 0;
         int from = 0;
 
-        Set<String> itemKeys = customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + casename + ".Items").getKeys(false);
+        Set<String> itemKeys = casesConfig.getCase(c).getConfigurationSection("case.Items").getKeys(false);
 
         for (String item : itemKeys) {
-            maxChance += customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance");
+            maxChance += casesConfig.getCase(c).getInt("case.Items." + item + ".Chance");
         }
 
         int rand = random.nextInt(maxChance);
 
         for (String item : itemKeys) {
-            int itemChance = customConfig.getConfig().getInt("DonatCase.Cases." + casename + ".Items." + item + ".Chance");
+            int itemChance = casesConfig.getCase(c).getInt("case.Items." + item + ".Chance");
             if (from <= rand && rand < from + itemChance) {
                 return item;
             }
@@ -93,7 +97,7 @@ public class Tools {
 
     public String rc(String t) {
         if(t != null) {
-            return ChatColor.translateAlternateColorCodes('&', t);
+            return hex(t);
         } else {
             return rc("&cMessage not found!");
         }
@@ -101,11 +105,13 @@ public class Tools {
 
     public String rt(String text, String... repl) {
         for (String s : repl) {
-            int l = s.split(":")[0].length();
-            if(text != null) {
-                text = text.replace(s.substring(0, l), s.substring(l + 1));
-            } else {
-                text = rc("&cMessage not found! Update lang file!");
+            if(s != null) {
+                int l = s.split(":")[0].length();
+                if (text != null) {
+                    text = text.replace(s.substring(0, l), s.substring(l + 1));
+                } else {
+                    text = rc("&cMessage not found! Update lang file!");
+                }
             }
         }
 
@@ -144,6 +150,65 @@ public class Tools {
         customConfig.getCases().set("config", "1.0");
         customConfig.saveCases();
         Logger.log("&aConversion successful!");
+    }
+
+    public void convertCases() {
+        ConfigurationSection cases = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+        if (cases != null) {
+            for (String caseName : cases.getKeys(false)) {
+                File folder = new File(Main.instance.getDataFolder(), "cases");
+                File caseFile;
+                try {
+                    caseFile = new File(folder, caseName + ".yml");
+                    caseFile.createNewFile();
+                    YamlConfiguration caseConfig = YamlConfiguration.loadConfiguration(caseFile);
+                    caseConfig.set("case", customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + caseName));
+                    String defaultMaterial = customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiMaterial");
+                    String defaultDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiMaterialName");
+                    boolean defaultEnchanted = customConfig.getConfig().getBoolean("DonatCase.Cases." + caseName + ".Gui.GuiMaterialEnchant");
+                    List<String> defaultLore = customConfig.getConfig().getStringList("DonatCase.Cases." + caseName + ".Gui.GuiMaterialLore");
+                    List<Integer> defaultSlots = new ArrayList<>();
+                    defaultSlots.add(0);
+                    defaultSlots.add(8);
+
+                    String openMaterial = customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterial");
+                    String openDisplayName = customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.DisplayName");
+                    boolean openEnchanted = customConfig.getConfig().getBoolean("DonatCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterialEnchant");
+                    List<String> openLore = customConfig.getConfig().getStringList("DonatCase.Cases." + caseName + ".Gui.Lore");
+                    List<Integer> openSlots = new ArrayList<>();
+                    openSlots.add(22);
+
+                    caseConfig.set("case.Gui", null);
+                    caseConfig.save(caseFile);
+                    caseConfig.set("case.Gui.Items.1.DisplayName", defaultDisplayName);
+                    caseConfig.set("case.Gui.Items.1.Enchanted", defaultEnchanted);
+                    caseConfig.set("case.Gui.Items.1.Lore", defaultLore);
+                    caseConfig.set("case.Gui.Items.1.Material", defaultMaterial);
+                    caseConfig.set("case.Gui.Items.1.Type", "DEFAULT");
+                    caseConfig.set("case.Gui.Items.1.Slots", defaultSlots);
+
+                    caseConfig.set("case.Gui.Items.Open.DisplayName", openDisplayName);
+                    caseConfig.set("case.Gui.Items.Open.Enchanted", openEnchanted);
+                    caseConfig.set("case.Gui.Items.Open.Lore", openLore);
+                    caseConfig.set("case.Gui.Items.Open.Material", openMaterial);
+                    caseConfig.set("case.Gui.Items.Open.Type", "OPEN");
+                    caseConfig.set("case.Gui.Items.Open.Slots", openSlots);
+
+                    caseConfig.set("case.Gui.Size", 45);
+                    caseConfig.save(caseFile);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        customConfig.getConfig().set("DonatCase.Cases", null);
+        customConfig.saveConfig();
+    }
+    public List<File> getCasesInFolder() {
+        List<File> files = new ArrayList<>();
+        File directory = new File(Main.instance.getDataFolder(), "cases");
+        Collections.addAll(files, Objects.requireNonNull(directory.listFiles()));
+        return files;
     }
     public Location fromString(String str) {
         String regex = "Location\\{world=CraftWorld\\{name=(.*?)},x=(.*?),y=(.*?),z=(.*?),pitch=(.*?),yaw=(.*?)}";
@@ -189,8 +254,8 @@ public class Tools {
         }
     }
 
-    public ItemStack createItem(Material ma, int amount, int data, String dn, boolean enchant) {
-        return createItem(ma, data, amount, dn, null, enchant);
+    public ItemStack createItem(Material ma, int amount, int data, String dn, boolean enchant, String[] rgb) {
+        return createItem(ma, data, amount, dn, null, enchant, rgb);
     }
 
     public Color parseColor(String s) {
@@ -216,7 +281,7 @@ public class Tools {
                             try {
                                 return (Color) field.get(null);
                             } catch (IllegalArgumentException | IllegalAccessException e1) {
-                                e1.printStackTrace();
+                                throw new RuntimeException(e1);
                             }
                         }
 
@@ -235,7 +300,7 @@ public class Tools {
                         try {
                             return (Color) field.get(null);
                         } catch (IllegalArgumentException | IllegalAccessException e1) {
-                            e1.printStackTrace();
+                            throw new RuntimeException(e1);
                         }
                     }
 
@@ -246,62 +311,48 @@ public class Tools {
 
         return color;
     }
-    public ItemStack getPlayerHead(String player, String displayname) {
-        Material type = Material.getMaterial( "SKULL_ITEM" );
-        if (  type == null ) {
-            type = Material.getMaterial( "PLAYER_HEAD" );
-        }
-        ItemStack item = new ItemStack(type, 1);
-        SkullMeta meta = (SkullMeta) item.getItemMeta();
-        meta.setOwner(player);
-        item.setItemMeta(meta);
-        ItemMeta itemmeta = item.getItemMeta();
-        Objects.requireNonNull(itemmeta).setDisplayName(rc(displayname));
-        item.setItemMeta(itemmeta);
 
-        return item;
-    }
-
-
-    public ItemStack getPlayerHead(String player, String displayname, List<String> lore) {
+    public ItemStack getPlayerHead(String player, String displayName, List<String> lore) {
         Material type = Material.getMaterial("SKULL_ITEM");
         ItemStack item;
         if (type == null) {
-            item = new ItemStack(Material.getMaterial("PLAYER_HEAD"));
+            item = new ItemStack(Objects.requireNonNull(Material.getMaterial("PLAYER_HEAD")));
         } else {
-            item = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short) 3);
+            item = new ItemStack(Objects.requireNonNull(Material.getMaterial("SKULL_ITEM")), 1, (short) 3);
         }
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         if (meta != null) {
             meta.setOwner(player);
+            meta.setDisplayName(rc(displayName));
+            if(lore != null) {
+                meta.setLore(rc(lore));
+            }
+            item.setItemMeta(meta);
         }
-        item.setItemMeta(meta);
-        ItemMeta itemmeta = item.getItemMeta();
-        itemmeta.setDisplayName(rc(displayname));
-        itemmeta.setLore(rc(lore));
-        item.setItemMeta(itemmeta);
 
         return item;
     }
-    public ItemStack getBASE64Skull(String url, String displayname, List<String> lore) {
+    public ItemStack getBASE64Skull(String url, String displayName, List<String> lore) {
         ItemStack item = MojangHeads.getSkull("http://textures.minecraft.net/texture/" + url);
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(rc(displayname));
-        itemMeta.setLore(rc(lore));
-        item.setItemMeta(itemMeta);
+        ItemMeta meta = item.getItemMeta();
+        if(meta != null) {
+            meta.setDisplayName(rc(displayName));
+            if (lore != null) {
+                meta.setLore(rc(lore));
+            }
+            item.setItemMeta(meta);
+        }
         return item;
     }
-    public ItemStack getBASE64Skull(String url, String displayname) {
-        ItemStack item = MojangHeads.getSkull("http://textures.minecraft.net/texture/" + url);
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(rc(displayname));
-        item.setItemMeta(itemMeta);
-        return item;
+    public ItemStack getBASE64Skull(String url, String displayName) {
+        return getBASE64Skull(url, displayName, null);
     }
 
     public ItemStack getWinItem(String c, String winGroup, Player player) {
         String winGroupId = Case.getWinGroupId(c, winGroup);
+        MaterialType materialType = t.getMaterialType(winGroupId);
         String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
+        String[] rgb = Case.getWinGroupRgb(c, winGroup);
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
             winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
@@ -315,34 +366,45 @@ public class Tools {
                 material = Material.STONE;
             }
             if(material != Material.AIR) {
-                winItem = t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant);
+                winItem = t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant, rgb);
             } else {
                 winItem = new ItemStack(Material.AIR);
                 ItemMeta meta = winItem.getItemMeta();
                 winItem.setItemMeta(meta);
             }
         } else {
-            if (winGroupId.startsWith("HEAD")) {
+            if (materialType == MaterialType.HEAD) {
                 String[] parts = winGroupId.split(":");
-                winItem = t.getPlayerHead(parts[1], winGroupDisplayName);
-            } else if (winGroupId.startsWith("HDB")) {
+                winItem = t.getPlayerHead(parts[1], winGroupDisplayName, null);
+            } else if (materialType == MaterialType.HDB) {
                 String[] parts = winGroupId.split(":");
                 String id = parts[1];
                 if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                    winItem = HeadDatabaseSupport.getSkull(id, winGroupDisplayName);
+                    winItem = HeadDatabaseSupport.getSkull(id, winGroupDisplayName, null);
                 } else {
                     winItem = new ItemStack(Material.STONE);
                 }
-            } else if (winGroupId.startsWith("CH")) {
+            } else if (materialType == MaterialType.CH) {
                 String[] parts = winGroupId.split(":");
                 String category = parts[1];
                 String id = parts[2];
                 if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                    winItem = CustomHeadSupport.getSkull(category, id, winGroupDisplayName);
+                    winItem = CustomHeadSupport.getSkull(category, id, winGroupDisplayName, null);
                 } else {
                     winItem = new ItemStack(Material.STONE);
                 }
-            } else if (winGroupId.startsWith("BASE64")) {
+            } else if (materialType == MaterialType.IA) {
+                String[] parts = winGroupId.split(":");
+                String namespace = parts[1];
+                String id = parts[2];
+                if(instance.getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
+                    winItem = ItemsAdderSupport.getItem(namespace + ":" + id, winGroupDisplayName, null);
+                } else {
+                    winItem = new ItemStack(Material.STONE);
+                    instance.getLogger().warning("ItemsAdder not loaded! Group: " + winGroup + " Case: " + c);
+                }
+            }
+            else if (materialType == MaterialType.BASE64) {
                 String[] parts = winGroupId.split(":");
                 String base64 = parts[1];
                 winItem = t.getBASE64Skull(base64, winGroupDisplayName);
@@ -356,36 +418,175 @@ public class Tools {
                 if (material == null) {
                     material = Material.STONE;
                 }
-                winItem = t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant);
+                winItem = t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant, rgb);
             }
         }
         return winItem;
     }
 
-    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant) {
+    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb) {
         ItemStack item;
         if(data == -1) {
             item = new ItemStack(ma, amount);
-        } else {
+        } else if (Bukkit.getVersion().contains("1.12.2")){
             item = new ItemStack(ma, amount, (short) 1, (byte) data);
+        } else {
+            item = new ItemStack(ma, amount);
         }
         if(enchant && !ma.equals(Material.AIR)) {
             item.addUnsafeEnchantment(Enchantment.LURE, 1);
         }
         ItemMeta m = item.getItemMeta();
-        if (dn != null) {
-            m.setDisplayName(rc(dn));
-        }
+        if(m != null) {
+            if (dn != null) {
+                m.setDisplayName(rc(dn));
+            }
 
-        if (lore != null ) {
-            m.setLore(this.rc(lore));
-        }
-        if (enchant && !ma.equals(Material.AIR)) {
-            m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
+            if (lore != null) {
 
-        item.setItemMeta(m);
+                m.setLore(this.rc(lore));
+            }
+            if (enchant && !ma.equals(Material.AIR)) {
+                m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
+
+            item.setItemMeta(m);
+
+            if (rgb != null && m instanceof LeatherArmorMeta) {
+                LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) m;
+                int r = Integer.parseInt(rgb[0]);
+                int g = Integer.parseInt(rgb[1]);
+                int b = Integer.parseInt(rgb[2]);
+                leatherArmorMeta.setColor(Color.fromRGB(r, g, b));
+                item.setItemMeta(leatherArmorMeta);
+            }
+        }
         return item;
+    }
+    public MaterialType getMaterialType(String material) {
+        if (material.contains(":")) {
+            if (material.startsWith("HEAD")) {
+                return MaterialType.HEAD;
+            } else if (material.startsWith("HDB")) {
+                return MaterialType.HDB;
+            } else if (material.startsWith("CH")) {
+                return MaterialType.CH;
+            } else if (material.startsWith("BASE64")) {
+                return MaterialType.BASE64;
+            } else if(material.startsWith("IA")) {
+                return MaterialType.IA;
+            }
+        }
+        return MaterialType.DEFAULT;
+    }
+    public List<Integer> getOpenMaterialSlots(String c) {
+        List<Integer> slots = new ArrayList<>();
+        for (String item : casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
+            if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type").startsWith("OPEN")) {
+                List<Integer> list = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
+                slots.addAll(list);
+            }
+        }
+        return slots;
+    }
+    public Map<List<Integer>, String> getOpenMaterialItemsBySlots(String c) {
+        Map<List<Integer>, String> map = new HashMap<>();
+        for (String item : casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
+            if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type").startsWith("OPEN")) {
+                List<Integer> slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
+                String type = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type");
+                if(type.contains("_")) {
+                    type = type.split("_")[1];
+                }
+                map.put(slots, type);
+            }
+        }
+        return map;
+    }
+    public String getOpenMaterialTypeByMapBySlot(String c, int slot) {
+        Map<List<Integer>, String> map = getOpenMaterialItemsBySlots(c);
+        for (List<Integer> list : map.keySet()) {
+            if(list.contains(slot)) {
+                return map.get(list);
+            }
+        }
+        return null;
+    }
+
+    public String hex(String message) {
+        Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
+        Matcher matcher = pattern.matcher(message);
+        while (matcher.find()) {
+            String hexCode = message.substring(matcher.start(), matcher.end());
+            String replaceSharp = hexCode.replace('#', 'x');
+
+            char[] ch = replaceSharp.toCharArray();
+            StringBuilder builder = new StringBuilder();
+            for (char c : ch) {
+                builder.append("&").append(c);
+            }
+
+            message = message.replace(hexCode, builder.toString());
+            matcher = pattern.matcher(message);
+        }
+        return ChatColor.translateAlternateColorCodes('&', message);
+    }
+
+    public int getPluginVersion(String version) {
+        StringBuilder builder = new StringBuilder();
+        version = version.replaceAll("\\.", "");
+        if(version.length() < 4) {
+            builder.append(version).append("0");
+        } else {
+            builder.append(version);
+        }
+        return Integer.parseInt(builder.toString());
+    }
+    public boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
+        for (String addon : addonsMap.keySet()) {
+            List<Map<String, SubCommand>> commands = addonsMap.get(addon);
+            for (Map<String, SubCommand> command : commands) {
+                for (String commandName : command.keySet()) {
+                    SubCommand subCommand = command.get(commandName);
+                    if(sender.hasPermission("donatecase.admin")) {
+                        if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                            return true;
+                        }
+                    } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
+                        if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                            return true;
+                        }
+                    } else if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
+                        if (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    public boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, String addon) {
+            List<Map<String, SubCommand>> commands = addonsMap.get(addon);
+            for (Map<String, SubCommand> command : commands) {
+                for (String commandName : command.keySet()) {
+                    SubCommand subCommand = command.get(commandName);
+                    if (sender.hasPermission("donatecase.admin")) {
+                        if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                            return true;
+                        }
+                    } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
+                        if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                            return true;
+                        }
+                    } else if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
+                        if (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        return false;
     }
 
 }

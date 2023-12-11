@@ -8,53 +8,74 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 public class CustomConfig {
-    private File filec;
-    private File filek;
-    private File filecon;
-    private File fileanim;
-    private YamlConfiguration Cases;
-    private YamlConfiguration Keys;
-    public YamlConfiguration Config;
-    public YamlConfiguration Animations;
+    private final File fileCases;
+    private final File fileKeys;
+    private final File fileConfig;
+    private final File fileAnimations;
+    private final File fileData;
+    private final YamlConfiguration Cases;
+    private final YamlConfiguration Keys;
+    private final YamlConfiguration Config;
+    private final YamlConfiguration Animations;
+    private final YamlConfiguration Data;
 
     public CustomConfig() {
-        fileanim = new File(Main.instance.getDataFolder(), "Animations.yml");
-        Animations = YamlConfiguration.loadConfiguration(fileanim);
-        filec = new File(Main.instance.getDataFolder(), "Cases.yml");
-        Cases = YamlConfiguration.loadConfiguration(filec);
-        filek = new File(Main.instance.getDataFolder(), "Keys.yml");
-        Keys = YamlConfiguration.loadConfiguration(filek);
-        filecon = new File(Main.instance.getDataFolder(), "Config.yml");
-        Config = YamlConfiguration.loadConfiguration(filecon);
+        fileAnimations = new File(Main.instance.getDataFolder(), "Animations.yml");
+        Animations = YamlConfiguration.loadConfiguration(fileAnimations);
+        fileCases = new File(Main.instance.getDataFolder(), "Cases.yml");
+        Cases = YamlConfiguration.loadConfiguration(fileCases);
+        fileKeys = new File(Main.instance.getDataFolder(), "Keys.yml");
+        Keys = YamlConfiguration.loadConfiguration(fileKeys);
+        fileConfig = new File(Main.instance.getDataFolder(), "Config.yml");
+        Config = YamlConfiguration.loadConfiguration(fileConfig);
+        fileData = new File(Main.instance.getDataFolder(), "Data.yml");
+        Data = YamlConfiguration.loadConfiguration(fileData);
     }
 
-
     public void reload(){
-        fileanim = new File(Main.instance.getDataFolder(), "Animations.yml");
-        Animations = YamlConfiguration.loadConfiguration(fileanim);
-        filec = new File(Main.instance.getDataFolder(), "Cases.yml");
-        Cases = YamlConfiguration.loadConfiguration(filec);
-        filek = new File(Main.instance.getDataFolder(), "Keys.yml");
-        Keys = YamlConfiguration.loadConfiguration(filek);
-        filecon = new File(Main.instance.getDataFolder(), "Config.yml");
-        Config = YamlConfiguration.loadConfiguration(filecon);
         Main.instance.setupConfigs();
     }
 
     public void saveCases() {
         try {
-            Cases.save(filec);
+            Cases.save(fileCases);
         } catch (IOException var1) {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Cases.yml");
+        }
+
+    }
+    public void saveConfig() {
+        try {
+            Config.save(fileConfig);
+        } catch (IOException var1) {
+            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Config.yml");
         }
 
     }
 
     public void saveKeys() {
         try {
-            Keys.save(filek);
+            Keys.save(fileKeys);
         } catch (IOException var1) {
             Main.instance.getLogger().log(Level.WARNING, "Couldn't save Keys.yml");
+        }
+    }
+
+    public void saveAnimations() {
+        try {
+            Animations.save(fileAnimations);
+        } catch (IOException var1) {
+            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
+        }
+
+    }
+
+
+    public void saveData() {
+        try {
+            Data.save(fileData);
+        } catch (IOException var1) {
+            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Data.yml");
         }
 
     }
@@ -85,5 +106,11 @@ public class CustomConfig {
             reload();
         }
         return Animations;
+    }
+    public YamlConfiguration getData() {
+        if(Data == null) {
+            reload();
+        }
+        return Data;
     }
 }

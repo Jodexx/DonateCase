@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -51,10 +52,10 @@ public class AnimationManager {
         if (animationClass != null) {
             try {
                 Animation animation = animationClass.newInstance();
-                animation.start(player, location, c);
+                animation.start(player, Case.getCaseLocationByBlockLocation(location), c);
                 Case.ActiveCase.put(location.getBlock().getLocation(), c);
                 for (Player pl : Bukkit.getOnlinePlayers()) {
-                    if (Case.openCase.containsKey(pl.getUniqueId()) && Main.t.isHere(location.getBlock().getLocation(), Case.openCase.get(pl.getUniqueId()))) {
+                    if (Case.playerOpensCase.containsKey(pl.getUniqueId()) && Main.t.isHere(location.getBlock().getLocation(), Case.playerOpensCase.get(pl.getUniqueId()).getLocation())) {
                         pl.closeInventory();
                     }
                 }

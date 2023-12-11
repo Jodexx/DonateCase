@@ -19,8 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
-import static com.jodexindustries.donatecase.dc.Main.t;
+import static com.jodexindustries.donatecase.dc.Main.*;
 
 public class FullWheelAnimation implements Animation {
 
@@ -51,7 +50,7 @@ public class FullWheelAnimation implements Animation {
         loc.setPitch(pitch);
         loc.setZ(loc.getZ() + 0.5);
         // register items
-        Set<String> configGroups = customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + c + ".Items").getKeys(false);
+        Set<String> configGroups = casesConfig.getCase(c).getConfigurationSection("case.Items").getKeys(false);
         int itemscount = configGroups.size();
         final String finalWinGroup = Case.getRandomGroup(c);
         configGroups.remove(finalWinGroup);
@@ -75,7 +74,7 @@ public class FullWheelAnimation implements Animation {
             final double rotationThreshold = Math.PI / (itemscount * speed);
 
             final double offset = 2 * Math.PI / itemscount;
-            final Location location = loc.clone().add(loc.getDirection().multiply(1).getX() + 0.5, -1 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"), 0);
+            final Location location = loc.clone().add(loc.getDirection().getX() + 0.5, -1 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"), 0);
             public void run() {
                 ticks++;
                 double angle = ticks / 20.0;
