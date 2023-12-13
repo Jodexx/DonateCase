@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
+import day.dean.skullcreator.SkullCreator;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.command.CommandSender;
@@ -333,7 +334,7 @@ public class Tools {
         return item;
     }
     public ItemStack getBASE64Skull(String url, String displayName, List<String> lore) {
-        ItemStack item = MojangHeads.getSkull("http://textures.minecraft.net/texture/" + url);
+        ItemStack item = SkullCreator.itemFromUrl("http://textures.minecraft.net/texture/" + url);
         ItemMeta meta = item.getItemMeta();
         if(meta != null) {
             meta.setDisplayName(rc(displayName));
@@ -494,9 +495,11 @@ public class Tools {
         for (String item : casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
             if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type").startsWith("OPEN")) {
                 List<Integer> slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
-                String type = c;
+                String type = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type");
                 if(type.contains("_")) {
                     type = type.split("_")[1];
+                } else {
+                    type = c;
                 }
                 map.put(slots, type);
             }
