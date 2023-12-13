@@ -5,7 +5,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.inventory.ItemStack;
@@ -33,8 +32,6 @@ public class SkullCreator {
 
     private static boolean warningPosted = false;
 
-    // some reflection stuff to be used when setting a skull's profile
-    private static Field blockProfileField;
     private static Method metaSetProfileMethod;
     private static Field metaProfileField;
 
@@ -62,15 +59,6 @@ public class SkullCreator {
         return itemWithName(createSkull(), name);
     }
 
-    /**
-     * Creates a player skull item with the skin based on a player's UUID.
-     *
-     * @param id The Player's UUID.
-     * @return The head of the Player.
-     */
-    public static ItemStack itemFromUuid(UUID id) {
-        return itemWithUuid(createSkull(), id);
-    }
 
     /**
      * Creates a player skull item with the skin at a Mojang URL.
@@ -106,30 +94,13 @@ public class SkullCreator {
         notNull(name, "name");
 
         SkullMeta meta = (SkullMeta) item.getItemMeta();
-        meta.setOwner(name);
+        if (meta != null) {
+            meta.setOwner(name);
+        }
         item.setItemMeta(meta);
 
         return item;
     }
-
-    /**
-     * Modifies a skull to use the skin of the player with a given UUID.
-     *
-     * @param item The item to apply the name to. Must be a player skull.
-     * @param id   The Player's UUID.
-     * @return The head of the Player.
-     */
-    public static ItemStack itemWithUuid(ItemStack item, UUID id) {
-        notNull(item, "item");
-        notNull(id, "id");
-
-        SkullMeta meta = (SkullMeta) item.getItemMeta();
-        meta.setOwningPlayer(Bukkit.getOfflinePlayer(id));
-        item.setItemMeta(meta);
-
-        return item;
-    }
-
     /**
      * Modifies a skull to use the skin at the given Mojang URL.
      *
@@ -182,64 +153,6 @@ public class SkullCreator {
         state.update(false, false);
     }
 
-    /**
-     * Sets the block to a skull with the given UUID.
-     *
-     * @param block The block to set.
-     * @param id    The player to set it to.
-     */
-    public static void blockWithUuid(Block block, UUID id) {
-        notNull(block, "block");
-        notNull(id, "id");
-
-        setToSkull(block);
-        Skull state = (Skull) block.getState();
-        state.setOwningPlayer(Bukkit.getOfflinePlayer(id));
-        state.update(false, false);
-    }
-
-    /**
-     * Sets the block to a skull with the skin found at the provided mojang URL.
-     *
-     * @param block The block to set.
-     * @param url   The mojang URL to set it to use.
-     */
-    public static void blockWithUrl(Block block, String url) {
-        notNull(block, "block");
-        notNull(url, "url");
-
-        blockWithBase64(block, urlToBase64(url));
-    }
-
-    /**
-     * Sets the block to a skull with the skin for the base64 string.
-     *
-     * @param block  The block to set.
-     * @param base64 The base64 to set it to use.
-     */
-    public static void blockWithBase64(Block block, String base64) {
-        notNull(block, "block");
-        notNull(base64, "base64");
-
-        setToSkull(block);
-        Skull state = (Skull) block.getState();
-        mutateBlockState(state, base64);
-        state.update(false, false);
-    }
-
-    private static void setToSkull(Block block) {
-        checkLegacy();
-
-        try {
-            block.setType(Material.valueOf("PLAYER_HEAD"), false);
-        } catch (IllegalArgumentException e) {
-            block.setType(Material.valueOf("SKULL"), false);
-            Skull state = (Skull) block.getState();
-            state.setSkullType(SkullType.PLAYER);
-            state.update(false, false);
-        }
-    }
-
     private static void notNull(Object o, String name) {
         if (o == null) {
             throw new NullPointerException(name + " should not be null!");
@@ -254,7 +167,7 @@ public class SkullCreator {
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-        String toEncode = "{\"textures\":{\"SKIN\":{\"url\":\"" + actualUrl.toString() + "\"}}}";
+        String toEncode = "{\"textures\":{\"SKIN\":{\"url\":\"" + actualUrl + "\"}}}";
         return Base64.getEncoder().encodeToString(toEncode.getBytes());
     }
 
@@ -267,18 +180,6 @@ public class SkullCreator {
         GameProfile profile = new GameProfile(id, "Player");
         profile.getProperties().put("textures", new Property("textures", b64));
         return profile;
-    }
-
-    private static void mutateBlockState(Skull block, String b64) {
-        try {
-            if (blockProfileField == null) {
-                blockProfileField = block.getClass().getDeclaredField("profile");
-                blockProfileField.setAccessible(true);
-            }
-            blockProfileField.set(block, makeProfile(b64));
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 
     private static void mutateItemMeta(SkullMeta meta, String b64) {
@@ -306,7 +207,6 @@ public class SkullCreator {
 
     // suppress warning since PLAYER_HEAD doesn't exist in 1.12.2,
     // but we expect this and catch the error at runtime.
-    @SuppressWarnings("JavaReflectionMemberAccess")
     private static void checkLegacy() {
         try {
             // if both of these succeed, then we are running
