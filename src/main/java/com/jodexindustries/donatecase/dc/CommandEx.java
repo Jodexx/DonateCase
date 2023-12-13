@@ -160,7 +160,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                     }
                                     result = NumberFormat.getNumberInstance().format(keys);
                                 }
-                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', string.replaceAll("%" + placeholder + "%", result)));
+                                sender.sendMessage(t.rc(string.replaceAll("%" + placeholder + "%", result)));
                             }
                         }
                     }
@@ -188,7 +188,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                 }
                                 result = NumberFormat.getNumberInstance().format(keys);
                             }
-                            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', string).replace("%player", target)
+                            sender.sendMessage(t.rc(string).replace("%player", target)
                                     .replace("%"+placeholder+"%", result));
                         }
                     } else {
