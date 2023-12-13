@@ -1,6 +1,9 @@
 package com.jodexindustries.donatecase.tools;
 
-import com.jodexindustries.donatecase.api.*;
+import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.MaterialType;
+import com.jodexindustries.donatecase.api.SubCommand;
+import com.jodexindustries.donatecase.api.SubCommandType;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
@@ -34,7 +37,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.jodexindustries.donatecase.dc.Main.*;
-import static net.md_5.bungee.api.ChatColor.COLOR_CHAR;
 
 public class Tools {
 
@@ -483,7 +485,7 @@ public class Tools {
     public List<Integer> getOpenMaterialSlots(String c) {
         List<Integer> slots = new ArrayList<>();
         for (String item : casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
-            if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type").startsWith("OPEN")) {
+            if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "").startsWith("OPEN")) {
                 List<Integer> list = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
                 slots.addAll(list);
             }
@@ -493,9 +495,9 @@ public class Tools {
     public Map<List<Integer>, String> getOpenMaterialItemsBySlots(String c) {
         Map<List<Integer>, String> map = new HashMap<>();
         for (String item : casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
-            if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type").startsWith("OPEN")) {
+            if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "").startsWith("OPEN")) {
                 List<Integer> slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
-                String type = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type");
+                String type = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "");
                 if(type.contains("_")) {
                     type = type.split("_")[1];
                 } else {

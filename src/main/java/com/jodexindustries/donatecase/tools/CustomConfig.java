@@ -61,14 +61,14 @@ public class CustomConfig {
         }
     }
 
-    public void saveAnimations() {
-        try {
-            Animations.save(fileAnimations);
-        } catch (IOException var1) {
-            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
-        }
-
-    }
+//    public void saveAnimations() {
+//        try {
+//            Animations.save(fileAnimations);
+//        } catch (IOException var1) {
+//            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
+//        }
+//
+//    }
 
 
     public void saveData() {

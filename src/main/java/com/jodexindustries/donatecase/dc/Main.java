@@ -53,7 +53,7 @@ public class Main extends JavaPlugin {
 
         customConfig.getConfig().addDefault("DonatCase.NoKeyWarningSound", "ENTITY_ENDERMAN_TELEPORT");
 
-        if(customConfig.getCases().getString("config") == null || !customConfig.getCases().getString("config").equalsIgnoreCase("1.0")) {
+        if(customConfig.getCases().getString("config") == null || !customConfig.getCases().getString("config", "").equalsIgnoreCase("1.0")) {
             Logger.log("Conversion of case locations to a new method of storage...");
             t.convertCasesLocation();
         }
@@ -75,7 +75,7 @@ public class Main extends JavaPlugin {
         Metrics metrics = new Metrics(this, 18709);
         metrics.addCustomChart(new Metrics.SimplePie("language", () -> customConfig.getConfig().getString("DonatCase.Languages")));
 
-        Tconfig = customConfig.getConfig().getString("DonatCase.MySql.Enabled").equalsIgnoreCase("false");
+        Tconfig = !customConfig.getConfig().getBoolean("DonatCase.MySql.Enabled");
         if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             instance.setupPermissions();
         }
@@ -175,7 +175,7 @@ public class Main extends JavaPlugin {
 
         }
 
-        if (!customConfig.getConfig().getString("config").equals("2.5")) {
+        if (!customConfig.getConfig().getString("config", "").equals("2.5")) {
             Logger.log("&cOutdated Config.yml! Creating a new!");
             ConfigFile = new File(this.getDataFolder(), "Config.yml");
             ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
@@ -191,7 +191,7 @@ public class Main extends JavaPlugin {
             customConfig = new CustomConfig();
         }
 
-        if (!customConfig.getAnimations().getString("config").equals("1.3")) {
+        if (!customConfig.getAnimations().getString("config", "").equals("1.3")) {
             Logger.log("&cOutdated Animations.yml! Creating a new!");
             AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
             AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
@@ -230,7 +230,7 @@ public class Main extends JavaPlugin {
 
     public void setupLangs() {
         lang = (new Languages(customConfig.getConfig().getString("DonatCase.Languages"))).getLang();
-        if (lang.getString("config") == null || !lang.getString("config").equals("2.5")) {
+        if (lang.getString("config") == null || !lang.getString("config", "").equals("2.5")) {
             Logger.log("&cOutdated lang config! Creating a new!");
             langRu = new File(this.getDataFolder(), "lang/ru_RU.yml");
             langRu.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));

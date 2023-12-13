@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.api;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.CustomConfig;
-import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
@@ -372,9 +371,9 @@ public class Case {
         String winGroupDisplayName = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Item.DisplayName");
         String winGroupGroup = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Group");
         // Give command
-        String giveСommand = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".GiveCommand");
+        String giveCommand = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".GiveCommand");
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            giveСommand = PAPISupport.setPlaceholders(player, giveСommand);
+            giveCommand = PAPISupport.setPlaceholders(player, giveCommand);
         }
         String giveType = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".GiveType", "ONE");
         if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && Main.getPermissions() != null) {
@@ -382,7 +381,7 @@ public class Case {
             if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) ||
                     customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {
                 if (giveType.equalsIgnoreCase("ONE")) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveСommand, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveCommand, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
                 } else {
                     String endCommand = "";
                     Random random = new Random();
@@ -413,7 +412,7 @@ public class Case {
             }
         } else {
             if(giveType.equalsIgnoreCase("ONE")) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveСommand, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveCommand, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
             } else {
                 String endCommand = "";
                 Random random = new Random();
