@@ -19,8 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static com.jodexindustries.donatecase.dc.Main.casesConfig;
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
+import static com.jodexindustries.donatecase.dc.Main.*;
 
 
 public class Case {
@@ -367,89 +366,29 @@ public class Case {
      */
     public static void onCaseOpenFinish(String caseName, Player player, boolean needSound, String winGroup) {
         String sound;
-        String caseTitle = casesConfig.getCase(caseName).getString("case.Title");
-        String winGroupDisplayName = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Item.DisplayName");
-        String winGroupGroup = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Group");
-        // Give command
-        String giveCommand = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".GiveCommand");
-        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            giveCommand = PAPISupport.setPlaceholders(player, giveCommand);
-        }
+        String winGroupDisplayName = t.rc(casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Item.DisplayName"));
+        String winGroupName = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Group");
         String giveType = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".GiveType", "ONE");
+        List<String> actions = casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".Actions");
+
         if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && Main.getPermissions() != null) {
             String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
             if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) ||
-                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupGroup)) {
+                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupName)) {
                 if (giveType.equalsIgnoreCase("ONE")) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveCommand, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
+                    executeActions(actions, player, winGroupName, winGroupDisplayName);
                 } else {
-                    String endCommand = "";
-                    Random random = new Random();
-                    int maxChance = 0;
-                    int from = 0;
-                    for (String command : casesConfig.getCase(caseName).getConfigurationSection("case.Items." + winGroup + ".GiveCommands").getKeys(false)) {
-                        maxChance += casesConfig.getCase(caseName).getInt("case.Items." + winGroup + ".GiveCommands." + command  + ".Chance");
-                    }
-                    int rand = random.nextInt(maxChance);
-                    for (String command : casesConfig.getCase(caseName).getConfigurationSection("case.Items." + winGroup + ".GiveCommands").getKeys(false)) {
-                        int itemChance = casesConfig.getCase(caseName).getInt("case.Items." + winGroup + ".GiveCommands." + command + ".Chance");
-                        if (from <= rand && rand < from + itemChance) {
-                            endCommand = command;
-                            break;
-                        }
-                        from += itemChance;
-                    }
-                    for (String command : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Commands")) {
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
-                    }
-                    for (String broadcast : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Broadcast")) {
-                        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                            broadcast = PAPISupport.setPlaceholders(player, broadcast);
-                        }
-                        Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player%:" + player.getName(), "%group%:" + winGroupDisplayName, "%case%:" + caseTitle)));
-                    }
+                    String choice = getChoice(caseName, winGroup);
+                    executeActions(casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".RandomActions." + choice + ".Actions"), player, winGroupName, winGroupDisplayName);
                 }
             }
         } else {
             if(giveType.equalsIgnoreCase("ONE")) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(giveCommand, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
+                executeActions(actions, player, winGroupName, winGroupDisplayName);
             } else {
-                String endCommand = "";
-                Random random = new Random();
-                int maxChance = 0;
-                int from = 0;
-                for (String command : casesConfig.getCase(caseName).getConfigurationSection("case.Items." + winGroup + ".GiveCommands").getKeys(false)) {
-                    maxChance += casesConfig.getCase(caseName).getInt("case.Items." + winGroup + ".GiveCommands." + command  + ".Chance");
-                }
-                int rand = random.nextInt(maxChance);
-                for (String command : casesConfig.getCase(caseName).getConfigurationSection("case.Items." + winGroup + ".GiveCommands").getKeys(false)) {
-                    int itemChance = casesConfig.getCase(caseName).getInt("case.Items." + winGroup + ".GiveCommands." + command + ".Chance");
-                    if (from <= rand && rand < from + itemChance) {
-                        endCommand = command;
-                        break;
-                    }
-                    from += itemChance;
-                }
-                for (String command : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Commands")) {
-                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                        command = PAPISupport.setPlaceholders(player, command);
-                    }
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
-                }
-                for (String broadcast : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".GiveCommands." + endCommand + ".Broadcast")) {
-                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                        broadcast = PAPISupport.setPlaceholders(player, broadcast);
-                    }
-                    Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(broadcast, "%player%:" + player.getName(), "%group%:" + winGroupDisplayName, "%case%:" + caseTitle)));
-                }
+                String choice = getChoice(caseName, winGroup);
+                executeActions(casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".RandomActions." + choice + ".Actions"), player, winGroupName, winGroupDisplayName);
             }
-        }
-        // Custom commands
-        for (String command : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".Commands")) {
-            if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                command = PAPISupport.setPlaceholders(player, command);
-            }
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(command, "%player%:" + player.getName(), "%group%:" + winGroupGroup));
         }
         // Sound
         if (needSound) {
@@ -462,33 +401,53 @@ public class Case {
                 }
             }
         }
-        // Title && SubTitle
-        String title;
-        if (customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Item." + winGroup + ".Title") != null) {
-            title = Main.t.rc(Main.t.rt(casesConfig.getCase(caseName).getString("case.Item." + winGroup + ".Title"),
-                    "%groupdisplayname%:" + winGroupDisplayName, "%group%:" + winGroup));
-        } else {
-            title = "";
+    }
+    private static String getChoice(String caseName, String winGroup) {
+        String endCommand = "";
+        Random random = new Random();
+        int maxChance = 0;
+        int from = 0;
+        for (String command : casesConfig.getCase(caseName).getConfigurationSection("case.Items." + winGroup + ".RandomActions").getKeys(false)) {
+            maxChance += casesConfig.getCase(caseName).getInt("case.Items." + winGroup + ".RandomActions." + command  + ".Chance");
         }
-        String subtitle;
-        if (casesConfig.getCase(caseName).getString("case.Item." + winGroup + ".Title") != null) {
-            subtitle = Main.t.rc(Main.t.rt(casesConfig.getCase(caseName).getString("case.Item." + winGroup + ".SubTitle"),
-                    "%groupdisplayname%:" + winGroupDisplayName, "%group%:" + winGroup));
-        } else {
-            subtitle = "";
+        int rand = random.nextInt(maxChance);
+        for (String command : casesConfig.getCase(caseName).getConfigurationSection("case.Items." + winGroup + ".RandomActions").getKeys(false)) {
+            int itemChance = casesConfig.getCase(caseName).getInt("case.Items." + winGroup + ".RandomActions." + command + ".Chance");
+            if (from <= rand && rand < from + itemChance) {
+                endCommand = command;
+                break;
+            }
+            from += itemChance;
         }
-        player.sendTitle(title, subtitle, 5, 60, 5);
+        return endCommand;
+    }
 
-        // Broadcast
-        if(giveType.equalsIgnoreCase("ONE")) {
-            for (String cmd2 : casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".Broadcast")) {
-                if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                    cmd2 = PAPISupport.setPlaceholders(player, cmd2);
+    private static void executeActions(List<String> actions, Player player, String winGroupGroup, String winGroupDisplayName) {
+        for (String action : actions) {
+            if (Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                action = PAPISupport.setPlaceholders(player, action);
+            }
+            action = Main.t.rc(action);
+            if (action.startsWith("[command]")) {
+                action = action.replaceFirst("\\[command]", "");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(action, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName));
+            }
+            if (action.startsWith("[broadcast]")) {
+                action = action.replaceFirst("\\[broadcast]", "");
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    p.sendMessage(Main.t.rt(action, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName));
                 }
-                Bukkit.broadcastMessage(Main.t.rc(Main.t.rt(cmd2, "%player%:" + player.getName(), "%group%:" + winGroupDisplayName, "%case%:" + caseTitle)));
+            }
+            if (action.startsWith("[title]")) {
+                action = action.replaceFirst("\\[title]", "");
+                String title = action.split(";")[0];
+                String subTitle = action.split(";")[1];
+                player.sendTitle(Main.t.rt(title, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName), Main.t.rt(subTitle, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName));
             }
         }
     }
+
+
 
     /**
      * Get case location (in Cases.yml) by block location

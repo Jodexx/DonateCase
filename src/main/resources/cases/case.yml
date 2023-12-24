@@ -45,26 +45,21 @@ case:
         DisplayName: '&7&l[&aVIP&7&l]'
         Enchanted: false
       GiveType: ONE # or RANDOM
-      GiveCommand: lp user %player% parent set %group% #  GiveType: ONE
-      GiveCommands: # GiveType: RANDOM
+      Actions: # GiveType: ONE
+        - '[command] lp user %player parent set %group%'
+        - '[title] &aCongratulations!;&5you won %groupdisplayname%'
+        - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+      RandomActions: # GiveType: RANDOM
         first:
           Chance: 50
-          Commands:
-            - ""
-          Broadcast:
-            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
+          Actions:
+            - '[command] say something'
+            - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
         second:
           Chance: 50
-          Commands:
-            - ""
-          Broadcast:
-            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
-      Commands: #  GiveType: ONE
-      #- some commands here
-      Title: "&aCongratulations!" # Placeholders: %group% - group name; %groupdisplayname% - group display name
-      SubTitle: "&5you won %groupdisplayname%"
-      Broadcast:
-        - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
+          Actions:
+            - '[command] say something'
+            - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
     VIPPLUS:
       Group: vipplus
       Chance: 25
@@ -73,26 +68,21 @@ case:
         DisplayName: '&7&l[&bVIP&6+&7&l]'
         Enchanted: false
       GiveType: ONE # or RANDOM
-      GiveCommand: lp user %player% parent set %group% #  GiveType: ONE
-      GiveCommands: # GiveType: RANDOM
+      Actions: # GiveType: ONE
+        - '[command] lp user %player parent set %group%'
+        - '[title] &aCongratulations!;&5you won %groupdisplayname%'
+        - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+      RandomActions: # GiveType: RANDOM
         first:
           Chance: 50
-          Commands:
-            - ""
-          Broadcast:
-            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
+          Actions:
+            - '[command] say something'
+            - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
         second:
           Chance: 50
-          Commands:
-            - ""
-          Broadcast:
-            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
-      Commands: #  GiveType: ONE
-        #- some commands here
-      Title: "&aCongratulations!" # Placeholders: %group% - group name; %groupdisplayname% - group display name
-      SubTitle: "&5you won %groupdisplayname%"
-      Broadcast:
-        - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
+          Actions:
+            - '[command] say something'
+            - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
     Deluxe:
       Group: deluxe
       Chance: 15
@@ -101,26 +91,21 @@ case:
         DisplayName: '&7&l[&5Deluxe&7&l]'
         Enchanted: false
       GiveType: ONE # or RANDOM
-      GiveCommand: lp user %player parent set %group% #  GiveType: ONE
-      GiveCommands: # GiveType: RANDOM
+      Actions: # GiveType: ONE
+        - '[command] lp user %player parent set %group%'
+        - '[title] &aCongratulations!;&5you won %groupdisplayname%'
+        - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+      RandomActions: # GiveType: RANDOM
         first:
           Chance: 50
-          Commands:
-            - ""
-          Broadcast:
-            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
+          Actions:
+            - '[command] '
+            - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
         second:
           Chance: 50
-          Commands:
-            - ""
-          Broadcast:
-            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
-      Commands: #  GiveType: ONE
-      #            - some commands here
-      Title: "&aCongratulations!" # Placeholders: %group% - group name; %groupdisplayname% - group display name
-      SubTitle: "&5you won %groupdisplayname%"
-      Broadcast:
-        - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
+          Actions:
+            - '[command] '
+            - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
     Legend:
       Group: legend
       Chance: 10
@@ -129,23 +114,18 @@ case:
         DisplayName: '&7&l[&dLegend&7&l]'
         Enchanted: false
       GiveType: ONE # or RANDOM
-      GiveCommand: lp user %player% parent set %group% #  GiveType: ONE
-      GiveCommands: # GiveType: RANDOM
+      Actions: # GiveType: ONE
+        - '[command] lp user %player parent set %group%'
+        - '[title] &aCongratulations!;&5you won %groupdisplayname%'
+        - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+      RandomActions: # GiveType: RANDOM
         first:
           Chance: 50
-          Commands:
-            - ""
-          Broadcast:
-            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
+          Actions:
+            - '[command] say something'
+            - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
         second:
           Chance: 50
-          Commands:
-            - ""
-          Broadcast:
-            - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
-      Commands: #  GiveType: ONE
-      #            - some commands here
-      Title: "&aCongratulations!" # Placeholders: %group% - group name; %groupdisplayname% - group display name
-      SubTitle: "&5you won %groupdisplayname%"
-      Broadcast:
-        - '&a>&c>&e> &c%player% &6won a donate %group% &6from &5Ultra-Case.'
+          Actions:
+            - '[command] say something'
+            - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
