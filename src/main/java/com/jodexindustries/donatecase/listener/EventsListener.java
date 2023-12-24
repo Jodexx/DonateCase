@@ -15,10 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -105,8 +102,10 @@ public class EventsListener implements Listener {
     @EventHandler
     public void PlayerInteractEntity(PlayerInteractAtEntityEvent e) {
         Entity entity = e.getRightClicked();
-        if (entity.getType() == EntityType.ARMOR_STAND && Case.listAR.contains(entity)) {
-            e.setCancelled(true);
+        if(entity instanceof ArmorStand) {
+            if (Case.listAR.contains(entity)) {
+                e.setCancelled(true);
+            }
         }
     }
     @EventHandler

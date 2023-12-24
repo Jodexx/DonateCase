@@ -51,7 +51,7 @@ public class FullWheelAnimation implements Animation {
         loc.setZ(loc.getZ() + 0.5);
         // register items
         Set<String> configGroups = casesConfig.getCase(c).getConfigurationSection("case.Items").getKeys(false);
-        int itemscount = configGroups.size();
+        int itemsCount = configGroups.size();
         final String finalWinGroup = Case.getRandomGroup(c);
         configGroups.remove(finalWinGroup);
         int i = 1;
@@ -71,9 +71,9 @@ public class FullWheelAnimation implements Animation {
 
             final double speed = customConfig.getAnimations().getDouble("FullWheel.CircleSpeed");
             final double radius = customConfig.getAnimations().getDouble("FullWheel.CircleRadius");
-            final double rotationThreshold = Math.PI / (itemscount * speed);
+            final double rotationThreshold = Math.PI / (itemsCount * speed);
 
-            final double offset = 2 * Math.PI / itemscount;
+            final double offset = 2 * Math.PI / itemsCount;
             final Location location = loc.clone().add(loc.getDirection().getX() + 0.5, -1 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"), 0);
             public void run() {
                 ticks++;

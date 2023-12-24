@@ -3,8 +3,6 @@ package com.jodexindustries.donatecase.gui;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.HistoryData;
 import com.jodexindustries.donatecase.api.MaterialType;
-import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
@@ -17,7 +15,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,14 +33,14 @@ public class CaseGui {
         if (items != null) {
             for (String item : items.getKeys(false)) {
                 String material = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Material", "STONE");
-                String displayName = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".DisplayName");
-                int keys = 0;
+                String displayName = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".DisplayName", "None");
+                int keys;
                 String placeholder = t.getLocalPlaceholder(displayName);
                 if (placeholder.startsWith("keys_")) {
                     String[] parts = placeholder.split("_");
-                    String casename = parts[1];
+                    String caseName = parts[1];
                     if (Tconfig) {
-                        keys = customConfig.getKeys().getInt("DonatCase.Cases." + casename + "." + Objects.requireNonNull(p.getName()));
+                        keys = customConfig.getKeys().getInt("DonatCase.Cases." + caseName + "." + Objects.requireNonNull(p.getName()));
                     } else {
                         keys = mysql.getKey(parts[1], Objects.requireNonNull(p.getName()));
                     }
