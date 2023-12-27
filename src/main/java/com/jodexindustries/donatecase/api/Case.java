@@ -428,18 +428,18 @@ public class Case {
                 action = PAPISupport.setPlaceholders(player, action);
             }
             action = Main.t.rc(action);
-            if (action.startsWith("[command]")) {
-                action = action.replaceFirst("\\[command]", "");
+            if (action.startsWith("[command] ")) {
+                action = action.replaceFirst("\\[command] ", "");
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(action, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName));
             }
-            if (action.startsWith("[broadcast]")) {
-                action = action.replaceFirst("\\[broadcast]", "");
+            if (action.startsWith("[broadcast] ")) {
+                action = action.replaceFirst("\\[broadcast] ", "");
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     p.sendMessage(Main.t.rt(action, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName));
                 }
             }
-            if (action.startsWith("[title]")) {
-                action = action.replaceFirst("\\[title]", "");
+            if (action.startsWith("[title] ")) {
+                action = action.replaceFirst("\\[title] ", "");
                 String title = action.split(";")[0];
                 String subTitle = action.split(";")[1];
                 player.sendTitle(Main.t.rt(title, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName), Main.t.rt(subTitle, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName));
