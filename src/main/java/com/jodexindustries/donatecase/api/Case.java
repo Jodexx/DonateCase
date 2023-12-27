@@ -338,7 +338,7 @@ public class Case {
     public static void animationEnd(String c, String animation, Player player, Location location, String winGroup) {
         AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, winGroup);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
-        HistoryData data = new HistoryData(player.getName(), System.currentTimeMillis(), winGroup);
+        HistoryData data = new HistoryData(c, player.getName(), System.currentTimeMillis(), winGroup);
         HistoryData[] list = historyData.getOrDefault(c, new HistoryData[10]);
         System.arraycopy(list, 0, list, 1, list.length - 1);
         list[0] = data;

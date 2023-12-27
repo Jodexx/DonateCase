@@ -202,7 +202,7 @@ public class Main extends JavaPlugin {
             for (String c : customConfig.getData().getConfigurationSection("Data").getKeys(false)) {
                 HistoryData[] historyData = new HistoryData[10];
                 for (String i : customConfig.getData().getConfigurationSection("Data." + c).getKeys(false)) {
-                    HistoryData data = new HistoryData(customConfig.getData().getString("Data." + c + "." + i + ".Player"),
+                    HistoryData data = new HistoryData(c, customConfig.getData().getString("Data." + c + "." + i + ".Player"),
                             customConfig.getData().getLong("Data." + c + "." + i + ".Time"),
                             customConfig.getData().getString("Data." + c + "." + i + ".Group"));
                     historyData[Integer.parseInt(i)] = data;

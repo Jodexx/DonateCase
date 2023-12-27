@@ -3,6 +3,8 @@ package com.jodexindustries.donatecase.gui;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.HistoryData;
 import com.jodexindustries.donatecase.api.MaterialType;
+import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
@@ -74,21 +76,26 @@ public class CaseGui {
                     String[] typeArgs = itemType.split("-");
 
                     int index = Integer.parseInt(typeArgs[1]);
-                    HistoryData[] historyData = Case.historyData.get(c);
+                    String caseType = c;
+                    if(typeArgs.length >= 3) {
+                        caseType = typeArgs[2];
+                    }
+                    HistoryData[] historyData = Case.historyData.get(caseType);
                     if (historyData == null) {
+                        instance.getLogger().warning("Case " + caseType + " HistoryData is null!");
                         continue;
                     }
                     HistoryData data = historyData[index];
                     if (data == null) {
                         continue;
                     }
-                    material = "HEAD:" + data.getPlayerName();
+                    material = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Material", "HEAD:" + data.getPlayerName());
                     Date date = new Date(data.getTime());
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                     String dateFormatted = formatter.format(date);
                     String groupDisplayName = Case.getWinGroupDisplayName(c, data.getGroup());
-                    displayName = t.rt(displayName, "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
-                    lore = t.rt(lore, "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
+                    displayName = t.rt(displayName, "%casename%:" + caseType, "%casetitle%:" + Case.getCaseTitle(caseType), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
+                    lore = t.rt(lore, "%casename%:" + caseType, "%casetitle%:" + Case.getCaseTitle(caseType), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
                 }
                 if (casesConfig.getCase(c).isList("case.Gui.Items." + item + ".Slots")) {
                     slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
