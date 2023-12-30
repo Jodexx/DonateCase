@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.CustomConfig;
 import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
@@ -14,6 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -490,5 +492,22 @@ public class Case {
      */
     public static String getCaseTitle(String caseName) {
         return casesConfig.getCase(caseName).getString("case.Title");
+    }
+
+    /**
+     * Open case gui
+     * @param p Player
+     * @param caseType Case type
+     * @param blockLocation Block location
+     */
+    public static Inventory openGui(Player p, String caseType, Location blockLocation) {
+        Inventory inventory = null;
+        if (!Case.playerOpensCase.containsKey(p.getUniqueId())) {
+            Case.playerOpensCase.put(p.getUniqueId(), new OpenCase(blockLocation, caseType, p.getUniqueId()));
+            inventory = new CaseGui(p, caseType).getInventory();
+        } else {
+            instance.getLogger().warning("Player already opened case");
+        }
+        return inventory;
     }
 }

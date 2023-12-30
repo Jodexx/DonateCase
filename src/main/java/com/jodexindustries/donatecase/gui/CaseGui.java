@@ -3,8 +3,6 @@ package com.jodexindustries.donatecase.gui;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.HistoryData;
 import com.jodexindustries.donatecase.api.MaterialType;
-import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
@@ -26,10 +24,11 @@ import java.util.Objects;
 import static com.jodexindustries.donatecase.dc.Main.*;
 
 public class CaseGui {
+    private final Inventory inventory;
 
     public CaseGui(Player p, String c) {
         String title = Case.getCaseTitle(c);
-        Inventory inv = Bukkit.createInventory(null, casesConfig.getCase(c).getInt("case.Gui.Size", 45), t.rc(title));
+        inventory = Bukkit.createInventory(null, casesConfig.getCase(c).getInt("case.Gui.Size", 45), t.rc(title));
         ConfigurationSection items = casesConfig.getCase(c).getConfigurationSection("case.Gui.Items");
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
         if (items != null) {
@@ -109,12 +108,15 @@ public class CaseGui {
                 }
                 ItemStack itemStack = getItem(material, displayName, lore, c, p, enchanted, rgb);
                 for (Integer slot : slots) {
-                    inv.setItem(slot, itemStack);
+                    inventory.setItem(slot, itemStack);
                 }
             }
         }
         });
-        p.openInventory(inv);
+        p.openInventory(inventory);
+    }
+    public Inventory getInventory() {
+        return inventory;
     }
     private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, boolean enchanted, String[] rgb) {
         int keys = Case.getKeys(c, p.getName());
