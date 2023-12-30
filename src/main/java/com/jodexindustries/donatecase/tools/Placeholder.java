@@ -1,14 +1,16 @@
 package com.jodexindustries.donatecase.tools;
 
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Objects;
 
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
+import static com.jodexindustries.donatecase.dc.Main.*;
 
 public class Placeholder extends PlaceholderExpansion {
 
@@ -29,15 +31,28 @@ public class Placeholder extends PlaceholderExpansion {
     }
 
     public String onRequest(OfflinePlayer player, String params) {
-        if (params.startsWith("keys_")) {
+        if(params.startsWith("keys")) {
             String[] parts = params.split("_", 2);
-            int s;
-            if (Main.Tconfig) {
-                s = customConfig.getKeys().getInt("DonatCase.Cases." + parts[1] + "." + Objects.requireNonNull(player.getName()));
-            } else {
-                s = Main.mysql.getKey(parts[1], Objects.requireNonNull(player.getName()));
+            int keys = 0;
+            for (String caseName : Case.getCases().keySet()) {
+                keys += Case.getKeys(caseName, player.getName());
             }
-            return NumberFormat.getNumberInstance().format(s);
+            if(parts.length == 1) {
+                return String.valueOf(keys);
+            } else if(parts[1].equalsIgnoreCase("format")) {
+                return NumberFormat.getNumberInstance().format(keys);
+            }
+        }
+        if (params.startsWith("keys_")) {
+            String[] parts = params.split("_", 3);
+            int s = Case.getKeys(parts[1], player.getName());
+            if(parts.length == 2) {
+                return String.valueOf(s);
+            } else if(parts[2].equalsIgnoreCase("format")) {
+                return NumberFormat.getNumberInstance().format(s);
+            } else {
+                return String.valueOf(s);
+            }
         } else {
             return null;
         }

@@ -5,10 +5,14 @@ config: '2.5' #DON'T CHANGE THIS PLEASE
 # %casetitle - заголовок кейсу
 # %key - кількість ключів
 # %keys_<casename>% - кількість ключів окремого кейсу
+# %keys_<casename>_format% - кількість ключів з форматуванням
 # %player - нікнейм гравця
 #
 # Глобальні плейсхолдери
 # %donatecase_keys_<casename>% - кількість ключів від конкретного кейсу
+# %donatecase_keys_<casename>_format% - кількість ключів від конкретного кейсу з форматуванням
+# %donatecase_keys% - кількість всіх ключів
+# %donatecase_keys_format% - кількість всіх ключів з форматуванням
 
 Prefix: '&7[&cDonateCase&7] &e'
 NoPermission: '&cУ вас немає прав'

@@ -442,7 +442,8 @@ public class Case {
                 action = action.replaceFirst("\\[title] ", "");
                 String title = action.split(";")[0];
                 String subTitle = action.split(";")[1];
-                player.sendTitle(Main.t.rt(title, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName), Main.t.rt(subTitle, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName));
+                player.sendTitle(Main.t.rt(title, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName),
+                        Main.t.rt(subTitle, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName));
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.dc;
 
 import com.jodexindustries.donatecase.api.*;
+import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import net.md_5.bungee.api.ChatColor;
@@ -158,8 +159,11 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                     } else {
                                         keys = Main.mysql.getKey(parts[1], player.getName());
                                     }
-                                    result = NumberFormat.getNumberInstance().format(keys);
-                                }
+                                    if(parts.length == 2) {
+                                        result = String.valueOf(keys);
+                                    } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
+                                        result = NumberFormat.getNumberInstance().format(keys);
+                                    }                                }
                                 sender.sendMessage(t.rc(string.replaceAll("%" + placeholder + "%", result)));
                             }
                         }
@@ -186,7 +190,11 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                 } else {
                                     keys = Main.mysql.getKey(parts[1], target);
                                 }
-                                result = NumberFormat.getNumberInstance().format(keys);
+                                if(parts.length == 2) {
+                                    result = String.valueOf(keys);
+                                } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
+                                    result = NumberFormat.getNumberInstance().format(keys);
+                                }
                             }
                             sender.sendMessage(t.rc(string).replace("%player", target)
                                     .replace("%"+placeholder+"%", result));
