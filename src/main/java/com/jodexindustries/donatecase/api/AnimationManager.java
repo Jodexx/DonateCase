@@ -1,8 +1,9 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.events.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
+import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -50,6 +51,9 @@ public class AnimationManager {
     public static void playAnimation(String name, Player player, Location location, String c) {
         Class<? extends Animation> animationClass = registeredAnimations.get(name);
         if (animationClass != null) {
+            String winGroup = Case.getRandomGroup(c);
+            AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, name,c, location, winGroup);
+            Bukkit.getPluginManager().callEvent(preStartEvent);
             try {
                 Animation animation = animationClass.newInstance();
                 animation.start(player, Case.getCaseLocationByBlockLocation(location), c);
@@ -59,6 +63,9 @@ public class AnimationManager {
                         pl.closeInventory();
                     }
                 }
+
+                AnimationStartEvent startEvent = new AnimationStartEvent(player, name, c, location, preStartEvent.getWinGroup());
+                Bukkit.getPluginManager().callEvent(startEvent);
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }

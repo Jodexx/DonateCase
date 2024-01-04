@@ -16,8 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
-import static com.jodexindustries.donatecase.dc.Main.t;
+import static com.jodexindustries.donatecase.dc.Main.*;
 
 public class FireworkAnimation implements Animation {
 
@@ -66,12 +65,10 @@ public class FireworkAnimation implements Animation {
                 las.setYaw(las.getYaw() + 20.0F);
                 as.teleport(las);
                 this.l = this.l.add(0.0, 0.14, 0.0);
-                // armor stand up :D
                 if (this.i <= 7) {
                     this.l.setYaw(las.getYaw());
                     as.teleport(this.l);
                 }
-
                 if (this.i >= 7) {
                     if (this.i == 10) {
                         as.setCustomNameVisible(true);
@@ -81,7 +78,6 @@ public class FireworkAnimation implements Animation {
                         as.setCustomName(finalWinGroupDisplayName);
                         Case.onCaseOpenFinish(c, player, true, winGroup);
                     }
-                    // end
                     if (this.i >= 30) {
                         as.remove();
                         this.cancel();

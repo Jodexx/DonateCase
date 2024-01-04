@@ -44,7 +44,7 @@ public class RainlyAnimation implements Animation {
         Location cloud3 = rain3.clone().add(0, 0.5, 0);
         Location cloud4 = rain4.clone().add(0, 0.5, 0);
         location.setYaw(-70.0F);
-        final ArmorStand as = (ArmorStand) player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+        final ArmorStand as = (ArmorStand) loc.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         as.setVisible(false);
         Case.listAR.add(as);
         as.setGravity(false);
@@ -98,7 +98,7 @@ public class RainlyAnimation implements Animation {
                         as.setHelmet(winItem2);
                     }
                     as.setCustomName(winGroupDisplayName2);
-                    player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 5.0F);
+                    loc.getWorld().playSound(loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 5.0F);
                     // firework particles
                     this.t += 0.25;
                     Location loc = this.l.clone();
