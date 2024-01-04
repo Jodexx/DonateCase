@@ -36,7 +36,7 @@ public class FullWheelAnimation implements Animation {
     }
 
     @Override
-    public void start(Player player, Location location, String c) {
+    public void start(Player player, Location location, String c, String winGroup) {
         p = player;
         this.c = c;
         final Location loc = location.clone();
@@ -52,16 +52,15 @@ public class FullWheelAnimation implements Animation {
         // register items
         Set<String> configGroups = casesConfig.getCase(c).getConfigurationSection("case.Items").getKeys(false);
         int itemsCount = configGroups.size();
-        final String finalWinGroup = Case.getRandomGroup(c);
-        configGroups.remove(finalWinGroup);
+        configGroups.remove(winGroup);
         int i = 1;
         // win group
-        addWinGroup(player, finalWinGroup);
+        addWinGroup(player, winGroup);
         // another groups
-        for (String winGroup : configGroups) {
-            ItemStack winItem = t.getWinItem(c, winGroup, player);
+        for (String tempWinGroup : configGroups) {
+            ItemStack winItem = t.getWinItem(c, tempWinGroup, player);
             items.add(winItem);
-            groups.add(winGroup);
+            groups.add(tempWinGroup);
             armorStands.add(spawnArmorStand(location, i));
             i++;
         }

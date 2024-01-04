@@ -25,9 +25,8 @@ public class FireworkAnimation implements Animation {
         return "DEFAULT FIREWORK";
     }
 
-    public void start(Player player, Location location, String c) {
+    public void start(Player player, Location location, String c, String winGroup) {
         final Location lAC = location.clone();
-        final String winGroup = Tools.getRandomGroup(c);
         String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);

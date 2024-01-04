@@ -19,6 +19,13 @@ public interface Animation {
      * @param player Player who opened case
      * @param location Case location
      * @param c Case name
+     * @param winGroup winGroup
      */
-    void start(Player player, Location location, String c);
+    default void start(Player player, Location location, String c, String winGroup) {
+        start(player,location,c);
+    }
+    @Deprecated
+    default void start(Player player, Location location, String c) {
+        start(player,location,c, Case.getRandomGroup(c));
+    }
 }

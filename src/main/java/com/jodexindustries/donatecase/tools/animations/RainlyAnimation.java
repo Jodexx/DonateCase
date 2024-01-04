@@ -26,10 +26,9 @@ public class RainlyAnimation implements Animation {
         return "DEFAULT RAINLY";
     }
     @Override
-    public void start(Player player, Location location, String c) {
+    public void start(Player player, Location location, String c, String winGroup) {
         final Location loc = location.clone();
         final String FallingParticle = customConfig.getAnimations().getString("Rainly.FallingParticle");
-        final String winGroup = Tools.getRandomGroup(c);
         String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
         if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);

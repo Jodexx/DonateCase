@@ -36,7 +36,7 @@ public class WheelAnimation implements Animation {
     }
 
     @Override
-    public void start(Player player, Location location, String c) {
+    public void start(Player player, Location location, String c, String winGroup) {
         p = player;
         this.c = c;
         final Location loc = location.clone();
@@ -50,11 +50,12 @@ public class WheelAnimation implements Animation {
         loc.setZ(loc.getZ() + 0.5);
         // register items
         int itemsCount = customConfig.getAnimations().getInt("Wheel.ItemsCount");
+        groups.add(winGroup);
         for (int i = 0; i < itemsCount; i++) {
-            String winGroup = Tools.getRandomGroup(c);
-            ItemStack winItem = t.getWinItem(c, winGroup, player);
+            String tempWinGroup = Tools.getRandomGroup(c);
+            ItemStack winItem = t.getWinItem(c, tempWinGroup, player);
             items.add(winItem);
-            groups.add(winGroup);
+            groups.add(tempWinGroup);
             armorStands.add(spawnArmorStand(location, i));
         }
         (new BukkitRunnable() {

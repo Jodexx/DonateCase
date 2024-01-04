@@ -56,7 +56,7 @@ public class AnimationManager {
             Bukkit.getPluginManager().callEvent(preStartEvent);
             try {
                 Animation animation = animationClass.newInstance();
-                animation.start(player, Case.getCaseLocationByBlockLocation(location), c);
+                animation.start(player, Case.getCaseLocationByBlockLocation(location), c, winGroup);
                 Case.ActiveCase.put(location.getBlock().getLocation(), c);
                 for (Player pl : Bukkit.getOnlinePlayers()) {
                     if (Case.playerOpensCase.containsKey(pl.getUniqueId()) && Main.t.isHere(location.getBlock().getLocation(), Case.playerOpensCase.get(pl.getUniqueId()).getLocation())) {
