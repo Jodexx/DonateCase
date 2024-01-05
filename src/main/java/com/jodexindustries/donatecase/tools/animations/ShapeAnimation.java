@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
+import static com.jodexindustries.donatecase.dc.Main.customConfig;
 import static com.jodexindustries.donatecase.dc.Main.t;
 
 public class ShapeAnimation implements Animation {
@@ -38,6 +39,30 @@ public class ShapeAnimation implements Animation {
         as.setVisible(false);
         as.setGravity(false);
         String finalWinGroupDisplayName = winGroupDisplayName;
+
+        String rgbString = customConfig.getAnimations().getString("Shape.Particle.Orange.Rgb");
+        String whiteRgbString = customConfig.getAnimations().getString("Shape.Particle.White.Rgb");
+        int red;
+        int green;
+        int blue;
+        Color orangeColor = Color.ORANGE;
+        Color whiteColor = Color.WHITE;
+        if(rgbString != null) {
+            String[] rgb = rgbString.split(",");
+            red = Integer.parseInt(rgb[0]);
+            green = Integer.parseInt(rgb[1]);
+            blue = Integer.parseInt(rgb[2]);
+            orangeColor = Color.fromRGB(red, green, blue);
+        }
+        if(whiteRgbString != null) {
+            String[] rgb = whiteRgbString.split(",");
+            red = Integer.parseInt(rgb[0]);
+            green = Integer.parseInt(rgb[1]);
+            blue = Integer.parseInt(rgb[2]);
+            whiteColor = Color.fromRGB(red, green, blue);
+        }
+        Color finalOrangeColor = orangeColor;
+        Color finalWhiteColor = whiteColor;
         (new BukkitRunnable() {
             int i; //ticks count
             double t;
@@ -73,7 +98,7 @@ public class ShapeAnimation implements Animation {
                     as.setCustomName(Main.t.rc(winGroupDisplayName));
                     if (this.i <= 8) {
                         if (!Bukkit.getVersion().contains("1.12")) {
-                            Particle.DustOptions dustOptions = new Particle.DustOptions(Color.ORANGE, 1.0F);
+                            Particle.DustOptions dustOptions = new Particle.DustOptions(finalOrangeColor, (float) customConfig.getAnimations().getDouble("Shape.Particle.Orange.Size"));
                             Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
                         } else {
                             Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0);
@@ -98,7 +123,12 @@ public class ShapeAnimation implements Animation {
                         final double x = 0.09 * (9.5 - this.t * 2.5) * Math.cos(this.t + phi);
                         final double z = 0.09 * (9.5 - this.t * 2.5) * Math.sin(this.t + phi);
                         loc.add(x, 0.0, z);
-                        Objects.requireNonNull(this.l.getWorld()).spawnParticle(Particle.FIREWORKS_SPARK, this.l.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0);
+                        if (!Bukkit.getVersion().contains("1.12")) {
+                            Particle.DustOptions dustOptions = new Particle.DustOptions(finalWhiteColor, (float) customConfig.getAnimations().getDouble("Shape.Particle.White.Size"));
+                            Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0, dustOptions);
+                        } else {
+                            Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.FIREWORKS_SPARK, this.l.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0);
+                        }
                         loc.subtract(x, 0.0, z);
                         if (this.t >= 22) {
                             loc.add(x, 0.0, z);
@@ -111,7 +141,6 @@ public class ShapeAnimation implements Animation {
                     as.remove();
                     this.cancel();
                     Case.animationEnd(c, getName(), player, loc, winGroup);
-                    Case.listAR.remove(as);
                 }
 
                 ++this.i;

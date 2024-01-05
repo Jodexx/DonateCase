@@ -117,7 +117,6 @@ public class RainlyAnimation implements Animation {
                     as.remove();
                     this.cancel();
                     Case.animationEnd(c, getName(), player, loc, winGroup);
-                    Case.listAR.remove(as);
                 }
 
                 ++this.i;
