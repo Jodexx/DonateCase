@@ -19,6 +19,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import javax.tools.Tool;
 import java.util.*;
 
 import static com.jodexindustries.donatecase.dc.Main.*;
@@ -515,5 +516,13 @@ public class Case {
             instance.getLogger().warning("Player already opened case");
         }
         return inventory;
+    }
+
+    /**
+     * Get tools
+     * @return Tools instance
+     */
+    public static Tools getTools() {
+        return t;
     }
 }
