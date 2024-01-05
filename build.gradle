@@ -14,7 +14,7 @@ plugins {
 }
 
 group = 'com.jodexindustries.donatecase'
-version = '2.1.6.5'
+version = '2.1.6.6'
 
 repositories {
     mavenCentral()
@@ -58,7 +58,7 @@ dependencies {
     implementation 'com.github.LoneDev6:API-ItemsAdder:3.6.1'
     implementation 'com.mojang:authlib:1.5.25'
     implementation 'com.github.justADeni:StandAPI:v1.8'
-    implementation 'com.comphenix.protocol:ProtocolLib:5.1.0'
+    implementation 'com.comphenix.protocol:ProtocolLib:5.2.0-SNAPSHOT'
 }
 
 def dependsDir = "${buildDir}/libs/dependencies/"

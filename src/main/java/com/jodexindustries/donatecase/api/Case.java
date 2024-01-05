@@ -340,22 +340,6 @@ public class Case {
     public static void animationEnd(String c, String animation, Player player, Location location, String winGroup) {
         AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, winGroup);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
-        HistoryData data = new HistoryData(c, player.getName(), System.currentTimeMillis(), winGroup);
-        HistoryData[] list = historyData.getOrDefault(c, new HistoryData[10]);
-        System.arraycopy(list, 0, list, 1, list.length - 1);
-        list[0] = data;
-
-        historyData.put(c, list);
-        for (int i = 0; i < list.length; i++) {
-            HistoryData data1 = list[i];
-            if(data1 != null) {
-                customConfig.getData().set("Data." + c + "." + i + ".Player", data1.getPlayerName());
-                customConfig.getData().set("Data." + c + "." + i + ".Time", data1.getTime());
-                customConfig.getData().set("Data." + c + "." + i + ".Group", data1.getGroup());
-            }
-        }
-
-        customConfig.saveData();
         ActiveCase.remove(location.getBlock().getLocation());
     }
 
@@ -368,6 +352,7 @@ public class Case {
      */
     public static void onCaseOpenFinish(String caseName, Player player, boolean needSound, String winGroup) {
         String sound;
+        String choice = "";
         String winGroupDisplayName = t.rc(casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Item.DisplayName"));
         String winGroupName = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Group");
         String giveType = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".GiveType", "ONE");
@@ -380,7 +365,7 @@ public class Case {
                 if (giveType.equalsIgnoreCase("ONE")) {
                     executeActions(actions, player, winGroupName, winGroupDisplayName);
                 } else {
-                    String choice = getChoice(caseName, winGroup);
+                    choice = getChoice(caseName, winGroup);
                     executeActions(casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".RandomActions." + choice + ".Actions"), player, winGroupName, winGroupDisplayName);
                 }
             }
@@ -388,7 +373,7 @@ public class Case {
             if(giveType.equalsIgnoreCase("ONE")) {
                 executeActions(actions, player, winGroupName, winGroupDisplayName);
             } else {
-                String choice = getChoice(caseName, winGroup);
+                choice = getChoice(caseName, winGroup);
                 executeActions(casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".RandomActions." + choice + ".Actions"), player, winGroupName, winGroupDisplayName);
             }
         }
@@ -403,6 +388,22 @@ public class Case {
                 }
             }
         }
+        HistoryData data = new HistoryData(caseName, player.getName(), System.currentTimeMillis(), winGroup, choice);
+        HistoryData[] list = historyData.getOrDefault(caseName, new HistoryData[10]);
+        System.arraycopy(list, 0, list, 1, list.length - 1);
+        list[0] = data;
+
+        historyData.put(caseName, list);
+        for (int i = 0; i < list.length; i++) {
+            HistoryData data1 = list[i];
+            if(data1 != null) {
+                customConfig.getData().set("Data." + caseName + "." + i + ".Player", data1.getPlayerName());
+                customConfig.getData().set("Data." + caseName + "." + i + ".Time", data1.getTime());
+                customConfig.getData().set("Data." + caseName + "." + i + ".Group", data1.getGroup());
+            }
+        }
+
+        customConfig.saveData();
     }
     private static String getChoice(String caseName, String winGroup) {
         String endCommand = "";

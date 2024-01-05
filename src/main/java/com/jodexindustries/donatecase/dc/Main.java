@@ -19,9 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Main extends JavaPlugin {
     public static Main instance;
@@ -38,6 +36,8 @@ public class Main extends JavaPlugin {
     File langUa;
     public static CustomConfig customConfig;
     public static CasesConfig casesConfig;
+    private List<Integer> entityIds = new ArrayList<>();
+    private boolean usePackets = true;
 
     public void onEnable() {
         long time = System.currentTimeMillis();
@@ -204,7 +204,7 @@ public class Main extends JavaPlugin {
                 for (String i : customConfig.getData().getConfigurationSection("Data." + c).getKeys(false)) {
                     HistoryData data = new HistoryData(c, customConfig.getData().getString("Data." + c + "." + i + ".Player"),
                             customConfig.getData().getLong("Data." + c + "." + i + ".Time"),
-                            customConfig.getData().getString("Data." + c + "." + i + ".Group"));
+                            customConfig.getData().getString("Data." + c + "." + i + ".Group"), customConfig.getData().getString("Data." + c + "." + i + ".Action"));
                     historyData[Integer.parseInt(i)] = data;
                 }
                 Case.historyData.put(c, historyData);
@@ -226,6 +226,9 @@ public class Main extends JavaPlugin {
             }
         }
         casesConfig = new CasesConfig();
+        usePackets = customConfig.getConfig().getBoolean("DonatCase.UsePackets") && getServer().getPluginManager().isPluginEnabled("ProtocolLib");
+
+
     }
 
     public void setupLangs() {
@@ -256,5 +259,13 @@ public class Main extends JavaPlugin {
     }
     public static Permission getPermissions() {
         return permission;
+    }
+
+    public List<Integer> getEntityIds() {
+        return entityIds;
+    }
+
+    public boolean isUsePackets() {
+        return usePackets;
     }
 }

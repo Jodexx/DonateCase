@@ -2,12 +2,11 @@ package com.jodexindustries.donatecase.tools.animations;
 
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -33,12 +32,11 @@ public class ShapeAnimation implements Animation {
         }
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
-        final ArmorStand as = (ArmorStand)player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        Case.listAR.add(as);
-        as.setGravity(false);
+        final ArmorStandCreator as = t.createArmorStand();
+        as.spawnArmorStand(location);
         as.setSmall(true);
         as.setVisible(false);
-        as.setCustomNameVisible(true);
+        as.setGravity(false);
         String finalWinGroupDisplayName = winGroupDisplayName;
         (new BukkitRunnable() {
             int i; //ticks count

@@ -1,9 +1,9 @@
 config: '2.5' #DON'T CHANGE THIS PLEASE
 
 # Local Placeholders
-# %case - case name
-# %casetitle - case title
-# %key - number of keys
+# %case% - case name
+# %casetitle% - case title
+# %key% - number of keys
 # %keys_<casename>% - number of keys
 # %keys_<casename>_format% - number of keys with format
 # %player - player nickname

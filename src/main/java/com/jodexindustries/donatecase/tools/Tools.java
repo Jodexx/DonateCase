@@ -4,6 +4,9 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.MaterialType;
 import com.jodexindustries.donatecase.api.SubCommand;
 import com.jodexindustries.donatecase.api.SubCommandType;
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
+import com.jodexindustries.donatecase.api.armorstand.BukkitArmorStandCreator;
+import com.jodexindustries.donatecase.api.armorstand.PacketArmorStandCreator;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
@@ -63,6 +66,16 @@ public class Tools {
         }
 
         return null;
+    }
+    public  int parseIntFromBoolean(boolean booleanValue) {
+        return booleanValue ? 1 : 0;
+    }
+    public ArmorStandCreator createArmorStand() {
+        if(instance.isUsePackets()) {
+            return new PacketArmorStandCreator();
+        } else {
+            return new BukkitArmorStandCreator();
+        }
     }
 
     public void launchFirework(Location l) {

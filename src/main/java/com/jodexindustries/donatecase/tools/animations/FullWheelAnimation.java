@@ -2,13 +2,12 @@ package com.jodexindustries.donatecase.tools.animations;
 
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,7 +15,6 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import static com.jodexindustries.donatecase.dc.Main.*;
@@ -25,7 +23,7 @@ public class FullWheelAnimation implements Animation {
 
     List<ItemStack> items = new ArrayList<>();
     List<String> groups = new ArrayList<>();
-    List<ArmorStand> armorStands = new ArrayList<>();
+    List<ArmorStandCreator> armorStands = new ArrayList<>();
     Player p;
     String c;
     Location location;
@@ -82,7 +80,7 @@ public class FullWheelAnimation implements Animation {
 
                 if (ticks < 101) {
                     double baseAngle = loc.getDirection().angle(new Vector(0, 0, 1));
-                    for (ArmorStand entity : armorStands) {
+                    for (ArmorStandCreator entity : armorStands) {
                         double x = radius * Math.sin(angle);
                         double y = radius * Math.cos(angle);
 
@@ -109,8 +107,7 @@ public class FullWheelAnimation implements Animation {
                 // End
                 if (this.ticks >= 120) {
                     this.cancel();
-                    for(ArmorStand stand : armorStands) {
-                        Case.listAR.remove(stand);
+                    for(ArmorStandCreator stand : armorStands) {
                         stand.remove();
                     }
                     Case.animationEnd(c, getName(), player, loc, groups.get(0));
@@ -121,13 +118,12 @@ public class FullWheelAnimation implements Animation {
             }
         }).runTaskTimer(Main.instance, 0L, 2L);
     }
-    private ArmorStand spawnArmorStand(Location location, int index) {
-        ArmorStand as = (ArmorStand) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.ARMOR_STAND);
-        as.setVisible(false);
-        Case.listAR.add(as);
-        as.setGravity(false);
+    private ArmorStandCreator spawnArmorStand(Location location, int index) {
+        ArmorStandCreator as = t.createArmorStand();
+        as.spawnArmorStand(location);
         as.setSmall(true);
-        as.setCustomNameVisible(true);
+        as.setVisible(false);
+        as.setGravity(false);
         if(items.get(index).getType() != Material.AIR) {
             as.setHelmet(items.get(index));
         }

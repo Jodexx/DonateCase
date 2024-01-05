@@ -33,8 +33,7 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.logging.Level;
 
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
-import static com.jodexindustries.donatecase.dc.Main.t;
+import static com.jodexindustries.donatecase.dc.Main.*;
 
 
 public class EventsListener implements Listener {
@@ -84,8 +83,17 @@ public class EventsListener implements Listener {
                                     p.closeInventory();
                                 } else {
                                     p.closeInventory();
-                                    p.playSound(p.getLocation(), Sound.valueOf(customConfig.getConfig().getString("DonatCase.NoKeyWarningSound")), 1.0F, 0.4F);
-                                    Main.t.msg(p, Main.lang.getString("NoKey"));
+                                    Sound sound = null;
+                                    try {
+                                        sound = Sound.valueOf(customConfig.getConfig().getString("DonatCase.NoKeyWarningSound"));
+                                    } catch (IllegalArgumentException ignore) {}
+                                    if(sound == null) {
+                                        sound = Sound.valueOf("ENTITY_ENDERMEN_TELEPORT");
+                                    }
+                                    p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
+                                    String noKey = casesConfig.getCase(caseType).getString("Messages.NoKey");
+                                    if(noKey == null) noKey = lang.getString("NoKey");
+                                    Main.t.msg(p, noKey);
                                 }
                             }
                         } else {

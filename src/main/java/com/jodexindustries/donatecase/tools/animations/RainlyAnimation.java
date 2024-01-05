@@ -2,15 +2,13 @@ package com.jodexindustries.donatecase.tools.animations;
 
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -43,12 +41,11 @@ public class RainlyAnimation implements Animation {
         Location cloud3 = rain3.clone().add(0, 0.5, 0);
         Location cloud4 = rain4.clone().add(0, 0.5, 0);
         location.setYaw(-70.0F);
-        final ArmorStand as = (ArmorStand) loc.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+        ArmorStandCreator as = t.createArmorStand();
+        as.spawnArmorStand(location);
         as.setVisible(false);
-        Case.listAR.add(as);
         as.setGravity(false);
         as.setSmall(true);
-        as.setCustomNameVisible(true);
         String finalWinGroupDisplayName = winGroupDisplayName;
         (new BukkitRunnable() {
             int i; // count of ticks

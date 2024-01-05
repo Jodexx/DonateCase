@@ -93,8 +93,8 @@ public class CaseGui {
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                     String dateFormatted = formatter.format(date);
                     String groupDisplayName = Case.getWinGroupDisplayName(c, data.getGroup());
-                    displayName = t.rt(displayName, "%casename%:" + caseType, "%casetitle%:" + Case.getCaseTitle(caseType), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
-                    lore = t.rt(lore, "%casename%:" + caseType, "%casetitle%:" + Case.getCaseTitle(caseType), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
+                    displayName = t.rt(displayName, "%action%:", data.getAction(), "%casename%:" + caseType, "%casetitle%:" + Case.getCaseTitle(caseType), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
+                    lore = t.rt(lore, "%action%:", data.getAction(), "%casename%:" + caseType, "%casetitle%:" + Case.getCaseTitle(caseType), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
                 }
                 if (casesConfig.getCase(c).isList("case.Gui.Items." + item + ".Slots")) {
                     slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");

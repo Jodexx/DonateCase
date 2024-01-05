@@ -2,14 +2,13 @@ package com.jodexindustries.donatecase.tools.animations;
 
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -36,12 +35,11 @@ public class FireworkAnimation implements Animation {
         }
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
-        final ArmorStand as = (ArmorStand)player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        Case.listAR.add(as);
-        as.setGravity(false);
+        ArmorStandCreator as = t.createArmorStand();
+        as.spawnArmorStand(location);
         as.setSmall(true);
         as.setVisible(false);
-        as.setCustomNameVisible(false);
+        as.setGravity(false);
         ItemStack winItem = t.getWinItem(c, winGroup, player);
         String finalWinGroupDisplayName = winGroupDisplayName;
         (new BukkitRunnable() {
@@ -73,7 +71,6 @@ public class FireworkAnimation implements Animation {
                 }
                 if (this.i >= 7) {
                     if (this.i == 10) {
-                        as.setCustomNameVisible(true);
                         if(winItem.getType() != Material.AIR) {
                             as.setHelmet(winItem);
                         }
@@ -84,7 +81,6 @@ public class FireworkAnimation implements Animation {
                         as.remove();
                         this.cancel();
                         Case.animationEnd(c, getName(), player, lAC, winGroup);
-                        Case.listAR.remove(as);
                     }
                 }
 
