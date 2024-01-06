@@ -48,14 +48,14 @@ public class ShapeAnimation implements Animation {
         Color orangeColor = Color.ORANGE;
         Color whiteColor = Color.WHITE;
         if(rgbString != null) {
-            String[] rgb = rgbString.split(",");
+            String[] rgb = rgbString.replaceAll(" ", "").split(",");
             red = Integer.parseInt(rgb[0]);
             green = Integer.parseInt(rgb[1]);
             blue = Integer.parseInt(rgb[2]);
             orangeColor = Color.fromRGB(red, green, blue);
         }
         if(whiteRgbString != null) {
-            String[] rgb = whiteRgbString.split(",");
+            String[] rgb = whiteRgbString.replaceAll(" ", "").split(",");
             red = Integer.parseInt(rgb[0]);
             green = Integer.parseInt(rgb[1]);
             blue = Integer.parseInt(rgb[2]);
