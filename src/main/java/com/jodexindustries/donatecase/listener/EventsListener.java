@@ -138,7 +138,11 @@ public class EventsListener implements Listener {
                     if (!Case.playerOpensCase.containsKey(p.getUniqueId())) {
                         if (!Case.ActiveCase.containsKey(blockLocation)) {
                             Case.playerOpensCase.put(p.getUniqueId(), new OpenCase(blockLocation, caseType, p.getUniqueId()));
-                            new CaseGui(p, caseType);
+                            try {
+                                new CaseGui(p, caseType);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         } else {
                             Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
                         }

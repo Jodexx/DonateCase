@@ -10,16 +10,15 @@ import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -30,13 +29,14 @@ public class CaseGui {
 
     public CaseGui(Player p, String c) {
         String title = Case.getCaseTitle(c);
-        inventory = Bukkit.createInventory(null, casesConfig.getCase(c).getInt("case.Gui.Size", 45), t.rc(title));
-        ConfigurationSection items = casesConfig.getCase(c).getConfigurationSection("case.Gui.Items");
+        YamlConfiguration configCase = casesConfig.getCase(c);
+        inventory = Bukkit.createInventory(null, configCase.getInt("case.Gui.Size", 45), t.rc(title));
+        ConfigurationSection items = configCase.getConfigurationSection("case.Gui.Items");
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
         if (items != null) {
             for (String item : items.getKeys(false)) {
-                String material = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Material", "STONE");
-                String displayName = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".DisplayName", "None");
+                String material = configCase.getString("case.Gui.Items." + item + ".Material", "STONE");
+                String displayName = configCase.getString("case.Gui.Items." + item + ".DisplayName", "None");
                 int keys;
                 String placeholder = t.getLocalPlaceholder(displayName);
                 if (placeholder.startsWith("keys_")) {
@@ -54,9 +54,9 @@ public class CaseGui {
                 if(instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                     displayName = PAPISupport.setPlaceholders(p, displayName);
                 }
-                boolean enchanted = casesConfig.getCase(c).getBoolean("case.Gui.Items." + item + ".Enchanted");
-                String itemType = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "DEFAULT");
-                List<String> lore = t.rc(casesConfig.getCase(c).getStringList("case.Gui.Items." + item + ".Lore"));
+                boolean enchanted = configCase.getBoolean("case.Gui.Items." + item + ".Enchanted");
+                String itemType = configCase.getString("case.Gui.Items." + item + ".Type", "DEFAULT");
+                List<String> lore = t.rc(configCase.getStringList("case.Gui.Items." + item + ".Lore"));
                 String[] rgb = null;
                 List<String> pLore = new ArrayList<>();
                 for(String line : lore) {
@@ -67,7 +67,7 @@ public class CaseGui {
                 }
                 lore = t.rc(pLore);
                 if (material.toUpperCase().startsWith("LEATHER_")) {
-                    String rgbString = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Rgb");
+                    String rgbString = configCase.getString("case.Gui.Items." + item + ".Rgb");
                     if (rgbString != null) {
                         rgb = rgbString.replace(" ", "").split(",");
                     }
@@ -88,7 +88,7 @@ public class CaseGui {
                         continue;
                     }
 
-                    material = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Material", "HEAD:" + data.getPlayerName());
+                    material = configCase.getString("case.Gui.Items." + item + ".Material", "HEAD:" + data.getPlayerName());
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                     String dateFormatted = formatter.format(new Date(data.getTime()));
                     String groupDisplayName = Case.getWinGroupDisplayName(c, data.getGroup());
@@ -97,26 +97,25 @@ public class CaseGui {
                     lore = t.rt(lore, template);
                 }
                 List<String> slots = new ArrayList<>();
-                if (casesConfig.getCase(c).isList("case.Gui.Items." + item + ".Slots")) {
-                    List<String> temp = casesConfig.getCase(c).getStringList("case.Gui.Items." + item + ".Slots");
-                    for (String string : temp) {
-                        if(string.contains("-")) {
-                            String[] slotArgs = string.split("-");
-                            if(slotArgs.length >= 2) {
-                                int range1 = Integer.parseInt(slotArgs[0]);
-                                int range2 = Integer.parseInt(slotArgs[1]);
-                                slots.addAll(IntStream.rangeClosed(range1, range2).mapToObj(String::valueOf).collect(Collectors.toList()));
-                            } else {
-                                slots.add(string);
+                if (configCase.isList("case.Gui.Items." + item + ".Slots")) {
+                    List<String> temp = configCase.getStringList("case.Gui.Items." + item + ".Slots");
+                    for (String slot : temp) {
+                        String[] values = slot.split("-", 2);
+                        if (values.length == 2) {
+                            for (int i = Integer.parseInt(values[0]); i <= Integer.parseInt(values[1]); i++) {
+                                slots.add(String.valueOf(i));
                             }
                         } else {
-                            slots.add(string);
+                            slots.add(slot);
                         }
                     }
                 } else {
-                    String[] slotArgs = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Slots", "0-0").split("-");
+                    String[] slotArgs = configCase.getString("case.Gui.Items." + item + ".Slots", "0-0").split("-");
                     int range1 = Integer.parseInt(slotArgs[0]);
-                    int range2 = Integer.parseInt(slotArgs[1]);
+                    int range2 = range1;
+                    if(slotArgs.length >= 2) {
+                        range2 = Integer.parseInt(slotArgs[1]);
+                    }
                     slots.addAll(IntStream.rangeClosed(range1, range2).mapToObj(String::valueOf).collect(Collectors.toList()));
                 }
 

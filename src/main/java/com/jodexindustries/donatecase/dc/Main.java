@@ -79,7 +79,7 @@ public class Main extends JavaPlugin {
         if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             instance.setupPermissions();
         }
-        if (!sql) {
+        if (sql) {
             String base = customConfig.getConfig().getString("DonatCase.MySql.DataBase");
             String port = customConfig.getConfig().getString("DonatCase.MySql.Port");
             String hostname = customConfig.getConfig().getString("DonatCase.MySql.Host");
@@ -89,7 +89,7 @@ public class Main extends JavaPlugin {
             (new BukkitRunnable() {
                 public void run() {
                     Main.mysql = new MySQL(host, user, password);
-                    if (!Main.mysql.hasTable("donate_cases") || !Main.mysql.hasTable("history")) {
+                    if (!Main.mysql.hasTable("donate_cases")) {
                         Main.mysql.createTable();
                     }
 
