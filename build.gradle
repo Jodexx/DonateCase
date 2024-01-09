@@ -10,6 +10,7 @@ buildscript {
 }
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'com.rikonardo.papermake' version '1.0.6'
 }
 
@@ -46,19 +47,26 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
     }
+    maven  { url 'https://repo.alessiodp.com/releases/' }
+    maven  { url 'https://repo.mineinabyss.com/releases' }
+    maven { url 'https://repo.lukasa.lt/repository/maven-public/' }
+
+
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:24.0.0'
-    implementation 'org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT'
-    implementation "com.github.MilkBowl:VaultAPI:1.7"
-    implementation "me.clip:placeholderapi:2.11.2"
-    implementation "com.arcaniax:HeadDatabase-API:1.3.1"
-    implementation "de.likewhat.customheads:CustomHeads:3.0.7"
-    implementation 'com.github.LoneDev6:API-ItemsAdder:3.6.1'
-    implementation 'com.mojang:authlib:1.5.25'
-    implementation 'com.github.justADeni:StandAPI:v1.8'
-    implementation 'com.comphenix.protocol:ProtocolLib:5.2.0-SNAPSHOT'
+    compileOnly 'org.jetbrains:annotations:24.0.0'
+    compileOnly 'org.spigotmc:spigot-api:1.20.4-R0.1-SNAPSHOT'
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+    compileOnly "me.clip:placeholderapi:2.11.2"
+    compileOnly "com.arcaniax:HeadDatabase-API:1.3.1"
+    compileOnly "de.likewhat.customheads:CustomHeads:3.0.7"
+    compileOnly 'com.github.LoneDev6:API-ItemsAdder:3.6.1'
+    compileOnly 'com.mojang:authlib:1.5.25'
+    compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0-SNAPSHOT'
+    implementation 'net.byteflux:libby-bukkit:1.3.0'
+    compileOnly 'it.unimi.dsi:fastutil:8.5.12'
+
 }
 
 def dependsDir = "${buildDir}/libs/dependencies/"
@@ -71,16 +79,18 @@ tasks.register('copyDepends', Copy) {
 }
 
 tasks.register('proguard', ProGuardTask) {
+    dependsOn tasks.shadowJar
     configuration file('proguard.conf')
-    injars sourceSets.main.output
+    injars tasks.shadowJar.outputs.files
     libraryjars files("D:/Java/Java11/jmods/")
     libraryjars files(dependsDir)
     verbose
-    outjars "${buildDir}/libs/${project.name}-${version}-obf.jar"
-
+    outjars "${buildDir}/libs/${project.name}-${version}.jar"
 }
 
-build.dependsOn proguard
+
+
+//build.dependsOn proguard
 
 def targetJavaVersion = 11
 java {
@@ -105,4 +115,9 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+tasks.shadowJar {
+    archiveBaseName.set("shadow")
+    archiveClassifier.set('')
+    archiveVersion.set('')
 }

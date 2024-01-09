@@ -12,19 +12,19 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.util.*;
+import java.util.Objects;
 
 public class Main extends JavaPlugin {
     public static Main instance;
     public static Permission permission = null;
-    public static boolean Tconfig = true;
+    public static boolean sql = true;
+
     public static Tools t;
     public static FileConfiguration lang;
     public static MySQL mysql;
@@ -36,7 +36,6 @@ public class Main extends JavaPlugin {
     File langUa;
     public static CustomConfig customConfig;
     public static CasesConfig casesConfig;
-    private List<Integer> entityIds = new ArrayList<>();
     private boolean usePackets = true;
 
     public void onEnable() {
@@ -44,6 +43,7 @@ public class Main extends JavaPlugin {
         instance = this;
         customConfig = new CustomConfig();
         t = new Tools();
+//        loadLibraries();
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             (new Placeholder()).register();
             Logger.log("&aPlaceholders registered!");
@@ -75,11 +75,11 @@ public class Main extends JavaPlugin {
         Metrics metrics = new Metrics(this, 18709);
         metrics.addCustomChart(new Metrics.SimplePie("language", () -> customConfig.getConfig().getString("DonatCase.Languages")));
 
-        Tconfig = !customConfig.getConfig().getBoolean("DonatCase.MySql.Enabled");
+        sql = customConfig.getConfig().getBoolean("DonatCase.MySql.Enabled");
         if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             instance.setupPermissions();
         }
-        if (!Tconfig) {
+        if (!sql) {
             String base = customConfig.getConfig().getString("DonatCase.MySql.DataBase");
             String port = customConfig.getConfig().getString("DonatCase.MySql.Port");
             String hostname = customConfig.getConfig().getString("DonatCase.MySql.Host");
@@ -89,7 +89,7 @@ public class Main extends JavaPlugin {
             (new BukkitRunnable() {
                 public void run() {
                     Main.mysql = new MySQL(host, user, password);
-                    if (!Main.mysql.hasTable("donate_cases")) {
+                    if (!Main.mysql.hasTable("donate_cases") || !Main.mysql.hasTable("history")) {
                         Main.mysql.createTable();
                     }
 
@@ -261,11 +261,21 @@ public class Main extends JavaPlugin {
         return permission;
     }
 
-    public List<Integer> getEntityIds() {
-        return entityIds;
-    }
 
     public boolean isUsePackets() {
         return usePackets;
     }
+//    private void loadLibraries() {
+//        BukkitLibraryManager libraryManager = new BukkitLibraryManager(this);
+//        Library lib = Library.builder()
+//                .groupId("com{}github{}justadeni{}standapi")
+//                .artifactId("StandAPI")
+//                .version("v1.8")
+//                .isolatedLoad(true)
+//                .build();
+//        libraryManager.addRepository("https://repo.jodexindustries.space/releases");
+//        libraryManager.addMavenCentral();
+//        libraryManager.loadLibrary(lib);
+//
+//    }
 }

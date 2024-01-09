@@ -46,7 +46,7 @@ case:
         Enchanted: false
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
-        - '[command] lp user %player parent set %group%'
+        - '[command] lp user %player% parent set %group%'
         - '[title] &aCongratulations!;&5you won %groupdisplayname%'
         - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
       RandomActions: # GiveType: RANDOM
@@ -69,7 +69,7 @@ case:
         Enchanted: false
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
-        - '[command] lp user %player parent set %group%'
+        - '[command] lp user %player% parent set %group%'
         - '[title] &aCongratulations!;&5you won %groupdisplayname%'
         - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
       RandomActions: # GiveType: RANDOM
@@ -92,19 +92,19 @@ case:
         Enchanted: false
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
-        - '[command] lp user %player parent set %group%'
+        - '[command] lp user %player% parent set %group%'
         - '[title] &aCongratulations!;&5you won %groupdisplayname%'
         - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
       RandomActions: # GiveType: RANDOM
         first:
           Chance: 50
           Actions:
-            - '[command] '
+            - '[command] say something'
             - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
         second:
           Chance: 50
           Actions:
-            - '[command] '
+            - '[command] say something'
             - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
     Legend:
       Group: legend
@@ -115,7 +115,7 @@ case:
         Enchanted: false
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
-        - '[command] lp user %player parent set %group%'
+        - '[command] lp user %player% parent set %group%'
         - '[title] &aCongratulations!;&5you won %groupdisplayname%'
         - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
       RandomActions: # GiveType: RANDOM

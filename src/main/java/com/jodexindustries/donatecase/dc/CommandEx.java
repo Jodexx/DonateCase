@@ -1,10 +1,8 @@
 package com.jodexindustries.donatecase.dc;
 
 import com.jodexindustries.donatecase.api.*;
-import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -88,7 +86,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     } else
                     if (args.length == 2) {
                         if (args[1].equalsIgnoreCase("all")) {
-                            if (Main.Tconfig) {
+                            if (!Main.sql) {
                                 customConfig.getKeys().set("DonatCase.Cases", null);
                                 customConfig.saveKeys();
                                 Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys")));
@@ -154,7 +152,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                     String[] parts = placeholder.split("_");
                                     String caseTitle = parts[1];
                                     int keys;
-                                    if (Main.Tconfig) {
+                                    if (!Main.sql) {
                                         keys = customConfig.getKeys().getInt("DonatCase.Cases." + caseTitle + "." + player.getName());
                                     } else {
                                         keys = Main.mysql.getKey(parts[1], player.getName());
@@ -185,7 +183,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                 String[] parts = placeholder.split("_");
                                 String caseName = parts[1];
                                 int keys;
-                                if (Main.Tconfig) {
+                                if (!Main.sql) {
                                     keys = customConfig.getKeys().getInt("DonatCase.Cases." + caseName + "." + target);
                                 } else {
                                     keys = Main.mysql.getKey(parts[1], target);

@@ -67,7 +67,7 @@ public class Tools {
 
         return null;
     }
-    public  int parseIntFromBoolean(boolean booleanValue) {
+    public int parseIntFromBoolean(boolean booleanValue) {
         return booleanValue ? 1 : 0;
     }
     public ArmorStandCreator createArmorStand() {
@@ -481,20 +481,25 @@ public class Tools {
     }
     public MaterialType getMaterialType(String material) {
         if (material.contains(":")) {
-            if (material.startsWith("HEAD")) {
-                return MaterialType.HEAD;
-            } else if (material.startsWith("HDB")) {
-                return MaterialType.HDB;
-            } else if (material.startsWith("CH")) {
-                return MaterialType.CH;
-            } else if (material.startsWith("BASE64")) {
-                return MaterialType.BASE64;
-            } else if(material.startsWith("IA")) {
-                return MaterialType.IA;
+            String prefix = material.substring(0, material.indexOf(":"));
+            switch (prefix) {
+                case "HEAD":
+                    return MaterialType.HEAD;
+                case "HDB":
+                    return MaterialType.HDB;
+                case "CH":
+                    return MaterialType.CH;
+                case "BASE64":
+                    return MaterialType.BASE64;
+                case "IA":
+                    return MaterialType.IA;
+                default:
+                    break;
             }
         }
         return MaterialType.DEFAULT;
     }
+
     public List<Integer> getOpenMaterialSlots(String c) {
         List<Integer> slots = new ArrayList<>();
         for (String item : casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {

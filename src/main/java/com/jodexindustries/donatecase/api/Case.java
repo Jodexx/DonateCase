@@ -19,7 +19,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import javax.tools.Tool;
 import java.util.*;
 
 import static com.jodexindustries.donatecase.dc.Main.*;
@@ -68,7 +67,7 @@ public class Case {
      * @param keys Number of keys
      */
     public static void setKeys(String caseName, String player, int keys) {
-        if (Main.Tconfig) {
+        if (!Main.sql) {
             customConfig.getKeys().set("DonatCase.Cases." + caseName + "." + player, keys == 0 ? null : keys);
             customConfig.saveKeys();
         } else {
@@ -83,7 +82,7 @@ public class Case {
      * @param player Player name
      */
     public static void setNullKeys(String caseName, String player) {
-        if (Main.Tconfig) {
+        if (!Main.sql) {
             customConfig.getKeys().set("DonatCase.Cases." + caseName + "." + player, 0);
             customConfig.saveKeys();
         } else {
@@ -121,7 +120,7 @@ public class Case {
      */
 
     public static int getKeys(String name, String player) {
-        return Main.Tconfig ? customConfig.getKeys().getInt("DonatCase.Cases." + name + "." + player) : Main.mysql.getKey(name, player);
+        return Main.sql ? Main.mysql.getKey(name, player) : customConfig.getKeys().getInt("DonatCase.Cases." + name + "." + player);
     }
 
     /**
