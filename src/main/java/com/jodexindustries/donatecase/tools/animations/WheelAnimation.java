@@ -38,14 +38,11 @@ public class WheelAnimation implements Animation {
         p = player;
         this.c = c;
         final Location loc = location.clone();
-        float pitch = loc.getPitch();
-        pitch = (float) (Math.round(pitch / 45.0) * 45.0);
-        if (Math.abs(pitch) < 10) {
-            pitch = 90;
-        }
-        pitch = pitch > 180 ? pitch - 360 : pitch;
+        float pitch = Math.round(location.getPitch() / 90.0f) * 90.0f;
+        float yaw = Math.round(location.getYaw() / 90.0f) * 90.0f;
         loc.setPitch(pitch);
-        loc.setZ(loc.getZ() + 0.5);
+        loc.setYaw(yaw);
+        loc.add(0.5, 0, 0.5);
         // register items
         int itemsCount = customConfig.getAnimations().getInt("Wheel.ItemsCount");
         groups.add(winGroup);
@@ -65,7 +62,7 @@ public class WheelAnimation implements Animation {
             final double rotationThreshold = Math.PI / (itemsCount * speed);
 
             final double offset = 2 * Math.PI / itemsCount;
-            final Location location = loc.clone().add(loc.getDirection().getX() + 0.5, -1 + customConfig.getAnimations().getDouble("Wheel.LiftingAlongY"), 0);
+            final Location location = loc.clone().add(0, -1 + customConfig.getAnimations().getDouble("Wheel.LiftingAlongY"), 0);
             public void run() {
                 ticks++;
                 double angle = ticks / 20.0;
