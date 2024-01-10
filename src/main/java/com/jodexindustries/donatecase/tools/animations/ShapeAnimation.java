@@ -40,6 +40,8 @@ public class ShapeAnimation implements Animation {
         as.setGravity(false);
         String finalWinGroupDisplayName = winGroupDisplayName;
 
+        float whiteSize = (float) customConfig.getAnimations().getDouble("Shape.Particle.White.Size");
+        float orangeSize = (float) customConfig.getAnimations().getDouble("Shape.Particle.Orange.Size");
         String rgbString = customConfig.getAnimations().getString("Shape.Particle.Orange.Rgb");
         String whiteRgbString = customConfig.getAnimations().getString("Shape.Particle.White.Rgb");
         int red;
@@ -98,7 +100,7 @@ public class ShapeAnimation implements Animation {
                     as.setCustomName(Main.t.rc(winGroupDisplayName));
                     if (this.i <= 8) {
                         if (!Bukkit.getVersion().contains("1.12")) {
-                            Particle.DustOptions dustOptions = new Particle.DustOptions(finalOrangeColor, (float) customConfig.getAnimations().getDouble("Shape.Particle.Orange.Size"));
+                            Particle.DustOptions dustOptions = new Particle.DustOptions(finalOrangeColor,orangeSize);
                             Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
                         } else {
                             Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0);
@@ -124,7 +126,7 @@ public class ShapeAnimation implements Animation {
                         final double z = 0.09 * (9.5 - this.t * 2.5) * Math.sin(this.t + phi);
                         loc.add(x, 0.0, z);
                         if (!Bukkit.getVersion().contains("1.12")) {
-                            Particle.DustOptions dustOptions = new Particle.DustOptions(finalWhiteColor, (float) customConfig.getAnimations().getDouble("Shape.Particle.White.Size"));
+                            Particle.DustOptions dustOptions = new Particle.DustOptions(finalWhiteColor, whiteSize);
                             Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0, dustOptions);
                         } else {
                             Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.FIREWORKS_SPARK, this.l.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0);
@@ -145,6 +147,6 @@ public class ShapeAnimation implements Animation {
 
                 ++this.i;
             }
-        }).runTaskTimer(Main.instance, 0L, 0L);
+        }).runTaskTimer(Main.instance, 0L, 2L);
     }
 }

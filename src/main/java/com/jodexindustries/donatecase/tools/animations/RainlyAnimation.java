@@ -121,6 +121,6 @@ public class RainlyAnimation implements Animation {
 
                 ++this.i;
             }
-        }).runTaskTimer(Main.instance, 0L, 0L);
+        }).runTaskTimer(Main.instance, 0L, 2L);
     }
 }
