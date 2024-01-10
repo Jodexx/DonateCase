@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.dc;
 
+import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.HistoryData;
@@ -255,7 +256,7 @@ public class Main extends JavaPlugin {
         AnimationManager.registerAnimation("RAINLY", RainlyAnimation.class);
         AnimationManager.registerAnimation("FIREWORK", FireworkAnimation.class);
         AnimationManager.registerAnimation("FULLWHEEL", FullWheelAnimation.class);
-        Logger.log("&aRegistered &c5 &adefault animations");
+        Logger.log("&aRegistered &adefault animations");
     }
     public static Permission getPermissions() {
         return permission;

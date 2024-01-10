@@ -19,7 +19,7 @@ public class StartAnimation {
             } else {
                 Main.t.msg(player, Main.t.rc("&cAn error occurred while opening the case!"));
                 Main.t.msg(player, Main.t.rc("&cContact the project administration!"));
-                Main.instance.getLogger().log(Level.WARNING, "Case animation name does not exist!");
+                Main.instance.getLogger().log(Level.WARNING, "Case animation "  + animation + " does not exist!");
             }
         } else {
             Main.t.msg(player, Main.t.rc("&cAn error occurred while opening the case!"));

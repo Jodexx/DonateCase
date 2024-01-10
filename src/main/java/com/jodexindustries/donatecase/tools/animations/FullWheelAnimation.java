@@ -5,9 +5,7 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -16,6 +14,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.jodexindustries.donatecase.dc.Main.*;
 
@@ -59,61 +58,84 @@ public class FullWheelAnimation implements Animation {
             armorStands.add(spawnArmorStand(location, i));
             i++;
         }
-        (new BukkitRunnable() {
-            int ticks = 0;
-            double lastCompletedRotation = 0.0;
 
-            final double speed = customConfig.getAnimations().getDouble("FullWheel.CircleSpeed");
-            final double radius = customConfig.getAnimations().getDouble("FullWheel.CircleRadius");
-            final double rotationThreshold = Math.PI / (itemsCount * speed);
+        double baseAngle = loc.clone().getDirection().angle(new Vector(0, 0, 1));
+        final double[] lastCompletedRotation = {0.0};
+        final double speed = customConfig.getAnimations().getDouble("FullWheel.CircleSpeed");
+        final double radius = customConfig.getAnimations().getDouble("FullWheel.CircleRadius");
+        final boolean useFlame = customConfig.getAnimations().getBoolean("FullWheel.UseFlame");
+        final double rotationThreshold = Math.PI / (itemsCount * speed);
+        AtomicInteger ticks = new AtomicInteger();
+        boolean needSound = customConfig.getAnimations().getString("FullWheel.Scroll.Sound") != null;
+        Sound sound = Sound.valueOf(customConfig.getAnimations().getString("FullWheel.Scroll.Sound"));
+        float volume = (float) customConfig.getAnimations().getDouble("FullWheel.Scroll.Volume");
+        float vpitch = (float) customConfig.getAnimations().getDouble("FullWheel.Scroll.Pitch");
+        int animationTime = customConfig.getAnimations().getInt("FullWheel.Scroll.Time", 100);
+        final double[] yAx = {0};
+        final double[] radiusAx = {radius};
+        final double offset = 2 * Math.PI / itemsCount;
+        final double[] speedAx = {speed};
+        final Location flocation = loc.clone().add(0, -1 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"), 0);
 
-            final double offset = 2 * Math.PI / itemsCount;
-            final Location location = loc.clone().add(0, -1 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"), 0);
-            public void run() {
-                ticks++;
-                double angle = ticks / 20.0;
-                angle *= speed;
-                angle *= 2 * Math.PI;
+        Bukkit.getScheduler().runTaskTimer(instance, (task) -> {
 
-                if (ticks < 101) {
-                    double baseAngle = loc.getDirection().angle(new Vector(0, 0, 1));
-                    for (ArmorStandCreator entity : armorStands) {
-                        double x = radius * Math.sin(angle);
-                        double y = radius * Math.cos(angle);
+            ticks.getAndIncrement();
+            double angle = ticks.get() / 20.0 * speedAx[0] * 2 * Math.PI;
 
-                        Vector rotationAxis = loc.getDirection().crossProduct(new Vector(0, 1, 0)).normalize();
-                        Location newLoc = location.clone().add(rotationAxis.multiply(x).add(loc.getDirection().multiply(y)));
-                        entity.teleport(newLoc);
-                        angle += offset;
+            if (ticks.get() < animationTime) {
+                // flame
+                if (useFlame) {
+                    yAx[0] += 6.0 / animationTime * speedAx[0];
+                    radiusAx[0] -= 0.015 / (animationTime / 100.0);
+                    double theta = ticks.get() / (20.0 / (speedAx[0] * 6));
+                    double dx = (radiusAx[0] / 1.1) * Math.sin(theta);
+                    double dy = (radiusAx[0] / 1.1) * Math.cos(theta);
+                    Location particleLocation = flocation.clone().subtract(0, 1.5, 0).add(dx, 1.5 + yAx[0], dy);
+                    particleLocation.getWorld().spawnParticle(Particle.FLAME, particleLocation, 1, 0, 0, 0, 0, null);
+                    double theta2 = theta + Math.PI;
+                    double dx2 = (radiusAx[0] / 1.1) * Math.sin(theta2);
+                    double dy2 = (radiusAx[0] / 1.1) * Math.cos(theta2);
+                    Location particleLocation2 = flocation.clone().subtract(0, 1.5, 0).add(dx2, 1.5 + yAx[0], dy2);
+                    particleLocation2.getWorld().spawnParticle(Particle.FLAME, particleLocation2, 1, 0, 0, 0, 0, null);
+                }
+                // armor stands
+                for (ArmorStandCreator entity : armorStands) {
+                    double x = radius * Math.sin(angle);
+                    double y = radius * Math.cos(angle);
 
-                        double currentAngle = angle - baseAngle;
-                        if (currentAngle - lastCompletedRotation >= rotationThreshold) {
-                            if (customConfig.getAnimations().getString("FullWheel.Scroll.Sound") != null) {
-                                location.getWorld().playSound(location,
-                                        Sound.valueOf(customConfig.getAnimations().getString("FullWheel.Scroll.Sound")),
-                                        customConfig.getAnimations().getInt("FullWheel.Scroll.Volume"),
-                                        customConfig.getAnimations().getInt("FullWheel.Scroll.Pitch"));
-                            }
-                            lastCompletedRotation = currentAngle;
+                    Vector rotationAxis = loc.getDirection().crossProduct(new Vector(0, 1, 0)).normalize();
+                    Location newLoc = flocation.clone().add(rotationAxis.multiply(x).add(loc.getDirection().multiply(y)));
+                    entity.teleport(newLoc);
+                    angle += offset;
+
+                    double currentAngle = angle - baseAngle;
+                    if (currentAngle - lastCompletedRotation[0] >= rotationThreshold) {
+                        if (needSound) {
+                            flocation.getWorld().playSound(flocation,
+                                    sound,
+                                    volume,
+                                    vpitch);
                         }
+                        lastCompletedRotation[0] = currentAngle;
                     }
-                }
-                if (ticks == 101) {
-                    Case.onCaseOpenFinish(c, player, true, groups.get(0));
-                }
-                // End
-                if (this.ticks >= 120) {
-                    this.cancel();
-                    for(ArmorStandCreator stand : armorStands) {
-                        stand.remove();
-                    }
-                    Case.animationEnd(c, getName(), player, loc, groups.get(0));
-                    items.clear();
-                    groups.clear();
-                    armorStands.clear();
                 }
             }
-        }).runTaskTimer(Main.instance, 0L, 2L);
+            if (ticks.get() == animationTime + 1) {
+                Case.onCaseOpenFinish(c, player, true, groups.get(0));
+            }
+            // End
+            if (ticks.get() >= animationTime + 20) {
+                task.cancel();
+                for (ArmorStandCreator stand : armorStands) {
+                    stand.remove();
+                }
+                Case.animationEnd(c, getName(), player, loc, groups.get(0));
+                items.clear();
+                groups.clear();
+                armorStands.clear();
+            }
+                speedAx[0] *= 1 - speed / (animationTime - 2);
+        }, 0L, 0L);
     }
     private ArmorStandCreator spawnArmorStand(Location location, int index) {
         ArmorStandCreator as = t.createArmorStand();

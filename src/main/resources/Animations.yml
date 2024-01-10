@@ -30,7 +30,9 @@ Wheel:
   CircleSpeed: 0.5
   CircleRadius: 1.5
   LiftingAlongY: 0
+  UseFlame: true # NEW
   Scroll:
+    Time: 100 # NEW
     Sound: UI_BUTTON_CLICK
     Volume: 10
     Pitch: 1
@@ -39,7 +41,9 @@ FullWheel:
   CircleSpeed: 0.5
   CircleRadius: 1.5
   LiftingAlongY: 0
+  UseFlame: true
   Scroll:
+    Time: 100
     Sound: UI_BUTTON_CLICK
     Volume: 10
     Pitch: 1

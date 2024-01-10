@@ -86,6 +86,6 @@ public class FireworkAnimation implements Animation {
 
                 ++this.i;
             }
-        }).runTaskTimer(Main.instance, 0L, 2L);
+        }).runTaskTimer(Main.instance, 0L, 0L);
     }
 }

@@ -15,7 +15,7 @@ plugins {
 }
 
 group = 'com.jodexindustries.donatecase'
-version = '2.1.7.0'
+version = '2.1.7.1'
 
 repositories {
     mavenCentral()
@@ -63,8 +63,6 @@ dependencies {
     compileOnly "de.likewhat.customheads:CustomHeads:3.0.7"
     compileOnly 'com.github.LoneDev6:API-ItemsAdder:3.6.1'
     compileOnly 'com.mojang:authlib:1.5.25'
-    compileOnly 'com.comphenix.protocol:ProtocolLib:5.1.0-SNAPSHOT'
-    compileOnly 'it.unimi.dsi:fastutil:8.5.12'
 
 }
 
