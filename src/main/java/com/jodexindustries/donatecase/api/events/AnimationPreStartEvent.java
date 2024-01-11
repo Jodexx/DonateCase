@@ -7,6 +7,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Called before the animation starts
+ */
 public class AnimationPreStartEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     CaseData caseData;
@@ -22,23 +25,47 @@ public class AnimationPreStartEvent extends PlayerEvent {
         this.winItem = winItem;
     }
 
+    /**
+     * Get case location
+     * @return case location
+     */
+
     @NotNull
     public Location getLocation() {
         return location;
     }
+    /**
+     * Get case data
+     * @return case data
+     */
     @NotNull
     public CaseData getCaseData() {
         return caseData;
     }
+
+    /**
+     * Get case animation
+     * @return case animation
+     */
     @NotNull
     public String getAnimation() {
         return animation;
     }
+
+    /**
+     * Get the win item
+     * @return win item
+     */
     @NotNull
-    public CaseData.Item getWinGroup() {
+    public CaseData.Item getWinItem() {
         return winItem;
     }
-    public void setWinGroup(CaseData.Item winItem) {
+
+    /**
+     * Set the prize before starting the animation (usually a random one is taken from the case configuration)
+     * @param winItem Win group data
+     */
+    public void setWinItem(CaseData.Item winItem) {
         this.winItem = winItem;
     }
 

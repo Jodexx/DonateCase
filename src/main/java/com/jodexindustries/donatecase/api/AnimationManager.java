@@ -52,18 +52,13 @@ public class AnimationManager {
      * @param c Case data
      */
     public static void playAnimation(String name, Player player, Location location, CaseData c) {
-        Class<? extends Animation> animationClass = getRegisteredAnimations().get(name);
-        Animation animation = null;
-        try {
-            animation = animationClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ignore) {
-        }
+        Animation animation = getRegisteredAnimation(name);
         if (animation != null) {
             CaseData.Item winItem = Case.getRandomItem(c);
             winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName()));
             AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, name, c, location, winItem);
             Bukkit.getPluginManager().callEvent(preStartEvent);
-            animation.start(player, Case.getCaseLocationByBlockLocation(location), c, preStartEvent.getWinGroup());
+            animation.start(player, Case.getCaseLocationByBlockLocation(location), c, preStartEvent.getWinItem());
             Case.activeCases.put(location.getBlock().getLocation(), c.getCaseName());
             for (Player pl : Bukkit.getOnlinePlayers()) {
                 if (Case.playersCases.containsKey(pl.getUniqueId()) && Main.t.isHere(location.getBlock().getLocation(), Case.playersCases.get(pl.getUniqueId()).getLocation())) {
@@ -71,7 +66,7 @@ public class AnimationManager {
                 }
             }
 
-            AnimationStartEvent startEvent = new AnimationStartEvent(player, name, c, location, preStartEvent.getWinGroup());
+            AnimationStartEvent startEvent = new AnimationStartEvent(player, name, c, location, preStartEvent.getWinItem());
             Bukkit.getPluginManager().callEvent(startEvent);
         } else {
             Main.instance.getLogger().warning("Animation " + name + " not found!");
@@ -88,6 +83,12 @@ public class AnimationManager {
     public static Map<String, Class<? extends Animation>> getRegisteredAnimations() {
         return registeredAnimations;
     }
+
+    /**
+     * Get registered animation
+     * @param animation Animation name
+     * @return Animation class instance
+     */
     private static Animation getRegisteredAnimation(String animation) {
         if (registeredAnimations.containsKey(animation)) {
             try {

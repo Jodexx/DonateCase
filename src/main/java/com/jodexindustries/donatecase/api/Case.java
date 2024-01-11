@@ -141,6 +141,12 @@ public class Case {
         customConfig.saveCases();
     }
 
+    /**
+     * Check if case has by location
+     * @param loc Case location
+     * @return Boolean
+     */
+
     public static boolean hasCaseByLocation(Location loc) {
         ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
         if(cases_ == null) {

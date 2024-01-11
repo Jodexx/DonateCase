@@ -7,6 +7,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Called when the animation ends
+ */
 public class AnimationEndEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     CaseData caseData;
@@ -22,18 +25,35 @@ public class AnimationEndEvent extends PlayerEvent {
         this.winItem = winItem;
     }
 
+    /**
+     * Get case location
+     * @return case location
+     */
     @NotNull
     public Location getLocation() {
         return location;
     }
+
+    /**
+     * Get case data
+     * @return case data
+     */
     @NotNull
     public CaseData getCaseData() {
         return caseData;
     }
+    /**
+     * Get case animation
+     * @return case animation
+     */
     @NotNull
     public String getAnimation() {
         return animation;
     }
+    /**
+     * Get the win item
+     * @return win item
+     */
     @NotNull
     public CaseData.Item getWinItem() {
         return winItem;

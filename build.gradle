@@ -87,7 +87,7 @@ tasks.register('proguard', ProGuardTask) {
 
 
 
-//build.dependsOn proguard
+build.dependsOn proguard
 
 def targetJavaVersion = 11
 java {
