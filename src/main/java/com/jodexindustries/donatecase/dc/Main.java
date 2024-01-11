@@ -2,7 +2,7 @@ package com.jodexindustries.donatecase.dc;
 
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.HistoryData;
+import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
 import com.jodexindustries.donatecase.listener.EventsListener;
@@ -11,22 +11,26 @@ import com.jodexindustries.donatecase.tools.animations.*;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class Main extends JavaPlugin {
     public static Main instance;
     public static Permission permission = null;
-    public static boolean Tconfig = true;
+    public static boolean sql = true;
+
     public static Tools t;
     public static FileConfiguration lang;
     public static MySQL mysql;
@@ -38,12 +42,14 @@ public class Main extends JavaPlugin {
     File langUa;
     public static CustomConfig customConfig;
     public static CasesConfig casesConfig;
+    private boolean usePackets = true;
 
     public void onEnable() {
         long time = System.currentTimeMillis();
         instance = this;
         customConfig = new CustomConfig();
         t = new Tools();
+//        loadLibraries();
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             (new Placeholder()).register();
             Logger.log("&aPlaceholders registered!");
@@ -75,11 +81,11 @@ public class Main extends JavaPlugin {
         Metrics metrics = new Metrics(this, 18709);
         metrics.addCustomChart(new Metrics.SimplePie("language", () -> customConfig.getConfig().getString("DonatCase.Languages")));
 
-        Tconfig = !customConfig.getConfig().getBoolean("DonatCase.MySql.Enabled");
+        sql = customConfig.getConfig().getBoolean("DonatCase.MySql.Enabled");
         if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             instance.setupPermissions();
         }
-        if (!Tconfig) {
+        if (sql) {
             String base = customConfig.getConfig().getString("DonatCase.MySql.DataBase");
             String port = customConfig.getConfig().getString("DonatCase.MySql.Port");
             String hostname = customConfig.getConfig().getString("DonatCase.MySql.Host");
@@ -112,7 +118,7 @@ public class Main extends JavaPlugin {
             new Placeholder().unregister();
         }
 
-        for (ArmorStand as : Case.listAR) {
+        for (ArmorStand as : Case.armorStandList) {
             if (as != null) {
                 as.remove();
             }
@@ -198,19 +204,6 @@ public class Main extends JavaPlugin {
             this.saveResource("Animations.yml", false);
             customConfig = new CustomConfig();
         }
-        if(customConfig.getData().getConfigurationSection("Data") != null) {
-            for (String c : customConfig.getData().getConfigurationSection("Data").getKeys(false)) {
-                HistoryData[] historyData = new HistoryData[10];
-                for (String i : customConfig.getData().getConfigurationSection("Data." + c).getKeys(false)) {
-                    HistoryData data = new HistoryData(customConfig.getData().getString("Data." + c + "." + i + ".Player"),
-                            customConfig.getData().getLong("Data." + c + "." + i + ".Time"),
-                            customConfig.getData().getString("Data." + c + "." + i + ".Group"));
-                    historyData[Integer.parseInt(i)] = data;
-                }
-                Case.historyData.put(c, historyData);
-            }
-        }
-        Logger.log("&aHistory data loaded!");
 
         if(customConfig.getConfig().getConfigurationSection("DonatCase.Cases") != null) {
             new File(getDataFolder(), "cases").mkdir();
@@ -226,6 +219,9 @@ public class Main extends JavaPlugin {
             }
         }
         casesConfig = new CasesConfig();
+        usePackets = customConfig.getConfig().getBoolean("DonatCase.UsePackets") && getServer().getPluginManager().isPluginEnabled("ProtocolLib");
+
+        loadCases();
     }
 
     public void setupLangs() {
@@ -252,9 +248,90 @@ public class Main extends JavaPlugin {
         AnimationManager.registerAnimation("RAINLY", RainlyAnimation.class);
         AnimationManager.registerAnimation("FIREWORK", FireworkAnimation.class);
         AnimationManager.registerAnimation("FULLWHEEL", FullWheelAnimation.class);
-        Logger.log("&aRegistered &c5 &adefault animations");
+        Logger.log("&aRegistered &adefault animations");
+    }
+    private void loadCases() {
+        Case.caseData.clear();
+        for (String caseName : casesConfig.getCases().keySet()) {
+            YamlConfiguration config = casesConfig.getCase(caseName);
+            String caseTitle = t.rc(config.getString("case.Title"));
+            String animationName = config.getString("case.Animation");
+
+            String animationSound = config.getString("case.AnimationSound", "NULL").toUpperCase();
+            float volume = (float) config.getDouble("case.Sound.Volume");
+            float pitch = (float) config.getDouble("case.Sound.Pitch");
+            Sound bukkitSound = Sound.valueOf(animationSound);
+            CaseData.AnimationSound sound = new CaseData.AnimationSound(bukkitSound,volume, pitch);
+
+            Map<String, CaseData.Item> items = new HashMap<>();
+            for (String item : config.getConfigurationSection("case.Items").getKeys(false)) {
+                String group = config.getString("case.Items." + item + ".Group");
+                int chance = config.getInt("case.Items." + item + ".Chance");
+                String giveType = config.getString("case.Items." + item + ".GiveType");
+
+                // get actions
+                List<String> actions = config.getStringList("case.Items." + item + ".Actions");
+
+                // get random actions
+                Map<String, CaseData.Item.RandomAction> randomActions = new HashMap<>();
+                for (String randomAction : config.getConfigurationSection("case.Items." + item + ".RandomActions").getKeys(false)) {
+                    int actionChance = config.getInt("case.Items." + item + ".RandomActions." + randomAction + ".Chance");
+                    List<String> randomActionsList = config.getStringList("case.Items." + item + ".RandomActions." + randomAction + ".Actions");
+                    CaseData.Item.RandomAction randomActionObject = new CaseData.Item.RandomAction(actionChance, randomActionsList);
+                    randomActions.put(randomAction, randomActionObject);
+                }
+
+                // get rgb
+                String[] rgb = null;
+                String rgbString = config.getString("case.Items." + item + ".Item.Rgb");
+                if(rgbString != null) {
+                    rgb = rgbString.replaceAll(" ", "").split(",");
+                }
+
+                // get material
+                String id = config.getString("case.Items." + item + ".Item.ID");
+                String itemDisplayName = t.rc(config.getString("case.Items." + item + ".Item.DisplayName"));
+                boolean enchanted = config.getBoolean("case.Items." + item + ".Item.Enchanted");
+                ItemStack itemStack = t.getCaseItem(itemDisplayName, id, enchanted, rgb);
+                CaseData.Item.Material material = new CaseData.Item.Material(itemStack, itemDisplayName, enchanted);
+
+                CaseData.Item caseItem = new CaseData.Item(item, group, chance, material, giveType, actions, randomActions, rgb);
+                items.put(item, caseItem);
+            }
+            CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
+            if(customConfig.getData().getConfigurationSection("Data") != null &&
+                    customConfig.getData().getConfigurationSection("Data." + caseName) != null) {
+                for (String i : customConfig.getData().getConfigurationSection("Data." + caseName).getKeys(false)) {
+                    CaseData.HistoryData data = new CaseData.HistoryData(caseName, customConfig.getData().getString("Data." + caseName + "." + i + ".Player"),
+                            customConfig.getData().getLong("Data." + caseName + "." + i + ".Time"),
+                            customConfig.getData().getString("Data." + caseName + "." + i + ".Group"), customConfig.getData().getString("Data." + caseName + "." + i + ".Action"));
+                    historyData[Integer.parseInt(i)] = data;
+                }
+            }
+            CaseData caseData = new CaseData(caseName, caseTitle,animationName, sound, items, historyData);
+            Case.caseData.put(caseName, caseData);
+        }
+        Logger.log("&aCases loaded!");
     }
     public static Permission getPermissions() {
         return permission;
     }
+
+
+    public boolean isUsePackets() {
+        return usePackets;
+    }
+//    private void loadLibraries() {
+//        BukkitLibraryManager libraryManager = new BukkitLibraryManager(this);
+//        Library lib = Library.builder()
+//                .groupId("com{}github{}justadeni{}standapi")
+//                .artifactId("StandAPI")
+//                .version("v1.8")
+//                .isolatedLoad(true)
+//                .build();
+//        libraryManager.addRepository("https://repo.jodexindustries.space/releases");
+//        libraryManager.addMavenCentral();
+//        libraryManager.loadLibrary(lib);
+//
+//    }
 }

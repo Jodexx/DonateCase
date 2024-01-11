@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.OpenCase;
+import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.events.OpenCaseEvent;
@@ -33,8 +34,7 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.logging.Level;
 
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
-import static com.jodexindustries.donatecase.dc.Main.t;
+import static com.jodexindustries.donatecase.dc.Main.*;
 
 
 public class EventsListener implements Listener {
@@ -66,13 +66,13 @@ public class EventsListener implements Listener {
         if (e.getCurrentItem() != null) {
             Player p = (Player)e.getWhoClicked();
             String pl = p.getName();
-            if(Case.playerOpensCase.containsKey(p.getUniqueId())) {
-                String caseType = Case.playerOpensCase.get(p.getUniqueId()).getName();
+            if(Case.playersCases.containsKey(p.getUniqueId())) {
+                String caseType = Case.playersCases.get(p.getUniqueId()).getName();
                     e.setCancelled(true);
                     if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && t.getOpenMaterialSlots(caseType).contains(e.getRawSlot())) {
                         caseType = t.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
                         if (Case.hasCaseByName(caseType)) {
-                            Location block = Case.playerOpensCase.get(p.getUniqueId()).getLocation();
+                            Location block = Case.playersCases.get(p.getUniqueId()).getLocation();
                             PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, block.getBlock());
                             Bukkit.getServer().getPluginManager().callEvent(event);
                             if (!event.isCancelled()) {
@@ -84,8 +84,17 @@ public class EventsListener implements Listener {
                                     p.closeInventory();
                                 } else {
                                     p.closeInventory();
-                                    p.playSound(p.getLocation(), Sound.valueOf(customConfig.getConfig().getString("DonatCase.NoKeyWarningSound")), 1.0F, 0.4F);
-                                    Main.t.msg(p, Main.lang.getString("NoKey"));
+                                    Sound sound = null;
+                                    try {
+                                        sound = Sound.valueOf(customConfig.getConfig().getString("DonatCase.NoKeyWarningSound"));
+                                    } catch (IllegalArgumentException ignore) {}
+                                    if(sound == null) {
+                                        sound = Sound.valueOf("ENTITY_ENDERMEN_TELEPORT");
+                                    }
+                                    p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
+                                    String noKey = casesConfig.getCase(caseType).getString("Messages.NoKey");
+                                    if(noKey == null) noKey = lang.getString("NoKey");
+                                    Main.t.msg(p, noKey);
                                 }
                             }
                         } else {
@@ -103,7 +112,7 @@ public class EventsListener implements Listener {
     public void PlayerInteractEntity(PlayerInteractAtEntityEvent e) {
         Entity entity = e.getRightClicked();
         if(entity instanceof ArmorStand) {
-            if (Case.listAR.contains(entity)) {
+            if (Case.armorStandList.contains(entity)) {
                 e.setCancelled(true);
             }
         }
@@ -127,10 +136,15 @@ public class EventsListener implements Listener {
                 CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType);
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    if (!Case.playerOpensCase.containsKey(p.getUniqueId())) {
-                        if (!Case.ActiveCase.containsKey(blockLocation)) {
-                            Case.playerOpensCase.put(p.getUniqueId(), new OpenCase(blockLocation, caseType, p.getUniqueId()));
-                            new CaseGui(p, caseType);
+                    if (!Case.playersCases.containsKey(p.getUniqueId())) {
+                        if (!Case.activeCases.containsKey(blockLocation)) {
+                            Case.playersCases.put(p.getUniqueId(), new OpenCase(blockLocation, caseType, p.getUniqueId()));
+                            try {
+                                CaseData caseData = Case.getCase(caseType).clone();
+                                new CaseGui(p, caseData);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         } else {
                             Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
                         }
@@ -144,7 +158,7 @@ public class EventsListener implements Listener {
     public void InventoryClose(InventoryCloseEvent e) {
         Player p = (Player)e.getPlayer();
         if (Case.hasCaseByTitle(e.getView().getTitle())) {
-            Case.playerOpensCase.remove(p.getUniqueId());
+            Case.playersCases.remove(p.getUniqueId());
         }
 
     }

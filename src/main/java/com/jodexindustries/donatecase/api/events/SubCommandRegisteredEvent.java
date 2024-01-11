@@ -25,6 +25,10 @@ public class SubCommandRegisteredEvent extends Event {
         return handlers;
     }
 
+    /**
+     * Get subcommand name
+     * @return subcommand name
+     */
     public String getSubCommandName() {
         return subCommandName;
     }

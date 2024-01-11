@@ -8,18 +8,18 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when the animation ends
+ * Called before the animation starts
  */
-public class AnimationEndEvent extends PlayerEvent {
+public class AnimationPreStartEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     CaseData caseData;
     Location location;
     String animation;
     CaseData.Item winItem;
 
-    public AnimationEndEvent(@NotNull Player who, String animation, CaseData caseData, Location location, CaseData.Item winItem) {
+    public AnimationPreStartEvent(@NotNull Player who, String animation, CaseData c, Location location, CaseData.Item winItem) {
         super(who);
-        this.caseData = caseData;
+        this.caseData = c;
         this.location = location;
         this.animation = animation;
         this.winItem = winItem;
@@ -29,11 +29,11 @@ public class AnimationEndEvent extends PlayerEvent {
      * Get case location
      * @return case location
      */
+
     @NotNull
     public Location getLocation() {
         return location;
     }
-
     /**
      * Get case data
      * @return case data
@@ -42,6 +42,7 @@ public class AnimationEndEvent extends PlayerEvent {
     public CaseData getCaseData() {
         return caseData;
     }
+
     /**
      * Get case animation
      * @return case animation
@@ -50,6 +51,7 @@ public class AnimationEndEvent extends PlayerEvent {
     public String getAnimation() {
         return animation;
     }
+
     /**
      * Get the win item
      * @return win item
@@ -57,6 +59,14 @@ public class AnimationEndEvent extends PlayerEvent {
     @NotNull
     public CaseData.Item getWinItem() {
         return winItem;
+    }
+
+    /**
+     * Set the prize before starting the animation (usually a random one is taken from the case configuration)
+     * @param winItem Win group data
+     */
+    public void setWinItem(CaseData.Item winItem) {
+        this.winItem = winItem;
     }
 
     @NotNull

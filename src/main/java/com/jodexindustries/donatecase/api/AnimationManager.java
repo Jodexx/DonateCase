@@ -1,18 +1,22 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.events.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
+import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.Logger;
+import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AnimationManager {
-    private static Map<String, Class<? extends Animation>> registeredAnimations = new HashMap<>();
+    private static final Map<String, Class<? extends Animation>> registeredAnimations = new HashMap<>();
 
     /**
      * Register custom animation
@@ -45,23 +49,25 @@ public class AnimationManager {
      * @param name Animation name
      * @param player Player who opened case (for who animation played)
      * @param location Case location (with pitch and yaw player)
-     * @param c Case type (from config)
+     * @param c Case data
      */
-    public static void playAnimation(String name, Player player, Location location, String c) {
-        Class<? extends Animation> animationClass = registeredAnimations.get(name);
-        if (animationClass != null) {
-            try {
-                Animation animation = animationClass.newInstance();
-                animation.start(player, Case.getCaseLocationByBlockLocation(location), c);
-                Case.ActiveCase.put(location.getBlock().getLocation(), c);
-                for (Player pl : Bukkit.getOnlinePlayers()) {
-                    if (Case.playerOpensCase.containsKey(pl.getUniqueId()) && Main.t.isHere(location.getBlock().getLocation(), Case.playerOpensCase.get(pl.getUniqueId()).getLocation())) {
-                        pl.closeInventory();
-                    }
+    public static void playAnimation(String name, Player player, Location location, CaseData c) {
+        Animation animation = getRegisteredAnimation(name);
+        if (animation != null) {
+            CaseData.Item winItem = Case.getRandomItem(c);
+            winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName()));
+            AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, name, c, location, winItem);
+            Bukkit.getPluginManager().callEvent(preStartEvent);
+            animation.start(player, Case.getCaseLocationByBlockLocation(location), c, preStartEvent.getWinItem());
+            Case.activeCases.put(location.getBlock().getLocation(), c.getCaseName());
+            for (Player pl : Bukkit.getOnlinePlayers()) {
+                if (Case.playersCases.containsKey(pl.getUniqueId()) && Main.t.isHere(location.getBlock().getLocation(), Case.playersCases.get(pl.getUniqueId()).getLocation())) {
+                    pl.closeInventory();
                 }
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
             }
+
+            AnimationStartEvent startEvent = new AnimationStartEvent(player, name, c, location, preStartEvent.getWinItem());
+            Bukkit.getPluginManager().callEvent(startEvent);
         } else {
             Main.instance.getLogger().warning("Animation " + name + " not found!");
         }
@@ -77,4 +83,23 @@ public class AnimationManager {
     public static Map<String, Class<? extends Animation>> getRegisteredAnimations() {
         return registeredAnimations;
     }
+
+    /**
+     * Get registered animation
+     * @param animation Animation name
+     * @return Animation class instance
+     */
+    private static Animation getRegisteredAnimation(String animation) {
+        if (registeredAnimations.containsKey(animation)) {
+            try {
+                Class<? extends Animation> animationClass = getRegisteredAnimations().get(animation);
+                return animationClass.getDeclaredConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+
 }

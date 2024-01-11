@@ -7,6 +7,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Called when the player interacts with the case block on the mouse's right button
+ */
 public class CaseInteractEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     protected boolean cancel;
@@ -22,6 +25,11 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
     public Block getClickedBlock() {
         return block;
     }
+
+    /**
+     * Get case type
+     * @return case type
+     */
     @NotNull
     public String getCaseType() {
         return caseType;

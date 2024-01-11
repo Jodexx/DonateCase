@@ -1,14 +1,18 @@
 config: '2.5' #DON'T CHANGE THIS PLEASE
 
 # Local Placeholders
-# %case - case name
-# %casetitle - case title
-# %key - number of keys
+# %case% - case name
+# %casetitle% - case title
+# %key% - number of keys
 # %keys_<casename>% - number of keys
+# %keys_<casename>_format% - number of keys with format
 # %player - player nickname
 #
 # Global Placeholders
 # %donatecase_keys_<casename>% - number of keys from a particular case
+# %donatecase_keys_<casename>_format% - number of keys from a particular case with format
+# %donatecase_keys% - number of keys from all cases
+# %donatecase_keys_format% - number of keys from all cases with format
 
 Prefix: '&7[&cDonateCase&7] &e'
 NoPermission: '&cYou do not have permissions!'

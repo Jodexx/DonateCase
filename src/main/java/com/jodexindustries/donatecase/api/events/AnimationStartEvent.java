@@ -8,16 +8,16 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when the animation ends
+ * Called when the animation starts
  */
-public class AnimationEndEvent extends PlayerEvent {
+public class AnimationStartEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     CaseData caseData;
     Location location;
     String animation;
     CaseData.Item winItem;
 
-    public AnimationEndEvent(@NotNull Player who, String animation, CaseData caseData, Location location, CaseData.Item winItem) {
+    public AnimationStartEvent(@NotNull Player who, String animation, CaseData caseData, Location location, CaseData.Item winItem) {
         super(who);
         this.caseData = caseData;
         this.location = location;
@@ -33,7 +33,6 @@ public class AnimationEndEvent extends PlayerEvent {
     public Location getLocation() {
         return location;
     }
-
     /**
      * Get case data
      * @return case data
@@ -42,6 +41,7 @@ public class AnimationEndEvent extends PlayerEvent {
     public CaseData getCaseData() {
         return caseData;
     }
+
     /**
      * Get case animation
      * @return case animation
@@ -50,6 +50,7 @@ public class AnimationEndEvent extends PlayerEvent {
     public String getAnimation() {
         return animation;
     }
+
     /**
      * Get the win item
      * @return win item

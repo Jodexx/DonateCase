@@ -7,6 +7,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Called when a player tries to open a case via the open menu
+ */
 public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     protected boolean cancel;
@@ -19,9 +22,18 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
         this.block = block;
         cancel = false;
     }
+    /**
+     * Get case type (type from config)
+     * @return case type
+     */
     public String getCaseType() {
         return caseType;
     }
+
+    /**
+     * Get case block
+     * @return Case block
+     */
     public Block getBlock() {
         return block;
     }

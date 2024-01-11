@@ -7,6 +7,7 @@ softdepend:
   - Vault
   - PlaceholderAPI
   - CustomHeads
+  - ProtocolLib
   - HeadDataBase
 api-version: 1.13
 commands:

@@ -2,17 +2,15 @@ package com.jodexindustries.donatecase.tools.animations;
 
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
+import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
@@ -26,14 +24,11 @@ public class RainlyAnimation implements Animation {
         return "DEFAULT RAINLY";
     }
     @Override
-    public void start(Player player, Location location, String c) {
+    public void start(Player player, Location location, CaseData c, CaseData.Item winItem) {
         final Location loc = location.clone();
         final String FallingParticle = customConfig.getAnimations().getString("Rainly.FallingParticle");
-        final String winGroup = Tools.getRandomGroup(c);
-        String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
-        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
-        }
+        String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
+        winItem.getMaterial().setDisplayName(winGroupDisplayName);
         location.add(0.5, 1, 0.5);
         Location rain1 = loc.clone().add(-1.5, 3, -1.5);
         Location rain2 = loc.clone().add(2.5, 3, -1.5);
@@ -44,13 +39,11 @@ public class RainlyAnimation implements Animation {
         Location cloud3 = rain3.clone().add(0, 0.5, 0);
         Location cloud4 = rain4.clone().add(0, 0.5, 0);
         location.setYaw(-70.0F);
-        final ArmorStand as = (ArmorStand) player.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+        ArmorStandCreator as = t.createArmorStand();
+        as.spawnArmorStand(location);
         as.setVisible(false);
-        Case.listAR.add(as);
         as.setGravity(false);
         as.setSmall(true);
-        as.setCustomNameVisible(true);
-        String finalWinGroupDisplayName = winGroupDisplayName;
         (new BukkitRunnable() {
             int i; // count of ticks
             double t;
@@ -68,7 +61,6 @@ public class RainlyAnimation implements Animation {
                 Location las = as.getLocation().clone();
                 las.setYaw(las.getYaw() + 20.0F);
                 as.teleport(las);
-                ItemStack winItem = Main.t.getWinItem(c, winGroup, player);
                 if (this.i == 0) {
                     this.l = as.getLocation();
                 }
@@ -76,11 +68,11 @@ public class RainlyAnimation implements Animation {
                     this.l.setYaw(las.getYaw());
                     if (this.i == 32) {
                         // win item and title
-                        if(winItem.getType() != Material.AIR) {
-                            as.setHelmet(winItem);
+                        if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
+                            as.setHelmet(winItem.getMaterial().getItemStack());
                         }
-                        as.setCustomName(finalWinGroupDisplayName);
-                        Case.onCaseOpenFinish(c, player, false, winGroup);
+                        as.setCustomName(winGroupDisplayName);
+                        Case.onCaseOpenFinish(c, player, false, winItem);
                         loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 0);
                         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                     }
@@ -88,17 +80,14 @@ public class RainlyAnimation implements Animation {
 
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0 )) {
-                    final String winGroup2 = Case.getRandomGroup(c);
-                    String winGroupDisplayName2 = Main.t.rc(Case.getWinGroupDisplayName(c, winGroup2));
-                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                        winGroupDisplayName2 = PAPISupport.setPlaceholders(player, winGroupDisplayName2);
+                    CaseData.Item winItem = Case.getRandomItem(c);
+                    String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
+                    winItem.getMaterial().setDisplayName(winGroupDisplayName);
+                    if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
+                        as.setHelmet(winItem.getMaterial().getItemStack());
                     }
-                    ItemStack winItem2 = Main.t.getWinItem(c, winGroup2, player);
-                    if(winItem2.getType() != Material.AIR) {
-                        as.setHelmet(winItem2);
-                    }
-                    as.setCustomName(winGroupDisplayName2);
-                    player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 5.0F);
+                    as.setCustomName(winItem.getMaterial().getDisplayName());
+                    loc.getWorld().playSound(loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 5.0F);
                     // firework particles
                     this.t += 0.25;
                     Location loc = this.l.clone();
@@ -120,8 +109,7 @@ public class RainlyAnimation implements Animation {
                 if (this.i >= 70) {
                     as.remove();
                     this.cancel();
-                    Case.animationEnd(c, getName(), player, loc, winGroup);
-                    Case.listAR.remove(as);
+                    Case.animationEnd(c, getName(), player, loc, winItem);
                 }
 
                 ++this.i;

@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.gui;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.HistoryData;
 import com.jodexindustries.donatecase.api.MaterialType;
+import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
@@ -10,36 +10,39 @@ import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.jodexindustries.donatecase.dc.Main.*;
 
 public class CaseGui {
+    private final Inventory inventory;
 
-    public CaseGui(Player p, String c) {
-        String title = Case.getCaseTitle(c);
-        Inventory inv = Bukkit.createInventory(null, casesConfig.getCase(c).getInt("case.Gui.Size", 45), t.rc(title));
-        ConfigurationSection items = casesConfig.getCase(c).getConfigurationSection("case.Gui.Items");
+    public CaseGui(Player p, CaseData caseData) {
+        String title = caseData.getCaseTitle();
+        String c = caseData.getCaseName();
+        YamlConfiguration configCase = casesConfig.getCase(c);
+        inventory = Bukkit.createInventory(null, configCase.getInt("case.Gui.Size", 45), t.rc(title));
+        ConfigurationSection items = configCase.getConfigurationSection("case.Gui.Items");
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
         if (items != null) {
             for (String item : items.getKeys(false)) {
-                String material = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Material", "STONE");
-                String displayName = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".DisplayName", "None");
+                String material = configCase.getString("case.Gui.Items." + item + ".Material", "STONE");
+                String displayName = configCase.getString("case.Gui.Items." + item + ".DisplayName", "None");
                 int keys;
                 String placeholder = t.getLocalPlaceholder(displayName);
                 if (placeholder.startsWith("keys_")) {
                     String[] parts = placeholder.split("_");
                     String caseName = parts[1];
-                    if (Tconfig) {
+                    if (!sql) {
                         keys = customConfig.getKeys().getInt("DonatCase.Cases." + caseName + "." + Objects.requireNonNull(p.getName()));
                     } else {
                         keys = mysql.getKey(parts[1], Objects.requireNonNull(p.getName()));
@@ -51,10 +54,9 @@ public class CaseGui {
                 if(instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                     displayName = PAPISupport.setPlaceholders(p, displayName);
                 }
-                boolean enchanted = casesConfig.getCase(c).getBoolean("case.Gui.Items." + item + ".Enchanted");
-                List<Integer> slots = new ArrayList<>();
-                String itemType = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "DEFAULT");
-                List<String> lore = t.rc(casesConfig.getCase(c).getStringList("case.Gui.Items." + item + ".Lore"));
+                boolean enchanted = configCase.getBoolean("case.Gui.Items." + item + ".Enchanted");
+                String itemType = configCase.getString("case.Gui.Items." + item + ".Type", "DEFAULT");
+                List<String> lore = t.rc(configCase.getStringList("case.Gui.Items." + item + ".Lore"));
                 String[] rgb = null;
                 List<String> pLore = new ArrayList<>();
                 for(String line : lore) {
@@ -65,49 +67,69 @@ public class CaseGui {
                 }
                 lore = t.rc(pLore);
                 if (material.toUpperCase().startsWith("LEATHER_")) {
-                    String rgbString = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Rgb");
+                    String rgbString = configCase.getString("case.Gui.Items." + item + ".Rgb");
                     if (rgbString != null) {
-                        rgb = rgbString.split(",");
+                        rgb = rgbString.replace(" ", "").split(",");
                     }
                 }
                 if (itemType.startsWith("HISTORY")) {
                     String[] typeArgs = itemType.split("-");
-
                     int index = Integer.parseInt(typeArgs[1]);
-                    HistoryData[] historyData = Case.historyData.get(c);
-                    if (historyData == null) {
+                    String caseType = (typeArgs.length >= 3) ? typeArgs[2] : c;
+                    CaseData historyCaseData = Case.getCase(caseType).clone();
+                    if (historyCaseData == null) {
+                        instance.getLogger().warning("Case " + caseType + " HistoryData is null!");
                         continue;
                     }
-                    HistoryData data = historyData[index];
+
+                    CaseData.HistoryData data = historyCaseData.getHistoryData()[index];
                     if (data == null) {
                         continue;
                     }
-                    material = "HEAD:" + data.getPlayerName();
-                    Date date = new Date(data.getTime());
+
+                    material = configCase.getString("case.Gui.Items." + item + ".Material", "HEAD:" + data.getPlayerName());
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
-                    String dateFormatted = formatter.format(date);
-                    String groupDisplayName = Case.getWinGroupDisplayName(c, data.getGroup());
-                    displayName = t.rt(displayName, "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
-                    lore = t.rt(lore, "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName);
+                    String dateFormatted = formatter.format(new Date(data.getTime()));
+                    String groupDisplayName = historyCaseData.getItem(data.getGroup()).getMaterial().getDisplayName();
+
+                    String[] template = {"%action%:" + data.getAction(), "%casename%:" + caseType, "%casetitle%:" + historyCaseData.getCaseTitle(), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName};
+                    displayName = t.rt(displayName, template);
+                    lore = t.rt(lore, template);
                 }
-                if (casesConfig.getCase(c).isList("case.Gui.Items." + item + ".Slots")) {
-                    slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
-                } else {
-                    String[] slotArgs = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Slots", "0-0").split("-");
-                    int range1 = Integer.parseInt(slotArgs[0]);
-                    int range2 = Integer.parseInt(slotArgs[1]);
-                    for (int i = range1; i <= range2; i++) {
-                        slots.add(i);
+                List<String> slots = new ArrayList<>();
+                if (configCase.isList("case.Gui.Items." + item + ".Slots")) {
+                    List<String> temp = configCase.getStringList("case.Gui.Items." + item + ".Slots");
+                    for (String slot : temp) {
+                        String[] values = slot.split("-", 2);
+                        if (values.length == 2) {
+                            for (int i = Integer.parseInt(values[0]); i <= Integer.parseInt(values[1]); i++) {
+                                slots.add(String.valueOf(i));
+                            }
+                        } else {
+                            slots.add(slot);
+                        }
                     }
+                } else {
+                    String[] slotArgs = configCase.getString("case.Gui.Items." + item + ".Slots", "0-0").split("-");
+                    int range1 = Integer.parseInt(slotArgs[0]);
+                    int range2 = range1;
+                    if(slotArgs.length >= 2) {
+                        range2 = Integer.parseInt(slotArgs[1]);
+                    }
+                    slots.addAll(IntStream.rangeClosed(range1, range2).mapToObj(String::valueOf).collect(Collectors.toList()));
                 }
+
                 ItemStack itemStack = getItem(material, displayName, lore, c, p, enchanted, rgb);
-                for (Integer slot : slots) {
-                    inv.setItem(slot, itemStack);
+                for (String slot : slots) {
+                    inventory.setItem(Integer.parseInt(slot), itemStack);
                 }
             }
         }
         });
-        p.openInventory(inv);
+        p.openInventory(inventory);
+    }
+    public Inventory getInventory() {
+        return inventory;
     }
     private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, boolean enchanted, String[] rgb) {
         int keys = Case.getKeys(c, p.getName());
@@ -118,7 +140,7 @@ public class CaseGui {
                 if (placeholder.startsWith("keys_")) {
                     String[] parts = placeholder.split("_");
                     String casename = parts[1];
-                    if (Tconfig) {
+                    if (!sql) {
                         keys = customConfig.getKeys().getInt("DonatCase.Cases." + casename + "." + Objects.requireNonNull(p.getName()));
                     } else {
                         keys = mysql.getKey(parts[1], Objects.requireNonNull(p.getName()));

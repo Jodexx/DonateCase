@@ -25,3 +25,4 @@ DonatCase:
   NoKeyWarningSound: ENTITY_ENDERMAN_TELEPORT
   DateFormat: "dd.MM HH:mm:ss"
   AddonsHelp: true # Show help list for addons commands?
+  UsePackets: false # don't change this

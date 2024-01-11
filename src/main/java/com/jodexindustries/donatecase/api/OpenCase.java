@@ -24,13 +24,28 @@ public class OpenCase {
         this.playerUUID = uuid;
     }
 
+    /**
+     * Player UUID
+     * @return UUID
+     */
+
     public UUID getPlayerUUID() {
         return playerUUID;
     }
 
+    /**
+     * Get player name
+     * @return name
+     */
+
     public String getName() {
         return name;
     }
+
+    /**
+     * Get location
+     * @return location
+     */
 
     public Location getLocation() {
         return location;
