@@ -398,8 +398,9 @@ public class Case {
                 String[] args = action.split(";");
                 String title = "";
                 String subTitle = "";
-                if(args.length >= 1) {
+                if(args.length == 1) {
                     title = args[0];
+                } else if(args.length > 1) {
                     subTitle = args[1];
                 }
                 player.sendTitle(Main.t.rt(title, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()),
