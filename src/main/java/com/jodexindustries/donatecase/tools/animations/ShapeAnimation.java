@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
+import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
@@ -24,13 +25,8 @@ public class ShapeAnimation implements Animation {
     }
 
     @Override
-    public void start(Player player, Location location, String c, String winGroup) {
+    public void start(Player player, Location location, CaseData c, CaseData.Item winItem) {
         final Location loc = location.clone();
-        String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
-        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
-            winGroupDisplayName = t.rc(winGroupDisplayName);
-        }
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
         final ArmorStandCreator as = t.createArmorStand();
@@ -38,7 +34,6 @@ public class ShapeAnimation implements Animation {
         as.setSmall(true);
         as.setVisible(false);
         as.setGravity(false);
-        String finalWinGroupDisplayName = winGroupDisplayName;
 
         float whiteSize = (float) customConfig.getAnimations().getDouble("Shape.Particle.White.Size");
         float orangeSize = (float) customConfig.getAnimations().getDouble("Shape.Particle.Orange.Size");
@@ -71,32 +66,28 @@ public class ShapeAnimation implements Animation {
             Location l;
 
             public void run() {
-                ItemStack winItem = Main.t.getWinItem(c, winGroup, player);
                 if (i == 0) {
                     l = as.getLocation();
                 }
                 if (i >= 7) {
                     if (i == 16) {
-                        if(winItem.getType() != Material.AIR) {
-                            as.setHelmet(winItem);
+                        if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
+                            as.setHelmet(winItem.getMaterial().getItemStack());
                         }
-                        as.setCustomName(finalWinGroupDisplayName);
+                        as.setCustomName(winItem.getMaterial().getDisplayName());
                         Main.t.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
-                        Case.onCaseOpenFinish(c, player, true, winGroup);
+                        Case.onCaseOpenFinish(c, player, true, winItem);
 
                     }
                 }
 
                 if (i <= 15) {
-                    final String winGroup2 = Tools.getRandomGroup(c);
-                    ItemStack winItem2 = Main.t.getWinItem(c, winGroup2, player);
-                    if(winItem2.getType() != Material.AIR) {
-                        as.setHelmet(winItem2);
+                    CaseData.Item winItem = Case.getRandomItem(c);
+                    if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
+                        as.setHelmet(winItem.getMaterial().getItemStack());
                     }
-                    String winGroupDisplayName = Case.getWinGroupDisplayName(c, winGroup2);
-                    if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                        winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
-                    }
+                    String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
+                    winItem.getMaterial().setDisplayName(winGroupDisplayName);
                     as.setCustomName(Main.t.rc(winGroupDisplayName));
                     if (this.i <= 8) {
                         if (!Bukkit.getVersion().contains("1.12")) {
@@ -142,7 +133,7 @@ public class ShapeAnimation implements Animation {
                 if (this.i >= 40) {
                     as.remove();
                     this.cancel();
-                    Case.animationEnd(c, getName(), player, loc, winGroup);
+                    Case.animationEnd(c, getName(), player, loc, winItem);
                 }
 
                 ++this.i;

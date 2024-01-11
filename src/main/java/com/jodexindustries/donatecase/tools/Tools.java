@@ -1,17 +1,16 @@
 package com.jodexindustries.donatecase.tools;
 
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.MaterialType;
 import com.jodexindustries.donatecase.api.SubCommand;
 import com.jodexindustries.donatecase.api.SubCommandType;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.BukkitArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.PacketArmorStandCreator;
+import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import day.dean.skullcreator.SkullCreator;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Type;
@@ -21,7 +20,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -44,31 +42,24 @@ import static com.jodexindustries.donatecase.dc.Main.*;
 public class Tools {
 
 
-    public static String getRandomGroup(String c) {
+    public static CaseData.Item getRandomGroup(CaseData data) {
         Random random = new Random();
         int maxChance = 0;
         int from = 0;
-
-        Set<String> itemKeys = casesConfig.getCase(c).getConfigurationSection("case.Items").getKeys(false);
-
-        for (String item : itemKeys) {
-            maxChance += casesConfig.getCase(c).getInt("case.Items." + item + ".Chance");
+        for (String item : data.clone().getItems().keySet()) {
+            maxChance += data.clone().getItem(item).getChance();
         }
-
         int rand = random.nextInt(maxChance);
 
-        for (String item : itemKeys) {
-            int itemChance = casesConfig.getCase(c).getInt("case.Items." + item + ".Chance");
+        for (String item : data.clone().getItems().keySet()) {
+            int itemChance = data.clone().getItem(item).getChance();
             if (from <= rand && rand < from + itemChance) {
-                return item;
+                return data.clone().getItem(item);
             }
             from += itemChance;
         }
 
         return null;
-    }
-    public int parseIntFromBoolean(boolean booleanValue) {
-        return booleanValue ? 1 : 0;
     }
     public ArmorStandCreator createArmorStand() {
         if(instance.isUsePackets()) {
@@ -364,25 +355,17 @@ public class Tools {
         return getBASE64Skull(url, displayName, null);
     }
 
-    public ItemStack getWinItem(String c, String winGroup, Player player) {
-        String winGroupId = Case.getWinGroupId(c, winGroup);
-        MaterialType materialType = t.getMaterialType(winGroupId);
-        String winGroupDisplayName = t.rc(Case.getWinGroupDisplayName(c, winGroup));
-        String[] rgb = Case.getWinGroupRgb(c, winGroup);
-        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            winGroupId = PAPISupport.setPlaceholders(player, winGroupId);
-            winGroupDisplayName = PAPISupport.setPlaceholders(player, winGroupDisplayName);
-        }
-        boolean winGroupEnchant = Case.getWinGroupEnchant(c, winGroup);
+    public ItemStack getCaseItem(String displayName, String id, boolean enchanted, String[] rgb) {
+        MaterialType materialType = t.getMaterialType(id);
         Material material;
         ItemStack winItem;
-        if (!winGroupId.contains(":")) {
-            material = Material.getMaterial(winGroupId);
+        if (!id.contains(":")) {
+            material = Material.getMaterial(id);
             if (material == null) {
                 material = Material.STONE;
             }
             if(material != Material.AIR) {
-                winItem = t.createItem(material, 1, -1, winGroupDisplayName, winGroupEnchant, rgb);
+                winItem = t.createItem(material, 1, -1, displayName, enchanted, rgb);
             } else {
                 winItem = new ItemStack(Material.AIR);
                 ItemMeta meta = winItem.getItemMeta();
@@ -390,42 +373,42 @@ public class Tools {
             }
         } else {
             if (materialType == MaterialType.HEAD) {
-                String[] parts = winGroupId.split(":");
-                winItem = t.getPlayerHead(parts[1], winGroupDisplayName, null);
+                String[] parts = id.split(":");
+                winItem = t.getPlayerHead(parts[1], displayName, null);
             } else if (materialType == MaterialType.HDB) {
-                String[] parts = winGroupId.split(":");
-                String id = parts[1];
+                String[] parts = id.split(":");
+                String skullId = parts[1];
                 if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                    winItem = HeadDatabaseSupport.getSkull(id, winGroupDisplayName, null);
+                    winItem = HeadDatabaseSupport.getSkull(skullId, displayName, null);
                 } else {
                     winItem = new ItemStack(Material.STONE);
                 }
             } else if (materialType == MaterialType.CH) {
-                String[] parts = winGroupId.split(":");
+                String[] parts = id.split(":");
                 String category = parts[1];
-                String id = parts[2];
+                String skullId = parts[2];
                 if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                    winItem = CustomHeadSupport.getSkull(category, id, winGroupDisplayName, null);
+                    winItem = CustomHeadSupport.getSkull(category, skullId, displayName, null);
                 } else {
                     winItem = new ItemStack(Material.STONE);
                 }
             } else if (materialType == MaterialType.IA) {
-                String[] parts = winGroupId.split(":");
+                String[] parts = id.split(":");
                 String namespace = parts[1];
-                String id = parts[2];
+                String skullId = parts[2];
                 if(instance.getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
-                    winItem = ItemsAdderSupport.getItem(namespace + ":" + id, winGroupDisplayName, null);
+                    winItem = ItemsAdderSupport.getItem(namespace + ":" + skullId, displayName, null);
                 } else {
                     winItem = new ItemStack(Material.STONE);
-                    instance.getLogger().warning("ItemsAdder not loaded! Group: " + winGroup + " Case: " + c);
+                    instance.getLogger().warning("ItemsAdder not loaded!");
                 }
             }
             else if (materialType == MaterialType.BASE64) {
-                String[] parts = winGroupId.split(":");
+                String[] parts = id.split(":");
                 String base64 = parts[1];
-                winItem = t.getBASE64Skull(base64, winGroupDisplayName);
+                winItem = t.getBASE64Skull(base64, displayName);
             } else {
-                String[] parts = winGroupId.split(":");
+                String[] parts = id.split(":");
                 byte data = -1;
                 if(parts[1] != null) {
                     data = Byte.parseByte(parts[1]);
@@ -434,7 +417,7 @@ public class Tools {
                 if (material == null) {
                     material = Material.STONE;
                 }
-                winItem = t.createItem(material, data, 1, winGroupDisplayName, winGroupEnchant, rgb);
+                winItem = t.createItem(material, data, 1, displayName, enchanted, rgb);
             }
         }
         return winItem;

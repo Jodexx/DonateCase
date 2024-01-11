@@ -3,29 +3,23 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.jodexindustries.donatecase.dc.Main.*;
 
 public class FullWheelAnimation implements Animation {
 
-    List<ItemStack> items = new ArrayList<>();
-    List<String> groups = new ArrayList<>();
+    List<CaseData.Item> items = new ArrayList<>();
     List<ArmorStandCreator> armorStands = new ArrayList<>();
-    Player p;
-    String c;
-    Location location;
 
     @Override
     public String getName() {
@@ -33,28 +27,29 @@ public class FullWheelAnimation implements Animation {
     }
 
     @Override
-    public void start(Player player, Location location, String c, String winGroup) {
-        p = player;
-        this.c = c;
+    public void start(Player player, Location location, CaseData c, CaseData.Item winItem) {
         final Location loc = location.clone();
-        this.location = loc;
         float pitch = Math.round(location.getPitch() / 90.0f) * 90.0f;
         float yaw = Math.round(location.getYaw() / 90.0f) * 90.0f;
         loc.setPitch(pitch);
         loc.setYaw(yaw);
         loc.add(0.5, 0, 0.5);
         // register items
-        Set<String> configGroups = casesConfig.getCase(c).getConfigurationSection("case.Items").getKeys(false);
+        Collection<CaseData.Item> configGroups = c.getItems().values();
         int itemsCount = configGroups.size();
-        configGroups.remove(winGroup);
+        configGroups.remove(winItem);
         int i = 1;
+        String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
+        winItem.getMaterial().setDisplayName(winGroupDisplayName);
         // win group
-        addWinGroup(player, winGroup);
+        items.add(winItem);
+        armorStands.add(spawnArmorStand(location, 0));
+
         // another groups
-        for (String tempWinGroup : configGroups) {
-            ItemStack winItem = t.getWinItem(c, tempWinGroup, player);
-            items.add(winItem);
-            groups.add(tempWinGroup);
+        for (CaseData.Item item : configGroups) {
+            String displayName = item.getMaterial().getDisplayName();
+            item.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, displayName));
+            items.add(item);
             armorStands.add(spawnArmorStand(location, i));
             i++;
         }
@@ -121,7 +116,7 @@ public class FullWheelAnimation implements Animation {
                 }
             }
             if (ticks.get() == animationTime + 1) {
-                Case.onCaseOpenFinish(c, player, true, groups.get(0));
+                Case.onCaseOpenFinish(c, player, true, winItem);
             }
             // End
             if (ticks.get() >= animationTime + 20) {
@@ -129,34 +124,24 @@ public class FullWheelAnimation implements Animation {
                 for (ArmorStandCreator stand : armorStands) {
                     stand.remove();
                 }
-                Case.animationEnd(c, getName(), player, loc, groups.get(0));
+                Case.animationEnd(c, getName(), player, loc, winItem);
                 items.clear();
-                groups.clear();
                 armorStands.clear();
             }
                 speedAx[0] *= 1 - speed / (animationTime - 2);
         }, 0L, 0L);
     }
     private ArmorStandCreator spawnArmorStand(Location location, int index) {
+        CaseData.Item item = items.get(index);
         ArmorStandCreator as = t.createArmorStand();
         as.spawnArmorStand(location);
         as.setSmall(true);
         as.setVisible(false);
         as.setGravity(false);
-        if(items.get(index).getType() != Material.AIR) {
-            as.setHelmet(items.get(index));
+        if(item.getMaterial().getItemStack().getType() != Material.AIR) {
+            as.setHelmet(items.get(index).getMaterial().getItemStack());
         }
-        String winGroupDisplayName = Case.getWinGroupDisplayName(c, groups.get(index));
-        if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            winGroupDisplayName = PAPISupport.setPlaceholders(p, winGroupDisplayName);
-        }
-        as.setCustomName(t.rc(winGroupDisplayName));
+        as.setCustomName(item.getMaterial().getDisplayName());
         return as;
-    }
-    private void addWinGroup(Player player, String finalWinGroup) {
-        ItemStack winItem = t.getWinItem(c, finalWinGroup, player);
-        items.add(winItem);
-        groups.add(finalWinGroup);
-        armorStands.add(spawnArmorStand(location, 0));
     }
 }

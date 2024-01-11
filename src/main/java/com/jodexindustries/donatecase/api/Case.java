@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.gui.CaseGui;
@@ -9,7 +10,6 @@ import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -29,23 +30,22 @@ public class Case {
     /**
      * List of entities currently in use
      */
-    public static List<ArmorStand> listAR = new ArrayList<>();
+    public static List<ArmorStand> armorStandList = new ArrayList<>();
     /**
      * Active cases
      */
-    public static HashMap<Location, String> ActiveCase = new HashMap<>();
+    public static HashMap<Location, String> activeCases = new HashMap<>();
 
 
     /**
      * Players, who opened cases (open gui)
      */
-    public static HashMap<UUID, OpenCase> playerOpensCase = new HashMap<>();
+    public static HashMap<UUID, OpenCase> playersCases = new HashMap<>();
 
     /**
-     * History data massive, key - case name
+     * Loaded cases in runtime
      */
-    public static HashMap<String, HistoryData[]> historyData = new HashMap<>();
-
+    public static HashMap<String, CaseData> caseData = new HashMap<>();
 
     /**
      * Save case location
@@ -216,15 +216,10 @@ public class Case {
      * @return true/false
      */
     public static boolean hasCaseByName(String name) {
-        if(casesConfig.getCases().isEmpty()) {
+        if(caseData.isEmpty()) {
             return false;
         }
-        for (String caseName : casesConfig.getCases().keySet()) {
-            if(caseName.equalsIgnoreCase(name)) {
-                return true;
-            }
-        }
-        return false;
+        return caseData.containsKey(name);
     }
     /**
      * Are there cases that have been created?
@@ -244,12 +239,8 @@ public class Case {
      * @return true/false
      */
     public static boolean hasCaseByTitle(String title) {
-        for (YamlConfiguration caseConfig : casesConfig.getCases().values()) {
-            if(caseConfig.getString("case.Title") == null) {
-                return false;
-            } else if (Main.t.rc(caseConfig.getString("case.Title")).equalsIgnoreCase(title)) {
-                return true;
-            }
+        for (CaseData data : caseData.values()) {
+            if(data.getCaseTitle().equalsIgnoreCase(title)) return true;
         }
 
         return false;
@@ -273,54 +264,13 @@ public class Case {
     }
     /**
      * Get random group from case
-     * @param c Case name
-     * @return Group name (item name)
+     * @param c Case data
+     * @return Item data
      */
-    public static String getRandomGroup(String c) {
+    public static CaseData.Item getRandomItem(CaseData c) {
         return Tools.getRandomGroup(c);
     }
-    /**
-     * Get win group id (item id)
-     * @param c Case name
-     * @param winGroup Group name
-     * @return Group id
-     */
-    public static String getWinGroupId(String c, String winGroup) {
-        return casesConfig.getCase(c).getString("case.Items." + winGroup + ".Item.ID");
-    }
-    /**
-     * Get win group displayname
-     * @param c Case name
-     * @param winGroup Group name
-     * @return Group displayname
-     */
-    public static String getWinGroupDisplayName(String c, String winGroup) {
-        return casesConfig.getCase(c).getString("case.Items." + winGroup + ".Item.DisplayName");
-    }
-    /**
-     * Get win group enchant (boolean)
-     * @param c Case name
-     * @param winGroup Group name
-     * @return true/false
-     */
-    public static boolean getWinGroupEnchant(String c, String winGroup) {
-        return casesConfig.getCase(c).getBoolean("case.Items." + winGroup + ".Item.Enchanted");
-    }
 
-    /**
-     * Get win group Rgb (String massive)
-     * @param c Case name
-     * @param winGroup Group name
-     * @return rgb massive with 3 items
-     */
-    public static String[] getWinGroupRgb(String c, String winGroup) {
-        String[] rgb = null;
-        String rgbString = casesConfig.getCase(c).getString("case.Items." + winGroup + ".Item.Rgb");
-        if(rgbString != null) {
-            rgb = rgbString.replaceAll(" ", "").split(",");
-        }
-        return rgb;
-    }
     /**
      * Get plugin instance
      * @return DonateCase instance
@@ -331,91 +281,82 @@ public class Case {
 
     /**
      * Animation end method for custom animations is called to completely end the animation
-     * @param winGroup Win group
-     * @param c Case type
+     * @param item Item data
+     * @param c Case data
      * @param animation Animation name
      * @param player Player who opened
      * @param location Case location
      */
-    public static void animationEnd(String c, String animation, Player player, Location location, String winGroup) {
-        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, winGroup);
+    public static void animationEnd(CaseData c, String animation, Player player, Location location, CaseData.Item item) {
+        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, item);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
-        ActiveCase.remove(location.getBlock().getLocation());
+        activeCases.remove(location.getBlock().getLocation());
     }
 
     /**
      * Case open finish method for custom animations is called to grant a group, send a message, and more
-     * @param caseName Case name
+     * @param caseData Case data
      * @param player Player who opened
      * @param needSound Boolean sound
-     * @param winGroup Win group
+     * @param item Win item data
      */
-    public static void onCaseOpenFinish(String caseName, Player player, boolean needSound, String winGroup) {
-        String sound;
+    public static void onCaseOpenFinish(CaseData caseData, Player player, boolean needSound, CaseData.Item item) {
         String choice = "";
-        String winGroupDisplayName = t.rc(casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Item.DisplayName"));
-        String winGroupName = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".Group");
-        String giveType = casesConfig.getCase(caseName).getString("case.Items." + winGroup + ".GiveType", "ONE");
-        List<String> actions = casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".Actions");
-
         if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && Main.getPermissions() != null) {
             String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
             if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) ||
-                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + winGroupName)) {
-                if (giveType.equalsIgnoreCase("ONE")) {
-                    executeActions(actions, player, winGroupName, winGroupDisplayName);
+                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + item.getGroup())) {
+                if (item.getGiveType().equalsIgnoreCase("ONE")) {
+                    executeActions(player, item, null);
                 } else {
-                    choice = getChoice(caseName, winGroup);
-                    executeActions(casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".RandomActions." + choice + ".Actions"), player, winGroupName, winGroupDisplayName);
+                    choice = getChoice(item);
+                    executeActions(player, item, choice);
                 }
             }
         } else {
-            if(giveType.equalsIgnoreCase("ONE")) {
-                executeActions(actions, player, winGroupName, winGroupDisplayName);
+            if(item.getGiveType().equalsIgnoreCase("ONE")) {
+                executeActions(player, item, null);
             } else {
-                choice = getChoice(caseName, winGroup);
-                executeActions(casesConfig.getCase(caseName).getStringList("case.Items." + winGroup + ".RandomActions." + choice + ".Actions"), player, winGroupName, winGroupDisplayName);
+                choice = getChoice(item);
+                executeActions(player, item, choice);
             }
         }
         // Sound
         if (needSound) {
-            if (casesConfig.getCase(caseName).getString("case.AnimationSound") != null) {
-                sound = casesConfig.getCase(caseName).getString("case.AnimationSound");
-                if (sound != null) {
-                    player.playSound(player.getLocation(), Sound.valueOf(sound),
-                            casesConfig.getCase(caseName).getInt("case.Sound.Volume"),
-                            casesConfig.getCase(caseName).getInt("case.Sound.Pitch"));
-                }
+            if (caseData.getAnimationSound() != null) {
+                    player.playSound(player.getLocation(), caseData.getAnimationSound().getSound(),
+                            caseData.getAnimationSound().getVolume(),
+                            caseData.getAnimationSound().getPitch());
             }
         }
-        HistoryData data = new HistoryData(caseName, player.getName(), System.currentTimeMillis(), winGroup, choice);
-        HistoryData[] list = historyData.getOrDefault(caseName, new HistoryData[10]);
+        CaseData.HistoryData data = new CaseData.HistoryData(caseData.getCaseName(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
+        CaseData.HistoryData[] list = caseData.getHistoryData();
         System.arraycopy(list, 0, list, 1, list.length - 1);
         list[0] = data;
 
-        historyData.put(caseName, list);
         for (int i = 0; i < list.length; i++) {
-            HistoryData data1 = list[i];
+            CaseData.HistoryData data1 = list[i];
             if(data1 != null) {
-                customConfig.getData().set("Data." + caseName + "." + i + ".Player", data1.getPlayerName());
-                customConfig.getData().set("Data." + caseName + "." + i + ".Time", data1.getTime());
-                customConfig.getData().set("Data." + caseName + "." + i + ".Group", data1.getGroup());
+                customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Player", data1.getPlayerName());
+                customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Time", data1.getTime());
+                customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Group", data1.getGroup());
             }
         }
+        caseData.setHistoryData(list);
 
         customConfig.saveData();
     }
-    private static String getChoice(String caseName, String winGroup) {
+    private static String getChoice(CaseData.Item item) {
         String endCommand = "";
         Random random = new Random();
         int maxChance = 0;
         int from = 0;
-        for (String command : casesConfig.getCase(caseName).getConfigurationSection("case.Items." + winGroup + ".RandomActions").getKeys(false)) {
-            maxChance += casesConfig.getCase(caseName).getInt("case.Items." + winGroup + ".RandomActions." + command  + ".Chance");
+        for (String command : item.getRandomActions().keySet()) {
+            maxChance += item.getRandomAction(command).getChance();
         }
         int rand = random.nextInt(maxChance);
-        for (String command : casesConfig.getCase(caseName).getConfigurationSection("case.Items." + winGroup + ".RandomActions").getKeys(false)) {
-            int itemChance = casesConfig.getCase(caseName).getInt("case.Items." + winGroup + ".RandomActions." + command + ".Chance");
+        for (String command : item.getRandomActions().keySet()) {
+            int itemChance = item.getRandomAction(command).getChance();
             if (from <= rand && rand < from + itemChance) {
                 endCommand = command;
                 break;
@@ -425,7 +366,11 @@ public class Case {
         return endCommand;
     }
 
-    private static void executeActions(List<String> actions, Player player, String winGroupGroup, String winGroupDisplayName) {
+    private static void executeActions(Player player, CaseData.Item item, String choice) {
+        List<String> actions = item.getActions();
+        if(choice != null) {
+          actions = item.getRandomAction(choice).getActions();
+        }
         for (String action : actions) {
             if (Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 action = PAPISupport.setPlaceholders(player, action);
@@ -433,12 +378,12 @@ public class Case {
             action = Main.t.rc(action);
             if (action.startsWith("[command] ")) {
                 action = action.replaceFirst("\\[command] ", "");
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(action, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName));
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(action, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
             }
             if (action.startsWith("[broadcast] ")) {
                 action = action.replaceFirst("\\[broadcast] ", "");
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.sendMessage(Main.t.rt(action, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName));
+                    p.sendMessage(Main.t.rt(action, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
                 }
             }
             if (action.startsWith("[title] ")) {
@@ -450,8 +395,8 @@ public class Case {
                     title = args[0];
                     subTitle = args[1];
                 }
-                player.sendTitle(Main.t.rt(title, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName),
-                        Main.t.rt(subTitle, "%player%:" + player.getName(), "%group%:" + winGroupGroup, "%groupdisplayname%:" + winGroupDisplayName));
+                player.sendTitle(Main.t.rt(title, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()),
+                        Main.t.rt(subTitle, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
             }
         }
     }
@@ -492,25 +437,16 @@ public class Case {
     }
 
     /**
-     * Get case title
-     * @param caseName Case name
-     * @return case title
-     */
-    public static String getCaseTitle(String caseName) {
-        return casesConfig.getCase(caseName).getString("case.Title");
-    }
-
-    /**
      * Open case gui
      * @param p Player
-     * @param caseType Case type
+     * @param caseData Case type
      * @param blockLocation Block location
      */
-    public static Inventory openGui(Player p, String caseType, Location blockLocation) {
+    public static Inventory openGui(Player p, CaseData caseData, Location blockLocation) {
         Inventory inventory = null;
-        if (!Case.playerOpensCase.containsKey(p.getUniqueId())) {
-            Case.playerOpensCase.put(p.getUniqueId(), new OpenCase(blockLocation, caseType, p.getUniqueId()));
-            inventory = new CaseGui(p, caseType).getInventory();
+        if (!Case.playersCases.containsKey(p.getUniqueId())) {
+            Case.playersCases.put(p.getUniqueId(), new OpenCase(blockLocation, caseData.getCaseName(), p.getUniqueId()));
+            inventory = new CaseGui(p, caseData).getInventory();
         } else {
             instance.getLogger().warning("Player already opened case");
         }
@@ -523,5 +459,24 @@ public class Case {
      */
     public static Tools getTools() {
         return t;
+    }
+
+    /**
+     * Is there a case with a name?
+     * @param c Case name
+     * @return Boolean
+     */
+    public static boolean hasCase(@NotNull String c) {
+        return caseData.containsKey(c);
+    }
+
+    /**
+     * Get a case with the name
+     * @param c Case name
+     * @return Case data
+     */
+    @Nullable
+    public static CaseData getCase(@NotNull String c) {
+        return caseData.getOrDefault(c, null);
     }
 }

@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.events;
 
+import com.jodexindustries.donatecase.api.data.CaseData;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -8,17 +9,17 @@ import org.jetbrains.annotations.NotNull;
 
 public class AnimationPreStartEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-    String caseType;
+    CaseData caseData;
     Location location;
     String animation;
-    String winGroup;
+    CaseData.Item winItem;
 
-    public AnimationPreStartEvent(@NotNull Player who, String animation, String caseType, Location location, String winGroup) {
+    public AnimationPreStartEvent(@NotNull Player who, String animation, CaseData c, Location location, CaseData.Item winItem) {
         super(who);
-        this.caseType = caseType;
+        this.caseData = c;
         this.location = location;
         this.animation = animation;
-        this.winGroup = winGroup;
+        this.winItem = winItem;
     }
 
     @NotNull
@@ -26,19 +27,19 @@ public class AnimationPreStartEvent extends PlayerEvent {
         return location;
     }
     @NotNull
-    public String getCaseType() {
-        return caseType;
+    public CaseData getCaseData() {
+        return caseData;
     }
     @NotNull
     public String getAnimation() {
         return animation;
     }
     @NotNull
-    public String getWinGroup() {
-        return winGroup;
+    public CaseData.Item getWinGroup() {
+        return winItem;
     }
-    public void setWinGroup(String winGroup) {
-        this.winGroup = winGroup;
+    public void setWinGroup(CaseData.Item winItem) {
+        this.winItem = winItem;
     }
 
     @NotNull

@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.gui;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.HistoryData;
 import com.jodexindustries.donatecase.api.MaterialType;
+import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -27,8 +26,9 @@ import static com.jodexindustries.donatecase.dc.Main.*;
 public class CaseGui {
     private final Inventory inventory;
 
-    public CaseGui(Player p, String c) {
-        String title = Case.getCaseTitle(c);
+    public CaseGui(Player p, CaseData caseData) {
+        String title = caseData.getCaseTitle();
+        String c = caseData.getCaseName();
         YamlConfiguration configCase = casesConfig.getCase(c);
         inventory = Bukkit.createInventory(null, configCase.getInt("case.Gui.Size", 45), t.rc(title));
         ConfigurationSection items = configCase.getConfigurationSection("case.Gui.Items");
@@ -76,14 +76,13 @@ public class CaseGui {
                     String[] typeArgs = itemType.split("-");
                     int index = Integer.parseInt(typeArgs[1]);
                     String caseType = (typeArgs.length >= 3) ? typeArgs[2] : c;
-                    HistoryData[] historyData = Case.historyData.get(caseType);
-
-                    if (historyData == null) {
+                    CaseData historyCaseData = Case.getCase(caseType).clone();
+                    if (historyCaseData == null) {
                         instance.getLogger().warning("Case " + caseType + " HistoryData is null!");
                         continue;
                     }
 
-                    HistoryData data = historyData[index];
+                    CaseData.HistoryData data = historyCaseData.getHistoryData()[index];
                     if (data == null) {
                         continue;
                     }
@@ -91,8 +90,9 @@ public class CaseGui {
                     material = configCase.getString("case.Gui.Items." + item + ".Material", "HEAD:" + data.getPlayerName());
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                     String dateFormatted = formatter.format(new Date(data.getTime()));
-                    String groupDisplayName = Case.getWinGroupDisplayName(c, data.getGroup());
-                    String[] template = {"%action%:" + data.getAction(), "%casename%:" + caseType, "%casetitle%:" + Case.getCaseTitle(caseType), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName};
+                    String groupDisplayName = historyCaseData.getItem(data.getGroup()).getMaterial().getDisplayName();
+
+                    String[] template = {"%action%:" + data.getAction(), "%casename%:" + caseType, "%casetitle%:" + historyCaseData.getCaseTitle(), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName};
                     displayName = t.rt(displayName, template);
                     lore = t.rt(lore, template);
                 }

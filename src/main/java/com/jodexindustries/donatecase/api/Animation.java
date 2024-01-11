@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.data.CaseData;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -16,10 +17,11 @@ public interface Animation {
 
     /**
      * Method to start animation
-     * @param player Player who opened case
+     *
+     * @param player   Player who opened case
      * @param location Case location
-     * @param c Case name
-     * @param winGroup winGroup
+     * @param c        Case name
+     * @param winItem  winItem
      */
-    void start(Player player, Location location, String c, String winGroup);
+    void start(Player player, Location location, CaseData c, CaseData.Item winItem);
 }

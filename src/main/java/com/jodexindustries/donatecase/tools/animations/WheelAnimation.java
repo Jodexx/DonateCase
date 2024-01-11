@@ -3,13 +3,9 @@ package com.jodexindustries.donatecase.tools.animations;
 import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.api.data.CaseData;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -20,11 +16,8 @@ import static com.jodexindustries.donatecase.dc.Main.*;
 
 public class WheelAnimation implements Animation {
 
-    List<ItemStack> items = new ArrayList<>();
-    List<String> groups = new ArrayList<>();
+    List<CaseData.Item> items = new ArrayList<>();
     List<ArmorStandCreator> armorStands = new ArrayList<>();
-    Player p;
-    String c;
 
     @Override
     public String getName() {
@@ -32,9 +25,7 @@ public class WheelAnimation implements Animation {
     }
 
     @Override
-    public void start(Player player, Location location, String c, String winGroup) {
-        p = player;
-        this.c = c;
+    public void start(Player player, Location location, CaseData c, CaseData.Item winItem) {
         final Location loc = location.clone();
         float pitch = Math.round(location.getPitch() / 90.0f) * 90.0f;
         float yaw = Math.round(location.getYaw() / 90.0f) * 90.0f;
@@ -43,12 +34,10 @@ public class WheelAnimation implements Animation {
         loc.add(0.5, 0, 0.5);
         // register items
         int itemsCount = customConfig.getAnimations().getInt("Wheel.ItemsCount");
-        groups.add(winGroup);
+        items.add(winItem);
         for (int i = 0; i < itemsCount; i++) {
-            String tempWinGroup = Tools.getRandomGroup(c);
-            ItemStack winItem = t.getWinItem(c, tempWinGroup, player);
-            items.add(winItem);
-            groups.add(tempWinGroup);
+            CaseData.Item tempWinItem = Case.getRandomItem(c);
+            items.add(tempWinItem);
             armorStands.add(spawnArmorStand(location, i));
         }
         double baseAngle = loc.clone().getDirection().angle(new Vector(0, 0, 1));
@@ -112,7 +101,7 @@ public class WheelAnimation implements Animation {
                 }
             }
             if (ticks.get() == animationTime + 1) {
-                Case.onCaseOpenFinish(c, player, true, groups.get(0));
+                Case.onCaseOpenFinish(c, player, true, winItem);
             }
             // End
             if (ticks.get() >= animationTime + 20) {
@@ -120,9 +109,8 @@ public class WheelAnimation implements Animation {
                 for (ArmorStandCreator stand : armorStands) {
                     stand.remove();
                 }
-                Case.animationEnd(c, getName(), player, loc, groups.get(0));
+                Case.animationEnd(c, getName(), player, loc, winItem);
                 items.clear();
-                groups.clear();
                 armorStands.clear();
             }
             if (ticks.get() < animationTime + 1) {
@@ -131,19 +119,16 @@ public class WheelAnimation implements Animation {
             }, 0L, 0L);
     }
     private ArmorStandCreator spawnArmorStand(Location location, int index) {
+        CaseData.Item item = items.get(index);
         ArmorStandCreator as = t.createArmorStand();
         as.spawnArmorStand(location);
         as.setSmall(true);
         as.setVisible(false);
         as.setGravity(false);
-        if(items.get(index).getType() != Material.AIR) {
-                as.setHelmet(items.get(index));
+        if(item.getMaterial().getItemStack().getType() != Material.AIR) {
+            as.setHelmet(items.get(index).getMaterial().getItemStack());
         }
-        String winGroupDisplayName = Case.getWinGroupDisplayName(c, groups.get(index));
-        if(instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            winGroupDisplayName = PAPISupport.setPlaceholders(p, winGroupDisplayName);
-        }
-        as.setCustomName(t.rc(winGroupDisplayName));
+        as.setCustomName(item.getMaterial().getDisplayName());
         return as;
     }
 }

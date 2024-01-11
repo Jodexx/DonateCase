@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.OpenCase;
+import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.events.OpenCaseEvent;
@@ -65,13 +66,13 @@ public class EventsListener implements Listener {
         if (e.getCurrentItem() != null) {
             Player p = (Player)e.getWhoClicked();
             String pl = p.getName();
-            if(Case.playerOpensCase.containsKey(p.getUniqueId())) {
-                String caseType = Case.playerOpensCase.get(p.getUniqueId()).getName();
+            if(Case.playersCases.containsKey(p.getUniqueId())) {
+                String caseType = Case.playersCases.get(p.getUniqueId()).getName();
                     e.setCancelled(true);
                     if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && t.getOpenMaterialSlots(caseType).contains(e.getRawSlot())) {
                         caseType = t.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
                         if (Case.hasCaseByName(caseType)) {
-                            Location block = Case.playerOpensCase.get(p.getUniqueId()).getLocation();
+                            Location block = Case.playersCases.get(p.getUniqueId()).getLocation();
                             PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, block.getBlock());
                             Bukkit.getServer().getPluginManager().callEvent(event);
                             if (!event.isCancelled()) {
@@ -111,7 +112,7 @@ public class EventsListener implements Listener {
     public void PlayerInteractEntity(PlayerInteractAtEntityEvent e) {
         Entity entity = e.getRightClicked();
         if(entity instanceof ArmorStand) {
-            if (Case.listAR.contains(entity)) {
+            if (Case.armorStandList.contains(entity)) {
                 e.setCancelled(true);
             }
         }
@@ -135,11 +136,12 @@ public class EventsListener implements Listener {
                 CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType);
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    if (!Case.playerOpensCase.containsKey(p.getUniqueId())) {
-                        if (!Case.ActiveCase.containsKey(blockLocation)) {
-                            Case.playerOpensCase.put(p.getUniqueId(), new OpenCase(blockLocation, caseType, p.getUniqueId()));
+                    if (!Case.playersCases.containsKey(p.getUniqueId())) {
+                        if (!Case.activeCases.containsKey(blockLocation)) {
+                            Case.playersCases.put(p.getUniqueId(), new OpenCase(blockLocation, caseType, p.getUniqueId()));
                             try {
-                                new CaseGui(p, caseType);
+                                CaseData caseData = Case.getCase(caseType).clone();
+                                new CaseGui(p, caseData);
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
@@ -156,7 +158,7 @@ public class EventsListener implements Listener {
     public void InventoryClose(InventoryCloseEvent e) {
         Player p = (Player)e.getPlayer();
         if (Case.hasCaseByTitle(e.getView().getTitle())) {
-            Case.playerOpensCase.remove(p.getUniqueId());
+            Case.playersCases.remove(p.getUniqueId());
         }
 
     }

@@ -15,7 +15,7 @@ plugins {
 }
 
 group = 'com.jodexindustries.donatecase'
-version = '2.1.7.2'
+version = '2.1.7.3'
 
 repositories {
     mavenCentral()
@@ -87,7 +87,7 @@ tasks.register('proguard', ProGuardTask) {
 
 
 
-build.dependsOn proguard
+//build.dependsOn proguard
 
 def targetJavaVersion = 11
 java {

@@ -11,7 +11,7 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
     @Override
     public void spawnArmorStand(Location location) {
         entity = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        Case.listAR.add(entity);
+        Case.armorStandList.add(entity);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void remove() {
-        Case.listAR.remove(entity);
+        Case.armorStandList.remove(entity);
         entity.remove();
     }
 }
