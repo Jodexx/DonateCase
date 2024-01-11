@@ -10,15 +10,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.jodexindustries.donatecase.dc.Main.*;
 
 public class FullWheelAnimation implements Animation {
 
-    List<CaseData.Item> items = new ArrayList<>();
+    List<String> items = new ArrayList<>();
     List<ArmorStandCreator> armorStands = new ArrayList<>();
 
     @Override
@@ -35,22 +35,22 @@ public class FullWheelAnimation implements Animation {
         loc.setYaw(yaw);
         loc.add(0.5, 0, 0.5);
         // register items
-        Collection<CaseData.Item> configGroups = c.getItems().values();
-        int itemsCount = configGroups.size();
-        configGroups.remove(winItem);
+        int itemsCount = c.getItems().size();
         int i = 1;
         String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
         winItem.getMaterial().setDisplayName(winGroupDisplayName);
         // win group
-        items.add(winItem);
-        armorStands.add(spawnArmorStand(location, 0));
+        items.add(winItem.getItemName());
+        armorStands.add(spawnArmorStand(c, location, 0));
 
         // another groups
-        for (CaseData.Item item : configGroups) {
+        for (String itemName : c.getItems().keySet()) {
+            if(itemName.equalsIgnoreCase(winItem.getItemName())) continue;
+            CaseData.Item item = c.getItem(itemName);
             String displayName = item.getMaterial().getDisplayName();
             item.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, displayName));
-            items.add(item);
-            armorStands.add(spawnArmorStand(location, i));
+            items.add(itemName);
+            armorStands.add(spawnArmorStand(c, location, i));
             i++;
         }
 
@@ -131,15 +131,15 @@ public class FullWheelAnimation implements Animation {
                 speedAx[0] *= 1 - speed / (animationTime - 2);
         }, 0L, 0L);
     }
-    private ArmorStandCreator spawnArmorStand(Location location, int index) {
-        CaseData.Item item = items.get(index);
+    private ArmorStandCreator spawnArmorStand(CaseData c, Location location, int index) {
+        CaseData.Item item = c.getItem(items.get(index));
         ArmorStandCreator as = t.createArmorStand();
         as.spawnArmorStand(location);
         as.setSmall(true);
         as.setVisible(false);
         as.setGravity(false);
         if(item.getMaterial().getItemStack().getType() != Material.AIR) {
-            as.setHelmet(items.get(index).getMaterial().getItemStack());
+            as.setHelmet(item.getMaterial().getItemStack());
         }
         as.setCustomName(item.getMaterial().getDisplayName());
         return as;

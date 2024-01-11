@@ -161,7 +161,9 @@ public class CaseData implements Cloneable {
     private static HistoryData[] cloneHistoryDataArray(HistoryData[] originalArray) {
         HistoryData[] newArray = new HistoryData[originalArray.length];
         for (int i = 0; i < originalArray.length; i++) {
-            newArray[i] = originalArray[i].clone();
+            if(originalArray[i] != null) {
+                newArray[i] = originalArray[i].clone();
+            }
         }
         return newArray;
     }
@@ -177,6 +179,7 @@ public class CaseData implements Cloneable {
         return clonedMap;
     }
     public static class Item implements Cloneable {
+        private final String itemName;
         private String group;
         private int chance;
         private Material material;
@@ -185,7 +188,8 @@ public class CaseData implements Cloneable {
         private Map<String,RandomAction> randomActions;
         private String[] rgb;
 
-        public Item(String group, int chance, Material material, String giveType, List<String> actions, Map<String, RandomAction> randomActions, String[] rgb) {
+        public Item(String itemName, String group, int chance, Material material, String giveType, List<String> actions, Map<String, RandomAction> randomActions, String[] rgb) {
+            this.itemName = itemName;
             this.group = group;
             this.chance = chance;
             this.material = material;
@@ -327,6 +331,10 @@ public class CaseData implements Cloneable {
                     ", randomActions=" + randomActions +
                     ", rgb=" + Arrays.toString(rgb) +
                     '}';
+        }
+
+        public String getItemName() {
+            return itemName;
         }
 
         public static class RandomAction implements Cloneable {

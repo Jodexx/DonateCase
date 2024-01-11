@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.dc;
 
-import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
@@ -296,11 +295,12 @@ public class Main extends JavaPlugin {
                 ItemStack itemStack = t.getCaseItem(itemDisplayName, id, enchanted, rgb);
                 CaseData.Item.Material material = new CaseData.Item.Material(itemStack, itemDisplayName, enchanted);
 
-                CaseData.Item caseItem = new CaseData.Item(group, chance, material, giveType, actions, randomActions, rgb);
+                CaseData.Item caseItem = new CaseData.Item(item, group, chance, material, giveType, actions, randomActions, rgb);
                 items.put(item, caseItem);
             }
             CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
-            if(customConfig.getData().getConfigurationSection("Data") != null) {
+            if(customConfig.getData().getConfigurationSection("Data") != null &&
+                    customConfig.getData().getConfigurationSection("Data." + caseName) != null) {
                 for (String i : customConfig.getData().getConfigurationSection("Data." + caseName).getKeys(false)) {
                     CaseData.HistoryData data = new CaseData.HistoryData(caseName, customConfig.getData().getString("Data." + caseName + "." + i + ".Player"),
                             customConfig.getData().getLong("Data." + caseName + "." + i + ".Time"),
