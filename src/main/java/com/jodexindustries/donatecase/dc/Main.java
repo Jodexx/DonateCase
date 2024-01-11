@@ -274,11 +274,13 @@ public class Main extends JavaPlugin {
 
                 // get random actions
                 Map<String, CaseData.Item.RandomAction> randomActions = new HashMap<>();
-                for (String randomAction : config.getConfigurationSection("case.Items." + item + ".RandomActions").getKeys(false)) {
-                    int actionChance = config.getInt("case.Items." + item + ".RandomActions." + randomAction + ".Chance");
-                    List<String> randomActionsList = config.getStringList("case.Items." + item + ".RandomActions." + randomAction + ".Actions");
-                    CaseData.Item.RandomAction randomActionObject = new CaseData.Item.RandomAction(actionChance, randomActionsList);
-                    randomActions.put(randomAction, randomActionObject);
+                if(config.getConfigurationSection("case.Items." + item + ".RandomActions") != null) {
+                    for (String randomAction : config.getConfigurationSection("case.Items." + item + ".RandomActions").getKeys(false)) {
+                        int actionChance = config.getInt("case.Items." + item + ".RandomActions." + randomAction + ".Chance");
+                        List<String> randomActionsList = config.getStringList("case.Items." + item + ".RandomActions." + randomAction + ".Actions");
+                        CaseData.Item.RandomAction randomActionObject = new CaseData.Item.RandomAction(actionChance, randomActionsList);
+                        randomActions.put(randomAction, randomActionObject);
+                    }
                 }
 
                 // get rgb
