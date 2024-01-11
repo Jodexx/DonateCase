@@ -335,7 +335,7 @@ public class Case {
                             caseData.getAnimationSound().getPitch());
             }
         }
-        CaseData.HistoryData data = new CaseData.HistoryData(caseData.getCaseName(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
+        CaseData.HistoryData data = new CaseData.HistoryData(item.getItemName(), caseData.getCaseName(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
         CaseData.HistoryData[] list = caseData.getHistoryData();
         System.arraycopy(list, 0, list, 1, list.length - 1);
         list[0] = data;
@@ -346,6 +346,7 @@ public class Case {
                 customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Player", data1.getPlayerName());
                 customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Time", data1.getTime());
                 customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Group", data1.getGroup());
+                customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Item", data1.getItem());
             }
         }
         caseData.setHistoryData(list);

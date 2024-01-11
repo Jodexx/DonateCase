@@ -580,13 +580,15 @@ public class CaseData implements Cloneable {
      * Class to implement information about case opening histories
      */
     public static class HistoryData implements Cloneable {
+        private final String item;
         private final String playerName;
         private final long time;
         private final String group;
         private final String caseType;
         private final String action;
 
-        public HistoryData(String caseType, String playerName, long time, String group, String action) {
+        public HistoryData(String item, String caseType, String playerName, long time, String group, String action) {
+            this.item = item;
             this.playerName = playerName;
             this.time = time;
             this.group = group;
@@ -656,6 +658,9 @@ public class CaseData implements Cloneable {
             return action;
         }
 
+        public String getItem() {
+            return item;
+        }
     }
 
 }

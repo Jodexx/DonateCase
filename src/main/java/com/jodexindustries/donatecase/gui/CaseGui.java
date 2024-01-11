@@ -90,7 +90,10 @@ public class CaseGui {
                     material = configCase.getString("case.Gui.Items." + item + ".Material", "HEAD:" + data.getPlayerName());
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                     String dateFormatted = formatter.format(new Date(data.getTime()));
-                    String groupDisplayName = historyCaseData.getItem(data.getGroup()).getMaterial().getDisplayName();
+                    String groupDisplayName = "open_case_again";
+                    if(data.getItem() != null) {
+                        groupDisplayName = historyCaseData.getItem(data.getItem()).getMaterial().getDisplayName();
+                    }
 
                     String[] template = {"%action%:" + data.getAction(), "%casename%:" + caseType, "%casetitle%:" + historyCaseData.getCaseTitle(), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName};
                     displayName = t.rt(displayName, template);
