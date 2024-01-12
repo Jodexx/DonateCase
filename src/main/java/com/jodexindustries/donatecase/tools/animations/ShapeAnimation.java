@@ -60,7 +60,7 @@ public class ShapeAnimation implements Animation {
         }
         Color finalOrangeColor = orangeColor;
         Color finalWhiteColor = whiteColor;
-        (new BukkitRunnable() {
+        new BukkitRunnable() {
             int i; //ticks count
             double t;
             Location l;
@@ -138,6 +138,6 @@ public class ShapeAnimation implements Animation {
 
                 ++this.i;
             }
-        }).runTaskTimer(Main.instance, 0L, 2L);
+        }.runTaskTimer(Main.instance, 0L, 2L);
     }
 }
