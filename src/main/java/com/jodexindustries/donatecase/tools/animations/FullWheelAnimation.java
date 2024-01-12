@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -73,7 +74,7 @@ public class FullWheelAnimation implements Animation {
         final double[] speedAx = {speed};
         final Location flocation = loc.clone().add(0, -1 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"), 0);
 
-        Bukkit.getScheduler().runTaskTimer(instance, new BukkitRunnable() {
+        new BukkitRunnable() {
             @Override
             public void run() {
 
@@ -135,7 +136,7 @@ public class FullWheelAnimation implements Animation {
                 speedAx[0] *= 1 - speed / (animationTime - 2);
 
             }
-        }, 0L, 0L);
+        }.runTaskTimer(Main.instance, 0L, 0L);
     }
     private ArmorStandCreator spawnArmorStand(CaseData c, Location location, int index) {
         CaseData.Item item = c.getItem(items.get(index));
