@@ -12,20 +12,37 @@ import org.bukkit.Bukkit;
 public class MySQL {
     public Connection con;
     public Statement stmt;
+    public static String host;
+    public static String user;
+    public static String password;
+    public static String database;
+    public static String port;
 
-    public MySQL(String host, String user, String password) {
+    public MySQL(String base, String port, String host, String user, String password) {
+        MySQL.host = host;
+        database = base;
+        MySQL.port = port;
+        MySQL.user = user;
+        MySQL.password = password;
         try {
             if (this.con != null) {
                 this.con.close();
             }
-
-            this.con = DriverManager.getConnection(host, user, password);
+            String jbdc = "jdbc:mysql://" + MySQL.host + ":" + MySQL.port + "/" + database;
+            this.con = DriverManager.getConnection(jbdc, MySQL.user, MySQL.password);
             this.stmt = this.con.createStatement();
         } catch (SQLException var5) {
             var5.printStackTrace();
             Bukkit.getPluginManager().disablePlugin(Main.instance);
         }
 
+    }
+    public void setConnection(String host, String user, String password, String port, String database) {
+        MySQL.host = host;
+        MySQL.user = user;
+        MySQL.password = password;
+        MySQL.port = port;
+        MySQL.database = database;
     }
 
     public int getKey(String name, String player) {

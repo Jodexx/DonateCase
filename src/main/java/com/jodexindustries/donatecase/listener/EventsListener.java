@@ -53,7 +53,7 @@ public class EventsListener implements Listener {
             if (p.hasPermission("donatecase.admin")) {
                 new UpdateChecker(Main.instance, 106701).getVersion((version) -> {
                     if (t.getPluginVersion(Main.instance.getDescription().getVersion()) < t.getPluginVersion(version)) {
-                        Main.t.msg(p, Main.t.rt(Main.lang.getString("UpdateCheck"), "%version:" + version));
+                        Main.t.msg(p, Main.t.rt(Main.customConfig.getLang().getString("UpdateCheck"), "%version:" + version));
                     }
 
                 });
@@ -93,7 +93,7 @@ public class EventsListener implements Listener {
                                     }
                                     p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
                                     String noKey = casesConfig.getCase(caseType).getString("Messages.NoKey");
-                                    if(noKey == null) noKey = lang.getString("NoKey");
+                                    if(noKey == null) noKey = Main.customConfig.getLang().getString("NoKey");
                                     Main.t.msg(p, noKey);
                                 }
                             }
@@ -146,7 +146,7 @@ public class EventsListener implements Listener {
                                 ex.printStackTrace();
                             }
                         } else {
-                            Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
+                            Main.t.msg(p, Main.customConfig.getLang().getString("HaveOpenCase"));
                         }
                     } // else player already opened case
                 }
@@ -168,7 +168,7 @@ public class EventsListener implements Listener {
         Location loc = e.getBlock().getLocation();
         if (Case.hasCaseByLocation(loc)) {
             e.setCancelled(true);
-            Main.t.msg(e.getPlayer(), Main.lang.getString("DestoryDonatCase"));
+            Main.t.msg(e.getPlayer(), Main.customConfig.getLang().getString("DestoryDonatCase"));
         }
 
     }

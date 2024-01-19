@@ -92,7 +92,7 @@ public class Tools {
 
     public void msg(CommandSender s, String msg) {
         if (s != null) {
-            msg_(s, Main.lang.getString("Prefix") + msg);
+            msg_(s, Main.customConfig.getLang().getString("Prefix") + msg);
         }
     }
 

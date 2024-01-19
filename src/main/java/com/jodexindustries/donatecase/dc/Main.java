@@ -32,7 +32,6 @@ public class Main extends JavaPlugin {
     public static boolean sql = true;
 
     public static Tools t;
-    public static FileConfiguration lang;
     public static MySQL mysql;
 
     File ConfigFile;
@@ -88,13 +87,12 @@ public class Main extends JavaPlugin {
         if (sql) {
             String base = customConfig.getConfig().getString("DonatCase.MySql.DataBase");
             String port = customConfig.getConfig().getString("DonatCase.MySql.Port");
-            String hostname = customConfig.getConfig().getString("DonatCase.MySql.Host");
-            final String host = "jdbc:mysql://" + hostname + ":" + port + "/" + base;
-            final String user = customConfig.getConfig().getString("DonatCase.MySql.User");
-            final String password = customConfig.getConfig().getString("DonatCase.MySql.Password");
+            String host = customConfig.getConfig().getString("DonatCase.MySql.Host");
+            String user = customConfig.getConfig().getString("DonatCase.MySql.User");
+            String password = customConfig.getConfig().getString("DonatCase.MySql.Password");
             (new BukkitRunnable() {
                 public void run() {
-                    Main.mysql = new MySQL(host, user, password);
+                    Main.mysql = new MySQL(base, port, host, user, password);
                     if (!Main.mysql.hasTable("donate_cases")) {
                         Main.mysql.createTable();
                     }
@@ -105,10 +103,10 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(getCommand("donatecase")).setExecutor(new CommandEx());
         Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
         registerDefaultAnimations();
-
-        Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
         DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseEnableEvent);
+
+        Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
     }
 
     public void onDisable() {
@@ -225,8 +223,7 @@ public class Main extends JavaPlugin {
     }
 
     public void setupLangs() {
-        lang = (new Languages(customConfig.getConfig().getString("DonatCase.Languages"))).getLang();
-        if (lang.getString("config") == null || !lang.getString("config", "").equals("2.5")) {
+        if (customConfig.getLang().getString("config") == null || !customConfig.getLang().getString("config", "").equals("2.5")) {
             Logger.log("&cOutdated lang config! Creating a new!");
             langRu = new File(this.getDataFolder(), "lang/ru_RU.yml");
             langRu.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));
@@ -238,7 +235,6 @@ public class Main extends JavaPlugin {
             langUa.renameTo(new File(this.getDataFolder(), "lang/ua_UA.yml.old"));
             this.saveResource("lang/ua_UA.yml", false);
             customConfig = new CustomConfig();
-            lang = (new Languages(customConfig.getConfig().getString("DonatCase.Languages"))).getLang();
         }
     }
 
