@@ -349,7 +349,7 @@ public class Case {
                 customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Item", data1.getItem());
             }
         }
-        caseData.setHistoryData(list);
+        getCase(caseData.getCaseName()).setHistoryData(list);
 
         customConfig.saveData();
     }
