@@ -46,7 +46,6 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         long time = System.currentTimeMillis();
         instance = this;
-        customConfig = new CustomConfig();
         t = new Tools();
 //        loadLibraries();
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -136,72 +135,24 @@ public class Main extends JavaPlugin {
     }
 
     public void setupConfigs() {
-        if (!(new File(this.getDataFolder(), "Config.yml")).exists()) {
-            this.saveResource("Config.yml", false);
-        }
+        String[] files = {
+                "Config.yml",
+                "Cases.yml",
+                "Keys.yml",
+                "Animations.yml",
+                "Data.yml",
+                "lang/ru_RU.yml",
+                "lang/en_US.yml",
+                "lang/ua_UA.yml"
+        };
 
-        if (!(new File(this.getDataFolder(), "Cases.yml")).exists()) {
-            this.saveResource("Cases.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "Keys.yml")).exists()) {
-            this.saveResource("Keys.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "Animations.yml")).exists()) {
-            this.saveResource("Animations.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "Data.yml")).exists()) {
-            this.saveResource("Data.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "lang/ru_RU.yml")).exists()) {
-            this.saveResource("lang/ru_RU.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "lang/en_US.yml")).exists()) {
-            this.saveResource("lang/en_US.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "lang/ua_UA.yml")).exists()) {
-            this.saveResource("lang/ua_UA.yml", false);
+        for (String file : files) {
+            checkAndCreateFile(file);
         }
 
         customConfig = new CustomConfig();
-        // Config.yml ver check
-        if (customConfig.getConfig().getString("config") == null) {
-            Logger.log("&cOutdated Config.yml! Creating a new!");
-            ConfigFile = new File(this.getDataFolder(), "Config.yml");
-            ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
-            this.saveResource("Config.yml", false);
-            customConfig = new CustomConfig();
-
-        }
-
-        if (!customConfig.getConfig().getString("config", "").equals("2.5")) {
-            Logger.log("&cOutdated Config.yml! Creating a new!");
-            ConfigFile = new File(this.getDataFolder(), "Config.yml");
-            ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
-            this.saveResource("Config.yml", false);
-            customConfig = new CustomConfig();
-        }
-        // Animations.yml ver check
-        if (customConfig.getAnimations().getString("config") == null) {
-            Logger.log("&cOutdated Animations.yml! Creating a new!");
-            AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
-            AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
-            this.saveResource("Animations.yml", false);
-            customConfig = new CustomConfig();
-        }
-
-        if (!customConfig.getAnimations().getString("config", "").equals("1.3")) {
-            Logger.log("&cOutdated Animations.yml! Creating a new!");
-            AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
-            AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
-            this.saveResource("Animations.yml", false);
-            customConfig = new CustomConfig();
-        }
+        checkAndUpdateConfig(customConfig.getConfig(),"Config.yml", "config", "2.5");
+        checkAndUpdateConfig(customConfig.getAnimations(), "Animations.yml", "config", "1.3");
 
         if(customConfig.getConfig().getConfigurationSection("DonatCase.Cases") != null) {
             new File(getDataFolder(), "cases").mkdir();
@@ -221,6 +172,23 @@ public class Main extends JavaPlugin {
 
         loadCases();
     }
+
+    private void checkAndCreateFile(String fileName) {
+        if (!(new File(this.getDataFolder(), fileName)).exists()) {
+            this.saveResource(fileName, false);
+        }
+    }
+
+    private void checkAndUpdateConfig(YamlConfiguration config, String fileName, String configKey, String expectedValue) {
+        if (config.getString(configKey) == null || !config.getString(configKey, "").equals(expectedValue)) {
+            Logger.log("&cOutdated " + fileName + "! Creating a new!");
+            File configFile = new File(this.getDataFolder(), fileName);
+            configFile.renameTo(new File(this.getDataFolder(), fileName + ".old"));
+            this.saveResource(fileName, false);
+            customConfig = new CustomConfig();
+        }
+    }
+
 
     public void setupLangs() {
         if (customConfig.getLang().getString("config") == null || !customConfig.getLang().getString("config", "").equals("2.5")) {

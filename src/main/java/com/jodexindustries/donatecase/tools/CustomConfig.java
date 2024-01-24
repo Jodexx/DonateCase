@@ -35,7 +35,7 @@ public class CustomConfig {
 
         File path = new File(Main.instance.getDataFolder(), "lang");
         File[] listFiles;
-        int length = (Objects.requireNonNull(listFiles = path.listFiles())).length;
+        int length = (listFiles = path.listFiles()).length;
         String lang = getConfig().getString("DonatCase.Languages");
         for(int i = 0; i < length; ++i) {
             File l = listFiles[i];
