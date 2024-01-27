@@ -488,4 +488,13 @@ public class Case {
     public static CaseData getCase(@NotNull String c) {
         return caseData.getOrDefault(c, null);
     }
+
+    /**
+     * Unregister all animations
+     */
+    public static void unregisterAnimations() {
+        for (String animation : AnimationManager.getRegisteredAnimations().keySet()) {
+            AnimationManager.unregisterAnimation(animation);
+        }
+    }
 }

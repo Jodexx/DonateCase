@@ -214,6 +214,7 @@ public class Main extends JavaPlugin {
         AnimationManager.registerAnimation("FULLWHEEL", FullWheelAnimation.class);
         Logger.log("&aRegistered &adefault animations");
     }
+
     private void loadCases() {
         Case.caseData.clear();
         for (String caseName : casesConfig.getCases().keySet()) {

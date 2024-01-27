@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.events.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
+import com.jodexindustries.donatecase.api.events.AnimationUnregisteredEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
@@ -42,6 +43,20 @@ public class AnimationManager {
             Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
         } else {
             Main.instance.getLogger().warning("Animation with name " + name + " already registered!");
+        }
+    }
+
+    /**
+     * Unregister custom animation
+     * @param name Animation name
+     */
+    public static void unregisterAnimation(String name) {
+        if(registeredAnimations.get(name) != null) {
+            registeredAnimations.remove(name);
+            AnimationUnregisteredEvent animationUnRegisteredEvent = new AnimationUnregisteredEvent(name);
+            Bukkit.getServer().getPluginManager().callEvent(animationUnRegisteredEvent);
+        } else {
+            Main.instance.getLogger().warning("Animation with name " + name + " already unregistered!");
         }
     }
     /**
