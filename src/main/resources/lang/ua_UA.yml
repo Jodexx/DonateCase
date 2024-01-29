@@ -3,6 +3,7 @@ config: '2.5' #DON'T CHANGE THIS PLEASE
 # Локальні плейсхолдери
 # %case% - назва кейсу
 # %casetitle% - заголовок кейсу
+# %casedisplayname% - ім,я кейсу, яке відображається
 # %key% - кількість ключів
 # %keys_<casename>% - кількість ключів окремого кейсу
 # %keys_<casename>_format% - кількість ключів з форматуванням
