@@ -220,6 +220,8 @@ public class Main extends JavaPlugin {
         for (String caseName : casesConfig.getCases().keySet()) {
             YamlConfiguration config = casesConfig.getCase(caseName);
             String caseTitle = t.rc(config.getString("case.Title"));
+            String caseDisplayName = config.getString("case.DisplayName");
+            caseDisplayName = caseDisplayName == null ? "" : t.rc(caseDisplayName);
             String animationName = config.getString("case.Animation");
 
             String animationSound = config.getString("case.AnimationSound", "NULL").toUpperCase();
@@ -279,7 +281,7 @@ public class Main extends JavaPlugin {
                     historyData[Integer.parseInt(i)] = data;
                 }
             }
-            CaseData caseData = new CaseData(caseName, caseTitle,animationName, sound, items, historyData);
+            CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData);
             Case.caseData.put(caseName, caseData);
         }
         Logger.log("&aCases loaded!");

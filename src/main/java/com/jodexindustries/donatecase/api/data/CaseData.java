@@ -11,14 +11,16 @@ import java.util.Map;
 
 public class CaseData implements Cloneable {
     private final String caseName;
+    private String caseDisplayName;
     private String caseTitle;
     private String animation;
     private AnimationSound animationSound;
     private Map<String, Item> items;
     private HistoryData[] historyData;
 
-    public CaseData(String caseName, String caseTitle, String animation, AnimationSound animationSound, Map<String, Item> items, HistoryData[] historyData) {
+    public CaseData(String caseName, String caseDisplayName, String caseTitle, String animation, AnimationSound animationSound, Map<String, Item> items, HistoryData[] historyData) {
         this.caseName = caseName;
+        this.caseDisplayName = caseDisplayName;
         this.caseTitle = caseTitle;
         this.animation = animation;
         this.animationSound = animationSound;
@@ -178,6 +180,15 @@ public class CaseData implements Cloneable {
         }
         return clonedMap;
     }
+
+    public String getCaseDisplayName() {
+        return caseDisplayName;
+    }
+
+    public void setCaseDisplayName(String caseDisplayName) {
+        this.caseDisplayName = caseDisplayName;
+    }
+
     public static class Item implements Cloneable {
         private final String itemName;
         private String group;

@@ -95,7 +95,7 @@ public class CaseGui {
                         groupDisplayName = historyCaseData.getItem(data.getItem()).getMaterial().getDisplayName();
                     }
 
-                    String[] template = {"%action%:" + data.getAction(), "%casename%:" + caseType, "%casetitle%:" + historyCaseData.getCaseTitle(), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName};
+                    String[] template = {"%action%:" + data.getAction(), "%casedisplayname%:" + historyCaseData.getCaseDisplayName(), "%casename%:" + caseType, "%casetitle%:" + historyCaseData.getCaseTitle(), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName};
                     displayName = t.rt(displayName, template);
                     lore = t.rt(lore, template);
                 }

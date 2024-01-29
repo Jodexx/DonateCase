@@ -65,10 +65,11 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             if (Case.hasCaseByName(caseName)) {
                                 CaseData data = Case.getCase(caseName).clone();
                                 String caseTitle = data.getCaseTitle();
+                                String caseDisplayName = data.getCaseDisplayName();
                                 Case.addKeys(caseName, player, keys);
-                                Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%case:" + caseName));
+                                Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                                 if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                                    Main.t.msg(target, Main.t.rt(Main.customConfig.getLang().getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%case:" + caseName));
+                                    Main.t.msg(target, Main.t.rt(Main.customConfig.getLang().getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                                 }
                             } else {
                                 Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
@@ -103,8 +104,9 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         if (Case.hasCaseByName(caseName)) {
                             CaseData data = Case.getCase(caseName).clone();
                             String caseTitle = data.getCaseTitle();
+                            String caseDisplayName = data.getCaseDisplayName();
                             Case.setNullKeys(caseName, player);
-                            Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("ClearKeys"), "%player:" + player, "%casetitle:" + caseTitle, "%case:" + caseName));
+                            Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("ClearKeys"), "%player:" + player, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                         } else {
                             Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
                         }
@@ -128,10 +130,11 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     if (Case.hasCaseByName(caseName)) {
                         CaseData data = Case.getCase(caseName).clone();
                         String caseTitle = data.getCaseTitle();
+                        String caseDisplayName = data.getCaseDisplayName();
                         Case.setKeys(caseName, player, keys);
-                        Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%case:" + caseName));
+                        Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                         if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                            Main.t.msg(target, Main.t.rt(Main.customConfig.getLang().getString("SetKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%case:" + caseName));
+                            Main.t.msg(target, Main.t.rt(Main.customConfig.getLang().getString("SetKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                         }
                     } else {
                         Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
@@ -165,7 +168,8 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                         result = String.valueOf(keys);
                                     } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
                                         result = NumberFormat.getNumberInstance().format(keys);
-                                    }                                }
+                                    }
+                                }
                                 sender.sendMessage(t.rc(string.replaceAll("%" + placeholder + "%", result)));
                             }
                         }
@@ -214,7 +218,9 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             num++;
                             CaseData data = Case.getCase(caseName).clone();
                             String caseTitle = data.getCaseTitle();
-                            Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("CasesList"), "%casename:" + caseName, "%num:" + num, "%casetitle:" + caseTitle));
+                            String caseDisplayName = data.getCaseDisplayName();
+
+                            Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("CasesList"), "%casename:" + caseName, "%num:" + num, "%casedisplayname:" + caseDisplayName, "%casetitle:" + caseTitle ));
                         }
                 }
             } else
