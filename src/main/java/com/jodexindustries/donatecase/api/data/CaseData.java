@@ -32,6 +32,7 @@ public class CaseData implements Cloneable {
     public String toString() {
         return "CaseData{" +
                 "caseName='" + caseName + '\'' +
+                ", caseDisplayName='" + caseDisplayName + '\'' +
                 ", caseTitle='" + caseTitle + '\'' +
                 ", animation='" + animation + '\'' +
                 ", animationSound=" + animationSound +
