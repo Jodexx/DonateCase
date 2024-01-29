@@ -57,6 +57,7 @@ public class CaseGui {
                 boolean enchanted = configCase.getBoolean("case.Gui.Items." + item + ".Enchanted");
                 String itemType = configCase.getString("case.Gui.Items." + item + ".Type", "DEFAULT");
                 List<String> lore = t.rc(configCase.getStringList("case.Gui.Items." + item + ".Lore"));
+                int modeldata = configCase.getInt("case.Gui.Items." + item + ".ModelData", -1);
                 String[] rgb = null;
                 List<String> pLore = new ArrayList<>();
                 for(String line : lore) {
@@ -122,7 +123,7 @@ public class CaseGui {
                     slots.addAll(IntStream.rangeClosed(range1, range2).mapToObj(String::valueOf).collect(Collectors.toList()));
                 }
 
-                ItemStack itemStack = getItem(material, displayName, lore, c, p, enchanted, rgb);
+                ItemStack itemStack = getItem(material, displayName, lore, c, p, enchanted, rgb, modeldata);
                 for (String slot : slots) {
                     inventory.setItem(Integer.parseInt(slot), itemStack);
                 }
@@ -134,7 +135,7 @@ public class CaseGui {
     public Inventory getInventory() {
         return inventory;
     }
-    private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, boolean enchanted, String[] rgb) {
+    private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, boolean enchanted, String[] rgb, int modeldata) {
         int keys = Case.getKeys(c, p.getName());
         List<String> newLore = new ArrayList<>();
         if(lore != null) {
@@ -160,7 +161,7 @@ public class CaseGui {
             if (itemMaterial == null) {
                 itemMaterial = Material.STONE;
             }
-            item = t.createItem(itemMaterial, -1, 1, displayName, t.rt(newLore,"%case%:" + c), enchanted, rgb);
+            item = t.createItem(itemMaterial, -1, 1, displayName, t.rt(newLore,"%case%:" + c), enchanted, rgb, modeldata);
         } else
         if(materialType == MaterialType.HEAD) {
             String[] parts = material.split(":");
@@ -172,7 +173,7 @@ public class CaseGui {
             if(instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
                 item = HeadDatabaseSupport.getSkull(id, displayName, t.rt(newLore, "%case%:" + c));
             } else {
-                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(newLore, "%case%:" + c), enchanted, null);
+                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(newLore, "%case%:" + c), enchanted, null, -1);
                 instance.getLogger().warning("HeadDataBase not loaded! Item: " + displayName + " Case: " + c);
 
             }
@@ -184,7 +185,7 @@ public class CaseGui {
             if (instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
                 item = CustomHeadSupport.getSkull(category, id, displayName, t.rt(newLore, "%case%:" + c));
             } else {
-                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(newLore, "%case%:" + c), enchanted, null);
+                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(newLore, "%case%:" + c), enchanted, null, -1);
                 instance.getLogger().warning("CustomHeads not loaded! Item: " + displayName + " Case: " + c);
 
             }
@@ -195,7 +196,7 @@ public class CaseGui {
             if(instance.getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
                 item = ItemsAdderSupport.getItem(namespace + ":" + id, displayName,t.rt(newLore, "%case%:" + c));
             } else {
-                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(newLore, "%case%:" + c), enchanted, null);
+                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(newLore, "%case%:" + c), enchanted, null, -1);
                 instance.getLogger().warning("ItemsAdder not loaded! Item: " + displayName + " Case: " + c);
             }
         } else if (materialType == MaterialType.BASE64) {
@@ -212,7 +213,7 @@ public class CaseGui {
             if (itemMaterial == null) {
                 itemMaterial = Material.STONE;
             }
-            item = t.createItem(itemMaterial, data, 1, displayName, t.rt(newLore,"%case%:" + c), enchanted, null);
+            item = t.createItem(itemMaterial, data, 1, displayName, t.rt(newLore,"%case%:" + c), enchanted, null, -1);
         }
         return item;
     }

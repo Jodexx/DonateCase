@@ -234,7 +234,7 @@ public class Main extends JavaPlugin {
             for (String item : config.getConfigurationSection("case.Items").getKeys(false)) {
                 String group = config.getString("case.Items." + item + ".Group");
                 int chance = config.getInt("case.Items." + item + ".Chance");
-                String giveType = config.getString("case.Items." + item + ".GiveType");
+                String giveType = config.getString("case.Items." + item + ".GiveType", "ONE");
 
                 // get actions
                 List<String> actions = config.getStringList("case.Items." + item + ".Actions");

@@ -262,7 +262,7 @@ public class Tools {
     }
 
     public ItemStack createItem(Material ma, int amount, int data, String dn, boolean enchant, String[] rgb) {
-        return createItem(ma, data, amount, dn, null, enchant, rgb);
+        return createItem(ma, data, amount, dn, null, enchant, rgb, -1);
     }
 
     public Color parseColor(String s) {
@@ -423,7 +423,7 @@ public class Tools {
         return winItem;
     }
 
-    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb) {
+    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb, int modeldata) {
         ItemStack item;
         if(data == -1) {
             item = new ItemStack(ma, amount);
@@ -444,6 +444,9 @@ public class Tools {
             if (lore != null) {
 
                 m.setLore(this.rc(lore));
+            }
+            if(modeldata != -1) {
+                m.setCustomModelData(modeldata);
             }
             if (enchant && !ma.equals(Material.AIR)) {
                 m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
