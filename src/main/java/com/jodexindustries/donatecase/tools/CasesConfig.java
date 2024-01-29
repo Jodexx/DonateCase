@@ -4,7 +4,6 @@ import com.jodexindustries.donatecase.dc.Main;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.awt.font.FontRenderContext;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +26,8 @@ public class CasesConfig {
                             List<String> actions = new ArrayList<>();
                             String giveCommand = caseConfig.getString("case.Items." + item + ".GiveCommand");
                             List<String> giveCommands = caseConfig.getStringList("case.Items." + item + ".Commands");
-                            if (giveCommand != null || !giveCommands.isEmpty()) {
+                            ConfigurationSection giveSection = caseConfig.getConfigurationSection("case.Items." + item + ".GiveCommands");
+                            if (giveCommand != null || !giveCommands.isEmpty() || giveSection != null) {
                                 if (!isOld) {
                                     isOld = true;
                                     Main.instance.getLogger().warning("Case " + name + " outdated! Converting...");
@@ -35,7 +35,6 @@ public class CasesConfig {
                                 String title = caseConfig.getString("case.Items." + item + ".Title");
                                 String subTitle = caseConfig.getString("case.Items." + item + ".SubTitle");
                                 List<String> broadcast = caseConfig.getStringList("case.Items." + item + ".Broadcast");
-                                ConfigurationSection giveSection = caseConfig.getConfigurationSection("case.Items." + item + ".GiveCommands");
                                 actions.add("[command] " + giveCommand);
                                 for (String command : giveCommands) {
                                     actions.add("[command] " + command);
