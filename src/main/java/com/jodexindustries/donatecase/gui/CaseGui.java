@@ -101,6 +101,11 @@ public class CaseGui {
                     }
 
                     material = configCase.getString("case.Gui.Items." + item + ".Material", "HEAD:" + data.getPlayerName());
+                    if(material.equalsIgnoreCase("DEFAULT")) {
+                        if(historyCaseData != null) {
+                            material = historyCaseData.getItem(data.getItem()).getMaterial().getItemStack().getType().name();
+                        }
+                    }
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                     String dateFormatted = formatter.format(new Date(data.getTime()));
                     String groupDisplayName = data.getItem() != null ? historyCaseData.getItem(data.getItem()).getMaterial().getDisplayName() : "open_case_again";
