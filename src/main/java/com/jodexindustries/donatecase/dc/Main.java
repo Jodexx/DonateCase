@@ -34,8 +34,6 @@ public class Main extends JavaPlugin {
     public static Tools t;
     public static MySQL mysql;
 
-    File ConfigFile;
-    File AnimationsFile;
     File langRu;
     File langEn;
     File langUa;
@@ -132,6 +130,17 @@ public class Main extends JavaPlugin {
         if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
         }
+    }
+    public void cleanCache() {
+        for (ArmorStand as : Case.armorStandList) {
+            if (as != null) {
+                as.remove();
+            }
+        }
+        Case.playersCases.clear();
+        Case.caseData.clear();
+        Case.activeCases.clear();
+        Case.armorStandList.clear();
     }
 
     public void setupConfigs() {

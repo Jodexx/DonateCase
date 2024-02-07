@@ -23,10 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -63,13 +60,13 @@ public class EventsListener implements Listener {
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void InventoryClick(InventoryClickEvent e) {
-        if (e.getCurrentItem() != null) {
             Player p = (Player)e.getWhoClicked();
             String pl = p.getName();
             if(Case.playersCases.containsKey(p.getUniqueId())) {
                 String caseType = Case.playersCases.get(p.getUniqueId()).getName();
-                    e.setCancelled(true);
-                    if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && t.getOpenMaterialSlots(caseType).contains(e.getRawSlot())) {
+                e.setCancelled(true);
+                if(e.getCurrentItem() == null) return;
+                if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && t.getOpenMaterialSlots(caseType).contains(e.getRawSlot())) {
                         caseType = t.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
                         if (Case.hasCaseByName(caseType)) {
                             Location block = Case.playersCases.get(p.getUniqueId()).getLocation();
@@ -104,7 +101,6 @@ public class EventsListener implements Listener {
                         }
                     }
             }
-        }
 
     }
 
@@ -140,8 +136,13 @@ public class EventsListener implements Listener {
                         if (!Case.activeCases.containsKey(blockLocation)) {
                             Case.playersCases.put(p.getUniqueId(), new OpenCase(blockLocation, caseType, p.getUniqueId()));
                             try {
-                                CaseData caseData = Case.getCase(caseType).clone();
-                                new CaseGui(p, caseData);
+                                if(Case.hasCase(caseType)) {
+                                    CaseData caseData = Case.getCase(caseType).clone();
+                                    new CaseGui(p, caseData);
+                                } else {
+                                    Main.t.msg(p, "&cSomething wrong! Contact with server administrator!");
+                                    Main.instance.getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
+                                }
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }

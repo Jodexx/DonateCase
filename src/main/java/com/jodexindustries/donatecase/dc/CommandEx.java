@@ -41,9 +41,18 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             //reload command
             if (args[0].equalsIgnoreCase("reload")) {
                 if (sender.hasPermission("donatecase.admin")) {
-                    Main.instance.setupConfigs();
-                    Main.instance.setupLangs();
-                    Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("ReloadConfig")));
+                    if(args.length == 1) {
+                        Main.instance.setupConfigs();
+                        Main.instance.setupLangs();
+                        Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("ReloadConfig")));
+                    } else {
+                        if(args[1].equalsIgnoreCase("cache")) {
+                            instance.cleanCache();
+                            Main.instance.setupConfigs();
+                            Main.instance.setupLangs();
+                            Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("ReloadConfigCache", "&aReloaded all DonateCase Cache")));
+                        }
+                    }
                 } else {
                     Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NoPermission")));
                 }

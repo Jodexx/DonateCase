@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.jodexindustries.donatecase.dc.Main.*;
 
@@ -496,5 +498,22 @@ public class Case {
         for (String animation : AnimationManager.getRegisteredAnimations().keySet()) {
             AnimationManager.unregisterAnimation(animation);
         }
+    }
+
+    /**
+     * Get sorted history data from all cases
+     * @return list of HistoryData (sorted by time)
+     */
+
+    public static List<CaseData.HistoryData> getSortedHistoryData() {
+        return caseData.values().stream()
+                .filter(Objects::nonNull)
+                .flatMap(data -> {
+                    CaseData.HistoryData[] historyData = data.getHistoryData();
+                    return historyData != null ? Arrays.stream(historyData) : Stream.empty();
+                })
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                .collect(Collectors.toList());
     }
 }
