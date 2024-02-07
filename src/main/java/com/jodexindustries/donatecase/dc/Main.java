@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.dc;
 
+import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
@@ -28,6 +29,7 @@ import java.util.Objects;
 
 public class Main extends JavaPlugin {
     public static Main instance;
+    public static AddonManager addonManager;
     public static Permission permission = null;
     public static boolean sql = true;
 
@@ -103,12 +105,17 @@ public class Main extends JavaPlugin {
         DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseEnableEvent);
 
+        addonManager = new AddonManager();
+        addonManager.loadAddons();
+
         Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
     }
 
     public void onDisable() {
         DonateCaseDisableEvent donateCaseDisableEvent = new DonateCaseDisableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseDisableEvent);
+
+        addonManager.disableAddons();
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new Placeholder().unregister();
         }

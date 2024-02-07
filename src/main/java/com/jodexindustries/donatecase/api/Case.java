@@ -504,7 +504,6 @@ public class Case {
      * Get sorted history data from all cases
      * @return list of HistoryData (sorted by time)
      */
-
     public static List<CaseData.HistoryData> getSortedHistoryData() {
         return caseData.values().stream()
                 .filter(Objects::nonNull)
@@ -515,5 +514,13 @@ public class Case {
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Get addon manager for addons manipulate
+     * @return AddonManager instance
+     */
+    public static AddonManager getAddonManager() {
+        return Main.addonManager;
     }
 }
