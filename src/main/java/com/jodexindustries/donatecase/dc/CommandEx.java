@@ -32,7 +32,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 if (sender.hasPermission("donatecase.player")) {
                     sendHelp(sender, label);
                 } else {
-                    Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
+                    Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NoPermission")));
                 }
             } else {
                 sendHelp(sender, label);
@@ -41,11 +41,20 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             //reload command
             if (args[0].equalsIgnoreCase("reload")) {
                 if (sender.hasPermission("donatecase.admin")) {
-                    Main.instance.setupConfigs();
-                    Main.instance.setupLangs();
-                    Main.t.msg(sender, Main.t.rt(Main.lang.getString("ReloadConfig")));
+                    if(args.length == 1) {
+                        Main.instance.setupConfigs();
+                        Main.instance.setupLangs();
+                        Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("ReloadConfig")));
+                    } else {
+                        if(args[1].equalsIgnoreCase("cache")) {
+                            instance.cleanCache();
+                            Main.instance.setupConfigs();
+                            Main.instance.setupLangs();
+                            Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("ReloadConfigCache", "&aReloaded all DonateCase Cache")));
+                        }
+                    }
                 } else {
-                    Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
+                    Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NoPermission")));
                 }
             } else
             //givekey command
@@ -59,25 +68,26 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             try {
                                 keys = Integer.parseInt(args[3]);
                             } catch (NumberFormatException e) {
-                                Main.t.msg_(sender, Main.t.rt(lang.getString("NumberFormatException"), "%string:" + args[3]));
+                                Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NumberFormatException"), "%string:" + args[3]));
                                 return true;
                             }
                             if (Case.hasCaseByName(caseName)) {
                                 CaseData data = Case.getCase(caseName).clone();
                                 String caseTitle = data.getCaseTitle();
+                                String caseDisplayName = data.getCaseDisplayName();
                                 Case.addKeys(caseName, player, keys);
-                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%case:" + caseName));
+                                Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                                 if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                                    Main.t.msg(target, Main.t.rt(Main.lang.getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%case:" + caseName));
+                                    Main.t.msg(target, Main.t.rt(Main.customConfig.getLang().getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                                 }
                             } else {
-                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + caseName));
+                                Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
                             }
                         } else {
                             sendHelp(sender, label);
                         }
                 } else {
-                    Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
+                    Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NoPermission")));
                 }
             } else
             //delkey
@@ -91,10 +101,10 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             if (!Main.sql) {
                                 customConfig.getKeys().set("DonatCase.Cases", null);
                                 customConfig.saveKeys();
-                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys")));
+                                Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("ClearAllKeys")));
                             } else {
                                 Main.mysql.delAllKey();
-                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearAllKeys")));
+                                Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("ClearAllKeys")));
                             }
                         }
                     } else {
@@ -103,17 +113,18 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         if (Case.hasCaseByName(caseName)) {
                             CaseData data = Case.getCase(caseName).clone();
                             String caseTitle = data.getCaseTitle();
+                            String caseDisplayName = data.getCaseDisplayName();
                             Case.setNullKeys(caseName, player);
-                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("ClearKeys"), "%player:" + player, "%casetitle:" + caseTitle, "%case:" + caseName));
+                            Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("ClearKeys"), "%player:" + player, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                         } else {
-                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + caseName));
+                            Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
                         }
                     }
                 }
             } else
             if(args[0].equalsIgnoreCase("setkey") || args[0].equalsIgnoreCase("sk")) {
                 if (!sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
-                    Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
+                    Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NoPermission")));
                 } else if (args.length >= 4) {
                     String player = args[1];
                     String caseName = args[2];
@@ -122,19 +133,20 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     try {
                         keys = Integer.parseInt(args[3]);
                     } catch (NumberFormatException e) {
-                        Main.t.msg_(sender, Main.t.rt(lang.getString("NumberFormatException"), "%string:" + args[3]));
+                        Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NumberFormatException"), "%string:" + args[3]));
                         return true;
                     }
                     if (Case.hasCaseByName(caseName)) {
                         CaseData data = Case.getCase(caseName).clone();
                         String caseTitle = data.getCaseTitle();
+                        String caseDisplayName = data.getCaseDisplayName();
                         Case.setKeys(caseName, player, keys);
-                        Main.t.msg(sender, Main.t.rt(Main.lang.getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%case:" + caseName));
+                        Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                         if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                            Main.t.msg(target, Main.t.rt(Main.lang.getString("SetKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%case:" + caseName));
+                            Main.t.msg(target, Main.t.rt(Main.customConfig.getLang().getString("SetKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                         }
                     } else {
-                        Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + caseName));
+                        Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
                     }
                 } else {
                     sendHelp(sender, label);
@@ -146,7 +158,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     if (sender instanceof Player) {
                         Player player = (Player) sender;
                         if (sender.hasPermission("donatecase.player")) {
-                            for (String string : Main.lang.getStringList("MyKeys")) {
+                            for (String string : Main.customConfig.getLang().getStringList("MyKeys")) {
                                 if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                                     string = PAPISupport.setPlaceholders(player, string);
                                 }
@@ -165,7 +177,8 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                         result = String.valueOf(keys);
                                     } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
                                         result = NumberFormat.getNumberInstance().format(keys);
-                                    }                                }
+                                    }
+                                }
                                 sender.sendMessage(t.rc(string.replaceAll("%" + placeholder + "%", result)));
                             }
                         }
@@ -174,7 +187,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     if (sender.hasPermission("donatecase.mod")) {
                         String target = args[1];
                         //Get player keys
-                        for (String string : Main.lang.getStringList("PlayerKeys")) {
+                        for (String string : Main.customConfig.getLang().getStringList("PlayerKeys")) {
                             if(Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                                 Player targetPlayer = Bukkit.getPlayerExact(target);
                                 if(targetPlayer != null) {
@@ -202,7 +215,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                     .replace("%"+placeholder+"%", result));
                         }
                     } else {
-                        Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
+                        Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NoPermission")));
                     }
                 }
             } else
@@ -214,7 +227,9 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             num++;
                             CaseData data = Case.getCase(caseName).clone();
                             String caseTitle = data.getCaseTitle();
-                            Main.t.msg_(sender, Main.t.rt(Main.lang.getString("CasesList"), "%casename:" + caseName, "%num:" + num, "%casetitle:" + caseTitle));
+                            String caseDisplayName = data.getCaseDisplayName();
+
+                            Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("CasesList"), "%casename:" + caseName, "%num:" + num, "%casedisplayname:" + caseDisplayName, "%casetitle:" + caseTitle ));
                         }
                 }
             } else
@@ -234,10 +249,10 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                     CaseData.Item winGroup = Tools.getRandomGroup(caseData);
                                     Case.onCaseOpenFinish(caseData, player, true, winGroup);
                                 } else {
-                                    Main.t.msg(player, Main.lang.getString("NoKey"));
+                                    Main.t.msg(player, Main.customConfig.getLang().getString("NoKey"));
                                 }
                             } else {
-                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + caseName));
+                                Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
                             }
                         } else {
                             sendHelp(sender, label);
@@ -260,23 +275,23 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             String caseName = args[2];
                             if (Case.hasCaseByName(caseType)) {
                                 if (Case.hasCaseByLocation(l)) {
-                                    Main.t.msg(sender, Main.lang.getString("HasDonatCase"));
+                                    Main.t.msg(sender, Main.customConfig.getLang().getString("HasDonatCase"));
                                 } else {
                                     if(!Case.hasCaseDataByName(caseName)) {
                                         Case.saveLocation(caseName, caseType, l);
-                                        Main.t.msg(sender, Main.lang.getString("AddDonatCase"));
+                                        Main.t.msg(sender, Main.customConfig.getLang().getString("AddDonatCase"));
                                     } else {
-                                        Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseAlreadyHasByName"), "%casename:" + caseName));
+                                        Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("CaseAlreadyHasByName"), "%casename:" + caseName));
                                     }
                                 }
                             } else {
-                                Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + caseType));
+                                Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("CaseNotExist"), "%case:" + caseType));
                             }
                         } else {
                             sendHelp(sender, label);
                         }
                     } else {
-                        Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
+                        Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NoPermission")));
                     }
                 }
             } else
@@ -289,22 +304,22 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             Location l = player.getTargetBlock(null, 5).getLocation();
                             if (Case.hasCaseByLocation(l)) {
                                 Case.deleteCaseByLocation(l);
-                                Main.t.msg(sender, Main.lang.getString("RemoveDonatCase"));
+                                Main.t.msg(sender, Main.customConfig.getLang().getString("RemoveDonatCase"));
                             } else {
-                                Main.t.msg(sender, Main.lang.getString("BlockDontDonatCase"));
+                                Main.t.msg(sender, Main.customConfig.getLang().getString("BlockDontDonatCase"));
                             }
                         }
                     } else if (args.length == 2) {
                         String name = args[1];
                         if (Case.hasCaseDataByName(name)) {
                             Case.deleteCaseByName(name);
-                            Main.t.msg(sender, Main.lang.getString("RemoveDonatCase"));
+                            Main.t.msg(sender, Main.customConfig.getLang().getString("RemoveDonatCase"));
                         } else {
-                            Main.t.msg(sender, Main.t.rt(Main.lang.getString("CaseNotExist"), "%case:" + name));
+                            Main.t.msg(sender, Main.t.rt(Main.customConfig.getLang().getString("CaseNotExist"), "%case:" + name));
                         }
                     }
                 } else {
-                    Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
+                    Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NoPermission")));
                 }
             } else {
                 String subCommandName = args[0];
@@ -319,7 +334,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                             sender.hasPermission("donatecase.admin"))) {
                         subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
                     } else {
-                        Main.t.msg_(sender, Main.t.rt(Main.lang.getString("NoPermission")));
+                        Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NoPermission")));
                     }
                 } else {
                     sendHelp(sender, label);
@@ -332,11 +347,11 @@ public class CommandEx implements CommandExecutor, TabCompleter {
     private void sendHelp(CommandSender sender, String label) {
         Main.t.msg_(sender, Main.t.rt("&aDonateCase " + Main.instance.getDescription().getVersion() + " &7by &c_Jodex__"));
         if(sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.mod")) {
-            for (String string : Main.lang.getStringList("HelpPlayer")) {
+            for (String string : Main.customConfig.getLang().getStringList("HelpPlayer")) {
                 Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
             }
         } else if(sender.hasPermission("donatecase.mod") || sender.hasPermission("donatecase.admin")) {
-            for (String string : Main.lang.getStringList("Help")) {
+            for (String string : Main.customConfig.getLang().getStringList("Help")) {
                 Main.t.msg_(sender, Main.t.rt(string, "%cmd:" + label));
             }
         }
@@ -357,8 +372,8 @@ public class CommandEx implements CommandExecutor, TabCompleter {
             if (t.isHasCommandForSender(sender, addonsMap)) {
                 for (String addon : addonsMap.keySet()) {
                     if(t.isHasCommandForSender(sender, addonsMap, addon)) {
-                        if(lang.getString("HelpAddons.Format.AddonName") != null && !lang.getString("HelpAddons.Format.AddonName", "").isEmpty()) {
-                            t.msg_(sender, Main.t.rt(lang.getString("HelpAddons.Format.AddonName"), "%addon:" + addon));
+                        if(Main.customConfig.getLang().getString("HelpAddons.Format.AddonName") != null && !Main.customConfig.getLang().getString("HelpAddons.Format.AddonName", "").isEmpty()) {
+                            t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("HelpAddons.Format.AddonName"), "%addon:" + addon));
                         }
                         List<Map<String, SubCommand>> commands = addonsMap.get(addon);
                         for (Map<String, SubCommand> command : commands) {
@@ -368,7 +383,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                 if (description == null) {
                                     description = "";
                                 } else {
-                                    description = Main.t.rt(lang.getString("HelpAddons.Format.AddonDescription"), "%description:" + description);
+                                    description = Main.t.rt(Main.customConfig.getLang().getString("HelpAddons.Format.AddonDescription"), "%description:" + description);
                                 }
                                 StringBuilder builder = new StringBuilder();
                                 if (subCommand.getArgs() != null) {
@@ -378,7 +393,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                 }
                                 if (sender.hasPermission("donatecase.admin")) {
                                     if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                                        t.msg_(sender, Main.t.rt(lang.getString("HelpAddons.Format.AddonCommand"),
+                                        t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("HelpAddons.Format.AddonCommand"),
                                                 "%cmd:" + commandName,
                                                 "%args:" + builder,
                                                 "%description:" + description
@@ -386,7 +401,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                     }
                                 } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
                                     if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                                        t.msg_(sender, Main.t.rt(lang.getString("HelpAddons.Format.AddonCommand"),
+                                        t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("HelpAddons.Format.AddonCommand"),
                                                 "%cmd:" + commandName,
                                                 "%args:" + builder,
                                                 "%description:" + description
@@ -394,7 +409,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                     }
                                 } else if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
                                     if (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                                        t.msg_(sender, Main.t.rt(lang.getString("HelpAddons.Format.AddonCommand"),
+                                        t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("HelpAddons.Format.AddonCommand"),
                                                 "%cmd:" + commandName,
                                                 "%args:" + builder,
                                                 "%description:" + description

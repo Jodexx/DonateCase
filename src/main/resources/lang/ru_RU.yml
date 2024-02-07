@@ -3,6 +3,7 @@ config: '2.5' #DON'T CHANGE THIS PLEASE
 # Локальные плейсхолдеры
 # %case% - название кейса
 # %casetitle% - заглавие кейса
+# %casedisplayname% - отображаемое имя кейса
 # %key% - количество ключей
 # %keys_<casename>% - количество ключей определённого кейса
 # %keys_<casename>_format% - количество ключей определённого кейса с форматированием
@@ -13,7 +14,6 @@ config: '2.5' #DON'T CHANGE THIS PLEASE
 # %donatecase_keys_<casename>_format% - количество ключей определённого кейса с форматированием
 # %donatecase_keys% - количество ключей всех кейсов
 # %donatecase_keys_format% - количество ключей всех кейсов с форматированием
-
 
 Prefix: '&7[&cDonateCase&7] &e'
 NoPermission: '&cУ вас нет прав'

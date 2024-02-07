@@ -32,11 +32,8 @@ public class Main extends JavaPlugin {
     public static boolean sql = true;
 
     public static Tools t;
-    public static FileConfiguration lang;
     public static MySQL mysql;
 
-    File ConfigFile;
-    File AnimationsFile;
     File langRu;
     File langEn;
     File langUa;
@@ -47,7 +44,6 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         long time = System.currentTimeMillis();
         instance = this;
-        customConfig = new CustomConfig();
         t = new Tools();
 //        loadLibraries();
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -88,13 +84,12 @@ public class Main extends JavaPlugin {
         if (sql) {
             String base = customConfig.getConfig().getString("DonatCase.MySql.DataBase");
             String port = customConfig.getConfig().getString("DonatCase.MySql.Port");
-            String hostname = customConfig.getConfig().getString("DonatCase.MySql.Host");
-            final String host = "jdbc:mysql://" + hostname + ":" + port + "/" + base;
-            final String user = customConfig.getConfig().getString("DonatCase.MySql.User");
-            final String password = customConfig.getConfig().getString("DonatCase.MySql.Password");
+            String host = customConfig.getConfig().getString("DonatCase.MySql.Host");
+            String user = customConfig.getConfig().getString("DonatCase.MySql.User");
+            String password = customConfig.getConfig().getString("DonatCase.MySql.Password");
             (new BukkitRunnable() {
                 public void run() {
-                    Main.mysql = new MySQL(host, user, password);
+                    Main.mysql = new MySQL(base, port, host, user, password);
                     if (!Main.mysql.hasTable("donate_cases")) {
                         Main.mysql.createTable();
                     }
@@ -105,10 +100,10 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(getCommand("donatecase")).setExecutor(new CommandEx());
         Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
         registerDefaultAnimations();
-
-        Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
         DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseEnableEvent);
+
+        Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
     }
 
     public void onDisable() {
@@ -136,74 +131,37 @@ public class Main extends JavaPlugin {
             permission = permissionProvider.getProvider();
         }
     }
+    public void cleanCache() {
+        for (ArmorStand as : Case.armorStandList) {
+            if (as != null) {
+                as.remove();
+            }
+        }
+        Case.playersCases.clear();
+        Case.caseData.clear();
+        Case.activeCases.clear();
+        Case.armorStandList.clear();
+    }
 
     public void setupConfigs() {
-        if (!(new File(this.getDataFolder(), "Config.yml")).exists()) {
-            this.saveResource("Config.yml", false);
-        }
+        String[] files = {
+                "Config.yml",
+                "Cases.yml",
+                "Keys.yml",
+                "Animations.yml",
+                "Data.yml",
+                "lang/ru_RU.yml",
+                "lang/en_US.yml",
+                "lang/ua_UA.yml"
+        };
 
-        if (!(new File(this.getDataFolder(), "Cases.yml")).exists()) {
-            this.saveResource("Cases.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "Keys.yml")).exists()) {
-            this.saveResource("Keys.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "Animations.yml")).exists()) {
-            this.saveResource("Animations.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "Data.yml")).exists()) {
-            this.saveResource("Data.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "lang/ru_RU.yml")).exists()) {
-            this.saveResource("lang/ru_RU.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "lang/en_US.yml")).exists()) {
-            this.saveResource("lang/en_US.yml", false);
-        }
-
-        if (!(new File(this.getDataFolder(), "lang/ua_UA.yml")).exists()) {
-            this.saveResource("lang/ua_UA.yml", false);
+        for (String file : files) {
+            checkAndCreateFile(file);
         }
 
         customConfig = new CustomConfig();
-        // Config.yml ver check
-        if (customConfig.getConfig().getString("config") == null) {
-            Logger.log("&cOutdated Config.yml! Creating a new!");
-            ConfigFile = new File(this.getDataFolder(), "Config.yml");
-            ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
-            this.saveResource("Config.yml", false);
-            customConfig = new CustomConfig();
-
-        }
-
-        if (!customConfig.getConfig().getString("config", "").equals("2.5")) {
-            Logger.log("&cOutdated Config.yml! Creating a new!");
-            ConfigFile = new File(this.getDataFolder(), "Config.yml");
-            ConfigFile.renameTo(new File(this.getDataFolder(), "Config.yml.old"));
-            this.saveResource("Config.yml", false);
-            customConfig = new CustomConfig();
-        }
-        // Animations.yml ver check
-        if (customConfig.getAnimations().getString("config") == null) {
-            Logger.log("&cOutdated Animations.yml! Creating a new!");
-            AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
-            AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
-            this.saveResource("Animations.yml", false);
-            customConfig = new CustomConfig();
-        }
-
-        if (!customConfig.getAnimations().getString("config", "").equals("1.3")) {
-            Logger.log("&cOutdated Animations.yml! Creating a new!");
-            AnimationsFile = new File(this.getDataFolder(), "Animations.yml");
-            AnimationsFile.renameTo(new File(this.getDataFolder(), "Animations.yml.old"));
-            this.saveResource("Animations.yml", false);
-            customConfig = new CustomConfig();
-        }
+        checkAndUpdateConfig(customConfig.getConfig(),"Config.yml", "config", "2.5");
+        checkAndUpdateConfig(customConfig.getAnimations(), "Animations.yml", "config", "1.3");
 
         if(customConfig.getConfig().getConfigurationSection("DonatCase.Cases") != null) {
             new File(getDataFolder(), "cases").mkdir();
@@ -224,9 +182,25 @@ public class Main extends JavaPlugin {
         loadCases();
     }
 
+    private void checkAndCreateFile(String fileName) {
+        if (!(new File(this.getDataFolder(), fileName)).exists()) {
+            this.saveResource(fileName, false);
+        }
+    }
+
+    private void checkAndUpdateConfig(YamlConfiguration config, String fileName, String configKey, String expectedValue) {
+        if (config.getString(configKey) == null || !config.getString(configKey, "").equals(expectedValue)) {
+            Logger.log("&cOutdated " + fileName + "! Creating a new!");
+            File configFile = new File(this.getDataFolder(), fileName);
+            configFile.renameTo(new File(this.getDataFolder(), fileName + ".old"));
+            this.saveResource(fileName, false);
+            customConfig = new CustomConfig();
+        }
+    }
+
+
     public void setupLangs() {
-        lang = (new Languages(customConfig.getConfig().getString("DonatCase.Languages"))).getLang();
-        if (lang.getString("config") == null || !lang.getString("config", "").equals("2.5")) {
+        if (customConfig.getLang().getString("config") == null || !customConfig.getLang().getString("config", "").equals("2.5")) {
             Logger.log("&cOutdated lang config! Creating a new!");
             langRu = new File(this.getDataFolder(), "lang/ru_RU.yml");
             langRu.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));
@@ -238,7 +212,6 @@ public class Main extends JavaPlugin {
             langUa.renameTo(new File(this.getDataFolder(), "lang/ua_UA.yml.old"));
             this.saveResource("lang/ua_UA.yml", false);
             customConfig = new CustomConfig();
-            lang = (new Languages(customConfig.getConfig().getString("DonatCase.Languages"))).getLang();
         }
     }
 
@@ -250,11 +223,14 @@ public class Main extends JavaPlugin {
         AnimationManager.registerAnimation("FULLWHEEL", FullWheelAnimation.class);
         Logger.log("&aRegistered &adefault animations");
     }
+
     private void loadCases() {
         Case.caseData.clear();
         for (String caseName : casesConfig.getCases().keySet()) {
             YamlConfiguration config = casesConfig.getCase(caseName);
             String caseTitle = t.rc(config.getString("case.Title"));
+            String caseDisplayName = config.getString("case.DisplayName");
+            caseDisplayName = caseDisplayName == null ? "" : t.rc(caseDisplayName);
             String animationName = config.getString("case.Animation");
 
             String animationSound = config.getString("case.AnimationSound", "NULL").toUpperCase();
@@ -267,7 +243,7 @@ public class Main extends JavaPlugin {
             for (String item : config.getConfigurationSection("case.Items").getKeys(false)) {
                 String group = config.getString("case.Items." + item + ".Group");
                 int chance = config.getInt("case.Items." + item + ".Chance");
-                String giveType = config.getString("case.Items." + item + ".GiveType");
+                String giveType = config.getString("case.Items." + item + ".GiveType", "ONE");
 
                 // get actions
                 List<String> actions = config.getStringList("case.Items." + item + ".Actions");
@@ -314,7 +290,7 @@ public class Main extends JavaPlugin {
                     historyData[Integer.parseInt(i)] = data;
                 }
             }
-            CaseData caseData = new CaseData(caseName, caseTitle,animationName, sound, items, historyData);
+            CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData);
             Case.caseData.put(caseName, caseData);
         }
         Logger.log("&aCases loaded!");

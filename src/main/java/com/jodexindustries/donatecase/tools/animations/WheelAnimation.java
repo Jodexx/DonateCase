@@ -56,7 +56,7 @@ public class WheelAnimation implements Animation {
         final double offset = 2 * Math.PI / itemsCount;
         final double[] speedAx = {speed};
         int animationTime = customConfig.getAnimations().getInt("Wheel.Scroll.Time", 100);
-        final Location flocation = loc.clone().add(0, -1 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"), 0);
+        final Location flocation = loc.clone().add(0, -1 + customConfig.getAnimations().getDouble("Wheel.LiftingAlongY"), 0);
 
         Bukkit.getScheduler().runTaskTimer(instance, (task) -> {
             ticks.getAndIncrement();

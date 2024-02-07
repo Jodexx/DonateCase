@@ -92,7 +92,7 @@ public class Tools {
 
     public void msg(CommandSender s, String msg) {
         if (s != null) {
-            msg_(s, Main.lang.getString("Prefix") + msg);
+            msg_(s, Main.customConfig.getLang().getString("Prefix") + msg);
         }
     }
 
@@ -262,7 +262,7 @@ public class Tools {
     }
 
     public ItemStack createItem(Material ma, int amount, int data, String dn, boolean enchant, String[] rgb) {
-        return createItem(ma, data, amount, dn, null, enchant, rgb);
+        return createItem(ma, data, amount, dn, null, enchant, rgb, -1);
     }
 
     public Color parseColor(String s) {
@@ -423,7 +423,7 @@ public class Tools {
         return winItem;
     }
 
-    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb) {
+    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb, int modeldata) {
         ItemStack item;
         if(data == -1) {
             item = new ItemStack(ma, amount);
@@ -444,6 +444,9 @@ public class Tools {
             if (lore != null) {
 
                 m.setLore(this.rc(lore));
+            }
+            if(modeldata != -1) {
+                m.setCustomModelData(modeldata);
             }
             if (enchant && !ma.equals(Material.AIR)) {
                 m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -495,29 +498,27 @@ public class Tools {
     }
     public Map<List<Integer>, String> getOpenMaterialItemsBySlots(String c) {
         Map<List<Integer>, String> map = new HashMap<>();
-        for (String item : casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
-            if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "").startsWith("OPEN")) {
-                List<Integer> slots = casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
-                String type = casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "");
-                if(type.contains("_")) {
-                    type = type.split("_")[1];
-                } else {
-                    type = c;
-                }
+        ConfigurationSection section = casesConfig.getCase(c).getConfigurationSection("case.Gui.Items");
+        for (String item : section.getKeys(false)) {
+            String type = section.getString(item + ".Type", "");
+            if(type.startsWith("OPEN")) {
+                List<Integer> slots = section.getIntegerList(item + ".Slots");
+                type = type.contains("_") ? type.split("_")[1] : c;
                 map.put(slots, type);
             }
         }
         return map;
     }
+
     public String getOpenMaterialTypeByMapBySlot(String c, int slot) {
-        Map<List<Integer>, String> map = getOpenMaterialItemsBySlots(c);
-        for (List<Integer> list : map.keySet()) {
-            if(list.contains(slot)) {
-                return map.get(list);
+        for (Map.Entry<List<Integer>, String> entry : getOpenMaterialItemsBySlots(c).entrySet()) {
+            if(entry.getKey().contains(slot)) {
+                return entry.getValue();
             }
         }
         return null;
     }
+
 
     public String hex(String message) {
         Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");

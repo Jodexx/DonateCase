@@ -23,10 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -53,7 +50,7 @@ public class EventsListener implements Listener {
             if (p.hasPermission("donatecase.admin")) {
                 new UpdateChecker(Main.instance, 106701).getVersion((version) -> {
                     if (t.getPluginVersion(Main.instance.getDescription().getVersion()) < t.getPluginVersion(version)) {
-                        Main.t.msg(p, Main.t.rt(Main.lang.getString("UpdateCheck"), "%version:" + version));
+                        Main.t.msg(p, Main.t.rt(Main.customConfig.getLang().getString("UpdateCheck"), "%version:" + version));
                     }
 
                 });
@@ -63,13 +60,13 @@ public class EventsListener implements Listener {
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void InventoryClick(InventoryClickEvent e) {
-        if (e.getCurrentItem() != null) {
             Player p = (Player)e.getWhoClicked();
             String pl = p.getName();
             if(Case.playersCases.containsKey(p.getUniqueId())) {
                 String caseType = Case.playersCases.get(p.getUniqueId()).getName();
-                    e.setCancelled(true);
-                    if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && t.getOpenMaterialSlots(caseType).contains(e.getRawSlot())) {
+                e.setCancelled(true);
+                if(e.getCurrentItem() == null) return;
+                if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && t.getOpenMaterialSlots(caseType).contains(e.getRawSlot())) {
                         caseType = t.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
                         if (Case.hasCaseByName(caseType)) {
                             Location block = Case.playersCases.get(p.getUniqueId()).getLocation();
@@ -93,7 +90,7 @@ public class EventsListener implements Listener {
                                     }
                                     p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
                                     String noKey = casesConfig.getCase(caseType).getString("Messages.NoKey");
-                                    if(noKey == null) noKey = lang.getString("NoKey");
+                                    if(noKey == null) noKey = Main.customConfig.getLang().getString("NoKey");
                                     Main.t.msg(p, noKey);
                                 }
                             }
@@ -104,7 +101,6 @@ public class EventsListener implements Listener {
                         }
                     }
             }
-        }
 
     }
 
@@ -140,13 +136,18 @@ public class EventsListener implements Listener {
                         if (!Case.activeCases.containsKey(blockLocation)) {
                             Case.playersCases.put(p.getUniqueId(), new OpenCase(blockLocation, caseType, p.getUniqueId()));
                             try {
-                                CaseData caseData = Case.getCase(caseType).clone();
-                                new CaseGui(p, caseData);
+                                if(Case.hasCase(caseType)) {
+                                    CaseData caseData = Case.getCase(caseType).clone();
+                                    new CaseGui(p, caseData);
+                                } else {
+                                    Main.t.msg(p, "&cSomething wrong! Contact with server administrator!");
+                                    Main.instance.getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
+                                }
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
                         } else {
-                            Main.t.msg(p, Main.lang.getString("HaveOpenCase"));
+                            Main.t.msg(p, Main.customConfig.getLang().getString("HaveOpenCase"));
                         }
                     } // else player already opened case
                 }
@@ -168,7 +169,7 @@ public class EventsListener implements Listener {
         Location loc = e.getBlock().getLocation();
         if (Case.hasCaseByLocation(loc)) {
             e.setCancelled(true);
-            Main.t.msg(e.getPlayer(), Main.lang.getString("DestoryDonatCase"));
+            Main.t.msg(e.getPlayer(), Main.customConfig.getLang().getString("DestoryDonatCase"));
         }
 
     }

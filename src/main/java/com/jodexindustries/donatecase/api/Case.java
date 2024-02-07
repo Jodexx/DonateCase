@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.jodexindustries.donatecase.dc.Main.*;
 
@@ -349,7 +351,7 @@ public class Case {
                 customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Item", data1.getItem());
             }
         }
-        caseData.setHistoryData(list);
+        getCase(caseData.getCaseName()).setHistoryData(list);
 
         customConfig.saveData();
     }
@@ -398,9 +400,10 @@ public class Case {
                 String[] args = action.split(";");
                 String title = "";
                 String subTitle = "";
-                if(args.length == 1) {
+                if(args.length >= 1) {
                     title = args[0];
-                } else if(args.length > 1) {
+                }
+                if(args.length > 1) {
                     subTitle = args[1];
                 }
                 player.sendTitle(Main.t.rt(title, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()),
@@ -486,5 +489,31 @@ public class Case {
     @Nullable
     public static CaseData getCase(@NotNull String c) {
         return caseData.getOrDefault(c, null);
+    }
+
+    /**
+     * Unregister all animations
+     */
+    public static void unregisterAnimations() {
+        for (String animation : AnimationManager.getRegisteredAnimations().keySet()) {
+            AnimationManager.unregisterAnimation(animation);
+        }
+    }
+
+    /**
+     * Get sorted history data from all cases
+     * @return list of HistoryData (sorted by time)
+     */
+
+    public static List<CaseData.HistoryData> getSortedHistoryData() {
+        return caseData.values().stream()
+                .filter(Objects::nonNull)
+                .flatMap(data -> {
+                    CaseData.HistoryData[] historyData = data.getHistoryData();
+                    return historyData != null ? Arrays.stream(historyData) : Stream.empty();
+                })
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                .collect(Collectors.toList());
     }
 }

@@ -5,6 +5,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class CustomConfig {
@@ -13,6 +14,7 @@ public class CustomConfig {
     private final File fileConfig;
     private final File fileAnimations;
     private final File fileData;
+    private YamlConfiguration Lang;
     private final YamlConfiguration Cases;
     private final YamlConfiguration Keys;
     private final YamlConfiguration Config;
@@ -30,6 +32,18 @@ public class CustomConfig {
         Config = YamlConfiguration.loadConfiguration(fileConfig);
         fileData = new File(Main.instance.getDataFolder(), "Data.yml");
         Data = YamlConfiguration.loadConfiguration(fileData);
+
+        File path = new File(Main.instance.getDataFolder(), "lang");
+        File[] listFiles;
+        int length = (listFiles = path.listFiles()).length;
+        String lang = getConfig().getString("DonatCase.Languages");
+        for(int i = 0; i < length; ++i) {
+            File l = listFiles[i];
+            if (l.getName().toLowerCase().split("_")[0].equalsIgnoreCase(lang)) {
+                this.Lang = YamlConfiguration.loadConfiguration(l);
+                break;
+            }
+        }
     }
 
     public void reload(){
@@ -61,14 +75,14 @@ public class CustomConfig {
         }
     }
 
-//    public void saveAnimations() {
-//        try {
-//            Animations.save(fileAnimations);
-//        } catch (IOException var1) {
-//            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
-//        }
-//
-//    }
+    public void saveAnimations() {
+        try {
+            Animations.save(fileAnimations);
+        } catch (IOException var1) {
+            Main.instance.getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
+        }
+
+    }
 
 
     public void saveData() {
@@ -112,5 +126,9 @@ public class CustomConfig {
             reload();
         }
         return Data;
+    }
+
+    public YamlConfiguration getLang() {
+        return Lang;
     }
 }
