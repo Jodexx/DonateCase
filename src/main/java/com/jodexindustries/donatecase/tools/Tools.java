@@ -448,8 +448,11 @@ public class Tools {
             if(modeldata != -1) {
                 m.setCustomModelData(modeldata);
             }
-            if (enchant && !ma.equals(Material.AIR)) {
+            if (!ma.equals(Material.AIR)) {
                 m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                m.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                m.addItemFlags(ItemFlag.HIDE_DYE);
+                m.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
             }
 
             item.setItemMeta(m);

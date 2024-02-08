@@ -408,14 +408,16 @@ public class CaseData implements Cloneable {
             }
         }
         public static class Material {
+            private String id;
             private ItemStack itemStack;
             private String displayName;
             private boolean enchanted;
 
-            public Material(ItemStack itemStack, String displayName, boolean enchanted) {
+            public Material(String id, ItemStack itemStack, String displayName, boolean enchanted) {
                 this.itemStack = itemStack;
                 this.displayName = displayName;
                 this.enchanted = enchanted;
+                this.id = id;
             }
 
             /**
@@ -481,6 +483,22 @@ public class CaseData implements Cloneable {
                         this.itemStack.removeEnchantment(Enchantment.LURE);
                     }
                     this.enchanted = enchanted;
+            }
+
+            /**
+             * Material id like HDB:1234, HEAD:name, RED_WOOL etc.
+             * @return id
+             */
+            public String getId() {
+                return id;
+            }
+
+            /**
+             * Set material id
+             * @param id material id
+             */
+            public void setId(String id) {
+                this.id = id;
             }
         }
 

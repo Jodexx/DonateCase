@@ -103,7 +103,7 @@ public class CaseGui {
                     material = configCase.getString("case.Gui.Items." + item + ".Material", "HEAD:" + data.getPlayerName());
                     if(material.equalsIgnoreCase("DEFAULT")) {
                         if(historyCaseData != null) {
-                            material = historyCaseData.getItem(data.getItem()).getMaterial().getItemStack().getType().name();
+                            material = historyCaseData.getItem(data.getItem()).getMaterial().getId();
                         }
                     }
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));

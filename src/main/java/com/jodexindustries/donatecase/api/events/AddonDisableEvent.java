@@ -1,17 +1,17 @@
 package com.jodexindustries.donatecase.api.events;
 
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.server.PluginEvent;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when DonateCase enabled
+ * Called when addon disabled
  */
-public class DonateCaseEnableEvent extends PluginEvent {
+public class AddonDisableEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    public DonateCaseEnableEvent(@NotNull Plugin plugin) {
-        super(plugin);
+    private final String addon;
+    public AddonDisableEvent(String addon) {
+        this.addon = addon;
     }
 
     @NotNull
@@ -21,5 +21,9 @@ public class DonateCaseEnableEvent extends PluginEvent {
     }
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    public String getAddon() {
+        return addon;
     }
 }
