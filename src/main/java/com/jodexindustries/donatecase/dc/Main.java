@@ -97,7 +97,7 @@ public class Main extends JavaPlugin {
                     }
 
                 }
-            }).runTaskTimer(instance, 0L, 12000L);
+            }).runTaskTimerAsynchronously(instance, 0L, 12000L);
         }
         Objects.requireNonNull(getCommand("donatecase")).setExecutor(new CommandEx());
         Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
