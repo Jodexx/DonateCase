@@ -278,7 +278,7 @@ public class Main extends JavaPlugin {
                 String itemDisplayName = t.rc(config.getString("case.Items." + item + ".Item.DisplayName"));
                 boolean enchanted = config.getBoolean("case.Items." + item + ".Item.Enchanted");
                 ItemStack itemStack = t.getCaseItem(itemDisplayName, id, enchanted, rgb);
-                CaseData.Item.Material material = new CaseData.Item.Material(itemStack, itemDisplayName, enchanted);
+                CaseData.Item.Material material = new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted);
 
                 CaseData.Item caseItem = new CaseData.Item(item, group, chance, material, giveType, actions, randomActions, rgb);
                 items.put(item, caseItem);
