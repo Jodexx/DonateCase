@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api;
+package com.jodexindustries.donatecase.api.data;
 
 import org.bukkit.command.CommandSender;
 

@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.tools;
 
 import com.jodexindustries.donatecase.api.AnimationManager;
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.dc.Main;
 import org.bukkit.Location;

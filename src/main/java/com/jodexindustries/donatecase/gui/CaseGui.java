@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.gui;
 
-import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.MaterialType;
+import com.jodexindustries.donatecase.api.data.Case;
+import com.jodexindustries.donatecase.api.data.MaterialType;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;

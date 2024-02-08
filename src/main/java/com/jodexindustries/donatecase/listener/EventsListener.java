@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.listener;
 
-import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.OpenCase;
+import com.jodexindustries.donatecase.api.data.Case;
+import com.jodexindustries.donatecase.api.data.OpenCase;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.CaseInteractEvent;

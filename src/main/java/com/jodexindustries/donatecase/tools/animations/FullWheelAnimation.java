@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.tools.animations;
 
-import com.jodexindustries.donatecase.api.Animation;
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.Animation;
+import com.jodexindustries.donatecase.api.data.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
@@ -11,7 +11,6 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.jodexindustries.donatecase.dc.Main.*;

@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.tools;
 
-import com.jodexindustries.donatecase.api.MaterialType;
-import com.jodexindustries.donatecase.api.SubCommand;
-import com.jodexindustries.donatecase.api.SubCommandType;
+import com.jodexindustries.donatecase.api.data.MaterialType;
+import com.jodexindustries.donatecase.api.data.SubCommand;
+import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.BukkitArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.PacketArmorStandCreator;

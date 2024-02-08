@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.events.SubCommandRegisteredEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import org.bukkit.Bukkit;

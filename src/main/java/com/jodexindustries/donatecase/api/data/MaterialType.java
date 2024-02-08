@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api;
+package com.jodexindustries.donatecase.api.data;
 
 public enum MaterialType {
     /**

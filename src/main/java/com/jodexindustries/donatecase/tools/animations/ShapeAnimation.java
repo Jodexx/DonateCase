@@ -1,15 +1,13 @@
 package com.jodexindustries.donatecase.tools.animations;
 
-import com.jodexindustries.donatecase.api.Animation;
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.Animation;
+import com.jodexindustries.donatecase.api.data.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.dc.Main;
-import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
