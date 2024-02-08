@@ -60,48 +60,48 @@ public class EventsListener implements Listener {
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void InventoryClick(InventoryClickEvent e) {
-            Player p = (Player)e.getWhoClicked();
-            String pl = p.getName();
-            if(Case.playersCases.containsKey(p.getUniqueId())) {
-                String caseType = Case.playersCases.get(p.getUniqueId()).getName();
-                e.setCancelled(true);
-                if(e.getCurrentItem() == null) return;
-                if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && t.getOpenMaterialSlots(caseType).contains(e.getRawSlot())) {
-                        caseType = t.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
-                        if (Case.hasCaseByName(caseType)) {
-                            Location block = Case.playersCases.get(p.getUniqueId()).getLocation();
-                            PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, block.getBlock());
-                            Bukkit.getServer().getPluginManager().callEvent(event);
-                            if (!event.isCancelled()) {
-                                if (Case.getKeys(caseType, pl) >= 1) {
-                                    Case.removeKeys(caseType, pl, 1);
-                                    new StartAnimation(p, block, caseType);
-                                    OpenCaseEvent openEvent = new OpenCaseEvent(p, caseType, block.getBlock());
-                                    Bukkit.getServer().getPluginManager().callEvent(openEvent);
-                                    p.closeInventory();
-                                } else {
-                                    p.closeInventory();
-                                    Sound sound = null;
-                                    try {
-                                        sound = Sound.valueOf(customConfig.getConfig().getString("DonatCase.NoKeyWarningSound"));
-                                    } catch (IllegalArgumentException ignore) {}
-                                    if(sound == null) {
-                                        sound = Sound.valueOf("ENTITY_ENDERMEN_TELEPORT");
-                                    }
-                                    p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
-                                    String noKey = casesConfig.getCase(caseType).getString("Messages.NoKey");
-                                    if(noKey == null) noKey = Main.customConfig.getLang().getString("NoKey");
-                                    Main.t.msg(p, noKey);
-                                }
-                            }
+        Player p = (Player) e.getWhoClicked();
+        String pl = p.getName();
+        if (Case.playersCases.containsKey(p.getUniqueId())) {
+            String caseType = Case.playersCases.get(p.getUniqueId()).getName();
+            e.setCancelled(true);
+            if (e.getCurrentItem() == null) return;
+            if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && t.getOpenMaterialSlots(caseType).contains(e.getRawSlot())) {
+                caseType = t.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
+                if (Case.hasCaseByName(caseType)) {
+                    Location block = Case.playersCases.get(p.getUniqueId()).getLocation();
+                    PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, block.getBlock());
+                    Bukkit.getServer().getPluginManager().callEvent(event);
+                    if (!event.isCancelled()) {
+                        if (Case.getKeys(caseType, pl) >= 1) {
+                            Case.removeKeys(caseType, pl, 1);
+                            new StartAnimation(p, block, caseType);
+                            OpenCaseEvent openEvent = new OpenCaseEvent(p, caseType, block.getBlock());
+                            Bukkit.getServer().getPluginManager().callEvent(openEvent);
+                            p.closeInventory();
                         } else {
                             p.closeInventory();
-                            Main.t.msg(p, "&cSomething wrong! Contact with server administrator!");
-                            Main.instance.getLogger().log(Level.WARNING, "Case with name " + caseType + " not exist!");
+                            Sound sound = null;
+                            try {
+                                sound = Sound.valueOf(customConfig.getConfig().getString("DonatCase.NoKeyWarningSound"));
+                            } catch (IllegalArgumentException ignore) {
+                            }
+                            if (sound == null) {
+                                sound = Sound.valueOf("ENTITY_ENDERMEN_TELEPORT");
+                            }
+                            p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
+                            String noKey = casesConfig.getCase(caseType).getString("Messages.NoKey");
+                            if (noKey == null) noKey = Main.customConfig.getLang().getString("NoKey");
+                            Main.t.msg(p, noKey);
                         }
                     }
+                } else {
+                    p.closeInventory();
+                    Main.t.msg(p, "&cSomething wrong! Contact with server administrator!");
+                    Main.instance.getLogger().log(Level.WARNING, "Case with name " + caseType + " not exist!");
+                }
             }
-
+        }
     }
 
     @EventHandler
@@ -125,6 +125,7 @@ public class EventsListener implements Listener {
         if(e.getHand() == EquipmentSlot.OFF_HAND) return;
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Player p = e.getPlayer();
+            assert e.getClickedBlock() != null;
             Location blockLocation = e.getClickedBlock().getLocation();
             if (Case.hasCaseByLocation(blockLocation)) {
                 String caseType = Case.getCaseTypeByLocation(blockLocation);
