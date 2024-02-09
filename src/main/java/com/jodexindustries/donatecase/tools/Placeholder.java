@@ -2,7 +2,7 @@ package com.jodexindustries.donatecase.tools;
 
 import java.text.NumberFormat;
 
-import com.jodexindustries.donatecase.api.data.Case;
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.dc.Main;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;

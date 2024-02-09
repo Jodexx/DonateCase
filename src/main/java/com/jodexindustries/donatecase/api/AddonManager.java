@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.addon.JavaAddon;
-import com.jodexindustries.donatecase.api.data.Case;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;

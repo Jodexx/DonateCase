@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.armorstand;
 
-import com.jodexindustries.donatecase.api.data.Case;
+import com.jodexindustries.donatecase.api.Case;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
