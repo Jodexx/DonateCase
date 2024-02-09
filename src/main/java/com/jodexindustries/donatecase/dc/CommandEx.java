@@ -1,7 +1,10 @@
 package com.jodexindustries.donatecase.dc;
 
 import com.jodexindustries.donatecase.api.*;
+import com.jodexindustries.donatecase.api.data.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.SubCommand;
+import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;

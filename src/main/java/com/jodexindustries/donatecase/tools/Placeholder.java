@@ -1,16 +1,12 @@
 package com.jodexindustries.donatecase.tools;
 
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Objects;
 
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.Case;
 import com.jodexindustries.donatecase.dc.Main;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
-
-import static com.jodexindustries.donatecase.dc.Main.*;
 
 public class Placeholder extends PlaceholderExpansion {
 

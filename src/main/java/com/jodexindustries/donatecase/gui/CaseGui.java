@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.gui;
 
-import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.MaterialType;
+import com.jodexindustries.donatecase.api.data.Case;
+import com.jodexindustries.donatecase.api.data.MaterialType;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
@@ -43,9 +43,9 @@ public class CaseGui {
                     String[] parts = placeholder.split("_");
                     String caseName = parts[1];
                     if (!sql) {
-                        keys = customConfig.getKeys().getInt("DonatCase.Cases." + caseName + "." + Objects.requireNonNull(p.getName()));
+                        keys = customConfig.getKeys().getInt("DonatCase.Cases." + caseName + "." + p.getName());
                     } else {
-                        keys = mysql.getKey(parts[1], Objects.requireNonNull(p.getName()));
+                        keys = mysql.getKey(parts[1], p.getName());
                     }
                 } else {
                     keys = Case.getKeys(c, p.getName());
@@ -95,16 +95,12 @@ public class CaseGui {
                         data = list.get(index);
                     } else data = historyCaseData.getHistoryData()[index];
                     if (data == null) continue;
-
-                    if (isGlobal) {
-                        historyCaseData = Case.getCase(data.getCaseType());
-                    }
+                    if (isGlobal) historyCaseData = Case.getCase(data.getCaseType());
+                    if(historyCaseData == null) continue;
 
                     material = configCase.getString("case.Gui.Items." + item + ".Material", "HEAD:" + data.getPlayerName());
                     if(material.equalsIgnoreCase("DEFAULT")) {
-                        if(historyCaseData != null) {
-                            material = historyCaseData.getItem(data.getItem()).getMaterial().getId();
-                        }
+                        material = historyCaseData.getItem(data.getItem()).getMaterial().getId();
                     }
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                     String dateFormatted = formatter.format(new Date(data.getTime()));
@@ -150,7 +146,7 @@ public class CaseGui {
     public Inventory getInventory() {
         return inventory;
     }
-    private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, boolean enchanted, String[] rgb, int modeldata) {
+    private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, boolean enchanted, String[] rgb, int modelData) {
         int keys = Case.getKeys(c, p.getName());
         List<String> newLore = new ArrayList<>();
         if(lore != null) {
@@ -158,11 +154,11 @@ public class CaseGui {
                 String placeholder = t.getLocalPlaceholder(string);
                 if (placeholder.startsWith("keys_")) {
                     String[] parts = placeholder.split("_");
-                    String casename = parts[1];
+                    String caseName = parts[1];
                     if (!sql) {
-                        keys = customConfig.getKeys().getInt("DonatCase.Cases." + casename + "." + Objects.requireNonNull(p.getName()));
+                        keys = customConfig.getKeys().getInt("DonatCase.Cases." + caseName + "." + p.getName());
                     } else {
-                        keys = mysql.getKey(parts[1], Objects.requireNonNull(p.getName()));
+                        keys = mysql.getKey(parts[1], p.getName());
                     }
                 }
                 newLore.add(string.replaceAll("%" + placeholder + "%", String.valueOf(keys)));
@@ -176,7 +172,7 @@ public class CaseGui {
             if (itemMaterial == null) {
                 itemMaterial = Material.STONE;
             }
-            item = t.createItem(itemMaterial, -1, 1, displayName, t.rt(newLore,"%case%:" + c), enchanted, rgb, modeldata);
+            item = t.createItem(itemMaterial, -1, 1, displayName, t.rt(newLore,"%case%:" + c), enchanted, rgb, modelData);
         } else
         if(materialType == MaterialType.HEAD) {
             String[] parts = material.split(":");

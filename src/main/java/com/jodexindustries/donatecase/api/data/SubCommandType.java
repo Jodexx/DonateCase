@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api;
+package com.jodexindustries.donatecase.api.data;
 
 /**
  * Class to define command type
