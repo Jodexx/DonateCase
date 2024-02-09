@@ -4,10 +4,12 @@ import com.jodexindustries.donatecase.dc.Main;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 import java.util.logging.Level;
 
 public abstract class JavaAddon implements Addon {
@@ -17,6 +19,8 @@ public abstract class JavaAddon implements Addon {
     private AddonLogger addonLogger;
     private File file;
 
+    public JavaAddon() {}
+
     public void init(String version, String name, File file) {
         this.version = version;
         this.name = name;
@@ -24,7 +28,6 @@ public abstract class JavaAddon implements Addon {
         this.classLoader = this.getClass().getClassLoader();
         this.addonLogger = new AddonLogger(this);
     }
-    public JavaAddon() {}
 
 
     @Override
@@ -115,5 +118,12 @@ public abstract class JavaAddon implements Addon {
 
     public AddonLogger getLogger() {
         return addonLogger;
+    }
+
+    public static String getNameByClassLoader(ClassLoader classLoader) {
+        InputStream input = classLoader.getResourceAsStream("addon.yml");
+        Yaml yaml = new Yaml();
+        Map<String, Object> data = yaml.load(input);
+        return (String) data.get("name");
     }
 }

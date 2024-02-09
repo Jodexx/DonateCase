@@ -53,7 +53,7 @@ public class AddonManager {
 
                     URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()}, this.getClass().getClassLoader());
                     Class<?> mainClass = Class.forName(mainClassName, true, loader);
-                    Case.getInstance().getLogger().info("Loading " + name + " addon v" + version + " version");
+                    Case.getInstance().getLogger().info("Loading " + name + " addon v" + version);
                     JavaAddon addon = (JavaAddon) mainClass.getDeclaredConstructor().newInstance();
                     addon.init(version, name, file);
                     addons.put(file.getName(), addon);
