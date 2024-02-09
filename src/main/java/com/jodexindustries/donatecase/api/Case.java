@@ -1,7 +1,7 @@
-package com.jodexindustries.donatecase.api.data;
+package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.donatecase.api.AddonManager;
-import com.jodexindustries.donatecase.api.AnimationManager;
+import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.OpenCase;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.dc.Main;
 import com.jodexindustries.donatecase.gui.CaseGui;

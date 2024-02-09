@@ -1,7 +1,8 @@
 package com.jodexindustries.donatecase.dc;
 
 import com.jodexindustries.donatecase.api.*;
-import com.jodexindustries.donatecase.api.data.Case;
+import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.addon.JavaAddon;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -332,7 +333,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
                     } else if(subCommand.getType() == SubCommandType.MODER && (sender.hasPermission("donatecase.mod") || sender.hasPermission("donatecase.admin"))) {
                         subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
-                    } else if(subCommand.getType() == SubCommandType.PLAYER && (sender.hasPermission("donatecase.player") ||
+                    } else if(( subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null ) && (sender.hasPermission("donatecase.player") ||
                             sender.hasPermission("donatecase.mod") ||
                             sender.hasPermission("donatecase.admin"))) {
                         subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
@@ -364,7 +365,14 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                 List<Map<String, SubCommand>> list = new ArrayList<>();
                 Map<String, SubCommand> commandMap = new HashMap<>();
                 SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
-                String addonName = JavaPlugin.getProvidingPlugin(subCommand.getClass()).getName();
+                String addonName = null;
+                try {
+                    addonName = JavaPlugin.getProvidingPlugin(subCommand.getClass()).getName();
+                } catch (IllegalArgumentException ignored) {}
+
+                if(addonName == null) {
+                    addonName = JavaAddon.getNameByClassLoader(subCommand.getClass().getClassLoader());
+                }
                 if (addonsMap.get(addonName) != null) {
                     list = addonsMap.get(addonName);
                 }

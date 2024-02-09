@@ -15,7 +15,7 @@ public class AddonLogger extends Logger {
      * @param context A reference to the plugin
      */
     public AddonLogger(@NotNull Addon context) {
-        super(context.getClass().getCanonicalName(), null);
+        super(context.getDonateCase().getName(), null);
         addonName = "[" + context.getName() + "] ";
         setParent(context.getDonateCase().getLogger());
         setLevel(Level.ALL);

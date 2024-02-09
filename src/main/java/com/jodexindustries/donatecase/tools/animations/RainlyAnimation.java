@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.tools.animations;
 
 import com.jodexindustries.donatecase.api.data.Animation;
-import com.jodexindustries.donatecase.api.data.Case;
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.dc.Main;
