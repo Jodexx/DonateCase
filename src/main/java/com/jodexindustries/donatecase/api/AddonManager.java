@@ -55,7 +55,7 @@ public class AddonManager {
                     Class<?> mainClass = Class.forName(mainClassName, true, loader);
                     Case.getInstance().getLogger().info("Loading " + name + " addon v" + version);
                     JavaAddon addon = (JavaAddon) mainClass.getDeclaredConstructor().newInstance();
-                    addon.init(version, name, file);
+                    addon.init(version, name, file, loader);
                     addons.put(file.getName(), addon);
                     addon.onEnable();
                     Case.getInstance().getLogger().info("Loaded " + name + " addon");
@@ -78,6 +78,11 @@ public class AddonManager {
         } else {
             javaAddon.onDisable();
             addons.remove(addon);
+            try {
+                javaAddon.getUrlClassLoader().close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
