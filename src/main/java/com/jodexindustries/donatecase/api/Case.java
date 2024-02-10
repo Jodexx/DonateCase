@@ -317,21 +317,21 @@ public class Case {
                     !customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(item.getGroup()) ||
                     customConfig.getConfig().getInt("DonatCase.LevelGroups." + playerGroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + item.getGroup())) {
                 if (item.getGiveType().equalsIgnoreCase("ONE")) {
-                    executeActions(player, item, null, false);
+                    executeActions(player, caseData, item, null, false);
                 } else {
                     choice = getChoice(item);
-                    executeActions(player, item, choice, false);
+                    executeActions(player, caseData, item, choice, false);
                 }
             } else {
                 // Handle alternative case
-                executeActions(player, item, null, true);
+                executeActions(player, caseData, item, null, true);
             }
         } else {
             if (item.getGiveType().equalsIgnoreCase("ONE")) {
-                executeActions(player, item, null, false);
+                executeActions(player,caseData, item, null, false);
             } else {
                 choice = getChoice(item);
-                executeActions(player, item, choice, false);
+                executeActions(player, caseData, item, choice, false);
             }
         }
         // Sound
@@ -380,7 +380,7 @@ public class Case {
         return endCommand;
     }
 
-    private static void executeActions(Player player, CaseData.Item item, String choice, boolean alternative) {
+    private static void executeActions(Player player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
         List<String> actions = alternative ? item.getAlternativeActions() : item.getActions();
         if(choice != null) actions = item.getRandomAction(choice).getActions();
         for (String action : actions) {
@@ -390,17 +390,26 @@ public class Case {
             action = t.rc(action);
             if (action.startsWith("[command] ")) {
                 action = action.replaceFirst("\\[command] ", "");
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), t.rt(action, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                        t.rt(action, "%player%:" + player.getName(),
+                                "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
             }
             if (action.startsWith("[message] ")) {
                 action = action.replaceFirst("\\[message] ", "");
-                player.sendMessage(t.rt(action, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                player.sendMessage(
+                        t.rt(action, "%player%:" + player.getName(),
+                                "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
             }
 
             if (action.startsWith("[broadcast] ")) {
                 action = action.replaceFirst("\\[broadcast] ", "");
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.sendMessage(t.rt(action, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                    p.sendMessage(
+                            t.rt(action, "%player%:" + player.getName(),
+                                    "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                                    "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
                 }
             }
             if (action.startsWith("[title] ")) {
@@ -414,8 +423,13 @@ public class Case {
                 if(args.length > 1) {
                     subTitle = args[1];
                 }
-                player.sendTitle(t.rt(title, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()),
-                        t.rt(subTitle, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                player.sendTitle(
+                        t.rt(title, "%player%:" + player.getName(),
+                                "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()),
+                        t.rt(subTitle, "%player%:" + player.getName(),
+                                "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
             }
         }
     }
