@@ -197,10 +197,12 @@ public class CaseData implements Cloneable {
         private Material material;
         private String giveType;
         private List<String> actions;
+        private List<String> alternativeActions;
         private Map<String,RandomAction> randomActions;
         private String[] rgb;
 
-        public Item(String itemName, String group, int chance, Material material, String giveType, List<String> actions, Map<String, RandomAction> randomActions, String[] rgb) {
+        public Item(String itemName, String group, int chance, Material material,
+                    String giveType, List<String> actions, Map<String, RandomAction> randomActions, String[] rgb, List<String> alternativeActions) {
             this.itemName = itemName;
             this.group = group;
             this.chance = chance;
@@ -209,6 +211,7 @@ public class CaseData implements Cloneable {
             this.actions = actions;
             this.randomActions = randomActions;
             this.rgb = rgb;
+            this.alternativeActions = alternativeActions;
         }
 
         /**
@@ -347,6 +350,14 @@ public class CaseData implements Cloneable {
 
         public String getItemName() {
             return itemName;
+        }
+
+        public List<String> getAlternativeActions() {
+            return alternativeActions;
+        }
+        
+        public void setAlternativeActions(List<String> alternativeActions) {
+            this.alternativeActions = alternativeActions;
         }
 
         public static class RandomAction implements Cloneable {
