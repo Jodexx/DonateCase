@@ -70,11 +70,11 @@ public class Case {
      * @param keys Number of keys
      */
     public static void setKeys(String caseName, String player, int keys) {
-        if (!Main.sql) {
+        if (!sql) {
             customConfig.getKeys().set("DonatCase.Cases." + caseName + "." + player, keys == 0 ? null : keys);
             customConfig.saveKeys();
         } else {
-            Main.mysql.setKey(caseName, player, keys);
+            mysql.setKey(caseName, player, keys);
         }
 
     }
@@ -85,11 +85,11 @@ public class Case {
      * @param player Player name
      */
     public static void setNullKeys(String caseName, String player) {
-        if (!Main.sql) {
+        if (!sql) {
             customConfig.getKeys().set("DonatCase.Cases." + caseName + "." + player, 0);
             customConfig.saveKeys();
         } else {
-            Main.mysql.setKey(caseName, player, 0);
+            mysql.setKey(caseName, player, 0);
         }
 
     }
@@ -123,7 +123,7 @@ public class Case {
      */
 
     public static int getKeys(String name, String player) {
-        return Main.sql ? Main.mysql.getKey(name, player) : customConfig.getKeys().getInt("DonatCase.Cases." + name + "." + player);
+        return sql ? mysql.getKey(name, player) : customConfig.getKeys().getInt("DonatCase.Cases." + name + "." + player);
     }
 
     /**
@@ -285,7 +285,7 @@ public class Case {
      * @return DonateCase instance
      */
     public static JavaPlugin getInstance() {
-        return Main.instance;
+        return instance;
     }
 
     /**
@@ -311,23 +311,27 @@ public class Case {
      */
     public static void onCaseOpenFinish(CaseData caseData, Player player, boolean needSound, CaseData.Item item) {
         String choice = "";
-        if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && Main.getPermissions() != null) {
-            String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
-            if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) ||
-                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + item.getGroup())) {
+        if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && getPermissions() != null) {
+            String playerGroup = getPermissions().getPrimaryGroup(player).toLowerCase();
+            if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playerGroup) ||
+                    !customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(item.getGroup()) ||
+                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playerGroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + item.getGroup())) {
                 if (item.getGiveType().equalsIgnoreCase("ONE")) {
-                    executeActions(player, item, null);
+                    executeActions(player, caseData, item, null, false);
                 } else {
                     choice = getChoice(item);
-                    executeActions(player, item, choice);
+                    executeActions(player, caseData, item, choice, false);
                 }
+            } else {
+                // Handle alternative case
+                executeActions(player, caseData, item, null, true);
             }
         } else {
-            if(item.getGiveType().equalsIgnoreCase("ONE")) {
-                executeActions(player, item, null);
+            if (item.getGiveType().equalsIgnoreCase("ONE")) {
+                executeActions(player,caseData, item, null, false);
             } else {
                 choice = getChoice(item);
-                executeActions(player, item, choice);
+                executeActions(player, caseData, item, choice, false);
             }
         }
         // Sound
@@ -376,24 +380,36 @@ public class Case {
         return endCommand;
     }
 
-    private static void executeActions(Player player, CaseData.Item item, String choice) {
-        List<String> actions = item.getActions();
-        if(choice != null) {
-          actions = item.getRandomAction(choice).getActions();
-        }
+    private static void executeActions(Player player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
+        List<String> actions = alternative ? item.getAlternativeActions() : item.getActions();
+        if(choice != null) actions = item.getRandomAction(choice).getActions();
         for (String action : actions) {
-            if (Main.instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            if (instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 action = PAPISupport.setPlaceholders(player, action);
             }
-            action = Main.t.rc(action);
+            action = t.rc(action);
             if (action.startsWith("[command] ")) {
                 action = action.replaceFirst("\\[command] ", "");
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), Main.t.rt(action, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                        t.rt(action, "%player%:" + player.getName(),
+                                "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
             }
+            if (action.startsWith("[message] ")) {
+                action = action.replaceFirst("\\[message] ", "");
+                player.sendMessage(
+                        t.rt(action, "%player%:" + player.getName(),
+                                "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+            }
+
             if (action.startsWith("[broadcast] ")) {
                 action = action.replaceFirst("\\[broadcast] ", "");
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.sendMessage(Main.t.rt(action, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                    p.sendMessage(
+                            t.rt(action, "%player%:" + player.getName(),
+                                    "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                                    "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
                 }
             }
             if (action.startsWith("[title] ")) {
@@ -407,8 +423,13 @@ public class Case {
                 if(args.length > 1) {
                     subTitle = args[1];
                 }
-                player.sendTitle(Main.t.rt(title, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()),
-                        Main.t.rt(subTitle, "%player%:" + player.getName(), "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                player.sendTitle(
+                        t.rt(title, "%player%:" + player.getName(),
+                                "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()),
+                        t.rt(subTitle, "%player%:" + player.getName(),
+                                "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
             }
         }
     }
@@ -522,6 +543,6 @@ public class Case {
      * @return AddonManager instance
      */
     public static AddonManager getAddonManager() {
-        return Main.addonManager;
+        return addonManager;
     }
 }

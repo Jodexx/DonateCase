@@ -38,9 +38,10 @@ public class FullWheelAnimation implements Animation {
         int i = 1;
         String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
         winItem.getMaterial().setDisplayName(winGroupDisplayName);
+        boolean small = customConfig.getAnimations().getBoolean("FullWheel.SmallArmorStand", true);
         // win group
         items.add(winItem.getItemName());
-        armorStands.add(spawnArmorStand(c, location, 0));
+        armorStands.add(spawnArmorStand(c, location, 0, small));
 
         // another groups
         for (String itemName : c.getItems().keySet()) {
@@ -49,7 +50,7 @@ public class FullWheelAnimation implements Animation {
             String displayName = item.getMaterial().getDisplayName();
             item.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, displayName));
             items.add(itemName);
-            armorStands.add(spawnArmorStand(c, location, i));
+            armorStands.add(spawnArmorStand(c, location, i, small));
             i++;
         }
 
@@ -130,11 +131,11 @@ public class FullWheelAnimation implements Animation {
                 speedAx[0] *= 1 - speed / (animationTime - 2);
         }, 0L, 0L);
     }
-    private ArmorStandCreator spawnArmorStand(CaseData c, Location location, int index) {
+    private ArmorStandCreator spawnArmorStand(CaseData c, Location location, int index, boolean small) {
         CaseData.Item item = c.getItem(items.get(index));
         ArmorStandCreator as = t.createArmorStand();
         as.spawnArmorStand(location);
-        as.setSmall(true);
+        as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
         if(item.getMaterial().getItemStack().getType() != Material.AIR) {

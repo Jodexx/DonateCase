@@ -43,7 +43,9 @@ public class RainlyAnimation implements Animation {
         as.spawnArmorStand(location);
         as.setVisible(false);
         as.setGravity(false);
-        as.setSmall(true);
+        boolean small = customConfig.getAnimations().getBoolean("Rainly.SmallArmorStand", true);
+
+        as.setSmall(small);
         (new BukkitRunnable() {
             int i; // count of ticks
             double t;

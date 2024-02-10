@@ -254,6 +254,9 @@ public class Main extends JavaPlugin {
                 // get actions
                 List<String> actions = config.getStringList("case.Items." + item + ".Actions");
 
+                // get alternative actions
+                List<String> alternativeActions = config.getStringList("case.Items." + item + ".AlternativeActions");
+
                 // get random actions
                 Map<String, CaseData.Item.RandomAction> randomActions = new HashMap<>();
                 if(config.getConfigurationSection("case.Items." + item + ".RandomActions") != null) {
@@ -279,7 +282,7 @@ public class Main extends JavaPlugin {
                 ItemStack itemStack = t.getCaseItem(itemDisplayName, id, enchanted, rgb);
                 CaseData.Item.Material material = new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted);
 
-                CaseData.Item caseItem = new CaseData.Item(item, group, chance, material, giveType, actions, randomActions, rgb);
+                CaseData.Item caseItem = new CaseData.Item(item, group, chance, material, giveType, actions, randomActions, rgb, alternativeActions);
                 items.put(item, caseItem);
             }
             CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];

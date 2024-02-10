@@ -35,7 +35,8 @@ public class FireworkAnimation implements Animation {
         location.setYaw(-70.0F);
         ArmorStandCreator as = t.createArmorStand();
         as.spawnArmorStand(location);
-        as.setSmall(true);
+        boolean small = customConfig.getAnimations().getBoolean("FireWork.SmallArmorStand", true);
+        as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
         (new BukkitRunnable() {
