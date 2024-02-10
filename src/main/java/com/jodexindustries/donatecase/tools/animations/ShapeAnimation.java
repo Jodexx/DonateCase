@@ -29,7 +29,8 @@ public class ShapeAnimation implements Animation {
         location.setYaw(-70.0F);
         final ArmorStandCreator as = t.createArmorStand();
         as.spawnArmorStand(location);
-        as.setSmall(true);
+        boolean small = customConfig.getAnimations().getBoolean("Shape.SmallArmorStand", true);
+        as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
 

@@ -34,11 +34,12 @@ public class WheelAnimation implements Animation {
         loc.add(0.5, 0, 0.5);
         // register items
         int itemsCount = customConfig.getAnimations().getInt("Wheel.ItemsCount");
+        boolean small = customConfig.getAnimations().getBoolean("Wheel.SmallArmorStand", true);
         items.add(winItem);
         for (int i = 0; i < itemsCount; i++) {
             CaseData.Item tempWinItem = Case.getRandomItem(c);
             items.add(tempWinItem);
-            armorStands.add(spawnArmorStand(location, i));
+            armorStands.add(spawnArmorStand(location, i, small));
         }
         double baseAngle = loc.clone().getDirection().angle(new Vector(0, 0, 1));
         final double[] lastCompletedRotation = {0.0};
@@ -118,11 +119,11 @@ public class WheelAnimation implements Animation {
             }
             }, 0L, 0L);
     }
-    private ArmorStandCreator spawnArmorStand(Location location, int index) {
+    private ArmorStandCreator spawnArmorStand(Location location, int index, boolean small) {
         CaseData.Item item = items.get(index);
         ArmorStandCreator as = t.createArmorStand();
         as.spawnArmorStand(location);
-        as.setSmall(true);
+        as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
         if(item.getMaterial().getItemStack().getType() != Material.AIR) {

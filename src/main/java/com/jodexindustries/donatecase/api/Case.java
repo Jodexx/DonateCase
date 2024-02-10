@@ -312,18 +312,21 @@ public class Case {
     public static void onCaseOpenFinish(CaseData caseData, Player player, boolean needSound, CaseData.Item item) {
         String choice = "";
         if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && Main.getPermissions() != null) {
-            String playergroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
-            if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playergroup) ||
-                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playergroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + item.getGroup())) {
+            String playerGroup = Main.getPermissions().getPrimaryGroup(player).toLowerCase();
+            if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playerGroup) ||
+                    !customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(item.getGroup()) ||
+                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playerGroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + item.getGroup())) {
                 if (item.getGiveType().equalsIgnoreCase("ONE")) {
                     executeActions(player, item, null);
                 } else {
                     choice = getChoice(item);
                     executeActions(player, item, choice);
                 }
+            } else {
+                // Handle alternative case
             }
         } else {
-            if(item.getGiveType().equalsIgnoreCase("ONE")) {
+            if (item.getGiveType().equalsIgnoreCase("ONE")) {
                 executeActions(player, item, null);
             } else {
                 choice = getChoice(item);
