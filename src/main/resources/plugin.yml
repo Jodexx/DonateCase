@@ -9,6 +9,9 @@ softdepend:
   - CustomHeads
   - ProtocolLib
   - HeadDataBase
+  - DecentHolograms
+  - CMI
+  - HolographicDisplays
 api-version: 1.13
 commands:
   donatecase:

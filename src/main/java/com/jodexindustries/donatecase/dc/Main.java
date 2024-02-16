@@ -1,17 +1,23 @@
 package com.jodexindustries.donatecase.dc;
 
+import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
+import com.jodexindustries.donatecase.api.holograms.HologramManager;
+import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
+import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
+import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
@@ -34,6 +40,7 @@ public class Main extends JavaPlugin {
 
     public static Tools t;
     public static MySQL mysql;
+    public static HologramManager hologramManager = null;
 
     File langRu;
     File langEn;
@@ -106,6 +113,9 @@ public class Main extends JavaPlugin {
 
         addonManager = new AddonManager();
         addonManager.loadAddons();
+        loadHologramManager();
+
+        loadHolograms();
 
         Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
     }
@@ -128,6 +138,7 @@ public class Main extends JavaPlugin {
         if (mysql != null) {
             mysql.close();
         }
+        hologramManager.removeAllHolograms();
 
     }
 
@@ -245,6 +256,12 @@ public class Main extends JavaPlugin {
             Sound bukkitSound = Sound.valueOf(animationSound);
             CaseData.AnimationSound sound = new CaseData.AnimationSound(bukkitSound,volume, pitch);
 
+            boolean hologramEnabled = config.getBoolean("case.Hologram.Toggle");
+            double hologramHeight = config.getDouble("case.Hologram.Height");
+            int range = config.getInt("case.Hologram.Range");
+            List<String> hologramMessage = config.getStringList("case.Hologram.Message");
+            CaseData.Hologram hologram = hologramEnabled ? new CaseData.Hologram(true, hologramHeight, range, hologramMessage) : new CaseData.Hologram();
+
             Map<String, CaseData.Item> items = new HashMap<>();
             for (String item : config.getConfigurationSection("case.Items").getKeys(false)) {
                 String group = config.getString("case.Items." + item + ".Group");
@@ -263,7 +280,8 @@ public class Main extends JavaPlugin {
                     for (String randomAction : config.getConfigurationSection("case.Items." + item + ".RandomActions").getKeys(false)) {
                         int actionChance = config.getInt("case.Items." + item + ".RandomActions." + randomAction + ".Chance");
                         List<String> randomActionsList = config.getStringList("case.Items." + item + ".RandomActions." + randomAction + ".Actions");
-                        CaseData.Item.RandomAction randomActionObject = new CaseData.Item.RandomAction(actionChance, randomActionsList);
+                        String displayName = config.getString("case.Items." + item + ".RandomActions." + randomAction + ".DisplayName");
+                        CaseData.Item.RandomAction randomActionObject = new CaseData.Item.RandomAction(actionChance, randomActionsList, displayName);
                         randomActions.put(randomAction, randomActionObject);
                     }
                 }
@@ -299,13 +317,33 @@ public class Main extends JavaPlugin {
                     historyData[Integer.parseInt(i)] = data;
                 }
             }
-            CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData);
+            CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData, hologram);
             Case.caseData.put(caseName, caseData);
         }
         Logger.log("&aCases loaded!");
     }
     public static Permission getPermissions() {
         return permission;
+    }
+
+    private void loadHologramManager() {
+        if(Bukkit.getPluginManager().isPluginEnabled("DecentHolograms")) {
+            hologramManager = new DecentHologramsSupport();
+        } else if(Bukkit.getPluginManager().isPluginEnabled("CMI") && CMIModule.holograms.isEnabled()) {
+            hologramManager = new CMIHologramsSupport();
+        } else if(Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")){
+            hologramManager = new HolographicDisplaysSupport();
+        }
+    }
+    private void loadHolograms() {
+        for (String caseName : customConfig.getCases().getConfigurationSection("DonatCase.Cases").getKeys(false)) {
+            String caseType = Case.getCaseTypeByCustomName(caseName);
+            CaseData caseData = Case.getCase(caseType);
+            Location location = Case.getCaseLocationByCustomName(caseName);
+            if (caseData != null && caseData.getHologram().isEnabled()) {
+                hologramManager.createHologram(location.getBlock(), caseData);
+            }
+        }
     }
 
 

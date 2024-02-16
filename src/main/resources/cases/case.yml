@@ -4,6 +4,17 @@ case:
   Sound:
     Volume: 10
     Pitch: 5
+  Hologram: # Thanks CrazyCrates for realisation
+    # Toggle on and off the holograms for the crates.
+    Toggle: true
+    # The height of the hologram above the crate.
+    Height: 1.5
+    # The distance the hologram can be seen. Only works with CMI and DecentHolograms
+    Range: 8
+    # The message that will be displayed.
+    Message:
+      - '&6DonateCase'
+
   Title: "&c&lDonate-&a&lCase" # Title in GUI
   DisplayName: "&c&lDonate-&a&lCase" # Name for placeholders
   Gui: # see more about items configuring -> https://wiki.jodexindustries.space/docs/DonateCase/items-settings
@@ -55,6 +66,7 @@ case:
       RandomActions: # GiveType: RANDOM
         first:
           Chance: 50
+          DisplayName: "something" # displayname for historydata displaying
           Actions:
             - '[command] say something'
             - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
@@ -78,6 +90,7 @@ case:
       RandomActions: # GiveType: RANDOM
         first:
           Chance: 50
+          DisplayName: "something" # displayname for historydata displaying
           Actions:
             - '[command] say something'
             - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'

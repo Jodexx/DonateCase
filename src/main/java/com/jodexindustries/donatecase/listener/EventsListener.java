@@ -68,7 +68,7 @@ public class EventsListener implements Listener {
             if (e.getCurrentItem() == null) return;
             if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && t.getOpenMaterialSlots(caseType).contains(e.getRawSlot())) {
                 caseType = t.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
-                if (Case.hasCaseByName(caseType)) {
+                if (Case.hasCaseByType(caseType)) {
                     Location block = Case.playersCases.get(p.getUniqueId()).getLocation();
                     PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, block.getBlock());
                     Bukkit.getServer().getPluginManager().callEvent(event);
@@ -137,7 +137,7 @@ public class EventsListener implements Listener {
                         if (!Case.activeCases.containsKey(blockLocation)) {
                             Case.playersCases.put(p.getUniqueId(), new OpenCase(blockLocation, caseType, p.getUniqueId()));
                             try {
-                                if(Case.hasCase(caseType)) {
+                                if(Case.hasCaseByType(caseType)) {
                                     CaseData caseData = Case.getCase(caseType).clone();
                                     new CaseGui(p, caseData);
                                 } else {

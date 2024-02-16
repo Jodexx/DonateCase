@@ -98,15 +98,20 @@ public class CaseGui {
                     if (isGlobal) historyCaseData = Case.getCase(data.getCaseType());
                     if(historyCaseData == null) continue;
 
+                    CaseData.Item historyItem = historyCaseData.getItem(data.getItem());
+
                     material = configCase.getString("case.Gui.Items." + item + ".Material", "HEAD:" + data.getPlayerName());
                     if(material.equalsIgnoreCase("DEFAULT")) {
-                        material = historyCaseData.getItem(data.getItem()).getMaterial().getId();
+                        material = historyItem.getMaterial().getId();
                     }
+                    CaseData.Item.RandomAction randomAction = historyItem.getRandomAction(data.getAction());
                     DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                     String dateFormatted = formatter.format(new Date(data.getTime()));
                     String groupDisplayName = data.getItem() != null ? historyCaseData.getItem(data.getItem()).getMaterial().getDisplayName() : "open_case_again";
 
-                    String[] template = {"%action%:" + data.getAction(), "%casedisplayname%:" + historyCaseData.getCaseDisplayName(), "%casename%:" + data.getCaseType(), "%casetitle%:" + historyCaseData.getCaseTitle(), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName};
+
+
+                    String[] template = {"%action%:" + data.getAction(), "%actiondisplayname%:" + randomAction.getDisplayName(), "%casedisplayname%:" + historyCaseData.getCaseDisplayName(), "%casename%:" + data.getCaseType(), "%casetitle%:" + historyCaseData.getCaseTitle(), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName};
                     displayName = t.rt(displayName, template);
                     lore = t.rt(lore, template);
                 }

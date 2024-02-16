@@ -68,6 +68,10 @@ public class AnimationManager {
      * @param c Case data
      */
     public static void playAnimation(String name, Player player, Location location, CaseData c) {
+        if(Case.getHologramManager() != null && c.getHologram().isEnabled()) {
+            Case.getHologramManager().removeHologram(location.getBlock());
+        }
+
         Animation animation = getRegisteredAnimation(name);
         if (animation != null) {
             CaseData.Item winItem = Case.getRandomItem(c);
