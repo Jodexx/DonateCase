@@ -361,6 +361,7 @@ public class Case {
                 customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Time", data1.getTime());
                 customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Group", data1.getGroup());
                 customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Item", data1.getItem());
+                customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Action", data1.getAction());
             }
         }
         getCase(caseData.getCaseName()).setHistoryData(list);
