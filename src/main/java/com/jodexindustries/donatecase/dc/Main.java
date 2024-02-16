@@ -340,7 +340,7 @@ public class Main extends JavaPlugin {
             String caseType = Case.getCaseTypeByCustomName(caseName);
             CaseData caseData = Case.getCase(caseType);
             Location location = Case.getCaseLocationByCustomName(caseName);
-            if (caseData != null && caseData.getHologram().isEnabled()) {
+            if (caseData != null && caseData.getHologram().isEnabled() && location != null && hologramManager != null) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }
