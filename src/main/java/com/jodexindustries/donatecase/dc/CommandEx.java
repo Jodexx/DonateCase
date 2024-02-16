@@ -75,7 +75,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                                 Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NumberFormatException"), "%string:" + args[3]));
                                 return true;
                             }
-                            if (Case.hasCaseByName(caseName)) {
+                            if (Case.hasCaseByType(caseName)) {
                                 CaseData data = Case.getCase(caseName).clone();
                                 String caseTitle = data.getCaseTitle();
                                 String caseDisplayName = data.getCaseDisplayName();
@@ -114,7 +114,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     } else {
                         String player = args[1];
                         String caseName = args[2];
-                        if (Case.hasCaseByName(caseName)) {
+                        if (Case.hasCaseByType(caseName)) {
                             CaseData data = Case.getCase(caseName).clone();
                             String caseTitle = data.getCaseTitle();
                             String caseDisplayName = data.getCaseDisplayName();
@@ -140,7 +140,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         Main.t.msg_(sender, Main.t.rt(Main.customConfig.getLang().getString("NumberFormatException"), "%string:" + args[3]));
                         return true;
                     }
-                    if (Case.hasCaseByName(caseName)) {
+                    if (Case.hasCaseByType(caseName)) {
                         CaseData data = Case.getCase(caseName).clone();
                         String caseTitle = data.getCaseTitle();
                         String caseDisplayName = data.getCaseDisplayName();
@@ -245,7 +245,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                     if (sender.hasPermission("donatecase.player")) {
                         if (args.length == 2) {
                             String caseName = args[1];
-                            if (Case.hasCaseByName(caseName)) {
+                            if (Case.hasCaseByType(caseName)) {
                                 int keys = Case.getKeys(caseName, playerName);
                                 if (keys >= 1) {
                                     Case.removeKeys(caseName, playerName, 1);
@@ -277,11 +277,11 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         if (args.length >= 3) {
                             String caseType = args[1];
                             String caseName = args[2];
-                            if (Case.hasCaseByName(caseType)) {
+                            if (Case.hasCaseByType(caseType)) {
                                 if (Case.hasCaseByLocation(l)) {
                                     Main.t.msg(sender, Main.customConfig.getLang().getString("HasDonatCase"));
                                 } else {
-                                    if(!Case.hasCaseDataByName(caseName)) {
+                                    if(!Case.hasCaseTypeByCustomName(caseName)) {
                                         Case.saveLocation(caseName, caseType, l);
                                         Main.t.msg(sender, Main.customConfig.getLang().getString("AddDonatCase"));
                                     } else {
@@ -315,7 +315,7 @@ public class CommandEx implements CommandExecutor, TabCompleter {
                         }
                     } else if (args.length == 2) {
                         String name = args[1];
-                        if (Case.hasCaseDataByName(name)) {
+                        if (Case.hasCaseTypeByCustomName(name)) {
                             Case.deleteCaseByName(name);
                             Main.t.msg(sender, Main.customConfig.getLang().getString("RemoveDonatCase"));
                         } else {

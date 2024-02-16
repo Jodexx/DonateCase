@@ -15,7 +15,7 @@ plugins {
 }
 
 group = 'com.jodexindustries.donatecase'
-version = '2.1.9.1'
+version = '2.1.9.2'
 
 repositories {
     mavenCentral()
@@ -50,7 +50,9 @@ repositories {
     maven  { url 'https://repo.alessiodp.com/releases/' }
     maven  { url 'https://repo.mineinabyss.com/releases' }
     maven { url 'https://repo.lukasa.lt/repository/maven-public/' }
-
+    maven {
+        url "https://repo.codemc.io/repository/maven-public/"
+    }
 
 }
 
@@ -63,6 +65,9 @@ dependencies {
     compileOnly "de.likewhat.customheads:CustomHeads:3.0.7"
     compileOnly 'com.github.LoneDev6:API-ItemsAdder:3.6.1'
     compileOnly 'com.mojang:authlib:1.5.25'
+    compileOnly 'com.github.decentsoftware-eu:decentholograms:2.8.6'
+    compileOnly fileTree("libs").include("*.jar")
+    compileOnly 'me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0'
 
 }
 

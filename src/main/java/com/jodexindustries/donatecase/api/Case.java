@@ -3,7 +3,7 @@ package com.jodexindustries.donatecase.api;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.OpenCase;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
-import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.CustomConfig;
 import com.jodexindustries.donatecase.tools.StartAnimation;
@@ -57,6 +57,10 @@ public class Case {
      * @param lv Case location
      */
     public static void saveLocation(String caseName, String type, Location lv) {
+        CaseData c= getCase(type);
+        if(Case.getHologramManager() != null && (c != null && c.getHologram().isEnabled())) {
+            Case.getHologramManager().createHologram(lv.getBlock(), c);
+        }
         String location = lv.getWorld().getName() + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
         customConfig.getCases().set("DonatCase.Cases." + caseName + ".location", location);
         customConfig.getCases().set("DonatCase.Cases." + caseName + ".type", type);
@@ -131,7 +135,7 @@ public class Case {
      * @param loc Case location
      */
     public static void deleteCaseByLocation(Location loc) {
-        customConfig.getCases().set("DonatCase.Cases." + Case.getCaseNameByLocation(loc), null);
+        customConfig.getCases().set("DonatCase.Cases." + Case.getCaseCustomNameByLocation(loc), null);
         customConfig.saveCases();
     }
 
@@ -159,7 +163,7 @@ public class Case {
             if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
                 return false;
             } else {
-                if(hasCaseByName(customConfig.getCases().getString("DonatCase.Cases." + name + ".type"))) {
+                if(hasCaseByType(customConfig.getCases().getString("DonatCase.Cases." + name + ".type"))) {
                     String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
                     World world = Bukkit.getWorld(location[0]);
                     Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
@@ -202,7 +206,7 @@ public class Case {
      * @param loc Case location
      * @return Case name
      */
-    public static String getCaseNameByLocation(Location loc) {
+    public static String getCaseCustomNameByLocation(Location loc) {
         ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
         for (String name : cases_.getValues(false).keySet()) {
             if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
@@ -224,7 +228,7 @@ public class Case {
      * @param name Case name
      * @return true/false
      */
-    public static boolean hasCaseByName(String name) {
+    public static boolean hasCaseByType(String name) {
         if(caseData.isEmpty()) {
             return false;
         }
@@ -235,7 +239,7 @@ public class Case {
      * @param name Case name
      * @return true/false
      */
-    public static boolean hasCaseDataByName(String name) {
+    public static boolean hasCaseTypeByCustomName(String name) {
         if(customConfig.getCases().getConfigurationSection("DonatCase.Cases") == null) {
             return false;
         } else
@@ -300,6 +304,9 @@ public class Case {
         AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, item);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
         activeCases.remove(location.getBlock().getLocation());
+        if(Case.getHologramManager() != null && c.getHologram().isEnabled()) {
+            Case.getHologramManager().createHologram(location.getBlock(), c);
+        }
     }
 
     /**
@@ -499,6 +506,7 @@ public class Case {
      * @param c Case name
      * @return Boolean
      */
+    @Deprecated
     public static boolean hasCase(@NotNull String c) {
         return caseData.containsKey(c);
     }
@@ -544,5 +552,35 @@ public class Case {
      */
     public static AddonManager getAddonManager() {
         return addonManager;
+    }
+
+    public static HologramManager getHologramManager() {
+        return hologramManager;
+    }
+
+    /**
+     * Get case location by custom name (/dc create (type) (customname)
+     * @param name Case custom name
+     * @return Case name
+     */
+    @Nullable
+    public static Location getCaseLocationByCustomName(String name) {
+        if (customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
+            return null;
+        } else {
+            String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
+            World world = Bukkit.getWorld(location[0]);
+            return new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
+
+        }
+    }
+
+    /**
+     * Get case type by custom namme
+     * @param name Case custom name
+     * @return case type
+     */
+    public static String getCaseTypeByCustomName(String name) {
+        return customConfig.getCases().getString("DonatCase.Cases." + name + ".type");
     }
 }
