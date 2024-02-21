@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
@@ -336,11 +337,13 @@ public class Main extends JavaPlugin {
         }
     }
     private void loadHolograms() {
-        for (String caseName : customConfig.getCases().getConfigurationSection("DonatCase.Cases").getKeys(false)) {
+        ConfigurationSection section = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+        if(section == null || section.getKeys(false).isEmpty()) return;
+        for (String caseName : section.getKeys(false)) {
             String caseType = Case.getCaseTypeByCustomName(caseName);
             CaseData caseData = Case.getCase(caseType);
             Location location = Case.getCaseLocationByCustomName(caseName);
-            if (caseData != null && caseData.getHologram().isEnabled()) {
+            if (caseData != null && caseData.getHologram().isEnabled() && location != null && hologramManager != null) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }
