@@ -33,7 +33,8 @@ public class CaseGui {
         inventory = Bukkit.createInventory(null, configCase.getInt("case.Gui.Size", 45), t.rc(title));
         ConfigurationSection items = configCase.getConfigurationSection("case.Gui.Items");
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
-        if (items != null) {
+            List<CaseData.HistoryData> globalHistoryData = Case.getSortedHistoryData();
+            if (items != null) {
             for (String item : items.getKeys(false)) {
                 String material = configCase.getString("case.Gui.Items." + item + ".Material", "STONE");
                 String displayName = configCase.getString("case.Gui.Items." + item + ".DisplayName", "None");
@@ -90,17 +91,16 @@ public class CaseGui {
 
                     CaseData.HistoryData data = null;
                     if (isGlobal) {
-                        List<CaseData.HistoryData> list = Case.getSortedHistoryData();
-                        if(list.size() <= index) continue;
-                        data = list.get(index);
+                        if(globalHistoryData.size() <= index) continue;
+                        data = globalHistoryData.get(index);
                     } else {
                         if(!sql) {
                             data = historyCaseData.getHistoryData()[index];
                         } else {
-                            List<CaseData.HistoryData> dbData = Case.getSortedHistoryDataByCase(caseType);
+                            List<CaseData.HistoryData> dbData = Case.sortHistoryDataByCase(globalHistoryData,caseType);
                             if(!dbData.isEmpty()) {
                                 if(dbData.size() <= index) continue;
-                                data = Case.getSortedHistoryDataByCase(caseType).get(index);
+                                data = dbData.get(index);
                             }
                         }
                     }

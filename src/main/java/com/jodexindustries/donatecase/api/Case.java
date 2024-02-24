@@ -541,7 +541,6 @@ public class Case {
      * @return list of HistoryData (sorted by time)
      */
     public static List<CaseData.HistoryData> getSortedHistoryData() {
-
         if(!sql) {
             return caseData.values().stream()
                     .filter(Objects::nonNull)
@@ -558,17 +557,11 @@ public class Case {
                     .collect(Collectors.toList());
         }
     }
-
-    public static List<CaseData.HistoryData> getSortedHistoryDataByCase(String caseType) {
-        if(!sql) {
-            return Arrays.stream(getCase(caseType).getHistoryData()).filter(Objects::nonNull)
-                    .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
-                    .collect(Collectors.toList());
-        } else {
-            return mysql.getHistoryDataByCaseType(caseType).stream().filter(Objects::nonNull)
-                    .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
-                    .collect(Collectors.toList());
-        }
+    public static List<CaseData.HistoryData> sortHistoryDataByCase(List<CaseData.HistoryData> historyData, String caseType) {
+        return historyData.stream().filter(Objects::nonNull)
+                .filter(data -> data.getCaseType().equals(caseType))
+                .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                .collect(Collectors.toList());
     }
 
 
