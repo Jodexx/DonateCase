@@ -1,6 +1,8 @@
 package com.jodexindustries.donatecase;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.LocalLogBackend;
 import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
@@ -103,6 +105,8 @@ public class DonateCase extends JavaPlugin {
                     DonateCase.mysql = new CaseDataBase(instance, base, port, host, user, password);
                 }
             }).runTaskTimerAsynchronously(instance, 0L, 12000L);
+            com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
+
         }
         Objects.requireNonNull(getCommand("donatecase")).setExecutor(new GlobalCommand());
         Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new GlobalCommand());
