@@ -303,17 +303,19 @@ public class DonateCase extends JavaPlugin {
                 items.put(item, caseItem);
             }
             CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
-            if(customConfig.getData().getConfigurationSection("Data") != null &&
-                    customConfig.getData().getConfigurationSection("Data." + caseName) != null) {
-                for (String i : customConfig.getData().getConfigurationSection("Data." + caseName).getKeys(false)) {
-                    CaseData.HistoryData data = new CaseData.HistoryData(
-                            customConfig.getData().getString("Data." + caseName + "." + i + ".Item"),
-                            caseName,
-                            customConfig.getData().getString("Data." + caseName + "." + i + ".Player"),
-                            customConfig.getData().getLong("Data." + caseName + "." + i + ".Time"),
-                            customConfig.getData().getString("Data." + caseName + "." + i + ".Group"),
-                            customConfig.getData().getString("Data." + caseName + "." + i + ".Action"));
-                    historyData[Integer.parseInt(i)] = data;
+            if(!sql) {
+                if (customConfig.getData().getConfigurationSection("Data") != null &&
+                        customConfig.getData().getConfigurationSection("Data." + caseName) != null) {
+                    for (String i : customConfig.getData().getConfigurationSection("Data." + caseName).getKeys(false)) {
+                        CaseData.HistoryData data = new CaseData.HistoryData(
+                                customConfig.getData().getString("Data." + caseName + "." + i + ".Item"),
+                                caseName,
+                                customConfig.getData().getString("Data." + caseName + "." + i + ".Player"),
+                                customConfig.getData().getLong("Data." + caseName + "." + i + ".Time"),
+                                customConfig.getData().getString("Data." + caseName + "." + i + ".Group"),
+                                customConfig.getData().getString("Data." + caseName + "." + i + ".Action"));
+                        historyData[Integer.parseInt(i)] = data;
+                    }
                 }
             }
             CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData, hologram);
