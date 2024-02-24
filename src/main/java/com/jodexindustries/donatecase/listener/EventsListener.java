@@ -7,7 +7,7 @@ import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.events.OpenCaseEvent;
 import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
-import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.StartAnimation;
@@ -31,7 +31,7 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.logging.Level;
 
-import static com.jodexindustries.donatecase.dc.Main.*;
+import static com.jodexindustries.donatecase.DonateCase.*;
 
 
 public class EventsListener implements Listener {
@@ -48,9 +48,9 @@ public class EventsListener implements Listener {
         Player p = event.getPlayer();
         if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             if (p.hasPermission("donatecase.admin")) {
-                new UpdateChecker(Main.instance, 106701).getVersion((version) -> {
-                    if (t.getPluginVersion(Main.instance.getDescription().getVersion()) < t.getPluginVersion(version)) {
-                        Main.t.msg(p, Main.t.rt(Main.customConfig.getLang().getString("UpdateCheck"), "%version:" + version));
+                new UpdateChecker(DonateCase.instance, 106701).getVersion((version) -> {
+                    if (t.getPluginVersion(DonateCase.instance.getDescription().getVersion()) < t.getPluginVersion(version)) {
+                        DonateCase.t.msg(p, DonateCase.t.rt(DonateCase.customConfig.getLang().getString("UpdateCheck"), "%version:" + version));
                     }
 
                 });
@@ -91,14 +91,14 @@ public class EventsListener implements Listener {
                             }
                             p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
                             String noKey = casesConfig.getCase(caseType).getString("Messages.NoKey");
-                            if (noKey == null) noKey = Main.customConfig.getLang().getString("NoKey");
-                            Main.t.msg(p, noKey);
+                            if (noKey == null) noKey = DonateCase.customConfig.getLang().getString("NoKey");
+                            DonateCase.t.msg(p, noKey);
                         }
                     }
                 } else {
                     p.closeInventory();
-                    Main.t.msg(p, "&cSomething wrong! Contact with server administrator!");
-                    Main.instance.getLogger().log(Level.WARNING, "Case with name " + caseType + " not exist!");
+                    DonateCase.t.msg(p, "&cSomething wrong! Contact with server administrator!");
+                    DonateCase.instance.getLogger().log(Level.WARNING, "Case with name " + caseType + " not exist!");
                 }
             }
         }
@@ -141,14 +141,14 @@ public class EventsListener implements Listener {
                                     CaseData caseData = Case.getCase(caseType).clone();
                                     new CaseGui(p, caseData);
                                 } else {
-                                    Main.t.msg(p, "&cSomething wrong! Contact with server administrator!");
-                                    Main.instance.getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
+                                    DonateCase.t.msg(p, "&cSomething wrong! Contact with server administrator!");
+                                    DonateCase.instance.getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
                                 }
                             } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
                         } else {
-                            Main.t.msg(p, Main.customConfig.getLang().getString("HaveOpenCase"));
+                            DonateCase.t.msg(p, DonateCase.customConfig.getLang().getString("HaveOpenCase"));
                         }
                     } // else player already opened case
                 }
@@ -170,7 +170,7 @@ public class EventsListener implements Listener {
         Location loc = e.getBlock().getLocation();
         if (Case.hasCaseByLocation(loc)) {
             e.setCancelled(true);
-            Main.t.msg(e.getPlayer(), Main.customConfig.getLang().getString("DestoryDonatCase"));
+            DonateCase.t.msg(e.getPlayer(), DonateCase.customConfig.getLang().getString("DestoryDonatCase"));
         }
 
     }

@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.jodexindustries.donatecase.dc.Main.*;
+import static com.jodexindustries.donatecase.DonateCase.*;
 
 public class CaseGui {
     private final Inventory inventory;

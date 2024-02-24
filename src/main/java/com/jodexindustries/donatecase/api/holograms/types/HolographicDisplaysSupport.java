@@ -3,7 +3,7 @@ package com.jodexindustries.donatecase.api.holograms.types;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
-import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.DonateCase;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 public class HolographicDisplaysSupport extends HologramManager {
 
     @NotNull
-    private final Main plugin = Main.instance;
+    private final DonateCase plugin = DonateCase.instance;
 
     @NotNull
     private final HolographicDisplaysAPI api = HolographicDisplaysAPI.get(this.plugin);

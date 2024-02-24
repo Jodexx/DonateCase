@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.addon;
 
-import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.DonateCase;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +41,7 @@ public abstract class JavaAddon implements Addon {
 
     @Override
     public Plugin getDonateCase() {
-        return Main.instance;
+        return DonateCase.instance;
     }
     @Override
     public File getDataFolder() {

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.jodexindustries.donatecase.dc.Main.*;
+import static com.jodexindustries.donatecase.DonateCase.*;
 
 public class FullWheelAnimation implements Animation {
 

@@ -4,7 +4,7 @@ import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,8 +15,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
-import static com.jodexindustries.donatecase.dc.Main.t;
+import static com.jodexindustries.donatecase.DonateCase.customConfig;
+import static com.jodexindustries.donatecase.DonateCase.t;
 
 public class RainlyAnimation implements Animation {
     @Override
@@ -116,6 +116,6 @@ public class RainlyAnimation implements Animation {
 
                 ++this.i;
             }
-        }).runTaskTimer(Main.instance, 0L, 2L);
+        }).runTaskTimer(DonateCase.instance, 0L, 2L);
     }
 }

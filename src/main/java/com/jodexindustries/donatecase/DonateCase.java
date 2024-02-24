@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.dc;
+package com.jodexindustries.donatecase;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.jodexindustries.donatecase.api.AddonManager;
@@ -11,6 +11,8 @@ import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
+import com.jodexindustries.donatecase.database.CaseDataBase;
+import com.jodexindustries.donatecase.commands.GlobalCommand;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
@@ -33,14 +35,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class Main extends JavaPlugin {
-    public static Main instance;
+public class DonateCase extends JavaPlugin {
+    public static DonateCase instance;
     public static AddonManager addonManager;
     public static Permission permission = null;
     public static boolean sql = true;
 
     public static Tools t;
-    public static MySQL mysql;
+    public static CaseDataBase mysql;
     public static HologramManager hologramManager = null;
 
     File langRu;
@@ -98,16 +100,12 @@ public class Main extends JavaPlugin {
             String password = customConfig.getConfig().getString("DonatCase.MySql.Password");
             (new BukkitRunnable() {
                 public void run() {
-                    Main.mysql = new MySQL(base, port, host, user, password);
-                    if (!Main.mysql.hasTable("donate_cases")) {
-                        Main.mysql.createTable();
-                    }
-
+                    DonateCase.mysql = new CaseDataBase(instance, base, port, host, user, password);
                 }
             }).runTaskTimerAsynchronously(instance, 0L, 12000L);
         }
-        Objects.requireNonNull(getCommand("donatecase")).setExecutor(new CommandEx());
-        Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
+        Objects.requireNonNull(getCommand("donatecase")).setExecutor(new GlobalCommand());
+        Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new GlobalCommand());
         registerDefaultAnimations();
         DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseEnableEvent);

@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.jodexindustries.donatecase.dc.Main.*;
+import static com.jodexindustries.donatecase.DonateCase.*;
 
 
 public class Case {

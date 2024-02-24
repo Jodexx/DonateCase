@@ -1,11 +1,6 @@
-import proguard.gradle.ProGuardTask
-
 buildscript {
     repositories {
         mavenCentral()
-    }
-    dependencies {
-        classpath 'com.guardsquare:proguard-gradle:7.4.1'
     }
 }
 plugins {
@@ -15,7 +10,7 @@ plugins {
 }
 
 group = 'com.jodexindustries.donatecase'
-version = '2.1.9.4'
+version = '2.1.9.5'
 
 repositories {
     mavenCentral()
@@ -68,6 +63,8 @@ dependencies {
     compileOnly 'com.github.decentsoftware-eu:decentholograms:2.8.6'
     compileOnly fileTree("libs").include("*.jar")
     compileOnly 'me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0'
+    compileOnly 'com.j256.ormlite:ormlite-jdbc:6.1'
+
 
 }
 
@@ -79,20 +76,6 @@ tasks.register('copyDepends', Copy) {
     from configurations.implementation
     into "${dependsDir}"
 }
-
-tasks.register('proguard', ProGuardTask) {
-    dependsOn tasks.shadowJar
-    configuration file('proguard.conf')
-    injars tasks.shadowJar.outputs.files
-    libraryjars files("D:/Java/Java11/jmods/")
-    libraryjars files(dependsDir)
-    verbose
-    outjars "${buildDir}/libs/${project.name}-${version}.jar"
-}
-
-
-
-build.dependsOn proguard
 
 def targetJavaVersion = 11
 java {
