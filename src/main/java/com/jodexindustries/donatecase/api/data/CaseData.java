@@ -1,5 +1,7 @@
 package com.jodexindustries.donatecase.api.data;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -638,13 +640,49 @@ public class CaseData implements Cloneable {
     /**
      * Class to implement information about case opening histories
      */
+    @DatabaseTable(tableName = "history_data")
+
     public static class HistoryData implements Cloneable {
-        private final String item;
-        private final String playerName;
-        private final long time;
-        private final String group;
-        private final String caseType;
-        private final String action;
+        @DatabaseField(columnName = "id")
+        private int id;
+
+        public void setItem(String item) {
+            this.item = item;
+        }
+
+        public void setPlayerName(String playerName) {
+            this.playerName = playerName;
+        }
+
+        public void setTime(long time) {
+            this.time = time;
+        }
+
+        public void setGroup(String group) {
+            this.group = group;
+        }
+
+        public void setCaseType(String caseType) {
+            this.caseType = caseType;
+        }
+
+        public void setAction(String action) {
+            this.action = action;
+        }
+
+        @DatabaseField(columnName = "item")
+        private String item;
+        @DatabaseField(columnName = "player_name")
+        private String playerName;
+        @DatabaseField(columnName = "time")
+        private long time;
+        @DatabaseField(columnName = "group")
+        private String group;
+        @DatabaseField(columnName = "case_type")
+        private String caseType;
+        @DatabaseField(columnName = "action")
+        private String action;
+        public HistoryData() {}
 
         public HistoryData(String item, String caseType, String playerName, long time, String group, String action) {
             this.item = item;
@@ -673,6 +711,14 @@ public class CaseData implements Cloneable {
             } catch (CloneNotSupportedException e) {
                 throw new AssertionError(e);
             }
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
         }
 
         /**

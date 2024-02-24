@@ -5,6 +5,12 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "player_keys")
 public class PlayerKeysTable {
+    @DatabaseField(canBeNull = false)
+    private String player;
+    @DatabaseField(canBeNull = false, columnName = "case_name")
+    private String caseName;
+    @DatabaseField(canBeNull = false, defaultValue = "0")
+    private int keys;
     public String getPlayer() {
         return player;
     }
@@ -28,11 +34,4 @@ public class PlayerKeysTable {
     public void setKeys(int keys) {
         this.keys = keys;
     }
-
-    @DatabaseField(id = true)
-    private String player;
-    @DatabaseField(canBeNull = false, columnName = "case_name")
-    private String caseName;
-    @DatabaseField(canBeNull = false, defaultValue = "0")
-    private int keys;
 }

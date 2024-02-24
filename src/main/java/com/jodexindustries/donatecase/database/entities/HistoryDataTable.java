@@ -6,13 +6,20 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "history_data")
 public class HistoryDataTable {
-    @DatabaseField(id = true)
-    private int id;
-    private String item;
-    private String playerName;
-    private long time;
-    private String group;
+    @DatabaseField(columnName = "case_type")
     private String caseType;
+    @DatabaseField(columnName = "id")
+    private int id;
+    @DatabaseField(columnName = "item")
+    private String item;
+    @DatabaseField(columnName = "player_name")
+    private String playerName;
+    @DatabaseField(columnName = "time")
+
+    private long time;
+    @DatabaseField(columnName = "group")
+    private String group;
+    @DatabaseField(columnName = "action")
     private String action;
     public HistoryDataTable() {}
 

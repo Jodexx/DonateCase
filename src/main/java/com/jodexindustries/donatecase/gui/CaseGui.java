@@ -88,12 +88,22 @@ public class CaseGui {
                         historyCaseData = historyCaseData.clone();
                     }
 
-                    CaseData.HistoryData data;
+                    CaseData.HistoryData data = null;
                     if (isGlobal) {
                         List<CaseData.HistoryData> list = Case.getSortedHistoryData();
                         if(list.size() <= index) continue;
                         data = list.get(index);
-                    } else data = historyCaseData.getHistoryData()[index];
+                    } else {
+                        if(!sql) {
+                            data = historyCaseData.getHistoryData()[index];
+                        } else {
+                            List<CaseData.HistoryData> dbData = Case.getSortedHistoryDataByCase(caseType);
+                            if(!dbData.isEmpty()) {
+                                if(dbData.size() <= index) continue;
+                                data = Case.getSortedHistoryDataByCase(caseType).get(index);
+                            }
+                        }
+                    }
                     if (data == null) continue;
                     if (isGlobal) historyCaseData = Case.getCase(data.getCaseType());
                     if(historyCaseData == null) continue;
