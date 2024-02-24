@@ -137,7 +137,7 @@ public class DonateCase extends JavaPlugin {
         if (mysql != null) {
             mysql.close();
         }
-        hologramManager.removeAllHolograms();
+        if(hologramManager != null) hologramManager.removeAllHolograms();
 
     }
 
@@ -232,11 +232,11 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultAnimations() {
-        AnimationManager.registerAnimation("SHAPE", ShapeAnimation.class);
-        AnimationManager.registerAnimation("WHEEL", WheelAnimation.class);
-        AnimationManager.registerAnimation("RAINLY", RainlyAnimation.class);
-        AnimationManager.registerAnimation("FIREWORK", FireworkAnimation.class);
-        AnimationManager.registerAnimation("FULLWHEEL", FullWheelAnimation.class);
+        AnimationManager.registerAnimation("SHAPE", new ShapeAnimation());
+        AnimationManager.registerAnimation("WHEEL", new WheelAnimation());
+        AnimationManager.registerAnimation("RAINLY", new RainlyAnimation());
+        AnimationManager.registerAnimation("FIREWORK", new FireworkAnimation());
+        AnimationManager.registerAnimation("FULLWHEEL", new FullWheelAnimation());
         Logger.log("&aRegistered &adefault animations");
     }
 

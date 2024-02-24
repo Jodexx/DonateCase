@@ -11,11 +11,11 @@ import org.jetbrains.annotations.NotNull;
 public class AnimationRegisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     String animationName;
-    Class<? extends Animation> animationClass;
+    Animation animationClass;
     boolean isDefault;
     String animationPluginName;
 
-    public AnimationRegisteredEvent(String animationName, Class<? extends Animation> animationClass, String animationPluginName, boolean isDefault) {
+    public AnimationRegisteredEvent(String animationName, Animation animationClass, String animationPluginName, boolean isDefault) {
         this.animationName = animationName;
         this.animationClass = animationClass;
         this.isDefault = isDefault;
@@ -49,7 +49,7 @@ public class AnimationRegisteredEvent extends Event {
     /** Get animation class
      * @return animation class
      */
-    public Class<? extends Animation> getAnimationClass() {
+    public Animation getAnimationClass() {
         return animationClass;
     }
 
