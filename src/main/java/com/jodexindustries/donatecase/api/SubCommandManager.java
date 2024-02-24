@@ -2,7 +2,7 @@ package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.events.SubCommandRegisteredEvent;
-import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.DonateCase;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -27,7 +27,7 @@ public class SubCommandManager {
             SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(commandName);
             Bukkit.getServer().getPluginManager().callEvent(subCommandRegisteredEvent);
         } else {
-            Main.instance.getLogger().warning("Sub command " + commandName + " already registered!");
+            DonateCase.instance.getLogger().warning("Sub command " + commandName + " already registered!");
         }
     }
 
@@ -41,7 +41,7 @@ public class SubCommandManager {
             SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(commandName);
             Bukkit.getServer().getPluginManager().callEvent(subCommandRegisteredEvent);
         } else {
-            Main.instance.getLogger().warning("Sub command " + commandName + " already unregistered!");
+            DonateCase.instance.getLogger().warning("Sub command " + commandName + " already unregistered!");
         }
     }
 

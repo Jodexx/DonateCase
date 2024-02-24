@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.tools.support;
 
-import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.Logger;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.Material;
@@ -19,9 +19,9 @@ public class HeadDatabaseSupport {
             Logger.log("Could not find the head you were looking for");
         }
         ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.setDisplayName(Main.t.rc(displayName));
+        itemMeta.setDisplayName(DonateCase.t.rc(displayName));
         if(lore != null) {
-            itemMeta.setLore(Main.t.rc(lore));
+            itemMeta.setLore(DonateCase.t.rc(lore));
         }
         item.setItemMeta(itemMeta);
         return item;

@@ -7,7 +7,7 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.BukkitArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.PacketArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
@@ -37,7 +37,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.jodexindustries.donatecase.dc.Main.*;
+import static com.jodexindustries.donatecase.DonateCase.*;
 
 public class Tools {
 
@@ -76,7 +76,7 @@ public class Tools {
         Color[] c = new Color[]{Color.RED, Color.AQUA, Color.GREEN, Color.ORANGE, Color.LIME, Color.BLUE, Color.MAROON, Color.WHITE};
         meta.addEffect(FireworkEffect.builder().flicker(false).with(Type.BALL).trail(false).withColor(c[r.nextInt(c.length)], c[r.nextInt(c.length)], c[r.nextInt(c.length)]).build());
         fw.setFireworkMeta(meta);
-        fw.setMetadata("case", new FixedMetadataValue(Main.instance, "case"));
+        fw.setMetadata("case", new FixedMetadataValue(DonateCase.instance, "case"));
         fw.detonate();
     }
 
@@ -92,7 +92,7 @@ public class Tools {
 
     public void msg(CommandSender s, String msg) {
         if (s != null) {
-            msg_(s, Main.customConfig.getLang().getString("Prefix") + msg);
+            msg_(s, DonateCase.customConfig.getLang().getString("Prefix") + msg);
         }
     }
 
@@ -163,7 +163,7 @@ public class Tools {
         ConfigurationSection cases = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
         if (cases != null) {
             for (String caseName : cases.getKeys(false)) {
-                File folder = new File(Main.instance.getDataFolder(), "cases");
+                File folder = new File(DonateCase.instance.getDataFolder(), "cases");
                 File caseFile;
                 try {
                     caseFile = new File(folder, caseName + ".yml");
@@ -213,7 +213,7 @@ public class Tools {
     }
     public List<File> getCasesInFolder() {
         List<File> files = new ArrayList<>();
-        File directory = new File(Main.instance.getDataFolder(), "cases");
+        File directory = new File(DonateCase.instance.getDataFolder(), "cases");
         Collections.addAll(files, Objects.requireNonNull(directory.listFiles()));
         return files;
     }
@@ -378,7 +378,7 @@ public class Tools {
             } else if (materialType == MaterialType.HDB) {
                 String[] parts = id.split(":");
                 String skullId = parts[1];
-                if (Main.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+                if (DonateCase.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
                     winItem = HeadDatabaseSupport.getSkull(skullId, displayName, null);
                 } else {
                     winItem = new ItemStack(Material.STONE);
@@ -387,7 +387,7 @@ public class Tools {
                 String[] parts = id.split(":");
                 String category = parts[1];
                 String skullId = parts[2];
-                if (Main.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+                if (DonateCase.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
                     winItem = CustomHeadSupport.getSkull(category, skullId, displayName, null);
                 } else {
                     winItem = new ItemStack(Material.STONE);

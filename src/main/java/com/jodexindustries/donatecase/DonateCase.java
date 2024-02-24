@@ -1,6 +1,8 @@
-package com.jodexindustries.donatecase.dc;
+package com.jodexindustries.donatecase;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.LocalLogBackend;
 import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
@@ -11,6 +13,8 @@ import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
+import com.jodexindustries.donatecase.database.CaseDataBase;
+import com.jodexindustries.donatecase.commands.GlobalCommand;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
@@ -33,14 +37,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class Main extends JavaPlugin {
-    public static Main instance;
+public class DonateCase extends JavaPlugin {
+    public static DonateCase instance;
     public static AddonManager addonManager;
     public static Permission permission = null;
     public static boolean sql = true;
 
     public static Tools t;
-    public static MySQL mysql;
+    public static CaseDataBase mysql;
     public static HologramManager hologramManager = null;
 
     File langRu;
@@ -98,16 +102,14 @@ public class Main extends JavaPlugin {
             String password = customConfig.getConfig().getString("DonatCase.MySql.Password");
             (new BukkitRunnable() {
                 public void run() {
-                    Main.mysql = new MySQL(base, port, host, user, password);
-                    if (!Main.mysql.hasTable("donate_cases")) {
-                        Main.mysql.createTable();
-                    }
-
+                    DonateCase.mysql = new CaseDataBase(instance, base, port, host, user, password);
                 }
             }).runTaskTimerAsynchronously(instance, 0L, 12000L);
+            com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
+
         }
-        Objects.requireNonNull(getCommand("donatecase")).setExecutor(new CommandEx());
-        Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new CommandEx());
+        Objects.requireNonNull(getCommand("donatecase")).setExecutor(new GlobalCommand());
+        Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new GlobalCommand());
         registerDefaultAnimations();
         DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseEnableEvent);
@@ -139,7 +141,7 @@ public class Main extends JavaPlugin {
         if (mysql != null) {
             mysql.close();
         }
-        hologramManager.removeAllHolograms();
+        if(hologramManager != null) hologramManager.removeAllHolograms();
 
     }
 
@@ -234,11 +236,11 @@ public class Main extends JavaPlugin {
     }
 
     private void registerDefaultAnimations() {
-        AnimationManager.registerAnimation("SHAPE", ShapeAnimation.class);
-        AnimationManager.registerAnimation("WHEEL", WheelAnimation.class);
-        AnimationManager.registerAnimation("RAINLY", RainlyAnimation.class);
-        AnimationManager.registerAnimation("FIREWORK", FireworkAnimation.class);
-        AnimationManager.registerAnimation("FULLWHEEL", FullWheelAnimation.class);
+        AnimationManager.registerAnimation("SHAPE", new ShapeAnimation());
+        AnimationManager.registerAnimation("WHEEL", new WheelAnimation());
+        AnimationManager.registerAnimation("RAINLY", new RainlyAnimation());
+        AnimationManager.registerAnimation("FIREWORK", new FireworkAnimation());
+        AnimationManager.registerAnimation("FULLWHEEL", new FullWheelAnimation());
         Logger.log("&aRegistered &adefault animations");
     }
 
@@ -305,17 +307,19 @@ public class Main extends JavaPlugin {
                 items.put(item, caseItem);
             }
             CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
-            if(customConfig.getData().getConfigurationSection("Data") != null &&
-                    customConfig.getData().getConfigurationSection("Data." + caseName) != null) {
-                for (String i : customConfig.getData().getConfigurationSection("Data." + caseName).getKeys(false)) {
-                    CaseData.HistoryData data = new CaseData.HistoryData(
-                            customConfig.getData().getString("Data." + caseName + "." + i + ".Item"),
-                            caseName,
-                            customConfig.getData().getString("Data." + caseName + "." + i + ".Player"),
-                            customConfig.getData().getLong("Data." + caseName + "." + i + ".Time"),
-                            customConfig.getData().getString("Data." + caseName + "." + i + ".Group"),
-                            customConfig.getData().getString("Data." + caseName + "." + i + ".Action"));
-                    historyData[Integer.parseInt(i)] = data;
+            if(!sql) {
+                if (customConfig.getData().getConfigurationSection("Data") != null &&
+                        customConfig.getData().getConfigurationSection("Data." + caseName) != null) {
+                    for (String i : customConfig.getData().getConfigurationSection("Data." + caseName).getKeys(false)) {
+                        CaseData.HistoryData data = new CaseData.HistoryData(
+                                customConfig.getData().getString("Data." + caseName + "." + i + ".Item"),
+                                caseName,
+                                customConfig.getData().getString("Data." + caseName + "." + i + ".Player"),
+                                customConfig.getData().getLong("Data." + caseName + "." + i + ".Time"),
+                                customConfig.getData().getString("Data." + caseName + "." + i + ".Group"),
+                                customConfig.getData().getString("Data." + caseName + "." + i + ".Action"));
+                        historyData[Integer.parseInt(i)] = data;
+                    }
                 }
             }
             CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData, hologram);

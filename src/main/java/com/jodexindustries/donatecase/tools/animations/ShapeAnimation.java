@@ -4,7 +4,7 @@ import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -12,8 +12,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
 
-import static com.jodexindustries.donatecase.dc.Main.customConfig;
-import static com.jodexindustries.donatecase.dc.Main.t;
+import static com.jodexindustries.donatecase.DonateCase.customConfig;
+import static com.jodexindustries.donatecase.DonateCase.t;
 
 public class ShapeAnimation implements Animation {
 
@@ -74,7 +74,7 @@ public class ShapeAnimation implements Animation {
                             as.setHelmet(winItem.getMaterial().getItemStack());
                         }
                         as.setCustomName(winItem.getMaterial().getDisplayName());
-                        Main.t.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
+                        DonateCase.t.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
                         Case.onCaseOpenFinish(c, player, true, winItem);
 
                     }
@@ -87,7 +87,7 @@ public class ShapeAnimation implements Animation {
                     }
                     String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
                     winItem.getMaterial().setDisplayName(winGroupDisplayName);
-                    as.setCustomName(Main.t.rc(winGroupDisplayName));
+                    as.setCustomName(DonateCase.t.rc(winGroupDisplayName));
                     if (this.i <= 8) {
                         if (!Bukkit.getVersion().contains("1.12")) {
                             Particle.DustOptions dustOptions = new Particle.DustOptions(finalOrangeColor,orangeSize);
@@ -137,6 +137,6 @@ public class ShapeAnimation implements Animation {
 
                 ++this.i;
             }
-        }).runTaskTimer(Main.instance, 0L, 2L);
+        }).runTaskTimer(DonateCase.instance, 0L, 2L);
     }
 }

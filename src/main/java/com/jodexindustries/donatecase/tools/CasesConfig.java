@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.tools;
 
-import com.jodexindustries.donatecase.dc.Main;
+import com.jodexindustries.donatecase.DonateCase;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -14,7 +14,7 @@ import java.util.Map;
 public class CasesConfig {
     public Map<String, YamlConfiguration> cases = new HashMap<>();
     public CasesConfig() {
-        for (File file : Main.t.getCasesInFolder()) {
+        for (File file : DonateCase.t.getCasesInFolder()) {
             if(file.getName().contains(".yml")) {
                 String name = file.getName().split(".yml")[0];
                 int index = file.getName().length();
@@ -30,7 +30,7 @@ public class CasesConfig {
                             if (giveCommand != null || !giveCommands.isEmpty() || giveSection != null) {
                                 if (!isOld) {
                                     isOld = true;
-                                    Main.instance.getLogger().warning("Case " + name + " outdated! Converting...");
+                                    DonateCase.instance.getLogger().warning("Case " + name + " outdated! Converting...");
                                 }
                                 String title = caseConfig.getString("case.Items." + item + ".Title");
                                 String subTitle = caseConfig.getString("case.Items." + item + ".SubTitle");

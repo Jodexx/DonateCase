@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.OpenCase;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
@@ -25,7 +26,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.jodexindustries.donatecase.dc.Main.*;
+import static com.jodexindustries.donatecase.DonateCase.*;
 
 
 public class Case {
@@ -357,11 +358,15 @@ public class Case {
         for (int i = 0; i < list.length; i++) {
             CaseData.HistoryData data1 = list[i];
             if(data1 != null) {
-                customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Player", data1.getPlayerName());
-                customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Time", data1.getTime());
-                customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Group", data1.getGroup());
-                customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Item", data1.getItem());
-                customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Action", data1.getAction());
+                if(!sql) {
+                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Player", data1.getPlayerName());
+                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Time", data1.getTime());
+                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Group", data1.getGroup());
+                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Item", data1.getItem());
+                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Action", data1.getAction());
+                } else {
+                    mysql.setHistoryData(caseData.getCaseName(),i, data1);
+                }
             }
         }
         getCase(caseData.getCaseName()).setHistoryData(list);
@@ -536,16 +541,29 @@ public class Case {
      * @return list of HistoryData (sorted by time)
      */
     public static List<CaseData.HistoryData> getSortedHistoryData() {
-        return caseData.values().stream()
-                .filter(Objects::nonNull)
-                .flatMap(data -> {
-                    CaseData.HistoryData[] historyData = data.getHistoryData();
-                    return historyData != null ? Arrays.stream(historyData) : Stream.empty();
-                })
-                .filter(Objects::nonNull)
+        if(!sql) {
+            return caseData.values().stream()
+                    .filter(Objects::nonNull)
+                    .flatMap(data -> {
+                        CaseData.HistoryData[] historyData = data.getHistoryData();
+                        return historyData != null ? Arrays.stream(historyData) : Stream.empty();
+                    })
+                    .filter(Objects::nonNull)
+                    .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                    .collect(Collectors.toList());
+        } else {
+            return mysql.getHistoryData().stream().filter(Objects::nonNull)
+                    .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                    .collect(Collectors.toList());
+        }
+    }
+    public static List<CaseData.HistoryData> sortHistoryDataByCase(List<CaseData.HistoryData> historyData, String caseType) {
+        return historyData.stream().filter(Objects::nonNull)
+                .filter(data -> data.getCaseType().equals(caseType))
                 .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
                 .collect(Collectors.toList());
     }
+
 
     /**
      * Get addon manager for addons manipulate
