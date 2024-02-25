@@ -43,11 +43,7 @@ public class CaseGui {
                 if (placeholder.startsWith("keys_")) {
                     String[] parts = placeholder.split("_");
                     String caseName = parts[1];
-                    if (!sql) {
-                        keys = customConfig.getKeys().getInt("DonatCase.Cases." + caseName + "." + p.getName());
-                    } else {
-                        keys = mysql.getKey(parts[1], p.getName());
-                    }
+                    keys = Case.getKeys(caseName, p.getName());
                 } else {
                     keys = Case.getKeys(c, p.getName());
                 }
@@ -171,11 +167,7 @@ public class CaseGui {
                 if (placeholder.startsWith("keys_")) {
                     String[] parts = placeholder.split("_");
                     String caseName = parts[1];
-                    if (!sql) {
-                        keys = customConfig.getKeys().getInt("DonatCase.Cases." + caseName + "." + p.getName());
-                    } else {
-                        keys = mysql.getKey(parts[1], p.getName());
-                    }
+                    keys = Case.getKeys(caseName, p.getName());
                 }
                 newLore.add(string.replaceAll("%" + placeholder + "%", String.valueOf(keys)));
             }

@@ -172,12 +172,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                                 if(placeholder.startsWith("keys_")) {
                                     String[] parts = placeholder.split("_");
                                     String caseTitle = parts[1];
-                                    int keys;
-                                    if (!DonateCase.sql) {
-                                        keys = customConfig.getKeys().getInt("DonatCase.Cases." + caseTitle + "." + player.getName());
-                                    } else {
-                                        keys = DonateCase.mysql.getKey(parts[1], player.getName());
-                                    }
+                                    int keys = Case.getKeys(caseTitle, player.getName());
                                     if(parts.length == 2) {
                                         result = String.valueOf(keys);
                                     } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
@@ -204,12 +199,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                             if(placeholder.startsWith("keys_")) {
                                 String[] parts = placeholder.split("_");
                                 String caseName = parts[1];
-                                int keys;
-                                if (!DonateCase.sql) {
-                                    keys = customConfig.getKeys().getInt("DonatCase.Cases." + caseName + "." + target);
-                                } else {
-                                    keys = DonateCase.mysql.getKey(parts[1], target);
-                                }
+                                int keys = Case.getKeys(caseName, target);
                                 if(parts.length == 2) {
                                     result = String.valueOf(keys);
                                 } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {

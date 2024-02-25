@@ -38,7 +38,6 @@ public class CaseDataBase {
 
     public int getKey(String name, String player) {
         try {
-            player = player.toLowerCase();
             List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
                     .where()
                     .eq("player", player)

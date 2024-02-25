@@ -13,8 +13,6 @@ softdepend:
   - CMI
   - HolographicDisplays
 api-version: 1.13
-libraries:
-  - com.j256.ormlite:ormlite-jdbc:6.1
 commands:
   donatecase:
     usage: /donatecase
