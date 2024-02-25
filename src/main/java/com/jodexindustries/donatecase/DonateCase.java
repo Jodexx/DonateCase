@@ -2,7 +2,6 @@ package com.jodexindustries.donatecase;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.j256.ormlite.logger.Level;
-import com.j256.ormlite.logger.LocalLogBackend;
 import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
@@ -13,16 +12,20 @@ import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
-import com.jodexindustries.donatecase.database.CaseDataBase;
 import com.jodexindustries.donatecase.commands.GlobalCommand;
+import com.jodexindustries.donatecase.database.CaseDataBase;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
+import net.byteflux.libby.BukkitLibraryManager;
+import net.byteflux.libby.Library;
+import net.byteflux.libby.LibraryManager;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
@@ -35,7 +38,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class DonateCase extends JavaPlugin {
     public static DonateCase instance;
@@ -58,67 +60,43 @@ public class DonateCase extends JavaPlugin {
         long time = System.currentTimeMillis();
         instance = this;
         t = new Tools();
-//        loadLibraries();
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            (new Placeholder()).register();
-            Logger.log("&aPlaceholders registered!");
-        }
+        loadPlaceholderAPI();
+
+        loadLibraries();
 
         setupConfigs();
 
-        customConfig.getConfig().addDefault("DonatCase.NoKeyWarningSound", "ENTITY_ENDERMAN_TELEPORT");
-
-        if(customConfig.getCases().getString("config") == null || !customConfig.getCases().getString("config", "").equalsIgnoreCase("1.0")) {
-            Logger.log("Conversion of case locations to a new method of storage...");
-            t.convertCasesLocation();
-        }
-
         Bukkit.getPluginManager().registerEvents(new EventsListener(), this);
-        if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
-            new UpdateChecker(this, 106701).getVersion((version) -> {
-                if (t.getPluginVersion(getDescription().getVersion()) >= t.getPluginVersion(version)) {
-                    Logger.log("There is not a new update available.");
-                } else {
-                    Logger.log(ChatColor.GREEN + "There is a new update " + version +  " available.");
-                    Logger.log(ChatColor.GREEN + "Download - https://www.spigotmc.org/resources/donatecase.106701/");
-                }
 
-            });
-        }
+        loadUpdater();
 
         setupLangs();
+
+        setupPermissions();
+
+
         Metrics metrics = new Metrics(this, 18709);
         metrics.addCustomChart(new Metrics.SimplePie("language", () -> customConfig.getConfig().getString("DonatCase.Languages")));
 
-        sql = customConfig.getConfig().getBoolean("DonatCase.MySql.Enabled");
-        if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
-            instance.setupPermissions();
-        }
-        if (sql) {
-            String base = customConfig.getConfig().getString("DonatCase.MySql.DataBase");
-            String port = customConfig.getConfig().getString("DonatCase.MySql.Port");
-            String host = customConfig.getConfig().getString("DonatCase.MySql.Host");
-            String user = customConfig.getConfig().getString("DonatCase.MySql.User");
-            String password = customConfig.getConfig().getString("DonatCase.MySql.Password");
-            (new BukkitRunnable() {
-                public void run() {
-                    DonateCase.mysql = new CaseDataBase(instance, base, port, host, user, password);
-                }
-            }).runTaskTimerAsynchronously(instance, 0L, 12000L);
-            com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
+        setupMySQL();
 
+        PluginCommand command = getCommand("donatecase");
+        if(command != null) {
+            command.setExecutor(new GlobalCommand());
+            command.setTabCompleter(new GlobalCommand());
         }
-        Objects.requireNonNull(getCommand("donatecase")).setExecutor(new GlobalCommand());
-        Objects.requireNonNull(getCommand("donatecase")).setTabCompleter(new GlobalCommand());
+
         registerDefaultAnimations();
-        DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
-        Bukkit.getServer().getPluginManager().callEvent(donateCaseEnableEvent);
 
         addonManager = new AddonManager();
         addonManager.loadAddons();
+
         loadHologramManager();
 
         loadHolograms();
+
+        DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
+        Bukkit.getServer().getPluginManager().callEvent(donateCaseEnableEvent);
 
         Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
     }
@@ -144,11 +122,48 @@ public class DonateCase extends JavaPlugin {
         if(hologramManager != null) hologramManager.removeAllHolograms();
 
     }
+    private void setupMySQL() {
+        sql = customConfig.getConfig().getBoolean("DonatCase.MySql.Enabled");
+        if (sql) {
+            String base = customConfig.getConfig().getString("DonatCase.MySql.DataBase");
+            String port = customConfig.getConfig().getString("DonatCase.MySql.Port");
+            String host = customConfig.getConfig().getString("DonatCase.MySql.Host");
+            String user = customConfig.getConfig().getString("DonatCase.MySql.User");
+            String password = customConfig.getConfig().getString("DonatCase.MySql.Password");
+            (new BukkitRunnable() {
+                public void run() {
+                    DonateCase.mysql = new CaseDataBase(instance, base, port, host, user, password);
+                }
+            }).runTaskTimerAsynchronously(instance, 0L, 12000L);
+            com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
+        }
+    }
 
     private void setupPermissions() {
-        RegisteredServiceProvider<Permission> permissionProvider = this.getServer().getServicesManager().getRegistration(Permission.class);
-        if (permissionProvider != null) {
-            permission = permissionProvider.getProvider();
+        if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+            RegisteredServiceProvider<Permission> permissionProvider = this.getServer().getServicesManager().getRegistration(Permission.class);
+            if (permissionProvider != null) {
+                permission = permissionProvider.getProvider();
+            }
+        }
+    }
+    private void loadPlaceholderAPI() {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            (new Placeholder()).register();
+            Logger.log("&aPlaceholders registered!");
+        }
+    }
+    private void loadUpdater() {
+        if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
+            new UpdateChecker(this, 106701).getVersion((version) -> {
+                if (t.getPluginVersion(getDescription().getVersion()) >= t.getPluginVersion(version)) {
+                    Logger.log("There is not a new update available.");
+                } else {
+                    Logger.log(ChatColor.GREEN + "There is a new update " + version +  " available.");
+                    Logger.log(ChatColor.GREEN + "Download - https://www.spigotmc.org/resources/donatecase.106701/");
+                }
+
+            });
         }
     }
     public void cleanCache() {
@@ -200,6 +215,13 @@ public class DonateCase extends JavaPlugin {
         usePackets = customConfig.getConfig().getBoolean("DonatCase.UsePackets") && getServer().getPluginManager().isPluginEnabled("ProtocolLib");
 
         loadCases();
+
+        customConfig.getConfig().addDefault("DonatCase.NoKeyWarningSound", "ENTITY_ENDERMAN_TELEPORT");
+
+        if(customConfig.getCases().getString("config") == null || !customConfig.getCases().getString("config", "").equalsIgnoreCase("1.0")) {
+            Logger.log("Conversion of case locations to a new method of storage...");
+            t.convertCasesLocation();
+        }
     }
 
     private void checkAndCreateFile(String fileName) {
@@ -357,17 +379,17 @@ public class DonateCase extends JavaPlugin {
     public boolean isUsePackets() {
         return usePackets;
     }
-//    private void loadLibraries() {
-//        BukkitLibraryManager libraryManager = new BukkitLibraryManager(this);
-//        Library lib = Library.builder()
-//                .groupId("com{}github{}justadeni{}standapi")
-//                .artifactId("StandAPI")
-//                .version("v1.8")
-//                .isolatedLoad(true)
-//                .build();
-//        libraryManager.addRepository("https://repo.jodexindustries.space/releases");
-//        libraryManager.addMavenCentral();
-//        libraryManager.loadLibrary(lib);
-//
-//    }
+
+    private void loadLibraries() {
+        Library lib = Library.builder()
+                .groupId("com{}j256{}ormlite")
+                .artifactId("ormlite-jdbc")
+                .version("6.1")
+                .id("ormlite")
+                .build();
+        BukkitLibraryManager bukkitLibraryManager = new BukkitLibraryManager(this);
+        bukkitLibraryManager.addMavenCentral();
+        bukkitLibraryManager.loadLibrary(lib);
+
+    }
 }
