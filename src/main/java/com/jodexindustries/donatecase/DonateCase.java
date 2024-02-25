@@ -362,7 +362,7 @@ public class DonateCase extends JavaPlugin {
             hologramManager = new HolographicDisplaysSupport();
         }
     }
-    private void loadHolograms() {
+    public void loadHolograms() {
         ConfigurationSection section = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
         if(section == null || section.getKeys(false).isEmpty()) return;
         for (String caseName : section.getKeys(false)) {

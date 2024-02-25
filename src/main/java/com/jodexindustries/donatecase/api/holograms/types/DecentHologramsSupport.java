@@ -20,7 +20,6 @@ public class DecentHologramsSupport extends HologramManager {
         if (!caseHologram.isEnabled()) return;
 
         double height = caseHologram.getHeight();
-
         Hologram hologram = DHAPI.createHologram("DonateCase-" + UUID.randomUUID(), block.getLocation().add(.5, height, .5));
 
         hologram.setDisplayRange(caseHologram.getRange());
@@ -35,7 +34,6 @@ public class DecentHologramsSupport extends HologramManager {
         if (!this.holograms.containsKey(block)) return;
 
         Hologram hologram = this.holograms.get(block);
-
         this.holograms.remove(block);
         hologram.delete();
     }

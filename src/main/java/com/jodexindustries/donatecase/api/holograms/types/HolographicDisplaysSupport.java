@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.DonateCase;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.PlaceholderSetting;
 import org.jetbrains.annotations.NotNull;
 import org.bukkit.block.Block;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ public class HolographicDisplaysSupport extends HologramManager {
         double height = crateHologram.getHeight();
 
         Hologram hologram = this.api.createHologram(block.getLocation().add(.5, height, .5));
-
+        hologram.setPlaceholderSetting(PlaceholderSetting.DEFAULT);
         crateHologram.getMessages().forEach(line -> hologram.getLines().appendText(
                 Case.getTools().rc((line))
         ));

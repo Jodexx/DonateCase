@@ -58,7 +58,7 @@ public class Case {
      * @param lv Case location
      */
     public static void saveLocation(String caseName, String type, Location lv) {
-        CaseData c= getCase(type);
+        CaseData c = getCase(type);
         if(Case.getHologramManager() != null && (c != null && c.getHologram().isEnabled())) {
             Case.getHologramManager().createHologram(lv.getBlock(), c);
         }
