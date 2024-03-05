@@ -138,7 +138,7 @@ public class FullWheelAnimation implements Animation {
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
-        if(item.getMaterial().getItemStack() != null && (item.getMaterial().getItemStack().getType() != Material.AIR)) {
+        if(item.getMaterial().getItemStack().getType() != Material.AIR) {
             as.setHelmet(item.getMaterial().getItemStack());
         }
         as.setCustomName(item.getMaterial().getDisplayName());

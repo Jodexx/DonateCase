@@ -82,7 +82,7 @@ public class ShapeAnimation implements Animation {
 
                 if (i <= 15) {
                     CaseData.Item winItem = Case.getRandomItem(c);
-                        if(winItem.getMaterial().getItemStack() != null && winItem.getMaterial().getItemStack().getType() != Material.AIR) {
+                        if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                         as.setHelmet(winItem.getMaterial().getItemStack());
                     }
                     String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());

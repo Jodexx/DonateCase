@@ -28,6 +28,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -355,6 +356,7 @@ public class Tools {
         return getBASE64Skull(url, displayName, null);
     }
 
+    @NotNull
     public ItemStack getCaseItem(String displayName, String id, boolean enchanted, String[] rgb) {
         MaterialType materialType = t.getMaterialType(id);
         Material material;
@@ -408,7 +410,7 @@ public class Tools {
         return winItem;
     }
 
-    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb, int modeldata) {
+    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb, int modelData) {
         ItemStack item;
         if(data == -1) {
             item = new ItemStack(ma, amount);
@@ -430,8 +432,8 @@ public class Tools {
 
                 m.setLore(this.rc(lore));
             }
-            if(modeldata != -1) {
-                m.setCustomModelData(modeldata);
+            if(modelData != -1) {
+                m.setCustomModelData(modelData);
             }
             if (!ma.equals(Material.AIR)) {
                 m.addItemFlags(ItemFlag.HIDE_ENCHANTS);

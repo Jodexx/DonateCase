@@ -85,7 +85,7 @@ public class RainlyAnimation implements Animation {
                     CaseData.Item winItem = Case.getRandomItem(c);
                     String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
                     winItem.getMaterial().setDisplayName(winGroupDisplayName);
-                    if(winItem.getMaterial().getItemStack() != null && winItem.getMaterial().getItemStack().getType() != Material.AIR) {
+                    if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                         as.setHelmet(winItem.getMaterial().getItemStack());
                     }
                     as.setCustomName(winItem.getMaterial().getDisplayName());

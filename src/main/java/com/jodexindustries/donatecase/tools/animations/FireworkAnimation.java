@@ -68,7 +68,7 @@ public class FireworkAnimation implements Animation {
                 }
                 if (this.i >= 7) {
                     if (this.i == 10) {
-                        if(winItem.getMaterial().getItemStack() != null && winItem.getMaterial().getItemStack().getType() != Material.AIR) {
+                        if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                             as.setHelmet(winItem.getMaterial().getItemStack());
                         }
                         as.setCustomName(displayName);
