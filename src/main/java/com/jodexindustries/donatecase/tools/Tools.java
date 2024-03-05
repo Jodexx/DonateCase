@@ -368,8 +368,6 @@ public class Tools {
                 winItem = t.createItem(material, 1, -1, displayName, enchanted, rgb);
             } else {
                 winItem = new ItemStack(Material.AIR);
-                ItemMeta meta = winItem.getItemMeta();
-                winItem.setItemMeta(meta);
             }
         } else {
             if (materialType == MaterialType.HEAD) {
