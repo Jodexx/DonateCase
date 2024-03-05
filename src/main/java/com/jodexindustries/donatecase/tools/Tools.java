@@ -376,30 +376,17 @@ public class Tools {
             } else if (materialType == MaterialType.HDB) {
                 String[] parts = id.split(":");
                 String skullId = parts[1];
-                if (DonateCase.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                    winItem = HeadDatabaseSupport.getSkull(skullId, displayName, null);
-                } else {
-                    winItem = new ItemStack(Material.STONE);
-                }
+                winItem = HeadDatabaseSupport.getSkull(skullId, displayName, null);
             } else if (materialType == MaterialType.CH) {
                 String[] parts = id.split(":");
                 String category = parts[1];
                 String skullId = parts[2];
-                if (DonateCase.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                    winItem = CustomHeadSupport.getSkull(category, skullId, displayName, null);
-                } else {
-                    winItem = new ItemStack(Material.STONE);
-                }
+                winItem = CustomHeadSupport.getSkull(category, skullId, displayName, null);
             } else if (materialType == MaterialType.IA) {
                 String[] parts = id.split(":");
                 String namespace = parts[1];
                 String skullId = parts[2];
-                if(instance.getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
-                    winItem = ItemsAdderSupport.getItem(namespace + ":" + skullId, displayName, null);
-                } else {
-                    winItem = new ItemStack(Material.STONE);
-                    instance.getLogger().warning("ItemsAdder not loaded!");
-                }
+                winItem = ItemsAdderSupport.getItem(namespace + ":" + skullId, displayName, null);
             }
             else if (materialType == MaterialType.BASE64) {
                 String[] parts = id.split(":");
