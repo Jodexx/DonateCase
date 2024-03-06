@@ -128,7 +128,7 @@ public class Case {
      */
 
     public static int getKeys(String name, String player) {
-        return sql ? mysql.getKey(name, player) : customConfig.getKeys().getInt("DonatCase.Cases." + name + "." + player);
+        return sql ? (mysql == null ? 0 : mysql.getKey(name, player)) : customConfig.getKeys().getInt("DonatCase.Cases." + name + "." + player);
     }
 
     /**
