@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.armorstand;
 
 import org.bukkit.Location;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public class PacketArmorStandCreator implements ArmorStandCreator {
@@ -13,6 +14,11 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
         this.location = location;
     }
     public void setHelmet(ItemStack item) {
+
+    }
+
+    @Override
+    public void setEquipment(EquipmentSlot equipmentSlot, ItemStack item) {
 
     }
 
