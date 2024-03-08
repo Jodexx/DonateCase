@@ -6,12 +6,10 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -21,6 +19,7 @@ import static com.jodexindustries.donatecase.DonateCase.customConfig;
 import static com.jodexindustries.donatecase.DonateCase.t;
 
 public class FireworkAnimation implements Animation {
+    private EquipmentSlot itemSlot;
 
     @Override
     public String getName() {
@@ -35,7 +34,8 @@ public class FireworkAnimation implements Animation {
         location.setYaw(-70.0F);
         ArmorStandCreator as = t.createArmorStand();
         as.spawnArmorStand(location);
-        boolean small = customConfig.getAnimations().getBoolean("FireWork.SmallArmorStand", true);
+        itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("Firework.ItemSlot", "HEAD").toUpperCase());
+        boolean small = customConfig.getAnimations().getBoolean("Firework.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
@@ -55,7 +55,7 @@ public class FireworkAnimation implements Animation {
                     for (String color : customConfig.getAnimations().getStringList("Firework.FireworkColors")) {
                         data.addEffect(FireworkEffect.builder().withColor(t.parseColor(color)).build());
                     }
-                    data.setPower(customConfig.getAnimations().getInt("FireWork.Power"));
+                    data.setPower(customConfig.getAnimations().getInt("Firework.Power"));
                     firework.setFireworkMeta(data);
                 }
                 Location las = as.getLocation().clone();
@@ -69,7 +69,7 @@ public class FireworkAnimation implements Animation {
                 if (this.i >= 7) {
                     if (this.i == 10) {
                         if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
-                            as.setHelmet(winItem.getMaterial().getItemStack());
+                            as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                         }
                         as.setCustomName(displayName);
                         Case.onCaseOpenFinish(c, player, true, winItem);
