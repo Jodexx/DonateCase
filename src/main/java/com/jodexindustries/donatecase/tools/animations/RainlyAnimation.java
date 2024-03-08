@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
@@ -19,6 +20,8 @@ import static com.jodexindustries.donatecase.DonateCase.customConfig;
 import static com.jodexindustries.donatecase.DonateCase.t;
 
 public class RainlyAnimation implements Animation {
+    private EquipmentSlot itemSlot;
+
     @Override
     public String getName() {
         return "DEFAULT RAINLY";
@@ -43,6 +46,8 @@ public class RainlyAnimation implements Animation {
         as.spawnArmorStand(location);
         as.setVisible(false);
         as.setGravity(false);
+        itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("Rainly.ItemSlot", "HEAD").toUpperCase());
+
         boolean small = customConfig.getAnimations().getBoolean("Rainly.SmallArmorStand", true);
 
         as.setSmall(small);
@@ -71,7 +76,7 @@ public class RainlyAnimation implements Animation {
                     if (this.i == 32) {
                         // win item and title
                         if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
-                            as.setHelmet(winItem.getMaterial().getItemStack());
+                            as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                         }
                         as.setCustomName(winGroupDisplayName);
                         Case.onCaseOpenFinish(c, player, false, winItem);
@@ -86,7 +91,7 @@ public class RainlyAnimation implements Animation {
                     String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
                     winItem.getMaterial().setDisplayName(winGroupDisplayName);
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
-                        as.setHelmet(winItem.getMaterial().getItemStack());
+                        as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                     }
                     as.setCustomName(winItem.getMaterial().getDisplayName());
                     loc.getWorld().playSound(loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 5.0F);
