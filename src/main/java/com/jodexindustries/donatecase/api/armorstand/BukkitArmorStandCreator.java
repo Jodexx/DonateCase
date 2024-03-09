@@ -7,6 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 
 public class BukkitArmorStandCreator implements ArmorStandCreator {
     private ArmorStand entity;
@@ -61,6 +62,16 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
                     equipment.setBoots(item);
             }
         }
+    }
+
+    @Override
+    public void setPose(ArmorStandEulerAngle angle) {
+        entity.setHeadPose(angle.getHead());
+        entity.setBodyPose(angle.getBody());
+        entity.setLeftArmPose(angle.getLeftArm());
+        entity.setRightArmPose(angle.getRightArm());
+        entity.setLeftLegPose(angle.getLeftLeg());
+        entity.setRightLegPose(angle.getRightLeg());
     }
 
     @Override
