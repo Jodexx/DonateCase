@@ -1,6 +1,14 @@
 config: "1.3"
 Shape:
+  ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
+  Pose:
+    Head: 0, 0, 0
+    Body: 0, 0, 0
+    RightArm: 0, 0, 0
+    LeftArm: 0, 0, 0
+    RightLeg: 0, 0, 0
+    LeftLeg: 0, 0, 0
   Particle: # 1.13+
     Orange:
       Size: 1.0
@@ -10,7 +18,15 @@ Shape:
       Rgb: 255, 255, 255
 
 Rainly:
+  ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
+  Pose:
+    Head: 0, 0, 0
+    Body: 0, 0, 0
+    RightArm: 0, 0, 0
+    LeftArm: 0, 0, 0
+    RightLeg: 0, 0, 0
+    LeftLeg: 0, 0, 0
   FallingParticle: FALLING_WATER # you can use all particles, full list: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
   # FALLING_WATER
   # FALLING_LAVA
@@ -20,7 +36,15 @@ Rainly:
   # FALLING_OBSIDIAN_TEAR
 
 Firework:
+  ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
+  Pose:
+    Head: 0, 0, 0
+    Body: 0, 0, 0
+    RightArm: 0, 0, 0
+    LeftArm: 0, 0, 0
+    RightLeg: 0, 0, 0
+    LeftLeg: 0, 0, 0
   Power: 0 # Firework power
   FireworkColors:
     - RED
@@ -29,7 +53,15 @@ Firework:
     - YELLOW
 
 Wheel:
+  ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
+  Pose:
+    Head: 0, 0, 0
+    Body: 0, 0, 0
+    RightArm: 0, 0, 0
+    LeftArm: 0, 0, 0
+    RightLeg: 0, 0, 0
+    LeftLeg: 0, 0, 0
   ItemsCount: 6
   CircleSpeed: 0.5
   CircleRadius: 1.5
@@ -42,7 +74,15 @@ Wheel:
     Pitch: 1
 
 FullWheel:
+  ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
+  Pose:
+    Head: 0, 0, 0
+    Body: 0, 0, 0
+    RightArm: 0, 0, 0
+    LeftArm: 0, 0, 0
+    RightLeg: 0, 0, 0
+    LeftLeg: 0, 0, 0
   CircleSpeed: 0.5
   CircleRadius: 1.5
   LiftingAlongY: 0

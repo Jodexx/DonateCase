@@ -47,14 +47,16 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             if (args[0].equalsIgnoreCase("reload")) {
                 if (sender.hasPermission("donatecase.admin")) {
                     if(args.length == 1) {
-                        DonateCase.instance.setupConfigs();
-                        DonateCase.instance.setupLangs();
+                        instance.setupConfigs();
+                        instance.setupLangs();
+                        if(hologramManager != null) hologramManager.removeAllHolograms();
+                        instance.loadHolograms();
                         DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.customConfig.getLang().getString("ReloadConfig")));
                     } else {
                         if(args[1].equalsIgnoreCase("cache")) {
                             instance.cleanCache();
-                            DonateCase.instance.setupConfigs();
-                            DonateCase.instance.setupLangs();
+                            instance.setupConfigs();
+                            instance.setupLangs();
                             DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.customConfig.getLang().getString("ReloadConfigCache", "&aReloaded all DonateCase Cache")));
                         }
                     }

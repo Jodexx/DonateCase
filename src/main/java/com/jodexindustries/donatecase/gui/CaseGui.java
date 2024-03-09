@@ -189,35 +189,18 @@ public class CaseGui {
         if(materialType == MaterialType.HDB) {
             String[] parts = material.split(":");
             String id = parts[1];
-            if(instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                item = HeadDatabaseSupport.getSkull(id, displayName, t.rt(newLore, "%case%:" + c));
-            } else {
-                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(newLore, "%case%:" + c), enchanted, null, -1);
-                instance.getLogger().warning("HeadDataBase not loaded! Item: " + displayName + " Case: " + c);
-
-            }
+            item = HeadDatabaseSupport.getSkull(id, displayName, t.rt(newLore, "%case%:" + c));
         } else
         if(materialType == MaterialType.CH) {
             String[] parts = material.split(":");
             String category = parts[1];
             String id = parts[2];
-            if (instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                item = CustomHeadSupport.getSkull(category, id, displayName, t.rt(newLore, "%case%:" + c));
-            } else {
-                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(newLore, "%case%:" + c), enchanted, null, -1);
-                instance.getLogger().warning("CustomHeads not loaded! Item: " + displayName + " Case: " + c);
-
-            }
+            item = CustomHeadSupport.getSkull(category, id, displayName, t.rt(newLore, "%case%:" + c));
         } else if (materialType == MaterialType.IA) {
             String[] parts = material.split(":");
             String namespace = parts[1];
             String id = parts[2];
-            if(instance.getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
-                item = ItemsAdderSupport.getItem(namespace + ":" + id, displayName,t.rt(newLore, "%case%:" + c));
-            } else {
-                item = t.createItem(Material.STONE, 1, 1, displayName, t.rt(newLore, "%case%:" + c), enchanted, null, -1);
-                instance.getLogger().warning("ItemsAdder not loaded! Item: " + displayName + " Case: " + c);
-            }
+            item = ItemsAdderSupport.getItem(namespace + ":" + id, displayName,t.rt(newLore, "%case%:" + c));
         } else if (materialType == MaterialType.BASE64) {
             String[] parts = material.split(":");
             String base64 = parts[1];

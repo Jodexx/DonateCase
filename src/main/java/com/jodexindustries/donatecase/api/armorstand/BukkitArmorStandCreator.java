@@ -4,7 +4,10 @@ import com.jodexindustries.donatecase.api.Case;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 
 public class BukkitArmorStandCreator implements ArmorStandCreator {
     private ArmorStand entity;
@@ -36,8 +39,41 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
     }
     @Override
     public void setHelmet(ItemStack item) {
-        entity.setHelmet(item);
+        EntityEquipment equipment = entity.getEquipment();
+        if(equipment != null) equipment.setHelmet(item);
     }
+
+    @Override
+    public void setEquipment(EquipmentSlot equipmentSlot, ItemStack item) {
+        EntityEquipment equipment = entity.getEquipment();
+        if(equipment != null) {
+            switch (equipmentSlot) {
+                case HAND:
+                    equipment.setItemInMainHand(item);
+                case OFF_HAND:
+                    equipment.setItemInOffHand(item);
+                case CHEST:
+                    equipment.setChestplate(item);
+                case LEGS:
+                    equipment.setLeggings(item);
+                case HEAD:
+                    equipment.setHelmet(item);
+                case FEET:
+                    equipment.setBoots(item);
+            }
+        }
+    }
+
+    @Override
+    public void setPose(ArmorStandEulerAngle angle) {
+        entity.setHeadPose(angle.getHead());
+        entity.setBodyPose(angle.getBody());
+        entity.setLeftArmPose(angle.getLeftArm());
+        entity.setRightArmPose(angle.getRightArm());
+        entity.setLeftLegPose(angle.getLeftLeg());
+        entity.setRightLegPose(angle.getRightLeg());
+    }
+
     @Override
     public Location getLocation() {
         return entity.getLocation();

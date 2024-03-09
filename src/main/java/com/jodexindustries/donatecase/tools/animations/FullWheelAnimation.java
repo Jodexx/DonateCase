@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -7,6 +8,7 @@ import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -19,6 +21,9 @@ public class FullWheelAnimation implements Animation {
 
     List<String> items = new ArrayList<>();
     List<ArmorStandCreator> armorStands = new ArrayList<>();
+    private EquipmentSlot itemSlot;
+    private ArmorStandEulerAngle armorStandEulerAngle;
+
 
     @Override
     public String getName() {
@@ -38,6 +43,9 @@ public class FullWheelAnimation implements Animation {
         int i = 1;
         String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
         winItem.getMaterial().setDisplayName(winGroupDisplayName);
+        armorStandEulerAngle = t.getArmorStandEulerAngle("FullWheel.Pose");
+
+        itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("FullWheel.ItemSlot", "HEAD").toUpperCase());
         boolean small = customConfig.getAnimations().getBoolean("FullWheel.SmallArmorStand", true);
         // win group
         items.add(winItem.getItemName());
@@ -139,8 +147,9 @@ public class FullWheelAnimation implements Animation {
         as.setVisible(false);
         as.setGravity(false);
         if(item.getMaterial().getItemStack().getType() != Material.AIR) {
-            as.setHelmet(item.getMaterial().getItemStack());
+            as.setEquipment(itemSlot, item.getMaterial().getItemStack());
         }
+        as.setPose(armorStandEulerAngle);
         as.setCustomName(item.getMaterial().getDisplayName());
         return as;
     }

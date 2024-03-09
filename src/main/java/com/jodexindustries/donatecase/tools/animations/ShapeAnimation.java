@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -8,6 +9,7 @@ import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
@@ -16,6 +18,8 @@ import static com.jodexindustries.donatecase.DonateCase.customConfig;
 import static com.jodexindustries.donatecase.DonateCase.t;
 
 public class ShapeAnimation implements Animation {
+    private EquipmentSlot itemSlot;
+    private ArmorStandEulerAngle armorStandEulerAngle;
 
     @Override
     public String getName() {
@@ -29,6 +33,8 @@ public class ShapeAnimation implements Animation {
         location.setYaw(-70.0F);
         final ArmorStandCreator as = t.createArmorStand();
         as.spawnArmorStand(location);
+        armorStandEulerAngle = t.getArmorStandEulerAngle("Shape.Pose");
+        itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("Shape.ItemSlot", "HEAD").toUpperCase());
         boolean small = customConfig.getAnimations().getBoolean("Shape.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
@@ -71,8 +77,9 @@ public class ShapeAnimation implements Animation {
                 if (i >= 7) {
                     if (i == 16) {
                         if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
-                            as.setHelmet(winItem.getMaterial().getItemStack());
+                            as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                         }
+                        as.setPose(armorStandEulerAngle);
                         as.setCustomName(winItem.getMaterial().getDisplayName());
                         DonateCase.t.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
                         Case.onCaseOpenFinish(c, player, true, winItem);
@@ -83,7 +90,8 @@ public class ShapeAnimation implements Animation {
                 if (i <= 15) {
                     CaseData.Item winItem = Case.getRandomItem(c);
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
-                        as.setHelmet(winItem.getMaterial().getItemStack());
+                        as.setPose(armorStandEulerAngle);
+                        as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                     }
                     String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
                     winItem.getMaterial().setDisplayName(winGroupDisplayName);

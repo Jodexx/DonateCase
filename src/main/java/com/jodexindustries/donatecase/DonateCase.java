@@ -19,7 +19,6 @@ import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
-import net.byteflux.libby.LibraryManager;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -362,7 +361,7 @@ public class DonateCase extends JavaPlugin {
             hologramManager = new HolographicDisplaysSupport();
         }
     }
-    private void loadHolograms() {
+    public void loadHolograms() {
         ConfigurationSection section = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
         if(section == null || section.getKeys(false).isEmpty()) return;
         for (String caseName : section.getKeys(false)) {

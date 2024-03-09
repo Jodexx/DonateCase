@@ -58,7 +58,7 @@ public class Case {
      * @param lv Case location
      */
     public static void saveLocation(String caseName, String type, Location lv) {
-        CaseData c= getCase(type);
+        CaseData c = getCase(type);
         if(Case.getHologramManager() != null && (c != null && c.getHologram().isEnabled())) {
             Case.getHologramManager().createHologram(lv.getBlock(), c);
         }
@@ -79,7 +79,7 @@ public class Case {
             customConfig.getKeys().set("DonatCase.Cases." + caseName + "." + player, keys == 0 ? null : keys);
             customConfig.saveKeys();
         } else {
-            mysql.setKey(caseName, player, keys);
+            if(mysql != null) mysql.setKey(caseName, player, keys);
         }
 
     }
@@ -94,7 +94,7 @@ public class Case {
             customConfig.getKeys().set("DonatCase.Cases." + caseName + "." + player, 0);
             customConfig.saveKeys();
         } else {
-            mysql.setKey(caseName, player, 0);
+            if(mysql != null) mysql.setKey(caseName, player, 0);
         }
 
     }
@@ -128,7 +128,7 @@ public class Case {
      */
 
     public static int getKeys(String name, String player) {
-        return sql ? mysql.getKey(name, player) : customConfig.getKeys().getInt("DonatCase.Cases." + name + "." + player);
+        return sql ? (mysql == null ? 0 : mysql.getKey(name, player)) : customConfig.getKeys().getInt("DonatCase.Cases." + name + "." + player);
     }
 
     /**
@@ -365,7 +365,7 @@ public class Case {
                     customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Item", data1.getItem());
                     customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Action", data1.getAction());
                 } else {
-                    mysql.setHistoryData(caseData.getCaseName(),i, data1);
+                    if(mysql != null) mysql.setHistoryData(caseData.getCaseName(),i, data1);
                 }
             }
         }
@@ -552,6 +552,7 @@ public class Case {
                     .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
                     .collect(Collectors.toList());
         } else {
+            if(mysql == null) return new ArrayList<>();
             return mysql.getHistoryData().stream().filter(Objects::nonNull)
                     .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
                     .collect(Collectors.toList());

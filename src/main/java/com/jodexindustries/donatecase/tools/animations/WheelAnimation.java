@@ -1,11 +1,13 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -18,6 +20,8 @@ public class WheelAnimation implements Animation {
 
     List<CaseData.Item> items = new ArrayList<>();
     List<ArmorStandCreator> armorStands = new ArrayList<>();
+    private EquipmentSlot itemSlot;
+    private ArmorStandEulerAngle armorStandEulerAngle;
 
     @Override
     public String getName() {
@@ -34,6 +38,8 @@ public class WheelAnimation implements Animation {
         loc.add(0.5, 0, 0.5);
         // register items
         int itemsCount = customConfig.getAnimations().getInt("Wheel.ItemsCount");
+        armorStandEulerAngle = t.getArmorStandEulerAngle("Wheel.Pose");
+        itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("Wheel.ItemSlot", "HEAD").toUpperCase());
         boolean small = customConfig.getAnimations().getBoolean("Wheel.SmallArmorStand", true);
         items.add(winItem);
         for (int i = 0; i < itemsCount; i++) {
@@ -127,8 +133,9 @@ public class WheelAnimation implements Animation {
         as.setVisible(false);
         as.setGravity(false);
         if(item.getMaterial().getItemStack().getType() != Material.AIR) {
-            as.setHelmet(items.get(index).getMaterial().getItemStack());
+            as.setEquipment(itemSlot, items.get(index).getMaterial().getItemStack());
         }
+        as.setPose(armorStandEulerAngle);
         as.setCustomName(item.getMaterial().getDisplayName());
         return as;
     }

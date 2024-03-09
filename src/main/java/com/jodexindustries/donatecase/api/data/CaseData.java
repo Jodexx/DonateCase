@@ -5,6 +5,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -285,6 +286,7 @@ public class CaseData implements Cloneable {
          * Get item material (CaseData.Material)
          * @return CaseData.Material
          */
+        @NotNull
         public Material getMaterial() {
             return material;
         }
@@ -455,6 +457,7 @@ public class CaseData implements Cloneable {
              * Get win item itemStack
              * @return itemStack
              */
+            @NotNull
             public ItemStack getItemStack() {
                 return itemStack;
             }

@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools;
 
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.MaterialType;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -27,7 +28,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -355,6 +358,7 @@ public class Tools {
         return getBASE64Skull(url, displayName, null);
     }
 
+    @NotNull
     public ItemStack getCaseItem(String displayName, String id, boolean enchanted, String[] rgb) {
         MaterialType materialType = t.getMaterialType(id);
         Material material;
@@ -368,8 +372,6 @@ public class Tools {
                 winItem = t.createItem(material, 1, -1, displayName, enchanted, rgb);
             } else {
                 winItem = new ItemStack(Material.AIR);
-                ItemMeta meta = winItem.getItemMeta();
-                winItem.setItemMeta(meta);
             }
         } else {
             if (materialType == MaterialType.HEAD) {
@@ -378,30 +380,17 @@ public class Tools {
             } else if (materialType == MaterialType.HDB) {
                 String[] parts = id.split(":");
                 String skullId = parts[1];
-                if (DonateCase.instance.getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
-                    winItem = HeadDatabaseSupport.getSkull(skullId, displayName, null);
-                } else {
-                    winItem = new ItemStack(Material.STONE);
-                }
+                winItem = HeadDatabaseSupport.getSkull(skullId, displayName, null);
             } else if (materialType == MaterialType.CH) {
                 String[] parts = id.split(":");
                 String category = parts[1];
                 String skullId = parts[2];
-                if (DonateCase.instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-                    winItem = CustomHeadSupport.getSkull(category, skullId, displayName, null);
-                } else {
-                    winItem = new ItemStack(Material.STONE);
-                }
+                winItem = CustomHeadSupport.getSkull(category, skullId, displayName, null);
             } else if (materialType == MaterialType.IA) {
                 String[] parts = id.split(":");
                 String namespace = parts[1];
                 String skullId = parts[2];
-                if(instance.getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
-                    winItem = ItemsAdderSupport.getItem(namespace + ":" + skullId, displayName, null);
-                } else {
-                    winItem = new ItemStack(Material.STONE);
-                    instance.getLogger().warning("ItemsAdder not loaded!");
-                }
+                winItem = ItemsAdderSupport.getItem(namespace + ":" + skullId, displayName, null);
             }
             else if (materialType == MaterialType.BASE64) {
                 String[] parts = id.split(":");
@@ -423,7 +412,7 @@ public class Tools {
         return winItem;
     }
 
-    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb, int modeldata) {
+    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb, int modelData) {
         ItemStack item;
         if(data == -1) {
             item = new ItemStack(ma, amount);
@@ -445,8 +434,8 @@ public class Tools {
 
                 m.setLore(this.rc(lore));
             }
-            if(modeldata != -1) {
-                m.setCustomModelData(modeldata);
+            if(modelData != -1) {
+                m.setCustomModelData(modelData);
             }
             if (!ma.equals(Material.AIR)) {
                 m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -597,6 +586,30 @@ public class Tools {
                 }
             }
         return false;
+    }
+    public EulerAngle getEulerAngleFromString(String angleString) {
+        String[] angle;
+        if (angleString == null) return new EulerAngle(0,0,0);
+        angle = angleString.replace(" ", "").split(",");
+        try {
+            double x = Double.parseDouble(angle[0]);
+            double y = Double.parseDouble(angle[1]);
+            double z = Double.parseDouble(angle[2]);
+            return new EulerAngle(x, y, z);
+        } catch (NumberFormatException ignored) {
+            return new EulerAngle(0,0,0);
+        }
+    }
+    public ArmorStandEulerAngle getArmorStandEulerAngle(String path) {
+         ConfigurationSection section = customConfig.getAnimations().getConfigurationSection(path);
+         if(section == null) return new ArmorStandEulerAngle(new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0));
+         EulerAngle head = getEulerAngleFromString(section.getString("Head"));
+         EulerAngle body = getEulerAngleFromString(section.getString("Body"));
+         EulerAngle rightArm = getEulerAngleFromString(section.getString("RightArm"));
+         EulerAngle leftArm = getEulerAngleFromString(section.getString("LeftArm"));
+         EulerAngle rightLeg = getEulerAngleFromString(section.getString("RightLeg"));
+         EulerAngle leftLeg = getEulerAngleFromString(section.getString("LeftLeg"));
+         return new ArmorStandEulerAngle(head,body,rightArm, leftArm, rightLeg,leftLeg);
     }
 
 }
