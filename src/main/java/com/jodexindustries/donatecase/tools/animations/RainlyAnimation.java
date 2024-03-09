@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -21,6 +22,8 @@ import static com.jodexindustries.donatecase.DonateCase.t;
 
 public class RainlyAnimation implements Animation {
     private EquipmentSlot itemSlot;
+    private ArmorStandEulerAngle armorStandEulerAngle;
+
 
     @Override
     public String getName() {
@@ -46,6 +49,8 @@ public class RainlyAnimation implements Animation {
         as.spawnArmorStand(location);
         as.setVisible(false);
         as.setGravity(false);
+        armorStandEulerAngle = t.getArmorStandEulerAngle("Rainly.Pose");
+
         itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("Rainly.ItemSlot", "HEAD").toUpperCase());
 
         boolean small = customConfig.getAnimations().getBoolean("Rainly.SmallArmorStand", true);
@@ -78,6 +83,7 @@ public class RainlyAnimation implements Animation {
                         if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                             as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                         }
+                        as.setPose(armorStandEulerAngle);
                         as.setCustomName(winGroupDisplayName);
                         Case.onCaseOpenFinish(c, player, false, winItem);
                         loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 0);
@@ -93,6 +99,7 @@ public class RainlyAnimation implements Animation {
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                         as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                     }
+                    as.setPose(armorStandEulerAngle);
                     as.setCustomName(winItem.getMaterial().getDisplayName());
                     loc.getWorld().playSound(loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 5.0F);
                     // firework particles

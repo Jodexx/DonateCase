@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -21,6 +22,8 @@ public class FullWheelAnimation implements Animation {
     List<String> items = new ArrayList<>();
     List<ArmorStandCreator> armorStands = new ArrayList<>();
     private EquipmentSlot itemSlot;
+    private ArmorStandEulerAngle armorStandEulerAngle;
+
 
     @Override
     public String getName() {
@@ -40,6 +43,8 @@ public class FullWheelAnimation implements Animation {
         int i = 1;
         String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
         winItem.getMaterial().setDisplayName(winGroupDisplayName);
+        armorStandEulerAngle = t.getArmorStandEulerAngle("FullWheel.Pose");
+
         itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("FullWheel.ItemSlot", "HEAD").toUpperCase());
         boolean small = customConfig.getAnimations().getBoolean("FullWheel.SmallArmorStand", true);
         // win group
@@ -144,6 +149,7 @@ public class FullWheelAnimation implements Animation {
         if(item.getMaterial().getItemStack().getType() != Material.AIR) {
             as.setEquipment(itemSlot, item.getMaterial().getItemStack());
         }
+        as.setPose(armorStandEulerAngle);
         as.setCustomName(item.getMaterial().getDisplayName());
         return as;
     }

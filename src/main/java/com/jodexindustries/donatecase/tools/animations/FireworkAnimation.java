@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -20,6 +21,7 @@ import static com.jodexindustries.donatecase.DonateCase.t;
 
 public class FireworkAnimation implements Animation {
     private EquipmentSlot itemSlot;
+    private ArmorStandEulerAngle armorStandEulerAngle;
 
     @Override
     public String getName() {
@@ -34,6 +36,8 @@ public class FireworkAnimation implements Animation {
         location.setYaw(-70.0F);
         ArmorStandCreator as = t.createArmorStand();
         as.spawnArmorStand(location);
+        armorStandEulerAngle = t.getArmorStandEulerAngle("Firework.Pose");
+
         itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("Firework.ItemSlot", "HEAD").toUpperCase());
         boolean small = customConfig.getAnimations().getBoolean("Firework.SmallArmorStand", true);
         as.setSmall(small);
@@ -71,6 +75,7 @@ public class FireworkAnimation implements Animation {
                         if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                             as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                         }
+                        as.setPose(armorStandEulerAngle);
                         as.setCustomName(displayName);
                         Case.onCaseOpenFinish(c, player, true, winItem);
                     }
