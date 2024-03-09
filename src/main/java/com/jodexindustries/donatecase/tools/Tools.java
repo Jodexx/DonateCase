@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools;
 
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.MaterialType;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -27,6 +28,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -584,6 +586,30 @@ public class Tools {
                 }
             }
         return false;
+    }
+    public EulerAngle getEulerAngleFromString(String angleString) {
+        String[] angle;
+        if (angleString == null) return new EulerAngle(0,0,0);
+        angle = angleString.replace(" ", "").split(",");
+        try {
+            double x = Double.parseDouble(angle[0]);
+            double y = Double.parseDouble(angle[1]);
+            double z = Double.parseDouble(angle[2]);
+            return new EulerAngle(x, y, z);
+        } catch (NumberFormatException ignored) {
+            return new EulerAngle(0,0,0);
+        }
+    }
+    public ArmorStandEulerAngle getArmorStandEulerAngle(String path) {
+         ConfigurationSection section = customConfig.getAnimations().getConfigurationSection(path);
+         if(section == null) return new ArmorStandEulerAngle(new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0));
+         EulerAngle head = getEulerAngleFromString(section.getString("Head"));
+         EulerAngle body = getEulerAngleFromString(section.getString("Body"));
+         EulerAngle rightArm = getEulerAngleFromString(section.getString("RightArm"));
+         EulerAngle leftArm = getEulerAngleFromString(section.getString("LeftArm"));
+         EulerAngle rightLeg = getEulerAngleFromString(section.getString("RightLeg"));
+         EulerAngle leftLeg = getEulerAngleFromString(section.getString("LeftLeg"));
+         return new ArmorStandEulerAngle(head,body,rightArm, leftArm, rightLeg,leftLeg);
     }
 
 }
