@@ -47,7 +47,7 @@ public class CaseGui {
                 } else {
                     keys = Case.getKeys(c, p.getName());
                 }
-                displayName.replaceAll("%" + placeholder + "%", String.valueOf(keys));
+                displayName.replace("%" + placeholder + "%", String.valueOf(keys));
                 if(instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                     displayName = PAPISupport.setPlaceholders(p, displayName);
                 }
@@ -169,7 +169,7 @@ public class CaseGui {
                     String caseName = parts[1];
                     keys = Case.getKeys(caseName, p.getName());
                 }
-                newLore.add(string.replaceAll("%" + placeholder + "%", String.valueOf(keys)));
+                newLore.add(string.replace("%" + placeholder + "%", String.valueOf(keys)));
             }
         }
         MaterialType materialType = t.getMaterialType(material);

@@ -181,7 +181,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                                         result = NumberFormat.getNumberInstance().format(keys);
                                     }
                                 }
-                                sender.sendMessage(t.rc(string.replaceAll("%" + placeholder + "%", result)));
+                                sender.sendMessage(t.rc(string.replace("%" + placeholder + "%", result)));
                             }
                         }
                     }

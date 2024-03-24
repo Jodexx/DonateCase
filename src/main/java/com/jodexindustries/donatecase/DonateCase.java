@@ -20,14 +20,12 @@ import com.jodexindustries.donatecase.tools.animations.*;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -108,12 +106,8 @@ public class DonateCase extends JavaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new Placeholder().unregister();
         }
+        cleanCache();
 
-        for (ArmorStand as : Case.armorStandList) {
-            if (as != null) {
-                as.remove();
-            }
-        }
 
         if (mysql != null) {
             mysql.close();
@@ -166,15 +160,10 @@ public class DonateCase extends JavaPlugin {
         }
     }
     public void cleanCache() {
-        for (ArmorStand as : Case.armorStandList) {
-            if (as != null) {
-                as.remove();
-            }
-        }
+        Bukkit.getWorlds().forEach(world -> world.getEntitiesByClass(ArmorStand.class).stream().filter(stand -> stand.hasMetadata("case")).forEachOrdered(Entity::remove));
         Case.playersCases.clear();
         Case.caseData.clear();
         Case.activeCases.clear();
-        Case.armorStandList.clear();
     }
 
     public void setupConfigs() {
