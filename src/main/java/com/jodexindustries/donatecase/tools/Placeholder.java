@@ -5,6 +5,7 @@ import java.text.NumberFormat;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.DonateCase;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +27,7 @@ public class Placeholder extends PlaceholderExpansion {
         return true;
     }
 
-    public String onRequest(OfflinePlayer player, String params) {
+    public String onRequest(OfflinePlayer player, @NotNull String params) {
         if(params.startsWith("keys")) {
             String[] parts = params.split("_", 2);
             int keys = 0;
