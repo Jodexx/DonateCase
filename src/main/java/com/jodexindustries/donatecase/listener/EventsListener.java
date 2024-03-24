@@ -106,7 +106,7 @@ public class EventsListener implements Listener {
     public void PlayerInteractEntity(PlayerInteractAtEntityEvent e) {
         Entity entity = e.getRightClicked();
         if(entity instanceof ArmorStand) {
-            if (Case.armorStandList.contains(entity)) {
+            if (entity.hasMetadata("case")) {
                 e.setCancelled(true);
             }
         }

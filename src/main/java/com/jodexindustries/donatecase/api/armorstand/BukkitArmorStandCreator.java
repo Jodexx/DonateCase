@@ -1,20 +1,20 @@
 package com.jodexindustries.donatecase.api.armorstand;
 
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.DonateCase;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
+import org.bukkit.metadata.FixedMetadataValue;
 
 public class BukkitArmorStandCreator implements ArmorStandCreator {
     private ArmorStand entity;
     @Override
     public void spawnArmorStand(Location location) {
         entity = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        Case.armorStandList.add(entity);
+        entity.setMetadata("case", new FixedMetadataValue(DonateCase.instance, "case"));
     }
 
     @Override
@@ -86,7 +86,6 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void remove() {
-        Case.armorStandList.remove(entity);
         entity.remove();
     }
 }
