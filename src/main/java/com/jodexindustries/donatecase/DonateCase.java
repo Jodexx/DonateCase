@@ -333,7 +333,17 @@ public class DonateCase extends JavaPlugin {
                     }
                 }
             }
-            CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData, hologram);
+
+            Map<String, Integer> levelGroups = new HashMap<>();
+            ConfigurationSection lgSection = config.getConfigurationSection("case.LevelGroups");
+            if(lgSection != null) {
+                for (String group : lgSection.getKeys(false)) {
+                    int level = lgSection.getInt(group);
+                    levelGroups.put(group, level);
+                }
+            }
+
+            CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData, hologram, levelGroups);
             Case.caseData.put(caseName, caseData);
         }
         Logger.log("&aCases loaded!");
@@ -358,7 +368,7 @@ public class DonateCase extends JavaPlugin {
             String caseType = Case.getCaseTypeByCustomName(caseName);
             CaseData caseData = Case.getCase(caseType);
             Location location = Case.getCaseLocationByCustomName(caseName);
-            if (caseData != null && caseData.getHologram().isEnabled() && location != null && hologramManager != null) {
+            if (caseData != null && caseData.getHologram().isEnabled() && location != null && location.getWorld() != null && hologramManager != null) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }
