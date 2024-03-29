@@ -8,6 +8,8 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'com.rikonardo.papermake' version '1.0.6'
 }
+apply plugin: 'maven-publish'
+
 
 group = 'com.jodexindustries.donatecase'
 version = '2.2.0.0'
@@ -73,6 +75,8 @@ build.dependsOn(shadowJar);
 
 def targetJavaVersion = 11
 java {
+    withSourcesJar()
+    withJavadocJar()
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
@@ -101,4 +105,30 @@ shadowJar {
     archiveBaseName.set(project.name)
     archiveClassifier.set('')
     archiveVersion.set(project.version)
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "JodexIndustries"
+            url = "https://repo.jodexindustries.space/releases"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+    publications {
+        maven(MavenPublication) {
+            groupId = "com.jodexindustries.donatecase"
+            artifactId = "DonateCaseAPI"
+            version = project.version
+            from components.java
+            artifact shadowJar
+        }
+    }
+}
+javadoc {
+    options.links('https://docs.oracle.com/en/java/javase/11/docs/api/', "https://helpch.at/docs/1.16.5/")
+    source = sourceSets.main.allJava
 }
