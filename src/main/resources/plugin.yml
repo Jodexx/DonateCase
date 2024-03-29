@@ -5,6 +5,7 @@ version: '${version}'
 website: "https://jodexindustries.space/"
 softdepend:
   - Vault
+  - LuckPerms
   - PlaceholderAPI
   - CustomHeads
   - ProtocolLib
