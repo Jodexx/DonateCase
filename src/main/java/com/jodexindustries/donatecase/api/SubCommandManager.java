@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Sub command class manager
+ * Class for managing subcommands, registering commands.
  */
 public class SubCommandManager {
     public static final Map<String, SubCommand> subCommands = new HashMap<>();

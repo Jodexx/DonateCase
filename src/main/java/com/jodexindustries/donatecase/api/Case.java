@@ -29,6 +29,9 @@ import java.util.stream.Stream;
 import static com.jodexindustries.donatecase.DonateCase.*;
 
 
+/**
+ * The main class for API interaction with DonateCase, this is where most of the functions are located.
+ */
 public class Case {
 
     /**
@@ -545,6 +548,13 @@ public class Case {
                     .collect(Collectors.toList());
         }
     }
+
+    /**
+     * Get sorted history data by case
+     * @param historyData HistoryData from all cases (or not all)
+     * @param caseType type of case for filtering
+     * @return list of case HistoryData
+     */
     public static List<CaseData.HistoryData> sortHistoryDataByCase(List<CaseData.HistoryData> historyData, String caseType) {
         return historyData.stream().filter(Objects::nonNull)
                 .filter(data -> data.getCaseType().equals(caseType))
@@ -591,12 +601,22 @@ public class Case {
         return customConfig.getCases().getString("DonatCase.Cases." + name + ".type");
     }
 
+    /**
+     * Get player primary group from Vault or LuckPerms
+     * @param player Bukkit player
+     * @return player primary group
+     */
     public static String getPlayerGroup(Player player) {
         String group = "";
         if(permissionDriver == PermissionDriver.vault) if(permission != null) group = permission.getPrimaryGroup(player);
         if(permissionDriver == PermissionDriver.luckperms) if(luckPerms != null) group = luckPerms.getPlayerAdapter(Player.class).getUser(player).getPrimaryGroup();
         return group;
     }
+
+    /**
+     * Get map of default LevelGroup from Config.yml
+     * @return map of LevelGroup
+     */
     public static Map<String, Integer> getDefaultLevelGroup() {
         Map<String, Integer> levelGroup = new HashMap<>();
         boolean isEnabled = customConfig.getConfig().getBoolean("DonatCase.LevelGroup");
@@ -611,6 +631,14 @@ public class Case {
         }
         return levelGroup;
     }
+
+    /**
+     * Check for alternative actions
+     * @param levelGroups map of LevelGroups (can be from case config or default Config.yml)
+     * @param playerGroup player primary group
+     * @param winGroup player win group
+     * @return boolean
+     */
     public static boolean isAlternative(Map<String, Integer> levelGroups, String playerGroup, String winGroup) {
         if(levelGroups.containsKey(playerGroup) && levelGroups.containsKey(winGroup)) {
             int playerGroupLevel = levelGroups.get(playerGroup);

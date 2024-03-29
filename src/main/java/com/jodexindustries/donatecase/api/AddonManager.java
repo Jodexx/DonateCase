@@ -14,7 +14,9 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-
+/**
+ * Class for managing add-ons, enabling and disabling.
+ */
 public class AddonManager {
     private final Map<String, JavaAddon> addons = new HashMap<>();
 
