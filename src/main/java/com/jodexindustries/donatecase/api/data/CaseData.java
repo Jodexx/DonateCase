@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * Class for implementing cases that are loaded into the plugin's memory.
+ */
 public class CaseData implements Cloneable {
     private final String caseName;
     private String caseDisplayName;
@@ -858,6 +861,9 @@ public class CaseData implements Cloneable {
     }
 
 
+    /**
+     * Class for the implementation of holograms of the case.
+     */
     public static class Hologram {
 
         private final boolean enabled;
