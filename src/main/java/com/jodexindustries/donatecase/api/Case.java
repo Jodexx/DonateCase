@@ -1,7 +1,9 @@
 package com.jodexindustries.donatecase.api;
 
+import com.j256.ormlite.stmt.query.In;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.OpenCase;
+import com.jodexindustries.donatecase.api.data.PermissionDriver;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.gui.CaseGui;
@@ -313,29 +315,20 @@ public class Case {
      */
     public static void onCaseOpenFinish(CaseData caseData, Player player, boolean needSound, CaseData.Item item) {
         String choice = "";
-        if (customConfig.getConfig().getBoolean("DonatCase.LevelGroup") && getPermissions() != null) {
-            String playerGroup = getPermissions().getPrimaryGroup(player).toLowerCase();
-            if (!customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(playerGroup) ||
-                    !customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups").contains(item.getGroup()) ||
-                    customConfig.getConfig().getInt("DonatCase.LevelGroups." + playerGroup) < customConfig.getConfig().getInt("DonatCase.LevelGroups." + item.getGroup())) {
-                if (item.getGiveType().equalsIgnoreCase("ONE")) {
-                    executeActions(player, caseData, item, null, false);
-                } else {
-                    choice = getChoice(item);
-                    executeActions(player, caseData, item, choice, false);
-                }
-            } else {
-                // Handle alternative case
-                executeActions(player, caseData, item, null, true);
-            }
+        Map<String, Integer> levelGroups = getDefaultLevelGroup();
+        if(!caseData.getLevelGroups().isEmpty()) levelGroups = caseData.getLevelGroups();
+        String playerGroup = getPlayerGroup(player);
+        if(isAlternative(levelGroups, playerGroup, item.getGroup())) {
+            executeActions(player, caseData, item, null, true);
         } else {
             if (item.getGiveType().equalsIgnoreCase("ONE")) {
-                executeActions(player,caseData, item, null, false);
+                executeActions(player, caseData, item, null, false);
             } else {
                 choice = getChoice(item);
                 executeActions(player, caseData, item, choice, false);
             }
         }
+
         // Sound
         if (needSound) {
             if (caseData.getAnimationSound() != null) {
@@ -590,11 +583,40 @@ public class Case {
     }
 
     /**
-     * Get case type by custom namme
+     * Get case type by custom name
      * @param name Case custom name
      * @return case type
      */
     public static String getCaseTypeByCustomName(String name) {
         return customConfig.getCases().getString("DonatCase.Cases." + name + ".type");
+    }
+
+    public static String getPlayerGroup(Player player) {
+        String group = "";
+        if(permissionDriver == PermissionDriver.vault) if(permission != null) group = permission.getPrimaryGroup(player);
+        if(permissionDriver == PermissionDriver.luckperms) if(luckPerms != null) group = luckPerms.getPlayerAdapter(Player.class).getUser(player).getPrimaryGroup();
+        return group;
+    }
+    public static Map<String, Integer> getDefaultLevelGroup() {
+        Map<String, Integer> levelGroup = new HashMap<>();
+        boolean isEnabled = customConfig.getConfig().getBoolean("DonatCase.LevelGroup");
+        if(isEnabled) {
+            ConfigurationSection section = customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups");
+            if (section != null) {
+                for (String group : section.getKeys(false)) {
+                    int level = section.getInt(group);
+                    levelGroup.put(group, level);
+                }
+            }
+        }
+        return levelGroup;
+    }
+    public static boolean isAlternative(Map<String, Integer> levelGroups, String playerGroup, String winGroup) {
+        if(levelGroups.containsKey(playerGroup) && levelGroups.containsKey(winGroup)) {
+            int playerGroupLevel = levelGroups.get(playerGroup);
+            int winGroupLevel = levelGroups.get(winGroup);
+            return playerGroupLevel >= winGroupLevel;
+        }
+        return false;
     }
 }
