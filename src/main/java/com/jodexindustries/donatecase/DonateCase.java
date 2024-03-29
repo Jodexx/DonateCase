@@ -61,6 +61,7 @@ public class DonateCase extends JavaPlugin {
 
         loadLibraries();
 
+
         setupConfigs();
 
         Bukkit.getPluginManager().registerEvents(new EventsListener(), this);
@@ -74,8 +75,6 @@ public class DonateCase extends JavaPlugin {
 
         Metrics metrics = new Metrics(this, 18709);
         metrics.addCustomChart(new Metrics.SimplePie("language", () -> customConfig.getConfig().getString("DonatCase.Languages")));
-
-        setupMySQL();
 
         PluginCommand command = getCommand("donatecase");
         if(command != null) {
@@ -201,6 +200,8 @@ public class DonateCase extends JavaPlugin {
         }
         casesConfig = new CasesConfig();
         usePackets = customConfig.getConfig().getBoolean("DonatCase.UsePackets") && getServer().getPluginManager().isPluginEnabled("ProtocolLib");
+
+        setupMySQL();
 
         loadCases();
 
