@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api.armorstand;
 import org.bukkit.Location;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 
 public class PacketArmorStandCreator implements ArmorStandCreator {
     private final int id = (int) (Math.random() * Integer.MAX_VALUE);
@@ -24,6 +25,16 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void setPose(ArmorStandEulerAngle angle) {
+
+    }
+
+    @Override
+    public void setRotation(float yaw, float pitch) {
+
+    }
+
+    @Override
+    public void setHeadPose(EulerAngle eulerAngle) {
 
     }
 
