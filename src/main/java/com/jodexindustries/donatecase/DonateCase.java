@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.PermissionDriver;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
@@ -19,6 +20,7 @@ import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
+import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
@@ -45,6 +47,8 @@ public class DonateCase extends JavaPlugin {
     public static Tools t;
     public static CaseDataBase mysql;
     public static HologramManager hologramManager = null;
+    public static LuckPerms luckPerms = null;
+    public static PermissionDriver permissionDriver = null;
 
     File langRu;
     File langEn;
@@ -70,7 +74,7 @@ public class DonateCase extends JavaPlugin {
 
         setupLangs();
 
-        setupPermissions();
+        loadPermissionDriver();
 
 
         Metrics metrics = new Metrics(this, 18709);
@@ -114,6 +118,28 @@ public class DonateCase extends JavaPlugin {
         if(hologramManager != null) hologramManager.removeAllHolograms();
 
     }
+    private void loadPermissionDriver() {
+        setupLuckPerms();
+        setupVault();
+        PermissionDriver temp;
+        try {
+            temp = PermissionDriver.valueOf(customConfig.getConfig().getString("DonatCase.PermissionDriver", "vault").toLowerCase());
+        }catch (IllegalArgumentException ignored) {
+            temp = PermissionDriver.luckperms;
+        }
+        if (temp == PermissionDriver.vault && permission != null) {
+            permissionDriver = temp;
+        }
+        if (temp == PermissionDriver.luckperms && luckPerms != null) {
+            permissionDriver = temp;
+        }
+    }
+    private void setupLuckPerms() {
+        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        if (provider != null) {
+            luckPerms = provider.getProvider();
+        }
+    }
     private void setupMySQL() {
         sql = customConfig.getConfig().getBoolean("DonatCase.MySql.Enabled");
         if (sql) {
@@ -131,7 +157,7 @@ public class DonateCase extends JavaPlugin {
         }
     }
 
-    private void setupPermissions() {
+    private void setupVault() {
         if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             RegisteredServiceProvider<Permission> permissionProvider = this.getServer().getServicesManager().getRegistration(Permission.class);
             if (permissionProvider != null) {
@@ -278,7 +304,7 @@ public class DonateCase extends JavaPlugin {
 
             Map<String, CaseData.Item> items = new HashMap<>();
             for (String item : config.getConfigurationSection("case.Items").getKeys(false)) {
-                String group = config.getString("case.Items." + item + ".Group");
+                String group = config.getString("case.Items." + item + ".Group", "");
                 int chance = config.getInt("case.Items." + item + ".Chance");
                 String giveType = config.getString("case.Items." + item + ".GiveType", "ONE");
 
@@ -347,9 +373,6 @@ public class DonateCase extends JavaPlugin {
             Case.caseData.put(caseName, caseData);
         }
         Logger.log("&aCases loaded!");
-    }
-    public static Permission getPermissions() {
-        return permission;
     }
 
     private void loadHologramManager() {
