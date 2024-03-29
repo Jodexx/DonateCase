@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api;
 
-import com.j256.ormlite.stmt.query.In;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.OpenCase;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
