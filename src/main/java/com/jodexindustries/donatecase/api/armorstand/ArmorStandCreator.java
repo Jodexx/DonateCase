@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.api.armorstand;
 import org.bukkit.Location;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
 
 public interface ArmorStandCreator {
     void spawnArmorStand(Location location);

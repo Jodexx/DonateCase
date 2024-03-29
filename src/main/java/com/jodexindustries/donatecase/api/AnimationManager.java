@@ -18,6 +18,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Animation control class, registration, playing
+ */
 public class AnimationManager {
     private static final Map<String, Animation> registeredAnimations = new HashMap<>();
 
@@ -90,6 +93,12 @@ public class AnimationManager {
             DonateCase.instance.getLogger().warning("Animation " + name + " not found!");
         }
     }
+
+    /**
+     * Check for animation registration
+     * @param name animation name
+     * @return boolean
+     */
     public static boolean isRegistered(String name) {
         return registeredAnimations.get(name) != null;
     }

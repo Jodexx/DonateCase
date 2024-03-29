@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api.data;
 
-import com.jodexindustries.donatecase.api.data.CaseData;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

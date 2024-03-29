@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * Class for implementing cases that are loaded into the plugin's memory.
+ */
 public class CaseData implements Cloneable {
     private final String caseName;
     private String caseDisplayName;
@@ -18,10 +21,11 @@ public class CaseData implements Cloneable {
     private Map<String, Item> items;
     private HistoryData[] historyData;
     private Hologram hologram;
+    private Map<String, Integer> levelGroups;
 
     public CaseData(String caseName, String caseDisplayName, String caseTitle,
                     String animation, AnimationSound animationSound, Map<String,
-            Item> items, HistoryData[] historyData, Hologram hologram) {
+            Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups) {
         this.caseName = caseName;
         this.caseDisplayName = caseDisplayName;
         this.caseTitle = caseTitle;
@@ -30,6 +34,7 @@ public class CaseData implements Cloneable {
         this.items = items;
         this.historyData = historyData;
         this.hologram = hologram;
+        this.levelGroups = levelGroups;
     }
 
     @Override
@@ -186,21 +191,59 @@ public class CaseData implements Cloneable {
         return clonedMap;
     }
 
+    /**
+     * Get case display name (case.DisplayName path in case config)
+     * @return case display name
+     */
+
     public String getCaseDisplayName() {
         return caseDisplayName;
     }
+
+    /**
+     * Set case display name (case.DisplayName path in case config)
+     * @param caseDisplayName new display name
+     */
 
     public void setCaseDisplayName(String caseDisplayName) {
         this.caseDisplayName = caseDisplayName;
     }
 
+    /**
+     * Get case hologram
+     * @return case hologram class
+     */
     public Hologram getHologram() {
         return hologram;
     }
+
+    /**
+     * Set case hologram
+     * @param hologram case hologram class
+     */
     public void setHologram(Hologram hologram) {
         this.hologram = hologram;
     }
 
+    /**
+     * Get case LevelGroups (optional setting for each case)
+     * @return map of LevelGroups
+     */
+    public Map<String, Integer> getLevelGroups() {
+        return levelGroups;
+    }
+
+    /**
+     * Set case LevelGroups (optional setting for each case)
+     * @param levelGroups map of LevelGroups
+     */
+    public void setLevelGroups(Map<String, Integer> levelGroups) {
+        this.levelGroups = levelGroups;
+    }
+
+    /**
+     * Class for the implementation of winning items from the case
+     */
     public static class Item implements Cloneable {
         private final String itemName;
         private String group;
@@ -360,18 +403,35 @@ public class CaseData implements Cloneable {
                     '}';
         }
 
+        /**
+         * Get item name (like path of item in case config)
+         * @return item name
+         */
         public String getItemName() {
             return itemName;
         }
 
+        /**
+         * Get alternative actions
+         * These actions are performed when LevelGroups is enabled and the player's group has a higher level than the one they won from the case
+         * @return list of actions
+         */
         public List<String> getAlternativeActions() {
             return alternativeActions;
         }
-        
+
+        /**
+         * Set alternative actions
+         * These actions are performed when LevelGroups is enabled and the player's group has a higher level than the one they won from the case
+         * @param alternativeActions list of actions
+         */
         public void setAlternativeActions(List<String> alternativeActions) {
             this.alternativeActions = alternativeActions;
         }
 
+        /**
+         * Class to implement a random action
+         */
         public static class RandomAction implements Cloneable {
             private int chance;
             private List<String> actions;
@@ -432,14 +492,28 @@ public class CaseData implements Cloneable {
                 }
             }
 
+            /**
+             * Get display name of random action
+             * Path in case config: RandomActions.(action).DisplayName
+             * @return display name of random action
+             */
             public String getDisplayName() {
                 return displayName;
             }
 
+            /**
+             * Set display name of random action
+             * Path in case config: RandomActions.(action).DisplayName
+             * @param displayName display name of random action
+             */
             public void setDisplayName(String displayName) {
                 this.displayName = displayName;
             }
         }
+
+        /**
+         * Class for the implementation of the winning item material
+         */
         public static class Material {
             private String id;
             private ItemStack itemStack;
@@ -562,6 +636,9 @@ public class CaseData implements Cloneable {
 
     }
 
+    /**
+     * Class for implementing animation sound in a case
+     */
     public static class AnimationSound implements Cloneable {
         private Sound sound;
         private float volume;
@@ -716,10 +793,18 @@ public class CaseData implements Cloneable {
             }
         }
 
+        /**
+         * Get material id like HDB:1234, HEAD:name, RED_WOOL etc.
+         * @return material id
+         */
         public int getId() {
             return id;
         }
 
+        /**
+         *  Set material id like HDB:1234, HEAD:name, RED_WOOL etc.
+         * @param id material id
+         */
         public void setId(int id) {
             this.id = id;
         }
@@ -758,7 +843,7 @@ public class CaseData implements Cloneable {
         }
 
         /**
-         * Get action (like group, but from randomactions section)
+         * Get action (like group, but from RandomActions section)
          * @return action
          */
 
@@ -766,12 +851,19 @@ public class CaseData implements Cloneable {
             return action;
         }
 
+        /**
+         * Get win item name (like path of item in case config)
+         * @return win item name
+         */
         public String getItem() {
             return item;
         }
     }
 
 
+    /**
+     * Class for the implementation of holograms of the case.
+     */
     public static class Hologram {
 
         private final boolean enabled;

@@ -15,6 +15,13 @@ case:
     Message:
       - '&6DonateCase'
 
+  LevelGroups: # delete all of this section, if you want to use default LevelGroups from Config.yml
+    legend: 4
+    deluxe: 3
+    vipplus: 2
+    vip: 1
+    default: 0
+
   Title: "&c&lDonate-&a&lCase" # Title in GUI
   DisplayName: "&c&lDonate-&a&lCase" # Name for placeholders
   Gui: # see more about items configuring -> https://wiki.jodexindustries.space/docs/DonateCase/items-settings

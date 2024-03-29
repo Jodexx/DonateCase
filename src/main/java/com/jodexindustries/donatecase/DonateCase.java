@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.PermissionDriver;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
@@ -19,6 +20,7 @@ import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
+import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
@@ -45,6 +47,8 @@ public class DonateCase extends JavaPlugin {
     public static Tools t;
     public static CaseDataBase mysql;
     public static HologramManager hologramManager = null;
+    public static LuckPerms luckPerms = null;
+    public static PermissionDriver permissionDriver = null;
 
     File langRu;
     File langEn;
@@ -61,6 +65,7 @@ public class DonateCase extends JavaPlugin {
 
         loadLibraries();
 
+
         setupConfigs();
 
         Bukkit.getPluginManager().registerEvents(new EventsListener(), this);
@@ -69,13 +74,11 @@ public class DonateCase extends JavaPlugin {
 
         setupLangs();
 
-        setupPermissions();
+        loadPermissionDriver();
 
 
         Metrics metrics = new Metrics(this, 18709);
         metrics.addCustomChart(new Metrics.SimplePie("language", () -> customConfig.getConfig().getString("DonatCase.Languages")));
-
-        setupMySQL();
 
         PluginCommand command = getCommand("donatecase");
         if(command != null) {
@@ -115,6 +118,28 @@ public class DonateCase extends JavaPlugin {
         if(hologramManager != null) hologramManager.removeAllHolograms();
 
     }
+    private void loadPermissionDriver() {
+        setupLuckPerms();
+        setupVault();
+        PermissionDriver temp;
+        try {
+            temp = PermissionDriver.valueOf(customConfig.getConfig().getString("DonatCase.PermissionDriver", "vault").toLowerCase());
+        }catch (IllegalArgumentException ignored) {
+            temp = PermissionDriver.luckperms;
+        }
+        if (temp == PermissionDriver.vault && permission != null) {
+            permissionDriver = temp;
+        }
+        if (temp == PermissionDriver.luckperms && luckPerms != null) {
+            permissionDriver = temp;
+        }
+    }
+    private void setupLuckPerms() {
+        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        if (provider != null) {
+            luckPerms = provider.getProvider();
+        }
+    }
     private void setupMySQL() {
         sql = customConfig.getConfig().getBoolean("DonatCase.MySql.Enabled");
         if (sql) {
@@ -132,7 +157,7 @@ public class DonateCase extends JavaPlugin {
         }
     }
 
-    private void setupPermissions() {
+    private void setupVault() {
         if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             RegisteredServiceProvider<Permission> permissionProvider = this.getServer().getServicesManager().getRegistration(Permission.class);
             if (permissionProvider != null) {
@@ -201,6 +226,8 @@ public class DonateCase extends JavaPlugin {
         }
         casesConfig = new CasesConfig();
         usePackets = customConfig.getConfig().getBoolean("DonatCase.UsePackets") && getServer().getPluginManager().isPluginEnabled("ProtocolLib");
+
+        setupMySQL();
 
         loadCases();
 
@@ -277,7 +304,7 @@ public class DonateCase extends JavaPlugin {
 
             Map<String, CaseData.Item> items = new HashMap<>();
             for (String item : config.getConfigurationSection("case.Items").getKeys(false)) {
-                String group = config.getString("case.Items." + item + ".Group");
+                String group = config.getString("case.Items." + item + ".Group", "");
                 int chance = config.getInt("case.Items." + item + ".Chance");
                 String giveType = config.getString("case.Items." + item + ".GiveType", "ONE");
 
@@ -332,13 +359,20 @@ public class DonateCase extends JavaPlugin {
                     }
                 }
             }
-            CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData, hologram);
+
+            Map<String, Integer> levelGroups = new HashMap<>();
+            ConfigurationSection lgSection = config.getConfigurationSection("case.LevelGroups");
+            if(lgSection != null) {
+                for (String group : lgSection.getKeys(false)) {
+                    int level = lgSection.getInt(group);
+                    levelGroups.put(group, level);
+                }
+            }
+
+            CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData, hologram, levelGroups);
             Case.caseData.put(caseName, caseData);
         }
         Logger.log("&aCases loaded!");
-    }
-    public static Permission getPermissions() {
-        return permission;
     }
 
     private void loadHologramManager() {
@@ -357,7 +391,7 @@ public class DonateCase extends JavaPlugin {
             String caseType = Case.getCaseTypeByCustomName(caseName);
             CaseData caseData = Case.getCase(caseType);
             Location location = Case.getCaseLocationByCustomName(caseName);
-            if (caseData != null && caseData.getHologram().isEnabled() && location != null && hologramManager != null) {
+            if (caseData != null && caseData.getHologram().isEnabled() && location != null && location.getWorld() != null && hologramManager != null) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }
