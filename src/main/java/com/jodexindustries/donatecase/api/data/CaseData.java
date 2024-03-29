@@ -18,10 +18,11 @@ public class CaseData implements Cloneable {
     private Map<String, Item> items;
     private HistoryData[] historyData;
     private Hologram hologram;
+    private Map<String, Integer> levelGroups;
 
     public CaseData(String caseName, String caseDisplayName, String caseTitle,
                     String animation, AnimationSound animationSound, Map<String,
-            Item> items, HistoryData[] historyData, Hologram hologram) {
+            Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups) {
         this.caseName = caseName;
         this.caseDisplayName = caseDisplayName;
         this.caseTitle = caseTitle;
@@ -30,6 +31,7 @@ public class CaseData implements Cloneable {
         this.items = items;
         this.historyData = historyData;
         this.hologram = hologram;
+        this.levelGroups = levelGroups;
     }
 
     @Override
@@ -199,6 +201,14 @@ public class CaseData implements Cloneable {
     }
     public void setHologram(Hologram hologram) {
         this.hologram = hologram;
+    }
+
+    public Map<String, Integer> getLevelGroups() {
+        return levelGroups;
+    }
+
+    public void setLevelGroups(Map<String, Integer> levelGroups) {
+        this.levelGroups = levelGroups;
     }
 
     public static class Item implements Cloneable {
