@@ -104,8 +104,7 @@ public class DonateCase extends JavaPlugin {
     public void onDisable() {
         DonateCaseDisableEvent donateCaseDisableEvent = new DonateCaseDisableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseDisableEvent);
-
-        addonManager.disableAddons();
+        if(addonManager != null) addonManager.disableAddons();
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new Placeholder().unregister();
         }
@@ -135,9 +134,11 @@ public class DonateCase extends JavaPlugin {
         }
     }
     private void setupLuckPerms() {
-        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-        if (provider != null) {
-            luckPerms = provider.getProvider();
+        if(Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) {
+            RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+            if (provider != null) {
+                luckPerms = provider.getProvider();
+            }
         }
     }
     private void setupMySQL() {
