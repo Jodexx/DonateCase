@@ -105,7 +105,7 @@ public class CaseGui {
                     if(historyCaseData == null) continue;
 
                     CaseData.Item historyItem = historyCaseData.getItem(data.getItem());
-
+                    if(historyItem == null) continue;
                     material = configCase.getString("case.Gui.Items." + item + ".Material", "HEAD:" + data.getPlayerName());
                     if(material.equalsIgnoreCase("DEFAULT")) {
                         material = historyItem.getMaterial().getId();

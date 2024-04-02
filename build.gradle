@@ -12,7 +12,7 @@ apply plugin: 'maven-publish'
 
 
 group = 'com.jodexindustries.donatecase'
-version = '2.2.0.0'
+version = '2.2.0.2'
 
 repositories {
     mavenCentral()
@@ -103,9 +103,11 @@ processResources {
 }
 shadowJar {
     archiveBaseName.set(project.name)
-    archiveClassifier.set('')
+    archiveClassifier.set(null)
     archiveVersion.set(project.version)
+
 }
+
 
 publishing {
     repositories {
@@ -126,6 +128,7 @@ publishing {
             from components.java
             artifact shadowJar
         }
+
     }
 }
 javadoc {

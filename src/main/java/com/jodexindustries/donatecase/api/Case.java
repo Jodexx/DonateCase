@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api;
 
-import com.j256.ormlite.stmt.query.In;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.OpenCase;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
@@ -23,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -391,48 +392,64 @@ public class Case {
                 action = PAPISupport.setPlaceholders(player, action);
             }
             action = t.rc(action);
+            int cooldown = 0;
+            Pattern pattern = Pattern.compile("\\[cooldown:(.*?)]");
+            Matcher matcher = pattern.matcher(action);
+            if(matcher.find()) {
+                action = action.replaceFirst("\\[cooldown:(.*?)]", "").trim();
+                cooldown = Integer.parseInt(matcher.group(1));
+            }
             if (action.startsWith("[command] ")) {
                 action = action.replaceFirst("\\[command] ", "");
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                        t.rt(action, "%player%:" + player.getName(),
+                String finalAction = action;
+                Bukkit.getScheduler().runTaskLater(instance, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                        t.rt(finalAction, "%player%:" + player.getName(),
                                 "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName())), 20L * cooldown);
             }
             if (action.startsWith("[message] ")) {
                 action = action.replaceFirst("\\[message] ", "");
-                player.sendMessage(
-                        t.rt(action, "%player%:" + player.getName(),
+                String finalAction = action;
+                Bukkit.getScheduler().runTaskLater(instance, () -> player.sendMessage(
+                        t.rt(finalAction, "%player%:" + player.getName(),
                                 "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName())), 20L *cooldown);
             }
 
             if (action.startsWith("[broadcast] ")) {
                 action = action.replaceFirst("\\[broadcast] ", "");
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    p.sendMessage(
-                            t.rt(action, "%player%:" + player.getName(),
-                                    "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                                    "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
-                }
+                String finalAction = action;
+                Bukkit.getScheduler().runTaskLater(instance, () -> {
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        p.sendMessage(
+                                t.rt(finalAction, "%player%:" + player.getName(),
+                                        "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                                        "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                    }
+                }, 20L * cooldown);
             }
             if (action.startsWith("[title] ")) {
                 action = action.replaceFirst("\\[title] ", "");
                 String[] args = action.split(";");
-                String title = "";
-                String subTitle = "";
-                if(args.length >= 1) {
+                String title;
+                String subTitle;
+                if (args.length >= 1) {
                     title = args[0];
+                } else {
+                    title = "";
                 }
-                if(args.length > 1) {
+                if (args.length > 1) {
                     subTitle = args[1];
+                } else {
+                    subTitle = "";
                 }
-                player.sendTitle(
+                Bukkit.getScheduler().runTaskLater(instance, () -> player.sendTitle(
                         t.rt(title, "%player%:" + player.getName(),
                                 "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
                                 "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()),
                         t.rt(subTitle, "%player%:" + player.getName(),
                                 "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName())), 20L * cooldown);
             }
         }
     }

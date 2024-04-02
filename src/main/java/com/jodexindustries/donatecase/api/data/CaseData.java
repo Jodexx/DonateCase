@@ -6,6 +6,7 @@ import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -71,6 +72,7 @@ public class CaseData implements Cloneable {
      * @param name item name
      * @return item
      */
+    @Nullable
     public Item getItem(String name) {
         return items.getOrDefault(name, null);
     }
@@ -281,6 +283,7 @@ public class CaseData implements Cloneable {
          * @param name random action name
          * @return CaseData.RandomAction
          */
+        @Nullable
         public RandomAction getRandomAction(String name) {
             return randomActions.getOrDefault(name, null);
         }
