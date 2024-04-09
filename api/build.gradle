@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group = 'com.jodexindustries.jodexindustries'
+version = '2.2.0.1'
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
+        }
+    }
+}
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+dependencies {
+    compileOnly 'org.jetbrains:annotations:24.0.0'
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+}
+publishing {
+    repositories {
+        maven {
+            name = "JodexIndustries"
+            url = "https://repo.jodexindustries.space/releases"
+            credentials(PasswordCredentials)
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+    publications {
+        maven(MavenPublication) {
+            groupId = "com.jodexindustries.donatecase"
+            artifactId = "DonateCaseAPI"
+            version = "2.2.0.1"
+            from components.java
+        }
+
+    }
+}
+javadoc {
+    options.links('https://docs.oracle.com/en/java/javase/11/docs/api/', "https://helpch.at/docs/1.16.5/")
+    source = sourceSets.main.allJava
+}
