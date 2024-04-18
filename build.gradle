@@ -37,7 +37,7 @@ repositories {
     }
     maven {
         name = "jodexindustries"
-        url = "https://repo.jodexindustries.space/releases"
+        url = "https://repo.jodexindustries.xyz/releases"
     }
     maven {
         name = "sonatype"
