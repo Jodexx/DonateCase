@@ -301,7 +301,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                             Location l = player.getTargetBlock(null, 5).getLocation();
                             if (Case.hasCaseByLocation(l)) {
                                 Case.deleteCaseByLocation(l);
-                                Case.getHologramManager().removeHologram(l.getBlock());
+                                if(Case.getHologramManager() != null) Case.getHologramManager().removeHologram(l.getBlock());
                                 DonateCase.t.msg(sender, DonateCase.customConfig.getLang().getString("RemoveDonatCase"));
                             } else {
                                 DonateCase.t.msg(sender, DonateCase.customConfig.getLang().getString("BlockDontDonatCase"));
