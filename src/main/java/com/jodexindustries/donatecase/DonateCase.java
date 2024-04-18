@@ -108,14 +108,12 @@ public class DonateCase extends JavaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new Placeholder().unregister();
         }
-        cleanCache();
-
 
         if (mysql != null) {
             mysql.close();
         }
         if(hologramManager != null) hologramManager.removeAllHolograms();
-
+        cleanCache();
     }
     private void loadPermissionDriver() {
         setupLuckPerms();
