@@ -311,6 +311,8 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                         String name = args[1];
                         if (Case.hasCaseTypeByCustomName(name)) {
                             Case.deleteCaseByName(name);
+                            Location location = Case.getCaseLocationByCustomName(name);
+                            if(Case.getHologramManager() != null) if(location != null) Case.getHologramManager().removeHologram(location.getBlock());
                             DonateCase.t.msg(sender, DonateCase.customConfig.getLang().getString("RemoveDonatCase"));
                         } else {
                             DonateCase.t.msg(sender, DonateCase.t.rt(DonateCase.customConfig.getLang().getString("CaseNotExist"), "%case:" + name));
