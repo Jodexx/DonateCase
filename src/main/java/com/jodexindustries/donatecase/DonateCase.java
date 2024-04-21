@@ -302,45 +302,50 @@ public class DonateCase extends JavaPlugin {
             CaseData.Hologram hologram = hologramEnabled ? new CaseData.Hologram(true, hologramHeight, range, hologramMessage) : new CaseData.Hologram();
 
             Map<String, CaseData.Item> items = new HashMap<>();
-            for (String item : config.getConfigurationSection("case.Items").getKeys(false)) {
-                String group = config.getString("case.Items." + item + ".Group", "");
-                int chance = config.getInt("case.Items." + item + ".Chance");
-                String giveType = config.getString("case.Items." + item + ".GiveType", "ONE");
+            ConfigurationSection itemsSection = config.getConfigurationSection("case.Items");
+            if(itemsSection != null) {
+                for (String item : itemsSection.getKeys(false)) {
+                    String group = config.getString("case.Items." + item + ".Group", "");
+                    int chance = config.getInt("case.Items." + item + ".Chance");
+                    String giveType = config.getString("case.Items." + item + ".GiveType", "ONE");
 
-                // get actions
-                List<String> actions = config.getStringList("case.Items." + item + ".Actions");
+                    // get actions
+                    List<String> actions = config.getStringList("case.Items." + item + ".Actions");
 
-                // get alternative actions
-                List<String> alternativeActions = config.getStringList("case.Items." + item + ".AlternativeActions");
+                    // get alternative actions
+                    List<String> alternativeActions = config.getStringList("case.Items." + item + ".AlternativeActions");
 
-                // get random actions
-                Map<String, CaseData.Item.RandomAction> randomActions = new HashMap<>();
-                if(config.getConfigurationSection("case.Items." + item + ".RandomActions") != null) {
-                    for (String randomAction : config.getConfigurationSection("case.Items." + item + ".RandomActions").getKeys(false)) {
-                        int actionChance = config.getInt("case.Items." + item + ".RandomActions." + randomAction + ".Chance");
-                        List<String> randomActionsList = config.getStringList("case.Items." + item + ".RandomActions." + randomAction + ".Actions");
-                        String displayName = config.getString("case.Items." + item + ".RandomActions." + randomAction + ".DisplayName");
-                        CaseData.Item.RandomAction randomActionObject = new CaseData.Item.RandomAction(actionChance, randomActionsList, displayName);
-                        randomActions.put(randomAction, randomActionObject);
+                    // get random actions
+                    Map<String, CaseData.Item.RandomAction> randomActions = new HashMap<>();
+                    if (config.getConfigurationSection("case.Items." + item + ".RandomActions") != null) {
+                        for (String randomAction : config.getConfigurationSection("case.Items." + item + ".RandomActions").getKeys(false)) {
+                            int actionChance = config.getInt("case.Items." + item + ".RandomActions." + randomAction + ".Chance");
+                            List<String> randomActionsList = config.getStringList("case.Items." + item + ".RandomActions." + randomAction + ".Actions");
+                            String displayName = config.getString("case.Items." + item + ".RandomActions." + randomAction + ".DisplayName");
+                            CaseData.Item.RandomAction randomActionObject = new CaseData.Item.RandomAction(actionChance, randomActionsList, displayName);
+                            randomActions.put(randomAction, randomActionObject);
+                        }
                     }
+
+                    // get rgb
+                    String[] rgb = null;
+                    String rgbString = config.getString("case.Items." + item + ".Item.Rgb");
+                    if (rgbString != null) {
+                        rgb = rgbString.replaceAll(" ", "").split(",");
+                    }
+
+                    // get material
+                    String id = config.getString("case.Items." + item + ".Item.ID");
+                    String itemDisplayName = t.rc(config.getString("case.Items." + item + ".Item.DisplayName"));
+                    boolean enchanted = config.getBoolean("case.Items." + item + ".Item.Enchanted");
+                    ItemStack itemStack = t.getCaseItem(itemDisplayName, id, enchanted, rgb);
+                    CaseData.Item.Material material = new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted);
+
+                    CaseData.Item caseItem = new CaseData.Item(item, group, chance, material, giveType, actions, randomActions, rgb, alternativeActions);
+                    items.put(item, caseItem);
                 }
-
-                // get rgb
-                String[] rgb = null;
-                String rgbString = config.getString("case.Items." + item + ".Item.Rgb");
-                if(rgbString != null) {
-                    rgb = rgbString.replaceAll(" ", "").split(",");
-                }
-
-                // get material
-                String id = config.getString("case.Items." + item + ".Item.ID");
-                String itemDisplayName = t.rc(config.getString("case.Items." + item + ".Item.DisplayName"));
-                boolean enchanted = config.getBoolean("case.Items." + item + ".Item.Enchanted");
-                ItemStack itemStack = t.getCaseItem(itemDisplayName, id, enchanted, rgb);
-                CaseData.Item.Material material = new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted);
-
-                CaseData.Item caseItem = new CaseData.Item(item, group, chance, material, giveType, actions, randomActions, rgb, alternativeActions);
-                items.put(item, caseItem);
+            } else {
+                getLogger().warning("Case " + caseName + " has a broken case.Items section");
             }
             CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
             if(!sql) {
