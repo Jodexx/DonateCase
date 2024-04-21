@@ -1,19 +1,15 @@
 package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.OpenCase;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.events.*;
 import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.Logger;
-import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -76,7 +72,7 @@ public class EventsListener implements Listener {
                     if (!event.isCancelled()) {
                         if (Case.getKeys(caseType, playerName) >= 1) {
                             Case.removeKeys(caseType, playerName, 1);
-                            new StartAnimation(p, location, caseType);
+                            Case.startAnimation(p, location, caseType);
                             OpenCaseEvent openEvent = new OpenCaseEvent(p, caseType, location.getBlock());
                             Bukkit.getServer().getPluginManager().callEvent(openEvent);
                             p.closeInventory();
@@ -127,28 +123,23 @@ public class EventsListener implements Listener {
             Location blockLocation = e.getClickedBlock().getLocation();
             if (Case.hasCaseByLocation(blockLocation)) {
                 String caseType = Case.getCaseTypeByLocation(blockLocation);
+                if(caseType == null) return;
                 e.setCancelled(true);
                 CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType);
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    if (!Case.playersCases.containsKey(p.getUniqueId())) {
-                        if (!Case.activeCases.containsKey(blockLocation)) {
-                            Case.playersCases.put(p.getUniqueId(), new OpenCase(blockLocation, caseType, p.getUniqueId()));
-                            try {
-                                if(Case.hasCaseByType(caseType)) {
-                                    CaseData caseData = Case.getCase(caseType).clone();
-                                    new CaseGui(p, caseData);
-                                } else {
-                                    DonateCase.t.msg(p, "&cSomething wrong! Contact with server administrator!");
-                                    DonateCase.instance.getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
-                                }
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
+                    if (!Case.activeCases.containsKey(blockLocation)) {
+                        if (Case.hasCaseByType(caseType)) {
+                            CaseData caseData = Case.getCase(caseType);
+                            if(caseData == null) return;
+                            Case.openGui(p, caseData, blockLocation);
                         } else {
-                            DonateCase.t.msg(p, DonateCase.customConfig.getLang().getString("HaveOpenCase"));
+                            DonateCase.t.msg(p, "&cSomething wrong! Contact with server administrator!");
+                            DonateCase.instance.getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
                         }
-                    } // else player already opened case
+                    } else {
+                        DonateCase.t.msg(p, DonateCase.customConfig.getLang().getString("HaveOpenCase"));
+                    }
                 }
             }
         }

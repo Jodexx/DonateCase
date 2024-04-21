@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.OpenCase;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
@@ -62,6 +63,7 @@ public class Case {
         if(Case.getHologramManager() != null && (c != null && c.getHologram().isEnabled())) {
             Case.getHologramManager().createHologram(lv.getBlock(), c);
         }
+        if(lv.getWorld() == null) return;
         String location = lv.getWorld().getName() + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
         customConfig.getCases().set("DonatCase.Cases." + caseName + ".location", location);
         customConfig.getCases().set("DonatCase.Cases." + caseName + ".type", type);
@@ -161,13 +163,16 @@ public class Case {
             return false;
         }
         for (String name : cases_.getValues(false).keySet()) {
-            if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
+            ConfigurationSection caseSection = customConfig.getCases().getConfigurationSection("DonatCase.Cases." + name);
+            if(caseSection == null || caseSection.getString("location") == null) {
                 return false;
             } else {
-                if(hasCaseByType(customConfig.getCases().getString("DonatCase.Cases." + name + ".type"))) {
-                    String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
-                    World world = Bukkit.getWorld(location[0]);
-                    Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
+                String type = caseSection.getString("type");
+                String location = caseSection.getString("location");
+                if(hasCaseByType(type) && location != null) {
+                    String[] worldLocation = location.split(";");
+                    World world = Bukkit.getWorld(worldLocation[0]);
+                    Location temp = new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
                     if (temp.equals(loc)) {
                         return true;
                     }
@@ -184,18 +189,19 @@ public class Case {
      * @return Case type
      */
     public static String getCaseTypeByLocation(Location loc) {
-        ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
-
-        for(String name : cases_.getValues(false).keySet()) {
-            if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
-                return null;
-            } else {
-                String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
-                World world = Bukkit.getWorld(location[0]);
-                Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
-                if (temp.equals(loc)) {
-                    return customConfig.getCases().getString("DonatCase.Cases." + name + ".type");
-                }
+        ConfigurationSection casesSection = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+        if(casesSection == null) return null;
+        for(String name : casesSection.getValues(false).keySet()) {
+            ConfigurationSection caseSection = casesSection.getConfigurationSection(name);
+            if(caseSection == null) return null;
+            String type = caseSection.getString("type");
+            String location = caseSection.getString("location");
+            if(location == null) return null;
+            String[] worldLocation = location.split(";");
+            World world = Bukkit.getWorld(worldLocation[0]);
+            Location temp = new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
+            if (temp.equals(loc)) {
+                return type;
             }
         }
         return null;
@@ -208,17 +214,18 @@ public class Case {
      * @return Case name
      */
     public static String getCaseCustomNameByLocation(Location loc) {
-        ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
-        for (String name : cases_.getValues(false).keySet()) {
-            if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
-                return null;
-            } else {
-                String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
-                World world = Bukkit.getWorld(location[0]);
-                Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
-                if (temp.equals(loc)) {
-                    return name;
-                }
+        ConfigurationSection casesSection = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+        if(casesSection == null) return null;
+        for (String name : casesSection.getValues(false).keySet()) {
+            ConfigurationSection caseSection = casesSection.getConfigurationSection(name);
+            if(caseSection == null) return null;
+            String location = caseSection.getString("location");
+            if(location == null) return null;
+            String[] worldLocation = location.split(";");
+            World world = Bukkit.getWorld(worldLocation[0]);
+            Location temp = new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
+            if (temp.equals(loc)) {
+                return name;
             }
         }
 
@@ -360,7 +367,8 @@ public class Case {
                 }
             }
         }
-        getCase(caseData.getCaseName()).setHistoryData(list);
+        CaseData finalCase = getCase(caseData.getCaseName());
+        if(finalCase != null) finalCase.setHistoryData(list);
 
         customConfig.saveData();
     }
@@ -370,11 +378,15 @@ public class Case {
         int maxChance = 0;
         int from = 0;
         for (String command : item.getRandomActions().keySet()) {
-            maxChance += item.getRandomAction(command).getChance();
+            CaseData.Item.RandomAction randomAction = item.getRandomAction(command);
+            if(randomAction == null) continue;
+            maxChance += randomAction.getChance();
         }
         int rand = random.nextInt(maxChance);
         for (String command : item.getRandomActions().keySet()) {
-            int itemChance = item.getRandomAction(command).getChance();
+            CaseData.Item.RandomAction randomAction = item.getRandomAction(command);
+            if(randomAction == null) continue;
+            int itemChance = randomAction.getChance();
             if (from <= rand && rand < from + itemChance) {
                 endCommand = command;
                 break;
@@ -386,7 +398,10 @@ public class Case {
 
     private static void executeActions(Player player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
         List<String> actions = alternative ? item.getAlternativeActions() : item.getActions();
-        if(choice != null) actions = item.getRandomAction(choice).getActions();
+        if(choice != null) {
+            CaseData.Item.RandomAction randomAction = item.getRandomAction(choice);
+            if(randomAction != null) actions = randomAction.getActions();
+        }
         for (String action : actions) {
             if (instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 action = PAPISupport.setPlaceholders(player, action);
@@ -449,7 +464,8 @@ public class Case {
                                 "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()),
                         t.rt(subTitle, "%player%:" + player.getName(),
                                 "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName())), 20L * cooldown);
+                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()), 10, 70, 20)
+                        , 20L * cooldown);
             }
         }
     }
@@ -462,21 +478,22 @@ public class Case {
      * @return case location in Cases.yml (with yaw and pitch)
      */
     public static Location getCaseLocationByBlockLocation(Location blockLocation) {
-        ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+        ConfigurationSection casesSection = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+        if(casesSection == null) return null;
 
-        for(String name : cases_.getValues(false).keySet()) {
-            if(customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
-                return null;
-            } else {
-                String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
-                World world = Bukkit.getWorld(location[0]);
-                Location temp = new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
-                if (temp.equals(blockLocation)) {
-                    Location result = temp.clone();
-                    result.setPitch(Float.parseFloat(location[4]));
-                    result.setYaw(Float.parseFloat(location[5]));
-                    return result;
-                }
+        for(String name : casesSection.getValues(false).keySet()) {
+            ConfigurationSection caseSection = casesSection.getConfigurationSection(name);
+            if (caseSection == null) return null;
+            String location = caseSection.getString("location");
+            if (location == null) return null;
+            String[] worldLocation = location.split(";");
+            World world = Bukkit.getWorld(worldLocation[0]);
+            Location temp = new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
+            if (temp.equals(blockLocation)) {
+                Location result = temp.clone();
+                result.setPitch(Float.parseFloat(worldLocation[4]));
+                result.setYaw(Float.parseFloat(worldLocation[5]));
+                return result;
             }
         }
         return null;
@@ -501,7 +518,7 @@ public class Case {
             Case.playersCases.put(p.getUniqueId(), new OpenCase(blockLocation, caseData.getCaseName(), p.getUniqueId()));
             inventory = new CaseGui(p, caseData).getInventory();
         } else {
-            instance.getLogger().warning("Player already opened case");
+            instance.getLogger().warning("Player " + p.getName() + " already opened case!");
         }
         return inventory;
     }
@@ -538,8 +555,9 @@ public class Case {
      * Unregister all animations
      */
     public static void unregisterAnimations() {
-        for (String animation : AnimationManager.getRegisteredAnimations().keySet()) {
-            AnimationManager.unregisterAnimation(animation);
+        List<String> list = new ArrayList<>(AnimationManager.getRegisteredAnimations().keySet());
+        for (String s : list) {
+            AnimationManager.unregisterAnimation(s);
         }
     }
 
@@ -599,14 +617,11 @@ public class Case {
      */
     @Nullable
     public static Location getCaseLocationByCustomName(String name) {
-        if (customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
-            return null;
-        } else {
-            String[] location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location").split(";");
-            World world = Bukkit.getWorld(location[0]);
-            return new Location(world, Double.parseDouble(location[1]), Double.parseDouble(location[2]), Double.parseDouble(location[3]));
-
-        }
+        String location = customConfig.getCases().getString("DonatCase.Cases." + name + ".location");
+        if (location == null) return null;
+        String[] worldLocation = location.split(";");
+        World world = Bukkit.getWorld(worldLocation[0]);
+        return new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
     }
 
     /**
@@ -624,7 +639,7 @@ public class Case {
      * @return player primary group
      */
     public static String getPlayerGroup(Player player) {
-        String group = "";
+        String group = null;
         if(permissionDriver == PermissionDriver.vault) if(permission != null) group = permission.getPrimaryGroup(player);
         if(permissionDriver == PermissionDriver.luckperms) if(luckPerms != null) group = luckPerms.getPlayerAdapter(Player.class).getUser(player).getPrimaryGroup();
         return group;

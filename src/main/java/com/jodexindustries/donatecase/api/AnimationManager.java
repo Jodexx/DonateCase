@@ -53,7 +53,7 @@ public class AnimationManager {
      * @param name Animation name
      */
     public static void unregisterAnimation(String name) {
-        if(registeredAnimations.get(name) != null) {
+        if(registeredAnimations.containsKey(name)) {
             registeredAnimations.remove(name);
             AnimationUnregisteredEvent animationUnRegisteredEvent = new AnimationUnregisteredEvent(name);
             Bukkit.getServer().getPluginManager().callEvent(animationUnRegisteredEvent);
