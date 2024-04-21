@@ -79,6 +79,8 @@ public class CasesConfig {
                             }
                         }
                         cases.put(name, caseConfig);
+                    } else {
+                        DonateCase.instance.getLogger().warning("Case " + name + " has a broken case section, skipped.");
                     }
                 }
             }
