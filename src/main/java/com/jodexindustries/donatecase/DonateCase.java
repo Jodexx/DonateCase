@@ -56,7 +56,7 @@ public class DonateCase extends JavaPlugin {
     public static CustomConfig customConfig;
     public static CasesConfig casesConfig;
     private boolean usePackets = true;
-
+    @Override
     public void onEnable() {
         long time = System.currentTimeMillis();
         instance = this;
@@ -390,7 +390,7 @@ public class DonateCase extends JavaPlugin {
             String caseType = Case.getCaseTypeByCustomName(caseName);
             CaseData caseData = Case.getCase(caseType);
             Location location = Case.getCaseLocationByCustomName(caseName);
-            if (caseData != null && caseData.getHologram().isEnabled() && location != null && location.getWorld() != null && hologramManager != null) {
+            if (caseData != null && caseData.getHologram().isEnabled() && location != null && location.getWorld() != null && hologramManager != null && !Case.activeCases.containsKey(location)) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }
