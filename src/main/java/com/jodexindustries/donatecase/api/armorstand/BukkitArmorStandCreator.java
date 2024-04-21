@@ -51,16 +51,22 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
             switch (equipmentSlot) {
                 case HAND:
                     equipment.setItemInMainHand(item);
+                    break;
                 case OFF_HAND:
                     equipment.setItemInOffHand(item);
+                    break;
                 case CHEST:
                     equipment.setChestplate(item);
+                    break;
                 case LEGS:
                     equipment.setLeggings(item);
+                    break;
                 case HEAD:
                     equipment.setHelmet(item);
+                    break;
                 case FEET:
                     equipment.setBoots(item);
+                    break;
             }
         }
     }
