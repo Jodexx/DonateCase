@@ -22,7 +22,12 @@ public class CasesConfig {
                     YamlConfiguration caseConfig = YamlConfiguration.loadConfiguration(file);
                     if(caseConfig.getConfigurationSection("case") != null) {
                         boolean isOld = false;
-                        for (String item : caseConfig.getConfigurationSection("case.Items").getKeys(false)) {
+                        ConfigurationSection items = caseConfig.getConfigurationSection("case.Items");
+                        if(items == null) {
+                            DonateCase.instance.getLogger().warning("Case " + name + " has a broken case.Items section, skipped.");
+                            continue;
+                        }
+                        for (String item : items.getKeys(false)) {
                             List<String> actions = new ArrayList<>();
                             String giveCommand = caseConfig.getString("case.Items." + item + ".GiveCommand");
                             List<String> giveCommands = caseConfig.getStringList("case.Items." + item + ".Commands");
