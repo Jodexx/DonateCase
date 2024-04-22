@@ -9,7 +9,9 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -90,7 +92,8 @@ public class AddonManager {
      * Disable all loaded addons
      */
     public void disableAddons() {
-        for (String addon : addons.keySet()) {
+        List<String> list = new ArrayList<>(addons.keySet());
+        for (String addon : list) {
             disableAddon(addon);
         }
         addons.clear();
