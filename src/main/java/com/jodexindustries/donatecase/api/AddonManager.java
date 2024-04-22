@@ -52,7 +52,6 @@ public class AddonManager {
                         Case.getInstance().getLogger().warning("Addon with name " + name + " already loaded!");
                         return;
                     }
-
                     URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()}, this.getClass().getClassLoader());
                     Class<?> mainClass = Class.forName(mainClassName, true, loader);
                     Case.getInstance().getLogger().info("Loading " + name + " addon v" + version);
@@ -60,7 +59,6 @@ public class AddonManager {
                     addon.init(version, name, file, loader);
                     addons.put(file.getName(), addon);
                     addon.onEnable();
-                    Case.getInstance().getLogger().info("Loaded " + name + " addon");
                 }
             } catch (IOException | ClassNotFoundException | InvocationTargetException | InstantiationException |
                      IllegalAccessException | NoSuchMethodException e) {
