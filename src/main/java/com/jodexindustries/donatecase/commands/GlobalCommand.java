@@ -364,11 +364,9 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                 String addonName = null;
                 try {
                     addonName = JavaPlugin.getProvidingPlugin(subCommand.getClass()).getName();
-                } catch (IllegalArgumentException ignored) {}
+                } catch (IllegalArgumentException | IllegalStateException ignored) {}
 
-                if(addonName == null) {
-                    addonName = JavaAddon.getNameByClassLoader(subCommand.getClass().getClassLoader());
-                }
+                if(addonName == null) addonName = JavaAddon.getNameByClassLoader(subCommand.getClass().getClassLoader());
                 if (addonsMap.get(addonName) != null) {
                     list = addonsMap.get(addonName);
                 }
