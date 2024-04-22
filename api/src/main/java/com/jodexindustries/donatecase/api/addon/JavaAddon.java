@@ -124,10 +124,16 @@ public abstract class JavaAddon implements Addon {
     }
 
     public static String getNameByClassLoader(ClassLoader classLoader) {
-        InputStream input = classLoader.getResourceAsStream("addon.yml");
-        Yaml yaml = new Yaml();
-        Map<String, Object> data = yaml.load(input);
-        return (String) data.get("name");
+        String name = null;
+        try {
+            InputStream input = classLoader.getResourceAsStream("addon.yml");
+            Yaml yaml = new Yaml();
+            Map<String, Object> data = yaml.load(input);
+            name = (String) data.get("name");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return name;
     }
 
     public URLClassLoader getUrlClassLoader() {
