@@ -2,9 +2,8 @@ package com.jodexindustries.donatecase;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.j256.ormlite.logger.Level;
-import com.jodexindustries.donatecase.api.AddonManager;
-import com.jodexindustries.donatecase.api.AnimationManager;
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.CaseAPI;
+import com.jodexindustries.donatecase.api.addon.InstanceAddon;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
@@ -42,17 +41,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DonateCase extends JavaPlugin {
+public class DonateCase extends JavaPlugin implements InstanceAddon {
     public static DonateCase instance;
-    public static AddonManager addonManager;
     public static Permission permission = null;
     public static boolean sql = false;
 
-    public static Tools t;
     public static CaseDataBase mysql;
     public static HologramManager hologramManager = null;
     public static LuckPerms luckPerms = null;
     public static PermissionDriver permissionDriver = null;
+    public static CaseAPI api;
 
     File langRu;
     File langEn;
@@ -60,15 +58,15 @@ public class DonateCase extends JavaPlugin {
     public static CustomConfig customConfig;
     public static CasesConfig casesConfig;
     private boolean usePackets = true;
+
     @Override
     public void onEnable() {
         long time = System.currentTimeMillis();
         instance = this;
-        t = new Tools();
+        api = new CaseAPI(this);
         loadPlaceholderAPI();
 
         loadLibraries();
-
 
         setupConfigs();
 
@@ -92,8 +90,7 @@ public class DonateCase extends JavaPlugin {
 
         registerDefaultAnimations();
 
-        addonManager = new AddonManager();
-        addonManager.loadAddons();
+        api.getAddonManager().loadAddons();
 
         loadHologramManager();
 
@@ -105,11 +102,17 @@ public class DonateCase extends JavaPlugin {
         Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
     }
 
+    @Override
+    public String getVersion() {
+        return super.getDescription().getVersion();
+    }
+
+    @Override
     public void onDisable() {
         DonateCaseDisableEvent donateCaseDisableEvent = new DonateCaseDisableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseDisableEvent);
-        Case.unregisterAnimations();
-        if(addonManager != null) addonManager.disableAddons();
+        api.unregisterAnimations();
+        if(api.getAddonManager() != null) api.getAddonManager().disableAddons();
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new Placeholder().unregister();
         }
@@ -180,7 +183,7 @@ public class DonateCase extends JavaPlugin {
     private void loadUpdater() {
         if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
-                if (t.getPluginVersion(getDescription().getVersion()) >= t.getPluginVersion(version)) {
+                if (Tools.getPluginVersion(getDescription().getVersion()) >= Tools.getPluginVersion(version)) {
                     Logger.log("There is not a new update available.");
                 } else {
                     Logger.log(ChatColor.GREEN + "There is a new update " + version +  " available.");
@@ -192,10 +195,10 @@ public class DonateCase extends JavaPlugin {
     }
     public void cleanCache() {
         Bukkit.getWorlds().forEach(world -> world.getEntitiesByClass(ArmorStand.class).stream().filter(stand -> stand.hasMetadata("case")).forEachOrdered(Entity::remove));
-        Case.playersGui.clear();
-        Case.caseData.clear();
-        Case.activeCases.clear();
-        Case.activeCasesByLocation.clear();
+        CaseAPI.playersGui.clear();
+        CaseAPI.caseData.clear();
+        CaseAPI.activeCases.clear();
+        CaseAPI.activeCasesByLocation.clear();
     }
 
     public void setupConfigs() {
@@ -221,7 +224,7 @@ public class DonateCase extends JavaPlugin {
         if(customConfig.getConfig().getConfigurationSection("DonatCase.Cases") != null) {
             new File(getDataFolder(), "cases").mkdir();
             Logger.log("&cOutdated cases format!");
-            t.convertCases();
+            Tools.convertCases();
         } else {
             if(!new File(getDataFolder(), "cases").exists()) {
                 new File(getDataFolder(), "cases").mkdir();
@@ -242,7 +245,7 @@ public class DonateCase extends JavaPlugin {
 
         if(customConfig.getCases().getString("config") == null || !customConfig.getCases().getString("config", "").equalsIgnoreCase("1.0")) {
             Logger.log("Conversion of case locations to a new method of storage...");
-            t.convertCasesLocation();
+            Tools.convertCasesLocation();
         }
     }
 
@@ -280,16 +283,16 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultAnimations() {
-        AnimationManager.registerAnimation("SHAPE", new ShapeAnimation());
-        AnimationManager.registerAnimation("WHEEL", new WheelAnimation());
-        AnimationManager.registerAnimation("RAINLY", new RainlyAnimation());
-        AnimationManager.registerAnimation("FIREWORK", new FireworkAnimation());
-        AnimationManager.registerAnimation("FULLWHEEL", new FullWheelAnimation());
+        api.getAnimationManager().registerAnimation("SHAPE", new ShapeAnimation());
+        api.getAnimationManager().registerAnimation("WHEEL", new WheelAnimation());
+        api.getAnimationManager().registerAnimation("RAINLY", new RainlyAnimation());
+        api.getAnimationManager().registerAnimation("FIREWORK", new FireworkAnimation());
+        api.getAnimationManager().registerAnimation("FULLWHEEL", new FullWheelAnimation());
         Logger.log("&aRegistered &adefault animations");
     }
 
     private void loadCases() {
-        Case.caseData.clear();
+        CaseAPI.caseData.clear();
         for (String caseName : casesConfig.getCases().keySet()) {
             YamlConfiguration config = casesConfig.getCase(caseName);
             ConfigurationSection caseSection = config.getConfigurationSection("case");
@@ -297,9 +300,9 @@ public class DonateCase extends JavaPlugin {
                 getLogger().warning("Case " + caseName + " has a broken case section, skipped.");
                 continue;
             }
-            String caseTitle = t.rc(caseSection.getString("Title"));
+            String caseTitle = Tools.rc(caseSection.getString("Title"));
             String caseDisplayName = caseSection.getString("DisplayName");
-            caseDisplayName = caseDisplayName == null ? "" : t.rc(caseDisplayName);
+            caseDisplayName = caseDisplayName == null ? "" : Tools.rc(caseDisplayName);
             String animationName = caseSection.getString("Animation");
 
             String animationSound = caseSection.getString("AnimationSound", "NULL").toUpperCase();
@@ -355,9 +358,9 @@ public class DonateCase extends JavaPlugin {
 
                     // get material
                     String id = itemSection.getString("Item.ID");
-                    String itemDisplayName = t.rc(itemSection.getString("Item.DisplayName"));
+                    String itemDisplayName = Tools.rc(itemSection.getString("Item.DisplayName"));
                     boolean enchanted = itemSection.getBoolean("Item.Enchanted");
-                    ItemStack itemStack = t.getCaseItem(itemDisplayName, id, enchanted, rgb);
+                    ItemStack itemStack = Tools.getCaseItem(itemDisplayName, id, enchanted, rgb);
                     CaseData.Item.Material material = new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted);
 
                     CaseData.Item caseItem = new CaseData.Item(item, group, chance, material, giveType, actions, randomActions, rgb, alternativeActions);
@@ -397,7 +400,7 @@ public class DonateCase extends JavaPlugin {
             }
 
             CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData, hologram, levelGroups);
-            Case.caseData.put(caseName, caseData);
+            CaseAPI.caseData.put(caseName, caseData);
         }
         Logger.log("&aCases loaded!");
     }
@@ -415,10 +418,10 @@ public class DonateCase extends JavaPlugin {
         ConfigurationSection section = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
         if(section == null || section.getKeys(false).isEmpty()) return;
         for (String caseName : section.getKeys(false)) {
-            String caseType = Case.getCaseTypeByCustomName(caseName);
-            CaseData caseData = Case.getCase(caseType);
-            Location location = Case.getCaseLocationByCustomName(caseName);
-            if (caseData != null && caseData.getHologram().isEnabled() && location != null && location.getWorld() != null && hologramManager != null && !Case.activeCasesByLocation.containsKey(location)) {
+            String caseType = api.getCaseTypeByCustomName(caseName);
+            CaseData caseData = api.getCase(caseType);
+            Location location = api.getCaseLocationByCustomName(caseName);
+            if (caseData != null && caseData.getHologram().isEnabled() && location != null && location.getWorld() != null && hologramManager != null && !CaseAPI.activeCasesByLocation.containsKey(location)) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }
