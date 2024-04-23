@@ -64,7 +64,7 @@ public class Tools {
 
         return null;
     }
-    public ArmorStandCreator createArmorStand() {
+    public static ArmorStandCreator createArmorStand() {
         if(instance.isUsePackets()) {
             return new PacketArmorStandCreator();
         } else {
@@ -72,7 +72,7 @@ public class Tools {
         }
     }
 
-    public void launchFirework(Location l) {
+    public static void launchFirework(Location l) {
         Random r = new Random();
         Firework fw = (Firework) Objects.requireNonNull(l.getWorld()).spawnEntity(l.subtract(new Vector(0.0, 0.5, 0.0)), EntityType.FIREWORK);
         FireworkMeta meta = fw.getFireworkMeta();
@@ -83,29 +83,29 @@ public class Tools {
         fw.detonate();
     }
 
-    public int c(int x, int y) {
+    public static int c(int x, int y) {
         int x2 = x - 1;
         int y2 = y - 1;
         return x2 + y2 * 9;
     }
 
-    public boolean isHere(Location l1, Location l2) {
+    public static boolean isHere(Location l1, Location l2) {
         return l1.getWorld() == l2.getWorld() && (int)l1.distance(l2) == 0;
     }
 
-    public void msg(CommandSender s, String msg) {
+    public static void msg(CommandSender s, String msg) {
         if (s != null) {
             msg_(s, DonateCase.customConfig.getLang().getString("Prefix") + msg);
         }
     }
 
-    public void msg_(CommandSender s, String msg) {
+    public static void msg_(CommandSender s, String msg) {
         if (s != null) {
             s.sendMessage(rc(msg));
         }
     }
 
-    public String rc(String t) {
+    public static String rc(String t) {
         if(t != null) {
             return hex(t);
         } else {
@@ -113,7 +113,7 @@ public class Tools {
         }
     }
 
-    public String rt(String text, String... repl) {
+    public static String rt(String text, String... repl) {
         for (String s : repl) {
             if(s != null) {
                 int l = s.split(":")[0].length();
@@ -128,7 +128,7 @@ public class Tools {
         return text;
     }
 
-    public List<String> rt(List<String> text, String... repl) {
+    public static List<String> rt(List<String> text, String... repl) {
         ArrayList<String> rt = new ArrayList<>();
 
         for (String t : text) {
@@ -137,7 +137,7 @@ public class Tools {
 
         return rt;
     }
-    public void convertCasesLocation() {
+    public static void convertCasesLocation() {
         ConfigurationSection cases_ = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
         if(cases_ != null) {
             for (String name : cases_.getValues(false).keySet()) {
@@ -162,7 +162,7 @@ public class Tools {
         Logger.log("&aConversion successful!");
     }
 
-    public void convertCases() {
+    public static void convertCases() {
         ConfigurationSection cases = customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
         if (cases != null) {
             for (String caseName : cases.getKeys(false)) {
@@ -214,13 +214,13 @@ public class Tools {
         customConfig.getConfig().set("DonatCase.Cases", null);
         customConfig.saveConfig();
     }
-    public List<File> getCasesInFolder() {
+    public static List<File> getCasesInFolder() {
         List<File> files = new ArrayList<>();
         File directory = new File(DonateCase.instance.getDataFolder(), "cases");
         Collections.addAll(files, Objects.requireNonNull(directory.listFiles()));
         return files;
     }
-    public Location fromString(String str) {
+    public static Location fromString(String str) {
         String regex = "Location\\{world=CraftWorld\\{name=(.*?)},x=(.*?),y=(.*?),z=(.*?),pitch=(.*?),yaw=(.*?)}";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(str);
@@ -242,7 +242,7 @@ public class Tools {
         return null;
     }
 
-    public List<String> rc(List<String> t) {
+    public static List<String> rc(List<String> t) {
         ArrayList<String> a = new ArrayList<>();
 
         for (String s : t) {
@@ -252,7 +252,7 @@ public class Tools {
         return a;
     }
 
-    public String getLocalPlaceholder(String string) {
+    public static String getLocalPlaceholder(String string) {
         Pattern pattern = Pattern.compile("%(.*?)%");
         Matcher matcher = pattern.matcher(string);
         if (matcher.find()) {
@@ -264,11 +264,11 @@ public class Tools {
         }
     }
 
-    public ItemStack createItem(Material ma, int amount, int data, String dn, boolean enchant, String[] rgb) {
+    public static ItemStack createItem(Material ma, int amount, int data, String dn, boolean enchant, String[] rgb) {
         return createItem(ma, data, amount, dn, null, enchant, rgb, -1);
     }
 
-    public Color parseColor(String s) {
+    public static Color parseColor(String s) {
 
         Color color = null;
         String[] split = s.split(" ");
@@ -322,7 +322,7 @@ public class Tools {
         return color;
     }
 
-    public ItemStack getPlayerHead(String player, String displayName, List<String> lore) {
+    public static ItemStack getPlayerHead(String player, String displayName, List<String> lore) {
         Material type = Material.getMaterial("SKULL_ITEM");
         ItemStack item;
         if (type == null) {
@@ -342,7 +342,7 @@ public class Tools {
 
         return item;
     }
-    public ItemStack getBASE64Skull(String url, String displayName, List<String> lore) {
+    public static ItemStack getBASE64Skull(String url, String displayName, List<String> lore) {
         ItemStack item = SkullCreator.itemFromUrl("http://textures.minecraft.net/texture/" + url);
         ItemMeta meta = item.getItemMeta();
         if(meta != null) {
@@ -354,13 +354,13 @@ public class Tools {
         }
         return item;
     }
-    public ItemStack getBASE64Skull(String url, String displayName) {
+    public static ItemStack getBASE64Skull(String url, String displayName) {
         return getBASE64Skull(url, displayName, null);
     }
 
     @NotNull
-    public ItemStack getCaseItem(String displayName, String id, boolean enchanted, String[] rgb) {
-        MaterialType materialType = t.getMaterialType(id);
+    public static ItemStack getCaseItem(String displayName, String id, boolean enchanted, String[] rgb) {
+        MaterialType materialType = getMaterialType(id);
         Material material;
         ItemStack winItem;
         if (!id.contains(":")) {
@@ -369,14 +369,14 @@ public class Tools {
                 material = Material.STONE;
             }
             if(material != Material.AIR) {
-                winItem = t.createItem(material, 1, -1, displayName, enchanted, rgb);
+                winItem = createItem(material, 1, -1, displayName, enchanted, rgb);
             } else {
                 winItem = new ItemStack(Material.AIR);
             }
         } else {
             if (materialType == MaterialType.HEAD) {
                 String[] parts = id.split(":");
-                winItem = t.getPlayerHead(parts[1], displayName, null);
+                winItem = getPlayerHead(parts[1], displayName, null);
             } else if (materialType == MaterialType.HDB) {
                 String[] parts = id.split(":");
                 String skullId = parts[1];
@@ -395,7 +395,7 @@ public class Tools {
             else if (materialType == MaterialType.BASE64) {
                 String[] parts = id.split(":");
                 String base64 = parts[1];
-                winItem = t.getBASE64Skull(base64, displayName);
+                winItem = getBASE64Skull(base64, displayName);
             } else {
                 String[] parts = id.split(":");
                 byte data = -1;
@@ -406,13 +406,13 @@ public class Tools {
                 if (material == null) {
                     material = Material.STONE;
                 }
-                winItem = t.createItem(material, data, 1, displayName, enchanted, rgb);
+                winItem = createItem(material, data, 1, displayName, enchanted, rgb);
             }
         }
         return winItem;
     }
 
-    public ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb, int modelData) {
+    public static ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb, int modelData) {
         ItemStack item;
         if(data == -1) {
             item = new ItemStack(ma, amount);
@@ -432,7 +432,7 @@ public class Tools {
 
             if (lore != null) {
 
-                m.setLore(this.rc(lore));
+                m.setLore(rc(lore));
             }
             if(modelData != -1) {
                 m.setCustomModelData(modelData);
@@ -457,7 +457,7 @@ public class Tools {
         }
         return item;
     }
-    public MaterialType getMaterialType(String material) {
+    public static MaterialType getMaterialType(String material) {
         if (material.contains(":")) {
             String prefix = material.substring(0, material.indexOf(":"));
             switch (prefix) {
@@ -478,7 +478,7 @@ public class Tools {
         return MaterialType.DEFAULT;
     }
 
-    public List<Integer> getOpenMaterialSlots(String c) {
+    public static List<Integer> getOpenMaterialSlots(String c) {
         List<Integer> slots = new ArrayList<>();
         for (String item : casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
             if(casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "").startsWith("OPEN")) {
@@ -488,7 +488,7 @@ public class Tools {
         }
         return slots;
     }
-    public Map<List<Integer>, String> getOpenMaterialItemsBySlots(String c) {
+    public static Map<List<Integer>, String> getOpenMaterialItemsBySlots(String c) {
         Map<List<Integer>, String> map = new HashMap<>();
         ConfigurationSection section = casesConfig.getCase(c).getConfigurationSection("case.Gui.Items");
         for (String item : section.getKeys(false)) {
@@ -502,7 +502,7 @@ public class Tools {
         return map;
     }
 
-    public String getOpenMaterialTypeByMapBySlot(String c, int slot) {
+    public static String getOpenMaterialTypeByMapBySlot(String c, int slot) {
         for (Map.Entry<List<Integer>, String> entry : getOpenMaterialItemsBySlots(c).entrySet()) {
             if(entry.getKey().contains(slot)) {
                 return entry.getValue();
@@ -512,7 +512,7 @@ public class Tools {
     }
 
 
-    public String hex(String message) {
+    public static String hex(String message) {
         Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
         Matcher matcher = pattern.matcher(message);
         while (matcher.find()) {
@@ -531,7 +531,7 @@ public class Tools {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public int getPluginVersion(String version) {
+    public static int getPluginVersion(String version) {
         StringBuilder builder = new StringBuilder();
         version = version.replaceAll("\\.", "");
         if(version.length() < 4) {
@@ -541,7 +541,7 @@ public class Tools {
         }
         return Integer.parseInt(builder.toString());
     }
-    public boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
+    public static boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
         for (String addon : addonsMap.keySet()) {
             List<Map<String, SubCommand>> commands = addonsMap.get(addon);
             for (Map<String, SubCommand> command : commands) {
@@ -565,7 +565,7 @@ public class Tools {
         }
         return false;
     }
-    public boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, String addon) {
+    public static boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, String addon) {
             List<Map<String, SubCommand>> commands = addonsMap.get(addon);
             for (Map<String, SubCommand> command : commands) {
                 for (String commandName : command.keySet()) {
@@ -587,7 +587,7 @@ public class Tools {
             }
         return false;
     }
-    public EulerAngle getEulerAngleFromString(String angleString) {
+    public static EulerAngle getEulerAngleFromString(String angleString) {
         String[] angle;
         if (angleString == null) return new EulerAngle(0,0,0);
         angle = angleString.replace(" ", "").split(",");
@@ -600,7 +600,7 @@ public class Tools {
             return new EulerAngle(0,0,0);
         }
     }
-    public ArmorStandEulerAngle getArmorStandEulerAngle(String path) {
+    public static ArmorStandEulerAngle getArmorStandEulerAngle(String path) {
          ConfigurationSection section = customConfig.getAnimations().getConfigurationSection(path);
          if(section == null) return new ArmorStandEulerAngle(new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0));
          EulerAngle head = getEulerAngleFromString(section.getString("Head"));
