@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.donatecase.api.addon.JavaAddon;
+import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.data.CaseData;
@@ -8,11 +8,11 @@ import com.jodexindustries.donatecase.api.events.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationUnregisteredEvent;
+import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -24,26 +24,24 @@ import java.util.UUID;
  */
 public class AnimationManager {
     private static final Map<String, Animation> registeredAnimations = new HashMap<>();
-
+    private final Addon addon;
+    public AnimationManager(Addon addon) {
+        this.addon = addon;
+    }
     /**
      * Register custom animation
      * @param name Animation name
      * @param animation Animation class
      */
-    public static void registerAnimation(String name, Animation animation) {
+    public void registerAnimation(String name, Animation animation) {
         if(registeredAnimations.get(name) == null) {
             registeredAnimations.put(name, animation);
-            String animationPluginName = null;
+            String animationPluginName = addon.getName();
             boolean isDefault = false;
-            try {
-                animationPluginName = JavaPlugin.getProvidingPlugin(animation.getClass()).getName();
-            } catch (IllegalArgumentException ignored) {}
-
-            if(animationPluginName == null) {
-                animationPluginName = JavaAddon.getNameByClassLoader(animation.getClass().getClassLoader());
-            }
             AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(animation.getName(), animation, animationPluginName, isDefault);
             Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
+        } else {
+            addon.getDonateCase().getLogger().warning("Animation with name " + name + " already registered!");
         }
     }
 
@@ -51,11 +49,13 @@ public class AnimationManager {
      * Unregister custom animation
      * @param name Animation name
      */
-    public static void unregisterAnimation(String name) {
-        if(registeredAnimations.get(name) != null) {
+    public void unregisterAnimation(String name) {
+        if(registeredAnimations.containsKey(name)) {
             registeredAnimations.remove(name);
             AnimationUnregisteredEvent animationUnRegisteredEvent = new AnimationUnregisteredEvent(name);
             Bukkit.getServer().getPluginManager().callEvent(animationUnRegisteredEvent);
+        } else {
+            addon.getDonateCase().getLogger().warning("Animation with name " + name + " already unregistered!");
         }
     }
     /**
@@ -65,26 +65,26 @@ public class AnimationManager {
      * @param location Case location (with pitch and yaw player)
      * @param c Case data
      */
-    public static void playAnimation(String name, Player player, Location location, CaseData c) {
-        if(Case.getHologramManager() != null && c.getHologram().isEnabled()) {
-            Case.getHologramManager().removeHologram(location.getBlock());
+    public void playAnimation(String name, Player player, Location location, CaseData c) {
+        if(addon.getCaseAPI().getHologramManager() != null && c.getHologram().isEnabled()) {
+            addon.getCaseAPI().getHologramManager().removeHologram(location.getBlock());
         }
 
         Animation animation = getRegisteredAnimation(name);
         if (animation != null) {
-            CaseData.Item winItem = Case.getRandomItem(c);
+            CaseData.Item winItem = addon.getCaseAPI().getRandomItem(c);
             winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName()));
             AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, name, c, location, winItem);
             Bukkit.getPluginManager().callEvent(preStartEvent);
 
             ActiveCase activeCase = new ActiveCase(location, c.getCaseName());
             UUID uuid = UUID.randomUUID();
-            Case.activeCases.put(uuid, activeCase);
-            Case.activeCasesByLocation.put(location, uuid);
+            CaseAPI.activeCases.put(uuid, activeCase);
+            CaseAPI.activeCasesByLocation.put(location, uuid);
 
-            animation.start(player,  Case.getCaseLocationByBlockLocation(location), uuid, c, preStartEvent.getWinItem());
+            animation.start(player,  addon.getCaseAPI().getCaseLocationByBlockLocation(location), uuid, c, preStartEvent.getWinItem());
             for (Player pl : Bukkit.getOnlinePlayers()) {
-                if (Case.playersGui.containsKey(pl.getUniqueId()) && Case.getTools().isHere(location.getBlock().getLocation(), Case.playersGui.get(pl.getUniqueId()).getLocation())) {
+                if (CaseAPI.playersGui.containsKey(pl.getUniqueId()) && Tools.isHere(location.getBlock().getLocation(), CaseAPI.playersGui.get(pl.getUniqueId()).getLocation())) {
                     pl.closeInventory();
                 }
             }
@@ -92,7 +92,7 @@ public class AnimationManager {
             AnimationStartEvent startEvent = new AnimationStartEvent(player, name, c, location, preStartEvent.getWinItem());
             Bukkit.getPluginManager().callEvent(startEvent);
         } else {
-            Case.getInstance().getLogger().warning("Animation " + name + " not found!");
+            addon.getDonateCase().getLogger().warning("Animation " + name + " not found!");
         }
     }
 
@@ -101,7 +101,7 @@ public class AnimationManager {
      * @param name animation name
      * @return boolean
      */
-    public static boolean isRegistered(String name) {
+    public boolean isRegistered(String name) {
         return registeredAnimations.get(name) != null;
     }
 
@@ -109,7 +109,7 @@ public class AnimationManager {
      * Get all registered animations
      * @return map with registered animations
      */
-    public static Map<String, Animation> getRegisteredAnimations() {
+    public Map<String, Animation> getRegisteredAnimations() {
         return registeredAnimations;
     }
 
@@ -118,12 +118,14 @@ public class AnimationManager {
      * @param animation Animation name
      * @return Animation class instance
      */
-    private static Animation getRegisteredAnimation(String animation) {
+    private Animation getRegisteredAnimation(String animation) {
         if (registeredAnimations.containsKey(animation)) {
             try {
                 Animation animationClass = getRegisteredAnimations().get(animation);
                 return animationClass.getClass().getDeclaredConstructor().newInstance();
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {}
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                addon.getDonateCase().getLogger().warning(e.getLocalizedMessage());
+            }
         }
         return null;
     }

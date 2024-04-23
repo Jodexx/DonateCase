@@ -1,25 +1,27 @@
 package com.jodexindustries.donatecase.api.addon;
 
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.CaseAPI;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
-import java.util.Map;
 import java.util.logging.Level;
 
-public abstract class JavaAddon implements Addon {
+/**
+ * Abstract class for JavaAddon realization, like BukkitPlugin
+ */
+public abstract class JavaAddon implements Addon, Plugin {
     private String version;
     private String name;
     private ClassLoader classLoader;
     private AddonLogger addonLogger;
     private File file;
     private URLClassLoader urlClassLoader;
+    private CaseAPI caseAPI;
 
     public JavaAddon() {}
 
@@ -30,6 +32,7 @@ public abstract class JavaAddon implements Addon {
         this.classLoader = this.getClass().getClassLoader();
         this.urlClassLoader = loader;
         this.addonLogger = new AddonLogger(this);
+        this.caseAPI = new CaseAPI(this);
     }
 
 
@@ -40,11 +43,16 @@ public abstract class JavaAddon implements Addon {
     public void onEnable() {}
 
     @Override
+    public CaseAPI getCaseAPI() {
+        return this.caseAPI;
+    }
+
+    @Override
     public Plugin getDonateCase() {
-        return Case.getInstance();
+        return getDonateCase();
     }
     @Override
-    public File getDataFolder() {
+    public @NotNull File getDataFolder() {
         File data = new File(getDonateCase().getDataFolder(), "addons/" + name);
         if(!data.exists()) {
             data.mkdir();
@@ -56,7 +64,7 @@ public abstract class JavaAddon implements Addon {
         return version;
     }
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return name;
     }
     @Override
@@ -119,21 +127,8 @@ public abstract class JavaAddon implements Addon {
         return classLoader;
     }
 
-    public AddonLogger getLogger() {
+    public @NotNull AddonLogger getLogger() {
         return addonLogger;
-    }
-
-    public static String getNameByClassLoader(ClassLoader classLoader) {
-        String name = null;
-        try {
-            InputStream input = classLoader.getResourceAsStream("addon.yml");
-            Yaml yaml = new Yaml();
-            Map<String, Object> data = yaml.load(input);
-            name = (String) data.get("name");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return name;
     }
 
     public URLClassLoader getUrlClassLoader() {

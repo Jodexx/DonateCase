@@ -12,6 +12,9 @@ import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.util.logging.Level;
 
+/**
+ * Abstract class for JavaAddon realization, like BukkitPlugin
+ */
 public abstract class JavaAddon implements Addon, Plugin {
     private String version;
     private String name;

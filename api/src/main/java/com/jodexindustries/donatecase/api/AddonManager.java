@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.addon.JavaAddon;
 import org.yaml.snakeyaml.Yaml;
 
@@ -20,13 +21,16 @@ import java.util.jar.JarFile;
  * Class for managing add-ons, enabling and disabling.
  */
 public class AddonManager {
-    private final Map<String, JavaAddon> addons = new HashMap<>();
-
+    private static final Map<String, JavaAddon> addons = new HashMap<>();
+    private final Addon addon;
+    public AddonManager(Addon addon) {
+        this.addon = addon;
+    }
     /**
      * Load all addons from "addons" folder
      */
     public void loadAddons() {
-        File addonsDir = new File(Case.getInstance().getDataFolder(), "addons");
+        File addonsDir = new File(addon.getDonateCase().getDataFolder(), "addons");
         if(!addonsDir.exists()) {
             addonsDir.mkdir();
         }
@@ -51,12 +55,12 @@ public class AddonManager {
                     String mainClassName = (String) data.get("main");
                     String version = String.valueOf(data.get("version"));
                     if(addons.get(name) != null) {
-                        Case.getInstance().getLogger().warning("Addon with name " + name + " already loaded!");
+                        addon.getDonateCase().getLogger().warning("Addon with name " + name + " already loaded!");
                         return;
                     }
                     URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()}, this.getClass().getClassLoader());
                     Class<?> mainClass = Class.forName(mainClassName, true, loader);
-                    Case.getInstance().getLogger().info("Loading " + name + " addon v" + version);
+                    addon.getDonateCase().getLogger().info("Loading " + name + " addon v" + version);
                     JavaAddon addon = (JavaAddon) mainClass.getDeclaredConstructor().newInstance();
                     addon.init(version, name, file, loader);
                     addons.put(file.getName(), addon);
@@ -76,15 +80,23 @@ public class AddonManager {
     public void disableAddon(String addon) {
         JavaAddon javaAddon = addons.get(addon);
         if(javaAddon == null) {
-            Case.getInstance().getLogger().warning("Addon with name " + addon + " already disabled!");
+            this.addon.getDonateCase().getLogger().warning("Addon with name " + addon + " already disabled!");
         } else {
-            javaAddon.onDisable();
-            addons.remove(addon);
             try {
-                javaAddon.getUrlClassLoader().close();
-            } catch (IOException e) {
+                javaAddon.onDisable();
+                addons.remove(addon);
+            } catch (Exception e) {
                 e.printStackTrace();
+                closeClassLoader(javaAddon.getUrlClassLoader());
             }
+            closeClassLoader(javaAddon.getUrlClassLoader());
+        }
+    }
+    private void closeClassLoader(URLClassLoader loader) {
+        try {
+            loader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -1,21 +1,16 @@
 package com.jodexindustries.donatecase.api.armorstand;
 
-import com.jodexindustries.donatecase.api.Case;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.EulerAngle;
 
 public class BukkitArmorStandCreator implements ArmorStandCreator {
     private ArmorStand entity;
     @Override
     public void spawnArmorStand(Location location) {
-        entity = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        entity.setMetadata("case", new FixedMetadataValue(Case.getInstance(), "case"));
     }
 
     @Override
@@ -51,16 +46,22 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
             switch (equipmentSlot) {
                 case HAND:
                     equipment.setItemInMainHand(item);
+                    break;
                 case OFF_HAND:
                     equipment.setItemInOffHand(item);
+                    break;
                 case CHEST:
                     equipment.setChestplate(item);
+                    break;
                 case LEGS:
                     equipment.setLeggings(item);
+                    break;
                 case HEAD:
                     equipment.setHelmet(item);
+                    break;
                 case FEET:
                     equipment.setBoots(item);
+                    break;
             }
         }
     }
