@@ -52,9 +52,6 @@ public class DonateCase extends JavaPlugin implements InstanceAddon {
     public static PermissionDriver permissionDriver = null;
     public static CaseAPI api;
 
-    File langRu;
-    File langEn;
-    File langUa;
     public static CustomConfig customConfig;
     public static CasesConfig casesConfig;
     private boolean usePackets = true;
@@ -269,13 +266,13 @@ public class DonateCase extends JavaPlugin implements InstanceAddon {
     public void setupLangs() {
         if (customConfig.getLang().getString("config") == null || !customConfig.getLang().getString("config", "").equals("2.5")) {
             Logger.log("&cOutdated lang config! Creating a new!");
-            langRu = new File(this.getDataFolder(), "lang/ru_RU.yml");
+            File langRu = new File(this.getDataFolder(), "lang/ru_RU.yml");
             langRu.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));
             this.saveResource("lang/ru_RU.yml", false);
-            langEn = new File(this.getDataFolder(), "lang/en_US.yml");
+            File langEn = new File(this.getDataFolder(), "lang/en_US.yml");
             langEn.renameTo(new File(this.getDataFolder(), "lang/en_US.yml.old"));
             this.saveResource("lang/en_US.yml", false);
-            langUa = new File(this.getDataFolder(), "lang/ua_UA.yml");
+            File langUa = new File(this.getDataFolder(), "lang/ua_UA.yml");
             langUa.renameTo(new File(this.getDataFolder(), "lang/ua_UA.yml.old"));
             this.saveResource("lang/ua_UA.yml", false);
             customConfig = new CustomConfig();
