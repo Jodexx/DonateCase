@@ -39,11 +39,22 @@ public class WheelAnimation implements Animation {
         loc.setPitch(pitch);
         loc.setYaw(yaw);
         loc.add(0.5, 0, 0.5);
-        // register items
         int itemsCount = customConfig.getAnimations().getInt("Wheel.ItemsCount");
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Wheel.Pose");
         itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("Wheel.ItemSlot", "HEAD").toUpperCase());
         boolean small = customConfig.getAnimations().getBoolean("Wheel.SmallArmorStand", true);
+        int animationTime = customConfig.getAnimations().getInt("Wheel.Scroll.Time", 100);
+        final Location flocation = loc.clone().add(0 + customConfig.getAnimations().getDouble("Wheel.LiftingAlongX"),
+                -1 + customConfig.getAnimations().getDouble("Wheel.LiftingAlongY"),
+                0 + customConfig.getAnimations().getDouble("Wheel.LiftingAlongZ"));
+        boolean needSound = customConfig.getAnimations().getString("Wheel.Scroll.Sound") != null;
+        Sound sound = Sound.valueOf(customConfig.getAnimations().getString("Wheel.Scroll.Sound"));
+        float volume = (float) customConfig.getAnimations().getDouble("Wheel.Scroll.Volume");
+        float vpitch = (float) customConfig.getAnimations().getDouble("Wheel.Scroll.Pitch");
+        final double speed = customConfig.getAnimations().getDouble("Wheel.CircleSpeed");
+        final double radius = customConfig.getAnimations().getDouble("Wheel.CircleRadius");
+        final boolean useFlame = customConfig.getAnimations().getBoolean("Wheel.UseFlame");
+        // register items
         items.add(winItem);
         for (int i = 0; i < itemsCount; i++) {
             CaseData.Item tempWinItem = Case.getRandomItem(c);
@@ -52,21 +63,12 @@ public class WheelAnimation implements Animation {
         }
         double baseAngle = loc.clone().getDirection().angle(new Vector(0, 0, 1));
         final double[] lastCompletedRotation = {0.0};
-        final double speed = customConfig.getAnimations().getDouble("Wheel.CircleSpeed");
-        final double radius = customConfig.getAnimations().getDouble("Wheel.CircleRadius");
-        final boolean useFlame = customConfig.getAnimations().getBoolean("Wheel.UseFlame");
         final double rotationThreshold = Math.PI / (itemsCount * speed);
         AtomicInteger ticks = new AtomicInteger();
-        boolean needSound = customConfig.getAnimations().getString("Wheel.Scroll.Sound") != null;
-        Sound sound = Sound.valueOf(customConfig.getAnimations().getString("Wheel.Scroll.Sound"));
-        float volume = (float) customConfig.getAnimations().getDouble("Wheel.Scroll.Volume");
-        float vpitch = (float) customConfig.getAnimations().getDouble("Wheel.Scroll.Pitch");
         final double[] yAx = {0};
         final double[] radiusAx = {radius};
         final double offset = 2 * Math.PI / itemsCount;
         final double[] speedAx = {speed};
-        int animationTime = customConfig.getAnimations().getInt("Wheel.Scroll.Time", 100);
-        final Location flocation = loc.clone().add(0, -1 + customConfig.getAnimations().getDouble("Wheel.LiftingAlongY"), 0);
 
         Bukkit.getScheduler().runTaskTimer(instance, (task) -> {
             ticks.getAndIncrement();

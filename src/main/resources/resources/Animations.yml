@@ -65,7 +65,9 @@ Wheel:
   ItemsCount: 6
   CircleSpeed: 0.5
   CircleRadius: 1.5
+  LiftingAlongX: 0
   LiftingAlongY: 0
+  LiftingAlongZ: 0
   UseFlame: true # NEW
   Scroll:
     Time: 100 # NEW
@@ -85,7 +87,9 @@ FullWheel:
     LeftLeg: 0, 0, 0
   CircleSpeed: 0.5
   CircleRadius: 1.5
+  LiftingAlongX: 0
   LiftingAlongY: 0
+  LiftingAlongZ: 0
   UseFlame: true
   Scroll:
     Time: 100
