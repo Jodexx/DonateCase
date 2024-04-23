@@ -16,6 +16,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import static com.jodexindustries.donatecase.DonateCase.customConfig;
 import static com.jodexindustries.donatecase.DonateCase.t;
@@ -30,7 +31,7 @@ public class RainlyAnimation implements Animation {
         return "DEFAULT RAINLY";
     }
     @Override
-    public void start(Player player, Location location, CaseData c, CaseData.Item winItem) {
+    public void start(Player player, Location location, UUID uuid, CaseData c, CaseData.Item winItem) {
         final Location loc = location.clone();
         final String FallingParticle = customConfig.getAnimations().getString("Rainly.FallingParticle");
         String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
@@ -123,7 +124,7 @@ public class RainlyAnimation implements Animation {
                 if (this.i >= 70) {
                     as.remove();
                     this.cancel();
-                    Case.animationEnd(c, getName(), player, loc, winItem);
+                    Case.animationEnd(c, getName(), player, uuid, winItem);
                 }
 
                 ++this.i;

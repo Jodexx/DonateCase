@@ -13,6 +13,7 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.jodexindustries.donatecase.DonateCase.*;
@@ -31,7 +32,7 @@ public class FullWheelAnimation implements Animation {
     }
 
     @Override
-    public void start(Player player, Location location, CaseData c, CaseData.Item winItem) {
+    public void start(Player player, Location location, UUID uuid, CaseData c, CaseData.Item winItem) {
         final Location loc = location.clone();
         float pitch = Math.round(location.getPitch() / 90.0f) * 90.0f;
         float yaw = Math.round(location.getYaw() / 90.0f) * 90.0f;
@@ -43,7 +44,24 @@ public class FullWheelAnimation implements Animation {
         int i = 1;
         String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
         winItem.getMaterial().setDisplayName(winGroupDisplayName);
+
+
+
         armorStandEulerAngle = t.getArmorStandEulerAngle("FullWheel.Pose");
+
+        boolean needSound = customConfig.getAnimations().getString("FullWheel.Scroll.Sound") != null;
+        Sound sound = Sound.valueOf(customConfig.getAnimations().getString("FullWheel.Scroll.Sound"));
+        float volume = (float) customConfig.getAnimations().getDouble("FullWheel.Scroll.Volume");
+        float vpitch = (float) customConfig.getAnimations().getDouble("FullWheel.Scroll.Pitch");
+        int animationTime = customConfig.getAnimations().getInt("FullWheel.Scroll.Time", 100);
+
+        final double speed = customConfig.getAnimations().getDouble("FullWheel.CircleSpeed");
+        final double radius = customConfig.getAnimations().getDouble("FullWheel.CircleRadius");
+        final boolean useFlame = customConfig.getAnimations().getBoolean("FullWheel.UseFlame");
+
+        final Location flocation = loc.clone().add(0 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongX"),
+                -1 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"),
+                0 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongZ"));
 
         itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("FullWheel.ItemSlot", "HEAD").toUpperCase());
         boolean small = customConfig.getAnimations().getBoolean("FullWheel.SmallArmorStand", true);
@@ -62,23 +80,14 @@ public class FullWheelAnimation implements Animation {
             i++;
         }
 
-        double baseAngle = loc.clone().getDirection().angle(new Vector(0, 0, 1));
+        double baseAngle = loc.getDirection().angle(new Vector(0, 0, 1));
         final double[] lastCompletedRotation = {0.0};
-        final double speed = customConfig.getAnimations().getDouble("FullWheel.CircleSpeed");
-        final double radius = customConfig.getAnimations().getDouble("FullWheel.CircleRadius");
-        final boolean useFlame = customConfig.getAnimations().getBoolean("FullWheel.UseFlame");
         final double rotationThreshold = Math.PI / (itemsCount * speed);
         AtomicInteger ticks = new AtomicInteger();
-        boolean needSound = customConfig.getAnimations().getString("FullWheel.Scroll.Sound") != null;
-        Sound sound = Sound.valueOf(customConfig.getAnimations().getString("FullWheel.Scroll.Sound"));
-        float volume = (float) customConfig.getAnimations().getDouble("FullWheel.Scroll.Volume");
-        float vpitch = (float) customConfig.getAnimations().getDouble("FullWheel.Scroll.Pitch");
-        int animationTime = customConfig.getAnimations().getInt("FullWheel.Scroll.Time", 100);
         final double[] yAx = {0};
         final double[] radiusAx = {radius};
         final double offset = 2 * Math.PI / itemsCount;
         final double[] speedAx = {speed};
-        final Location flocation = loc.clone().add(0, -1 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"), 0);
 
         Bukkit.getScheduler().runTaskTimer(instance, (task) -> {
 
@@ -132,7 +141,7 @@ public class FullWheelAnimation implements Animation {
                 for (ArmorStandCreator stand : armorStands) {
                     stand.remove();
                 }
-                Case.animationEnd(c, getName(), player, loc, winItem);
+                Case.animationEnd(c, getName(), player, uuid, winItem);
                 items.clear();
                 armorStands.clear();
             }

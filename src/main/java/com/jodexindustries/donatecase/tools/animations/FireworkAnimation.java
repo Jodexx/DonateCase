@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import static com.jodexindustries.donatecase.DonateCase.customConfig;
 import static com.jodexindustries.donatecase.DonateCase.t;
@@ -28,8 +29,7 @@ public class FireworkAnimation implements Animation {
         return "DEFAULT FIREWORK";
     }
 
-    public void start(Player player, Location location, CaseData c, CaseData.Item winItem) {
-        final Location lAC = location.clone();
+    public void start(Player player, Location location, UUID uuid, CaseData c, CaseData.Item winItem) {
         String displayName = winItem.getMaterial().getDisplayName();
         winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, displayName));
         location.add(0.5, -0.1, 0.5);
@@ -82,7 +82,7 @@ public class FireworkAnimation implements Animation {
                     if (this.i >= 30) {
                         as.remove();
                         this.cancel();
-                        Case.animationEnd(c, getName(), player, lAC, winItem);
+                        Case.animationEnd(c, getName(), player, uuid, winItem);
                     }
                 }
 

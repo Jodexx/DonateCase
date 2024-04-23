@@ -12,6 +12,7 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.jodexindustries.donatecase.DonateCase.*;
@@ -29,7 +30,7 @@ public class WheelAnimation implements Animation {
     }
 
     @Override
-    public void start(Player player, Location location, CaseData c, CaseData.Item winItem) {
+    public void start(Player player, Location location, UUID uuid, CaseData c, CaseData.Item winItem) {
         final Location loc = location.clone();
         float pitch = Math.round(location.getPitch() / 90.0f) * 90.0f;
         float yaw = Math.round(location.getYaw() / 90.0f) * 90.0f;
@@ -116,7 +117,7 @@ public class WheelAnimation implements Animation {
                 for (ArmorStandCreator stand : armorStands) {
                     stand.remove();
                 }
-                Case.animationEnd(c, getName(), player, loc, winItem);
+                Case.animationEnd(c, getName(), player, uuid, winItem);
                 items.clear();
                 armorStands.clear();
             }
