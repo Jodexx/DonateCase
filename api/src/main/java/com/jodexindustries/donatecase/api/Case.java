@@ -1,17 +1,14 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.OpenCase;
-import com.jodexindustries.donatecase.api.data.PermissionDriver;
+import com.jodexindustries.donatecase.api.data.PlayerOpenCase;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.tools.CustomConfig;
 import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -20,10 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 /**
@@ -34,13 +28,18 @@ public class Case {
     /**
      * Active cases
      */
-    public static HashMap<Location, String> activeCases = new HashMap<>();
+    public static HashMap<UUID, ActiveCase> activeCases = new HashMap<>();
+
+    /**
+     * Active cases, but by location
+     */
+    public static HashMap<Location, UUID> activeCasesByLocation = new HashMap<>();
 
 
     /**
      * Players, who opened cases (open gui)
      */
-    public static HashMap<UUID, OpenCase> playersCases = new HashMap<>();
+    public static HashMap<UUID, PlayerOpenCase> playersGui = new HashMap<>();
 
     /**
      * Loaded cases in runtime
@@ -191,8 +190,7 @@ public class Case {
      * @param location Location where to start the animation
      * @param caseName Case name
      */
-    public static void startAnimation(Player player, Location location, String caseName) {
-    }
+    public static void startAnimation(Player player, Location location, String caseName) {}
     /**
      * Get random group from case
      * @param c Case data
@@ -216,12 +214,15 @@ public class Case {
      * @param c Case data
      * @param animation Animation name
      * @param player Player who opened
-     * @param location Case location
+     * @param uuid Active case uuid
      */
-    public static void animationEnd(CaseData c, String animation, Player player, Location location, CaseData.Item item) {
+    public static void animationEnd(CaseData c, String animation, Player player, UUID uuid, CaseData.Item item) {
+        ActiveCase activeCase = activeCases.get(uuid);
+        Location location = activeCase.getLocation();
         AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, item);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
-        activeCases.remove(location.getBlock().getLocation());
+        activeCasesByLocation.remove(location.getBlock().getLocation());
+        activeCases.remove(uuid);
         if(Case.getHologramManager() != null && c.getHologram().isEnabled()) {
             Case.getHologramManager().createHologram(location.getBlock(), c);
         }
