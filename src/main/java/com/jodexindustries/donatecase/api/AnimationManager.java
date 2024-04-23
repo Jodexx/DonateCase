@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.addon.JavaAddon;
+import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.events.AnimationPreStartEvent;
@@ -17,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Animation control class, registration, playing
@@ -79,10 +81,15 @@ public class AnimationManager {
             winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName()));
             AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, name, c, location, winItem);
             Bukkit.getPluginManager().callEvent(preStartEvent);
-            animation.start(player, Case.getCaseLocationByBlockLocation(location), c, preStartEvent.getWinItem());
-            Case.activeCases.put(location.getBlock().getLocation(), c.getCaseName());
+
+            ActiveCase activeCase = new ActiveCase(location, c.getCaseName());
+            UUID uuid = UUID.randomUUID();
+            Case.activeCases.put(uuid, activeCase);
+            Case.activeCasesByLocation.put(location, uuid);
+
+            animation.start(player,  Case.getCaseLocationByBlockLocation(location), uuid, c, preStartEvent.getWinItem());
             for (Player pl : Bukkit.getOnlinePlayers()) {
-                if (Case.playersCases.containsKey(pl.getUniqueId()) && DonateCase.t.isHere(location.getBlock().getLocation(), Case.playersCases.get(pl.getUniqueId()).getLocation())) {
+                if (Case.playersGui.containsKey(pl.getUniqueId()) && DonateCase.t.isHere(location.getBlock().getLocation(), Case.playersGui.get(pl.getUniqueId()).getLocation())) {
                     pl.closeInventory();
                 }
             }
