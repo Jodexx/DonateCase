@@ -18,7 +18,7 @@ public class Main extends JavaAddon implements Listener {
         subCommandManager.registerSubCommand("test", new TestCommand());
         // register animation
         AnimationManager animationManager = api.getAnimationManager();
-        animationManager.registerAnimation("test", new TestAnimation(this));
+        animationManager.registerAnimation("test", new TestAnimation());
         // register event listener
         getDonateCase().getServer().getPluginManager().registerEvents(this, getDonateCase());
     }
