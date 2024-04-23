@@ -72,7 +72,7 @@ public class AnimationManager {
 
         Animation animation = getRegisteredAnimation(name);
         if (animation != null) {
-            CaseData.Item winItem = addon.getCaseAPI().getRandomItem(c);
+            CaseData.Item winItem = Case.getRandomItem(c);
             winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName()));
             AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, name, c, location, winItem);
             Bukkit.getPluginManager().callEvent(preStartEvent);
@@ -82,7 +82,7 @@ public class AnimationManager {
             Case.activeCases.put(uuid, activeCase);
             Case.activeCasesByLocation.put(location, uuid);
 
-            animation.start(player,  addon.getCaseAPI().getCaseLocationByBlockLocation(location), uuid, c, preStartEvent.getWinItem());
+            animation.start(player,  Case.getCaseLocationByBlockLocation(location), uuid, c, preStartEvent.getWinItem());
             for (Player pl : Bukkit.getOnlinePlayers()) {
                 if (Case.playersGui.containsKey(pl.getUniqueId()) && Tools.isHere(location.getBlock().getLocation(), Case.playersGui.get(pl.getUniqueId()).getLocation())) {
                     pl.closeInventory();
