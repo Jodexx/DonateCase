@@ -2,7 +2,12 @@ package com.jodexindustries.donatecase.api.addon;
 
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.CaseAPI;
+import org.bukkit.Server;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,6 +21,71 @@ import java.util.logging.Level;
  * Abstract class for JavaAddon realization, like BukkitPlugin
  */
 public abstract class JavaAddon implements Addon, Plugin {
+    @NotNull
+    @Override
+    public PluginDescriptionFile getDescription() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public FileConfiguration getConfig() {
+        return null;
+    }
+
+    @Override
+    public void saveDefaultConfig() {
+
+    }
+
+    @Override
+    public void saveConfig() {
+
+    }
+
+    @Override
+    public void reloadConfig() {
+
+    }
+
+    @NotNull
+    @Override
+    public PluginLoader getPluginLoader() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Server getServer() {
+        return null;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
+    @Override
+    public void onLoad() {
+
+    }
+
+    @Override
+    public boolean isNaggable() {
+        return false;
+    }
+
+    @Override
+    public void setNaggable(boolean canNag) {
+
+    }
+
+    @Nullable
+    @Override
+    public ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
+        return null;
+    }
+
     private String version;
     private String name;
     private ClassLoader classLoader;
