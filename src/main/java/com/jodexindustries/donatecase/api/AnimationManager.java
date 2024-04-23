@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.data.CaseData;
@@ -8,12 +7,12 @@ import com.jodexindustries.donatecase.api.events.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationUnregisteredEvent;
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -24,8 +23,8 @@ import java.util.logging.Level;
  */
 public class AnimationManager {
     private static final Map<String, Animation> registeredAnimations = new HashMap<>();
-    private final Addon addon;
-    public AnimationManager(Addon addon) {
+    private final Plugin addon;
+    public AnimationManager(Plugin addon) {
         this.addon = addon;
     }
     /**
@@ -41,7 +40,7 @@ public class AnimationManager {
             AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(animation.getName(), animation, animationPluginName, isDefault);
             Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
         } else {
-            DonateCase.instance.getLogger().warning("Animation with name " + name + " already registered!");
+            Case.getInstance().getLogger().warning("Animation with name " + name + " already registered!");
         }
     }
     
@@ -56,7 +55,7 @@ public class AnimationManager {
             AnimationUnregisteredEvent animationUnRegisteredEvent = new AnimationUnregisteredEvent(name);
             Bukkit.getServer().getPluginManager().callEvent(animationUnRegisteredEvent);
         } else {
-            DonateCase.instance.getLogger().warning("Animation with name " + name + " already unregistered!");
+            Case.getInstance().getLogger().warning("Animation with name " + name + " already unregistered!");
         }
     }
 
@@ -85,12 +84,12 @@ public class AnimationManager {
             } else {
                 Tools.msg(player, Tools.rc("&cAn error occurred while opening the case!"));
                 Tools.msg(player, Tools.rc("&cContact the project administration!"));
-                DonateCase.instance.getLogger().log(Level.WARNING, "Case animation "  + animation + " does not exist!");
+                Case.getInstance().getLogger().log(Level.WARNING, "Case animation "  + animation + " does not exist!");
             }
         } else {
             Tools.msg(player, Tools.rc("&cAn error occurred while opening the case!"));
             Tools.msg(player, Tools.rc("&cContact the project administration!"));
-            DonateCase.instance.getLogger().log(Level.WARNING, "Case animation name does not exist!");
+            Case.getInstance().getLogger().log(Level.WARNING, "Case animation name does not exist!");
         }
     }
     
@@ -128,7 +127,7 @@ public class AnimationManager {
             AnimationStartEvent startEvent = new AnimationStartEvent(player, name, c, location, preStartEvent.getWinItem());
             Bukkit.getPluginManager().callEvent(startEvent);
         } else {
-            DonateCase.instance.getLogger().warning("Animation " + name + " not found!");
+            Case.getInstance().getLogger().warning("Animation " + name + " not found!");
         }
     }
 
@@ -160,7 +159,7 @@ public class AnimationManager {
                 Animation animationClass = getRegisteredAnimations().get(animation);
                 return animationClass.getClass().getDeclaredConstructor().newInstance();
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                DonateCase.instance.getLogger().warning(e.getLocalizedMessage());
+                Case.getInstance().getLogger().warning(e.getLocalizedMessage());
             }
         }
         return null;

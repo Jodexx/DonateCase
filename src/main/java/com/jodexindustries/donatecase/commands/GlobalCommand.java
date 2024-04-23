@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.commands;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -18,6 +17,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
@@ -327,7 +327,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                 }
             } else {
                 String subCommandName = args[0];
-                Pair<SubCommand, Addon> pair = api.getSubCommandManager().getSubCommands().get(subCommandName);
+                Pair<SubCommand, Plugin> pair = api.getSubCommandManager().getSubCommands().get(subCommandName);
                 SubCommand subCommand = pair.getFirst();
                 if(subCommand != null) {
                     if(subCommand.getType() == SubCommandType.ADMIN && sender.hasPermission("donatecase.admin")) {
@@ -365,9 +365,9 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             for (String subCommandName : api.getSubCommandManager().getSubCommands().keySet()) {
                 List<Map<String, SubCommand>> list = new ArrayList<>();
                 Map<String, SubCommand> commandMap = new HashMap<>();
-                Pair<SubCommand, Addon> pair = api.getSubCommandManager().getSubCommands().get(subCommandName);
+                Pair<SubCommand, Plugin> pair = api.getSubCommandManager().getSubCommands().get(subCommandName);
                 SubCommand subCommand = pair.getFirst();
-                Addon addon = pair.getSecond();
+                Plugin addon = pair.getSecond();
                 commandMap.put(subCommandName, subCommand);
                 list.add(commandMap);
                 addonsMap.put(addon.getName(), list);

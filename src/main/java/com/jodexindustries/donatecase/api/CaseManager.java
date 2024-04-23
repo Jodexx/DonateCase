@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import static com.jodexindustries.donatecase.DonateCase.*;
@@ -14,10 +14,10 @@ public class CaseManager {
     private final AddonManager addonManager;
     private final AnimationManager animationManager;
     private final SubCommandManager subCommandManager;
-    private final Addon addon;
-    public CaseManager(Addon addon) {
+    private final Plugin addon;
+    public CaseManager(Plugin addon) {
         this.addon = addon;
-        addonManager = new AddonManager(addon);
+        addonManager = new AddonManager();
         subCommandManager = new SubCommandManager(addon);
         this.animationManager = new AnimationManager(addon);
     }
@@ -54,7 +54,7 @@ public class CaseManager {
         return hologramManager;
     }
 
-    public Addon getAddon() {
+    public Plugin getAddon() {
         return addon;
     }
 }

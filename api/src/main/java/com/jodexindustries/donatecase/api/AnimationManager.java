@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.data.CaseData;
@@ -13,19 +12,19 @@ import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.logging.Level;
 
 /**
  * Animation control class, registration, playing
  */
 public class AnimationManager {
     private static final Map<String, Animation> registeredAnimations = new HashMap<>();
-    private final Addon addon;
-    public AnimationManager(Addon addon) {
+    private final Plugin addon;
+    public AnimationManager(Plugin addon) {
         this.addon = addon;
     }
     /**
@@ -41,9 +40,10 @@ public class AnimationManager {
             AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(animation.getName(), animation, animationPluginName, isDefault);
             Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
         } else {
-            addon.getDonateCase().getLogger().warning("Animation with name " + name + " already registered!");
+            Case.getInstance().getLogger().warning("Animation with name " + name + " already registered!");
         }
     }
+
 
     /**
      * Unregister custom animation
@@ -55,9 +55,44 @@ public class AnimationManager {
             AnimationUnregisteredEvent animationUnRegisteredEvent = new AnimationUnregisteredEvent(name);
             Bukkit.getServer().getPluginManager().callEvent(animationUnRegisteredEvent);
         } else {
-            addon.getDonateCase().getLogger().warning("Animation with name " + name + " already unregistered!");
+            Case.getInstance().getLogger().warning("Animation with name " + name + " already unregistered!");
         }
     }
+
+    /**
+     * Unregister all animations
+     */
+    public void unregisterAnimations() {
+        List<String> list = new ArrayList<>(getRegisteredAnimations().keySet());
+        for (String s : list) {
+            unregisterAnimation(s);
+        }
+    }
+
+    /**
+     * Start animation at a specific location
+     * @param player The player who opened the case
+     * @param location Location where to start the animation
+     * @param caseName Case name
+     */
+    public void startAnimation(Player player, Location location, String caseName) {
+        CaseData caseData = Case.getCase(caseName).clone();
+        String animation = caseData.getAnimation();
+        if(animation != null) {
+            if(isRegistered(animation)) {
+                playAnimation(animation, player, location, caseData);
+            } else {
+                Tools.msg(player, Tools.rc("&cAn error occurred while opening the case!"));
+                Tools.msg(player, Tools.rc("&cContact the project administration!"));
+                Case.getInstance().getLogger().log(Level.WARNING, "Case animation "  + animation + " does not exist!");
+            }
+        } else {
+            Tools.msg(player, Tools.rc("&cAn error occurred while opening the case!"));
+            Tools.msg(player, Tools.rc("&cContact the project administration!"));
+            Case.getInstance().getLogger().log(Level.WARNING, "Case animation name does not exist!");
+        }
+    }
+
     /**
      * Play animation
      * @param name Animation name
@@ -65,9 +100,9 @@ public class AnimationManager {
      * @param location Case location (with pitch and yaw player)
      * @param c Case data
      */
-    public void playAnimation(String name, Player player, Location location, CaseData c) {
-        if(addon.getCaseAPI().getHologramManager() != null && c.getHologram().isEnabled()) {
-            addon.getCaseAPI().getHologramManager().removeHologram(location.getBlock());
+    private void playAnimation(String name, Player player, Location location, CaseData c) {
+        if(CaseManager.getHologramManager() != null && c.getHologram().isEnabled()) {
+            CaseManager.getHologramManager().removeHologram(location.getBlock());
         }
 
         Animation animation = getRegisteredAnimation(name);
@@ -92,7 +127,7 @@ public class AnimationManager {
             AnimationStartEvent startEvent = new AnimationStartEvent(player, name, c, location, preStartEvent.getWinItem());
             Bukkit.getPluginManager().callEvent(startEvent);
         } else {
-            addon.getDonateCase().getLogger().warning("Animation " + name + " not found!");
+            Case.getInstance().getLogger().warning("Animation " + name + " not found!");
         }
     }
 
@@ -124,7 +159,7 @@ public class AnimationManager {
                 Animation animationClass = getRegisteredAnimations().get(animation);
                 return animationClass.getClass().getDeclaredConstructor().newInstance();
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                addon.getDonateCase().getLogger().warning(e.getLocalizedMessage());
+                Case.getInstance().getLogger().warning(e.getLocalizedMessage());
             }
         }
         return null;

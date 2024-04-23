@@ -1,4 +1,4 @@
-package com.jodexindustries.testaddon;
+package com.jodexindustries.testpluginaddon;
 
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
