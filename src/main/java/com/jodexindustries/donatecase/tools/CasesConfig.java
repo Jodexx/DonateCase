@@ -14,7 +14,7 @@ import java.util.Map;
 public class CasesConfig {
     public Map<String, YamlConfiguration> cases = new HashMap<>();
     public CasesConfig() {
-        for (File file : DonateCase.t.getCasesInFolder()) {
+        for (File file : Tools.getCasesInFolder()) {
             if(file.getName().contains(".yml")) {
                 String name = file.getName().split(".yml")[0];
                 int index = file.getName().length();

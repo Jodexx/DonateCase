@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.tools.support;
 
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.Logger;
+import com.jodexindustries.donatecase.tools.Tools;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -20,10 +20,10 @@ public class ItemsAdderSupport {
                 ItemStack item = stack.getItemStack();
                 ItemMeta itemMeta = item.getItemMeta();
                 if(displayName != null) {
-                    itemMeta.setDisplayName(DonateCase.t.rc(displayName));
+                    itemMeta.setDisplayName(Tools.rc(displayName));
                 }
                 if (lore != null) {
-                    itemMeta.setLore(DonateCase.t.rc(lore));
+                    itemMeta.setLore(Tools.rc(lore));
                 }
                 item.setItemMeta(itemMeta);
                 return item;

@@ -1,10 +1,11 @@
 package com.jodexindustries.donatecase.listener;
 
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.CaseAPI;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.events.*;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.Logger;
+import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,8 +44,8 @@ public class EventsListener implements Listener {
         if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             if (p.hasPermission("donatecase.admin")) {
                 new UpdateChecker(DonateCase.instance, 106701).getVersion((version) -> {
-                    if (t.getPluginVersion(DonateCase.instance.getDescription().getVersion()) < t.getPluginVersion(version)) {
-                        DonateCase.t.msg(p, DonateCase.t.rt(DonateCase.customConfig.getLang().getString("UpdateCheck"), "%version:" + version));
+                    if (Tools.getPluginVersion(DonateCase.instance.getDescription().getVersion()) < Tools.getPluginVersion(version)) {
+                        Tools.msg(p, Tools.rt(DonateCase.customConfig.getLang().getString("UpdateCheck"), "%version:" + version));
                     }
 
                 });
@@ -56,23 +57,23 @@ public class EventsListener implements Listener {
     public void InventoryClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         String playerName = p.getName();
-        if (Case.playersGui.containsKey(p.getUniqueId())) {
-            String caseType = Case.playersGui.get(p.getUniqueId()).getName();
+        if (CaseAPI.playersGui.containsKey(p.getUniqueId())) {
+            String caseType = DonateCase.api.playersGui.get(p.getUniqueId()).getName();
             e.setCancelled(true);
 //            if (e.getCurrentItem() == null) return;
-            boolean isOpenItem = t.getOpenMaterialSlots(caseType).contains(e.getRawSlot());
-            Location location = Case.playersGui.get(p.getUniqueId()).getLocation();
+            boolean isOpenItem = Tools.getOpenMaterialSlots(caseType).contains(e.getRawSlot());
+            Location location = CaseAPI.playersGui.get(p.getUniqueId()).getLocation();
             CaseGuiClickEvent caseGuiClickEvent = new CaseGuiClickEvent(e.getView(), e.getSlotType(), e.getSlot(), e.getClick(), e.getAction(), location, caseType, isOpenItem);
             Bukkit.getServer().getPluginManager().callEvent(caseGuiClickEvent);
             if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && isOpenItem) {
-                caseType = t.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
-                if (Case.hasCaseByType(caseType)) {
+                caseType = Tools.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
+                if (DonateCase.api.hasCaseByType(caseType)) {
                     PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, location.getBlock());
                     Bukkit.getServer().getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
-                        if (Case.getKeys(caseType, playerName) >= 1) {
-                            Case.removeKeys(caseType, playerName, 1);
-                            Case.startAnimation(p, location, caseType);
+                        if (DonateCase.api.getKeys(caseType, playerName) >= 1) {
+                            DonateCase.api.removeKeys(caseType, playerName, 1);
+                            DonateCase.api.startAnimation(p, location, caseType);
                             OpenCaseEvent openEvent = new OpenCaseEvent(p, caseType, location.getBlock());
                             Bukkit.getServer().getPluginManager().callEvent(openEvent);
                             p.closeInventory();
@@ -86,12 +87,12 @@ public class EventsListener implements Listener {
                             p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
                             String noKey = casesConfig.getCase(caseType).getString("Messages.NoKey");
                             if (noKey == null) noKey = DonateCase.customConfig.getLang().getString("NoKey");
-                            DonateCase.t.msg(p, noKey);
+                            Tools.msg(p, noKey);
                         }
                     }
                 } else {
                     p.closeInventory();
-                    DonateCase.t.msg(p, "&cSomething wrong! Contact with server administrator!");
+                    Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
                     DonateCase.instance.getLogger().log(Level.WARNING, "Case with name " + caseType + " not exist!");
                 }
             }
@@ -121,24 +122,24 @@ public class EventsListener implements Listener {
             Player p = e.getPlayer();
             assert e.getClickedBlock() != null;
             Location blockLocation = e.getClickedBlock().getLocation();
-            if (Case.hasCaseByLocation(blockLocation)) {
-                String caseType = Case.getCaseTypeByLocation(blockLocation);
+            if (DonateCase.api.hasCaseByLocation(blockLocation)) {
+                String caseType = DonateCase.api.getCaseTypeByLocation(blockLocation);
                 if(caseType == null) return;
                 e.setCancelled(true);
                 CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType);
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    if (!Case.activeCasesByLocation.containsKey(blockLocation)) {
-                        if (Case.hasCaseByType(caseType)) {
-                            CaseData caseData = Case.getCase(caseType);
+                    if (!CaseAPI.activeCasesByLocation.containsKey(blockLocation)) {
+                        if (DonateCase.api.hasCaseByType(caseType)) {
+                            CaseData caseData = DonateCase.api.getCase(caseType);
                             if(caseData == null) return;
-                            Case.openGui(p, caseData, blockLocation);
+                            DonateCase.api.openGui(p, caseData, blockLocation);
                         } else {
-                            DonateCase.t.msg(p, "&cSomething wrong! Contact with server administrator!");
+                            Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
                             DonateCase.instance.getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
                         }
                     } else {
-                        DonateCase.t.msg(p, DonateCase.customConfig.getLang().getString("HaveOpenCase"));
+                        Tools.msg(p, DonateCase.customConfig.getLang().getString("HaveOpenCase"));
                     }
                 }
             }
@@ -148,8 +149,8 @@ public class EventsListener implements Listener {
     @EventHandler
     public void InventoryClose(InventoryCloseEvent e) {
         Player p = (Player)e.getPlayer();
-        if (Case.hasCaseByTitle(e.getView().getTitle())) {
-            Case.playersGui.remove(p.getUniqueId());
+        if (DonateCase.api.hasCaseByTitle(e.getView().getTitle())) {
+            CaseAPI.playersGui.remove(p.getUniqueId());
         }
 
     }
@@ -157,9 +158,9 @@ public class EventsListener implements Listener {
     @EventHandler
     public void BlockBreak(BlockBreakEvent e) {
         Location loc = e.getBlock().getLocation();
-        if (Case.hasCaseByLocation(loc)) {
+        if (DonateCase.api.hasCaseByLocation(loc)) {
             e.setCancelled(true);
-            DonateCase.t.msg(e.getPlayer(), DonateCase.customConfig.getLang().getString("DestoryDonatCase"));
+            Tools.msg(e.getPlayer(), DonateCase.customConfig.getLang().getString("DestoryDonatCase"));
         }
 
     }

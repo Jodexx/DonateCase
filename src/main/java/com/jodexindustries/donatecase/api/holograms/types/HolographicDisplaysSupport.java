@@ -1,9 +1,9 @@
 package com.jodexindustries.donatecase.api.holograms.types;
 
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.tools.Tools;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.PlaceholderSetting;
@@ -13,11 +13,9 @@ import java.util.HashMap;
 
 public class HolographicDisplaysSupport extends HologramManager {
 
-    @NotNull
-    private final DonateCase plugin = DonateCase.instance;
 
     @NotNull
-    private final HolographicDisplaysAPI api = HolographicDisplaysAPI.get(this.plugin);
+    private final HolographicDisplaysAPI api = HolographicDisplaysAPI.get(DonateCase.instance);
 
     private final HashMap<Block, Hologram> holograms = new HashMap<>();
 
@@ -32,7 +30,7 @@ public class HolographicDisplaysSupport extends HologramManager {
         Hologram hologram = this.api.createHologram(block.getLocation().add(.5, height, .5));
         hologram.setPlaceholderSetting(PlaceholderSetting.DEFAULT);
         crateHologram.getMessages().forEach(line -> hologram.getLines().appendText(
-                Case.getTools().rc((line))
+                Tools.rc((line))
         ));
 
         this.holograms.put(block, hologram);

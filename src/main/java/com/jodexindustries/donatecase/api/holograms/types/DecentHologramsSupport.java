@@ -1,11 +1,12 @@
 package com.jodexindustries.donatecase.api.holograms.types;
 
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
+import com.jodexindustries.donatecase.tools.Tools;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import org.bukkit.block.Block;
+
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -24,7 +25,7 @@ public class DecentHologramsSupport extends HologramManager {
 
         hologram.setDisplayRange(caseHologram.getRange());
 
-        caseHologram.getMessages().forEach(line -> DHAPI.addHologramLine(hologram, Case.getTools().rc(line)));
+        caseHologram.getMessages().forEach(line -> DHAPI.addHologramLine(hologram, Tools.rc(line)));
 
         this.holograms.put(block, hologram);
     }

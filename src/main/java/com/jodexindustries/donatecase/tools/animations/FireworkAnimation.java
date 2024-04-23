@@ -2,10 +2,10 @@ package com.jodexindustries.donatecase.tools.animations;
 
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.entity.Firework;
@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static com.jodexindustries.donatecase.DonateCase.customConfig;
-import static com.jodexindustries.donatecase.DonateCase.t;
 
 public class FireworkAnimation implements Animation {
     private EquipmentSlot itemSlot;
@@ -34,9 +33,9 @@ public class FireworkAnimation implements Animation {
         winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, displayName));
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
-        ArmorStandCreator as = t.createArmorStand();
+        ArmorStandCreator as = Tools.createArmorStand();
         as.spawnArmorStand(location);
-        armorStandEulerAngle = t.getArmorStandEulerAngle("Firework.Pose");
+        armorStandEulerAngle = Tools.getArmorStandEulerAngle("Firework.Pose");
 
         itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("Firework.ItemSlot", "HEAD").toUpperCase());
         boolean small = customConfig.getAnimations().getBoolean("Firework.SmallArmorStand", true);
@@ -57,7 +56,7 @@ public class FireworkAnimation implements Animation {
                     FireworkMeta data = firework.getFireworkMeta();
                     data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
                     for (String color : customConfig.getAnimations().getStringList("Firework.FireworkColors")) {
-                        data.addEffect(FireworkEffect.builder().withColor(t.parseColor(color)).build());
+                        data.addEffect(FireworkEffect.builder().withColor(Tools.parseColor(color)).build());
                     }
                     data.setPower(customConfig.getAnimations().getInt("Firework.Power"));
                     firework.setFireworkMeta(data);
@@ -77,12 +76,12 @@ public class FireworkAnimation implements Animation {
                         }
                         as.setPose(armorStandEulerAngle);
                         as.setCustomName(displayName);
-                        Case.onCaseOpenFinish(c, player, true, winItem);
+                        DonateCase.api.onCaseOpenFinish(c, player, true, winItem);
                     }
                     if (this.i >= 30) {
                         as.remove();
                         this.cancel();
-                        Case.animationEnd(c, getName(), player, uuid, winItem);
+                        DonateCase.api.animationEnd(c, getName(), player, uuid, winItem);
                     }
                 }
 

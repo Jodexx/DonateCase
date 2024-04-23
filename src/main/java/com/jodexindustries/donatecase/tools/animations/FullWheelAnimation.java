@@ -1,10 +1,11 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -47,7 +48,7 @@ public class FullWheelAnimation implements Animation {
 
 
 
-        armorStandEulerAngle = t.getArmorStandEulerAngle("FullWheel.Pose");
+        armorStandEulerAngle = Tools.getArmorStandEulerAngle("FullWheel.Pose");
 
         boolean needSound = customConfig.getAnimations().getString("FullWheel.Scroll.Sound") != null;
         Sound sound = Sound.valueOf(customConfig.getAnimations().getString("FullWheel.Scroll.Sound"));
@@ -133,7 +134,7 @@ public class FullWheelAnimation implements Animation {
                 }
             }
             if (ticks.get() == animationTime + 1) {
-                Case.onCaseOpenFinish(c, player, true, winItem);
+                DonateCase.api.onCaseOpenFinish(c, player, true, winItem);
             }
             // End
             if (ticks.get() >= animationTime + 20) {
@@ -141,7 +142,7 @@ public class FullWheelAnimation implements Animation {
                 for (ArmorStandCreator stand : armorStands) {
                     stand.remove();
                 }
-                Case.animationEnd(c, getName(), player, uuid, winItem);
+                DonateCase.api.animationEnd(c, getName(), player, uuid, winItem);
                 items.clear();
                 armorStands.clear();
             }
@@ -150,7 +151,7 @@ public class FullWheelAnimation implements Animation {
     }
     private ArmorStandCreator spawnArmorStand(CaseData c, Location location, int index, boolean small) {
         CaseData.Item item = c.getItem(items.get(index));
-        ArmorStandCreator as = t.createArmorStand();
+        ArmorStandCreator as = Tools.createArmorStand();
         as.spawnArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);

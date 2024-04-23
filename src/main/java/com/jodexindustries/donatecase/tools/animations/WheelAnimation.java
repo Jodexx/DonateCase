@@ -1,10 +1,11 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -39,12 +40,12 @@ public class WheelAnimation implements Animation {
         loc.add(0.5, 0, 0.5);
         // register items
         int itemsCount = customConfig.getAnimations().getInt("Wheel.ItemsCount");
-        armorStandEulerAngle = t.getArmorStandEulerAngle("Wheel.Pose");
+        armorStandEulerAngle = Tools.getArmorStandEulerAngle("Wheel.Pose");
         itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("Wheel.ItemSlot", "HEAD").toUpperCase());
         boolean small = customConfig.getAnimations().getBoolean("Wheel.SmallArmorStand", true);
         items.add(winItem);
         for (int i = 0; i < itemsCount; i++) {
-            CaseData.Item tempWinItem = Case.getRandomItem(c);
+            CaseData.Item tempWinItem = DonateCase.api.getRandomItem(c);
             items.add(tempWinItem);
             armorStands.add(spawnArmorStand(location, i, small));
         }
@@ -109,7 +110,7 @@ public class WheelAnimation implements Animation {
                 }
             }
             if (ticks.get() == animationTime + 1) {
-                Case.onCaseOpenFinish(c, player, true, winItem);
+                DonateCase.api.onCaseOpenFinish(c, player, true, winItem);
             }
             // End
             if (ticks.get() >= animationTime + 20) {
@@ -117,7 +118,7 @@ public class WheelAnimation implements Animation {
                 for (ArmorStandCreator stand : armorStands) {
                     stand.remove();
                 }
-                Case.animationEnd(c, getName(), player, uuid, winItem);
+                DonateCase.api.animationEnd(c, getName(), player, uuid, winItem);
                 items.clear();
                 armorStands.clear();
             }
@@ -128,7 +129,7 @@ public class WheelAnimation implements Animation {
     }
     private ArmorStandCreator spawnArmorStand(Location location, int index, boolean small) {
         CaseData.Item item = items.get(index);
-        ArmorStandCreator as = t.createArmorStand();
+        ArmorStandCreator as = Tools.createArmorStand();
         as.spawnArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);

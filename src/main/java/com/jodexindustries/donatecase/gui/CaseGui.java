@@ -1,8 +1,9 @@
 package com.jodexindustries.donatecase.gui;
 
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.MaterialType;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
@@ -30,22 +31,22 @@ public class CaseGui {
         String title = caseData.getCaseTitle();
         String c = caseData.getCaseName();
         YamlConfiguration configCase = casesConfig.getCase(c);
-        inventory = Bukkit.createInventory(null, configCase.getInt("case.Gui.Size", 45), t.rc(title));
+        inventory = Bukkit.createInventory(null, configCase.getInt("case.Gui.Size", 45), Tools.rc(title));
         ConfigurationSection items = configCase.getConfigurationSection("case.Gui.Items");
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
-            List<CaseData.HistoryData> globalHistoryData = Case.getSortedHistoryData();
+            List<CaseData.HistoryData> globalHistoryData = DonateCase.api.getSortedHistoryData();
             if (items != null) {
             for (String item : items.getKeys(false)) {
                 String material = configCase.getString("case.Gui.Items." + item + ".Material", "STONE");
                 String displayName = configCase.getString("case.Gui.Items." + item + ".DisplayName", "None");
                 int keys;
-                String placeholder = t.getLocalPlaceholder(displayName);
+                String placeholder = Tools.getLocalPlaceholder(displayName);
                 if (placeholder.startsWith("keys_")) {
                     String[] parts = placeholder.split("_");
                     String caseName = parts[1];
-                    keys = Case.getKeys(caseName, p.getName());
+                    keys = DonateCase.api.getKeys(caseName, p.getName());
                 } else {
-                    keys = Case.getKeys(c, p.getName());
+                    keys = DonateCase.api.getKeys(c, p.getName());
                 }
                 displayName.replace("%" + placeholder + "%", String.valueOf(keys));
                 if(instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -53,7 +54,7 @@ public class CaseGui {
                 }
                 boolean enchanted = configCase.getBoolean("case.Gui.Items." + item + ".Enchanted");
                 String itemType = configCase.getString("case.Gui.Items." + item + ".Type", "DEFAULT");
-                List<String> lore = t.rc(configCase.getStringList("case.Gui.Items." + item + ".Lore"));
+                List<String> lore = Tools.rc(configCase.getStringList("case.Gui.Items." + item + ".Lore"));
                 int modelData = configCase.getInt("case.Gui.Items." + item + ".ModelData", -1);
                 String[] rgb = null;
                 List<String> pLore = new ArrayList<>();
@@ -63,7 +64,7 @@ public class CaseGui {
                     }
                     pLore.add(line);
                 }
-                lore = t.rc(pLore);
+                lore = Tools.rc(pLore);
                 if (material.toUpperCase().startsWith("LEATHER_")) {
                     String rgbString = configCase.getString("case.Gui.Items." + item + ".Rgb");
                     if (rgbString != null) {
@@ -76,7 +77,7 @@ public class CaseGui {
                     String caseType = (typeArgs.length >= 3) ? typeArgs[2] : c;
                     boolean isGlobal = caseType.equalsIgnoreCase("GLOBAL");
 
-                    CaseData historyCaseData = isGlobal ? null : Case.getCase(caseType);
+                    CaseData historyCaseData = isGlobal ? null : DonateCase.api.getCase(caseType);
                     if (historyCaseData == null && !isGlobal) {
                         instance.getLogger().warning("Case " + caseType + " HistoryData is null!");
                         continue;
@@ -93,7 +94,7 @@ public class CaseGui {
                         if(!sql) {
                             data = historyCaseData.getHistoryData()[index];
                         } else {
-                            List<CaseData.HistoryData> dbData = Case.sortHistoryDataByCase(globalHistoryData,caseType);
+                            List<CaseData.HistoryData> dbData = DonateCase.api.sortHistoryDataByCase(globalHistoryData,caseType);
                             if(!dbData.isEmpty()) {
                                 if(dbData.size() <= index) continue;
                                 data = dbData.get(index);
@@ -101,7 +102,7 @@ public class CaseGui {
                         }
                     }
                     if (data == null) continue;
-                    if (isGlobal) historyCaseData = Case.getCase(data.getCaseType());
+                    if (isGlobal) historyCaseData = DonateCase.api.getCase(data.getCaseType());
                     if(historyCaseData == null) continue;
 
                     CaseData.Item historyItem = historyCaseData.getItem(data.getItem());
@@ -116,8 +117,8 @@ public class CaseGui {
                     String dateFormatted = formatter.format(new Date(data.getTime()));
                     String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "open_case_again";
                     String[] template = {"%action%:" + data.getAction(), "%actiondisplayname%:" + randomActionDisplayname, "%casedisplayname%:" + historyCaseData.getCaseDisplayName(), "%casename%:" + data.getCaseType(), "%casetitle%:" + historyCaseData.getCaseTitle(), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName};
-                    displayName = t.rt(displayName, template);
-                    lore = t.rt(lore, template);
+                    displayName = Tools.rt(displayName, template);
+                    lore = Tools.rt(lore, template);
                 }
 
                 List<String> slots = new ArrayList<>();
@@ -156,20 +157,20 @@ public class CaseGui {
         return inventory;
     }
     private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, boolean enchanted, String[] rgb, int modelData) {
-        int keys = Case.getKeys(c, p.getName());
+        int keys = DonateCase.api.getKeys(c, p.getName());
         List<String> newLore = new ArrayList<>();
         if(lore != null) {
             for (String string : lore) {
-                String placeholder = t.getLocalPlaceholder(string);
+                String placeholder = Tools.getLocalPlaceholder(string);
                 if (placeholder.startsWith("keys_")) {
                     String[] parts = placeholder.split("_");
                     String caseName = parts[1];
-                    keys = Case.getKeys(caseName, p.getName());
+                    keys = DonateCase.api.getKeys(caseName, p.getName());
                 }
                 newLore.add(string.replace("%" + placeholder + "%", String.valueOf(keys)));
             }
         }
-        MaterialType materialType = t.getMaterialType(material);
+        MaterialType materialType = Tools.getMaterialType(material);
         Material itemMaterial;
         ItemStack item;
         if(!material.contains(":")) {
@@ -177,31 +178,31 @@ public class CaseGui {
             if (itemMaterial == null) {
                 itemMaterial = Material.STONE;
             }
-            item = t.createItem(itemMaterial, -1, 1, displayName, t.rt(newLore,"%case%:" + c), enchanted, rgb, modelData);
+            item = Tools.createItem(itemMaterial, -1, 1, displayName, Tools.rt(newLore,"%case%:" + c), enchanted, rgb, modelData);
         } else
         if(materialType == MaterialType.HEAD) {
             String[] parts = material.split(":");
-            item = t.getPlayerHead(parts[1], displayName, t.rt(newLore,"%case%:" + c));
+            item = Tools.getPlayerHead(parts[1], displayName, Tools.rt(newLore,"%case%:" + c));
         } else
         if(materialType == MaterialType.HDB) {
             String[] parts = material.split(":");
             String id = parts[1];
-            item = HeadDatabaseSupport.getSkull(id, displayName, t.rt(newLore, "%case%:" + c));
+            item = HeadDatabaseSupport.getSkull(id, displayName, Tools.rt(newLore, "%case%:" + c));
         } else
         if(materialType == MaterialType.CH) {
             String[] parts = material.split(":");
             String category = parts[1];
             String id = parts[2];
-            item = CustomHeadSupport.getSkull(category, id, displayName, t.rt(newLore, "%case%:" + c));
+            item = CustomHeadSupport.getSkull(category, id, displayName, Tools.rt(newLore, "%case%:" + c));
         } else if (materialType == MaterialType.IA) {
             String[] parts = material.split(":");
             String namespace = parts[1];
             String id = parts[2];
-            item = ItemsAdderSupport.getItem(namespace + ":" + id, displayName,t.rt(newLore, "%case%:" + c));
+            item = ItemsAdderSupport.getItem(namespace + ":" + id, displayName, Tools.rt(newLore, "%case%:" + c));
         } else if (materialType == MaterialType.BASE64) {
             String[] parts = material.split(":");
             String base64 = parts[1];
-            item = t.getBASE64Skull(base64, displayName, t.rt(newLore,"%case%:" + c));
+            item = Tools.getBASE64Skull(base64, displayName, Tools.rt(newLore,"%case%:" + c));
         } else {
             String[] parts = material.split(":");
             byte data = -1;
@@ -212,7 +213,7 @@ public class CaseGui {
             if (itemMaterial == null) {
                 itemMaterial = Material.STONE;
             }
-            item = t.createItem(itemMaterial, data, 1, displayName, t.rt(newLore,"%case%:" + c), enchanted, null, -1);
+            item = Tools.createItem(itemMaterial, data, 1, displayName, Tools.rt(newLore,"%case%:" + c), enchanted, null, -1);
         }
         return item;
     }

@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.tools.support;
 
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.Logger;
+import com.jodexindustries.donatecase.tools.Tools;
 import de.likewhat.customheads.CustomHeads;
 import de.likewhat.customheads.api.CustomHeadsAPI;
 import org.bukkit.Material;
@@ -26,10 +26,10 @@ public class CustomHeadSupport {
             ItemMeta itemMeta = item.getItemMeta();
             if (itemMeta != null) {
                 if(displayName != null) {
-                    itemMeta.setDisplayName(DonateCase.t.rc(displayName));
+                    itemMeta.setDisplayName(Tools.rc(displayName));
                 }
                 if(lore != null) {
-                    itemMeta.setLore(DonateCase.t.rc(lore));
+                    itemMeta.setLore(Tools.rc(lore));
                 }
             }
             item.setItemMeta(itemMeta);

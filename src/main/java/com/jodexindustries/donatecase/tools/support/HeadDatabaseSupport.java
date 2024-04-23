@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.tools.support;
 
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.Logger;
+import com.jodexindustries.donatecase.tools.Tools;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -24,10 +24,10 @@ public class HeadDatabaseSupport {
             ItemMeta itemMeta = item.getItemMeta();
             if (itemMeta != null) {
                 if(displayName != null) {
-                    itemMeta.setDisplayName(DonateCase.t.rc(displayName));
+                    itemMeta.setDisplayName(Tools.rc(displayName));
                 }
                 if (lore != null) {
-                    itemMeta.setLore(DonateCase.t.rc(lore));
+                    itemMeta.setLore(Tools.rc(lore));
                 }
                 item.setItemMeta(itemMeta);
             }
