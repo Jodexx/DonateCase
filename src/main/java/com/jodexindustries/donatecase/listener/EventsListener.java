@@ -56,12 +56,12 @@ public class EventsListener implements Listener {
     public void InventoryClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         String playerName = p.getName();
-        if (Case.playersCases.containsKey(p.getUniqueId())) {
-            String caseType = Case.playersCases.get(p.getUniqueId()).getName();
+        if (Case.playersGui.containsKey(p.getUniqueId())) {
+            String caseType = Case.playersGui.get(p.getUniqueId()).getName();
             e.setCancelled(true);
 //            if (e.getCurrentItem() == null) return;
             boolean isOpenItem = t.getOpenMaterialSlots(caseType).contains(e.getRawSlot());
-            Location location = Case.playersCases.get(p.getUniqueId()).getLocation();
+            Location location = Case.playersGui.get(p.getUniqueId()).getLocation();
             CaseGuiClickEvent caseGuiClickEvent = new CaseGuiClickEvent(e.getView(), e.getSlotType(), e.getSlot(), e.getClick(), e.getAction(), location, caseType, isOpenItem);
             Bukkit.getServer().getPluginManager().callEvent(caseGuiClickEvent);
             if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && isOpenItem) {
@@ -128,7 +128,7 @@ public class EventsListener implements Listener {
                 CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType);
                 Bukkit.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    if (!Case.activeCases.containsKey(blockLocation)) {
+                    if (!Case.activeCasesByLocation.containsKey(blockLocation)) {
                         if (Case.hasCaseByType(caseType)) {
                             CaseData caseData = Case.getCase(caseType);
                             if(caseData == null) return;
@@ -149,7 +149,7 @@ public class EventsListener implements Listener {
     public void InventoryClose(InventoryCloseEvent e) {
         Player p = (Player)e.getPlayer();
         if (Case.hasCaseByTitle(e.getView().getTitle())) {
-            Case.playersCases.remove(p.getUniqueId());
+            Case.playersGui.remove(p.getUniqueId());
         }
 
     }
