@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -76,12 +77,12 @@ public class FireworkAnimation implements Animation {
                         }
                         as.setPose(armorStandEulerAngle);
                         as.setCustomName(displayName);
-                        DonateCase.api.onCaseOpenFinish(c, player, true, winItem);
+                        Case.onCaseOpenFinish(c, player, true, winItem);
                     }
                     if (this.i >= 30) {
                         as.remove();
                         this.cancel();
-                        DonateCase.api.animationEnd(c, getName(), player, uuid, winItem);
+                        Case.animationEnd(c, getName(), player, uuid, winItem);
                     }
                 }
 

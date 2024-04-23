@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.api.addon;
 
 import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.api.CaseAPI;
+import com.jodexindustries.donatecase.api.CaseManager;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +20,7 @@ public interface InstanceAddon extends Addon {
         return DonateCase.instance;
     }
     @Override
-    default CaseAPI getCaseAPI() {
+    default CaseManager getCaseAPI() {
         return DonateCase.api;
     }
 

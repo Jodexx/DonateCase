@@ -1,6 +1,8 @@
 package com.jodexindustries.donatecase.commands;
 
 import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.CaseManager;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.SubCommand;
@@ -75,12 +77,12 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                                 Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NumberFormatException"), "%string:" + args[3]));
                                 return true;
                             }
-                            if (DonateCase.api.hasCaseByType(caseName)) {
-                                CaseData data = DonateCase.api.getCase(caseName);
+                            if (Case.hasCaseByType(caseName)) {
+                                CaseData data = Case.getCase(caseName);
                                 if(data == null) return true;
                                 String caseTitle = data.getCaseTitle();
                                 String caseDisplayName = data.getCaseDisplayName();
-                                DonateCase.api.addKeys(caseName, player, keys);
+                                Case.addKeys(caseName, player, keys);
                                 Tools.msg(sender, Tools.rt(customConfig.getLang().getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                                 if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
                                     Tools.msg(target, Tools.rt(customConfig.getLang().getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
@@ -115,12 +117,12 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     } else {
                         String player = args[1];
                         String caseName = args[2];
-                        if (DonateCase.api.hasCaseByType(caseName)) {
-                            CaseData data = DonateCase.api.getCase(caseName);
+                        if (Case.hasCaseByType(caseName)) {
+                            CaseData data = Case.getCase(caseName);
                             if(data == null) return true;
                             String caseTitle = data.getCaseTitle();
                             String caseDisplayName = data.getCaseDisplayName();
-                            DonateCase.api.setNullKeys(caseName, player);
+                            Case.setNullKeys(caseName, player);
                             Tools.msg(sender, Tools.rt(customConfig.getLang().getString("ClearKeys"), "%player:" + player, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                         } else {
                             Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
@@ -142,12 +144,12 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                         Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NumberFormatException"), "%string:" + args[3]));
                         return true;
                     }
-                    if (DonateCase.api.hasCaseByType(caseName)) {
-                        CaseData data = DonateCase.api.getCase(caseName);
+                    if (Case.hasCaseByType(caseName)) {
+                        CaseData data = Case.getCase(caseName);
                         if(data == null) return true;
                         String caseTitle = data.getCaseTitle();
                         String caseDisplayName = data.getCaseDisplayName();
-                        DonateCase.api.setKeys(caseName, player, keys);
+                        Case.setKeys(caseName, player, keys);
                         Tools.msg(sender, Tools.rt(customConfig.getLang().getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                         if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
                             Tools.msg(target, Tools.rt(customConfig.getLang().getString("SetKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
@@ -174,7 +176,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                                 if(placeholder.startsWith("keys_")) {
                                     String[] parts = placeholder.split("_");
                                     String caseTitle = parts[1];
-                                    int keys = DonateCase.api.getKeys(caseTitle, player.getName());
+                                    int keys = Case.getKeys(caseTitle, player.getName());
                                     if(parts.length == 2) {
                                         result = String.valueOf(keys);
                                     } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
@@ -201,7 +203,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                             if(placeholder.startsWith("keys_")) {
                                 String[] parts = placeholder.split("_");
                                 String caseName = parts[1];
-                                int keys = DonateCase.api.getKeys(caseName, target);
+                                int keys = Case.getKeys(caseName, target);
                                 if(parts.length == 2) {
                                     result = String.valueOf(keys);
                                 } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
@@ -222,7 +224,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     int num = 0;
                         for (String caseName : casesConfig.getCases().keySet()) {
                             num++;
-                            CaseData data = DonateCase.api.getCase(caseName);
+                            CaseData data = Case.getCase(caseName);
                             if(data == null) return true;
                             String caseTitle = data.getCaseTitle();
                             String caseDisplayName = data.getCaseDisplayName();
@@ -239,14 +241,14 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     if (sender.hasPermission("donatecase.player")) {
                         if (args.length == 2) {
                             String caseName = args[1];
-                            if (DonateCase.api.hasCaseByType(caseName)) {
-                                int keys = DonateCase.api.getKeys(caseName, playerName);
+                            if (Case.hasCaseByType(caseName)) {
+                                int keys = Case.getKeys(caseName, playerName);
                                 if (keys >= 1) {
-                                    DonateCase.api.removeKeys(caseName, playerName, 1);
-                                    CaseData data = DonateCase.api.getCase(caseName);
+                                    Case.removeKeys(caseName, playerName, 1);
+                                    CaseData data = Case.getCase(caseName);
                                     if(data == null) return true;
                                     CaseData.Item winGroup = Tools.getRandomGroup(data);
-                                    DonateCase.api.onCaseOpenFinish(data, player, true, winGroup);
+                                    Case.onCaseOpenFinish(data, player, true, winGroup);
                                 } else {
                                     Tools.msg(player, customConfig.getLang().getString("NoKey"));
                                 }
@@ -272,12 +274,12 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                         if (args.length >= 3) {
                             String caseType = args[1];
                             String caseName = args[2];
-                            if (DonateCase.api.hasCaseByType(caseType)) {
-                                if (DonateCase.api.hasCaseByLocation(l)) {
+                            if (Case.hasCaseByType(caseType)) {
+                                if (Case.hasCaseByLocation(l)) {
                                     Tools.msg(sender, customConfig.getLang().getString("HasDonatCase"));
                                 } else {
-                                    if(!DonateCase.api.hasCaseTypeByCustomName(caseName)) {
-                                        DonateCase.api.saveLocation(caseName, caseType, l);
+                                    if(!Case.hasCaseTypeByCustomName(caseName)) {
+                                        Case.saveLocation(caseName, caseType, l);
                                         Tools.msg(sender, customConfig.getLang().getString("AddDonatCase"));
                                     } else {
                                         Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseAlreadyHasByName"), "%casename:" + caseName));
@@ -301,9 +303,9 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                         if (sender instanceof Player) {
                             Player player = (Player) sender;
                             Location l = player.getTargetBlock(null, 5).getLocation();
-                            if (DonateCase.api.hasCaseByLocation(l)) {
-                                DonateCase.api.deleteCaseByLocation(l);
-                                if(DonateCase.api.getHologramManager() != null) DonateCase.api.getHologramManager().removeHologram(l.getBlock());
+                            if (Case.hasCaseByLocation(l)) {
+                                Case.deleteCaseByLocation(l);
+                                if(CaseManager.getHologramManager() != null) CaseManager.getHologramManager().removeHologram(l.getBlock());
                                 Tools.msg(sender, customConfig.getLang().getString("RemoveDonatCase"));
                             } else {
                                 Tools.msg(sender, customConfig.getLang().getString("BlockDontDonatCase"));
@@ -311,10 +313,10 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                         }
                     } else if (args.length == 2) {
                         String name = args[1];
-                        if (DonateCase.api.hasCaseTypeByCustomName(name)) {
-                            DonateCase.api.deleteCaseByName(name);
-                            Location location = DonateCase.api.getCaseLocationByCustomName(name);
-                            if(DonateCase.api.getHologramManager() != null) if(location != null) DonateCase.api.getHologramManager().removeHologram(location.getBlock());
+                        if (Case.hasCaseTypeByCustomName(name)) {
+                            Case.deleteCaseByName(name);
+                            Location location = Case.getCaseLocationByCustomName(name);
+                            if(CaseManager.getHologramManager() != null) if(location != null) CaseManager.getHologramManager().removeHologram(location.getBlock());
                             Tools.msg(sender, customConfig.getLang().getString("RemoveDonatCase"));
                         } else {
                             Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseNotExist"), "%case:" + name));

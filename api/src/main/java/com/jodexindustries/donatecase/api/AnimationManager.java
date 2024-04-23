@@ -79,12 +79,12 @@ public class AnimationManager {
 
             ActiveCase activeCase = new ActiveCase(location, c.getCaseName());
             UUID uuid = UUID.randomUUID();
-            CaseAPI.activeCases.put(uuid, activeCase);
-            CaseAPI.activeCasesByLocation.put(location, uuid);
+            Case.activeCases.put(uuid, activeCase);
+            Case.activeCasesByLocation.put(location, uuid);
 
             animation.start(player,  addon.getCaseAPI().getCaseLocationByBlockLocation(location), uuid, c, preStartEvent.getWinItem());
             for (Player pl : Bukkit.getOnlinePlayers()) {
-                if (CaseAPI.playersGui.containsKey(pl.getUniqueId()) && Tools.isHere(location.getBlock().getLocation(), CaseAPI.playersGui.get(pl.getUniqueId()).getLocation())) {
+                if (Case.playersGui.containsKey(pl.getUniqueId()) && Tools.isHere(location.getBlock().getLocation(), Case.playersGui.get(pl.getUniqueId()).getLocation())) {
                     pl.closeInventory();
                 }
             }

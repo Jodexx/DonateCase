@@ -16,9 +16,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.logging.Level;
 
 /**
  * Animation control class, registration, playing
@@ -45,6 +44,7 @@ public class AnimationManager {
             DonateCase.instance.getLogger().warning("Animation with name " + name + " already registered!");
         }
     }
+    
 
     /**
      * Unregister custom animation
@@ -59,6 +59,41 @@ public class AnimationManager {
             DonateCase.instance.getLogger().warning("Animation with name " + name + " already unregistered!");
         }
     }
+
+    /**
+     * Unregister all animations
+     */
+    public void unregisterAnimations() {
+        List<String> list = new ArrayList<>(getRegisteredAnimations().keySet());
+        for (String s : list) {
+            unregisterAnimation(s);
+        }
+    }
+
+    /**
+     * Start animation at a specific location
+     * @param player The player who opened the case
+     * @param location Location where to start the animation
+     * @param caseName Case name
+     */
+    public void startAnimation(Player player, Location location, String caseName) {
+        CaseData caseData = Case.getCase(caseName).clone();
+        String animation = caseData.getAnimation();
+        if(animation != null) {
+            if(isRegistered(animation)) {
+                playAnimation(animation, player, location, caseData);
+            } else {
+                Tools.msg(player, Tools.rc("&cAn error occurred while opening the case!"));
+                Tools.msg(player, Tools.rc("&cContact the project administration!"));
+                DonateCase.instance.getLogger().log(Level.WARNING, "Case animation "  + animation + " does not exist!");
+            }
+        } else {
+            Tools.msg(player, Tools.rc("&cAn error occurred while opening the case!"));
+            Tools.msg(player, Tools.rc("&cContact the project administration!"));
+            DonateCase.instance.getLogger().log(Level.WARNING, "Case animation name does not exist!");
+        }
+    }
+    
     /**
      * Play animation
      * @param name Animation name
@@ -66,26 +101,26 @@ public class AnimationManager {
      * @param location Case location (with pitch and yaw player)
      * @param c Case data
      */
-    public void playAnimation(String name, Player player, Location location, CaseData c) {
-        if(addon.getCaseAPI().getHologramManager() != null && c.getHologram().isEnabled()) {
-            addon.getCaseAPI().getHologramManager().removeHologram(location.getBlock());
+    private void playAnimation(String name, Player player, Location location, CaseData c) {
+        if(CaseManager.getHologramManager() != null && c.getHologram().isEnabled()) {
+            CaseManager.getHologramManager().removeHologram(location.getBlock());
         }
 
         Animation animation = getRegisteredAnimation(name);
         if (animation != null) {
-            CaseData.Item winItem = addon.getCaseAPI().getRandomItem(c);
+            CaseData.Item winItem = Case.getRandomItem(c);
             winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName()));
             AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, name, c, location, winItem);
             Bukkit.getPluginManager().callEvent(preStartEvent);
 
             ActiveCase activeCase = new ActiveCase(location, c.getCaseName());
             UUID uuid = UUID.randomUUID();
-            CaseAPI.activeCases.put(uuid, activeCase);
-            CaseAPI.activeCasesByLocation.put(location, uuid);
+            Case.activeCases.put(uuid, activeCase);
+            Case.activeCasesByLocation.put(location, uuid);
 
-            animation.start(player,  addon.getCaseAPI().getCaseLocationByBlockLocation(location), uuid, c, preStartEvent.getWinItem());
+            animation.start(player,  Case.getCaseLocationByBlockLocation(location), uuid, c, preStartEvent.getWinItem());
             for (Player pl : Bukkit.getOnlinePlayers()) {
-                if (CaseAPI.playersGui.containsKey(pl.getUniqueId()) && Tools.isHere(location.getBlock().getLocation(), CaseAPI.playersGui.get(pl.getUniqueId()).getLocation())) {
+                if (Case.playersGui.containsKey(pl.getUniqueId()) && Tools.isHere(location.getBlock().getLocation(), Case.playersGui.get(pl.getUniqueId()).getLocation())) {
                     pl.closeInventory();
                 }
             }

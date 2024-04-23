@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.tools;
 import java.text.NumberFormat;
 
 import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.api.Case;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +30,8 @@ public class Placeholder extends PlaceholderExpansion {
         if(params.startsWith("keys")) {
             String[] parts = params.split("_", 2);
             int keys = 0;
-            for (String caseName : DonateCase.api.getCases().keySet()) {
-                keys += DonateCase.api.getKeys(caseName, player.getName());
+            for (String caseName : Case.getCases().keySet()) {
+                keys += Case.getKeys(caseName, player.getName());
             }
             if(parts.length == 1) {
                 return String.valueOf(keys);
@@ -40,7 +41,7 @@ public class Placeholder extends PlaceholderExpansion {
         }
         if (params.startsWith("keys_")) {
             String[] parts = params.split("_", 3);
-            int s = DonateCase.api.getKeys(parts[1], player.getName());
+            int s = Case.getKeys(parts[1], player.getName());
             if(parts.length == 2) {
                 return String.valueOf(s);
             } else if(parts[2].equalsIgnoreCase("format")) {

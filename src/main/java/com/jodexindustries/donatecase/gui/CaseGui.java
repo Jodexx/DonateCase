@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.gui;
 
-import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.api.data.MaterialType;
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.MaterialType;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
@@ -34,7 +34,7 @@ public class CaseGui {
         inventory = Bukkit.createInventory(null, configCase.getInt("case.Gui.Size", 45), Tools.rc(title));
         ConfigurationSection items = configCase.getConfigurationSection("case.Gui.Items");
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
-            List<CaseData.HistoryData> globalHistoryData = DonateCase.api.getSortedHistoryData();
+            List<CaseData.HistoryData> globalHistoryData = Case.getSortedHistoryData();
             if (items != null) {
             for (String item : items.getKeys(false)) {
                 String material = configCase.getString("case.Gui.Items." + item + ".Material", "STONE");
@@ -44,9 +44,9 @@ public class CaseGui {
                 if (placeholder.startsWith("keys_")) {
                     String[] parts = placeholder.split("_");
                     String caseName = parts[1];
-                    keys = DonateCase.api.getKeys(caseName, p.getName());
+                    keys = Case.getKeys(caseName, p.getName());
                 } else {
-                    keys = DonateCase.api.getKeys(c, p.getName());
+                    keys = Case.getKeys(c, p.getName());
                 }
                 displayName.replace("%" + placeholder + "%", String.valueOf(keys));
                 if(instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -77,7 +77,7 @@ public class CaseGui {
                     String caseType = (typeArgs.length >= 3) ? typeArgs[2] : c;
                     boolean isGlobal = caseType.equalsIgnoreCase("GLOBAL");
 
-                    CaseData historyCaseData = isGlobal ? null : DonateCase.api.getCase(caseType);
+                    CaseData historyCaseData = isGlobal ? null : Case.getCase(caseType);
                     if (historyCaseData == null && !isGlobal) {
                         instance.getLogger().warning("Case " + caseType + " HistoryData is null!");
                         continue;
@@ -94,7 +94,7 @@ public class CaseGui {
                         if(!sql) {
                             data = historyCaseData.getHistoryData()[index];
                         } else {
-                            List<CaseData.HistoryData> dbData = DonateCase.api.sortHistoryDataByCase(globalHistoryData,caseType);
+                            List<CaseData.HistoryData> dbData = Case.sortHistoryDataByCase(globalHistoryData,caseType);
                             if(!dbData.isEmpty()) {
                                 if(dbData.size() <= index) continue;
                                 data = dbData.get(index);
@@ -102,7 +102,7 @@ public class CaseGui {
                         }
                     }
                     if (data == null) continue;
-                    if (isGlobal) historyCaseData = DonateCase.api.getCase(data.getCaseType());
+                    if (isGlobal) historyCaseData = Case.getCase(data.getCaseType());
                     if(historyCaseData == null) continue;
 
                     CaseData.Item historyItem = historyCaseData.getItem(data.getItem());
@@ -157,7 +157,7 @@ public class CaseGui {
         return inventory;
     }
     private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, boolean enchanted, String[] rgb, int modelData) {
-        int keys = DonateCase.api.getKeys(c, p.getName());
+        int keys = Case.getKeys(c, p.getName());
         List<String> newLore = new ArrayList<>();
         if(lore != null) {
             for (String string : lore) {
@@ -165,7 +165,7 @@ public class CaseGui {
                 if (placeholder.startsWith("keys_")) {
                     String[] parts = placeholder.split("_");
                     String caseName = parts[1];
-                    keys = DonateCase.api.getKeys(caseName, p.getName());
+                    keys = Case.getKeys(caseName, p.getName());
                 }
                 newLore.add(string.replace("%" + placeholder + "%", String.valueOf(keys)));
             }

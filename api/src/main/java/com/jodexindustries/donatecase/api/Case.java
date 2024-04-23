@@ -1,15 +1,17 @@
 package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.PlayerOpenCase;
+import com.jodexindustries.donatecase.api.data.PermissionDriver;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
-import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.tools.CustomConfig;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -18,24 +20,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 
 /**
  * The main class for API interaction with DonateCase, this is where most of the functions are located.
  */
-public class CaseAPI {
-    private final AddonManager addonManager;
-    private final AnimationManager animationManager;
-    private final SubCommandManager subCommandManager;
-    private final Addon addon;
-    public CaseAPI(Addon addon) {
-        this.addon = addon;
-        addonManager = new AddonManager(addon);
-        subCommandManager = new SubCommandManager(addon);
-        this.animationManager = new AnimationManager(addon);
-    }
+public class Case{
     /**
      * Active cases
      */
@@ -63,7 +58,8 @@ public class CaseAPI {
      * @param type Case type (config)
      * @param lv Case location
      */
-    public void saveLocation(String caseName, String type, Location lv) {}
+    public static void saveLocation(String caseName, String type, Location lv) {
+    }
 
     /**
      * Set case keys to a specific player
@@ -71,7 +67,8 @@ public class CaseAPI {
      * @param player Player name
      * @param keys Number of keys
      */
-    public void setKeys(String caseName, String player, int keys) {
+    public static void setKeys(String caseName, String player, int keys) {
+
     }
 
     /**
@@ -79,7 +76,7 @@ public class CaseAPI {
      * @param caseName Case name
      * @param player Player name
      */
-    public void setNullKeys(String caseName, String player) {
+    public static void setNullKeys(String caseName, String player) {
     }
 
     /**
@@ -88,7 +85,7 @@ public class CaseAPI {
      * @param player Player name
      * @param keys Number of keys
      */
-    public void addKeys(String caseName, String player, int keys) {
+    public static void addKeys(String caseName, String player, int keys) {
         setKeys(caseName, player, getKeys(caseName, player) + keys);
     }
 
@@ -99,7 +96,7 @@ public class CaseAPI {
      * @param keys Number of keys
      */
 
-    public void removeKeys(String caseName, String player, int keys) {
+    public static void removeKeys(String caseName, String player, int keys) {
         setKeys(caseName, player, getKeys(caseName, player) - keys);
     }
 
@@ -110,7 +107,7 @@ public class CaseAPI {
      * @return Number of keys
      */
 
-    public int getKeys(String name, String player) {
+    public static int getKeys(String name, String player) {
         return getKeys(name, player);
     }
 
@@ -118,14 +115,14 @@ public class CaseAPI {
      * Delete case by location in Cases.yml
      * @param loc Case location
      */
-    public void deleteCaseByLocation(Location loc) {
+    public static void deleteCaseByLocation(Location loc) {
     }
 
     /**
      * Delete case by name in Cases.yml
      * @param name Case name
      */
-    public void deleteCaseByName(String name) {
+    public static void deleteCaseByName(String name) {
     }
 
     /**
@@ -134,8 +131,8 @@ public class CaseAPI {
      * @return Boolean
      */
 
-    public boolean hasCaseByLocation(Location loc) {
-        return hasCaseByLocation(loc);
+    public static boolean hasCaseByLocation(Location loc) {
+        return false;
     }
 
     /**
@@ -143,8 +140,8 @@ public class CaseAPI {
      * @param loc Case location
      * @return Case type
      */
-    public String getCaseTypeByLocation(Location loc) {
-        return getCaseTypeByLocation(loc);
+    public static String getCaseTypeByLocation(Location loc) {
+        return null;
     }
 
 
@@ -153,7 +150,7 @@ public class CaseAPI {
      * @param loc Case location
      * @return Case name
      */
-    public String getCaseCustomNameByLocation(Location loc) {
+    public static String getCaseCustomNameByLocation(Location loc) {
         return null;
     }
     /**
@@ -161,7 +158,7 @@ public class CaseAPI {
      * @param name Case name
      * @return true/false
      */
-    public boolean hasCaseByType(String name) {
+    public static boolean hasCaseByType(String name) {
         if(caseData.isEmpty()) {
             return false;
         }
@@ -172,7 +169,7 @@ public class CaseAPI {
      * @param name Case name
      * @return true/false
      */
-    public boolean hasCaseTypeByCustomName(String name) {
+    public static boolean hasCaseTypeByCustomName(String name) {
         return hasCaseTypeByCustomName(name);
     }
 
@@ -181,7 +178,7 @@ public class CaseAPI {
      * @param title Case title
      * @return true/false
      */
-    public boolean hasCaseByTitle(String title) {
+    public static boolean hasCaseByTitle(String title) {
         for (CaseData data : caseData.values()) {
             if(data.getCaseTitle().equalsIgnoreCase(title)) return true;
         }
@@ -192,39 +189,15 @@ public class CaseAPI {
      * Get all cases in config
      * @return cases
      */
-    public Map<String, YamlConfiguration> getCases() {
+    public static Map<String, YamlConfiguration> getCases() {
         return getCases();
-    }
-
-    /**
-     * Start animation at a specific location
-     * @param player The player who opened the case
-     * @param location Location where to start the animation
-     * @param caseName Case name
-     */
-    public void startAnimation(Player player, Location location, String caseName) {
-        CaseData caseData = getCase(caseName).clone();
-        String animation = caseData.getAnimation();
-        if(animation != null) {
-            if(animationManager.isRegistered(animation)) {
-                animationManager.playAnimation(animation, player, location, caseData);
-            } else {
-                Tools.msg(player, Tools.rc("&cAn error occurred while opening the case!"));
-                Tools.msg(player, Tools.rc("&cContact the project administration!"));
-                getInstance().getLogger().log(Level.WARNING, "Case animation "  + animation + " does not exist!");
-            }
-        } else {
-            Tools.msg(player, Tools.rc("&cAn error occurred while opening the case!"));
-            Tools.msg(player, Tools.rc("&cContact the project administration!"));
-            getInstance().getLogger().log(Level.WARNING, "Case animation name does not exist!");
-        }
     }
     /**
      * Get random group from case
      * @param c Case data
      * @return Item data
      */
-    public CaseData.Item getRandomItem(CaseData c) {
+    public static CaseData.Item getRandomItem(CaseData c) {
         return Tools.getRandomGroup(c);
     }
 
@@ -232,7 +205,7 @@ public class CaseAPI {
      * Get plugin instance
      * @return DonateCase instance
      */
-    public JavaPlugin getInstance() {
+    public static JavaPlugin getInstance() {
         return getInstance();
     }
 
@@ -244,15 +217,15 @@ public class CaseAPI {
      * @param player Player who opened
      * @param uuid Active case uuid
      */
-    public void animationEnd(CaseData c, String animation, Player player, UUID uuid, CaseData.Item item) {
+    public static void animationEnd(CaseData c, String animation, Player player, UUID uuid, CaseData.Item item) {
         ActiveCase activeCase = activeCases.get(uuid);
         Location location = activeCase.getLocation();
         AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, item);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
         activeCasesByLocation.remove(location.getBlock().getLocation());
         activeCases.remove(uuid);
-        if(getHologramManager() != null && c.getHologram().isEnabled()) {
-            getHologramManager().createHologram(location.getBlock(), c);
+        if(CaseManager.getHologramManager() != null && c.getHologram().isEnabled()) {
+            CaseManager.getHologramManager().createHologram(location.getBlock(), c);
         }
     }
 
@@ -263,8 +236,9 @@ public class CaseAPI {
      * @param needSound Boolean sound
      * @param item Win item data
      */
-    public void onCaseOpenFinish(CaseData caseData, Player player, boolean needSound, CaseData.Item item) {}
-    private String getChoice(CaseData.Item item) {
+    public static void onCaseOpenFinish(CaseData caseData, Player player, boolean needSound, CaseData.Item item) {
+    }
+    private static String getChoice(CaseData.Item item) {
         String endCommand = "";
         Random random = new Random();
         int maxChance = 0;
@@ -288,7 +262,7 @@ public class CaseAPI {
         return endCommand;
     }
 
-    private void executeActions(Player player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
+    private static void executeActions(Player player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
     }
 
 
@@ -298,14 +272,14 @@ public class CaseAPI {
      * @param blockLocation Block location
      * @return case location in Cases.yml (with yaw and pitch)
      */
-    public Location getCaseLocationByBlockLocation(Location blockLocation) {
+    public static Location getCaseLocationByBlockLocation(Location blockLocation) {
         return null;
     }
 
     /** Get plugin configuration manager
      * @return configuration manager instance
      */
-    public @NotNull CustomConfig getCustomConfig() {
+    public static @NotNull CustomConfig getCustomConfig() {
         return getCustomConfig();
     }
 
@@ -315,8 +289,8 @@ public class CaseAPI {
      * @param caseData Case type
      * @param blockLocation Block location
      */
-    public Inventory openGui(Player p, CaseData caseData, Location blockLocation) {
-        return openGui(p,caseData,blockLocation);
+    public static Inventory openGui(Player p, CaseData caseData, Location blockLocation) {
+        return openGui(p, caseData, blockLocation);
     }
 
     /**
@@ -325,7 +299,7 @@ public class CaseAPI {
      * @return Boolean
      */
     @Deprecated
-    public boolean hasCase(@NotNull String c) {
+    public static boolean hasCase(@NotNull String c) {
         return caseData.containsKey(c);
     }
 
@@ -335,25 +309,15 @@ public class CaseAPI {
      * @return Case data
      */
     @Nullable
-    public CaseData getCase(@NotNull String c) {
+    public static CaseData getCase(@NotNull String c) {
         return caseData.getOrDefault(c, null);
-    }
-
-    /**
-     * Unregister all animations
-     */
-    public void unregisterAnimations() {
-        List<String> list = new ArrayList<>(animationManager.getRegisteredAnimations().keySet());
-        for (String s : list) {
-            animationManager.unregisterAnimation(s);
-        }
     }
 
     /**
      * Get sorted history data from all cases
      * @return list of HistoryData (sorted by time)
      */
-    public List<CaseData.HistoryData> getSortedHistoryData() {
+    public static List<CaseData.HistoryData> getSortedHistoryData() {
         return getSortedHistoryData();
     }
 
@@ -363,37 +327,11 @@ public class CaseAPI {
      * @param caseType type of case for filtering
      * @return list of case HistoryData
      */
-    public List<CaseData.HistoryData> sortHistoryDataByCase(List<CaseData.HistoryData> historyData, String caseType) {
+    public static List<CaseData.HistoryData> sortHistoryDataByCase(List<CaseData.HistoryData> historyData, String caseType) {
         return historyData.stream().filter(Objects::nonNull)
                 .filter(data -> data.getCaseType().equals(caseType))
                 .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
                 .collect(Collectors.toList());
-    }
-
-
-    /**
-     * Get addon manager for addons manipulate
-     * @return AddonManager instance
-     */
-    public AddonManager getAddonManager() {
-        return this.addonManager;
-    }
-
-    public AnimationManager getAnimationManager() {
-        return this.animationManager;
-    }
-
-
-    /**
-     * Get sub command manager
-     * @return SubCommandManager instance
-     */
-    public SubCommandManager getSubCommandManager() {
-        return this.subCommandManager;
-    }
-
-    public HologramManager getHologramManager() {
-        return getHologramManager();
     }
 
     /**
@@ -402,7 +340,7 @@ public class CaseAPI {
      * @return Case name
      */
     @Nullable
-    public Location getCaseLocationByCustomName(String name) {
+    public static Location getCaseLocationByCustomName(String name) {
         return getCaseLocationByCustomName(name);
     }
 
@@ -411,7 +349,7 @@ public class CaseAPI {
      * @param name Case custom name
      * @return case type
      */
-    public String getCaseTypeByCustomName(String name) {
+    public static String getCaseTypeByCustomName(String name) {
         return getCaseTypeByCustomName(name);
     }
 
@@ -421,7 +359,7 @@ public class CaseAPI {
      * @return player primary group
      */
     public static String getPlayerGroup(Player player) {
-        return null;
+        return getPlayerGroup(player);
     }
 
     /**
@@ -439,16 +377,12 @@ public class CaseAPI {
      * @param winGroup player win group
      * @return boolean
      */
-    public boolean isAlternative(Map<String, Integer> levelGroups, String playerGroup, String winGroup) {
+    public static boolean isAlternative(Map<String, Integer> levelGroups, String playerGroup, String winGroup) {
         if(levelGroups.containsKey(playerGroup) && levelGroups.containsKey(winGroup)) {
             int playerGroupLevel = levelGroups.get(playerGroup);
             int winGroupLevel = levelGroups.get(winGroup);
             return playerGroupLevel >= winGroupLevel;
         }
         return false;
-    }
-
-    public Addon getAddon() {
-        return addon;
     }
 }

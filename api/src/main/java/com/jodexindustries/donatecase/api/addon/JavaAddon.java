@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.addon;
 
-import com.jodexindustries.donatecase.api.CaseAPI;
+import com.jodexindustries.donatecase.api.CaseManager;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -105,7 +105,7 @@ public abstract class JavaAddon implements Addon, Plugin {
     private AddonLogger addonLogger;
     private File file;
     private URLClassLoader urlClassLoader;
-    private CaseAPI caseAPI;
+    private CaseManager caseAPI;
 
     public JavaAddon() {}
 
@@ -116,7 +116,7 @@ public abstract class JavaAddon implements Addon, Plugin {
         this.classLoader = this.getClass().getClassLoader();
         this.urlClassLoader = loader;
         this.addonLogger = new AddonLogger(this);
-        this.caseAPI = new CaseAPI(this);
+        this.caseAPI = new CaseManager(this);
     }
 
 
@@ -127,7 +127,7 @@ public abstract class JavaAddon implements Addon, Plugin {
     public void onEnable() {}
 
     @Override
-    public CaseAPI getCaseAPI() {
+    public CaseManager getCaseAPI() {
         return this.caseAPI;
     }
 

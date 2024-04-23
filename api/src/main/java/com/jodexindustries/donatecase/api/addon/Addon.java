@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.addon;
 
-import com.jodexindustries.donatecase.api.CaseAPI;
+import com.jodexindustries.donatecase.api.CaseManager;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +13,7 @@ public interface Addon {
     String getName();
     String getVersion();
     Plugin getDonateCase();
-    CaseAPI getCaseAPI();
+    CaseManager getCaseAPI();
     File getDataFolder();
     void saveResource(@NotNull String resourcePath, boolean replace);
     InputStream getResource(@NotNull String filename);

@@ -2,7 +2,8 @@ package com.jodexindustries.donatecase;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.j256.ormlite.logger.Level;
-import com.jodexindustries.donatecase.api.CaseAPI;
+import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.CaseManager;
 import com.jodexindustries.donatecase.api.addon.InstanceAddon;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
@@ -50,7 +51,7 @@ public class DonateCase extends JavaPlugin implements InstanceAddon {
     public static HologramManager hologramManager = null;
     public static LuckPerms luckPerms = null;
     public static PermissionDriver permissionDriver = null;
-    public static CaseAPI api;
+    public static CaseManager api;
 
     public static CustomConfig customConfig;
     public static CasesConfig casesConfig;
@@ -60,7 +61,7 @@ public class DonateCase extends JavaPlugin implements InstanceAddon {
     public void onEnable() {
         long time = System.currentTimeMillis();
         instance = this;
-        api = new CaseAPI(this);
+        api = new CaseManager(this);
         loadPlaceholderAPI();
 
         loadLibraries();
@@ -108,7 +109,7 @@ public class DonateCase extends JavaPlugin implements InstanceAddon {
     public void onDisable() {
         DonateCaseDisableEvent donateCaseDisableEvent = new DonateCaseDisableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseDisableEvent);
-        api.unregisterAnimations();
+        api.getAnimationManager().unregisterAnimations();
         if(api.getAddonManager() != null) api.getAddonManager().disableAddons();
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new Placeholder().unregister();
@@ -192,10 +193,10 @@ public class DonateCase extends JavaPlugin implements InstanceAddon {
     }
     public void cleanCache() {
         Bukkit.getWorlds().forEach(world -> world.getEntitiesByClass(ArmorStand.class).stream().filter(stand -> stand.hasMetadata("case")).forEachOrdered(Entity::remove));
-        CaseAPI.playersGui.clear();
-        CaseAPI.caseData.clear();
-        CaseAPI.activeCases.clear();
-        CaseAPI.activeCasesByLocation.clear();
+        Case.playersGui.clear();
+        Case.caseData.clear();
+        Case.activeCases.clear();
+        Case.activeCasesByLocation.clear();
     }
 
     public void setupConfigs() {
@@ -289,7 +290,7 @@ public class DonateCase extends JavaPlugin implements InstanceAddon {
     }
 
     private void loadCases() {
-        CaseAPI.caseData.clear();
+        Case.caseData.clear();
         for (String caseName : casesConfig.getCases().keySet()) {
             YamlConfiguration config = casesConfig.getCase(caseName);
             ConfigurationSection caseSection = config.getConfigurationSection("case");
@@ -397,7 +398,7 @@ public class DonateCase extends JavaPlugin implements InstanceAddon {
             }
 
             CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData, hologram, levelGroups);
-            CaseAPI.caseData.put(caseName, caseData);
+            Case.caseData.put(caseName, caseData);
         }
         Logger.log("&aCases loaded!");
     }
@@ -415,10 +416,10 @@ public class DonateCase extends JavaPlugin implements InstanceAddon {
         ConfigurationSection section = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
         if(section == null || section.getKeys(false).isEmpty()) return;
         for (String caseName : section.getKeys(false)) {
-            String caseType = api.getCaseTypeByCustomName(caseName);
-            CaseData caseData = api.getCase(caseType);
-            Location location = api.getCaseLocationByCustomName(caseName);
-            if (caseData != null && caseData.getHologram().isEnabled() && location != null && location.getWorld() != null && hologramManager != null && !CaseAPI.activeCasesByLocation.containsKey(location)) {
+            String caseType = Case.getCaseTypeByCustomName(caseName);
+            CaseData caseData = Case.getCase(caseType);
+            Location location = Case.getCaseLocationByCustomName(caseName);
+            if (caseData != null && caseData.getHologram().isEnabled() && location != null && location.getWorld() != null && hologramManager != null && !Case.activeCasesByLocation.containsKey(location)) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }

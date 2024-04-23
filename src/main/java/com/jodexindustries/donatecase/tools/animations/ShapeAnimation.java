@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -81,13 +82,13 @@ public class ShapeAnimation implements Animation {
                         as.setPose(armorStandEulerAngle);
                         as.setCustomName(winItem.getMaterial().getDisplayName());
                         Tools.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
-                        DonateCase.api.onCaseOpenFinish(c, player, true, winItem);
+                        Case.onCaseOpenFinish(c, player, true, winItem);
 
                     }
                 }
 
                 if (i <= 15) {
-                    CaseData.Item winItem = DonateCase.api.getRandomItem(c);
+                    CaseData.Item winItem = Case.getRandomItem(c);
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                         as.setPose(armorStandEulerAngle);
                         as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
@@ -139,7 +140,7 @@ public class ShapeAnimation implements Animation {
                 if (this.i >= 40) {
                     as.remove();
                     this.cancel();
-                    DonateCase.api.animationEnd(c, getName(), player, uuid, winItem);
+                    Case.animationEnd(c, getName(), player, uuid, winItem);
                 }
 
                 ++this.i;

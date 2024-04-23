@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools.animations;
 
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -85,7 +86,7 @@ public class RainlyAnimation implements Animation {
                         }
                         as.setPose(armorStandEulerAngle);
                         as.setCustomName(winGroupDisplayName);
-                        DonateCase.api.onCaseOpenFinish(c, player, false, winItem);
+                        Case.onCaseOpenFinish(c, player, false, winItem);
                         loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 0);
                         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                     }
@@ -93,7 +94,7 @@ public class RainlyAnimation implements Animation {
 
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0 )) {
-                    CaseData.Item winItem = DonateCase.api.getRandomItem(c);
+                    CaseData.Item winItem = Case.getRandomItem(c);
                     String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
                     winItem.getMaterial().setDisplayName(winGroupDisplayName);
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
@@ -123,7 +124,7 @@ public class RainlyAnimation implements Animation {
                 if (this.i >= 70) {
                     as.remove();
                     this.cancel();
-                    DonateCase.api.animationEnd(c, getName(), player, uuid, winItem);
+                    Case.animationEnd(c, getName(), player, uuid, winItem);
                 }
 
                 ++this.i;

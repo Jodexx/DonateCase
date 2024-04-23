@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.tools.animations;
 
 import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -45,7 +46,7 @@ public class WheelAnimation implements Animation {
         boolean small = customConfig.getAnimations().getBoolean("Wheel.SmallArmorStand", true);
         items.add(winItem);
         for (int i = 0; i < itemsCount; i++) {
-            CaseData.Item tempWinItem = DonateCase.api.getRandomItem(c);
+            CaseData.Item tempWinItem = Case.getRandomItem(c);
             items.add(tempWinItem);
             armorStands.add(spawnArmorStand(location, i, small));
         }
@@ -110,7 +111,7 @@ public class WheelAnimation implements Animation {
                 }
             }
             if (ticks.get() == animationTime + 1) {
-                DonateCase.api.onCaseOpenFinish(c, player, true, winItem);
+                Case.onCaseOpenFinish(c, player, true, winItem);
             }
             // End
             if (ticks.get() >= animationTime + 20) {
@@ -118,7 +119,7 @@ public class WheelAnimation implements Animation {
                 for (ArmorStandCreator stand : armorStands) {
                     stand.remove();
                 }
-                DonateCase.api.animationEnd(c, getName(), player, uuid, winItem);
+                Case.animationEnd(c, getName(), player, uuid, winItem);
                 items.clear();
                 armorStands.clear();
             }

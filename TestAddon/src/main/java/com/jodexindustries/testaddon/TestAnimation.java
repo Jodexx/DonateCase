@@ -1,6 +1,5 @@
 package com.jodexindustries.testaddon;
 
-import com.jodexindustries.donatecase.api.CaseAPI;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.data.CaseData;
