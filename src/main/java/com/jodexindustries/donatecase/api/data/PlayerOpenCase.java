@@ -4,7 +4,7 @@ import org.bukkit.Location;
 
 import java.util.UUID;
 
-public class OpenCase {
+public class PlayerOpenCase {
     /**
      * Case location
      */
@@ -18,7 +18,7 @@ public class OpenCase {
      */
     private final UUID playerUUID;
 
-    public OpenCase(Location location, String name, UUID uuid) {
+    public PlayerOpenCase(Location location, String name, UUID uuid) {
         this.location = location;
         this.name = name;
         this.playerUUID = uuid;
