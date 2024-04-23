@@ -75,7 +75,6 @@ build.dependsOn(shadowJar);
 def targetJavaVersion = 11
 java {
     withSourcesJar()
-    withJavadocJar()
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
