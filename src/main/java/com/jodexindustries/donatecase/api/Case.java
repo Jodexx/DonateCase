@@ -1,13 +1,14 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.OpenCase;
+import com.jodexindustries.donatecase.api.data.PlayerOpenCase;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.CustomConfig;
-import com.jodexindustries.donatecase.tools.StartAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -38,13 +40,18 @@ public class Case {
     /**
      * Active cases
      */
-    public static HashMap<Location, String> activeCases = new HashMap<>();
+    public static HashMap<UUID, ActiveCase> activeCases = new HashMap<>();
+
+    /**
+     * Active cases, but by location
+     */
+    public static HashMap<Location, UUID> activeCasesByLocation = new HashMap<>();
 
 
     /**
      * Players, who opened cases (open gui)
      */
-    public static HashMap<UUID, OpenCase> playersCases = new HashMap<>();
+    public static HashMap<UUID, PlayerOpenCase> playersGui = new HashMap<>();
 
     /**
      * Loaded cases in runtime
@@ -280,7 +287,21 @@ public class Case {
      * @param caseName Case name
      */
     public static void startAnimation(Player player, Location location, String caseName) {
-        new StartAnimation(player, location, caseName);
+        CaseData caseData = Case.getCase(caseName).clone();
+        String animation = caseData.getAnimation();
+        if(animation != null) {
+            if(AnimationManager.isRegistered(animation)) {
+                AnimationManager.playAnimation(animation, player, location, caseData);
+            } else {
+                DonateCase.t.msg(player, DonateCase.t.rc("&cAn error occurred while opening the case!"));
+                DonateCase.t.msg(player, DonateCase.t.rc("&cContact the project administration!"));
+                DonateCase.instance.getLogger().log(Level.WARNING, "Case animation "  + animation + " does not exist!");
+            }
+        } else {
+            DonateCase.t.msg(player, DonateCase.t.rc("&cAn error occurred while opening the case!"));
+            DonateCase.t.msg(player, DonateCase.t.rc("&cContact the project administration!"));
+            DonateCase.instance.getLogger().log(Level.WARNING, "Case animation name does not exist!");
+        }
     }
     /**
      * Get random group from case
@@ -305,12 +326,15 @@ public class Case {
      * @param c Case data
      * @param animation Animation name
      * @param player Player who opened
-     * @param location Case location
+     * @param uuid Active case uuid
      */
-    public static void animationEnd(CaseData c, String animation, Player player, Location location, CaseData.Item item) {
+    public static void animationEnd(CaseData c, String animation, Player player, UUID uuid, CaseData.Item item) {
+        ActiveCase activeCase = activeCases.get(uuid);
+        Location location = activeCase.getLocation();
         AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, item);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
-        activeCases.remove(location.getBlock().getLocation());
+        activeCasesByLocation.remove(location.getBlock().getLocation());
+        activeCases.remove(uuid);
         if(Case.getHologramManager() != null && c.getHologram().isEnabled()) {
             Case.getHologramManager().createHologram(location.getBlock(), c);
         }
@@ -513,8 +537,8 @@ public class Case {
      */
     public static Inventory openGui(Player p, CaseData caseData, Location blockLocation) {
         Inventory inventory = null;
-        if (!Case.playersCases.containsKey(p.getUniqueId())) {
-            Case.playersCases.put(p.getUniqueId(), new OpenCase(blockLocation, caseData.getCaseName(), p.getUniqueId()));
+        if (!Case.playersGui.containsKey(p.getUniqueId())) {
+            Case.playersGui.put(p.getUniqueId(), new PlayerOpenCase(blockLocation, caseData.getCaseName(), p.getUniqueId()));
             inventory = new CaseGui(p, caseData).getInventory();
         } else {
             instance.getLogger().warning("Player " + p.getName() + " already opened case!");
