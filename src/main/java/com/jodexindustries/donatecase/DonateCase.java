@@ -192,9 +192,10 @@ public class DonateCase extends JavaPlugin {
     }
     public void cleanCache() {
         Bukkit.getWorlds().forEach(world -> world.getEntitiesByClass(ArmorStand.class).stream().filter(stand -> stand.hasMetadata("case")).forEachOrdered(Entity::remove));
-        Case.playersCases.clear();
+        Case.playersGui.clear();
         Case.caseData.clear();
         Case.activeCases.clear();
+        Case.activeCasesByLocation.clear();
     }
 
     public void setupConfigs() {
@@ -417,7 +418,7 @@ public class DonateCase extends JavaPlugin {
             String caseType = Case.getCaseTypeByCustomName(caseName);
             CaseData caseData = Case.getCase(caseType);
             Location location = Case.getCaseLocationByCustomName(caseName);
-            if (caseData != null && caseData.getHologram().isEnabled() && location != null && location.getWorld() != null && hologramManager != null && !Case.activeCases.containsKey(location)) {
+            if (caseData != null && caseData.getHologram().isEnabled() && location != null && location.getWorld() != null && hologramManager != null && !Case.activeCasesByLocation.containsKey(location)) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }
