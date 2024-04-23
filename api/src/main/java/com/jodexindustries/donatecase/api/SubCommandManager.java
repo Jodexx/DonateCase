@@ -20,7 +20,7 @@ public class SubCommandManager {
      * @param commandName Sub command name to register
      * @param subCommand Class that implements the SubCommand interface
      */
-    public static void registerSubCommand(String commandName, SubCommand subCommand) {
+    public void registerSubCommand(String commandName, SubCommand subCommand) {
         if(subCommands.get(commandName.toLowerCase()) == null) {
             subCommands.put(commandName.toLowerCase(), subCommand);
             SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(commandName);
@@ -32,7 +32,7 @@ public class SubCommandManager {
      * Unregister sub command
      * @param commandName Sub command name to unregister
      */
-    public static void unregisterSubCommand(String commandName) {
+    public void unregisterSubCommand(String commandName) {
         if(subCommands.get(commandName.toLowerCase()) != null) {
             subCommands.remove(commandName.toLowerCase());
             SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(commandName);
@@ -44,7 +44,7 @@ public class SubCommandManager {
      * Get all subcommands
      * @return String - sub command name <br> SubCommand - Class that implements the SubCommand interface
      */
-    public static Map<String, SubCommand> getSubCommands() {
+    public Map<String, SubCommand> getSubCommands() {
         return subCommands;
     }
 
@@ -55,7 +55,7 @@ public class SubCommandManager {
      * @param subCommandName Sub command name
      * @return Tab completions
      */
-    public static List<String> getTabCompletionsForSubCommand(CommandSender sender, String subCommandName, String[] args) {
+    public List<String> getTabCompletionsForSubCommand(CommandSender sender, String subCommandName, String[] args) {
         SubCommand subCommand = subCommands.get(subCommandName.toLowerCase());
         if (subCommand != null) {
             return subCommand.getTabCompletions(sender, args);
