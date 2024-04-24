@@ -315,7 +315,10 @@ public class DonateCase extends JavaPlugin {
             if(itemsSection != null) {
                 for (String item : itemsSection.getKeys(false)) {
                     ConfigurationSection itemSection = itemsSection.getConfigurationSection(item);
-                    if(itemSection == null) continue;
+                    if(itemSection == null) {
+                        getLogger().warning("Case " + caseName + " has a broken item " + item + " section, skipped.");
+                        continue;
+                    }
                     String group = itemSection.getString("Group", "");
                     int chance = itemSection.getInt("Chance");
                     String giveType = itemSection.getString("GiveType", "ONE");
@@ -367,18 +370,19 @@ public class DonateCase extends JavaPlugin {
                 ConfigurationSection dataSection = customConfig.getData().getConfigurationSection("Data");
                 if (dataSection != null) {
                     ConfigurationSection caseDatasSection = dataSection.getConfigurationSection(caseName);
-                    if (caseDatasSection == null) continue;
-                    for (String i : caseDatasSection.getKeys(false)) {
-                        ConfigurationSection caseDataSection = caseDatasSection.getConfigurationSection(i);
-                        if(caseDataSection == null) continue;
-                        CaseData.HistoryData data = new CaseData.HistoryData(
-                                caseDataSection.getString("Item"),
-                                caseName,
-                                caseDataSection.getString("Player"),
-                                caseDataSection.getLong("Time"),
-                                caseDataSection.getString("Group"),
-                                caseDataSection.getString("Action"));
-                        historyData[Integer.parseInt(i)] = data;
+                    if (caseDatasSection != null) {
+                        for (String i : caseDatasSection.getKeys(false)) {
+                            ConfigurationSection caseDataSection = caseDatasSection.getConfigurationSection(i);
+                            if (caseDataSection == null) continue;
+                            CaseData.HistoryData data = new CaseData.HistoryData(
+                                    caseDataSection.getString("Item"),
+                                    caseName,
+                                    caseDataSection.getString("Player"),
+                                    caseDataSection.getLong("Time"),
+                                    caseDataSection.getString("Group"),
+                                    caseDataSection.getString("Action"));
+                            historyData[Integer.parseInt(i)] = data;
+                        }
                     }
                 }
             }
