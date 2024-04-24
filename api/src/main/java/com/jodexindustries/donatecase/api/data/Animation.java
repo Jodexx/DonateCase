@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 /**
- * An interface to help create animations, <a href="https://wiki.jodexindustries.space/docs/DonateCase/API/register-animations">like this</a>
+ * An interface to help create animations, <a href="https://wiki.jodexindustries.xyz/docs/DonateCase/API/register-animations">like this</a>
  */
 
 public interface Animation {

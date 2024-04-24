@@ -2,7 +2,7 @@ name: DonateCase
 main: com.jodexindustries.donatecase.DonateCase
 author: _Jodex__
 version: '${version}'
-website: "https://jodexindustries.space/"
+website: "https://jodexindustries.xyz/"
 softdepend:
   - Vault
   - LuckPerms

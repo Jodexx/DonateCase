@@ -1,5 +1,5 @@
 case:
-  Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL, FULLWHEEL see: https://wiki.jodexindustries.space/docs/DonateCase/animations
+  Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL, FULLWHEEL see: https://wiki.jodexindustries.xyz/docs/DonateCase/animations
   AnimationSound: ENTITY_EXPERIENCE_ORB_PICKUP # remove this line if you don't want to play sound
   Sound:
     Volume: 10
@@ -24,24 +24,24 @@ case:
 
   Title: "&c&lDonate-&a&lCase" # Title in GUI
   DisplayName: "&c&lDonate-&a&lCase" # Name for placeholders
-  Gui: # see more about items configuring -> https://wiki.jodexindustries.space/docs/DonateCase/items-settings
+  Gui: # see more about items configuring -> https://wiki.jodexindustries.xyz/docs/DonateCase/items-settings
     Size: 45
     Items:
       "1":
-        DisplayName: "&cJodexIndustries.space"
+        DisplayName: "&cJodexIndustries.xyz"
         Enchanted: false
         Lore:
           - ""
         Slots: # or Slots: 0-10 (range)
           - 0
           - 8
-        Material: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+        Material: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         Type: DEFAULT
       Open:
         DisplayName: "&bOpen Case"
         Enchanted: false
         Lore:
-        - '&6The case can be bought on the website: &cJodexIndustries.space'
+        - '&6The case can be bought on the website: &cJodexIndustries.xyz'
         - ''
         - '&7Keys: %keys%'
         - ''
@@ -53,14 +53,14 @@ case:
         - ''
         Slots: # or Slots: 0-10 (range)
           - 22
-        Material: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+        Material: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         Type: OPEN # or you can use OPEN_<anotherCaseName> for opening another case 
   Items:
     VIP:
       Group: vip
       Chance: 50
       Item:
-        ID: IRON_SWORD # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+        ID: IRON_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         DisplayName: '&7&l[&aVIP&7&l]'
         Enchanted: false
       GiveType: ONE # or RANDOM
@@ -86,7 +86,7 @@ case:
       Group: vipplus
       Chance: 25
       Item:
-        ID: GOLDEN_SWORD # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+        ID: GOLDEN_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         DisplayName: '&7&l[&bVIP&6+&7&l]'
         Enchanted: false
       GiveType: ONE # or RANDOM
@@ -110,7 +110,7 @@ case:
       Group: deluxe
       Chance: 15
       Item:
-        ID: DIAMOND_SWORD # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+        ID: DIAMOND_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         DisplayName: '&7&l[&5Deluxe&7&l]'
         Enchanted: false
       GiveType: ONE # or RANDOM
@@ -133,7 +133,7 @@ case:
       Group: legend
       Chance: 10
       Item:
-        ID: NETHERITE_SWORD # see: https://wiki.jodexindustries.space/docs/DonateCase/item-id
+        ID: NETHERITE_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         DisplayName: '&7&l[&dLegend&7&l]'
         Enchanted: false
       GiveType: ONE # or RANDOM
