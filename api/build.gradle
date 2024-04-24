@@ -16,7 +16,7 @@ repositories {
         }
     }
 }
-def targetJavaVersion = 11
+def targetJavaVersion = 8
 java {
     withSourcesJar()
     withJavadocJar()
