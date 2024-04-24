@@ -80,54 +80,43 @@ public class AnimationManager {
         String animation = caseData.getAnimation();
         if(animation != null) {
             if(isRegistered(animation)) {
-                playAnimation(animation, player, location, caseData);
+                if(CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {
+                    CaseManager.getHologramManager().removeHologram(location.getBlock());
+                }
+
+                Animation animationClass = getRegisteredAnimation(animation);
+                if (animationClass != null) {
+                    CaseData.Item winItem = Case.getRandomItem(caseData);
+                    winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName()));
+                    AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, animation, caseData, location, winItem);
+                    Bukkit.getPluginManager().callEvent(preStartEvent);
+
+                    ActiveCase activeCase = new ActiveCase(location, caseData.getCaseName());
+                    UUID uuid = UUID.randomUUID();
+                    Case.activeCases.put(uuid, activeCase);
+                    Case.activeCasesByLocation.put(location, uuid);
+
+                    animationClass.start(player,  Case.getCaseLocationByBlockLocation(location), uuid, caseData, preStartEvent.getWinItem());
+                    for (Player pl : Bukkit.getOnlinePlayers()) {
+                        if (Case.playersGui.containsKey(pl.getUniqueId()) && Tools.isHere(location.getBlock().getLocation(), Case.playersGui.get(pl.getUniqueId()).getLocation())) {
+                            pl.closeInventory();
+                        }
+                    }
+                    // AnimationStart event
+                    AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, location, preStartEvent.getWinItem());
+                    Bukkit.getPluginManager().callEvent(startEvent);
+                } else {
+                    Case.getInstance().getLogger().warning("Animation " + animation + " not found!");
+                }
             } else {
-                Tools.msg(player, Tools.rc("&cAn error occurred while opening the case!"));
-                Tools.msg(player, Tools.rc("&cContact the project administration!"));
+                Tools.msg(player, "&cAn error occurred while opening the case!");
+                Tools.msg(player, "&cContact the project administration!");
                 Case.getInstance().getLogger().log(Level.WARNING, "Case animation "  + animation + " does not exist!");
             }
         } else {
-            Tools.msg(player, Tools.rc("&cAn error occurred while opening the case!"));
-            Tools.msg(player, Tools.rc("&cContact the project administration!"));
+            Tools.msg(player, "&cAn error occurred while opening the case!");
+            Tools.msg(player, "&cContact the project administration!");
             Case.getInstance().getLogger().log(Level.WARNING, "Case animation name does not exist!");
-        }
-    }
-    
-    /**
-     * Play animation
-     * @param name Animation name
-     * @param player Player who opened case (for who animation played)
-     * @param location Case location (with pitch and yaw player)
-     * @param c Case data
-     */
-    private void playAnimation(String name, Player player, Location location, CaseData c) {
-        if(CaseManager.getHologramManager() != null && c.getHologram().isEnabled()) {
-            CaseManager.getHologramManager().removeHologram(location.getBlock());
-        }
-
-        Animation animation = getRegisteredAnimation(name);
-        if (animation != null) {
-            CaseData.Item winItem = Case.getRandomItem(c);
-            winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName()));
-            AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, name, c, location, winItem);
-            Bukkit.getPluginManager().callEvent(preStartEvent);
-
-            ActiveCase activeCase = new ActiveCase(location, c.getCaseName());
-            UUID uuid = UUID.randomUUID();
-            Case.activeCases.put(uuid, activeCase);
-            Case.activeCasesByLocation.put(location, uuid);
-
-            animation.start(player,  Case.getCaseLocationByBlockLocation(location), uuid, c, preStartEvent.getWinItem());
-            for (Player pl : Bukkit.getOnlinePlayers()) {
-                if (Case.playersGui.containsKey(pl.getUniqueId()) && Tools.isHere(location.getBlock().getLocation(), Case.playersGui.get(pl.getUniqueId()).getLocation())) {
-                    pl.closeInventory();
-                }
-            }
-
-            AnimationStartEvent startEvent = new AnimationStartEvent(player, name, c, location, preStartEvent.getWinItem());
-            Bukkit.getPluginManager().callEvent(startEvent);
-        } else {
-            Case.getInstance().getLogger().warning("Animation " + name + " not found!");
         }
     }
 
