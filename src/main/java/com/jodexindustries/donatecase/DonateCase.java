@@ -4,7 +4,6 @@ import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.j256.ormlite.logger.Level;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
-import com.jodexindustries.donatecase.api.addon.InstanceAddon;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
@@ -42,7 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DonateCase extends JavaPlugin implements InstanceAddon {
+public class DonateCase extends JavaPlugin {
     public static DonateCase instance;
     public static Permission permission = null;
     public static boolean sql = false;
@@ -100,10 +99,6 @@ public class DonateCase extends JavaPlugin implements InstanceAddon {
         Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
     }
 
-    @Override
-    public String getVersion() {
-        return super.getDescription().getVersion();
-    }
 
     @Override
     public void onDisable() {
