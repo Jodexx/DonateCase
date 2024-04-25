@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -462,7 +463,7 @@ public class DonateCase extends JavaPlugin {
 
         try {
             if (!outFile.exists() || replace) {
-                OutputStream out = new FileOutputStream(outFile);
+                OutputStream out = Files.newOutputStream(outFile.toPath());
                 byte[] buf = new byte[1024];
                 int len;
                 while ((len = in.read(buf)) > 0) {
