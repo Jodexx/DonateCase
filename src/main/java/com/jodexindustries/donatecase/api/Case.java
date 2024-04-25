@@ -62,10 +62,11 @@ public class Case{
      */
     public static void saveLocation(String caseName, String type, Location lv) {
         CaseData c = getCase(type);
-        if(CaseManager.getHologramManager() != null && (c != null && c.getHologram().isEnabled())) {
-            CaseManager.getHologramManager().createHologram(lv.getBlock(), c);
+        if(lv.getWorld() == null) {
+            instance.getLogger().warning("Error with saving location: world not found!");
+            return;
         }
-        if(lv.getWorld() == null) return;
+        if(CaseManager.getHologramManager() != null && (c != null && c.getHologram().isEnabled())) CaseManager.getHologramManager().createHologram(lv.getBlock(), c);
         String location = lv.getWorld().getName() + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
         customConfig.getCases().set("DonatCase.Cases." + caseName + ".location", location);
         customConfig.getCases().set("DonatCase.Cases." + caseName + ".type", type);
