@@ -328,18 +328,22 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             } else {
                 String subCommandName = args[0];
                 Pair<SubCommand, Plugin> pair = api.getSubCommandManager().getSubCommands().get(subCommandName);
-                SubCommand subCommand = pair.getFirst();
-                if(subCommand != null) {
-                    if(subCommand.getType() == SubCommandType.ADMIN && sender.hasPermission("donatecase.admin")) {
-                        subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
-                    } else if(subCommand.getType() == SubCommandType.MODER && (sender.hasPermission("donatecase.mod") || sender.hasPermission("donatecase.admin"))) {
-                        subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
-                    } else if(( subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null ) && (sender.hasPermission("donatecase.player") ||
-                            sender.hasPermission("donatecase.mod") ||
-                            sender.hasPermission("donatecase.admin"))) {
-                        subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
+                if(pair != null) {
+                    SubCommand subCommand = pair.getFirst();
+                    if (subCommand != null) {
+                        if (subCommand.getType() == SubCommandType.ADMIN && sender.hasPermission("donatecase.admin")) {
+                            subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
+                        } else if (subCommand.getType() == SubCommandType.MODER && (sender.hasPermission("donatecase.mod") || sender.hasPermission("donatecase.admin"))) {
+                            subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
+                        } else if ((subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) && (sender.hasPermission("donatecase.player") ||
+                                sender.hasPermission("donatecase.mod") ||
+                                sender.hasPermission("donatecase.admin"))) {
+                            subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
+                        } else {
+                            Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
+                        }
                     } else {
-                        Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
+                        sendHelp(sender, label);
                     }
                 } else {
                     sendHelp(sender, label);
