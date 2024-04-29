@@ -68,9 +68,11 @@ Wheel:
   LiftingAlongX: 0
   LiftingAlongY: 0
   LiftingAlongZ: 0
-  UseFlame: true # NEW
+  Flame:
+    Enabled: true
+    Particle: FLAME
   Scroll:
-    Time: 100 # NEW
+    Time: 100
     Sound: UI_BUTTON_CLICK
     Volume: 10
     Pitch: 1
@@ -90,7 +92,9 @@ FullWheel:
   LiftingAlongX: 0
   LiftingAlongY: 0
   LiftingAlongZ: 0
-  UseFlame: true
+  Flame:
+    Enabled: true
+    Particle: FLAME
   Scroll:
     Time: 100
     Sound: UI_BUTTON_CLICK
