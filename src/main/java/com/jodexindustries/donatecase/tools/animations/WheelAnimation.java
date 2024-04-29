@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.tools.animations;
 
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
@@ -53,7 +52,8 @@ public class WheelAnimation implements Animation {
         float vpitch = (float) customConfig.getAnimations().getDouble("Wheel.Scroll.Pitch");
         final double speed = customConfig.getAnimations().getDouble("Wheel.CircleSpeed");
         final double radius = customConfig.getAnimations().getDouble("Wheel.CircleRadius");
-        final boolean useFlame = customConfig.getAnimations().getBoolean("Wheel.UseFlame");
+        final boolean useFlame = customConfig.getAnimations().getBoolean("Wheel.Flame.Enabled");
+        final Particle flameParticle = Particle.valueOf(customConfig.getAnimations().getString("Wheel.Flame.Particle", "FLAME"));
         // register items
         items.add(winItem);
         for (int i = 0; i < itemsCount; i++) {
@@ -83,12 +83,12 @@ public class WheelAnimation implements Animation {
                     double dx = (radiusAx[0] / 1.1) * Math.sin(theta);
                     double dy = (radiusAx[0] / 1.1) * Math.cos(theta);
                     Location particleLocation = flocation.clone().add(dx, yAx[0], dy);
-                    particleLocation.getWorld().spawnParticle(Particle.FLAME, particleLocation, 1, 0, 0, 0, 0, null);
+                    particleLocation.getWorld().spawnParticle(flameParticle, particleLocation, 1, 0, 0, 0, 0, null);
                     double theta2 = theta + Math.PI;
                     double dx2 = (radiusAx[0] / 1.1) * Math.sin(theta2);
                     double dy2 = (radiusAx[0] / 1.1) * Math.cos(theta2);
                     Location particleLocation2 = flocation.clone().add(dx2, yAx[0], dy2);
-                    particleLocation2.getWorld().spawnParticle(Particle.FLAME, particleLocation2, 1, 0, 0, 0, 0, null);
+                    particleLocation2.getWorld().spawnParticle(flameParticle, particleLocation2, 1, 0, 0, 0, 0, null);
                 }
                 // armor stands
                 for (ArmorStandCreator entity : armorStands) {
@@ -129,7 +129,7 @@ public class WheelAnimation implements Animation {
                 speedAx[0] *= 1 - (speed / (animationTime - 2) );
             }
             }, 0L, 0L);
-    }
+        }
     private ArmorStandCreator spawnArmorStand(Location location, int index, boolean small) {
         CaseData.Item item = items.get(index);
         ArmorStandCreator as = Tools.createArmorStand();

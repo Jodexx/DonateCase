@@ -59,7 +59,8 @@ public class FullWheelAnimation implements Animation {
 
         final double speed = customConfig.getAnimations().getDouble("FullWheel.CircleSpeed");
         final double radius = customConfig.getAnimations().getDouble("FullWheel.CircleRadius");
-        final boolean useFlame = customConfig.getAnimations().getBoolean("FullWheel.UseFlame");
+        final boolean useFlame = customConfig.getAnimations().getBoolean("FullWheel.Flame.Enabled");
+        final Particle flameParticle = Particle.valueOf(customConfig.getAnimations().getString("FullWheel.Flame.Particle", "FLAME"));
 
         final Location flocation = loc.clone().add(0 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongX"),
                 -1 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"),
@@ -105,12 +106,12 @@ public class FullWheelAnimation implements Animation {
                     double dx = (radiusAx[0] / 1.1) * Math.sin(theta);
                     double dy = (radiusAx[0] / 1.1) * Math.cos(theta);
                     Location particleLocation = flocation.clone().subtract(0, 1.5, 0).add(dx, 1.5 + yAx[0], dy);
-                    particleLocation.getWorld().spawnParticle(Particle.FLAME, particleLocation, 1, 0, 0, 0, 0, null);
+                    particleLocation.getWorld().spawnParticle(flameParticle, particleLocation, 1, 0, 0, 0, 0, null);
                     double theta2 = theta + Math.PI;
                     double dx2 = (radiusAx[0] / 1.1) * Math.sin(theta2);
                     double dy2 = (radiusAx[0] / 1.1) * Math.cos(theta2);
                     Location particleLocation2 = flocation.clone().subtract(0, 1.5, 0).add(dx2, 1.5 + yAx[0], dy2);
-                    particleLocation2.getWorld().spawnParticle(Particle.FLAME, particleLocation2, 1, 0, 0, 0, 0, null);
+                    particleLocation2.getWorld().spawnParticle(flameParticle, particleLocation2, 1, 0, 0, 0, 0, null);
                 }
                 // armor stands
                 for (ArmorStandCreator entity : armorStands) {
