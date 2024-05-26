@@ -1,11 +1,11 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.events.SubCommandRegisteredEvent;
 import com.jodexindustries.donatecase.tools.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,9 +15,9 @@ import java.util.Map;
  * Class for managing subcommands, registering commands.
  */
 public class SubCommandManager {
-    public static final Map<String, Pair<SubCommand, Plugin>> subCommands = new HashMap<>();
-    private final Plugin addon;
-    public SubCommandManager(Plugin addon) {
+    public static final Map<String, Pair<SubCommand, Addon>> subCommands = new HashMap<>();
+    private final Addon addon;
+    public SubCommandManager(Addon addon) {
         this.addon = addon;
     }
 
@@ -54,7 +54,7 @@ public class SubCommandManager {
      * Get all subcommands
      * @return String - sub command name <br> SubCommand - Class that implements the SubCommand interface
      */
-    public Map<String, Pair<SubCommand, Plugin>> getSubCommands() {
+    public Map<String, Pair<SubCommand, Addon>> getSubCommands() {
         return subCommands;
     }
 

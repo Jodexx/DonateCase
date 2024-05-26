@@ -1,14 +1,8 @@
-package com.jodexindustries.donatecase.api.addon;
+package com.jodexindustries.donatecase.api.addon.internal;
 
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
-import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,98 +10,22 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
  * Abstract class for JavaAddon realization, like BukkitPlugin
  */
-public abstract class JavaAddon implements Addon, Plugin {
-    @NotNull
-    @Override
-    public PluginDescriptionFile getDescription() {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public FileConfiguration getConfig() {
-        return null;
-    }
-
-    @Override
-    public void saveConfig() {
-
-    }
-
-    @Override
-    public void saveDefaultConfig() {
-
-    }
-
-    @Override
-    public void reloadConfig() {
-
-    }
-
-    @NotNull
-    @Override
-    public PluginLoader getPluginLoader() {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public Server getServer() {
-        return null;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return false;
-    }
-
-    @Override
-    public void onLoad() {
-
-    }
-
-    @Override
-    public boolean isNaggable() {
-        return false;
-    }
-
-    @Override
-    public void setNaggable(boolean canNag) {
-
-    }
-
-    @Nullable
-    @Override
-    public ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
-        return null;
-    }
-
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        return false;
-    }
-
-    @Nullable
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        return List.of();
-    }
+public abstract class InternalJavaAddon implements InternalAddon {
 
     private String version;
     private String name;
     private ClassLoader classLoader;
-    private AddonLogger addonLogger;
+    private InternalAddonLogger internalAddonLogger;
     private File file;
     private URLClassLoader urlClassLoader;
     private CaseManager caseAPI;
 
-    public JavaAddon() {}
+    public InternalJavaAddon() {}
 
     public void init(String version, String name, File file, URLClassLoader loader) {
         this.version = version;
@@ -115,7 +33,7 @@ public abstract class JavaAddon implements Addon, Plugin {
         this.file = file;
         this.classLoader = this.getClass().getClassLoader();
         this.urlClassLoader = loader;
-        this.addonLogger = new AddonLogger(this);
+        this.internalAddonLogger = new InternalAddonLogger(this);
         this.caseAPI = new CaseManager(this);
     }
 
@@ -133,7 +51,7 @@ public abstract class JavaAddon implements Addon, Plugin {
 
     @Override
     public Plugin getDonateCase() {
-        return getDonateCase();
+        return Case.getInstance();
     }
     @Override
     public @NotNull File getDataFolder() {
@@ -211,8 +129,8 @@ public abstract class JavaAddon implements Addon, Plugin {
         return classLoader;
     }
 
-    public @NotNull AddonLogger getLogger() {
-        return addonLogger;
+    public @NotNull InternalAddonLogger getLogger() {
+        return internalAddonLogger;
     }
 
     public URLClassLoader getUrlClassLoader() {

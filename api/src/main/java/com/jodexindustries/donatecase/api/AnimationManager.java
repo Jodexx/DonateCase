@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.data.CaseData;
@@ -12,7 +13,6 @@ import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -23,8 +23,8 @@ import java.util.logging.Level;
  */
 public class AnimationManager {
     private static final Map<String, Animation> registeredAnimations = new HashMap<>();
-    private final Plugin addon;
-    public AnimationManager(Plugin addon) {
+    private final Addon addon;
+    public AnimationManager(Addon addon) {
         this.addon = addon;
     }
     /**
@@ -94,7 +94,7 @@ public class AnimationManager {
                     ActiveCase activeCase = new ActiveCase(location, caseData.getCaseName());
                     UUID uuid = UUID.randomUUID();
                     Case.activeCases.put(uuid, activeCase);
-                    Case.activeCasesByLocation.put(location, uuid);
+                    Case.activeCasesByLocation.put(location.getBlock().getLocation(), uuid);
 
                     animationClass.start(player,  Case.getCaseLocationByBlockLocation(location), uuid, caseData, preStartEvent.getWinItem());
                     for (Player pl : Bukkit.getOnlinePlayers()) {
