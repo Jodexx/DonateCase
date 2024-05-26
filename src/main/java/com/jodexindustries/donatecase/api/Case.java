@@ -11,6 +11,7 @@ import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -187,29 +188,41 @@ public class Case{
     }
 
     /**
-     * Get case type by location
+     * Get case information by location
      * @param loc Case location
-     * @return Case type
+     * @param infoType Information type ("type" or "name")
+     * @return Case information
      */
-    public static String getCaseTypeByLocation(Location loc) {
+    private static String getCaseInfoByLocation(Location loc, String infoType) {
         ConfigurationSection casesSection = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
-        if(casesSection == null) return null;
-        for(String name : casesSection.getValues(false).keySet()) {
+        if (casesSection == null) return null;
+
+        for (String name : casesSection.getValues(false).keySet()) {
             ConfigurationSection caseSection = casesSection.getConfigurationSection(name);
-            if(caseSection == null) return null;
-            String type = caseSection.getString("type");
+            if (caseSection == null) continue;
+
             String location = caseSection.getString("location");
-            if(location == null) return null;
+            if (location == null) continue;
+
             String[] worldLocation = location.split(";");
             World world = Bukkit.getWorld(worldLocation[0]);
             Location temp = new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
+
             if (temp.equals(loc)) {
-                return type;
+                return infoType.equals("type") ? caseSection.getString("type") : name;
             }
         }
         return null;
     }
 
+    /**
+     * Get case type by location
+     * @param loc Case location
+     * @return Case type
+     */
+    public static String getCaseTypeByLocation(Location loc) {
+        return getCaseInfoByLocation(loc, "type");
+    }
 
     /**
      * Get case name by location
@@ -217,23 +230,9 @@ public class Case{
      * @return Case name
      */
     public static String getCaseCustomNameByLocation(Location loc) {
-        ConfigurationSection casesSection = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
-        if(casesSection == null) return null;
-        for (String name : casesSection.getValues(false).keySet()) {
-            ConfigurationSection caseSection = casesSection.getConfigurationSection(name);
-            if(caseSection == null) return null;
-            String location = caseSection.getString("location");
-            if(location == null) return null;
-            String[] worldLocation = location.split(";");
-            World world = Bukkit.getWorld(worldLocation[0]);
-            Location temp = new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
-            if (temp.equals(loc)) {
-                return name;
-            }
-        }
-
-        return null;
+        return getCaseInfoByLocation(loc, "name");
     }
+
     /**
      * Is there a case with a name?
      * @param name Case name
@@ -392,7 +391,7 @@ public class Case{
         return endCommand;
     }
 
-    private static void executeActions(Player player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
+    private static void executeActions(OfflinePlayer player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
         List<String> actions = alternative ? item.getAlternativeActions() : item.getActions();
         if(choice != null) {
             CaseData.Item.RandomAction randomAction = item.getRandomAction(choice);
@@ -406,7 +405,7 @@ public class Case{
             int cooldown = 0;
             Pattern pattern = Pattern.compile("\\[cooldown:(.*?)]");
             Matcher matcher = pattern.matcher(action);
-            if(matcher.find()) {
+            if (matcher.find()) {
                 action = action.replaceFirst("\\[cooldown:(.*?)]", "").trim();
                 cooldown = Integer.parseInt(matcher.group(1));
             }
@@ -421,10 +420,14 @@ public class Case{
             if (action.startsWith("[message] ")) {
                 action = action.replaceFirst("\\[message] ", "");
                 String finalAction = action;
-                Bukkit.getScheduler().runTaskLater(instance, () -> player.sendMessage(
-                        Tools.rt(finalAction, "%player%:" + player.getName(),
-                                "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName())), 20L *cooldown);
+                Bukkit.getScheduler().runTaskLater(instance, () -> {
+                    if (player.getPlayer() != null) {
+                        player.getPlayer().sendMessage(
+                                Tools.rt(finalAction, "%player%:" + player.getName(),
+                                        "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                                        "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                    }
+                }, 20L * cooldown);
             }
 
             if (action.startsWith("[broadcast] ")) {
@@ -454,14 +457,17 @@ public class Case{
                 } else {
                     subTitle = "";
                 }
-                Bukkit.getScheduler().runTaskLater(instance, () -> player.sendTitle(
+                Bukkit.getScheduler().runTaskLater(instance, () -> {
+                    if (player.getPlayer() != null) {
+                        player.getPlayer().sendTitle(
                                 Tools.rt(title, "%player%:" + player.getName(),
                                         "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
                                         "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()),
                                 Tools.rt(subTitle, "%player%:" + player.getName(),
                                         "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                                        "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()), 10, 70, 20)
-                        , 20L * cooldown);
+                                        "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()), 10, 70, 20);
+                    }
+                }, 20L * cooldown);
             }
         }
     }
