@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.jodexindustries.jodexindustries'
-version = '2.2.0.8'
+version = '2.2.1.7'
 
 repositories {
     mavenCentral()
