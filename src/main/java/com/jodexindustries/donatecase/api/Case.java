@@ -349,16 +349,16 @@ public class Case{
         list[0] = data;
 
         for (int i = 0; i < list.length; i++) {
-            CaseData.HistoryData data1 = list[i];
-            if(data1 != null) {
+            CaseData.HistoryData tempData = list[i];
+            if(tempData != null) {
                 if(!sql) {
-                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Player", data1.getPlayerName());
-                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Time", data1.getTime());
-                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Group", data1.getGroup());
-                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Item", data1.getItem());
-                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Action", data1.getAction());
+                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Player", tempData.getPlayerName());
+                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Time", tempData.getTime());
+                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Group", tempData.getGroup());
+                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Item", tempData.getItem());
+                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Action", tempData.getAction());
                 } else {
-                    if(mysql != null) mysql.setHistoryData(caseData.getCaseName(),i, data1);
+                    if(mysql != null) mysql.setHistoryData(caseData.getCaseName(), i, tempData);
                 }
             }
         }
@@ -392,6 +392,11 @@ public class Case{
     }
 
     private static void executeActions(OfflinePlayer player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
+        final String[] replacementRegex = {
+                "%player%:" + player.getName(),
+                "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()
+        };
         List<String> actions = alternative ? item.getAlternativeActions() : item.getActions();
         if(choice != null) {
             CaseData.Item.RandomAction randomAction = item.getRandomAction(choice);
@@ -413,9 +418,7 @@ public class Case{
                 action = action.replaceFirst("\\[command] ", "");
                 String finalAction = action;
                 Bukkit.getScheduler().runTaskLater(instance, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                        Tools.rt(finalAction, "%player%:" + player.getName(),
-                                "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName())), 20L * cooldown);
+                        Tools.rt(finalAction, replacementRegex)), 20L * cooldown);
             }
             if (action.startsWith("[message] ")) {
                 action = action.replaceFirst("\\[message] ", "");
@@ -423,9 +426,7 @@ public class Case{
                 Bukkit.getScheduler().runTaskLater(instance, () -> {
                     if (player.getPlayer() != null) {
                         player.getPlayer().sendMessage(
-                                Tools.rt(finalAction, "%player%:" + player.getName(),
-                                        "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                                        "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                                Tools.rt(finalAction, replacementRegex));
                     }
                 }, 20L * cooldown);
             }
@@ -436,36 +437,20 @@ public class Case{
                 Bukkit.getScheduler().runTaskLater(instance, () -> {
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         p.sendMessage(
-                                Tools.rt(finalAction, "%player%:" + player.getName(),
-                                        "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                                        "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()));
+                                Tools.rt(finalAction, replacementRegex));
                     }
                 }, 20L * cooldown);
             }
             if (action.startsWith("[title] ")) {
                 action = action.replaceFirst("\\[title] ", "");
                 String[] args = action.split(";");
-                String title;
-                String subTitle;
-                if (args.length >= 1) {
-                    title = args[0];
-                } else {
-                    title = "";
-                }
-                if (args.length > 1) {
-                    subTitle = args[1];
-                } else {
-                    subTitle = "";
-                }
+                String title = args.length > 0 ? args[0] : "";
+                String subTitle = args.length > 1 ? args[1] : "";
                 Bukkit.getScheduler().runTaskLater(instance, () -> {
                     if (player.getPlayer() != null) {
                         player.getPlayer().sendTitle(
-                                Tools.rt(title, "%player%:" + player.getName(),
-                                        "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                                        "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()),
-                                Tools.rt(subTitle, "%player%:" + player.getName(),
-                                        "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                                        "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()), 10, 70, 20);
+                                Tools.rt(title, replacementRegex),
+                                Tools.rt(subTitle, replacementRegex), 10, 70, 20);
                     }
                 }, 20L * cooldown);
             }
@@ -485,9 +470,9 @@ public class Case{
 
         for(String name : casesSection.getValues(false).keySet()) {
             ConfigurationSection caseSection = casesSection.getConfigurationSection(name);
-            if (caseSection == null) return null;
+            if (caseSection == null) continue;
             String location = caseSection.getString("location");
-            if (location == null) return null;
+            if (location == null) continue;
             String[] worldLocation = location.split(";");
             World world = Bukkit.getWorld(worldLocation[0]);
             Location temp = new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
