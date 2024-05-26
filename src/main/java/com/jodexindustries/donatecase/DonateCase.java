@@ -177,13 +177,10 @@ public class DonateCase extends JavaPlugin {
     private void loadUpdater() {
         if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
-                if (Tools.getPluginVersion(getDescription().getVersion()) >= Tools.getPluginVersion(version)) {
-                    Logger.log("There is not a new update available.");
-                } else {
+                if (Tools.getPluginVersion(getDescription().getVersion()) < Tools.getPluginVersion(version)) {
                     Logger.log(ChatColor.GREEN + "There is a new update " + version +  " available.");
                     Logger.log(ChatColor.GREEN + "Download - https://www.spigotmc.org/resources/donatecase.106701/");
                 }
-
             });
         }
     }
