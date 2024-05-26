@@ -1,5 +1,7 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -14,11 +16,17 @@ public class CaseManager {
     private final AddonManager addonManager;
     private final AnimationManager animationManager;
     private final SubCommandManager subCommandManager;
-    private final Plugin addon;
-    public CaseManager(Plugin addon) {
+    private final Addon addon;
+    public CaseManager(Addon addon) {
         this.addon = addon;
-        addonManager = new AddonManager();
-        subCommandManager = new SubCommandManager(addon);
+        this.addonManager = new AddonManager();
+        this.subCommandManager = new SubCommandManager(addon);
+        this.animationManager = new AnimationManager(addon);
+    }
+    public CaseManager(Plugin plugin) {
+        this.addon = new ExternalJavaAddon(plugin);
+        this.addonManager = new AddonManager();
+        this.subCommandManager = new SubCommandManager(addon);
         this.animationManager = new AnimationManager(addon);
     }
 
@@ -38,6 +46,10 @@ public class CaseManager {
         return this.addonManager;
     }
 
+    /**
+     * Get animation manager for animations manipulate
+     * @return AnimationManager instance
+     */
     public AnimationManager getAnimationManager() {
         return this.animationManager;
     }
@@ -50,11 +62,20 @@ public class CaseManager {
         return this.subCommandManager;
     }
 
+    /**
+     * Get hologram manager
+     * @return HologramManager instance
+     */
     public static HologramManager getHologramManager() {
         return hologramManager;
     }
 
-    public Plugin getAddon() {
+    /**
+     * Get addon object
+     * Can be cast to Addon from DonateCase if it's really loaded addon by DonateCase
+     * @return Addon object
+     */
+    public Addon getAddon() {
         return addon;
     }
 }

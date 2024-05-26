@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api.addon;
+package com.jodexindustries.donatecase.api.addon.internal;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-public class AddonLogger extends Logger {
+public class InternalAddonLogger extends Logger {
     private final String addonName;
 
     /**
@@ -14,7 +14,7 @@ public class AddonLogger extends Logger {
      *
      * @param context A reference to the plugin
      */
-    public AddonLogger(@NotNull Addon context) {
+    public InternalAddonLogger(@NotNull InternalAddon context) {
         super(context.getDonateCase().getName(), null);
         addonName = "[" + context.getName() + "] ";
         setParent(context.getDonateCase().getLogger());

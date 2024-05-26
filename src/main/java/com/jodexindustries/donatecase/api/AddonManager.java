@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.donatecase.api.addon.JavaAddon;
+import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -20,7 +20,7 @@ import java.util.jar.JarFile;
  * Class for managing add-ons, enabling and disabling.
  */
 public class AddonManager {
-    private static final Map<String, JavaAddon> addons = new HashMap<>();
+    private static final Map<String, InternalJavaAddon> addons = new HashMap<>();
 
     /**
      * Load all addons from "addons" folder
@@ -57,7 +57,7 @@ public class AddonManager {
                     URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()}, this.getClass().getClassLoader());
                     Class<?> mainClass = Class.forName(mainClassName, true, loader);
                     Case.getInstance().getLogger().info("Loading " + name + " addon v" + version);
-                    JavaAddon addon = (JavaAddon) mainClass.getDeclaredConstructor().newInstance();
+                    InternalJavaAddon addon = (InternalJavaAddon) mainClass.getDeclaredConstructor().newInstance();
                     addon.init(version, name, file, loader);
                     addons.put(file.getName(), addon);
                     addon.onEnable();
@@ -74,18 +74,18 @@ public class AddonManager {
      * @param addon addon name
      */
     public void disableAddon(String addon) {
-        JavaAddon javaAddon = addons.get(addon);
-        if(javaAddon == null) {
+        InternalJavaAddon javaInternalAddon = addons.get(addon);
+        if(javaInternalAddon == null) {
             Case.getInstance().getLogger().warning("Addon with name " + addon + " already disabled!");
         } else {
             try {
-                javaAddon.onDisable();
+                javaInternalAddon.onDisable();
                 addons.remove(addon);
             } catch (Exception e) {
                 e.printStackTrace();
-                closeClassLoader(javaAddon.getUrlClassLoader());
+                closeClassLoader(javaInternalAddon.getUrlClassLoader());
             }
-            closeClassLoader(javaAddon.getUrlClassLoader());
+            closeClassLoader(javaInternalAddon.getUrlClassLoader());
         }
     }
     private void closeClassLoader(URLClassLoader loader) {

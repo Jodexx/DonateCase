@@ -1,6 +1,6 @@
-package com.jodexindustries.donatecase.api.addon;
+package com.jodexindustries.donatecase.api.addon.internal;
 
-import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -15,17 +15,17 @@ import java.util.logging.Level;
 /**
  * Abstract class for JavaAddon realization, like BukkitPlugin
  */
-public abstract class JavaAddon implements Addon {
+public abstract class InternalJavaAddon implements InternalAddon {
 
     private String version;
     private String name;
     private ClassLoader classLoader;
-    private AddonLogger addonLogger;
+    private InternalAddonLogger internalAddonLogger;
     private File file;
     private URLClassLoader urlClassLoader;
     private CaseManager caseAPI;
 
-    public JavaAddon() {}
+    public InternalJavaAddon() {}
 
     public void init(String version, String name, File file, URLClassLoader loader) {
         this.version = version;
@@ -33,7 +33,7 @@ public abstract class JavaAddon implements Addon {
         this.file = file;
         this.classLoader = this.getClass().getClassLoader();
         this.urlClassLoader = loader;
-        this.addonLogger = new AddonLogger(this);
+        this.internalAddonLogger = new InternalAddonLogger(this);
         this.caseAPI = new CaseManager(this);
     }
 
@@ -51,7 +51,7 @@ public abstract class JavaAddon implements Addon {
 
     @Override
     public Plugin getDonateCase() {
-        return DonateCase.instance;
+        return Case.getInstance();
     }
     @Override
     public @NotNull File getDataFolder() {
@@ -129,8 +129,8 @@ public abstract class JavaAddon implements Addon {
         return classLoader;
     }
 
-    public @NotNull AddonLogger getLogger() {
-        return addonLogger;
+    public @NotNull InternalAddonLogger getLogger() {
+        return internalAddonLogger;
     }
 
     public URLClassLoader getUrlClassLoader() {
