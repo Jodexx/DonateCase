@@ -8,6 +8,7 @@ import com.jodexindustries.donatecase.tools.CustomConfig;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -254,7 +255,7 @@ public class Case{
         return endCommand;
     }
 
-    private static void executeActions(Player player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
+    private static void executeActions(OfflinePlayer player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
     }
 
 
