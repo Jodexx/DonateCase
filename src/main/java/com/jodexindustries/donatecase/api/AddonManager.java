@@ -6,7 +6,6 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 
 /**
  * Class for managing add-ons, enabling and disabling.
@@ -55,15 +55,28 @@ public class AddonManager {
                         return;
                     }
                     URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()}, this.getClass().getClassLoader());
-                    Class<?> mainClass = Class.forName(mainClassName, true, loader);
-                    Case.getInstance().getLogger().info("Loading " + name + " addon v" + version);
-                    InternalJavaAddon addon = (InternalJavaAddon) mainClass.getDeclaredConstructor().newInstance();
-                    addon.init(version, name, file, loader);
-                    addons.put(file.getName(), addon);
-                    addon.onEnable();
+                    try {
+                        Class<?> mainClass = Class.forName(mainClassName, true, loader);
+                        Case.getInstance().getLogger().info("Loading " + name + " addon v" + version);
+                        InternalJavaAddon addon = (InternalJavaAddon) mainClass.getDeclaredConstructor().newInstance();
+                        addon.init(version, name, file, loader);
+                        addons.put(file.getName(), addon);
+                        addon.onEnable();
+                    } catch (Throwable e) {
+                        if(e.getCause() instanceof ClassNotFoundException) {
+                            ClassNotFoundException error = (ClassNotFoundException) e.getCause();
+                            if(error.getLocalizedMessage().contains("JavaAddon")) {
+                                Case.getInstance().getLogger().log(Level.SEVERE,
+                                        "Error occurred while enabling addon " + name + " v" + version +
+                                                "\nIncompatible DonateCaseAPI! Contact with developer or update addon!", e);
+                                return;
+                            }
+                        }
+                        Case.getInstance().getLogger().log(Level.SEVERE,
+                                "Error occurred while enabling addon " + name + " v" + version, e);
+                    }
                 }
-            } catch (IOException | ClassNotFoundException | InvocationTargetException | InstantiationException |
-                     IllegalAccessException | NoSuchMethodException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
