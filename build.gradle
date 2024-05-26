@@ -45,7 +45,6 @@ repositories {
     }
     maven  { url 'https://repo.alessiodp.com/releases/' }
     maven  { url 'https://repo.mineinabyss.com/releases' }
-    maven { url 'https://repo.lukasa.lt/repository/maven-public/' }
     maven {
         url "https://repo.codemc.io/repository/maven-public/"
     }
