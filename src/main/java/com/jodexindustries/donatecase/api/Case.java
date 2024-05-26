@@ -303,13 +303,13 @@ public class Case{
     public static void animationEnd(CaseData c, String animation, Player player, UUID uuid, CaseData.Item item) {
         ActiveCase activeCase = activeCases.get(uuid);
         Location location = activeCase.getLocation();
-        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, item);
-        Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
         activeCasesByLocation.remove(location.getBlock().getLocation());
         activeCases.remove(uuid);
         if(CaseManager.getHologramManager() != null && c.getHologram().isEnabled()) {
             CaseManager.getHologramManager().createHologram(location.getBlock(), c);
         }
+        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, item);
+        Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
     }
 
     /**
