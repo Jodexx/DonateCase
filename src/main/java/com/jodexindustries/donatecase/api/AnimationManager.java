@@ -94,7 +94,7 @@ public class AnimationManager {
                     ActiveCase activeCase = new ActiveCase(location, caseData.getCaseName());
                     UUID uuid = UUID.randomUUID();
                     Case.activeCases.put(uuid, activeCase);
-                    Case.activeCasesByLocation.put(location, uuid);
+                    Case.activeCasesByLocation.put(location.getBlock().getLocation(), uuid);
 
                     animationClass.start(player,  Case.getCaseLocationByBlockLocation(location), uuid, caseData, preStartEvent.getWinItem());
                     for (Player pl : Bukkit.getOnlinePlayers()) {
