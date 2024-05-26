@@ -108,5 +108,4 @@ shadowJar {
     archiveBaseName.set(project.name)
     archiveClassifier.set(null)
     archiveVersion.set(project.version)
-
 }

@@ -57,3 +57,13 @@ javadoc {
     options.links('https://docs.oracle.com/en/java/javase/11/docs/api/', "https://helpch.at/docs/1.16.5/")
     source = sourceSets.main.allJava
 }
+tasks.register('replaceVersionInREADME') {
+    // Maven
+    ant.replaceregexp(match: '<version>([0-9\\.]+)</version>', replace: "<version>${version}</version>", flags: 'g', byline: true) {
+        fileset(dir: '..', includes: 'README.md')
+    }
+    // Gradle
+    ant.replaceregexp(match: 'com\\.jodexindustries\\.donatecase\\:DonateCaseAPI\\:([0-9\\.]+)', replace: "com.jodexindustries.donatecase:DonateCaseAPI:${version}", flags: 'g', byline: true) {
+        fileset(dir: '..', includes: 'README.md')
+    }
+}
