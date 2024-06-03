@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.PlayerOpenCase;
@@ -17,7 +18,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -287,7 +287,7 @@ public class Case{
      * Get plugin instance
      * @return DonateCase instance
      */
-    public static JavaPlugin getInstance() {
+    public static DonateCase getInstance() {
         return instance;
     }
 
