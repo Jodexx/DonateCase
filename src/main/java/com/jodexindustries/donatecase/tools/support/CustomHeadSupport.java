@@ -21,7 +21,7 @@ public class CustomHeadSupport {
             try {
                 item = api.getHead(category, Integer.parseInt(id));
             } catch (NullPointerException nullPointerException) {
-                Logger.log("&eCould not find the head you were looking for");
+                Logger.log("&eCould not find the head you were looking for by CustomHeads support. Category: " + category + " Id: " + id);
             }
             ItemMeta itemMeta = item.getItemMeta();
             if (itemMeta != null) {
