@@ -12,7 +12,8 @@ import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
-import com.jodexindustries.donatecase.commands.GlobalCommand;
+import com.jodexindustries.donatecase.command.GlobalCommand;
+import com.jodexindustries.donatecase.command.subcommands.ReloadCommand;
 import com.jodexindustries.donatecase.database.CaseDataBase;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
@@ -86,6 +87,7 @@ public class DonateCase extends JavaPlugin {
             command.setTabCompleter(new GlobalCommand());
         }
 
+        registerDefaultSubCommands();
         registerDefaultAnimations();
 
         api.getAddonManager().loadAddons();
@@ -106,7 +108,7 @@ public class DonateCase extends JavaPlugin {
         DonateCaseDisableEvent donateCaseDisableEvent = new DonateCaseDisableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseDisableEvent);
         api.getAnimationManager().unregisterAnimations();
-        if(api.getAddonManager() != null) api.getAddonManager().disableAddons();
+        if(api.getAddonManager() != null) api.getAddonManager().unloadAddons();
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new Placeholder().unregister();
         }
@@ -271,6 +273,9 @@ public class DonateCase extends JavaPlugin {
             this.saveResource("lang/ua_UA.yml", false);
             customConfig = new CustomConfig();
         }
+    }
+    private void registerDefaultSubCommands() {
+        api.getSubCommandManager().registerSubCommand("reload", new ReloadCommand());
     }
 
     private void registerDefaultAnimations() {
