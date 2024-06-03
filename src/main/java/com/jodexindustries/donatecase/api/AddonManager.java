@@ -29,11 +29,14 @@ public class AddonManager {
      */
     public void loadAddons() {
         File addonsDir = new File(Case.getInstance().getDataFolder(), "addons");
+        File[] files = addonsDir.listFiles();
         if(!addonsDir.exists()) {
             addonsDir.mkdir();
         }
-        for (File file : addonsDir.listFiles()) {
-            loadAddon(file);
+        if(files != null) {
+            for (File file : files) {
+                loadAddon(file);
+            }
         }
     }
 
@@ -67,8 +70,7 @@ public class AddonManager {
                         InternalJavaAddon addon = (InternalJavaAddon) mainClass.getDeclaredConstructor().newInstance();
                         addon.init(version, name, file, loader);
                         addons.put(name, addon);
-                        Case.getInstance().getLogger().info("Enabling " + name + " addon v" + version);
-                        addon.setEnabled(true);
+                        enableAddon(addon);
                     } catch (Throwable e) {
                         addons.remove(name);
                         closeClassLoader(loader);
