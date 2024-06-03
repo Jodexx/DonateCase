@@ -22,4 +22,9 @@ public class ExternalJavaAddon implements ExternalAddon {
     public Plugin getPlugin() {
         return plugin;
     }
+
+    @Override
+    public boolean isEnabled() {
+        return plugin.isEnabled();
+    }
 }
