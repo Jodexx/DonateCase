@@ -14,7 +14,7 @@ import java.util.*;
  * Class for implementing cases that are loaded into the plugin's memory.
  */
 public class CaseData implements Cloneable {
-    private final String caseName;
+    private final String caseType;
     private String caseDisplayName;
     private String caseTitle;
     private String animation;
@@ -24,10 +24,10 @@ public class CaseData implements Cloneable {
     private Hologram hologram;
     private Map<String, Integer> levelGroups;
 
-    public CaseData(String caseName, String caseDisplayName, String caseTitle,
+    public CaseData(String caseType, String caseDisplayName, String caseTitle,
                     String animation, AnimationSound animationSound, Map<String,
             Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups) {
-        this.caseName = caseName;
+        this.caseType = caseType;
         this.caseDisplayName = caseDisplayName;
         this.caseTitle = caseTitle;
         this.animation = animation;
@@ -41,7 +41,7 @@ public class CaseData implements Cloneable {
     @Override
     public String toString() {
         return "CaseData{" +
-                "caseName='" + caseName + '\'' +
+                "caseType='" + caseType + '\'' +
                 ", caseDisplayName='" + caseDisplayName + '\'' +
                 ", caseTitle='" + caseTitle + '\'' +
                 ", animation='" + animation + '\'' +
@@ -142,11 +142,25 @@ public class CaseData implements Cloneable {
     }
 
     /**
-     * Get case name
-     * @return case name
+     * Get case type
+     * @deprecated
+     * This method does not match the field name
+     * <p> Use {@link CaseData#getCaseType()} instead</p>
+     * @return case type
+     *
      */
+    @Deprecated
     public String getCaseName() {
-        return caseName;
+        return caseType;
+    }
+
+    /**
+     * Get case type
+     * @return case type
+     * @since 2.2.1.8
+     */
+    public String getCaseType() {
+        return caseType;
     }
 
     @Override

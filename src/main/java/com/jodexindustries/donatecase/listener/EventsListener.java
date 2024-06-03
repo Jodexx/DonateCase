@@ -58,7 +58,7 @@ public class EventsListener implements Listener {
         Player p = (Player) e.getWhoClicked();
         String playerName = p.getName();
         if (Case.playersGui.containsKey(p.getUniqueId())) {
-            String caseType = Case.playersGui.get(p.getUniqueId()).getName();
+            String caseType = Case.playersGui.get(p.getUniqueId()).getCaseType();
             e.setCancelled(true);
 //            if (e.getCurrentItem() == null) return;
             boolean isOpenItem = Tools.getOpenMaterialSlots(caseType).contains(e.getRawSlot());

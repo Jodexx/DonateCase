@@ -7,23 +7,35 @@ public class ActiveCase {
      * Case location
      */
     private final Location location;
-    /**
-     *  Case name
-     */
-    private final String name;
 
-    public ActiveCase(Location location, String name) {
+    /**
+     *  Case type
+     */
+    private final String caseType;
+
+    public ActiveCase(Location location, String caseType) {
         this.location = location;
-        this.name = name;
+        this.caseType = caseType;
     }
 
     /**
-     * Get player name
-     * @return name
+     * Get case type
+     * @deprecated
+     * This method does not match the field name
+     * <p> Use {@link ActiveCase#getCaseType()} instead</p>
+     * @return case type
+     *
      */
-
     public String getName() {
-        return name;
+        return caseType;
+    }
+
+    /**
+     * Get case type
+     * @return case type
+     */
+    public String getCaseType() {
+        return caseType;
     }
 
     /**

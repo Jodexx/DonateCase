@@ -76,65 +76,65 @@ public class Case{
 
     /**
      * Set case keys to a specific player
-     * @param caseName Case name
+     * @param caseType Case type
      * @param player Player name
      * @param keys Number of keys
      */
-    public static void setKeys(String caseName, String player, int keys) {
+    public static void setKeys(String caseType, String player, int keys) {
         if (!sql) {
-            customConfig.getKeys().set("DonatCase.Cases." + caseName + "." + player, keys == 0 ? null : keys);
+            customConfig.getKeys().set("DonatCase.Cases." + caseType + "." + player, keys == 0 ? null : keys);
             customConfig.saveKeys();
         } else {
-            if(mysql != null) mysql.setKey(caseName, player, keys);
+            if(mysql != null) mysql.setKey(caseType, player, keys);
         }
 
     }
 
     /**
      * Set null case keys to a specific player
-     * @param caseName Case name
+     * @param caseType Case type
      * @param player Player name
      */
-    public static void setNullKeys(String caseName, String player) {
+    public static void setNullKeys(String caseType, String player) {
         if (!sql) {
-            customConfig.getKeys().set("DonatCase.Cases." + caseName + "." + player, 0);
+            customConfig.getKeys().set("DonatCase.Cases." + caseType + "." + player, 0);
             customConfig.saveKeys();
         } else {
-            if(mysql != null) mysql.setKey(caseName, player, 0);
+            if(mysql != null) mysql.setKey(caseType, player, 0);
         }
 
     }
 
     /**
      * Add case keys to a specific player
-     * @param caseName Case name
+     * @param caseType Case type
      * @param player Player name
      * @param keys Number of keys
      */
-    public static void addKeys(String caseName, String player, int keys) {
-        setKeys(caseName, player, getKeys(caseName, player) + keys);
+    public static void addKeys(String caseType, String player, int keys) {
+        setKeys(caseType, player, getKeys(caseType, player) + keys);
     }
 
     /**
      * Delete case keys for a specific player
-     * @param caseName Case name
+     * @param caseType Case name
      * @param player Player name
      * @param keys Number of keys
      */
 
-    public static void removeKeys(String caseName, String player, int keys) {
-        setKeys(caseName, player, getKeys(caseName, player) - keys);
+    public static void removeKeys(String caseType, String player, int keys) {
+        setKeys(caseType, player, getKeys(caseType, player) - keys);
     }
 
     /**
      * Get the keys to a certain player's case
-     * @param name Case name
+     * @param caseType Case caseType
      * @param player Player name
      * @return Number of keys
      */
 
-    public static int getKeys(String name, String player) {
-        return sql ? (mysql == null ? 0 : mysql.getKey(name, player)) : customConfig.getKeys().getInt("DonatCase.Cases." + name + "." + player);
+    public static int getKeys(String caseType, String player) {
+        return sql ? (mysql == null ? 0 : mysql.getKey(caseType, player)) : customConfig.getKeys().getInt("DonatCase.Cases." + caseType + "." + player);
     }
 
     /**
@@ -234,15 +234,14 @@ public class Case{
     }
 
     /**
-     * Is there a case with a name?
-     * @param name Case name
-     * @return true/false
+     * Is there a case with a type?
+     * @param caseType Case type
      */
-    public static boolean hasCaseByType(String name) {
+    public static boolean hasCaseByType(String caseType) {
         if(caseData.isEmpty()) {
             return false;
         }
-        return caseData.containsKey(name);
+        return caseData.containsKey(caseType);
     }
     /**
      * Are there cases that have been created?
@@ -343,7 +342,7 @@ public class Case{
                         caseData.getAnimationSound().getPitch());
             }
         }
-        CaseData.HistoryData data = new CaseData.HistoryData(item.getItemName(), caseData.getCaseName(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
+        CaseData.HistoryData data = new CaseData.HistoryData(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
         CaseData.HistoryData[] list = caseData.getHistoryData();
         System.arraycopy(list, 0, list, 1, list.length - 1);
         list[0] = data;
@@ -352,17 +351,17 @@ public class Case{
             CaseData.HistoryData tempData = list[i];
             if(tempData != null) {
                 if(!sql) {
-                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Player", tempData.getPlayerName());
-                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Time", tempData.getTime());
-                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Group", tempData.getGroup());
-                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Item", tempData.getItem());
-                    customConfig.getData().set("Data." + caseData.getCaseName() + "." + i + ".Action", tempData.getAction());
+                    customConfig.getData().set("Data." + caseData.getCaseType() + "." + i + ".Player", tempData.getPlayerName());
+                    customConfig.getData().set("Data." + caseData.getCaseType() + "." + i + ".Time", tempData.getTime());
+                    customConfig.getData().set("Data." + caseData.getCaseType() + "." + i + ".Group", tempData.getGroup());
+                    customConfig.getData().set("Data." + caseData.getCaseType() + "." + i + ".Item", tempData.getItem());
+                    customConfig.getData().set("Data." + caseData.getCaseType() + "." + i + ".Action", tempData.getAction());
                 } else {
-                    if(mysql != null) mysql.setHistoryData(caseData.getCaseName(), i, tempData);
+                    if(mysql != null) mysql.setHistoryData(caseData.getCaseType(), i, tempData);
                 }
             }
         }
-        CaseData finalCase = getCase(caseData.getCaseName());
+        CaseData finalCase = getCase(caseData.getCaseType());
         if(finalCase != null) finalCase.setHistoryData(list);
 
         customConfig.saveData();
@@ -394,7 +393,7 @@ public class Case{
     private static void executeActions(OfflinePlayer player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
         final String[] replacementRegex = {
                 "%player%:" + player.getName(),
-                "%casename%:" + caseData.getCaseName(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
+                "%casename%:" + caseData.getCaseType(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
                 "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()
         };
         List<String> actions = alternative ? item.getAlternativeActions() : item.getActions();
@@ -502,7 +501,7 @@ public class Case{
     public static Inventory openGui(Player p, CaseData caseData, Location blockLocation) {
         Inventory inventory = null;
         if (!playersGui.containsKey(p.getUniqueId())) {
-            playersGui.put(p.getUniqueId(), new PlayerOpenCase(blockLocation, caseData.getCaseName(), p.getUniqueId()));
+            playersGui.put(p.getUniqueId(), new PlayerOpenCase(blockLocation, caseData.getCaseType(), p.getUniqueId()));
             inventory = new CaseGui(p, caseData).getInventory();
         } else {
             instance.getLogger().warning("Player " + p.getName() + " already opened case!");

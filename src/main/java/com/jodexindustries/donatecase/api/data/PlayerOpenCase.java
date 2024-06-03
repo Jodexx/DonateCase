@@ -10,17 +10,17 @@ public class PlayerOpenCase {
      */
     private final Location location;
     /**
-     *  Case name
+     *  Case type
      */
-    private final String name;
+    private final String caseType;
     /**
      * Player UUID
      */
     private final UUID playerUUID;
 
-    public PlayerOpenCase(Location location, String name, UUID uuid) {
+    public PlayerOpenCase(Location location, String caseType, UUID uuid) {
         this.location = location;
-        this.name = name;
+        this.caseType = caseType;
         this.playerUUID = uuid;
     }
 
@@ -34,12 +34,24 @@ public class PlayerOpenCase {
     }
 
     /**
-     * Get player name
-     * @return name
+     * Get case type
+     * @return case type
      */
 
+    public String getCaseType() {
+        return caseType;
+    }
+
+    /**
+     * Get case type
+     * @deprecated
+     * This method does not match the field name
+     * <p> Use {@link PlayerOpenCase#getCaseType()} instead</p>
+     * @return case type
+     */
+    @Deprecated
     public String getName() {
-        return name;
+        return caseType;
     }
 
     /**
@@ -55,7 +67,7 @@ public class PlayerOpenCase {
     public String toString() {
         return "OpenCase{" +
                 "location=" + location +
-                ", name='" + name + '\'' +
+                ", name='" + caseType + '\'' +
                 ", playerUUID=" + playerUUID +
                 '}';
     }

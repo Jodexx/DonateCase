@@ -73,10 +73,10 @@ public class AnimationManager {
      * Start animation at a specific location
      * @param player The player who opened the case
      * @param location Location where to start the animation
-     * @param caseName Case name
+     * @param caseType Case type
      */
-    public void startAnimation(Player player, Location location, String caseName) {
-        CaseData caseData = Case.getCase(caseName).clone();
+    public void startAnimation(Player player, Location location, String caseType) {
+        CaseData caseData = Case.getCase(caseType).clone();
         String animation = caseData.getAnimation();
         if(animation != null) {
             if(isRegistered(animation)) {
@@ -91,7 +91,7 @@ public class AnimationManager {
                     AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, animation, caseData, location, winItem);
                     Bukkit.getPluginManager().callEvent(preStartEvent);
 
-                    ActiveCase activeCase = new ActiveCase(location, caseData.getCaseName());
+                    ActiveCase activeCase = new ActiveCase(location, caseData.getCaseType());
                     UUID uuid = UUID.randomUUID();
                     Case.activeCases.put(uuid, activeCase);
                     Case.activeCasesByLocation.put(location.getBlock().getLocation(), uuid);

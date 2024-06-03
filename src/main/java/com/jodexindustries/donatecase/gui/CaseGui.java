@@ -30,7 +30,7 @@ public class CaseGui {
 
     public CaseGui(Player p, CaseData caseData) {
         String title = caseData.getCaseTitle();
-        String c = caseData.getCaseName();
+        String c = caseData.getCaseType();
         YamlConfiguration configCase = casesConfig.getCase(c);
         int size = configCase.getInt("case.Gui.Size", 45);
         if(size >= 9 && size <= 54 && size % 9 == 0) {
