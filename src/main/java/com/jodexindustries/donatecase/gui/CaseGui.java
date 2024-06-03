@@ -51,7 +51,7 @@ public class CaseGui {
                         } else {
                             keys = Case.getKeys(c, p.getName());
                         }
-                        displayName.replace("%" + placeholder + "%", String.valueOf(keys));
+                        displayName = displayName.replace("%" + placeholder + "%", String.valueOf(keys));
                         if (instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                             displayName = PAPISupport.setPlaceholders(p, displayName);
                         }
@@ -184,6 +184,7 @@ public class CaseGui {
         if(!material.contains(":")) {
             itemMaterial = Material.getMaterial(material);
             if (itemMaterial == null) {
+                Case.getInstance().getLogger().warning("Material \"" + material + "\" not found! Case: " + c);
                 itemMaterial = Material.STONE;
             }
             item = Tools.createItem(itemMaterial, -1, 1, displayName, Tools.rt(newLore,"%case%:" + c), enchanted, rgb, modelData);
