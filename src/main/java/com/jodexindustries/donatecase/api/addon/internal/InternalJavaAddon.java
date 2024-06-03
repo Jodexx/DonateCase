@@ -17,6 +17,8 @@ import java.util.logging.Level;
  */
 public abstract class InternalJavaAddon implements InternalAddon {
 
+    private boolean isEnabled = false;
+
     private String version;
     private String name;
     private ClassLoader classLoader;
@@ -37,6 +39,26 @@ public abstract class InternalJavaAddon implements InternalAddon {
         this.caseAPI = new CaseManager(this);
     }
 
+    /**
+     * Sets the enabled state of this addon
+     *
+     * @param enabled true if enabled, otherwise false
+     */
+    public final void setEnabled(final boolean enabled) {
+        if (isEnabled != enabled) {
+            isEnabled = enabled;
+
+            if (isEnabled) {
+                onEnable();
+            } else {
+                onDisable();
+            }
+        }
+    }
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
 
     @Override
     public void onDisable() {}
