@@ -1,26 +1,16 @@
 package com.jodexindustries.donatecase.command;
 
-import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.CaseManager;
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.tools.Pair;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import com.jodexindustries.donatecase.tools.Tools;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,299 +22,39 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
         if (args.length == 0) {
-            sendHelp(sender,label);
+            sendHelp(sender, label);
         } else {
-            //givekey command
-            if (args[0].equalsIgnoreCase("givekey") || args[0].equalsIgnoreCase("gk")) {
-                if(sender.hasPermission("donatecase.mod")) {
-                        if (args.length >= 4) {
-                            String player = args[1];
-                            String caseName = args[2];
-                            Player target = Bukkit.getPlayer(player);
-                            int keys;
-                            try {
-                                keys = Integer.parseInt(args[3]);
-                            } catch (NumberFormatException e) {
-                                Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NumberFormatException"), "%string:" + args[3]));
-                                return true;
-                            }
-                            if (Case.hasCaseByType(caseName)) {
-                                CaseData data = Case.getCase(caseName);
-                                if(data == null) return true;
-                                String caseTitle = data.getCaseTitle();
-                                String caseDisplayName = data.getCaseDisplayName();
-                                Case.addKeys(caseName, player, keys);
-                                Tools.msg(sender, Tools.rt(customConfig.getLang().getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
-                                if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                                    Tools.msg(target, Tools.rt(customConfig.getLang().getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
-                                }
-                            } else {
-                                Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
-                            }
-                        } else {
-                            sendHelp(sender, label);
-                        }
-                } else {
-                    Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
-                }
-            } else
-            //delkey
-            if(args[0].equalsIgnoreCase("delkey") || args[0].equalsIgnoreCase("dk")) {
-                if (sender.hasPermission("donatecase.admin") || sender.hasPermission("donatecase.mod")) {
-                    if (args.length == 1) {
-                        sendHelp(sender, label);
-                    } else
-                    if (args.length == 2) {
-                        if (args[1].equalsIgnoreCase("all")) {
-                            if (!DonateCase.sql) {
-                                customConfig.getKeys().set("DonatCase.Cases", null);
-                                customConfig.saveKeys();
-                                Tools.msg(sender, Tools.rt(customConfig.getLang().getString("ClearAllKeys")));
-                            } else {
-                                DonateCase.mysql.delAllKey();
-                                Tools.msg(sender, Tools.rt(customConfig.getLang().getString("ClearAllKeys")));
-                            }
-                        }
-                    } else {
-                        String player = args[1];
-                        String caseName = args[2];
-                        if (Case.hasCaseByType(caseName)) {
-                            CaseData data = Case.getCase(caseName);
-                            if(data == null) return true;
-                            String caseTitle = data.getCaseTitle();
-                            String caseDisplayName = data.getCaseDisplayName();
-                            Case.setNullKeys(caseName, player);
-                            Tools.msg(sender, Tools.rt(customConfig.getLang().getString("ClearKeys"), "%player:" + player, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
-                        } else {
-                            Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
-                        }
-                    }
-                }
-            } else
-            if(args[0].equalsIgnoreCase("setkey") || args[0].equalsIgnoreCase("sk")) {
-                if (!sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
-                    Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
-                } else if (args.length >= 4) {
-                    String player = args[1];
-                    String caseName = args[2];
-                    Player target = Bukkit.getPlayer(player);
-                    int keys;
-                    try {
-                        keys = Integer.parseInt(args[3]);
-                    } catch (NumberFormatException e) {
-                        Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NumberFormatException"), "%string:" + args[3]));
-                        return true;
-                    }
-                    if (Case.hasCaseByType(caseName)) {
-                        CaseData data = Case.getCase(caseName);
-                        if(data == null) return true;
-                        String caseTitle = data.getCaseTitle();
-                        String caseDisplayName = data.getCaseDisplayName();
-                        Case.setKeys(caseName, player, keys);
-                        Tools.msg(sender, Tools.rt(customConfig.getLang().getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
-                        if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                            Tools.msg(target, Tools.rt(customConfig.getLang().getString("SetKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
-                        }
-                    } else {
-                        Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
-                    }
-                } else {
-                    sendHelp(sender, label);
-                }
-            } else
-            //keys
-            if (args[0].equalsIgnoreCase("keys")) {
-                if (args.length < 2) {
-                    if (sender instanceof Player) {
-                        Player player = (Player) sender;
-                        if (sender.hasPermission("donatecase.player")) {
-                            for (String string : customConfig.getLang().getStringList("MyKeys")) {
-                                if(instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                                    string = PAPISupport.setPlaceholders(player, string);
-                                }
-                                String placeholder = Tools.getLocalPlaceholder(string);
-                                String result = "0";
-                                if(placeholder.startsWith("keys_")) {
-                                    String[] parts = placeholder.split("_");
-                                    String caseTitle = parts[1];
-                                    int keys = Case.getKeys(caseTitle, player.getName());
-                                    if(parts.length == 2) {
-                                        result = String.valueOf(keys);
-                                    } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
-                                        result = NumberFormat.getNumberInstance().format(keys);
-                                    }
-                                }
-                                sender.sendMessage(Tools.rc(string.replace("%" + placeholder + "%", result)));
-                            }
-                        }
-                    }
-                } else {
-                    if (sender.hasPermission("donatecase.mod")) {
-                        String target = args[1];
-                        //Get player keys
-                        for (String string : customConfig.getLang().getStringList("PlayerKeys")) {
-                            if(instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                                Player targetPlayer = Bukkit.getPlayerExact(target);
-                                if(targetPlayer != null) {
-                                    string = PAPISupport.setPlaceholders(targetPlayer, string);
-                                }
-                            }
-                            String placeholder = Tools.getLocalPlaceholder(string);
-                            String result = "0";
-                            if(placeholder.startsWith("keys_")) {
-                                String[] parts = placeholder.split("_");
-                                String caseName = parts[1];
-                                int keys = Case.getKeys(caseName, target);
-                                if(parts.length == 2) {
-                                    result = String.valueOf(keys);
-                                } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
-                                    result = NumberFormat.getNumberInstance().format(keys);
-                                }
-                            }
-                            sender.sendMessage(Tools.rc(string).replace("%player", target)
-                                    .replace("%"+placeholder+"%", result));
-                        }
-                    } else {
-                        Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
-                    }
-                }
-            } else
-            //cases
-            if (args[0].equalsIgnoreCase("cases")) {
-                if (sender.hasPermission("donatecase.mod")) {
-                    int num = 0;
-                        for (String caseName : casesConfig.getCases().keySet()) {
-                            num++;
-                            CaseData data = Case.getCase(caseName);
-                            if(data == null) return true;
-                            String caseTitle = data.getCaseTitle();
-                            String caseDisplayName = data.getCaseDisplayName();
+            String subCommandName = args[0];
+            Pair<SubCommand, Addon> pair = api.getSubCommandManager().getSubCommands().get(subCommandName);
 
-                            Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("CasesList"), "%casename:" + caseName, "%num:" + num, "%casedisplayname:" + caseDisplayName, "%casetitle:" + caseTitle ));
-                        }
-                }
-            } else
-            // opencase
-            if (args[0].equalsIgnoreCase("opencase")) {
-                if (sender instanceof Player) {
-                    String playerName = sender.getName();
-                    Player player = (Player) sender;
-                    if (sender.hasPermission("donatecase.player")) {
-                        if (args.length == 2) {
-                            String caseName = args[1];
-                            if (Case.hasCaseByType(caseName)) {
-                                int keys = Case.getKeys(caseName, playerName);
-                                if (keys >= 1) {
-                                    Case.removeKeys(caseName, playerName, 1);
-                                    CaseData data = Case.getCase(caseName);
-                                    if(data == null) return true;
-                                    CaseData.Item winGroup = Tools.getRandomGroup(data);
-                                    Case.onCaseOpenFinish(data, player, true, winGroup);
-                                } else {
-                                    Tools.msg(player, customConfig.getLang().getString("NoKey"));
-                                }
-                            } else {
-                                Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
-                            }
-                        } else {
-                            sendHelp(sender, label);
-                        }
-                    }
-                }
-            } else
-            //help
-            if (args[0].equalsIgnoreCase("help")) {
+            if (pair == null) {
                 sendHelp(sender, label);
-            } else
-            //create
-            if (args[0].equalsIgnoreCase("create")) {
-                if(sender instanceof Player) {
-                    Player player = (Player) sender;
-                    Location l = player.getTargetBlock(null, 5).getLocation().setDirection(player.getLocation().getDirection());
-                    if (sender.hasPermission("donatecase.admin")) {
-                        if (args.length >= 3) {
-                            String caseType = args[1];
-                            String caseName = args[2];
-                            if (Case.hasCaseByType(caseType)) {
-                                if (Case.hasCaseByLocation(l)) {
-                                    Tools.msg(sender, customConfig.getLang().getString("HasDonatCase"));
-                                } else {
-                                    if(!Case.hasCaseTypeByCustomName(caseName)) {
-                                        Case.saveLocation(caseName, caseType, l);
-                                        Tools.msg(sender, customConfig.getLang().getString("AddDonatCase"));
-                                    } else {
-                                        Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseAlreadyHasByName"), "%casename:" + caseName));
-                                    }
-                                }
-                            } else {
-                                Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseNotExist"), "%case:" + caseType));
-                            }
-                        } else {
-                            sendHelp(sender, label);
-                        }
-                    } else {
-                        Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
-                    }
-                }
-            } else
-            //delete
-            if (args[0].equalsIgnoreCase("delete")) {
-                if (sender.hasPermission("donatecase.admin")) {
-                    if (args.length == 1) {
-                        if (sender instanceof Player) {
-                            Player player = (Player) sender;
-                            Location l = player.getTargetBlock(null, 5).getLocation();
-                            if (Case.hasCaseByLocation(l)) {
-                                Case.deleteCaseByLocation(l);
-                                if(CaseManager.getHologramManager() != null) CaseManager.getHologramManager().removeHologram(l.getBlock());
-                                Tools.msg(sender, customConfig.getLang().getString("RemoveDonatCase"));
-                            } else {
-                                Tools.msg(sender, customConfig.getLang().getString("BlockDontDonatCase"));
-                            }
-                        }
-                    } else if (args.length == 2) {
-                        String name = args[1];
-                        if (Case.hasCaseTypeByCustomName(name)) {
-                            Location location = Case.getCaseLocationByCustomName(name);
-                            if(CaseManager.getHologramManager() != null) if(location != null) CaseManager.getHologramManager().removeHologram(location.getBlock());
-                            Case.deleteCaseByName(name);
-                            Tools.msg(sender, customConfig.getLang().getString("RemoveDonatCase"));
-                        } else {
-                            Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseNotExist"), "%case:" + name));
-                        }
-                    }
-                } else {
-                    Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
-                }
+                return true;
+            }
+
+            SubCommand subCommand = pair.getFirst();
+            if (subCommand == null) {
+                sendHelp(sender, label);
+                return true;
+            }
+
+            SubCommandType type = subCommand.getType();
+            boolean hasAdminPermission = sender.hasPermission("donatecase.admin");
+            boolean hasModPermission = sender.hasPermission("donatecase.mod");
+            boolean hasPlayerPermission = sender.hasPermission("donatecase.player");
+
+            if (type == SubCommandType.ADMIN && hasAdminPermission ||
+                    type == SubCommandType.MODER && (hasModPermission || hasAdminPermission) ||
+                    (type == SubCommandType.PLAYER || type == null) && (hasPlayerPermission || hasModPermission || hasAdminPermission)) {
+                subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
             } else {
-                String subCommandName = args[0];
-                Pair<SubCommand, Addon> pair = api.getSubCommandManager().getSubCommands().get(subCommandName);
-                if(pair != null) {
-                    SubCommand subCommand = pair.getFirst();
-                    if (subCommand != null) {
-                        if (subCommand.getType() == SubCommandType.ADMIN && sender.hasPermission("donatecase.admin")) {
-                            subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
-                        } else if (subCommand.getType() == SubCommandType.MODER && (sender.hasPermission("donatecase.mod") || sender.hasPermission("donatecase.admin"))) {
-                            subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
-                        } else if ((subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) && (sender.hasPermission("donatecase.player") ||
-                                sender.hasPermission("donatecase.mod") ||
-                                sender.hasPermission("donatecase.admin"))) {
-                            subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
-                        } else {
-                            Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
-                        }
-                    } else {
-                        sendHelp(sender, label);
-                    }
-                } else {
-                    sendHelp(sender, label);
-                }
+                Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
             }
         }
         return true;
     }
 
-    private void sendHelp(CommandSender sender, String label) {
+    public static void sendHelp(CommandSender sender, String label) {
         if(sender.hasPermission("donatecase.player")) {
             Tools.msg_(sender, Tools.rt("&aDonateCase " + instance.getDescription().getVersion() + " &7by &c_Jodex__"));
             if (!sender.hasPermission("donatecase.mod")) {
@@ -418,12 +148,11 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        List<String> list = new ArrayList<>();
+        List<String> list;
         List<String> value = new ArrayList<>();
 
         if (args.length == 1) {
             if (sender.hasPermission("donatecase.admin")) {
-                value.addAll(Arrays.asList("help", "create", "delete", "givekey", "setkey", "keys", "opencase", "cases", "delkey"));
                 for (String subCommandName : api.getSubCommandManager().getSubCommands().keySet()) {
                     SubCommand subCommand = api.getSubCommandManager().getSubCommands().get(subCommandName).getFirst();
                     if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == null || subCommand.getType() == SubCommandType.PLAYER) {
@@ -431,7 +160,6 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     }
                 }
             } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
-                value.addAll(Arrays.asList("help", "givekey", "setkey", "keys", "cases", "opencase", "delkey"));
                 for (String subCommandName : api.getSubCommandManager().getSubCommands().keySet()) {
                     SubCommand subCommand = api.getSubCommandManager().getSubCommands().get(subCommandName).getFirst();
                     if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
@@ -439,7 +167,6 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     }
                 }
             } else if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
-                value.addAll(Arrays.asList("help", "keys", "opencase"));
                 for (String subCommandName : api.getSubCommandManager().getSubCommands().keySet()) {
                     SubCommand subCommand = api.getSubCommandManager().getSubCommands().get(subCommandName).getFirst();
                     if (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
@@ -447,46 +174,6 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     }
                 }
             } else {
-                return new ArrayList<>();
-            }
-        } else if (args[0].equalsIgnoreCase("create") && sender.hasPermission("donatecase.admin")) {
-            value.addAll(casesConfig.getCases().keySet());
-            if(args.length >= 3) {
-                return new ArrayList<>();
-            }
-        } else if (args[0].equalsIgnoreCase("opencase") && sender.hasPermission("donatecase.player")) {
-            value.addAll(casesConfig.getCases().keySet());
-            if(args.length >= 3) {
-                return new ArrayList<>();
-            }
-        } else if (args[0].equalsIgnoreCase("delete")) {
-            if (args.length == 2) {
-                ConfigurationSection section = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
-                if (section != null) {
-                    value.addAll(section.getKeys(false));
-                } else {
-                    return new ArrayList<>();
-                }
-            } else {
-                return new ArrayList<>();
-            }
-        } else if (args[0].equalsIgnoreCase("keys")) {
-            if (args.length != 2 || !sender.hasPermission("donatecase.mod")) {
-                return new ArrayList<>();
-            }
-            list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(px -> px.startsWith(args[1])).collect(Collectors.toList()));
-            return list;
-        } else if (Arrays.asList("cases", "help").contains(args[0].toLowerCase())) {
-            return new ArrayList<>();
-        } else if (Arrays.asList("givekey", "gk", "setkey", "sk", "delkey", "dk").contains(args[0].toLowerCase())) {
-            if (!sender.hasPermission("donatecase.mod")) {
-                return new ArrayList<>();
-            }
-            value.addAll(casesConfig.getCases().keySet());
-            if (args.length == 2) {
-                list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(px -> px.startsWith(args[1])).collect(Collectors.toList()));
-                return list;
-            } else if (args.length >= 4) {
                 return new ArrayList<>();
             }
         } else if (api.getSubCommandManager().getSubCommands().get(args[0]) != null) {
@@ -498,12 +185,11 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         if (args[args.length - 1].isEmpty()) {
             list = value;
         } else {
-            list.addAll(value.stream().filter(tmp -> tmp.startsWith(args[args.length - 1])).collect(Collectors.toList()));
+            list = value.stream().filter(tmp -> tmp.startsWith(args[args.length - 1])).collect(Collectors.toList());
         }
 
         Collections.sort(list);
         return list;
     }
-
 
 }
