@@ -107,7 +107,7 @@ public class AddonManager {
      * @param addon addon instance
      */
     public void enableAddon(InternalJavaAddon addon) {
-        if(addon.isEnabled()) {
+        if(!addon.isEnabled()) {
             Case.getInstance().getLogger().info("Enabling " + addon.getName() + " addon v" + addon.getVersion());
             addon.setEnabled(true);
         } else {
