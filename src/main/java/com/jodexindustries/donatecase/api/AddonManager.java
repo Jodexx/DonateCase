@@ -70,6 +70,8 @@ public class AddonManager {
                         Case.getInstance().getLogger().info("Enabling " + name + " addon v" + version);
                         addon.setEnabled(true);
                     } catch (Throwable e) {
+                        addons.remove(name);
+                        closeClassLoader(loader);
                         if(e.getCause() instanceof ClassNotFoundException) {
                             ClassNotFoundException error = (ClassNotFoundException) e.getCause();
                             if(error.getLocalizedMessage().contains("JavaAddon")) {
@@ -81,8 +83,6 @@ public class AddonManager {
                         }
                         Case.getInstance().getLogger().log(Level.SEVERE,
                                 "Error occurred while enabling addon " + name + " v" + version, e);
-                        addons.remove(name);
-                        closeClassLoader(loader);
                     }
                 } else {
                     Case.getInstance().getLogger().warning("Addon " + file.getName() + " trying to load without addon.yml! Abort.");
