@@ -492,9 +492,6 @@ public class DonateCase extends JavaPlugin {
 
     @Nullable
     public InputStream getResource(@NotNull String filename) {
-        if (filename == null) {
-            throw new IllegalArgumentException("Filename cannot be null");
-        }
 
         try {
             URL url = getClassLoader().getResource("resources/" +  filename);
