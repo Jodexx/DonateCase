@@ -148,48 +148,40 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        List<String> list;
         List<String> value = new ArrayList<>();
 
         if (args.length == 1) {
-            if (sender.hasPermission("donatecase.admin")) {
-                for (String subCommandName : api.getSubCommandManager().getSubCommands().keySet()) {
-                    SubCommand subCommand = api.getSubCommandManager().getSubCommands().get(subCommandName).getFirst();
-                    if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == null || subCommand.getType() == SubCommandType.PLAYER) {
-                        value.add(subCommandName);
-                    }
+            boolean isAdmin = sender.hasPermission("donatecase.admin");
+            boolean isMod = sender.hasPermission("donatecase.mod");
+            boolean isPlayer = sender.hasPermission("donatecase.player");
+
+            Map<String, Pair<SubCommand, Addon>> subCommands = api.getSubCommandManager().getSubCommands();
+
+            for (Map.Entry<String, Pair<SubCommand, Addon>> entry : subCommands.entrySet()) {
+                String subCommandName = entry.getKey();
+                SubCommand subCommand = entry.getValue().getFirst();
+                SubCommandType type = subCommand.getType();
+
+                if (isAdmin || isMod && (type == SubCommandType.MODER || type == SubCommandType.PLAYER || type == null) || isPlayer && !isMod && (type == SubCommandType.PLAYER || type == null)) {
+                    value.add(subCommandName);
                 }
-            } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
-                for (String subCommandName : api.getSubCommandManager().getSubCommands().keySet()) {
-                    SubCommand subCommand = api.getSubCommandManager().getSubCommands().get(subCommandName).getFirst();
-                    if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                        value.add(subCommandName);
-                    }
-                }
-            } else if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
-                for (String subCommandName : api.getSubCommandManager().getSubCommands().keySet()) {
-                    SubCommand subCommand = api.getSubCommandManager().getSubCommands().get(subCommandName).getFirst();
-                    if (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                        value.add(subCommandName);
-                    }
-                }
-            } else {
-                return new ArrayList<>();
             }
-        } else if (api.getSubCommandManager().getSubCommands().get(args[0]) != null) {
+        } else if (api.getSubCommandManager().getSubCommands().containsKey(args[0])) {
             return api.getSubCommandManager().getTabCompletionsForSubCommand(sender, args[0], Arrays.copyOfRange(args, 1, args.length));
         } else {
             return new ArrayList<>();
         }
 
         if (args[args.length - 1].isEmpty()) {
-            list = value;
-        } else {
-            list = value.stream().filter(tmp -> tmp.startsWith(args[args.length - 1])).collect(Collectors.toList());
+            Collections.sort(value);
+            return value;
         }
 
-        Collections.sort(list);
-        return list;
+        return value.stream()
+                .filter(tmp -> tmp.startsWith(args[args.length - 1]))
+                .sorted()
+                .collect(Collectors.toList());
     }
+
 
 }
