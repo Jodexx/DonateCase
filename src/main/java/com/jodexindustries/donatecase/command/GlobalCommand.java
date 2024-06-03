@@ -55,82 +55,71 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
     }
 
     public static void sendHelp(CommandSender sender, String label) {
-        if(sender.hasPermission("donatecase.player")) {
-            Tools.msg_(sender, Tools.rt("&aDonateCase " + instance.getDescription().getVersion() + " &7by &c_Jodex__"));
-            if (!sender.hasPermission("donatecase.mod")) {
-                for (String string : customConfig.getLang().getStringList("HelpPlayer")) {
-                    Tools.msg_(sender, Tools.rt(string, "%cmd:" + label));
-                }
-            } else if (sender.hasPermission("donatecase.mod") || sender.hasPermission("donatecase.admin")) {
-                for (String string : customConfig.getLang().getStringList("Help")) {
-                    Tools.msg_(sender, Tools.rt(string, "%cmd:" + label));
-                }
-            }
-            if (customConfig.getConfig().getBoolean("DonatCase.AddonsHelp", true)) {
-                Map<String, List<Map<String, SubCommand>>> addonsMap = new HashMap<>();
-                for (String subCommandName : api.getSubCommandManager().getSubCommands().keySet()) {
-                    List<Map<String, SubCommand>> list = new ArrayList<>();
-                    Map<String, SubCommand> commandMap = new HashMap<>();
-                    Pair<SubCommand, Addon> pair = api.getSubCommandManager().getSubCommands().get(subCommandName);
-                    SubCommand subCommand = pair.getFirst();
-                    Addon addon = pair.getSecond();
-                    commandMap.put(subCommandName, subCommand);
-                    list.add(commandMap);
-                    addonsMap.put(addon.getName(), list);
-                }
-                if (Tools.isHasCommandForSender(sender, addonsMap)) {
-                    for (String addon : addonsMap.keySet()) {
-                        if (addon.equalsIgnoreCase("DonateCase")) continue;
-                        if (Tools.isHasCommandForSender(sender, addonsMap, addon)) {
-                            if (customConfig.getLang().getString("HelpAddons.Format.AddonName") != null && !customConfig.getLang().getString("HelpAddons.Format.AddonName", "").isEmpty()) {
-                                Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("HelpAddons.Format.AddonName"), "%addon:" + addon));
-                            }
-                            List<Map<String, SubCommand>> commands = addonsMap.get(addon);
-                            for (Map<String, SubCommand> command : commands) {
-                                for (String commandName : command.keySet()) {
-                                    SubCommand subCommand = command.get(commandName);
-                                    String description = subCommand.getDescription();
-                                    if (description == null) {
-                                        description = "";
-                                    } else {
-                                        description = Tools.rt(customConfig.getLang().getString("HelpAddons.Format.AddonDescription"), "%description:" + description);
-                                    }
-                                    StringBuilder builder = compileSubCommandArgs(subCommand.getArgs());
-                                    if (sender.hasPermission("donatecase.admin")) {
-                                        if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                                            Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("HelpAddons.Format.AddonCommand"),
-                                                    "%cmd:" + commandName,
-                                                    "%args:" + builder,
-                                                    "%description:" + description
-                                            ));
-                                        }
-                                    } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
-                                        if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                                            Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("HelpAddons.Format.AddonCommand"),
-                                                    "%cmd:" + commandName,
-                                                    "%args:" + builder,
-                                                    "%description:" + description
-                                            ));
-                                        }
-                                    } else if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
-                                        if (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                                            Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("HelpAddons.Format.AddonCommand"),
-                                                    "%cmd:" + commandName,
-                                                    "%args:" + builder,
-                                                    "%description:" + description
-                                            ));
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+        if (!sender.hasPermission("donatecase.player")) {
+            Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
+            return;
+        }
+
+        Tools.msg_(sender, Tools.rt("&aDonateCase " + instance.getDescription().getVersion() + " &7by &c_Jodex__"));
+
+        boolean isAdmin = sender.hasPermission("donatecase.admin");
+        boolean isMod = sender.hasPermission("donatecase.mod");
+
+        if (!isAdmin && !isMod) {
+            for (String string : customConfig.getLang().getStringList("HelpPlayer")) {
+                Tools.msg_(sender, Tools.rt(string, "%cmd:" + label));
             }
         } else {
-            Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
+            for (String string : customConfig.getLang().getStringList("Help")) {
+                Tools.msg_(sender, Tools.rt(string, "%cmd:" + label));
+            }
+        }
+
+        if (customConfig.getConfig().getBoolean("DonatCase.AddonsHelp", true)) {
+            Map<String, List<Map<String, SubCommand>>> addonsMap = new HashMap<>();
+            api.getSubCommandManager().getSubCommands().forEach((subCommandName, pair) -> {
+                SubCommand subCommand = pair.getFirst();
+                Addon addon = pair.getSecond();
+                addonsMap.computeIfAbsent(addon.getName(), k -> new ArrayList<>())
+                        .add(Collections.singletonMap(subCommandName, subCommand));
+            });
+
+            if (Tools.isHasCommandForSender(sender, addonsMap)) {
+                addonsMap.forEach((addon, commands) -> {
+                    if (!addon.equalsIgnoreCase("DonateCase") && Tools.isHasCommandForSender(sender, addonsMap, addon)) {
+                        String addonNameFormat = customConfig.getLang().getString("HelpAddons.Format.AddonName");
+                        if (addonNameFormat != null && !addonNameFormat.isEmpty()) {
+                            Tools.msg_(sender, Tools.rt(addonNameFormat, "%addon:" + addon));
+                        }
+
+                        commands.forEach(command -> command.forEach((commandName, subCommand) -> {
+                            String description = subCommand.getDescription();
+                            if (description != null) {
+                                description = Tools.rt(customConfig.getLang().getString("HelpAddons.Format.AddonDescription"), "%description:" + description);
+                            } else {
+                                description = "";
+                            }
+                            StringBuilder builder = compileSubCommandArgs(subCommand.getArgs());
+
+                            boolean hasPermissionForSubCommand = isAdmin || isMod &&
+                                    (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER ||
+                                            subCommand.getType() == null) || sender.hasPermission("donatecase.player") && !isMod &&
+                                    (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null);
+
+                            if (hasPermissionForSubCommand) {
+                                Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("HelpAddons.Format.AddonCommand"),
+                                        "%cmd:" + commandName,
+                                        "%args:" + builder,
+                                        "%description:" + description
+                                ));
+                            }
+                        }));
+                    }
+                });
+            }
         }
     }
+
 
     private static @NotNull StringBuilder compileSubCommandArgs(String[] args) {
         StringBuilder builder = new StringBuilder();
