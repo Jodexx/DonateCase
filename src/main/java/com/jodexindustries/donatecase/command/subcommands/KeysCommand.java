@@ -71,7 +71,7 @@ public class KeysCommand implements SubCommand {
                             .replace("%"+placeholder+"%", result));
                 }
             } else {
-                Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
+                Tools.msgRaw(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
             }
         }
     }

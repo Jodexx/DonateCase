@@ -97,11 +97,11 @@ public class Tools {
 
     public static void msg(CommandSender s, String msg) {
         if (s != null) {
-            msg_(s, DonateCase.customConfig.getLang().getString("Prefix") + msg);
+            msgRaw(s, DonateCase.customConfig.getLang().getString("Prefix") + msg);
         }
     }
 
-    public static void msg_(CommandSender s, String msg) {
+    public static void msgRaw(CommandSender s, String msg) {
         if (s != null) {
             s.sendMessage(rc(msg));
         }

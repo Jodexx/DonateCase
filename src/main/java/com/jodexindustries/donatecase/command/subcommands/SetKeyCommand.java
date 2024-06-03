@@ -26,7 +26,7 @@ public class SetKeyCommand implements SubCommand {
             try {
                 keys = Integer.parseInt(args[3]);
             } catch (NumberFormatException e) {
-                Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NumberFormatException"), "%string:" + args[3]));
+                Tools.msgRaw(sender, Tools.rt(customConfig.getLang().getString("NumberFormatException"), "%string:" + args[3]));
                 return;
             }
             if (Case.hasCaseByType(caseName)) {

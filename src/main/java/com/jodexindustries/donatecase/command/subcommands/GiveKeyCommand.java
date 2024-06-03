@@ -26,7 +26,7 @@ public class GiveKeyCommand implements SubCommand {
             try {
                 keys = Integer.parseInt(args[2]);
             } catch (NumberFormatException e) {
-                Tools.msg_(sender, Tools.rt(customConfig.getLang().getString("NumberFormatException"), "%string:" + args[2]));
+                Tools.msgRaw(sender, Tools.rt(customConfig.getLang().getString("NumberFormatException"), "%string:" + args[2]));
                 return;
             }
             if (Case.hasCaseByType(caseName)) {
