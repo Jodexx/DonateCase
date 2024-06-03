@@ -13,7 +13,7 @@ import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
 import com.jodexindustries.donatecase.command.GlobalCommand;
-import com.jodexindustries.donatecase.command.subcommands.ReloadCommand;
+import com.jodexindustries.donatecase.command.subcommands.*;
 import com.jodexindustries.donatecase.database.CaseDataBase;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
@@ -276,6 +276,15 @@ public class DonateCase extends JavaPlugin {
     }
     private void registerDefaultSubCommands() {
         api.getSubCommandManager().registerSubCommand("reload", new ReloadCommand());
+        api.getSubCommandManager().registerSubCommand("givekey", new GiveKeyCommand());
+        api.getSubCommandManager().registerSubCommand("delkey", new DelKeyCommand());
+        api.getSubCommandManager().registerSubCommand("setkey", new SetKeyCommand());
+        api.getSubCommandManager().registerSubCommand("keys", new KeysCommand());
+        api.getSubCommandManager().registerSubCommand("cases", new CasesCommand());
+        api.getSubCommandManager().registerSubCommand("opencase", new OpenCaseCommand());
+        api.getSubCommandManager().registerSubCommand("help", new HelpCommand());
+        api.getSubCommandManager().registerSubCommand("create", new CreateCommand());
+        api.getSubCommandManager().registerSubCommand("delete", new DeleteCommand());
     }
 
     private void registerDefaultAnimations() {
