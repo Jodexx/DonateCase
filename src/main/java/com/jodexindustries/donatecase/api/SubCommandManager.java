@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.events.SubCommandRegisteredEvent;
+import com.jodexindustries.donatecase.api.events.SubCommandUnregisteredEvent;
 import com.jodexindustries.donatecase.tools.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -43,8 +44,8 @@ public class SubCommandManager {
     public void unregisterSubCommand(String commandName) {
         if(subCommands.get(commandName.toLowerCase()) != null) {
             subCommands.remove(commandName.toLowerCase());
-            SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(commandName);
-            Bukkit.getServer().getPluginManager().callEvent(subCommandRegisteredEvent);
+            SubCommandUnregisteredEvent subCommandUnregisteredEvent = new SubCommandUnregisteredEvent(commandName);
+            Bukkit.getServer().getPluginManager().callEvent(subCommandUnregisteredEvent);
         } else {
             Case.getInstance().getLogger().warning("Sub command " + commandName + " already unregistered!");
         }
