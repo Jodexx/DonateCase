@@ -18,7 +18,7 @@ import static com.jodexindustries.donatecase.tools.Tools.resolveSDGCompletions;
 public class SetKeyCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (args.length >= 4) {
+        if (args.length >= 3) {
             String player = args[1];
             String caseName = args[2];
             Player target = Bukkit.getPlayer(player);
