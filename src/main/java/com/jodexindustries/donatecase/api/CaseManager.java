@@ -1,12 +1,10 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import static com.jodexindustries.donatecase.DonateCase.*;
 
 
 /**
@@ -34,8 +32,8 @@ public class CaseManager {
      * Get plugin instance
      * @return DonateCase instance
      */
-    public JavaPlugin getInstance() {
-        return instance;
+    public DonateCase getInstance() {
+        return Case.getInstance();
     }
 
     /**
@@ -67,7 +65,7 @@ public class CaseManager {
      * @return HologramManager instance
      */
     public static HologramManager getHologramManager() {
-        return hologramManager;
+        return Case.getInstance().hologramManager;
     }
 
     /**
