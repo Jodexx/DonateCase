@@ -76,7 +76,9 @@ public class AnimationManager {
      * @param caseType Case type
      */
     public void startAnimation(Player player, Location location, String caseType) {
-        CaseData caseData = Case.getCase(caseType).clone();
+        CaseData caseData = Case.getCase(caseType);
+        if(caseData == null) return;
+        caseData = caseData.clone();
         String animation = caseData.getAnimation();
         if(animation != null) {
             if(isRegistered(animation)) {
