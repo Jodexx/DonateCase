@@ -10,21 +10,18 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jodexindustries.donatecase.DonateCase.casesConfig;
-import static com.jodexindustries.donatecase.DonateCase.customConfig;
-
 public class CasesCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         int num = 0;
-        for (String caseName : casesConfig.getCases().keySet()) {
+        for (String caseName : Case.getInstance().casesConfig.getCases().keySet()) {
             num++;
             CaseData data = Case.getCase(caseName);
             if(data == null) return;
             String caseTitle = data.getCaseTitle();
             String caseDisplayName = data.getCaseDisplayName();
 
-            Tools.msgRaw(sender, Tools.rt(customConfig.getLang().getString("CasesList"), "%casename:" + caseName, "%num:" + num, "%casedisplayname:" + caseDisplayName, "%casetitle:" + caseTitle ));
+            Tools.msgRaw(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("CasesList"), "%casename:" + caseName, "%num:" + num, "%casedisplayname:" + caseDisplayName, "%casetitle:" + caseTitle ));
         }
     }
 

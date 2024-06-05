@@ -2,7 +2,6 @@ package com.jodexindustries.donatecase.tools;
 
 import java.text.NumberFormat;
 
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -19,7 +18,7 @@ public class Placeholder extends PlaceholderExpansion {
     }
 
     public @NotNull String getVersion() {
-        return DonateCase.instance.getDescription().getVersion();
+        return Case.getInstance().getDescription().getVersion();
     }
 
     public boolean persist() {

@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static com.jodexindustries.donatecase.DonateCase.customConfig;
 import static com.jodexindustries.donatecase.tools.Tools.resolveSDGCompletions;
 
 public class GiveKeyCommand implements SubCommand {
@@ -26,7 +25,7 @@ public class GiveKeyCommand implements SubCommand {
             try {
                 keys = Integer.parseInt(args[2]);
             } catch (NumberFormatException e) {
-                Tools.msgRaw(sender, Tools.rt(customConfig.getLang().getString("NumberFormatException"), "%string:" + args[2]));
+                Tools.msgRaw(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("NumberFormatException"), "%string:" + args[2]));
                 return;
             }
             if (Case.hasCaseByType(caseName)) {
@@ -35,12 +34,12 @@ public class GiveKeyCommand implements SubCommand {
                 String caseTitle = data.getCaseTitle();
                 String caseDisplayName = data.getCaseDisplayName();
                 Case.addKeys(caseName, player, keys);
-                Tools.msg(sender, Tools.rt(customConfig.getLang().getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
-                if (customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                    Tools.msg(target, Tools.rt(customConfig.getLang().getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
+                Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("GiveKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
+                if (Case.getInstance().customConfig.getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
+                    Tools.msg(target, Tools.rt(Case.getInstance().customConfig.getLang().getString("GiveKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                 }
             } else {
-                Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
+                Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
             }
         } else {
             GlobalCommand.sendHelp(sender, "dc");

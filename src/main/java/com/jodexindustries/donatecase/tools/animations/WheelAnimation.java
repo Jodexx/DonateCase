@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.jodexindustries.donatecase.DonateCase.*;
-
 public class WheelAnimation implements Animation {
 
     List<CaseData.Item> items = new ArrayList<>();
@@ -38,22 +36,22 @@ public class WheelAnimation implements Animation {
         loc.setPitch(pitch);
         loc.setYaw(yaw);
         loc.add(0.5, 0, 0.5);
-        int itemsCount = customConfig.getAnimations().getInt("Wheel.ItemsCount");
+        int itemsCount = Case.getInstance().customConfig.getAnimations().getInt("Wheel.ItemsCount");
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Wheel.Pose");
-        itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("Wheel.ItemSlot", "HEAD").toUpperCase());
-        boolean small = customConfig.getAnimations().getBoolean("Wheel.SmallArmorStand", true);
-        int animationTime = customConfig.getAnimations().getInt("Wheel.Scroll.Time", 100);
-        final Location flocation = loc.clone().add(0 + customConfig.getAnimations().getDouble("Wheel.LiftingAlongX"),
-                -1 + customConfig.getAnimations().getDouble("Wheel.LiftingAlongY"),
-                0 + customConfig.getAnimations().getDouble("Wheel.LiftingAlongZ"));
-        boolean needSound = customConfig.getAnimations().getString("Wheel.Scroll.Sound") != null;
-        Sound sound = Sound.valueOf(customConfig.getAnimations().getString("Wheel.Scroll.Sound"));
-        float volume = (float) customConfig.getAnimations().getDouble("Wheel.Scroll.Volume");
-        float vpitch = (float) customConfig.getAnimations().getDouble("Wheel.Scroll.Pitch");
-        final double speed = customConfig.getAnimations().getDouble("Wheel.CircleSpeed");
-        final double radius = customConfig.getAnimations().getDouble("Wheel.CircleRadius");
-        final boolean useFlame = customConfig.getAnimations().getBoolean("Wheel.Flame.Enabled");
-        final Particle flameParticle = Particle.valueOf(customConfig.getAnimations().getString("Wheel.Flame.Particle", "FLAME"));
+        itemSlot = EquipmentSlot.valueOf(Case.getInstance().customConfig.getAnimations().getString("Wheel.ItemSlot", "HEAD").toUpperCase());
+        boolean small = Case.getInstance().customConfig.getAnimations().getBoolean("Wheel.SmallArmorStand", true);
+        int animationTime = Case.getInstance().customConfig.getAnimations().getInt("Wheel.Scroll.Time", 100);
+        final Location flocation = loc.clone().add(0 + Case.getInstance().customConfig.getAnimations().getDouble("Wheel.LiftingAlongX"),
+                -1 + Case.getInstance().customConfig.getAnimations().getDouble("Wheel.LiftingAlongY"),
+                0 + Case.getInstance().customConfig.getAnimations().getDouble("Wheel.LiftingAlongZ"));
+        boolean needSound = Case.getInstance().customConfig.getAnimations().getString("Wheel.Scroll.Sound") != null;
+        Sound sound = Sound.valueOf(Case.getInstance().customConfig.getAnimations().getString("Wheel.Scroll.Sound"));
+        float volume = (float) Case.getInstance().customConfig.getAnimations().getDouble("Wheel.Scroll.Volume");
+        float vpitch = (float) Case.getInstance().customConfig.getAnimations().getDouble("Wheel.Scroll.Pitch");
+        final double speed = Case.getInstance().customConfig.getAnimations().getDouble("Wheel.CircleSpeed");
+        final double radius = Case.getInstance().customConfig.getAnimations().getDouble("Wheel.CircleRadius");
+        final boolean useFlame = Case.getInstance().customConfig.getAnimations().getBoolean("Wheel.Flame.Enabled");
+        final Particle flameParticle = Particle.valueOf(Case.getInstance().customConfig.getAnimations().getString("Wheel.Flame.Particle", "FLAME"));
         // register items
         items.add(winItem);
         for (int i = 0; i < itemsCount; i++) {
@@ -70,7 +68,7 @@ public class WheelAnimation implements Animation {
         final double offset = 2 * Math.PI / itemsCount;
         final double[] speedAx = {speed};
 
-        Bukkit.getScheduler().runTaskTimer(instance, (task) -> {
+        Bukkit.getScheduler().runTaskTimer(Case.getInstance(), (task) -> {
             ticks.getAndIncrement();
             double angle = ticks.get() / (20.0 * (animationTime / 100D) ) * speedAx[0] * 2 * Math.PI;
 

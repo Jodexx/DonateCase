@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools.support;
 
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.Tools;
 import dev.lone.itemsadder.api.CustomStack;
@@ -11,12 +12,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
-
 public class ItemsAdderSupport {
     public static ItemStack getItem(@NotNull String namespace, String displayName, List<String> lore) {
         ItemStack item = new ItemStack(Material.STONE);
-        if(instance.getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
+        if(Case.getInstance().getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
             try {
                 CustomStack stack = CustomStack.getInstance(namespace);
                 if(stack != null) {

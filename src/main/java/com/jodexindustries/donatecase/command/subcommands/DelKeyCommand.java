@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.command.subcommands;
 
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.SubCommand;
@@ -11,7 +10,6 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-import static com.jodexindustries.donatecase.DonateCase.customConfig;
 import static com.jodexindustries.donatecase.tools.Tools.resolveSDGCompletions;
 
 public class DelKeyCommand implements SubCommand {
@@ -21,13 +19,13 @@ public class DelKeyCommand implements SubCommand {
             GlobalCommand.sendHelp(sender, "dc");
         } else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("all")) {
-                if (!DonateCase.sql) {
-                    customConfig.getKeys().set("DonatCase.Cases", null);
-                    customConfig.saveKeys();
-                    Tools.msg(sender, Tools.rt(customConfig.getLang().getString("ClearAllKeys")));
+                if (!Case.getInstance().sql) {
+                    Case.getInstance().customConfig.getKeys().set("DonatCase.Cases", null);
+                    Case.getInstance().customConfig.saveKeys();
+                    Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("ClearAllKeys")));
                 } else {
-                    DonateCase.mysql.delAllKey();
-                    Tools.msg(sender, Tools.rt(customConfig.getLang().getString("ClearAllKeys")));
+                    Case.getInstance().mysql.delAllKey();
+                    Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("ClearAllKeys")));
                 }
             }
         } else {
@@ -39,9 +37,9 @@ public class DelKeyCommand implements SubCommand {
                 String caseTitle = data.getCaseTitle();
                 String caseDisplayName = data.getCaseDisplayName();
                 Case.setNullKeys(caseName, player);
-                Tools.msg(sender, Tools.rt(customConfig.getLang().getString("ClearKeys"), "%player:" + player, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
+                Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("ClearKeys"), "%player:" + player, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
             } else {
-                Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
+                Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
             }
         }
     }

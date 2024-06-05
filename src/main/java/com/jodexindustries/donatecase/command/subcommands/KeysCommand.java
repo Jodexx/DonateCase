@@ -14,9 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.jodexindustries.donatecase.DonateCase.customConfig;
-import static com.jodexindustries.donatecase.DonateCase.instance;
-
 public class KeysCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
@@ -24,8 +21,8 @@ public class KeysCommand implements SubCommand {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (sender.hasPermission("donatecase.player")) {
-                    for (String string : customConfig.getLang().getStringList("MyKeys")) {
-                        if(instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                    for (String string : Case.getInstance().customConfig.getLang().getStringList("MyKeys")) {
+                        if(Case.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                             string = PAPISupport.setPlaceholders(player, string);
                         }
                         String placeholder = Tools.getLocalPlaceholder(string);
@@ -48,8 +45,8 @@ public class KeysCommand implements SubCommand {
             if (sender.hasPermission("donatecase.mod")) {
                 String target = args[0];
                 //Get player keys
-                for (String string : customConfig.getLang().getStringList("PlayerKeys")) {
-                    if(instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                for (String string : Case.getInstance().customConfig.getLang().getStringList("PlayerKeys")) {
+                    if(Case.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                         Player targetPlayer = Bukkit.getPlayerExact(target);
                         if(targetPlayer != null) {
                             string = PAPISupport.setPlaceholders(targetPlayer, string);
@@ -71,7 +68,7 @@ public class KeysCommand implements SubCommand {
                             .replace("%"+placeholder+"%", result));
                 }
             } else {
-                Tools.msgRaw(sender, Tools.rt(customConfig.getLang().getString("NoPermission")));
+                Tools.msgRaw(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("NoPermission")));
             }
         }
     }

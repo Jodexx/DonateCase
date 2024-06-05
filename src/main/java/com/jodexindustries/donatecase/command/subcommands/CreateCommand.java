@@ -12,9 +12,6 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jodexindustries.donatecase.DonateCase.casesConfig;
-import static com.jodexindustries.donatecase.DonateCase.customConfig;
-
 public class CreateCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
@@ -26,19 +23,19 @@ public class CreateCommand implements SubCommand {
                 String caseName = args[1];
                 if (Case.hasCaseByType(caseType)) {
                     if (Case.hasCaseByLocation(l)) {
-                        Tools.msg(sender, customConfig.getLang().getString("HasDonatCase"));
+                        Tools.msg(sender, Case.getInstance().customConfig.getLang().getString("HasDonatCase"));
                     } else {
                         if (!Case.hasCaseTypeByCustomName(caseName)) {
                             Case.saveLocation(caseName, caseType, l);
-                            Tools.msg(sender, Tools.rt(customConfig.getLang().getString("AddDonatCase"),
+                            Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("AddDonatCase"),
                                     "%casename:" + caseName, "%casetype:" + caseType));
                         } else {
-                            Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseAlreadyHasByName"),
+                            Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("CaseAlreadyHasByName"),
                                     "%casename:" + caseName));
                         }
                     }
                 } else {
-                    Tools.msg(sender, Tools.rt(customConfig.getLang().getString("CaseNotExist"),
+                    Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("CaseNotExist"),
                             "%case:" + caseType));
                 }
             } else {
@@ -49,7 +46,7 @@ public class CreateCommand implements SubCommand {
 
     @Override
     public List<String> getTabCompletions(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>(casesConfig.getCases().keySet());
+        List<String> list = new ArrayList<>(Case.getInstance().casesConfig.getCases().keySet());
         if(args.length >= 2) {
             return new ArrayList<>();
         }

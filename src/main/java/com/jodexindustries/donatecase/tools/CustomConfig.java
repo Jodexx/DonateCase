@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.tools;
 
-import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.api.Case;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -21,18 +21,18 @@ public class CustomConfig {
     private final YamlConfiguration Data;
 
     public CustomConfig() {
-        fileAnimations = new File(DonateCase.instance.getDataFolder(), "Animations.yml");
+        fileAnimations = new File(Case.getInstance().getDataFolder(), "Animations.yml");
         Animations = YamlConfiguration.loadConfiguration(fileAnimations);
-        fileCases = new File(DonateCase.instance.getDataFolder(), "Cases.yml");
+        fileCases = new File(Case.getInstance().getDataFolder(), "Cases.yml");
         Cases = YamlConfiguration.loadConfiguration(fileCases);
-        fileKeys = new File(DonateCase.instance.getDataFolder(), "Keys.yml");
+        fileKeys = new File(Case.getInstance().getDataFolder(), "Keys.yml");
         Keys = YamlConfiguration.loadConfiguration(fileKeys);
-        fileConfig = new File(DonateCase.instance.getDataFolder(), "Config.yml");
+        fileConfig = new File(Case.getInstance().getDataFolder(), "Config.yml");
         Config = YamlConfiguration.loadConfiguration(fileConfig);
-        fileData = new File(DonateCase.instance.getDataFolder(), "Data.yml");
+        fileData = new File(Case.getInstance().getDataFolder(), "Data.yml");
         Data = YamlConfiguration.loadConfiguration(fileData);
 
-        File path = new File(DonateCase.instance.getDataFolder(), "lang");
+        File path = new File(Case.getInstance().getDataFolder(), "lang");
         File[] listFiles;
         int length = (listFiles = path.listFiles()).length;
         String lang = getConfig().getString("DonatCase.Languages");
@@ -46,14 +46,14 @@ public class CustomConfig {
     }
 
     public void reload(){
-        DonateCase.instance.setupConfigs();
+        Case.getInstance().setupConfigs();
     }
 
     public void saveCases() {
         try {
             Cases.save(fileCases);
         } catch (IOException var1) {
-            DonateCase.instance.getLogger().log(Level.WARNING, "Couldn't save Cases.yml");
+            Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Cases.yml");
         }
 
     }
@@ -61,7 +61,7 @@ public class CustomConfig {
         try {
             Config.save(fileConfig);
         } catch (IOException var1) {
-            DonateCase.instance.getLogger().log(Level.WARNING, "Couldn't save Config.yml");
+            Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Config.yml");
         }
 
     }
@@ -70,7 +70,7 @@ public class CustomConfig {
         try {
             Keys.save(fileKeys);
         } catch (IOException var1) {
-            DonateCase.instance.getLogger().log(Level.WARNING, "Couldn't save Keys.yml");
+            Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Keys.yml");
         }
     }
 
@@ -78,7 +78,7 @@ public class CustomConfig {
         try {
             Animations.save(fileAnimations);
         } catch (IOException var1) {
-            DonateCase.instance.getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
+            Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
         }
 
     }
@@ -88,7 +88,7 @@ public class CustomConfig {
         try {
             Data.save(fileData);
         } catch (IOException var1) {
-            DonateCase.instance.getLogger().log(Level.WARNING, "Couldn't save Data.yml");
+            Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Data.yml");
         }
 
     }

@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.tools;
 
-import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.api.Case;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -24,7 +24,7 @@ public class CasesConfig {
                         boolean isOld = false;
                         ConfigurationSection items = caseConfig.getConfigurationSection("case.Items");
                         if(items == null) {
-                            DonateCase.instance.getLogger().warning("Case " + name + " has a broken case.Items section, skipped.");
+                            Case.getInstance().getLogger().warning("Case " + name + " has a broken case.Items section, skipped.");
                             continue;
                         }
                         for (String item : items.getKeys(false)) {
@@ -35,7 +35,7 @@ public class CasesConfig {
                             if (giveCommand != null || !giveCommands.isEmpty() || giveSection != null) {
                                 if (!isOld) {
                                     isOld = true;
-                                    DonateCase.instance.getLogger().warning("Case " + name + " outdated! Converting...");
+                                    Case.getInstance().getLogger().warning("Case " + name + " outdated! Converting...");
                                 }
                                 String title = caseConfig.getString("case.Items." + item + ".Title");
                                 String subTitle = caseConfig.getString("case.Items." + item + ".SubTitle");
@@ -80,7 +80,7 @@ public class CasesConfig {
                         }
                         cases.put(name, caseConfig);
                     } else {
-                        DonateCase.instance.getLogger().warning("Case " + name + " has a broken case section, skipped.");
+                        Case.getInstance().getLogger().warning("Case " + name + " has a broken case section, skipped.");
                     }
                 }
             }

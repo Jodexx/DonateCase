@@ -26,8 +26,6 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.logging.Level;
 
-import static com.jodexindustries.donatecase.DonateCase.*;
-
 
 public class EventsListener implements Listener {
 
@@ -41,11 +39,11 @@ public class EventsListener implements Listener {
     @EventHandler (priority = EventPriority.HIGH)
     public void onAdminJoined(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
+        if (Case.getInstance().customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             if (p.hasPermission("donatecase.admin")) {
-                new UpdateChecker(DonateCase.instance, 106701).getVersion((version) -> {
-                    if (Tools.getPluginVersion(DonateCase.instance.getDescription().getVersion()) < Tools.getPluginVersion(version)) {
-                        Tools.msg(p, Tools.rt(DonateCase.customConfig.getLang().getString("UpdateCheck"), "%version:" + version));
+                new UpdateChecker(Case.getInstance(), 106701).getVersion((version) -> {
+                    if (Tools.getPluginVersion(Case.getInstance().getDescription().getVersion()) < Tools.getPluginVersion(version)) {
+                        Tools.msg(p, Tools.rt(Case.getInstance().customConfig.getLang().getString("UpdateCheck"), "%version:" + version));
                     }
 
                 });
@@ -73,7 +71,7 @@ public class EventsListener implements Listener {
                     if (!event.isCancelled()) {
                         if (Case.getKeys(caseType, playerName) >= 1) {
                             Case.removeKeys(caseType, playerName, 1);
-                            api.getAnimationManager().startAnimation(p, location, caseType);
+                            Case.getInstance().api.getAnimationManager().startAnimation(p, location, caseType);
                             OpenCaseEvent openEvent = new OpenCaseEvent(p, caseType, location.getBlock());
                             Bukkit.getServer().getPluginManager().callEvent(openEvent);
                             p.closeInventory();
@@ -81,19 +79,19 @@ public class EventsListener implements Listener {
                             p.closeInventory();
                             Sound sound = null;
                             try {
-                                sound = Sound.valueOf(customConfig.getConfig().getString("DonatCase.NoKeyWarningSound"));
+                                sound = Sound.valueOf(Case.getInstance().customConfig.getConfig().getString("DonatCase.NoKeyWarningSound"));
                             } catch (IllegalArgumentException ignore) {}
                             if (sound == null) sound = Sound.valueOf("ENTITY_ENDERMEN_TELEPORT");
                             p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
-                            String noKey = casesConfig.getCase(caseType).getString("Messages.NoKey");
-                            if (noKey == null) noKey = DonateCase.customConfig.getLang().getString("NoKey");
+                            String noKey = Case.getInstance().casesConfig.getCase(caseType).getString("Messages.NoKey");
+                            if (noKey == null) noKey = Case.getInstance().customConfig.getLang().getString("NoKey");
                             Tools.msg(p, noKey);
                         }
                     }
                 } else {
                     p.closeInventory();
                     Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
-                    DonateCase.instance.getLogger().log(Level.WARNING, "Case with name " + caseType + " not exist!");
+                    Case.getInstance().getLogger().log(Level.WARNING, "Case with name " + caseType + " not exist!");
                 }
             }
         }
@@ -136,10 +134,10 @@ public class EventsListener implements Listener {
                             Case.openGui(p, caseData, blockLocation);
                         } else {
                             Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
-                            DonateCase.instance.getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
+                            Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
                         }
                     } else {
-                        Tools.msg(p, DonateCase.customConfig.getLang().getString("HaveOpenCase"));
+                        Tools.msg(p, Case.getInstance().customConfig.getLang().getString("HaveOpenCase"));
                     }
                 }
             }
@@ -160,7 +158,7 @@ public class EventsListener implements Listener {
         Location loc = e.getBlock().getLocation();
         if (Case.hasCaseByLocation(loc)) {
             e.setCancelled(true);
-            Tools.msg(e.getPlayer(), DonateCase.customConfig.getLang().getString("DestoryDonatCase"));
+            Tools.msg(e.getPlayer(), Case.getInstance().customConfig.getLang().getString("DestoryDonatCase"));
         }
 
     }

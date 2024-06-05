@@ -22,7 +22,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.jodexindustries.donatecase.DonateCase.*;
 import static com.jodexindustries.donatecase.api.Case.playersGui;
 
 public class CaseGui {
@@ -31,12 +30,12 @@ public class CaseGui {
     public CaseGui(Player p, CaseData caseData) {
         String title = caseData.getCaseTitle();
         String c = caseData.getCaseType();
-        YamlConfiguration configCase = casesConfig.getCase(c);
+        YamlConfiguration configCase = Case.getInstance().casesConfig.getCase(c);
         int size = configCase.getInt("case.Gui.Size", 45);
         if(size >= 9 && size <= 54 && size % 9 == 0) {
             inventory = Bukkit.createInventory(null, configCase.getInt("case.Gui.Size", 45), Tools.rc(title));
             ConfigurationSection items = configCase.getConfigurationSection("case.Gui.Items");
-            Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+            Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () -> {
                 List<CaseData.HistoryData> globalHistoryData = Case.getSortedHistoryData();
                 if (items != null) {
                     for (String item : items.getKeys(false)) {
@@ -52,7 +51,7 @@ public class CaseGui {
                             keys = Case.getKeys(c, p.getName());
                         }
                         displayName = displayName.replace("%" + placeholder + "%", String.valueOf(keys));
-                        if (instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                        if (Case.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                             displayName = PAPISupport.setPlaceholders(p, displayName);
                         }
                         boolean enchanted = configCase.getBoolean("case.Gui.Items." + item + ".Enchanted");
@@ -62,7 +61,7 @@ public class CaseGui {
                         String[] rgb = null;
                         List<String> pLore = new ArrayList<>();
                         for (String line : lore) {
-                            if (instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                            if (Case.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                                 line = PAPISupport.setPlaceholders(p, line);
                             }
                             pLore.add(line);
@@ -82,7 +81,7 @@ public class CaseGui {
 
                             CaseData historyCaseData = isGlobal ? null : Case.getCase(caseType);
                             if (historyCaseData == null && !isGlobal) {
-                                instance.getLogger().warning("Case " + caseType + " HistoryData is null!");
+                                Case.getInstance().getLogger().warning("Case " + caseType + " HistoryData is null!");
                                 continue;
                             }
                             if (!isGlobal) {
@@ -94,7 +93,7 @@ public class CaseGui {
                                 if (globalHistoryData.size() <= index) continue;
                                 data = globalHistoryData.get(index);
                             } else {
-                                if (!sql) {
+                                if (!Case.getInstance().sql) {
                                     data = historyCaseData.getHistoryData()[index];
                                 } else {
                                     List<CaseData.HistoryData> dbData = Case.sortHistoryDataByCase(globalHistoryData, caseType);
@@ -116,7 +115,7 @@ public class CaseGui {
                             }
                             CaseData.Item.RandomAction randomAction = historyItem.getRandomAction(data.getAction());
                             String randomActionDisplayname = randomAction != null ? randomAction.getDisplayName() : "";
-                            DateFormat formatter = new SimpleDateFormat(customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
+                            DateFormat formatter = new SimpleDateFormat(Case.getInstance().customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                             String dateFormatted = formatter.format(new Date(data.getTime()));
                             String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "open_case_again";
                             String[] template = {"%action%:" + data.getAction(), "%actiondisplayname%:" + randomActionDisplayname, "%casedisplayname%:" + historyCaseData.getCaseDisplayName(), "%casename%:" + data.getCaseType(), "%casetitle%:" + historyCaseData.getCaseTitle(), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName};
@@ -157,7 +156,7 @@ public class CaseGui {
             p.openInventory(inventory);
         } else {
             Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
-            instance.getLogger().warning("Wrong GUI size! Use: 9, 18, 27, 36, 45, 54");
+            Case.getInstance().getLogger().warning("Wrong GUI size! Use: 9, 18, 27, 36, 45, 54");
             playersGui.remove(p.getUniqueId());
         }
     }

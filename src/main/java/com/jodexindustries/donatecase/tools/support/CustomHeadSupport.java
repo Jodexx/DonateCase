@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.tools.support;
 
+import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.Tools;
 import de.likewhat.customheads.CustomHeads;
@@ -11,12 +12,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
-
 public class CustomHeadSupport {
     public static ItemStack getSkull(@NotNull String category, String id, String displayName, List<String> lore) {
         ItemStack item = new ItemStack(Material.STONE);
-        if(instance.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+        if(Case.getInstance().getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
             CustomHeadsAPI api = CustomHeads.getApi();
             try {
                 item = api.getHead(category, Integer.parseInt(id));

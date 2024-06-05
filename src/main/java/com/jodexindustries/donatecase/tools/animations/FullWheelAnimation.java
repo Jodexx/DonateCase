@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.tools.animations;
 
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.Animation;
@@ -17,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.jodexindustries.donatecase.DonateCase.*;
 
 public class FullWheelAnimation implements Animation {
 
@@ -51,23 +48,23 @@ public class FullWheelAnimation implements Animation {
 
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("FullWheel.Pose");
 
-        boolean needSound = customConfig.getAnimations().getString("FullWheel.Scroll.Sound") != null;
-        Sound sound = Sound.valueOf(customConfig.getAnimations().getString("FullWheel.Scroll.Sound"));
-        float volume = (float) customConfig.getAnimations().getDouble("FullWheel.Scroll.Volume");
-        float vpitch = (float) customConfig.getAnimations().getDouble("FullWheel.Scroll.Pitch");
-        int animationTime = customConfig.getAnimations().getInt("FullWheel.Scroll.Time", 100);
+        boolean needSound = Case.getInstance().customConfig.getAnimations().getString("FullWheel.Scroll.Sound") != null;
+        Sound sound = Sound.valueOf(Case.getInstance().customConfig.getAnimations().getString("FullWheel.Scroll.Sound"));
+        float volume = (float) Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.Scroll.Volume");
+        float vpitch = (float) Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.Scroll.Pitch");
+        int animationTime = Case.getInstance().customConfig.getAnimations().getInt("FullWheel.Scroll.Time", 100);
 
-        final double speed = customConfig.getAnimations().getDouble("FullWheel.CircleSpeed");
-        final double radius = customConfig.getAnimations().getDouble("FullWheel.CircleRadius");
-        final boolean useFlame = customConfig.getAnimations().getBoolean("FullWheel.Flame.Enabled");
-        final Particle flameParticle = Particle.valueOf(customConfig.getAnimations().getString("FullWheel.Flame.Particle", "FLAME"));
+        final double speed = Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.CircleSpeed");
+        final double radius = Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.CircleRadius");
+        final boolean useFlame = Case.getInstance().customConfig.getAnimations().getBoolean("FullWheel.Flame.Enabled");
+        final Particle flameParticle = Particle.valueOf(Case.getInstance().customConfig.getAnimations().getString("FullWheel.Flame.Particle", "FLAME"));
 
-        final Location flocation = loc.clone().add(0 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongX"),
-                -1 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"),
-                0 + customConfig.getAnimations().getDouble("FullWheel.LiftingAlongZ"));
+        final Location flocation = loc.clone().add(0 + Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.LiftingAlongX"),
+                -1 + Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"),
+                0 + Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.LiftingAlongZ"));
 
-        itemSlot = EquipmentSlot.valueOf(customConfig.getAnimations().getString("FullWheel.ItemSlot", "HEAD").toUpperCase());
-        boolean small = customConfig.getAnimations().getBoolean("FullWheel.SmallArmorStand", true);
+        itemSlot = EquipmentSlot.valueOf(Case.getInstance().customConfig.getAnimations().getString("FullWheel.ItemSlot", "HEAD").toUpperCase());
+        boolean small = Case.getInstance().customConfig.getAnimations().getBoolean("FullWheel.SmallArmorStand", true);
         // win group
         items.add(winItem.getItemName());
         armorStands.add(spawnArmorStand(c, location, 0, small));
@@ -92,7 +89,7 @@ public class FullWheelAnimation implements Animation {
         final double offset = 2 * Math.PI / itemsCount;
         final double[] speedAx = {speed};
 
-        Bukkit.getScheduler().runTaskTimer(instance, (task) -> {
+        Bukkit.getScheduler().runTaskTimer(Case.getInstance(), (task) -> {
 
             ticks.getAndIncrement();
             double angle = ticks.get() / 20.0 * speedAx[0] * 2 * Math.PI;
