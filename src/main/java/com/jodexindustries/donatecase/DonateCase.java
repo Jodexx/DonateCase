@@ -45,18 +45,19 @@ import java.util.Map;
 
 public class DonateCase extends JavaPlugin {
     public static DonateCase instance;
-    public static Permission permission = null;
-    public static boolean sql = false;
 
-    public static CaseDataBase mysql;
-    public static HologramManager hologramManager = null;
-    public static LuckPerms luckPerms = null;
-    public static PermissionDriver permissionDriver = null;
-    public static CaseManager api;
+    public CaseDataBase mysql;
+    public HologramManager hologramManager = null;
+    public LuckPerms luckPerms = null;
+    public Permission permission = null;
+    public PermissionDriver permissionDriver = null;
+    public CaseManager api;
 
-    public static CustomConfig customConfig;
-    public static CasesConfig casesConfig;
+    public CustomConfig customConfig;
+    public CasesConfig casesConfig;
+
     private boolean usePackets = true;
+    public boolean sql = false;
 
     @Override
     public void onEnable() {
@@ -155,7 +156,7 @@ public class DonateCase extends JavaPlugin {
             String password = mysqlSection.getString("Password");
             (new BukkitRunnable() {
                 public void run() {
-                    DonateCase.mysql = new CaseDataBase(instance, base, port, host, user, password);
+                    mysql = new CaseDataBase(instance, base, port, host, user, password);
                 }
             }).runTaskTimerAsynchronously(instance, 0L, 12000L);
             com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
@@ -293,7 +294,8 @@ public class DonateCase extends JavaPlugin {
         api.getAnimationManager().registerAnimation("RAINLY", new RainlyAnimation());
         api.getAnimationManager().registerAnimation("FIREWORK", new FireworkAnimation());
         api.getAnimationManager().registerAnimation("FULLWHEEL", new FullWheelAnimation());
-        Logger.log("&aRegistered &adefault animations");
+        api.getAnimationManager().registerAnimation("TEST_WHEEL", new TestWheelAnimation());
+        Logger.log("&aRegistered &cdefault &aanimations");
     }
 
     private void loadCases() {
