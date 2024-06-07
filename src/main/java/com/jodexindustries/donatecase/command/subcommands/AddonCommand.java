@@ -5,6 +5,7 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.command.CommandSender;
 
@@ -73,6 +74,8 @@ public class AddonCommand implements SubCommand {
                     }
                 }
             }
+        } else {
+            GlobalCommand.sendHelp(sender, "dc");
         }
     }
 
