@@ -19,7 +19,7 @@ public class OpenCaseCommand implements SubCommand {
         if (sender instanceof Player) {
             String playerName = sender.getName();
             Player player = (Player) sender;
-            if (args.length == 1) {
+            if (args.length >= 1) {
                 String caseName = args[0];
                 if (Case.hasCaseByType(caseName)) {
                     int keys = Case.getKeys(caseName, playerName);
