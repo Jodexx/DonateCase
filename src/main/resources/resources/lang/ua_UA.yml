@@ -50,7 +50,7 @@ help:
   - '&9/%cmd delkey all &3- &2Видалити всі ключі всім гравцям'
   - '&9/%cmd reload &3- &2Перезапустити конфіг'
   - '&9/%cmd addons &3- &2Показати завантажені аддони'
-  - '&9/%cmd addon &7(&aenable&7/&cdisable&7|&aload&7/&cunload&7) (&aАддон&7) &3- &2Управління аддонами'
+  - '&9/%cmd addon &7(&aenable&7/&cdisable&7 | &aload&7/&cunload&7) (&aАддон&7) &3- &2Управління аддонами'
 
 help-addons:
   format:
