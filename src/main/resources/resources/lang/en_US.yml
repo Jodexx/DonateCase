@@ -49,6 +49,8 @@ help:
   - '&9/%cmd delkey &7(&aPlayer&7) &7(&aCase Type&7) &3- &2Remove all keys to a player'
   - '&9/%cmd delkey all &3- &2Delete all keys for all players'
   - '&9/%cmd reload &3- &2Reload config'
+  - '&9/%cmd addons &3- &2Show loaded addons'
+
 help-addons:
   format:
     name: "&6%addon" # Leave it blank if you don't want to separate commands with addon names
