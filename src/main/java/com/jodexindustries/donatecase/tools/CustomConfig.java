@@ -13,24 +13,25 @@ public class CustomConfig {
     private final File fileConfig;
     private final File fileAnimations;
     private final File fileData;
-    private YamlConfiguration Lang;
-    private final YamlConfiguration Cases;
-    private final YamlConfiguration Keys;
-    private final YamlConfiguration Config;
-    private final YamlConfiguration Animations;
-    private final YamlConfiguration Data;
+    private YamlConfiguration lang;
+    private File fileLang;
+    private final YamlConfiguration cases;
+    private final YamlConfiguration keys;
+    private final YamlConfiguration config;
+    private final YamlConfiguration animations;
+    private final YamlConfiguration data;
 
     public CustomConfig() {
         fileAnimations = new File(Case.getInstance().getDataFolder(), "Animations.yml");
-        Animations = YamlConfiguration.loadConfiguration(fileAnimations);
+        animations = YamlConfiguration.loadConfiguration(fileAnimations);
         fileCases = new File(Case.getInstance().getDataFolder(), "Cases.yml");
-        Cases = YamlConfiguration.loadConfiguration(fileCases);
+        cases = YamlConfiguration.loadConfiguration(fileCases);
         fileKeys = new File(Case.getInstance().getDataFolder(), "Keys.yml");
-        Keys = YamlConfiguration.loadConfiguration(fileKeys);
+        keys = YamlConfiguration.loadConfiguration(fileKeys);
         fileConfig = new File(Case.getInstance().getDataFolder(), "Config.yml");
-        Config = YamlConfiguration.loadConfiguration(fileConfig);
+        config = YamlConfiguration.loadConfiguration(fileConfig);
         fileData = new File(Case.getInstance().getDataFolder(), "Data.yml");
-        Data = YamlConfiguration.loadConfiguration(fileData);
+        data = YamlConfiguration.loadConfiguration(fileData);
 
         File path = new File(Case.getInstance().getDataFolder(), "lang");
         File[] listFiles;
@@ -39,7 +40,8 @@ public class CustomConfig {
         for(int i = 0; i < length; ++i) {
             File l = listFiles[i];
             if (l.getName().toLowerCase().split("_")[0].equalsIgnoreCase(lang)) {
-                this.Lang = YamlConfiguration.loadConfiguration(l);
+                this.fileLang = l;
+                this.lang = YamlConfiguration.loadConfiguration(l);
                 break;
             }
         }
@@ -51,7 +53,7 @@ public class CustomConfig {
 
     public void saveCases() {
         try {
-            Cases.save(fileCases);
+            cases.save(fileCases);
         } catch (IOException var1) {
             Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Cases.yml");
         }
@@ -59,16 +61,15 @@ public class CustomConfig {
     }
     public void saveConfig() {
         try {
-            Config.save(fileConfig);
+            config.save(fileConfig);
         } catch (IOException var1) {
             Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Config.yml");
         }
-
     }
 
     public void saveKeys() {
         try {
-            Keys.save(fileKeys);
+            keys.save(fileKeys);
         } catch (IOException var1) {
             Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Keys.yml");
         }
@@ -76,17 +77,25 @@ public class CustomConfig {
 
     public void saveAnimations() {
         try {
-            Animations.save(fileAnimations);
+            animations.save(fileAnimations);
         } catch (IOException var1) {
             Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
         }
 
     }
 
+    public void saveLang() {
+        try {
+            lang.save(fileLang);
+        } catch (IOException ignored) {
+            Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save " + fileLang.getName());
+        }
+    }
+
 
     public void saveData() {
         try {
-            Data.save(fileData);
+            data.save(fileData);
         } catch (IOException var1) {
             Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Data.yml");
         }
@@ -94,40 +103,40 @@ public class CustomConfig {
     }
 
     public YamlConfiguration getCases() {
-        if(Cases == null) {
+        if(cases == null) {
             reload();
         }
-        return Cases;
+        return cases;
     }
 
     public YamlConfiguration getKeys() {
-        if(Keys == null) {
+        if(keys == null) {
             reload();
         }
-        return Keys;
+        return keys;
     }
 
     public YamlConfiguration getConfig() {
-        if(Config == null) {
+        if(config == null) {
             reload();
         }
-        return Config;
+        return config;
     }
 
     public YamlConfiguration getAnimations() {
-        if(Animations == null) {
+        if(animations == null) {
             reload();
         }
-        return Animations;
+        return animations;
     }
     public YamlConfiguration getData() {
-        if(Data == null) {
+        if(data == null) {
             reload();
         }
-        return Data;
+        return data;
     }
 
     public YamlConfiguration getLang() {
-        return Lang;
+        return lang;
     }
 }
