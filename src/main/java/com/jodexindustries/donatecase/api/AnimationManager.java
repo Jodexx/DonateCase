@@ -100,7 +100,7 @@ public class AnimationManager {
 
                     animationClass.start(player,  Case.getCaseLocationByBlockLocation(location), uuid, caseData, preStartEvent.getWinItem());
                     for (Player pl : Bukkit.getOnlinePlayers()) {
-                        if (Case.playersGui.containsKey(pl.getUniqueId()) && Tools.isHere(location.getBlock().getLocation(), Case.playersGui.get(pl.getUniqueId()).getLocation())) {
+                        if (Case.playersGui.containsKey(pl.getUniqueId())) {
                             pl.closeInventory();
                         }
                     }
