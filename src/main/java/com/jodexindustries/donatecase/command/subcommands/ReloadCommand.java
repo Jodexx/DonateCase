@@ -30,7 +30,11 @@ public class ReloadCommand implements SubCommand {
 
     @Override
     public List<String> getTabCompletions(CommandSender sender, String[] args) {
-        return new ArrayList<>();
+        List<String> list = new ArrayList<>();
+        if(args.length == 1) {
+            list.add("cache");
+        }
+        return list;
     }
 
     @Override
