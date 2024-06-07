@@ -39,11 +39,11 @@ public class EventsListener implements Listener {
     @EventHandler (priority = EventPriority.HIGH)
     public void onAdminJoined(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if (Case.getInstance().customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
+        if (Case.getCustomConfig().getConfig().getBoolean("DonatCase.UpdateChecker")) {
             if (p.hasPermission("donatecase.admin")) {
                 new UpdateChecker(Case.getInstance(), 106701).getVersion((version) -> {
                     if (Tools.getPluginVersion(Case.getInstance().getDescription().getVersion()) < Tools.getPluginVersion(version)) {
-                        Tools.msg(p, Tools.rt(Case.getInstance().customConfig.getLang().getString("UpdateCheck"), "%version:" + version));
+                        Tools.msg(p, Tools.rt(Case.getCustomConfig().getLang().getString("UpdateCheck"), "%version:" + version));
                     }
 
                 });
@@ -79,12 +79,12 @@ public class EventsListener implements Listener {
                             p.closeInventory();
                             Sound sound = null;
                             try {
-                                sound = Sound.valueOf(Case.getInstance().customConfig.getConfig().getString("DonatCase.NoKeyWarningSound"));
+                                sound = Sound.valueOf(Case.getCustomConfig().getConfig().getString("DonatCase.NoKeyWarningSound"));
                             } catch (IllegalArgumentException ignore) {}
                             if (sound == null) sound = Sound.valueOf("ENTITY_ENDERMEN_TELEPORT");
                             p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
-                            String noKey = Case.getInstance().casesConfig.getCase(caseType).getString("Messages.NoKey");
-                            if (noKey == null) noKey = Case.getInstance().customConfig.getLang().getString("NoKey");
+                            String noKey = Case.getCasesConfig().getCase(caseType).getString("Messages.NoKey");
+                            if (noKey == null) noKey = Case.getCustomConfig().getLang().getString("NoKey");
                             Tools.msg(p, noKey);
                         }
                     }
@@ -137,7 +137,7 @@ public class EventsListener implements Listener {
                             Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
                         }
                     } else {
-                        Tools.msg(p, Case.getInstance().customConfig.getLang().getString("HaveOpenCase"));
+                        Tools.msg(p, Case.getCustomConfig().getLang().getString("HaveOpenCase"));
                     }
                 }
             }
@@ -158,7 +158,7 @@ public class EventsListener implements Listener {
         Location loc = e.getBlock().getLocation();
         if (Case.hasCaseByLocation(loc)) {
             e.setCancelled(true);
-            Tools.msg(e.getPlayer(), Case.getInstance().customConfig.getLang().getString("DestoryDonatCase"));
+            Tools.msg(e.getPlayer(), Case.getCustomConfig().getLang().getString("DestoryDonatCase"));
         }
 
     }

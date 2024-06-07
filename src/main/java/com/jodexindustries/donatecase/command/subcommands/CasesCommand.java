@@ -14,14 +14,14 @@ public class CasesCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         int num = 0;
-        for (String caseName : Case.getInstance().casesConfig.getCases().keySet()) {
+        for (String caseName : Case.getCasesConfig().getCases().keySet()) {
             num++;
             CaseData data = Case.getCase(caseName);
             if(data == null) return;
             String caseTitle = data.getCaseTitle();
             String caseDisplayName = data.getCaseDisplayName();
 
-            Tools.msgRaw(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("CasesList"), "%casename:" + caseName, "%num:" + num, "%casedisplayname:" + caseDisplayName, "%casetitle:" + caseTitle ));
+            Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("CasesList"), "%casename:" + caseName, "%num:" + num, "%casedisplayname:" + caseDisplayName, "%casetitle:" + caseTitle ));
         }
     }
 

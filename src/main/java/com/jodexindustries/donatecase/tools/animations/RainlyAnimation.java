@@ -31,7 +31,7 @@ public class RainlyAnimation implements Animation {
     @Override
     public void start(Player player, Location location, UUID uuid, CaseData c, CaseData.Item winItem) {
         final Location loc = location.clone();
-        final String FallingParticle = Case.getInstance().customConfig.getAnimations().getString("Rainly.FallingParticle");
+        final String FallingParticle = Case.getCustomConfig().getAnimations().getString("Rainly.FallingParticle");
         String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
         winItem.getMaterial().setDisplayName(winGroupDisplayName);
         location.add(0.5, 1, 0.5);
@@ -50,9 +50,9 @@ public class RainlyAnimation implements Animation {
         as.setGravity(false);
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Rainly.Pose");
 
-        itemSlot = EquipmentSlot.valueOf(Case.getInstance().customConfig.getAnimations().getString("Rainly.ItemSlot", "HEAD").toUpperCase());
+        itemSlot = EquipmentSlot.valueOf(Case.getCustomConfig().getAnimations().getString("Rainly.ItemSlot", "HEAD").toUpperCase());
 
-        boolean small = Case.getInstance().customConfig.getAnimations().getBoolean("Rainly.SmallArmorStand", true);
+        boolean small = Case.getCustomConfig().getAnimations().getBoolean("Rainly.SmallArmorStand", true);
 
         as.setSmall(small);
         (new BukkitRunnable() {

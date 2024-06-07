@@ -30,7 +30,7 @@ public class CaseGui {
     public CaseGui(Player p, CaseData caseData) {
         String title = caseData.getCaseTitle();
         String c = caseData.getCaseType();
-        YamlConfiguration configCase = Case.getInstance().casesConfig.getCase(c);
+        YamlConfiguration configCase = Case.getCasesConfig().getCase(c);
         int size = configCase.getInt("case.Gui.Size", 45);
         if(size >= 9 && size <= 54 && size % 9 == 0) {
             inventory = Bukkit.createInventory(null, configCase.getInt("case.Gui.Size", 45), Tools.rc(title));
@@ -115,7 +115,7 @@ public class CaseGui {
                             }
                             CaseData.Item.RandomAction randomAction = historyItem.getRandomAction(data.getAction());
                             String randomActionDisplayname = randomAction != null ? randomAction.getDisplayName() : "";
-                            DateFormat formatter = new SimpleDateFormat(Case.getInstance().customConfig.getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
+                            DateFormat formatter = new SimpleDateFormat(Case.getCustomConfig().getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
                             String dateFormatted = formatter.format(new Date(data.getTime()));
                             String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "open_case_again";
                             String[] template = {"%action%:" + data.getAction(), "%actiondisplayname%:" + randomActionDisplayname, "%casedisplayname%:" + historyCaseData.getCaseDisplayName(), "%casename%:" + data.getCaseType(), "%casetitle%:" + historyCaseData.getCaseTitle(), "%time%:" + dateFormatted, "%group%:" + data.getGroup(), "%player%:" + data.getPlayerName(), "%groupdisplayname%:" + groupDisplayName};

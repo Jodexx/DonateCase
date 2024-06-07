@@ -32,16 +32,16 @@ public class ShapeAnimation implements Animation {
         final ArmorStandCreator as = Tools.createArmorStand();
         as.spawnArmorStand(location);
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Shape.Pose");
-        itemSlot = EquipmentSlot.valueOf(Case.getInstance().customConfig.getAnimations().getString("Shape.ItemSlot", "HEAD").toUpperCase());
-        boolean small = Case.getInstance().customConfig.getAnimations().getBoolean("Shape.SmallArmorStand", true);
+        itemSlot = EquipmentSlot.valueOf(Case.getCustomConfig().getAnimations().getString("Shape.ItemSlot", "HEAD").toUpperCase());
+        boolean small = Case.getCustomConfig().getAnimations().getBoolean("Shape.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
 
-        float whiteSize = (float) Case.getInstance().customConfig.getAnimations().getDouble("Shape.Particle.White.Size");
-        float orangeSize = (float) Case.getInstance().customConfig.getAnimations().getDouble("Shape.Particle.Orange.Size");
-        String rgbString = Case.getInstance().customConfig.getAnimations().getString("Shape.Particle.Orange.Rgb");
-        String whiteRgbString = Case.getInstance().customConfig.getAnimations().getString("Shape.Particle.White.Rgb");
+        float whiteSize = (float) Case.getCustomConfig().getAnimations().getDouble("Shape.Particle.White.Size");
+        float orangeSize = (float) Case.getCustomConfig().getAnimations().getDouble("Shape.Particle.Orange.Size");
+        String rgbString = Case.getCustomConfig().getAnimations().getString("Shape.Particle.Orange.Rgb");
+        String whiteRgbString = Case.getCustomConfig().getAnimations().getString("Shape.Particle.White.Rgb");
         int red;
         int green;
         int blue;

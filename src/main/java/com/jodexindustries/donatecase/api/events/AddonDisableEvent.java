@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.events;
 
+import com.jodexindustries.donatecase.api.addon.internal.InternalAddon;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -9,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AddonDisableEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private final String addon;
-    public AddonDisableEvent(String addon) {
+    private final InternalAddon addon;
+    public AddonDisableEvent(InternalAddon addon) {
         this.addon = addon;
     }
 
@@ -23,7 +24,11 @@ public class AddonDisableEvent extends Event {
         return handlers;
     }
 
-    public String getAddon() {
+    /**
+     * Get addon object
+     * @return Addon object
+     */
+    public InternalAddon getAddon() {
         return addon;
     }
 }

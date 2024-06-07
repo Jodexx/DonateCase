@@ -96,7 +96,7 @@ public class Tools {
 
     public static void msg(CommandSender s, String msg) {
         if (s != null) {
-            msgRaw(s, Case.getInstance().customConfig.getLang().getString("Prefix") + msg);
+            msgRaw(s, Case.getCustomConfig().getLang().getString("Prefix") + msg);
         }
     }
 
@@ -139,13 +139,13 @@ public class Tools {
         return rt;
     }
     public static void convertCasesLocation() {
-        ConfigurationSection cases_ = Case.getInstance().customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+        ConfigurationSection cases_ = Case.getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases");
         if(cases_ != null) {
             for (String name : cases_.getValues(false).keySet()) {
-                if (Case.getInstance().customConfig.getCases().getString("DonatCase.Cases." + name + ".location") == null) {
+                if (Case.getCustomConfig().getCases().getString("DonatCase.Cases." + name + ".location") == null) {
                     return;
                 } else {
-                    String stringlocation = Case.getInstance().customConfig.getCases().getString("DonatCase.Cases." + name + ".location");
+                    String stringlocation = Case.getCustomConfig().getCases().getString("DonatCase.Cases." + name + ".location");
                     Location lv = fromString(stringlocation);
                     String world = "Undefined";
                     if (lv != null) {
@@ -153,18 +153,18 @@ public class Tools {
                             world = lv.getWorld().getName();
                         }
                         String location = world + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
-                        Case.getInstance().customConfig.getCases().set("DonatCase.Cases." + name + ".location", location);
+                        Case.getCustomConfig().getCases().set("DonatCase.Cases." + name + ".location", location);
                     }
                 }
             }
         }
-        Case.getInstance().customConfig.getCases().set("config", "1.0");
-        Case.getInstance().customConfig.saveCases();
+        Case.getCustomConfig().getCases().set("config", "1.0");
+        Case.getCustomConfig().saveCases();
         Logger.log("&aConversion successful!");
     }
 
     public static void convertCases() {
-        ConfigurationSection cases = Case.getInstance().customConfig.getConfig().getConfigurationSection("DonatCase.Cases");
+        ConfigurationSection cases = Case.getCustomConfig().getConfig().getConfigurationSection("DonatCase.Cases");
         if (cases != null) {
             for (String caseName : cases.getKeys(false)) {
                 File folder = new File(Case.getInstance().getDataFolder(), "cases");
@@ -173,19 +173,19 @@ public class Tools {
                     caseFile = new File(folder, caseName + ".yml");
                     caseFile.createNewFile();
                     YamlConfiguration caseConfig = YamlConfiguration.loadConfiguration(caseFile);
-                    caseConfig.set("case", Case.getInstance().customConfig.getConfig().getConfigurationSection("DonatCase.Cases." + caseName));
-                    String defaultMaterial = Case.getInstance().customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiMaterial");
-                    String defaultDisplayName = Case.getInstance().customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiMaterialName");
-                    boolean defaultEnchanted = Case.getInstance().customConfig.getConfig().getBoolean("DonatCase.Cases." + caseName + ".Gui.GuiMaterialEnchant");
-                    List<String> defaultLore = Case.getInstance().customConfig.getConfig().getStringList("DonatCase.Cases." + caseName + ".Gui.GuiMaterialLore");
+                    caseConfig.set("case", Case.getCustomConfig().getConfig().getConfigurationSection("DonatCase.Cases." + caseName));
+                    String defaultMaterial = Case.getCustomConfig().getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiMaterial");
+                    String defaultDisplayName = Case.getCustomConfig().getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiMaterialName");
+                    boolean defaultEnchanted = Case.getCustomConfig().getConfig().getBoolean("DonatCase.Cases." + caseName + ".Gui.GuiMaterialEnchant");
+                    List<String> defaultLore = Case.getCustomConfig().getConfig().getStringList("DonatCase.Cases." + caseName + ".Gui.GuiMaterialLore");
                     List<Integer> defaultSlots = new ArrayList<>();
                     defaultSlots.add(0);
                     defaultSlots.add(8);
 
-                    String openMaterial = Case.getInstance().customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterial");
-                    String openDisplayName = Case.getInstance().customConfig.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.DisplayName");
-                    boolean openEnchanted = Case.getInstance().customConfig.getConfig().getBoolean("DonatCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterialEnchant");
-                    List<String> openLore = Case.getInstance().customConfig.getConfig().getStringList("DonatCase.Cases." + caseName + ".Gui.Lore");
+                    String openMaterial = Case.getCustomConfig().getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterial");
+                    String openDisplayName = Case.getCustomConfig().getConfig().getString("DonatCase.Cases." + caseName + ".Gui.DisplayName");
+                    boolean openEnchanted = Case.getCustomConfig().getConfig().getBoolean("DonatCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterialEnchant");
+                    List<String> openLore = Case.getCustomConfig().getConfig().getStringList("DonatCase.Cases." + caseName + ".Gui.Lore");
                     List<Integer> openSlots = new ArrayList<>();
                     openSlots.add(22);
 
@@ -212,8 +212,8 @@ public class Tools {
                 }
             }
         }
-        Case.getInstance().customConfig.getConfig().set("DonatCase.Cases", null);
-        Case.getInstance().customConfig.saveConfig();
+        Case.getCustomConfig().getConfig().set("DonatCase.Cases", null);
+        Case.getCustomConfig().saveConfig();
     }
     public static List<File> getCasesInFolder() {
         List<File> files = new ArrayList<>();
@@ -481,9 +481,9 @@ public class Tools {
 
     public static List<Integer> getOpenMaterialSlots(String c) {
         List<Integer> slots = new ArrayList<>();
-        for (String item : Case.getInstance().casesConfig.getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
-            if(Case.getInstance().casesConfig.getCase(c).getString("case.Gui.Items." + item + ".Type", "").startsWith("OPEN")) {
-                List<Integer> list = Case.getInstance().casesConfig.getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
+        for (String item : Case.getCasesConfig().getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
+            if(Case.getCasesConfig().getCase(c).getString("case.Gui.Items." + item + ".Type", "").startsWith("OPEN")) {
+                List<Integer> list = Case.getCasesConfig().getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
                 slots.addAll(list);
             }
         }
@@ -491,7 +491,7 @@ public class Tools {
     }
     public static Map<List<Integer>, String> getOpenMaterialItemsBySlots(String c) {
         Map<List<Integer>, String> map = new HashMap<>();
-        ConfigurationSection section = Case.getInstance().casesConfig.getCase(c).getConfigurationSection("case.Gui.Items");
+        ConfigurationSection section = Case.getCasesConfig().getCase(c).getConfigurationSection("case.Gui.Items");
         for (String item : section.getKeys(false)) {
             String type = section.getString(item + ".Type", "");
             if(type.startsWith("OPEN")) {
@@ -602,7 +602,7 @@ public class Tools {
         }
     }
     public static ArmorStandEulerAngle getArmorStandEulerAngle(String path) {
-         ConfigurationSection section = Case.getInstance().customConfig.getAnimations().getConfigurationSection(path);
+         ConfigurationSection section = Case.getCustomConfig().getAnimations().getConfigurationSection(path);
          if(section == null) return new ArmorStandEulerAngle(new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0));
          EulerAngle head = getEulerAngleFromString(section.getString("Head"));
          EulerAngle body = getEulerAngleFromString(section.getString("Body"));
@@ -621,7 +621,7 @@ public class Tools {
      */
     @NotNull
     public static List<String> resolveSDGCompletions(String[] args) {
-        List<String> value = new ArrayList<>(Case.getInstance().casesConfig.getCases().keySet());
+        List<String> value = new ArrayList<>(Case.getCasesConfig().getCases().keySet());
         List<String> list = new ArrayList<>();
         if (args.length == 1) {
             list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(px -> px.startsWith(args[0])).collect(Collectors.toList()));

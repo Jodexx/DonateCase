@@ -20,12 +20,12 @@ public class DelKeyCommand implements SubCommand {
         } else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("all")) {
                 if (!Case.getInstance().sql) {
-                    Case.getInstance().customConfig.getKeys().set("DonatCase.Cases", null);
-                    Case.getInstance().customConfig.saveKeys();
-                    Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("ClearAllKeys")));
+                    Case.getCustomConfig().getKeys().set("DonatCase.Cases", null);
+                    Case.getCustomConfig().saveKeys();
+                    Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("ClearAllKeys")));
                 } else {
                     Case.getInstance().mysql.delAllKey();
-                    Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("ClearAllKeys")));
+                    Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("ClearAllKeys")));
                 }
             }
         } else {
@@ -37,9 +37,9 @@ public class DelKeyCommand implements SubCommand {
                 String caseTitle = data.getCaseTitle();
                 String caseDisplayName = data.getCaseDisplayName();
                 Case.setNullKeys(caseName, player);
-                Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("ClearKeys"), "%player:" + player, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
+                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("ClearKeys"), "%player:" + player, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
             } else {
-                Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
+                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("CaseNotExist"), "%case:" + caseName));
             }
         }
     }

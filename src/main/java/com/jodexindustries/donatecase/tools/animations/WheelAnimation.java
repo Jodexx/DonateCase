@@ -36,22 +36,22 @@ public class WheelAnimation implements Animation {
         loc.setPitch(pitch);
         loc.setYaw(yaw);
         loc.add(0.5, 0, 0.5);
-        int itemsCount = Case.getInstance().customConfig.getAnimations().getInt("Wheel.ItemsCount");
+        int itemsCount = Case.getCustomConfig().getAnimations().getInt("Wheel.ItemsCount");
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Wheel.Pose");
-        itemSlot = EquipmentSlot.valueOf(Case.getInstance().customConfig.getAnimations().getString("Wheel.ItemSlot", "HEAD").toUpperCase());
-        boolean small = Case.getInstance().customConfig.getAnimations().getBoolean("Wheel.SmallArmorStand", true);
-        int animationTime = Case.getInstance().customConfig.getAnimations().getInt("Wheel.Scroll.Time", 100);
-        final Location flocation = loc.clone().add(0 + Case.getInstance().customConfig.getAnimations().getDouble("Wheel.LiftingAlongX"),
-                -1 + Case.getInstance().customConfig.getAnimations().getDouble("Wheel.LiftingAlongY"),
-                0 + Case.getInstance().customConfig.getAnimations().getDouble("Wheel.LiftingAlongZ"));
-        boolean needSound = Case.getInstance().customConfig.getAnimations().getString("Wheel.Scroll.Sound") != null;
-        Sound sound = Sound.valueOf(Case.getInstance().customConfig.getAnimations().getString("Wheel.Scroll.Sound"));
-        float volume = (float) Case.getInstance().customConfig.getAnimations().getDouble("Wheel.Scroll.Volume");
-        float vpitch = (float) Case.getInstance().customConfig.getAnimations().getDouble("Wheel.Scroll.Pitch");
-        final double speed = Case.getInstance().customConfig.getAnimations().getDouble("Wheel.CircleSpeed");
-        final double radius = Case.getInstance().customConfig.getAnimations().getDouble("Wheel.CircleRadius");
-        final boolean useFlame = Case.getInstance().customConfig.getAnimations().getBoolean("Wheel.Flame.Enabled");
-        final Particle flameParticle = Particle.valueOf(Case.getInstance().customConfig.getAnimations().getString("Wheel.Flame.Particle", "FLAME"));
+        itemSlot = EquipmentSlot.valueOf(Case.getCustomConfig().getAnimations().getString("Wheel.ItemSlot", "HEAD").toUpperCase());
+        boolean small = Case.getCustomConfig().getAnimations().getBoolean("Wheel.SmallArmorStand", true);
+        int animationTime = Case.getCustomConfig().getAnimations().getInt("Wheel.Scroll.Time", 100);
+        final Location flocation = loc.clone().add(0 + Case.getCustomConfig().getAnimations().getDouble("Wheel.LiftingAlongX"),
+                -1 + Case.getCustomConfig().getAnimations().getDouble("Wheel.LiftingAlongY"),
+                0 + Case.getCustomConfig().getAnimations().getDouble("Wheel.LiftingAlongZ"));
+        boolean needSound = Case.getCustomConfig().getAnimations().getString("Wheel.Scroll.Sound") != null;
+        Sound sound = Sound.valueOf(Case.getCustomConfig().getAnimations().getString("Wheel.Scroll.Sound"));
+        float volume = (float) Case.getCustomConfig().getAnimations().getDouble("Wheel.Scroll.Volume");
+        float vpitch = (float) Case.getCustomConfig().getAnimations().getDouble("Wheel.Scroll.Pitch");
+        final double speed = Case.getCustomConfig().getAnimations().getDouble("Wheel.CircleSpeed");
+        final double radius = Case.getCustomConfig().getAnimations().getDouble("Wheel.CircleRadius");
+        final boolean useFlame = Case.getCustomConfig().getAnimations().getBoolean("Wheel.Flame.Enabled");
+        final Particle flameParticle = Particle.valueOf(Case.getCustomConfig().getAnimations().getString("Wheel.Flame.Particle", "FLAME"));
         // register items
         items.add(winItem);
         for (int i = 0; i < itemsCount; i++) {

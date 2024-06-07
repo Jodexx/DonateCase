@@ -48,23 +48,23 @@ public class FullWheelAnimation implements Animation {
 
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("FullWheel.Pose");
 
-        boolean needSound = Case.getInstance().customConfig.getAnimations().getString("FullWheel.Scroll.Sound") != null;
-        Sound sound = Sound.valueOf(Case.getInstance().customConfig.getAnimations().getString("FullWheel.Scroll.Sound"));
-        float volume = (float) Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.Scroll.Volume");
-        float vpitch = (float) Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.Scroll.Pitch");
-        int animationTime = Case.getInstance().customConfig.getAnimations().getInt("FullWheel.Scroll.Time", 100);
+        boolean needSound = Case.getCustomConfig().getAnimations().getString("FullWheel.Scroll.Sound") != null;
+        Sound sound = Sound.valueOf(Case.getCustomConfig().getAnimations().getString("FullWheel.Scroll.Sound"));
+        float volume = (float) Case.getCustomConfig().getAnimations().getDouble("FullWheel.Scroll.Volume");
+        float vpitch = (float) Case.getCustomConfig().getAnimations().getDouble("FullWheel.Scroll.Pitch");
+        int animationTime = Case.getCustomConfig().getAnimations().getInt("FullWheel.Scroll.Time", 100);
 
-        final double speed = Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.CircleSpeed");
-        final double radius = Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.CircleRadius");
-        final boolean useFlame = Case.getInstance().customConfig.getAnimations().getBoolean("FullWheel.Flame.Enabled");
-        final Particle flameParticle = Particle.valueOf(Case.getInstance().customConfig.getAnimations().getString("FullWheel.Flame.Particle", "FLAME"));
+        final double speed = Case.getCustomConfig().getAnimations().getDouble("FullWheel.CircleSpeed");
+        final double radius = Case.getCustomConfig().getAnimations().getDouble("FullWheel.CircleRadius");
+        final boolean useFlame = Case.getCustomConfig().getAnimations().getBoolean("FullWheel.Flame.Enabled");
+        final Particle flameParticle = Particle.valueOf(Case.getCustomConfig().getAnimations().getString("FullWheel.Flame.Particle", "FLAME"));
 
-        final Location flocation = loc.clone().add(0 + Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.LiftingAlongX"),
-                -1 + Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.LiftingAlongY"),
-                0 + Case.getInstance().customConfig.getAnimations().getDouble("FullWheel.LiftingAlongZ"));
+        final Location flocation = loc.clone().add(0 + Case.getCustomConfig().getAnimations().getDouble("FullWheel.LiftingAlongX"),
+                -1 + Case.getCustomConfig().getAnimations().getDouble("FullWheel.LiftingAlongY"),
+                0 + Case.getCustomConfig().getAnimations().getDouble("FullWheel.LiftingAlongZ"));
 
-        itemSlot = EquipmentSlot.valueOf(Case.getInstance().customConfig.getAnimations().getString("FullWheel.ItemSlot", "HEAD").toUpperCase());
-        boolean small = Case.getInstance().customConfig.getAnimations().getBoolean("FullWheel.SmallArmorStand", true);
+        itemSlot = EquipmentSlot.valueOf(Case.getCustomConfig().getAnimations().getString("FullWheel.ItemSlot", "HEAD").toUpperCase());
+        boolean small = Case.getCustomConfig().getAnimations().getBoolean("FullWheel.SmallArmorStand", true);
         // win group
         items.add(winItem.getItemName());
         armorStands.add(spawnArmorStand(c, location, 0, small));

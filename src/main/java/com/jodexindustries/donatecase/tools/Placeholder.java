@@ -29,7 +29,7 @@ public class Placeholder extends PlaceholderExpansion {
         if(params.startsWith("keys")) {
             String[] parts = params.split("_", 2);
             int keys = 0;
-            for (String caseName : Case.getCases().keySet()) {
+            for (String caseName : Case.caseData.keySet()) {
                 keys += Case.getKeys(caseName, player.getName());
             }
             if(parts.length == 1) {

@@ -7,6 +7,7 @@ import com.jodexindustries.donatecase.api.data.PlayerOpenCase;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.gui.CaseGui;
+import com.jodexindustries.donatecase.tools.CasesConfig;
 import com.jodexindustries.donatecase.tools.CustomConfig;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
@@ -69,9 +70,9 @@ public class Case{
         }
         if(CaseManager.getHologramManager() != null && (c != null && c.getHologram().isEnabled())) CaseManager.getHologramManager().createHologram(lv.getBlock(), c);
         String location = lv.getWorld().getName() + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
-        instance.customConfig.getCases().set("DonatCase.Cases." + caseName + ".location", location);
-        instance.customConfig.getCases().set("DonatCase.Cases." + caseName + ".type", type);
-        instance.customConfig.saveCases();
+        getCustomConfig().getCases().set("DonatCase.Cases." + caseName + ".location", location);
+        getCustomConfig().getCases().set("DonatCase.Cases." + caseName + ".type", type);
+        getCustomConfig().saveCases();
     }
 
     /**
@@ -82,8 +83,8 @@ public class Case{
      */
     public static void setKeys(String caseType, String player, int keys) {
         if (!instance.sql) {
-            instance.customConfig.getKeys().set("DonatCase.Cases." + caseType + "." + player, keys == 0 ? null : keys);
-            instance.customConfig.saveKeys();
+            getCustomConfig().getKeys().set("DonatCase.Cases." + caseType + "." + player, keys == 0 ? null : keys);
+            getCustomConfig().saveKeys();
         } else {
             if(instance.mysql != null) instance.mysql.setKey(caseType, player, keys);
         }
@@ -97,8 +98,8 @@ public class Case{
      */
     public static void setNullKeys(String caseType, String player) {
         if (!instance.sql) {
-            instance.customConfig.getKeys().set("DonatCase.Cases." + caseType + "." + player, 0);
-            instance.customConfig.saveKeys();
+            getCustomConfig().getKeys().set("DonatCase.Cases." + caseType + "." + player, 0);
+            getCustomConfig().saveKeys();
         } else {
             if(instance.mysql != null) instance.mysql.setKey(caseType, player, 0);
         }
@@ -134,7 +135,7 @@ public class Case{
      */
 
     public static int getKeys(String caseType, String player) {
-        return instance.sql ? (instance.mysql == null ? 0 : instance.mysql.getKey(caseType, player)) : instance.customConfig.getKeys().getInt("DonatCase.Cases." + caseType + "." + player);
+        return instance.sql ? (instance.mysql == null ? 0 : instance.mysql.getKey(caseType, player)) : getCustomConfig().getKeys().getInt("DonatCase.Cases." + caseType + "." + player);
     }
 
     /**
@@ -142,8 +143,8 @@ public class Case{
      * @param loc Case location
      */
     public static void deleteCaseByLocation(Location loc) {
-        instance.customConfig.getCases().set("DonatCase.Cases." + getCaseCustomNameByLocation(loc), null);
-        instance.customConfig.saveCases();
+        getCustomConfig().getCases().set("DonatCase.Cases." + getCaseCustomNameByLocation(loc), null);
+        getCustomConfig().saveCases();
     }
 
     /**
@@ -151,8 +152,8 @@ public class Case{
      * @param name Case name
      */
     public static void deleteCaseByName(String name) {
-        instance.customConfig.getCases().set("DonatCase.Cases." + name, null);
-        instance.customConfig.saveCases();
+        getCustomConfig().getCases().set("DonatCase.Cases." + name, null);
+        getCustomConfig().saveCases();
     }
 
     /**
@@ -162,12 +163,12 @@ public class Case{
      */
 
     public static boolean hasCaseByLocation(Location loc) {
-        ConfigurationSection cases_ = instance.customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+        ConfigurationSection cases_ = getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases");
         if(cases_ == null) {
             return false;
         }
         for (String name : cases_.getValues(false).keySet()) {
-            ConfigurationSection caseSection = instance.customConfig.getCases().getConfigurationSection("DonatCase.Cases." + name);
+            ConfigurationSection caseSection = getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases." + name);
             if(caseSection == null || caseSection.getString("location") == null) {
                 return false;
             } else {
@@ -194,7 +195,7 @@ public class Case{
      * @return Case information
      */
     private static String getCaseInfoByLocation(Location loc, String infoType) {
-        ConfigurationSection casesSection = instance.customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+        ConfigurationSection casesSection = getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases");
         if (casesSection == null) return null;
 
         for (String name : casesSection.getValues(false).keySet()) {
@@ -249,10 +250,10 @@ public class Case{
      * @return true/false
      */
     public static boolean hasCaseTypeByCustomName(String name) {
-        if(instance.customConfig.getCases().getConfigurationSection("DonatCase.Cases") == null) {
+        if(getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases") == null) {
             return false;
         } else
-            return Objects.requireNonNull(instance.customConfig.getCases().getConfigurationSection("DonatCase.Cases")).contains(name);
+            return Objects.requireNonNull(getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases")).contains(name);
     }
 
     /**
@@ -268,12 +269,24 @@ public class Case{
         return false;
     }
     /**
-     * Get all cases in config
+     * Get all cases in "cases" folder
      * @return cases
+     * @deprecated
+     * <p> Use {@link Case#getCasesConfig()} instead</p>
      */
+    @Deprecated
     public static Map<String, YamlConfiguration> getCases() {
         return instance.casesConfig.getCases();
     }
+
+    /**
+     * Get cases config instance
+     * Used for loading cases folder
+     */
+    public static CasesConfig getCasesConfig() {
+        return instance.casesConfig;
+    }
+
     /**
      * Get random group from case
      * @param c Case data
@@ -351,11 +364,11 @@ public class Case{
             CaseData.HistoryData tempData = list[i];
             if(tempData != null) {
                 if(!instance.sql) {
-                    instance.customConfig.getData().set("Data." + caseData.getCaseType() + "." + i + ".Player", tempData.getPlayerName());
-                    instance.customConfig.getData().set("Data." + caseData.getCaseType() + "." + i + ".Time", tempData.getTime());
-                    instance.customConfig.getData().set("Data." + caseData.getCaseType() + "." + i + ".Group", tempData.getGroup());
-                    instance.customConfig.getData().set("Data." + caseData.getCaseType() + "." + i + ".Item", tempData.getItem());
-                    instance.customConfig.getData().set("Data." + caseData.getCaseType() + "." + i + ".Action", tempData.getAction());
+                    getCustomConfig().getData().set("Data." + caseData.getCaseType() + "." + i + ".Player", tempData.getPlayerName());
+                    getCustomConfig().getData().set("Data." + caseData.getCaseType() + "." + i + ".Time", tempData.getTime());
+                    getCustomConfig().getData().set("Data." + caseData.getCaseType() + "." + i + ".Group", tempData.getGroup());
+                    getCustomConfig().getData().set("Data." + caseData.getCaseType() + "." + i + ".Item", tempData.getItem());
+                    getCustomConfig().getData().set("Data." + caseData.getCaseType() + "." + i + ".Action", tempData.getAction());
                 } else {
                     if(instance.mysql != null) instance.mysql.setHistoryData(caseData.getCaseType(), i, tempData);
                 }
@@ -364,7 +377,7 @@ public class Case{
         CaseData finalCase = getCase(caseData.getCaseType());
         if(finalCase != null) finalCase.setHistoryData(list);
 
-        instance.customConfig.saveData();
+        getCustomConfig().saveData();
     }
     private static String getChoice(CaseData.Item item) {
         String endCommand = "";
@@ -464,7 +477,7 @@ public class Case{
      * @return case location in Cases.yml (with yaw and pitch)
      */
     public static Location getCaseLocationByBlockLocation(Location blockLocation) {
-        ConfigurationSection casesSection = instance.customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+        ConfigurationSection casesSection = getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases");
         if(casesSection == null) return null;
 
         for(String name : casesSection.getValues(false).keySet()) {
@@ -489,7 +502,7 @@ public class Case{
      * @return configuration manager instance
      */
     public static @NotNull CustomConfig getCustomConfig() {
-        return instance.customConfig;
+        return getInstance().customConfig;
     }
 
     /**
@@ -572,7 +585,7 @@ public class Case{
      */
     @Nullable
     public static Location getCaseLocationByCustomName(String name) {
-        String location = instance.customConfig.getCases().getString("DonatCase.Cases." + name + ".location");
+        String location = getCustomConfig().getCases().getString("DonatCase.Cases." + name + ".location");
         if (location == null) return null;
         String[] worldLocation = location.split(";");
         World world = Bukkit.getWorld(worldLocation[0]);
@@ -585,7 +598,7 @@ public class Case{
      * @return case type
      */
     public static String getCaseTypeByCustomName(String name) {
-        return instance.customConfig.getCases().getString("DonatCase.Cases." + name + ".type");
+        return getCustomConfig().getCases().getString("DonatCase.Cases." + name + ".type");
     }
 
     /**
@@ -606,9 +619,9 @@ public class Case{
      */
     public static Map<String, Integer> getDefaultLevelGroup() {
         Map<String, Integer> levelGroup = new HashMap<>();
-        boolean isEnabled = instance.customConfig.getConfig().getBoolean("DonatCase.LevelGroup");
+        boolean isEnabled = getCustomConfig().getConfig().getBoolean("DonatCase.LevelGroup");
         if(isEnabled) {
-            ConfigurationSection section = instance.customConfig.getConfig().getConfigurationSection("DonatCase.LevelGroups");
+            ConfigurationSection section = getCustomConfig().getConfig().getConfigurationSection("DonatCase.LevelGroups");
             if (section != null) {
                 for (String group : section.getKeys(false)) {
                     int level = section.getInt(group);

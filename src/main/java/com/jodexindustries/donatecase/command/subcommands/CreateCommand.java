@@ -23,19 +23,19 @@ public class CreateCommand implements SubCommand {
                 String caseName = args[1];
                 if (Case.hasCaseByType(caseType)) {
                     if (Case.hasCaseByLocation(l)) {
-                        Tools.msg(sender, Case.getInstance().customConfig.getLang().getString("HasDonatCase"));
+                        Tools.msg(sender, Case.getCustomConfig().getLang().getString("HasDonatCase"));
                     } else {
                         if (!Case.hasCaseTypeByCustomName(caseName)) {
                             Case.saveLocation(caseName, caseType, l);
-                            Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("AddDonatCase"),
+                            Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("AddDonatCase"),
                                     "%casename:" + caseName, "%casetype:" + caseType));
                         } else {
-                            Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("CaseAlreadyHasByName"),
+                            Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("CaseAlreadyHasByName"),
                                     "%casename:" + caseName));
                         }
                     }
                 } else {
-                    Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("CaseNotExist"),
+                    Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("CaseNotExist"),
                             "%case:" + caseType));
                 }
             } else {
@@ -46,7 +46,7 @@ public class CreateCommand implements SubCommand {
 
     @Override
     public List<String> getTabCompletions(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>(Case.getInstance().casesConfig.getCases().keySet());
+        List<String> list = new ArrayList<>(Case.getCasesConfig().getCases().keySet());
         if(args.length >= 2) {
             return new ArrayList<>();
         }

@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CasesConfig {
-    public Map<String, YamlConfiguration> cases = new HashMap<>();
+    private final Map<String, YamlConfiguration> cases = new HashMap<>();
+
     public CasesConfig() {
         for (File file : Tools.getCasesInFolder()) {
             if(file.getName().contains(".yml")) {
@@ -87,9 +88,19 @@ public class CasesConfig {
         }
     }
 
+    /**
+     * Get all cases configurations
+     * @return map of configuration
+     */
     public Map<String, YamlConfiguration> getCases() {
         return cases;
     }
+
+    /**
+     * Get case configuration
+     * @param name Case type (file name without .yml)
+     * @return case configuration
+     */
      public YamlConfiguration getCase(String name) {
         return cases.get(name);
      }

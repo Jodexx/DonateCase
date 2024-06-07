@@ -30,10 +30,10 @@ public class OpenCaseCommand implements SubCommand {
                         CaseData.Item winGroup = Tools.getRandomGroup(data);
                         Case.onCaseOpenFinish(data, player, true, winGroup);
                     } else {
-                        Tools.msg(player, Case.getInstance().customConfig.getLang().getString("NoKey"));
+                        Tools.msg(player, Case.getCustomConfig().getLang().getString("NoKey"));
                     }
                 } else {
-                    Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("CaseNotExist"), "%case:" + caseName));
+                    Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("CaseNotExist"), "%case:" + caseName));
                 }
             } else {
                 GlobalCommand.sendHelp(sender, "dc");
@@ -43,7 +43,7 @@ public class OpenCaseCommand implements SubCommand {
 
     @Override
     public List<String> getTabCompletions(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>(Case.getInstance().casesConfig.getCases().keySet());
+        List<String> list = new ArrayList<>(Case.getCasesConfig().getCases().keySet());
         if(args.length >= 2) {
             return new ArrayList<>();
         }

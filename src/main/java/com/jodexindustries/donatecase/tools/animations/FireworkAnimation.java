@@ -36,8 +36,8 @@ public class FireworkAnimation implements Animation {
         as.spawnArmorStand(location);
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Firework.Pose");
 
-        itemSlot = EquipmentSlot.valueOf(Case.getInstance().customConfig.getAnimations().getString("Firework.ItemSlot", "HEAD").toUpperCase());
-        boolean small = Case.getInstance().customConfig.getAnimations().getBoolean("Firework.SmallArmorStand", true);
+        itemSlot = EquipmentSlot.valueOf(Case.getCustomConfig().getAnimations().getString("Firework.ItemSlot", "HEAD").toUpperCase());
+        boolean small = Case.getCustomConfig().getAnimations().getBoolean("Firework.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
@@ -54,10 +54,10 @@ public class FireworkAnimation implements Animation {
                     Firework firework = Objects.requireNonNull(loc.getWorld()).spawn(loc, Firework.class);
                     FireworkMeta data = firework.getFireworkMeta();
                     data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
-                    for (String color : Case.getInstance().customConfig.getAnimations().getStringList("Firework.FireworkColors")) {
+                    for (String color : Case.getCustomConfig().getAnimations().getStringList("Firework.FireworkColors")) {
                         data.addEffect(FireworkEffect.builder().withColor(Tools.parseColor(color)).build());
                     }
-                    data.setPower(Case.getInstance().customConfig.getAnimations().getInt("Firework.Power"));
+                    data.setPower(Case.getCustomConfig().getAnimations().getInt("Firework.Power"));
                     firework.setFireworkMeta(data);
                 }
                 Location las = as.getLocation().clone();

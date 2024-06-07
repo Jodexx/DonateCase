@@ -23,9 +23,9 @@ public class DeleteCommand implements SubCommand {
                 if (Case.hasCaseByLocation(l)) {
                     Case.deleteCaseByLocation(l);
                     if(CaseManager.getHologramManager() != null) CaseManager.getHologramManager().removeHologram(l.getBlock());
-                    Tools.msg(sender, Case.getInstance().customConfig.getLang().getString("RemoveDonatCase"));
+                    Tools.msg(sender, Case.getCustomConfig().getLang().getString("RemoveDonatCase"));
                 } else {
-                    Tools.msg(sender, Case.getInstance().customConfig.getLang().getString("BlockDontDonatCase"));
+                    Tools.msg(sender, Case.getCustomConfig().getLang().getString("BlockDontDonatCase"));
                 }
             }
         } else if (args.length == 1) {
@@ -34,9 +34,9 @@ public class DeleteCommand implements SubCommand {
                 Location location = Case.getCaseLocationByCustomName(name);
                 if(CaseManager.getHologramManager() != null) if(location != null) CaseManager.getHologramManager().removeHologram(location.getBlock());
                 Case.deleteCaseByName(name);
-                Tools.msg(sender, Case.getInstance().customConfig.getLang().getString("RemoveDonatCase"));
+                Tools.msg(sender, Case.getCustomConfig().getLang().getString("RemoveDonatCase"));
             } else {
-                Tools.msg(sender, Tools.rt(Case.getInstance().customConfig.getLang().getString("CaseNotExist"), "%case:" + name));
+                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("CaseNotExist"), "%case:" + name));
             }
         }
     }
@@ -45,7 +45,7 @@ public class DeleteCommand implements SubCommand {
     public List<String> getTabCompletions(CommandSender sender, String[] args) {
         List<String> value;
         if (args.length == 1) {
-            ConfigurationSection section = Case.getInstance().customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+            ConfigurationSection section = Case.getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases");
             if (section != null) {
                 value = new ArrayList<>(section.getKeys(false));
             } else {
