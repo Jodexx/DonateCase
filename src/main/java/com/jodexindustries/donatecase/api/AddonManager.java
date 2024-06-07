@@ -2,6 +2,9 @@ package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddon;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
+import com.jodexindustries.donatecase.api.events.AddonDisableEvent;
+import com.jodexindustries.donatecase.api.events.AddonEnableEvent;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 
@@ -113,6 +116,9 @@ public class AddonManager {
         if(!addon.isEnabled()) {
             Case.getInstance().getLogger().info("Enabling " + addon.getName() + " addon v" + addon.getVersion());
             addon.setEnabled(true);
+
+            AddonEnableEvent addonEnableEvent = new AddonEnableEvent(addon);
+            Bukkit.getPluginManager().callEvent(addonEnableEvent);
         } else {
             Case.getInstance().getLogger().warning("Addon with name " + addon.getName() + " already enabled!");
         }
@@ -135,6 +141,8 @@ public class AddonManager {
         if(addon.isEnabled()) {
             Case.getInstance().getLogger().info("Disabling " + addon.getName() + " addon v" + addon.getVersion());
             addon.setEnabled(false);
+            AddonDisableEvent addonDisableEvent = new AddonDisableEvent(addon);
+            Bukkit.getPluginManager().callEvent(addonDisableEvent);
         } else {
             Case.getInstance().getLogger().warning("Addon with name " + addon.getName() + " already disabled!");
         }
