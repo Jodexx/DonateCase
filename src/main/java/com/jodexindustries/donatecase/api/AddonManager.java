@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.donatecase.api.addon.internal.InternalAddon;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.events.AddonDisableEvent;
 import com.jodexindustries.donatecase.api.events.AddonEnableEvent;
@@ -45,7 +44,7 @@ public class AddonManager {
      * Load specific addon
      * @param file addon jar file
      */
-    public void loadAddon(File file) {
+    public boolean loadAddon(File file) {
         if (file.isFile() && file.getName().endsWith(".jar")) {
             try (JarFile jarFile = new JarFile(file)) {
                 JarEntry entry = jarFile.getJarEntry("addon.yml");
@@ -60,10 +59,10 @@ public class AddonManager {
                     if(addons.get(name) != null) {
                         if(name.equalsIgnoreCase("DonateCase")) {
                             Case.getInstance().getLogger().warning("Addon " + file.getName() + " trying to load with DonateCase name! Abort.");
-                            return;
+                            return false;
                         }
                         Case.getInstance().getLogger().warning("Addon with name " + name + " already loaded!");
-                        return;
+                        return false;
                     }
                     URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()}, this.getClass().getClassLoader());
                     try {
@@ -72,6 +71,7 @@ public class AddonManager {
                         addon.init(version, name, file, loader);
                         addons.put(name, addon);
                         enableAddon(addon);
+                        return true;
                     } catch (Throwable e) {
                         addons.remove(name);
                         closeClassLoader(loader);
@@ -81,7 +81,7 @@ public class AddonManager {
                                 Case.getInstance().getLogger().log(Level.SEVERE,
                                         "Error occurred while enabling addon " + name + " v" + version +
                                                 "\nIncompatible DonateCaseAPI! Contact with developer or update addon!", e);
-                                return;
+                                return false;
                             }
                         }
                         Case.getInstance().getLogger().log(Level.SEVERE,
@@ -94,6 +94,7 @@ public class AddonManager {
                 e.printStackTrace();
             }
         }
+        return false;
     }
 
     /**
@@ -189,7 +190,7 @@ public class AddonManager {
      * @return addon
      */
     @Nullable
-    public InternalAddon getAddon(String addon) {
+    public InternalJavaAddon getAddon(String addon) {
         return addons.get(addon);
     }
 
