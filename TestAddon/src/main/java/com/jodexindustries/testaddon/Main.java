@@ -19,9 +19,17 @@ public class Main extends InternalJavaAddon implements Listener {
         // register animation
         AnimationManager animationManager = api.getAnimationManager();
         animationManager.registerAnimation("test", new TestAnimation());
+
         // register event listener
         getDonateCase().getServer().getPluginManager().registerEvents(this, getDonateCase());
     }
+
+    @Override
+    public void onDisable() {
+        getCaseAPI().getSubCommandManager().unregisterSubCommand("test");
+        getCaseAPI().getAnimationManager().unregisterAnimation("test");
+    }
+
     @EventHandler
     public void onInventory(CaseGuiClickEvent e) {
         getDonateCase().getServer().broadcastMessage(e.getCaseType());
