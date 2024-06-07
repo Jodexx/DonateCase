@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when the player successfully opens the case (from gui) and the animation starts
+ * <p> Very similar with {@link AnimationPreStartEvent}</p>
  */
 public class OpenCaseEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
