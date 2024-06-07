@@ -179,11 +179,11 @@ public class AddonManager {
         try {
             disableAddon(addon);
             addons.remove(addon.getName());
+            closeClassLoader(addon.getUrlClassLoader());
             return true;
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        closeClassLoader(addon.getUrlClassLoader());
         return false;
     }
 
