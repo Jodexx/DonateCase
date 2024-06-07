@@ -261,17 +261,22 @@ public class DonateCase extends JavaPlugin {
 
 
     public void setupLangs() {
-        if (customConfig.getLang().getString("config") == null || !customConfig.getLang().getString("config", "").equals("2.5")) {
-            Logger.log("&cOutdated lang config! Creating a new!");
-            File langRu = new File(this.getDataFolder(), "lang/ru_RU.yml");
-            langRu.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));
-            this.saveResource("lang/ru_RU.yml", false);
-            File langEn = new File(this.getDataFolder(), "lang/en_US.yml");
-            langEn.renameTo(new File(this.getDataFolder(), "lang/en_US.yml.old"));
-            this.saveResource("lang/en_US.yml", false);
-            File langUa = new File(this.getDataFolder(), "lang/ua_UA.yml");
-            langUa.renameTo(new File(this.getDataFolder(), "lang/ua_UA.yml.old"));
-            this.saveResource("lang/ua_UA.yml", false);
+        String version = customConfig.getLang().getString("config");
+        if (version == null || !version.equalsIgnoreCase("2.6")) {
+            Logger.log("&cOutdated language config! Creating a new!");
+            if(version != null && version.equalsIgnoreCase("2.5")) {
+                Tools.convertLanguage(customConfig.getLang());
+            } else {
+                File langRu = new File(this.getDataFolder(), "lang/ru_RU.yml");
+                langRu.renameTo(new File(this.getDataFolder(), "lang/ru_RU.yml.old"));
+                this.saveResource("lang/ru_RU.yml", false);
+                File langEn = new File(this.getDataFolder(), "lang/en_US.yml");
+                langEn.renameTo(new File(this.getDataFolder(), "lang/en_US.yml.old"));
+                this.saveResource("lang/en_US.yml", false);
+                File langUa = new File(this.getDataFolder(), "lang/ua_UA.yml");
+                langUa.renameTo(new File(this.getDataFolder(), "lang/ua_UA.yml.old"));
+                this.saveResource("lang/ua_UA.yml", false);
+            }
             customConfig = new CustomConfig();
         }
     }

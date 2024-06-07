@@ -17,13 +17,13 @@ public class ReloadCommand implements SubCommand {
             Case.getInstance().setupLangs();
             if(Case.getInstance().hologramManager != null) Case.getInstance().hologramManager.removeAllHolograms();
             Case.getInstance().loadHolograms();
-            Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("ReloadConfig")));
+            Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("config-reloaded")));
         } else {
             if(args[0].equalsIgnoreCase("cache")) {
                 Case.getInstance().cleanCache();
                 Case.getInstance().setupConfigs();
                 Case.getInstance().setupLangs();
-                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("ReloadConfigCache", "&aReloaded all DonateCase Cache")));
+                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("config-cache-reloaded", "&aReloaded all DonateCase Cache")));
             }
         }
     }

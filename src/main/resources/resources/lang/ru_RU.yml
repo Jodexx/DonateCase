@@ -1,4 +1,4 @@
-config: '2.5' #DON'T CHANGE THIS PLEASE
+config: '2.6' #DON'T CHANGE THIS PLEASE
 
 # Локальные плейсхолдеры
 # %case% - название кейса
@@ -15,28 +15,29 @@ config: '2.5' #DON'T CHANGE THIS PLEASE
 # %donatecase_keys% - количество ключей всех кейсов
 # %donatecase_keys_format% - количество ключей всех кейсов с форматированием
 
-Prefix: '&7[&cDonateCase&7] &e'
-NoPermission: '&cУ вас нет прав'
-UpdateCheck: "&eНовое обновление плагина &cDonateCase &a%version &eдоступно! &eСкачать &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
-CaseNotExist: '&cКейса &6%case &cне существует.'
-CaseAlreadyHasByName: "&cКейс с названием &6%casename &cуже существует!"
-HasDonatCase: '&cЭтот блок уже донат кейс'
-AddDonatCase: '&eНовый кейс создан'
-RemoveDonatCase: '&eДонат кейс удалён'
-BlockDontDonatCase: '&cВ этом блоке не найдено Донат Кейса'
-GiveKeys: '&eИгроку &6%player &eвыдано &c%key &eключей'
-GiveKeysTarget: '&eВам было выдано &c%key &eключей от кейса &6%casetitle'
-SetKeys: '&eИгроку &6%player &eустановлено &c%key &eключей'
-SetKeysTarget: '&eВам было установлено &c%key &eключей от кейса &6%casetitle'
-ClearKeys: '&eИгроку &6%player &eудалено все ключи кейса %case'
-ClearAllKeys: '&eВсе ключи игроков были удалены'
-DestoryDonatCase: '&cДонат Кейс ломать запрещено'
-NoKey: '&cУ вас нет ключей для этого кейса. Можете купить их тут >>> &6JodexIndustries.ru'
-HaveOpenCase: '&cПодождите этот кейс открывается'
-ReloadConfig: '&aКонфиг перезагружен!'
-CasesList: '&e%num. &6%casename &3- &r%casetitle'
-NumberFormatException: "&cСтрока %string не является числом"
-Help:
+prefix: '&7[&cDonateCase&7] &e'
+no-permission: '&cУ вас нет прав'
+new-update: "&eНовое обновление плагина &cDonateCase &a%version &eдоступно! &eСкачать &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
+case-does-not-exist: '&cКейса &6%case &cне существует.'
+case-already-exist: "&cКейс с названием &6%casename &cуже существует!"
+case-already-created: '&cЭтот блок уже донат кейс'
+case-added: '&eНовый кейс создан'
+case-removed: '&eДонат кейс удалён'
+block-is-not-case: '&cВ этом блоке не найдено Донат Кейса'
+keys-given: '&eИгроку &6%player &eвыдано &c%key &eключей'
+keys-given-target: '&eВам было выдано &c%key &eключей от кейса &6%casetitle'
+keys-sets: '&eИгроку &6%player &eустановлено &c%key &eключей'
+keys-sets-target: '&eВам было установлено &c%key &eключей от кейса &6%casetitle'
+keys-cleared: '&eИгроку &6%player &eудалено все ключи кейса %case'
+all-keys-cleared: '&eВсе ключи игроков были удалены'
+case-destroy-disallow: '&cДонат Кейс ломать запрещено'
+no-keys: '&cУ вас нет ключей для этого кейса. Можете купить их тут >>> &6JodexIndustries.ru'
+case-opens: '&cПодождите этот кейс открывается'
+config-reloaded: '&aКонфиг перезагружен!'
+config-cache-reloaded: '&aПерезагружен весь кэш DonateCase'
+list-of-cases: '&e%num. &6%casename &3- &r%casetitle'
+number-format-exception: "&cСтрока %string не является числом"
+help:
   - '&9/%cmd help &3- &2Помощь по плагину'
   - '&9/%cmd keys &7(&aИгрок&7)&3- &2Показать ключи'
   - '&9/%cmd opencase &7(&aТип Кейса&7) &3- &2Открыть кейс'
@@ -48,18 +49,18 @@ Help:
   - '&9/%cmd delkey &7(&aИгрок&7) &7(&aТип Кейса&7) &3- &2Удалить все ключи игроку'
   - '&9/%cmd delkey all &3- &2Удалить все ключи всем игрокам'
   - '&9/%cmd reload &3- &2Перезапустить конфиг'
-HelpAddons:
-  Format:
-    AddonName: "&6%addon" # Оставьте поле пустым, если вы не хотите разделять команды с именами аддонов
-    AddonDescription: "&3- &2%description"
-    AddonCommand: "&9/dc %cmd %args %description"
-HelpPlayer:
+help-addons:
+  format:
+    name: "&6%addon" # Оставьте поле пустым, если вы не хотите разделять команды с именами аддонов
+    description: "&3- &2%description"
+    command: "&9/dc %cmd %args %description"
+help-player:
   - '&9/%cmd help &3- &2Помощь по плагину'
   - '&9/%cmd keys &3- &2Показать свои ключи'
   - '&9/%cmd opencase &7(&aТип Кейса&7) &3- &2Открыть кейс'
-MyKeys:
+my-keys:
   - "&7Ваши ключи:"
   - "&c&lДонат-&a&lКейс &7- &a%keys_case% &7ключей"
-PlayerKeys:
+player-keys:
   - "&7Ключи %player:"
   - "&c&lДонат-&a&lКейс &7- &a%keys_case% &7ключей"

@@ -14,8 +14,14 @@ import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
 import day.dean.skullcreator.SkullCreator;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -84,19 +90,10 @@ public class Tools {
         fw.detonate();
     }
 
-    public static int c(int x, int y) {
-        int x2 = x - 1;
-        int y2 = y - 1;
-        return x2 + y2 * 9;
-    }
-
-    public static boolean isHere(Location l1, Location l2) {
-        return l1.getWorld() == l2.getWorld() && (int)l1.distance(l2) == 0;
-    }
 
     public static void msg(CommandSender s, String msg) {
         if (s != null) {
-            msgRaw(s, Case.getCustomConfig().getLang().getString("Prefix") + msg);
+            msgRaw(s, Case.getCustomConfig().getLang().getString("prefix") + msg);
         }
     }
 
@@ -145,8 +142,8 @@ public class Tools {
                 if (Case.getCustomConfig().getCases().getString("DonatCase.Cases." + name + ".location") == null) {
                     return;
                 } else {
-                    String stringlocation = Case.getCustomConfig().getCases().getString("DonatCase.Cases." + name + ".location");
-                    Location lv = fromString(stringlocation);
+                    String locationString = Case.getCustomConfig().getCases().getString("DonatCase.Cases." + name + ".location");
+                    Location lv = fromString(locationString);
                     String world = "Undefined";
                     if (lv != null) {
                         if (lv.getWorld() != null) {
@@ -215,6 +212,131 @@ public class Tools {
         Case.getCustomConfig().getConfig().set("DonatCase.Cases", null);
         Case.getCustomConfig().saveConfig();
     }
+
+    public static void convertLanguage(YamlConfiguration config) {
+        config.set("config", "2.6");
+
+        String prefix = config.getString("Prefix");
+        config.set("Prefix", null);
+        config.set("prefix", prefix);
+
+        String noPermission = config.getString("NoPermission");
+        config.set("NoPermission", null);
+        config.set("no-permission", noPermission);
+
+        String updateCheck = config.getString("UpdateCheck");
+        config.set("UpdateCheck", null);
+        config.set("new-update", updateCheck);
+
+        String caseNotExist = config.getString("CaseNotExist");
+        config.set("CaseNotExist", null);
+        config.set("case-does-not-exist", caseNotExist);
+
+        String caseAlreadyHasByName = config.getString("CaseAlreadyHasByName");
+        config.set("CaseAlreadyHasByName", null);
+        config.set("case-already-exist", caseAlreadyHasByName);
+
+        String hasDonatCase = config.getString("HasDonatCase");
+        config.set("HasDonatCase", null);
+        config.set("case-already-created", hasDonatCase);
+
+        String addDonatCase = config.getString("AddDonatCase");
+        config.set("AddDonatCase", null);
+        config.set("case-added", addDonatCase);
+
+        String RemoveDonatCase = config.getString("RemoveDonatCase");
+        config.set("RemoveDonatCase", null);
+        config.set("case-removed", RemoveDonatCase);
+
+        String blockDontDonatCase = config.getString("BlockDontDonatCase");
+        config.set("BlockDontDonatCase", null);
+        config.set("block-is-not-case", blockDontDonatCase);
+
+        String giveKeys = config.getString("GiveKeys");
+        config.set("GiveKeys", null);
+        config.set("keys-given", giveKeys);
+
+        String giveKeysTarget = config.getString("GiveKeysTarget");
+        config.set("GiveKeysTarget", null);
+        config.set("keys-given-target", giveKeysTarget);
+
+        String setKeys = config.getString("SetKeys");
+        config.set("SetKeys", null);
+        config.set("keys-sets", setKeys);
+
+        String setKeysTarget = config.getString("SetKeysTarget");
+        config.set("SetKeysTarget", null);
+        config.set("keys-sets-target", setKeysTarget);
+
+        String clearKeys = config.getString("ClearKeys");
+        config.set("ClearKeys", null);
+        config.set("keys-cleared", clearKeys);
+
+        String clearAllKeys = config.getString("ClearAllKeys");
+        config.set("ClearAllKeys", null);
+        config.set("all-keys-cleared", clearAllKeys);
+
+        String destoryDonatCase = config.getString("DestoryDonatCase");
+        config.set("DestoryDonatCase", null);
+        config.set("case-destroy-disallow", destoryDonatCase);
+
+        String noKey = config.getString("NoKey");
+        config.set("NoKey", null);
+        config.set("no-keys", noKey);
+
+        String haveOpenCase = config.getString("HaveOpenCase");
+        config.set("HaveOpenCase", null);
+        config.set("case-opens", haveOpenCase);
+
+        String reloadConfig = config.getString("ReloadConfig");
+        config.set("ReloadConfig", null);
+        config.set("config-reloaded", reloadConfig);
+
+        String casesList = config.getString("CasesList");
+        config.set("CasesList", null);
+        config.set("list-of-cases", casesList);
+
+        String NumberFormatException = config.getString("NumberFormatException");
+        config.set("NumberFormatException", null);
+        config.set("number-format-exception", NumberFormatException);
+
+        List<String> help = config.getStringList("Help");
+        config.set("Help", null);
+        config.set("help", help);
+
+        String helpAddonsFormatAddonName = config.getString("HelpAddons.Format.AddonName");
+        config.set("HelpAddons.Format.AddonName", null);
+        config.set("help-addons.format.name", helpAddonsFormatAddonName);
+
+        String helpAddonsFormatAddonDescription = config.getString("HelpAddons.Format.AddonDescription");
+        config.set("HelpAddons.Format.AddonDescription", null);
+        config.set("help-addons.format.description", helpAddonsFormatAddonDescription);
+
+        String helpAddonsFormatAddonCommand = config.getString("HelpAddons.Format.AddonCommand");
+        config.set("HelpAddons.Format.AddonCommand", null);
+        config.set("help-addons.format.command", helpAddonsFormatAddonCommand);
+
+        List<String> helpPlayer = config.getStringList("HelpPlayer");
+        config.set("HelpPlayer", null);
+        config.set("help-player", helpPlayer);
+
+        List<String> myKeys = config.getStringList("MyKeys");
+        config.set("MyKeys", null);
+        config.set("my-keys", myKeys);
+
+        List<String> playerKeys = config.getStringList("PlayerKeys");
+        config.set("PlayerKeys", null);
+        config.set("player-keys", playerKeys);
+
+        try {
+            config.save(config.getName());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+
     public static List<File> getCasesInFolder() {
         List<File> files = new ArrayList<>();
         File directory = new File(Case.getInstance().getDataFolder(), "cases");

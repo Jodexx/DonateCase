@@ -47,7 +47,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     (type == SubCommandType.PLAYER || type == null) && (hasPlayerPermission || hasModPermission || hasAdminPermission)) {
                 subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
             } else {
-                Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("NoPermission")));
+                Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("no-permission")));
             }
         }
         return true;
@@ -55,7 +55,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     public static void sendHelp(CommandSender sender, String label) {
         if (!sender.hasPermission("donatecase.player")) {
-            Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("NoPermission")));
+            Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("no-permission")));
             return;
         }
 
@@ -65,11 +65,11 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         boolean isMod = sender.hasPermission("donatecase.mod");
 
         if (!isAdmin && !isMod) {
-            for (String string : Case.getCustomConfig().getLang().getStringList("HelpPlayer")) {
+            for (String string : Case.getCustomConfig().getLang().getStringList("help-player")) {
                 Tools.msgRaw(sender, Tools.rt(string, "%cmd:" + label));
             }
         } else {
-            for (String string : Case.getCustomConfig().getLang().getStringList("Help")) {
+            for (String string : Case.getCustomConfig().getLang().getStringList("help")) {
                 Tools.msgRaw(sender, Tools.rt(string, "%cmd:" + label));
             }
         }
@@ -86,7 +86,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             if (Tools.isHasCommandForSender(sender, addonsMap)) {
                 addonsMap.forEach((addon, commands) -> {
                     if (!addon.equalsIgnoreCase("DonateCase") && Tools.isHasCommandForSender(sender, addonsMap, addon)) {
-                        String addonNameFormat = Case.getCustomConfig().getLang().getString("HelpAddons.Format.AddonName");
+                        String addonNameFormat = Case.getCustomConfig().getLang().getString("help-addons.format.name");
                         if (addonNameFormat != null && !addonNameFormat.isEmpty()) {
                             Tools.msgRaw(sender, Tools.rt(addonNameFormat, "%addon:" + addon));
                         }
@@ -94,7 +94,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                         commands.forEach(command -> command.forEach((commandName, subCommand) -> {
                             String description = subCommand.getDescription();
                             if (description != null) {
-                                description = Tools.rt(Case.getCustomConfig().getLang().getString("HelpAddons.Format.AddonDescription"), "%description:" + description);
+                                description = Tools.rt(Case.getCustomConfig().getLang().getString("help-addons.format.description"), "%description:" + description);
                             } else {
                                 description = "";
                             }
@@ -106,7 +106,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                                     (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null);
 
                             if (hasPermissionForSubCommand) {
-                                Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("HelpAddons.Format.AddonCommand"),
+                                Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("help-addons.format.command"),
                                         "%cmd:" + commandName,
                                         "%args:" + builder,
                                         "%description:" + description

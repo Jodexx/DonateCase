@@ -25,7 +25,7 @@ public class SetKeyCommand implements SubCommand {
             try {
                 keys = Integer.parseInt(args[3]);
             } catch (NumberFormatException e) {
-                Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("NumberFormatException"), "%string:" + args[3]));
+                Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("number-format-exception"), "%string:" + args[3]));
                 return;
             }
             if (Case.hasCaseByType(caseName)) {
@@ -34,12 +34,12 @@ public class SetKeyCommand implements SubCommand {
                 String caseTitle = data.getCaseTitle();
                 String caseDisplayName = data.getCaseDisplayName();
                 Case.setKeys(caseName, player, keys);
-                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("SetKeys"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
+                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("keys-sets"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                 if (Case.getCustomConfig().getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                    Tools.msg(target, Tools.rt(Case.getCustomConfig().getLang().getString("SetKeysTarget"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
+                    Tools.msg(target, Tools.rt(Case.getCustomConfig().getLang().getString("keys-sets-target"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
                 }
             } else {
-                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("CaseNotExist"), "%case:" + caseName));
+                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
             }
         } else {
             GlobalCommand.sendHelp(sender, "dc");

@@ -43,7 +43,7 @@ public class EventsListener implements Listener {
             if (p.hasPermission("donatecase.admin")) {
                 new UpdateChecker(Case.getInstance(), 106701).getVersion((version) -> {
                     if (Tools.getPluginVersion(Case.getInstance().getDescription().getVersion()) < Tools.getPluginVersion(version)) {
-                        Tools.msg(p, Tools.rt(Case.getCustomConfig().getLang().getString("UpdateCheck"), "%version:" + version));
+                        Tools.msg(p, Tools.rt(Case.getCustomConfig().getLang().getString("new-update"), "%version:" + version));
                     }
 
                 });
@@ -84,7 +84,7 @@ public class EventsListener implements Listener {
                             if (sound == null) sound = Sound.valueOf("ENTITY_ENDERMEN_TELEPORT");
                             p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
                             String noKey = Case.getCasesConfig().getCase(caseType).getString("Messages.NoKey");
-                            if (noKey == null) noKey = Case.getCustomConfig().getLang().getString("NoKey");
+                            if (noKey == null) noKey = Case.getCustomConfig().getLang().getString("no-keys");
                             Tools.msg(p, noKey);
                         }
                     }
@@ -137,7 +137,7 @@ public class EventsListener implements Listener {
                             Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
                         }
                     } else {
-                        Tools.msg(p, Case.getCustomConfig().getLang().getString("HaveOpenCase"));
+                        Tools.msg(p, Case.getCustomConfig().getLang().getString("case-opens"));
                     }
                 }
             }
@@ -158,7 +158,7 @@ public class EventsListener implements Listener {
         Location loc = e.getBlock().getLocation();
         if (Case.hasCaseByLocation(loc)) {
             e.setCancelled(true);
-            Tools.msg(e.getPlayer(), Case.getCustomConfig().getLang().getString("DestoryDonatCase"));
+            Tools.msg(e.getPlayer(), Case.getCustomConfig().getLang().getString("case-destroy-disallow"));
         }
 
     }

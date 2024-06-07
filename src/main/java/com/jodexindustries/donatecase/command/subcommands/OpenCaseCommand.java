@@ -30,10 +30,10 @@ public class OpenCaseCommand implements SubCommand {
                         CaseData.Item winGroup = Tools.getRandomGroup(data);
                         Case.onCaseOpenFinish(data, player, true, winGroup);
                     } else {
-                        Tools.msg(player, Case.getCustomConfig().getLang().getString("NoKey"));
+                        Tools.msg(player, Case.getCustomConfig().getLang().getString("no-keys"));
                     }
                 } else {
-                    Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("CaseNotExist"), "%case:" + caseName));
+                    Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
                 }
             } else {
                 GlobalCommand.sendHelp(sender, "dc");

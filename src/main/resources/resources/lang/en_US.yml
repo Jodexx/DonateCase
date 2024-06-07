@@ -1,4 +1,4 @@
-config: '2.5' #DON'T CHANGE THIS PLEASE
+config: '2.6' #DON'T CHANGE THIS PLEASE
 
 # Local Placeholders
 # %case% - case name
@@ -15,28 +15,29 @@ config: '2.5' #DON'T CHANGE THIS PLEASE
 # %donatecase_keys% - number of keys from all cases
 # %donatecase_keys_format% - number of keys from all cases with format
 
-Prefix: '&7[&cDonateCase&7] &e'
-NoPermission: '&cYou do not have permissions!'
-UpdateCheck: "&eNew &cDonateCase &a%version &eplugin update available&e! &eDownload &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
-CaseNotExist: '&cCase &6%case &cdoes not exist.'
-CaseAlreadyHasByName: "&cCase with name &6%casename &calready exists!"
-HasDonatCase: '&cThis block is already a donation case'
-AddDonatCase: '&eNew case created'
-RemoveDonatCase: '&eDonate case deleted'
-BlockDontDonatCase: '&cDonate Case not found in this block'
-GiveKeys: '&ePlayer &6%player &egiven &c%key &ekey(s)'
-GiveKeysTarget: '&eYou have been given &c%key &ecase keys &6%casetitle'
-SetKeys: '&ePlayer &6%player &eset &c%key &ekey(s)'
-SetKeysTarget: '&eYou have been set &c%key &ecase keys &6%casetitle'
-ClearKeys: '&ePlayer &6%player &ehad all the keys of case &6%case &eremoved'
-ClearAllKeys: '&eAll player keys have been removed'
-DestoryDonatCase: '&cDonate Case is forbidden to break'
-NoKey: "&cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.com"
-HaveOpenCase: '&cPlease wait this case is opening'
-ReloadConfig: '&aConfig reloaded!'
-CasesList: '&e%num. &6%casename &3- &r%casetitle'
-NumberFormatException: "&cThe string %string is not a number"
-Help:
+prefix: '&7[&cDonateCase&7] &e'
+no-permission: '&cYou do not have permissions!'
+new-update: "&eNew &cDonateCase &a%version &eplugin update available&e! &eDownload &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
+case-does-not-exist: '&cCase &6%case &cdoes not exist.'
+case-already-exist: "&cCase with name &6%casename &calready exists!"
+case-already-created: '&cThis block is already a donation case'
+case-added: '&eNew case created'
+case-removed: '&eDonate case deleted'
+block-is-not-case: '&cDonate Case not found in this block'
+keys-given: '&ePlayer &6%player &egiven &c%key &ekey(s)'
+keys-given-target: '&eYou have been given &c%key &ecase keys &6%casetitle'
+keys-sets: '&ePlayer &6%player &eset &c%key &ekey(s)'
+keys-sets-target: '&eYou have been set &c%key &ecase keys &6%casetitle'
+keys-cleared: '&ePlayer &6%player &ehad all the keys of case &6%case &eremoved'
+all-keys-cleared: '&eAll player keys have been removed'
+case-destroy-disallow: '&cDonate Case is forbidden to break'
+no-keys: "&cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.com"
+case-opens: '&cPlease wait this case is opening'
+config-reloaded: '&aConfig reloaded!'
+config-cache-reloaded: '&aReloaded all DonateCase Cache'
+list-of-cases: '&e%num. &6%casename &3- &r%casetitle'
+number-format-exception: "&cThe string %string is not a number"
+help:
   - '&9/%cmd help &3- &2Help for the plugin'
   - '&9/%cmd keys &7(&aPlayer&7) &3- &2Show keys'
   - '&9/%cmd opencase &7(&aCase Type&7) &3- &2Open case'
@@ -48,18 +49,18 @@ Help:
   - '&9/%cmd delkey &7(&aPlayer&7) &7(&aCase Type&7) &3- &2Remove all keys to a player'
   - '&9/%cmd delkey all &3- &2Delete all keys for all players'
   - '&9/%cmd reload &3- &2Reload config'
-HelpAddons:
-  Format:
-    AddonName: "&6%addon" # Leave it blank if you don't want to separate commands with addon names
-    AddonDescription: "&3- &2%description"
-    AddonCommand: "&9/dc %cmd %args %description"
-HelpPlayer:
+help-addons:
+  format:
+    name: "&6%addon" # Leave it blank if you don't want to separate commands with addon names
+    description: "&3- &2%description"
+    command: "&9/dc %cmd %args %description"
+help-player:
   - '&9/%cmd help &3- &2Help for the plugin'
   - '&9/%cmd keys &3- &2Show your keys'
   - '&9/%cmd opencase &7(&aCase Type&7) &3- &2Open case'
-MyKeys:
+my-keys:
   - "&7Your keys:"
   - "&c&lDonate-&a&lCase &7- &a%keys_case% &7keys"
-PlayerKeys:
+player-keys:
   - "&7%player keys:"
   - "&c&lDonate-&a&lCase &7- &a%keys_case% &7keys"

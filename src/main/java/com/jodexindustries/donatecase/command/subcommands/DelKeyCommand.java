@@ -22,11 +22,10 @@ public class DelKeyCommand implements SubCommand {
                 if (!Case.getInstance().sql) {
                     Case.getCustomConfig().getKeys().set("DonatCase.Cases", null);
                     Case.getCustomConfig().saveKeys();
-                    Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("ClearAllKeys")));
                 } else {
                     Case.getInstance().mysql.delAllKey();
-                    Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("ClearAllKeys")));
                 }
+                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("all-keys-cleared")));
             }
         } else {
             String player = args[0];
@@ -37,9 +36,9 @@ public class DelKeyCommand implements SubCommand {
                 String caseTitle = data.getCaseTitle();
                 String caseDisplayName = data.getCaseDisplayName();
                 Case.setNullKeys(caseName, player);
-                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("ClearKeys"), "%player:" + player, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
+                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("keys-cleared"), "%player:" + player, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
             } else {
-                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("CaseNotExist"), "%case:" + caseName));
+                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
             }
         }
     }

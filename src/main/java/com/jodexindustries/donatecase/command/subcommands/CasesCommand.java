@@ -21,7 +21,7 @@ public class CasesCommand implements SubCommand {
             String caseTitle = data.getCaseTitle();
             String caseDisplayName = data.getCaseDisplayName();
 
-            Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("CasesList"), "%casename:" + caseName, "%num:" + num, "%casedisplayname:" + caseDisplayName, "%casetitle:" + caseTitle ));
+            Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("list-of-cases"), "%casename:" + caseName, "%num:" + num, "%casedisplayname:" + caseDisplayName, "%casetitle:" + caseTitle ));
         }
     }
 

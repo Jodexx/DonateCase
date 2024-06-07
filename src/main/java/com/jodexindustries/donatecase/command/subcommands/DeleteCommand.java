@@ -23,9 +23,9 @@ public class DeleteCommand implements SubCommand {
                 if (Case.hasCaseByLocation(l)) {
                     Case.deleteCaseByLocation(l);
                     if(CaseManager.getHologramManager() != null) CaseManager.getHologramManager().removeHologram(l.getBlock());
-                    Tools.msg(sender, Case.getCustomConfig().getLang().getString("RemoveDonatCase"));
+                    Tools.msg(sender, Case.getCustomConfig().getLang().getString("case-removed"));
                 } else {
-                    Tools.msg(sender, Case.getCustomConfig().getLang().getString("BlockDontDonatCase"));
+                    Tools.msg(sender, Case.getCustomConfig().getLang().getString("block-is-not-case"));
                 }
             }
         } else if (args.length == 1) {
@@ -34,9 +34,9 @@ public class DeleteCommand implements SubCommand {
                 Location location = Case.getCaseLocationByCustomName(name);
                 if(CaseManager.getHologramManager() != null) if(location != null) CaseManager.getHologramManager().removeHologram(location.getBlock());
                 Case.deleteCaseByName(name);
-                Tools.msg(sender, Case.getCustomConfig().getLang().getString("RemoveDonatCase"));
+                Tools.msg(sender, Case.getCustomConfig().getLang().getString("case-removed"));
             } else {
-                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("CaseNotExist"), "%case:" + name));
+                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("case-does-not-exist"), "%case:" + name));
             }
         }
     }

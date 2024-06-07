@@ -21,7 +21,7 @@ public class KeysCommand implements SubCommand {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (sender.hasPermission("donatecase.player")) {
-                    for (String string : Case.getCustomConfig().getLang().getStringList("MyKeys")) {
+                    for (String string : Case.getCustomConfig().getLang().getStringList("my-keys")) {
                         if(Case.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                             string = PAPISupport.setPlaceholders(player, string);
                         }
@@ -45,7 +45,7 @@ public class KeysCommand implements SubCommand {
             if (sender.hasPermission("donatecase.mod")) {
                 String target = args[0];
                 //Get player keys
-                for (String string : Case.getCustomConfig().getLang().getStringList("PlayerKeys")) {
+                for (String string : Case.getCustomConfig().getLang().getStringList("player-keys")) {
                     if(Case.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                         Player targetPlayer = Bukkit.getPlayerExact(target);
                         if(targetPlayer != null) {
@@ -68,7 +68,7 @@ public class KeysCommand implements SubCommand {
                             .replace("%"+placeholder+"%", result));
                 }
             } else {
-                Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("NoPermission")));
+                Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("no-permission")));
             }
         }
     }
