@@ -18,12 +18,12 @@ public class SetKeyCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (args.length >= 3) {
-            String player = args[1];
-            String caseName = args[2];
+            String player = args[0];
+            String caseName = args[1];
             Player target = Bukkit.getPlayer(player);
             int keys;
             try {
-                keys = Integer.parseInt(args[3]);
+                keys = Integer.parseInt(args[2]);
             } catch (NumberFormatException e) {
                 Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("number-format-exception"), "%string:" + args[3]));
                 return;
