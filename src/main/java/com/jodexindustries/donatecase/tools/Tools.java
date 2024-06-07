@@ -305,16 +305,16 @@ public class Tools {
         config.set("help", help);
 
         String helpAddonsFormatAddonName = config.getString("HelpAddons.Format.AddonName");
-        config.set("HelpAddons.Format.AddonName", null);
         config.set("help-addons.format.name", helpAddonsFormatAddonName);
 
         String helpAddonsFormatAddonDescription = config.getString("HelpAddons.Format.AddonDescription");
-        config.set("HelpAddons.Format.AddonDescription", null);
         config.set("help-addons.format.description", helpAddonsFormatAddonDescription);
 
         String helpAddonsFormatAddonCommand = config.getString("HelpAddons.Format.AddonCommand");
-        config.set("HelpAddons.Format.AddonCommand", null);
         config.set("help-addons.format.command", helpAddonsFormatAddonCommand);
+
+        config.set("HelpAddons", null);
+
 
         List<String> helpPlayer = config.getStringList("HelpPlayer");
         config.set("HelpPlayer", null);
@@ -328,12 +328,7 @@ public class Tools {
         config.set("PlayerKeys", null);
         config.set("player-keys", playerKeys);
 
-        try {
-            config.save(config.getName());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        Case.getCustomConfig().saveLang();
     }
 
 
