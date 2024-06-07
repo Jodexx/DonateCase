@@ -161,12 +161,13 @@ public class AddonManager {
      * Unload addon by name
      * @param addon addon name
      */
-    public void unloadAddon(@NotNull String addon) {
+    public boolean unloadAddon(@NotNull String addon) {
         InternalJavaAddon javaInternalAddon = addons.get(addon);
         if(javaInternalAddon == null) {
             Case.getInstance().getLogger().warning("Addon " + addon + " already unloaded!");
+            return false;
         } else {
-            unloadAddon(javaInternalAddon);
+            return unloadAddon(javaInternalAddon);
         }
     }
 
@@ -174,14 +175,16 @@ public class AddonManager {
      * Unload addon by instance
      * @param addon addon instance
      */
-    public void unloadAddon(@NotNull InternalJavaAddon addon) {
+    public boolean unloadAddon(@NotNull InternalJavaAddon addon) {
         try {
             disableAddon(addon);
             addons.remove(addon.getName());
+            return true;
         } catch (Throwable e) {
             e.printStackTrace();
         }
         closeClassLoader(addon.getUrlClassLoader());
+        return false;
     }
 
     /**
@@ -198,11 +201,13 @@ public class AddonManager {
         return addons.values();
     }
 
-    private void closeClassLoader(URLClassLoader loader) {
+    private boolean closeClassLoader(URLClassLoader loader) {
         try {
             loader.close();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 }
