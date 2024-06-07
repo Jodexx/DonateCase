@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddon;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
+import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Nullable;
@@ -99,7 +100,7 @@ public class AddonManager {
      * Enable addon by name
      * @param addon addon name
      */
-    public void enableAddon(String addon) {
+    public void enableAddon(@NotNull String addon) {
         InternalJavaAddon javaInternalAddon = addons.get(addon);
         enableAddon(javaInternalAddon);
     }
@@ -108,7 +109,7 @@ public class AddonManager {
      * Enable addon by instance
      * @param addon addon instance
      */
-    public void enableAddon(InternalJavaAddon addon) {
+    public void enableAddon(@NotNull InternalJavaAddon addon) {
         if(!addon.isEnabled()) {
             Case.getInstance().getLogger().info("Enabling " + addon.getName() + " addon v" + addon.getVersion());
             addon.setEnabled(true);
@@ -121,7 +122,7 @@ public class AddonManager {
      * Disable addon by name
      * @param addon addon name
      */
-    public void disableAddon(String addon) {
+    public void disableAddon(@NotNull String addon) {
         InternalJavaAddon javaInternalAddon = addons.get(addon);
         disableAddon(javaInternalAddon);
     }
@@ -130,7 +131,7 @@ public class AddonManager {
      * Disable addon by instance
      * @param addon addon instance
      */
-    public void disableAddon(InternalJavaAddon addon) {
+    public void disableAddon(@NotNull InternalJavaAddon addon) {
         if(addon.isEnabled()) {
             Case.getInstance().getLogger().info("Disabling " + addon.getName() + " addon v" + addon.getVersion());
             addon.setEnabled(false);
@@ -154,7 +155,7 @@ public class AddonManager {
      * Unload addon by name
      * @param addon addon name
      */
-    public void unloadAddon(String addon) {
+    public void unloadAddon(@NotNull String addon) {
         InternalJavaAddon javaInternalAddon = addons.get(addon);
         if(javaInternalAddon == null) {
             Case.getInstance().getLogger().warning("Addon " + addon + " already unloaded!");
@@ -167,16 +168,14 @@ public class AddonManager {
      * Unload addon by instance
      * @param addon addon instance
      */
-    public void unloadAddon(InternalJavaAddon addon) {
-        if(addon != null) {
-            try {
-                disableAddon(addon);
-                addons.remove(addon.getName());
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-            closeClassLoader(addon.getUrlClassLoader());
+    public void unloadAddon(@NotNull InternalJavaAddon addon) {
+        try {
+            disableAddon(addon);
+            addons.remove(addon.getName());
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
+        closeClassLoader(addon.getUrlClassLoader());
     }
 
     /**
