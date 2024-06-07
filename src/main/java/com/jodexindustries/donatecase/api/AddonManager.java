@@ -14,10 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -194,6 +191,10 @@ public class AddonManager {
     @Nullable
     public InternalAddon getAddon(String addon) {
         return addons.get(addon);
+    }
+
+    public Collection<InternalJavaAddon> getAddons() {
+        return addons.values();
     }
 
     private void closeClassLoader(URLClassLoader loader) {
