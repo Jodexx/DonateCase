@@ -41,16 +41,6 @@ public class CaseGui {
                     for (String item : items.getKeys(false)) {
                         String material = configCase.getString("case.Gui.Items." + item + ".Material", "STONE");
                         String displayName = configCase.getString("case.Gui.Items." + item + ".DisplayName", "None");
-                        int keys;
-                        String placeholder = Tools.getLocalPlaceholder(displayName);
-                        if (placeholder.startsWith("keys_")) {
-                            String[] parts = placeholder.split("_");
-                            String caseName = parts[1];
-                            keys = Case.getKeys(caseName, p.getName());
-                        } else {
-                            keys = Case.getKeys(c, p.getName());
-                        }
-                        displayName = displayName.replace("%" + placeholder + "%", String.valueOf(keys));
                         if (Case.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                             displayName = PAPISupport.setPlaceholders(p, displayName);
                         }
@@ -164,17 +154,20 @@ public class CaseGui {
         return inventory;
     }
     private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, boolean enchanted, String[] rgb, int modelData) {
-        int keys = Case.getKeys(c, p.getName());
         List<String> newLore = new ArrayList<>();
         if(lore != null) {
             for (String string : lore) {
                 String placeholder = Tools.getLocalPlaceholder(string);
-                if (placeholder.startsWith("keys_")) {
-                    String[] parts = placeholder.split("_");
-                    String caseName = parts[1];
-                    keys = Case.getKeys(caseName, p.getName());
+                if (placeholder.startsWith("keys")) {
+                    String caseName = c;
+                    if(placeholder.startsWith("keys_")) {
+                        String[] parts = placeholder.split("_");
+                        if(parts.length >= 2) {
+                            caseName = parts[1];
+                        }
+                    }
+                    newLore.add(string.replace("%" + placeholder + "%", String.valueOf(Case.getKeys(caseName, p.getName()))));
                 }
-                newLore.add(string.replace("%" + placeholder + "%", String.valueOf(keys)));
             }
         }
         MaterialType materialType = Tools.getMaterialType(material);
