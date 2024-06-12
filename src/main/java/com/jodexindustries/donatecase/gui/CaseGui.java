@@ -155,67 +155,48 @@ public class CaseGui {
     }
     private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, boolean enchanted, String[] rgb, int modelData) {
         List<String> newLore = new ArrayList<>();
-        if(lore != null) {
+        if (lore != null) {
             for (String string : lore) {
                 String placeholder = Tools.getLocalPlaceholder(string);
                 if (placeholder.startsWith("keys")) {
                     String caseName = c;
-                    if(placeholder.startsWith("keys_")) {
+                    if (placeholder.startsWith("keys_")) {
                         String[] parts = placeholder.split("_");
-                        if(parts.length >= 2) {
+                        if (parts.length >= 2) {
                             caseName = parts[1];
                         }
                     }
                     newLore.add(string.replace("%" + placeholder + "%", String.valueOf(Case.getKeys(caseName, p.getName()))));
+                } else {
+                    newLore.add(string);
                 }
             }
         }
-        MaterialType materialType = Tools.getMaterialType(material);
-        Material itemMaterial;
-        ItemStack item;
-        if(!material.contains(":")) {
-            itemMaterial = Material.getMaterial(material);
-            if (itemMaterial == null) {
-                Case.getInstance().getLogger().warning("Material \"" + material + "\" not found! Case: " + c);
-                itemMaterial = Material.STONE;
-            }
-            item = Tools.createItem(itemMaterial, -1, 1, displayName, Tools.rt(newLore,"%case%:" + c), enchanted, rgb, modelData);
-        } else
-        if(materialType == MaterialType.HEAD) {
-            String[] parts = material.split(":");
-            item = Tools.getPlayerHead(parts[1], displayName, Tools.rt(newLore,"%case%:" + c));
-        } else
-        if(materialType == MaterialType.HDB) {
-            String[] parts = material.split(":");
-            String id = parts[1];
-            item = HeadDatabaseSupport.getSkull(id, displayName, Tools.rt(newLore, "%case%:" + c));
-        } else
-        if(materialType == MaterialType.CH) {
-            String[] parts = material.split(":");
-            String category = parts[1];
-            String id = parts[2];
-            item = CustomHeadSupport.getSkull(category, id, displayName, Tools.rt(newLore, "%case%:" + c));
-        } else if (materialType == MaterialType.IA) {
-            String[] parts = material.split(":");
-            String namespace = parts[1];
-            String id = parts[2];
-            item = ItemsAdderSupport.getItem(namespace + ":" + id, displayName, Tools.rt(newLore, "%case%:" + c));
-        } else if (materialType == MaterialType.BASE64) {
-            String[] parts = material.split(":");
-            String base64 = parts[1];
-            item = Tools.getBASE64Skull(base64, displayName, Tools.rt(newLore,"%case%:" + c));
-        } else {
-            String[] parts = material.split(":");
-            byte data = -1;
-            if(parts[1] != null) {
-                data = Byte.parseByte(parts[1]);
-            }
-            itemMaterial = Material.getMaterial(parts[0]);
-            if (itemMaterial == null) {
-                itemMaterial = Material.STONE;
-            }
-            item = Tools.createItem(itemMaterial, data, 1, displayName, Tools.rt(newLore,"%case%:" + c), enchanted, null, -1);
+
+        String[] materialParts = material.split(":");
+        MaterialType materialType = Tools.getMaterialType(materialParts[0]);
+        Material itemMaterial = Material.getMaterial(materialParts[0]);
+
+        if (itemMaterial == null) {
+            Case.getInstance().getLogger().warning("Material \"" + material + "\" not found! Case: " + c);
+            itemMaterial = Material.STONE;
         }
-        return item;
+
+        switch (materialType) {
+            case HEAD:
+                return Tools.getPlayerHead(materialParts[1], displayName, Tools.rt(newLore, "%case%:" + c));
+            case HDB:
+                return HeadDatabaseSupport.getSkull(materialParts[1], displayName, Tools.rt(newLore, "%case%:" + c));
+            case CH:
+                return CustomHeadSupport.getSkull(materialParts[1], materialParts[2], displayName, Tools.rt(newLore, "%case%:" + c));
+            case IA:
+                return ItemsAdderSupport.getItem(materialParts[1] + ":" + materialParts[2], displayName, Tools.rt(newLore, "%case%:" + c));
+            case BASE64:
+                return Tools.getBASE64Skull(materialParts[1], displayName, Tools.rt(newLore, "%case%:" + c));
+            default:
+                byte data = (materialParts.length > 1) ? Byte.parseByte(materialParts[1]) : -1;
+                return Tools.createItem(itemMaterial, data, 1, displayName, Tools.rt(newLore, "%case%:" + c), enchanted, rgb, modelData);
+        }
     }
+
 }
