@@ -8,7 +8,7 @@ import org.bukkit.plugin.Plugin;
 
 
 /**
- * The main class for API interaction with DonateCase, this is where most of the functions are located.
+ * Class for getting all DonateCase managers
  */
 public class CaseManager {
     private final AddonManager addonManager;
