@@ -103,6 +103,7 @@ public class Tools {
         }
     }
 
+    @NotNull
     public static String rc(String t) {
         if(t != null) {
             return hex(t);
@@ -111,6 +112,7 @@ public class Tools {
         }
     }
 
+    @NotNull
     public static String rt(String text, String... repl) {
         for (String s : repl) {
             if(s != null) {
@@ -606,6 +608,8 @@ public class Tools {
         }
         return slots;
     }
+
+    @NotNull
     public static Map<List<Integer>, String> getOpenMaterialItemsBySlots(String c) {
         Map<List<Integer>, String> map = new HashMap<>();
         ConfigurationSection section = Case.getCasesConfig().getCase(c).getConfigurationSection("case.Gui.Items");
@@ -659,6 +663,7 @@ public class Tools {
         }
         return Integer.parseInt(builder.toString());
     }
+
     public static boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
         for (String addon : addonsMap.keySet()) {
             List<Map<String, SubCommand>> commands = addonsMap.get(addon);

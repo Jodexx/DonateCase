@@ -113,6 +113,7 @@ public class CaseData implements Cloneable {
      * Get animation
      * @return animation
      */
+    @NotNull
     public String getAnimation() {
         return animation;
     }
@@ -159,6 +160,7 @@ public class CaseData implements Cloneable {
      * @return case type
      * @since 2.2.1.8
      */
+    @NotNull
     public String getCaseType() {
         return caseType;
     }

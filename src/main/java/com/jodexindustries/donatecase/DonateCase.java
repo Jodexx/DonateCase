@@ -82,6 +82,7 @@ public class DonateCase extends JavaPlugin {
         registerDefaultAnimations();
 
         loadHologramManager();
+
         loadHolograms();
 
         loadPlaceholderAPI();
@@ -276,14 +277,15 @@ public class DonateCase extends JavaPlugin {
     private void loadCases() {
         Case.caseData.clear();
         int count = 0;
-        for (String caseName : casesConfig.getCases().keySet()) {
-            YamlConfiguration config = casesConfig.getCase(caseName);
+        for (String caseType : casesConfig.getCases().keySet()) {
+            YamlConfiguration config = casesConfig.getCase(caseType);
             ConfigurationSection caseSection = config.getConfigurationSection("case");
             if(caseSection == null) {
-                getLogger().warning("Case " + caseName + " has a broken case section, skipped.");
+                getLogger().warning("Case " + caseType + " has a broken case section, skipped.");
                 continue;
             }
             String caseTitle = Tools.rc(caseSection.getString("Title"));
+            caseTitle = caseTitle == null ? "" : Tools.rc(caseTitle);
             String caseDisplayName = caseSection.getString("DisplayName");
             caseDisplayName = caseDisplayName == null ? "" : Tools.rc(caseDisplayName);
             String animationName = caseSection.getString("Animation");
@@ -291,8 +293,11 @@ public class DonateCase extends JavaPlugin {
             String animationSound = caseSection.getString("AnimationSound", "NULL").toUpperCase();
             float volume = (float) caseSection.getDouble("Sound.Volume");
             float pitch = (float) caseSection.getDouble("Sound.Pitch");
-            Sound bukkitSound = Sound.valueOf(animationSound);
-            CaseData.AnimationSound sound = new CaseData.AnimationSound(bukkitSound,volume, pitch);
+
+            Sound bukkitSound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+            try {bukkitSound = Sound.valueOf(animationSound);} catch (IllegalArgumentException ignored) {}
+
+            CaseData.AnimationSound sound = new CaseData.AnimationSound(bukkitSound, volume, pitch);
 
             boolean hologramEnabled = caseSection.getBoolean("Hologram.Toggle");
             double hologramHeight = caseSection.getDouble("Hologram.Height");
@@ -306,7 +311,7 @@ public class DonateCase extends JavaPlugin {
                 for (String item : itemsSection.getKeys(false)) {
                     ConfigurationSection itemSection = itemsSection.getConfigurationSection(item);
                     if(itemSection == null) {
-                        getLogger().warning("Case " + caseName + " has a broken item " + item + " section, skipped.");
+                        getLogger().warning("Case " + caseType + " has a broken item " + item + " section, skipped.");
                         continue;
                     }
                     String group = itemSection.getString("Group", "");
@@ -353,21 +358,21 @@ public class DonateCase extends JavaPlugin {
                     items.put(item, caseItem);
                 }
             } else {
-                getLogger().warning("Case " + caseName + " has a broken case.Items section");
+                getLogger().warning("Case " + caseType + " has a broken case.Items section");
             }
             CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
             if(!sql) {
                 ConfigurationSection dataSection = customConfig.getData().getConfigurationSection("Data");
                 if (dataSection != null) {
 
-                    ConfigurationSection caseDatasSection = dataSection.getConfigurationSection(caseName);
+                    ConfigurationSection caseDatasSection = dataSection.getConfigurationSection(caseType);
                     if (caseDatasSection != null) {
                         for (String i : caseDatasSection.getKeys(false)) {
                             ConfigurationSection caseDataSection = caseDatasSection.getConfigurationSection(i);
                             if (caseDataSection == null) continue;
                             CaseData.HistoryData data = new CaseData.HistoryData(
                                     caseDataSection.getString("Item"),
-                                    caseName,
+                                    caseType,
                                     caseDataSection.getString("Player"),
                                     caseDataSection.getLong("Time"),
                                     caseDataSection.getString("Group"),
@@ -387,8 +392,8 @@ public class DonateCase extends JavaPlugin {
                 }
             }
 
-            CaseData caseData = new CaseData(caseName, caseDisplayName, caseTitle,animationName, sound, items, historyData, hologram, levelGroups);
-            Case.caseData.put(caseName, caseData);
+            CaseData caseData = new CaseData(caseType, caseDisplayName, caseTitle, animationName, sound, items, historyData, hologram, levelGroups);
+            Case.caseData.put(caseType, caseData);
             count++;
         }
         Logger.log("&aLoaded &c" + count + " &acases!");
