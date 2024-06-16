@@ -11,10 +11,15 @@ import java.util.UUID;
 
 public interface Animation {
     /**
+     * @deprecated This is not used anymore!!!
      * Get animation name
+     *
      * @return animation name
      */
-    String getName();
+    @Deprecated
+    default String getName() {
+        return null;
+    }
 
     /**
      * Method to start animation
@@ -22,8 +27,8 @@ public interface Animation {
      * @param player   Player who opened case
      * @param uuid Active case uuid
      * @param location Case location
-     * @param c        Case name
+     * @param caseData        Case name
      * @param winItem  winItem
      */
-    void start(Player player, Location location, UUID uuid, CaseData c, CaseData.Item winItem);
+    void start(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem);
 }
