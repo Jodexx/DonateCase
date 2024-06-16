@@ -2,8 +2,8 @@ package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.PlayerOpenCase;
 import com.jodexindustries.donatecase.api.events.*;
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
@@ -45,7 +45,6 @@ public class EventsListener implements Listener {
                     if (Tools.getPluginVersion(Case.getInstance().getDescription().getVersion()) < Tools.getPluginVersion(version)) {
                         Tools.msg(p, Tools.rt(Case.getCustomConfig().getLang().getString("new-update"), "%version:" + version));
                     }
-
                 });
             }
         }
@@ -56,32 +55,36 @@ public class EventsListener implements Listener {
         Player p = (Player) e.getWhoClicked();
         String playerName = p.getName();
         if (Case.playersGui.containsKey(p.getUniqueId())) {
-            String caseType = Case.playersGui.get(p.getUniqueId()).getCaseType();
+            PlayerOpenCase playerOpenCase = Case.playersGui.get(p.getUniqueId());
+            String caseType = playerOpenCase.getCaseType();
             e.setCancelled(true);
-//            if (e.getCurrentItem() == null) return;
             boolean isOpenItem = Tools.getOpenMaterialSlots(caseType).contains(e.getRawSlot());
-            Location location = Case.playersGui.get(p.getUniqueId()).getLocation();
+            Location location = playerOpenCase.getLocation();
             CaseGuiClickEvent caseGuiClickEvent = new CaseGuiClickEvent(e.getView(), e.getSlotType(), e.getSlot(), e.getClick(), e.getAction(), location, caseType, isOpenItem);
             Bukkit.getServer().getPluginManager().callEvent(caseGuiClickEvent);
             if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && isOpenItem) {
-                caseType = Tools.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
+                String openMaterialType = Tools.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
+                if(openMaterialType != null) caseType = openMaterialType;
+
                 if (Case.hasCaseByType(caseType)) {
                     PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, location.getBlock());
                     Bukkit.getServer().getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
                         if (Case.getKeys(caseType, playerName) >= 1) {
                             Case.removeKeys(caseType, playerName, 1);
-                            Case.getInstance().api.getAnimationManager().startAnimation(p, location, caseType);
+
                             OpenCaseEvent openEvent = new OpenCaseEvent(p, caseType, location.getBlock());
                             Bukkit.getServer().getPluginManager().callEvent(openEvent);
+
                             p.closeInventory();
+
+                            Case.getInstance().api.getAnimationManager().startAnimation(p, location, caseType);
                         } else {
                             p.closeInventory();
-                            Sound sound = null;
+                            Sound sound = Sound.ENTITY_ENDERMAN_TELEPORT;
                             try {
                                 sound = Sound.valueOf(Case.getCustomConfig().getConfig().getString("DonatCase.NoKeyWarningSound"));
                             } catch (IllegalArgumentException ignore) {}
-                            if (sound == null) sound = Sound.valueOf("ENTITY_ENDERMEN_TELEPORT");
                             p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
                             String noKey = Case.getCasesConfig().getCase(caseType).getString("Messages.NoKey");
                             if (noKey == null) noKey = Case.getCustomConfig().getLang().getString("no-keys");
