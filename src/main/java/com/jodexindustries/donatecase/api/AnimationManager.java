@@ -37,7 +37,7 @@ public class AnimationManager {
             registeredAnimations.put(name, animation);
             String animationPluginName = addon.getName();
             boolean isDefault = false;
-            AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(animation.getName(), animation, animationPluginName, isDefault);
+            AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(name, animation, animationPluginName, isDefault);
             Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
         } else {
             Case.getInstance().getLogger().warning("Animation with name " + name + " already registered!");
