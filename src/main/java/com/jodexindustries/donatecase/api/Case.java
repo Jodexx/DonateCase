@@ -308,11 +308,10 @@ public class Case{
      * Animation end method for custom animations is called to completely end the animation
      * @param item Item data
      * @param c Case data
-     * @param animation Animation name
      * @param player Player who opened
      * @param uuid Active case uuid
      */
-    public static void animationEnd(CaseData c, String animation, Player player, UUID uuid, CaseData.Item item) {
+    public static void animationEnd(CaseData c, Player player, UUID uuid, CaseData.Item item) {
         ActiveCase activeCase = activeCases.get(uuid);
         Location location = activeCase.getLocation();
         activeCasesByLocation.remove(location.getBlock().getLocation());
@@ -320,18 +319,18 @@ public class Case{
         if(CaseManager.getHologramManager() != null && c.getHologram().isEnabled()) {
             CaseManager.getHologramManager().createHologram(location.getBlock(), c);
         }
-        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, animation, c, location, item);
+        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, c.getAnimation(), c, location, item);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
     }
 
     /**
-     * Case open finish method for custom animations is called to grant a group, send a message, and more
+     * Animation pre end method for custom animations is called to grant a group, send a message, and more
      * @param caseData Case data
      * @param player Player who opened
      * @param needSound Boolean sound
      * @param item Win item data
      */
-    public static void onCaseOpenFinish(CaseData caseData, Player player, boolean needSound, CaseData.Item item) {
+    public static void animationPreEnd(CaseData caseData, Player player, boolean needSound, CaseData.Item item) {
         String choice = "";
         Map<String, Integer> levelGroups = getDefaultLevelGroup();
         if(!caseData.getLevelGroups().isEmpty()) levelGroups = caseData.getLevelGroups();
