@@ -1,3 +1,3 @@
 name: TestAddon
-main: com.jodexindustries.testaddon.Main
+main: com.jodexindustries.testaddon.MainAddon
 version: 1.0

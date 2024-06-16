@@ -17,7 +17,7 @@ public class TestAnimation implements Animation {
 
     @Override
     public void start(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item item) {
-        Case.onCaseOpenFinish(caseData, player, true, item);
-        Bukkit.getScheduler().runTaskLater(Case.getInstance(), () -> Case.animationEnd(caseData, getName(), player, uuid, item),20L);
+        Case.animationPreEnd(caseData, player, true, item);
+        Bukkit.getScheduler().runTaskLater(Case.getInstance(), () -> Case.animationEnd(caseData, player, uuid, item),20L);
     }
 }
