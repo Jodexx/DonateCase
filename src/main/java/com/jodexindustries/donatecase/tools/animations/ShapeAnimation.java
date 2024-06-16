@@ -80,7 +80,7 @@ public class ShapeAnimation implements Animation {
                         as.setPose(armorStandEulerAngle);
                         as.setCustomName(winItem.getMaterial().getDisplayName());
                         Tools.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
-                        Case.onCaseOpenFinish(c, player, true, winItem);
+                        Case.animationPreEnd(c, player, true, winItem);
 
                     }
                 }
@@ -138,7 +138,7 @@ public class ShapeAnimation implements Animation {
                 if (this.i >= 40) {
                     as.remove();
                     this.cancel();
-                    Case.animationEnd(c, getName(), player, uuid, winItem);
+                    Case.animationEnd(c, player, uuid, winItem);
                 }
 
                 ++this.i;

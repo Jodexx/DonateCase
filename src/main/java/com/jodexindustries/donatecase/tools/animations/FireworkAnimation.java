@@ -75,12 +75,12 @@ public class FireworkAnimation implements Animation {
                         }
                         as.setPose(armorStandEulerAngle);
                         as.setCustomName(displayName);
-                        Case.onCaseOpenFinish(c, player, true, winItem);
+                        Case.animationPreEnd(c, player, true, winItem);
                     }
                     if (this.i >= 30) {
                         as.remove();
                         this.cancel();
-                        Case.animationEnd(c, getName(), player, uuid, winItem);
+                        Case.animationEnd(c, player, uuid, winItem);
                     }
                 }
 

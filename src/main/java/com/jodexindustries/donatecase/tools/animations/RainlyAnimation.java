@@ -84,7 +84,7 @@ public class RainlyAnimation implements Animation {
                         }
                         as.setPose(armorStandEulerAngle);
                         as.setCustomName(winGroupDisplayName);
-                        Case.onCaseOpenFinish(c, player, false, winItem);
+                        Case.animationPreEnd(c, player, false, winItem);
                         loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 0);
                         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                     }
@@ -122,7 +122,7 @@ public class RainlyAnimation implements Animation {
                 if (this.i >= 70) {
                     as.remove();
                     this.cancel();
-                    Case.animationEnd(c, getName(), player, uuid, winItem);
+                    Case.animationEnd(c, player, uuid, winItem);
                 }
 
                 ++this.i;

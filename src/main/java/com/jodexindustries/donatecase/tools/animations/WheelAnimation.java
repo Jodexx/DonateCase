@@ -111,7 +111,7 @@ public class WheelAnimation implements Animation {
                 }
             }
             if (ticks.get() == animationTime + 1) {
-                Case.onCaseOpenFinish(c, player, true, winItem);
+                Case.animationPreEnd(c, player, true, winItem);
             }
             // End
             if (ticks.get() >= animationTime + 20) {
@@ -119,7 +119,7 @@ public class WheelAnimation implements Animation {
                 for (ArmorStandCreator stand : armorStands) {
                     stand.remove();
                 }
-                Case.animationEnd(c, getName(), player, uuid, winItem);
+                Case.animationEnd(c, player, uuid, winItem);
                 items.clear();
                 armorStands.clear();
             }
