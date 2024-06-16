@@ -307,19 +307,19 @@ public class Case{
     /**
      * Animation end method for custom animations is called to completely end the animation
      * @param item Item data
-     * @param c Case data
+     * @param caseData Case data
      * @param player Player who opened
      * @param uuid Active case uuid
      */
-    public static void animationEnd(CaseData c, Player player, UUID uuid, CaseData.Item item) {
+    public static void animationEnd(CaseData caseData, Player player, UUID uuid, CaseData.Item item) {
         ActiveCase activeCase = activeCases.get(uuid);
         Location location = activeCase.getLocation();
         activeCasesByLocation.remove(location.getBlock().getLocation());
         activeCases.remove(uuid);
-        if(CaseManager.getHologramManager() != null && c.getHologram().isEnabled()) {
-            CaseManager.getHologramManager().createHologram(location.getBlock(), c);
+        if(CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {
+            CaseManager.getHologramManager().createHologram(location.getBlock(), caseData);
         }
-        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, c.getAnimation(), c, location, item);
+        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, caseData.getAnimation(), caseData, location, item);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
     }
 
