@@ -22,12 +22,7 @@ public class FireworkAnimation implements Animation {
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 
-    @Override
-    public String getName() {
-        return "DEFAULT FIREWORK";
-    }
-
-    public void start(Player player, Location location, UUID uuid, CaseData c, CaseData.Item winItem) {
+    public void start(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
         String displayName = winItem.getMaterial().getDisplayName();
         winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, displayName));
         location.add(0.5, -0.1, 0.5);
@@ -75,12 +70,12 @@ public class FireworkAnimation implements Animation {
                         }
                         as.setPose(armorStandEulerAngle);
                         as.setCustomName(displayName);
-                        Case.animationPreEnd(c, player, true, winItem);
+                        Case.animationPreEnd(caseData, player, true, winItem);
                     }
                     if (this.i >= 30) {
                         as.remove();
                         this.cancel();
-                        Case.animationEnd(c, player, uuid, winItem);
+                        Case.animationEnd(caseData, player, uuid, winItem);
                     }
                 }
 

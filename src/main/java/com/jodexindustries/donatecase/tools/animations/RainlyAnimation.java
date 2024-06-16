@@ -23,13 +23,8 @@ public class RainlyAnimation implements Animation {
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 
-
     @Override
-    public String getName() {
-        return "DEFAULT RAINLY";
-    }
-    @Override
-    public void start(Player player, Location location, UUID uuid, CaseData c, CaseData.Item winItem) {
+    public void start(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
         final Location loc = location.clone();
         final String FallingParticle = Case.getCustomConfig().getAnimations().getString("Rainly.FallingParticle");
         String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
@@ -84,7 +79,7 @@ public class RainlyAnimation implements Animation {
                         }
                         as.setPose(armorStandEulerAngle);
                         as.setCustomName(winGroupDisplayName);
-                        Case.animationPreEnd(c, player, false, winItem);
+                        Case.animationPreEnd(caseData, player, false, winItem);
                         loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 0);
                         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                     }
@@ -92,7 +87,7 @@ public class RainlyAnimation implements Animation {
 
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0 )) {
-                    CaseData.Item winItem = Case.getRandomItem(c);
+                    CaseData.Item winItem = Case.getRandomItem(caseData);
                     String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
                     winItem.getMaterial().setDisplayName(winGroupDisplayName);
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
@@ -122,7 +117,7 @@ public class RainlyAnimation implements Animation {
                 if (this.i >= 70) {
                     as.remove();
                     this.cancel();
-                    Case.animationEnd(c, player, uuid, winItem);
+                    Case.animationEnd(caseData, player, uuid, winItem);
                 }
 
                 ++this.i;

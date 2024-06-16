@@ -26,12 +26,7 @@ public class FullWheelAnimation implements Animation {
 
 
     @Override
-    public String getName() {
-        return "DEFAULT FULLWHEEL";
-    }
-
-    @Override
-    public void start(Player player, Location location, UUID uuid, CaseData c, CaseData.Item winItem) {
+    public void start(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
         final Location loc = location.clone();
         float pitch = Math.round(location.getPitch() / 90.0f) * 90.0f;
         float yaw = Math.round(location.getYaw() / 90.0f) * 90.0f;
@@ -39,7 +34,7 @@ public class FullWheelAnimation implements Animation {
         loc.setYaw(yaw);
         loc.add(0.5, 0, 0.5);
         // register items
-        int itemsCount = c.getItems().size();
+        int itemsCount = caseData.getItems().size();
         int i = 1;
         String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
         winItem.getMaterial().setDisplayName(winGroupDisplayName);
@@ -67,16 +62,16 @@ public class FullWheelAnimation implements Animation {
         boolean small = Case.getCustomConfig().getAnimations().getBoolean("FullWheel.SmallArmorStand", true);
         // win group
         items.add(winItem.getItemName());
-        armorStands.add(spawnArmorStand(c, location, 0, small));
+        armorStands.add(spawnArmorStand(caseData, location, 0, small));
 
         // another groups
-        for (String itemName : c.getItems().keySet()) {
+        for (String itemName : caseData.getItems().keySet()) {
             if(itemName.equalsIgnoreCase(winItem.getItemName())) continue;
-            CaseData.Item item = c.getItem(itemName);
+            CaseData.Item item = caseData.getItem(itemName);
             String displayName = item.getMaterial().getDisplayName();
             item.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, displayName));
             items.add(itemName);
-            armorStands.add(spawnArmorStand(c, location, i, small));
+            armorStands.add(spawnArmorStand(caseData, location, i, small));
             i++;
         }
 
@@ -133,7 +128,7 @@ public class FullWheelAnimation implements Animation {
                 }
             }
             if (ticks.get() == animationTime + 1) {
-                Case.animationPreEnd(c, player, true, winItem);
+                Case.animationPreEnd(caseData, player, true, winItem);
             }
             // End
             if (ticks.get() >= animationTime + 20) {
@@ -141,7 +136,7 @@ public class FullWheelAnimation implements Animation {
                 for (ArmorStandCreator stand : armorStands) {
                     stand.remove();
                 }
-                Case.animationEnd(c, player, uuid, winItem);
+                Case.animationEnd(caseData, player, uuid, winItem);
                 items.clear();
                 armorStands.clear();
             }

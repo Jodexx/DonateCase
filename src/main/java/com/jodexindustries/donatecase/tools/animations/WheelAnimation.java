@@ -24,12 +24,7 @@ public class WheelAnimation implements Animation {
     private ArmorStandEulerAngle armorStandEulerAngle;
 
     @Override
-    public String getName() {
-        return "DEFAULT WHEEL";
-    }
-
-    @Override
-    public void start(Player player, Location location, UUID uuid, CaseData c, CaseData.Item winItem) {
+    public void start(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
         final Location loc = location.clone();
         float pitch = Math.round(location.getPitch() / 90.0f) * 90.0f;
         float yaw = Math.round(location.getYaw() / 90.0f) * 90.0f;
@@ -55,7 +50,7 @@ public class WheelAnimation implements Animation {
         // register items
         items.add(winItem);
         for (int i = 0; i < itemsCount; i++) {
-            CaseData.Item tempWinItem = Case.getRandomItem(c);
+            CaseData.Item tempWinItem = Case.getRandomItem(caseData);
             items.add(tempWinItem);
             armorStands.add(spawnArmorStand(location, i, small));
         }
@@ -111,7 +106,7 @@ public class WheelAnimation implements Animation {
                 }
             }
             if (ticks.get() == animationTime + 1) {
-                Case.animationPreEnd(c, player, true, winItem);
+                Case.animationPreEnd(caseData, player, true, winItem);
             }
             // End
             if (ticks.get() >= animationTime + 20) {
@@ -119,7 +114,7 @@ public class WheelAnimation implements Animation {
                 for (ArmorStandCreator stand : armorStands) {
                     stand.remove();
                 }
-                Case.animationEnd(c, player, uuid, winItem);
+                Case.animationEnd(caseData, player, uuid, winItem);
                 items.clear();
                 armorStands.clear();
             }

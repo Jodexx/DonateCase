@@ -21,12 +21,7 @@ public class ShapeAnimation implements Animation {
     private ArmorStandEulerAngle armorStandEulerAngle;
 
     @Override
-    public String getName() {
-        return "DEFAULT SHAPE";
-    }
-
-    @Override
-    public void start(Player player, Location location, UUID uuid, CaseData c, CaseData.Item winItem) {
+    public void start(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
         final ArmorStandCreator as = Tools.createArmorStand();
@@ -80,13 +75,13 @@ public class ShapeAnimation implements Animation {
                         as.setPose(armorStandEulerAngle);
                         as.setCustomName(winItem.getMaterial().getDisplayName());
                         Tools.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
-                        Case.animationPreEnd(c, player, true, winItem);
+                        Case.animationPreEnd(caseData, player, true, winItem);
 
                     }
                 }
 
                 if (i <= 15) {
-                    CaseData.Item winItem = Case.getRandomItem(c);
+                    CaseData.Item winItem = Case.getRandomItem(caseData);
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                         as.setPose(armorStandEulerAngle);
                         as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
@@ -138,7 +133,7 @@ public class ShapeAnimation implements Animation {
                 if (this.i >= 40) {
                     as.remove();
                     this.cancel();
-                    Case.animationEnd(c, player, uuid, winItem);
+                    Case.animationEnd(caseData, player, uuid, winItem);
                 }
 
                 ++this.i;
