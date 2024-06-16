@@ -13,6 +13,8 @@ softdepend:
   - DecentHolograms
   - CMI
   - HolographicDisplays
+  - Multiverse-Core
+  - MultiWorld
 api-version: 1.13
 commands:
   donatecase:
