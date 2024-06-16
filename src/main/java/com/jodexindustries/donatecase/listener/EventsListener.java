@@ -4,11 +4,9 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.PlayerOpenCase;
 import com.jodexindustries.donatecase.api.events.*;
-import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
@@ -107,12 +105,6 @@ public class EventsListener implements Listener {
             if (entity.hasMetadata("case")) {
                 e.setCancelled(true);
             }
-        }
-    }
-    @EventHandler
-    public void onAnimationRegistered(AnimationRegisteredEvent e) {
-        if(!e.getAnimationName().startsWith("DEFAULT")) {
-            Logger.log(ChatColor.GREEN + "Registered new animation with name: " + ChatColor.RED + e.getAnimationName() + ChatColor.GREEN + " from " + ChatColor.RED + e.getAnimationPluginName());
         }
     }
 
