@@ -284,7 +284,7 @@ public class DonateCase extends JavaPlugin {
                 getLogger().warning("Case " + caseType + " has a broken case section, skipped.");
                 continue;
             }
-            String caseTitle = Tools.rc(caseSection.getString("Title"));
+            String caseTitle = caseSection.getString("Title");
             caseTitle = caseTitle == null ? "" : Tools.rc(caseTitle);
             String caseDisplayName = caseSection.getString("DisplayName");
             caseDisplayName = caseDisplayName == null ? "" : Tools.rc(caseDisplayName);
