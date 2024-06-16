@@ -245,11 +245,12 @@ public class Case{
         return caseData.containsKey(caseType);
     }
     /**
-     * Are there cases that have been created?
+     * Is there a case with a specific custom name?
+     * <p>
+     * In other words, whether a case has been created
      * @param name Case name
-     * @return true/false
      */
-    public static boolean hasCaseTypeByCustomName(String name) {
+    public static boolean hasCaseByCustomName(String name) {
         if(getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases") == null) {
             return false;
         } else
@@ -257,9 +258,8 @@ public class Case{
     }
 
     /**
-     * Are there cases with a specific title?
+     * Is there a case with a specific title?
      * @param title Case title
-     * @return true/false
      */
     public static boolean hasCaseByTitle(String title) {
         for (CaseData data : caseData.values()) {
