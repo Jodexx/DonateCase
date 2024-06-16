@@ -25,7 +25,7 @@ public class CreateCommand implements SubCommand {
                     if (Case.hasCaseByLocation(l)) {
                         Tools.msg(sender, Case.getCustomConfig().getLang().getString("case-already-created"));
                     } else {
-                        if (!Case.hasCaseTypeByCustomName(caseName)) {
+                        if (!Case.hasCaseByCustomName(caseName)) {
                             Case.saveLocation(caseName, caseType, l);
                             Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("case-added"),
                                     "%casename:" + caseName, "%casetype:" + caseType));

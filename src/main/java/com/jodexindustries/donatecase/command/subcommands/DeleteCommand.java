@@ -30,7 +30,7 @@ public class DeleteCommand implements SubCommand {
             }
         } else if (args.length == 1) {
             String name = args[0];
-            if (Case.hasCaseTypeByCustomName(name)) {
+            if (Case.hasCaseByCustomName(name)) {
                 Location location = Case.getCaseLocationByCustomName(name);
                 if(CaseManager.getHologramManager() != null) if(location != null) CaseManager.getHologramManager().removeHologram(location.getBlock());
                 Case.deleteCaseByName(name);
