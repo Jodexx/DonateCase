@@ -480,63 +480,41 @@ public class Tools {
 
     @NotNull
     public static ItemStack getCaseItem(String displayName, String id, boolean enchanted, String[] rgb) {
-        MaterialType materialType = getMaterialType(id);
-        Material material;
+        String[] materialParts = id.split(":");
+
+        MaterialType materialType = getMaterialType(materialParts[0]);
         ItemStack winItem;
-        if (!id.contains(":")) {
-            material = Material.getMaterial(id);
-            if (material == null) {
-                material = Material.STONE;
-            }
-            if(material != Material.AIR) {
-                winItem = createItem(material, 1, -1, displayName, enchanted, rgb);
-            } else {
-                winItem = new ItemStack(Material.AIR);
-            }
-        } else {
-            if (materialType == MaterialType.HEAD) {
-                String[] parts = id.split(":");
-                winItem = getPlayerHead(parts[1], displayName, null);
-            } else if (materialType == MaterialType.HDB) {
-                String[] parts = id.split(":");
-                String skullId = parts[1];
-                winItem = HeadDatabaseSupport.getSkull(skullId, displayName, null);
-            } else if (materialType == MaterialType.CH) {
-                String[] parts = id.split(":");
-                String category = parts[1];
-                String skullId = parts[2];
-                winItem = CustomHeadSupport.getSkull(category, skullId, displayName, null);
-            } else if (materialType == MaterialType.IA) {
-                String[] parts = id.split(":");
-                String namespace = parts[1];
-                String skullId = parts[2];
-                winItem = ItemsAdderSupport.getItem(namespace + ":" + skullId, displayName, null);
-            }
-            else if (materialType == MaterialType.BASE64) {
-                String[] parts = id.split(":");
-                String base64 = parts[1];
-                winItem = getBASE64Skull(base64, displayName);
-            } else {
-                String[] parts = id.split(":");
-                byte data = -1;
-                if(parts[1] != null) {
-                    data = Byte.parseByte(parts[1]);
-                }
-                material = Material.getMaterial(parts[0]);
-                if (material == null) {
-                    material = Material.STONE;
-                }
-                winItem = createItem(material, data, 1, displayName, enchanted, rgb);
-            }
+        switch (materialType) {
+            case HEAD:
+                winItem = getPlayerHead(materialParts[1], displayName, null);
+                break;
+            case HDB:
+                winItem = HeadDatabaseSupport.getSkull(materialParts[1], displayName, null);
+                break;
+            case CH:
+                winItem = CustomHeadSupport.getSkull(materialParts[1], materialParts[2], displayName, null);
+                break;
+            case IA:
+                winItem = ItemsAdderSupport.getItem(materialParts[1] + ":" + materialParts[2], displayName, null);
+                break;
+            case BASE64:
+                winItem = getBASE64Skull(materialParts[1], displayName);
+                break;
+            default:
+                byte data = (materialParts.length > 1) ? Byte.parseByte(materialParts[1]) : -1;
+                winItem = createItem(Material.getMaterial(materialParts[0]), data, 1, displayName, enchanted, rgb);
+                break;
         }
+
         return winItem;
     }
 
     public static ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb, int modelData) {
         ItemStack item;
+        if(ma == null) return new ItemStack(Material.STONE);
         if(data == -1) {
             item = new ItemStack(ma, amount);
-        } else if (Bukkit.getVersion().contains("1.12.2")){
+        } else if (Bukkit.getVersion().contains("1.12.2")) {
             item = new ItemStack(ma, amount, (short) 1, (byte) data);
         } else {
             item = new ItemStack(ma, amount);
@@ -578,22 +556,19 @@ public class Tools {
         return item;
     }
     public static MaterialType getMaterialType(String material) {
-        if (material.contains(":")) {
-            String prefix = material.substring(0, material.indexOf(":"));
-            switch (prefix) {
-                case "HEAD":
-                    return MaterialType.HEAD;
-                case "HDB":
-                    return MaterialType.HDB;
-                case "CH":
-                    return MaterialType.CH;
-                case "BASE64":
-                    return MaterialType.BASE64;
-                case "IA":
-                    return MaterialType.IA;
-                default:
-                    break;
-            }
+        switch (material) {
+            case "HEAD":
+                return MaterialType.HEAD;
+            case "HDB":
+                return MaterialType.HDB;
+            case "CH":
+                return MaterialType.CH;
+            case "BASE64":
+                return MaterialType.BASE64;
+            case "IA":
+                return MaterialType.IA;
+            default:
+                break;
         }
         return MaterialType.DEFAULT;
     }

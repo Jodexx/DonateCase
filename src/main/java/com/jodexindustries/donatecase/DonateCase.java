@@ -348,7 +348,7 @@ public class DonateCase extends JavaPlugin {
                     }
 
                     // get material
-                    String id = itemSection.getString("Item.ID");
+                    String id = itemSection.getString("Item.ID", "STONE");
                     String itemDisplayName = Tools.rc(itemSection.getString("Item.DisplayName"));
                     boolean enchanted = itemSection.getBoolean("Item.Enchanted");
                     ItemStack itemStack = Tools.getCaseItem(itemDisplayName, id, enchanted, rgb);

@@ -175,11 +175,10 @@ public class CaseGui {
 
         String[] materialParts = material.split(":");
         MaterialType materialType = Tools.getMaterialType(materialParts[0]);
-        Material itemMaterial = Material.getMaterial(materialParts[0]);
 
-        if (itemMaterial == null) {
-            Case.getInstance().getLogger().warning("Material \"" + material + "\" not found! Case: " + c);
-            itemMaterial = Material.STONE;
+        if (materialType == null) {
+            Case.getInstance().getLogger().warning("Material \"" + materialParts[0] + "\" not found! Case: " + c);
+            return new ItemStack(Material.STONE);
         }
 
         switch (materialType) {
@@ -194,8 +193,13 @@ public class CaseGui {
             case BASE64:
                 return Tools.getBASE64Skull(materialParts[1], displayName, Tools.rt(newLore, "%case%:" + c));
             default:
-                byte data = (materialParts.length > 1) ? Byte.parseByte(materialParts[1]) : -1;
-                return Tools.createItem(itemMaterial, data, 1, displayName, Tools.rt(newLore, "%case%:" + c), enchanted, rgb, modelData);
+                byte data = -1;
+                if(materialParts.length > 1)  {
+                    try {
+                        data = Byte.parseByte(materialParts[1]);
+                    } catch (NumberFormatException ignored) {}
+                }
+                return Tools.createItem(Material.getMaterial(materialParts[0]), data, 1, displayName, Tools.rt(newLore, "%case%:" + c), enchanted, rgb, modelData);
         }
     }
 
