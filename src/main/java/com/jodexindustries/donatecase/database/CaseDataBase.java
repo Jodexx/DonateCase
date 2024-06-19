@@ -31,8 +31,7 @@ public class CaseDataBase {
             historyDataTables = DaoManager.createDao(connectionSource, CaseData.HistoryData.class);
             playerKeysTables = DaoManager.createDao(connectionSource, PlayerKeysTable.class);
         } catch (SQLException e) {
-            instance.getLogger().warning(e.getMessage());
-            Bukkit.getPluginManager().disablePlugin(instance);
+            throw new RuntimeException(e);
         }
     }
 
