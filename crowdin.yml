@@ -1,5 +1,0 @@
-files:
-  - source: /src/main/resources/resources/lang/en_US.yml
-    translation: /src/main/resources/resources/lang/%locale_with_underscore%.yml
-bundles:
-  - 2
