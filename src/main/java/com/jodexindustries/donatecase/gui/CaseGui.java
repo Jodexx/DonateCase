@@ -199,7 +199,7 @@ public class CaseGui {
                         data = Byte.parseByte(materialParts[1]);
                     } catch (NumberFormatException ignored) {}
                 }
-                return Tools.createItem(Material.getMaterial(materialParts[0]), data, 1, displayName, Tools.rt(newLore, "%case%:" + c), enchanted, rgb, modelData);
+                return Tools.createItem(Material.getMaterial(materialParts[0]), 1, data, displayName, Tools.rt(newLore, "%case%:" + c), enchanted, rgb, modelData);
         }
     }
 

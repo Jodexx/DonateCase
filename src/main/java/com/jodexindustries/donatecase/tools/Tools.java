@@ -385,7 +385,7 @@ public class Tools {
     }
 
     public static ItemStack createItem(Material ma, int amount, int data, String dn, boolean enchant, String[] rgb) {
-        return createItem(ma, data, amount, dn, null, enchant, rgb, -1);
+        return createItem(ma, amount, data, dn, null, enchant, rgb, -1);
     }
 
     public static Color parseColor(String s) {
@@ -502,14 +502,14 @@ public class Tools {
                 break;
             default:
                 byte data = (materialParts.length > 1) ? Byte.parseByte(materialParts[1]) : -1;
-                winItem = createItem(Material.getMaterial(materialParts[0]), data, 1, displayName, enchanted, rgb);
+                winItem = createItem(Material.getMaterial(materialParts[0]), 1, data, displayName, enchanted, rgb);
                 break;
         }
 
         return winItem;
     }
 
-    public static ItemStack createItem(Material ma, int data, int amount, String dn, List<String> lore, boolean enchant, String[] rgb, int modelData) {
+    public static ItemStack createItem(Material ma, int amount, int data, String dn, List<String> lore, boolean enchant, String[] rgb, int modelData) {
         ItemStack item;
         if(ma == null) return new ItemStack(Material.STONE);
         if(data == -1) {
