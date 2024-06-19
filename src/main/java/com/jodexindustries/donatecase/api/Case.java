@@ -60,17 +60,17 @@ public class Case{
      * Save case location
      * @param caseName Case name (custom)
      * @param type Case type (config)
-     * @param lv Case location
+     * @param location Case location
      */
-    public static void saveLocation(String caseName, String type, Location lv) {
-        CaseData c = getCase(type);
-        if(lv.getWorld() == null) {
+    public static void saveLocation(String caseName, String type, Location location) {
+        CaseData caseData = getCase(type);
+        if(location.getWorld() == null) {
             instance.getLogger().warning("Error with saving location: world not found!");
             return;
         }
-        if(CaseManager.getHologramManager() != null && (c != null && c.getHologram().isEnabled())) CaseManager.getHologramManager().createHologram(lv.getBlock(), c);
-        String location = lv.getWorld().getName() + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
-        getCustomConfig().getCases().set("DonatCase.Cases." + caseName + ".location", location);
+        if(CaseManager.getHologramManager() != null && (caseData != null && caseData.getHologram().isEnabled())) CaseManager.getHologramManager().createHologram(location.getBlock(), caseData);
+        String tempLocation = location.getWorld().getName() + ";" + location.getX() + ";" + location.getY() + ";" + location.getZ() + ";" + location.getPitch() + ";" + location.getYaw();
+        getCustomConfig().getCases().set("DonatCase.Cases." + caseName + ".location", tempLocation);
         getCustomConfig().getCases().set("DonatCase.Cases." + caseName + ".type", type);
         getCustomConfig().saveCases();
     }
