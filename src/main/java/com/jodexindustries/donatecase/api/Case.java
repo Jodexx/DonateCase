@@ -191,10 +191,10 @@ public class Case{
     /**
      * Get case information by location
      * @param loc Case location
-     * @param infoType Information type ("type" or "name")
+     * @param infoType Information type ("type", "name" or "location")
      * @return Case information
      */
-    private static String getCaseInfoByLocation(Location loc, String infoType) {
+    private static Object getCaseInfoByLocation(Location loc, String infoType) {
         ConfigurationSection casesSection = getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases");
         if (casesSection == null) return null;
 
@@ -210,7 +210,16 @@ public class Case{
             Location temp = new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
 
             if (temp.equals(loc)) {
-                return infoType.equals("type") ? caseSection.getString("type") : name;
+                switch (infoType) {
+                    case "type": return caseSection.getString("type");
+                    case "name": return name;
+                    case "location": {
+                        Location result = temp.clone();
+                        result.setPitch(Float.parseFloat(worldLocation[4]));
+                        result.setYaw(Float.parseFloat(worldLocation[5]));
+                        return result;
+                    }
+                }
             }
         }
         return null;
@@ -222,7 +231,7 @@ public class Case{
      * @return Case type
      */
     public static String getCaseTypeByLocation(Location loc) {
-        return getCaseInfoByLocation(loc, "type");
+        return (String) getCaseInfoByLocation(loc, "type");
     }
 
     /**
@@ -231,7 +240,16 @@ public class Case{
      * @return Case name
      */
     public static String getCaseCustomNameByLocation(Location loc) {
-        return getCaseInfoByLocation(loc, "name");
+        return (String) getCaseInfoByLocation(loc, "name");
+    }
+
+    /**
+     * Get case location (in Cases.yml) by block location
+     * @param blockLocation Block location
+     * @return case location in Cases.yml (with yaw and pitch)
+     */
+    public static Location getCaseLocationByBlockLocation(Location blockLocation) {
+        return (Location) getCaseInfoByLocation(blockLocation, "location");
     }
 
     /**
@@ -468,34 +486,6 @@ public class Case{
         }
     }
 
-
-
-    /**
-     * Get case location (in Cases.yml) by block location
-     * @param blockLocation Block location
-     * @return case location in Cases.yml (with yaw and pitch)
-     */
-    public static Location getCaseLocationByBlockLocation(Location blockLocation) {
-        ConfigurationSection casesSection = getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases");
-        if(casesSection == null) return null;
-
-        for(String name : casesSection.getValues(false).keySet()) {
-            ConfigurationSection caseSection = casesSection.getConfigurationSection(name);
-            if (caseSection == null) continue;
-            String location = caseSection.getString("location");
-            if (location == null) continue;
-            String[] worldLocation = location.split(";");
-            World world = Bukkit.getWorld(worldLocation[0]);
-            Location temp = new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
-            if (temp.equals(blockLocation)) {
-                Location result = temp.clone();
-                result.setPitch(Float.parseFloat(worldLocation[4]));
-                result.setYaw(Float.parseFloat(worldLocation[5]));
-                return result;
-            }
-        }
-        return null;
-    }
 
     /** Get plugin configuration manager
      * @return configuration manager instance
