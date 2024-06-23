@@ -22,7 +22,6 @@ import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -58,12 +57,16 @@ public class Tools {
         int maxChance = 0;
         int from = 0;
         for (String item : data.clone().getItems().keySet()) {
-            maxChance += data.clone().getItem(item).getChance();
+            CaseData.Item caseItem = data.clone().getItems().get(item);
+            if(caseItem == null) continue;
+            maxChance += caseItem.getChance();
         }
         int rand = random.nextInt(maxChance);
 
         for (String item : data.clone().getItems().keySet()) {
-            int itemChance = data.clone().getItem(item).getChance();
+            CaseData.Item caseItem = data.clone().getItems().get(item);
+            if(caseItem == null) continue;
+            int itemChance = caseItem.getChance();
             if (from <= rand && rand < from + itemChance) {
                 return data.clone().getItem(item);
             }
@@ -80,15 +83,18 @@ public class Tools {
         }
     }
 
-    public static void launchFirework(Location l) {
+    public static void launchFirework(Location location) {
         Random r = new Random();
-        Firework fw = (Firework) Objects.requireNonNull(l.getWorld()).spawnEntity(l.subtract(new Vector(0.0, 0.5, 0.0)), EntityType.FIREWORK);
-        FireworkMeta meta = fw.getFireworkMeta();
-        Color[] c = new Color[]{Color.RED, Color.AQUA, Color.GREEN, Color.ORANGE, Color.LIME, Color.BLUE, Color.MAROON, Color.WHITE};
-        meta.addEffect(FireworkEffect.builder().flicker(false).with(Type.BALL).trail(false).withColor(c[r.nextInt(c.length)], c[r.nextInt(c.length)], c[r.nextInt(c.length)]).build());
-        fw.setFireworkMeta(meta);
-        fw.setMetadata("case", new FixedMetadataValue(DonateCase.instance, "case"));
-        fw.detonate();
+        World world = location.getWorld();
+        if(world == null) return;
+
+        Firework firework = (Firework) world.spawnEntity(location.subtract(new Vector(0.0, 0.5, 0.0)), EntityType.FIREWORK);
+        FireworkMeta meta = firework.getFireworkMeta();
+        Color[] color = new Color[]{Color.RED, Color.AQUA, Color.GREEN, Color.ORANGE, Color.LIME, Color.BLUE, Color.MAROON, Color.WHITE};
+        meta.addEffect(FireworkEffect.builder().flicker(false).with(Type.BALL).trail(false).withColor(color[r.nextInt(color.length)], color[r.nextInt(color.length)], color[r.nextInt(color.length)]).build());
+        firework.setFireworkMeta(meta);
+        firework.setMetadata("case", new FixedMetadataValue(DonateCase.instance, "case"));
+        firework.detonate();
     }
 
 
@@ -391,7 +397,7 @@ public class Tools {
 
     public static Color parseColor(String s) {
 
-        Color color = null;
+        Color color;
         String[] split = s.split(" ");
         if (split.length > 2) {
             try {
@@ -403,44 +409,33 @@ public class Tools {
 
             } catch (NumberFormatException e) {
                 // Name
-                Field[] fields = Color.class.getFields();
-                for (Field field : fields) {
-                    if (Modifier.isStatic(field.getModifiers())
-                            && field.getType() == Color.class) {
-
-                        if (field.getName().equalsIgnoreCase(s)) {
-                            try {
-                                return (Color) field.get(null);
-                            } catch (IllegalArgumentException | IllegalAccessException e1) {
-                                throw new RuntimeException(e1);
-                            }
-                        }
-
-                    }
-                }
+                return getColor(s);
 
             }
         } else {
             // Name
-            Field[] fields = Color.class.getFields();
-            for (Field field : fields) {
-                if (Modifier.isStatic(field.getModifiers())
-                        && field.getType() == Color.class) {
-
-                    if (field.getName().equalsIgnoreCase(s)) {
-                        try {
-                            return (Color) field.get(null);
-                        } catch (IllegalArgumentException | IllegalAccessException e1) {
-                            throw new RuntimeException(e1);
-                        }
-                    }
-
-                }
-            }
-
+            return getColor(s);
         }
 
         return color;
+    }
+    public static Color getColor(String color) {
+        Field[] fields = Color.class.getFields();
+        for (Field field : fields) {
+            if (Modifier.isStatic(field.getModifiers())
+                    && field.getType() == Color.class) {
+
+                if (field.getName().equalsIgnoreCase(color)) {
+                    try {
+                        return (Color) field.get(null);
+                    } catch (IllegalArgumentException | IllegalAccessException e1) {
+                        throw new RuntimeException(e1);
+                    }
+                }
+
+            }
+        }
+        return null;
     }
 
     public static ItemStack getPlayerHead(String player, String displayName, List<String> lore) {
@@ -576,7 +571,9 @@ public class Tools {
 
     public static List<Integer> getOpenMaterialSlots(String c) {
         List<Integer> slots = new ArrayList<>();
-        for (String item : Case.getCasesConfig().getCase(c).getConfigurationSection("case.Gui.Items").getKeys(false)) {
+        ConfigurationSection section = Case.getCasesConfig().getCase(c).getConfigurationSection("case.Gui.Items");
+        if(section == null) return slots;
+        for (String item : section.getKeys(false)) {
             if(Case.getCasesConfig().getCase(c).getString("case.Gui.Items." + item + ".Type", "").startsWith("OPEN")) {
                 List<Integer> list = Case.getCasesConfig().getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
                 slots.addAll(list);
@@ -589,6 +586,7 @@ public class Tools {
     public static Map<List<Integer>, String> getOpenMaterialItemsBySlots(String c) {
         Map<List<Integer>, String> map = new HashMap<>();
         ConfigurationSection section = Case.getCasesConfig().getCase(c).getConfigurationSection("case.Gui.Items");
+        if(section == null) return map;
         for (String item : section.getKeys(false)) {
             String type = section.getString(item + ".Type", "");
             if(type.startsWith("OPEN")) {
