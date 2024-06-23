@@ -8,10 +8,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 public class PAPISupport {
-    private final Placeholder placeholder;
+    private Placeholder placeholder = null;
 
     public PAPISupport() {
-        this.placeholder = new Placeholder();
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            this.placeholder = new Placeholder();
+        }
     }
 
     public void register() {
