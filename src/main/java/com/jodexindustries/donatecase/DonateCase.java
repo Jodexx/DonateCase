@@ -19,6 +19,7 @@ import com.jodexindustries.donatecase.database.CaseDataBase;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
+import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
 import net.luckperms.api.LuckPerms;
@@ -48,6 +49,7 @@ public class DonateCase extends JavaPlugin {
 
     public CaseDataBase mysql;
     public HologramManager hologramManager = null;
+    public PAPISupport papi = null;
     public LuckPerms luckPerms = null;
     public Permission permission = null;
     public PermissionDriver permissionDriver = null;
@@ -104,9 +106,8 @@ public class DonateCase extends JavaPlugin {
         Bukkit.getServer().getPluginManager().callEvent(donateCaseDisableEvent);
         api.getAnimationManager().unregisterAnimations();
         if(api.getAddonManager() != null) api.getAddonManager().unloadAddons();
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            new Placeholder().unregister();
-        }
+
+        papi.unregister();
 
         if (mysql != null) {
             mysql.close();
@@ -133,10 +134,8 @@ public class DonateCase extends JavaPlugin {
         }
     }
     private void loadPlaceholderAPI() {
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            (new Placeholder()).register();
-            Logger.log("&aPlaceholders registered!");
-        }
+        papi = new PAPISupport();
+        papi.register();
     }
     private void loadUpdater() {
         if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
