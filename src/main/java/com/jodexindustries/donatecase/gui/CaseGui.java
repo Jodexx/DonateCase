@@ -129,29 +129,37 @@ public class CaseGui {
     }
 
     private List<String> getItemSlots(YamlConfiguration configCase, String item) {
-        List<String> slots = new ArrayList<>();
+        List<String> slots;
         if (configCase.isList("case.Gui.Items." + item + ".Slots")) {
-            List<String> temp = configCase.getStringList("case.Gui.Items." + item + ".Slots");
-            for (String slot : temp) {
-                String[] values = slot.split("-", 2);
-                if (values.length == 2) {
-                    for (int i = Integer.parseInt(values[0]); i <= Integer.parseInt(values[1]); i++) {
-                        slots.add(String.valueOf(i));
-                    }
-                } else {
-                    slots.add(slot);
-                }
-            }
+            slots = getItemSlotsListed(configCase, item);
         } else {
-            String[] slotArgs = configCase.getString("case.Gui.Items." + item + ".Slots", "0-0").split("-");
-            int range1 = Integer.parseInt(slotArgs[0]);
-            int range2 = range1;
-            if (slotArgs.length >= 2) {
-                range2 = Integer.parseInt(slotArgs[1]);
-            }
-            slots.addAll(IntStream.rangeClosed(range1, range2).mapToObj(String::valueOf).collect(Collectors.toList()));
+            slots = getItemSlotsRanged(configCase, item);
         }
         return slots;
+    }
+    private List<String> getItemSlotsListed(YamlConfiguration configCase, String item) {
+        List<String> slots = new ArrayList<>();
+        List<String> temp = configCase.getStringList("case.Gui.Items." + item + ".Slots");
+        for (String slot : temp) {
+            String[] values = slot.split("-", 2);
+            if (values.length == 2) {
+                for (int i = Integer.parseInt(values[0]); i <= Integer.parseInt(values[1]); i++) {
+                    slots.add(String.valueOf(i));
+                }
+            } else {
+                slots.add(slot);
+            }
+        }
+        return slots;
+    }
+    private List<String> getItemSlotsRanged(YamlConfiguration configCase, String item) {
+        String[] slotArgs = configCase.getString("case.Gui.Items." + item + ".Slots", "0-0").split("-");
+        int range1 = Integer.parseInt(slotArgs[0]);
+        int range2 = range1;
+        if (slotArgs.length >= 2) {
+            range2 = Integer.parseInt(slotArgs[1]);
+        }
+        return IntStream.rangeClosed(range1, range2).mapToObj(String::valueOf).collect(Collectors.toList());
     }
 
     public Inventory getInventory() {
