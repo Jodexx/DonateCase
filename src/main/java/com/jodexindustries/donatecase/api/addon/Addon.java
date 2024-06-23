@@ -7,11 +7,13 @@ public interface Addon {
 
     /**
      * Returns the name of the addon
+     * @return Addon name
      */
     String getName();
 
     /**
      * An addon revision identifier
+     * @return Addon version
      */
     String getVersion();
 

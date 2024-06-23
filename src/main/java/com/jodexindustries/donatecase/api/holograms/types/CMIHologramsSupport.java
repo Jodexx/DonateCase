@@ -10,6 +10,9 @@ import net.Zrips.CMILib.Container.CMILocation;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * Class for CMI Holograms implementation
+ */
 public class CMIHologramsSupport extends HologramManager {
 
     private final HashMap<Block, CMIHologram> holograms = new HashMap<>();

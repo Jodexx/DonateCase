@@ -19,6 +19,11 @@ public class DonateCaseEnableEvent extends PluginEvent {
     public HandlerList getHandlers() {
         return handlers;
     }
+
+    /**
+     * Get handlers
+     * @return handlers list
+     */
     public static HandlerList getHandlerList() {
         return handlers;
     }

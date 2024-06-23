@@ -12,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Class for CustomHeads implementation
+ */
 public class CustomHeadSupport {
     public static ItemStack getSkull(@NotNull String category, String id, String displayName, List<String> lore) {
         ItemStack item = new ItemStack(Material.STONE);

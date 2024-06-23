@@ -15,15 +15,25 @@ public class CaseManager {
     private final AnimationManager animationManager;
     private final SubCommandManager subCommandManager;
     private final Addon addon;
+
+    /**
+     * Constructor for initializing addon's CaseManager
+     * @param addon Internal addon
+     */
     public CaseManager(Addon addon) {
         this.addon = addon;
-        this.addonManager = new AddonManager();
+        this.addonManager = new AddonManager(addon);
         this.subCommandManager = new SubCommandManager(addon);
         this.animationManager = new AnimationManager(addon);
     }
+
+    /**
+     * Constructor for initializing addon's CaseManager
+     * @param plugin External addon
+     */
     public CaseManager(Plugin plugin) {
         this.addon = new ExternalJavaAddon(plugin);
-        this.addonManager = new AddonManager();
+        this.addonManager = new AddonManager(addon);
         this.subCommandManager = new SubCommandManager(addon);
         this.animationManager = new AnimationManager(addon);
     }

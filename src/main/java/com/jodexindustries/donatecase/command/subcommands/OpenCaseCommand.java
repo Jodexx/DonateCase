@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * Class for /dc opencase subcommand implementation
+ */
 public class OpenCaseCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {

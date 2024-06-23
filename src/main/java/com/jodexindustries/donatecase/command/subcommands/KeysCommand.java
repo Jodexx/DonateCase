@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class for /dc keys subcommand implementation
+ */
 public class KeysCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {

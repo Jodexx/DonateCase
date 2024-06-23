@@ -11,9 +11,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class for loading cases configurations
+ */
 public class CasesConfig {
     private final Map<String, YamlConfiguration> cases = new HashMap<>();
 
+    /**
+     * Default initialization constructor
+     */
     public CasesConfig() {
         for (File file : Tools.getCasesInFolder()) {
             if(file.getName().contains(".yml")) {

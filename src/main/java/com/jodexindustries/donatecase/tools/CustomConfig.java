@@ -7,7 +7,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
+/**
+ * Class for load all configuration files
+ */
 public class CustomConfig {
+
     private final File fileCases;
     private final File fileKeys;
     private final File fileConfig;
@@ -21,6 +25,9 @@ public class CustomConfig {
     private final YamlConfiguration animations;
     private final YamlConfiguration data;
 
+    /**
+     * Default initialization constructor
+     */
     public CustomConfig() {
         fileAnimations = new File(Case.getInstance().getDataFolder(), "Animations.yml");
         animations = YamlConfiguration.loadConfiguration(fileAnimations);
@@ -34,11 +41,10 @@ public class CustomConfig {
         data = YamlConfiguration.loadConfiguration(fileData);
 
         File path = new File(Case.getInstance().getDataFolder(), "lang");
-        File[] listFiles;
-        int length = (listFiles = path.listFiles()).length;
+        File[] listFiles = path.listFiles();
+        if(listFiles == null) return;
         String lang = getConfig().getString("DonatCase.Languages");
-        for(int i = 0; i < length; ++i) {
-            File l = listFiles[i];
+        for (File l : listFiles) {
             if (l.getName().toLowerCase().split("_")[0].equalsIgnoreCase(lang)) {
                 this.fileLang = l;
                 this.lang = YamlConfiguration.loadConfiguration(l);
@@ -47,10 +53,16 @@ public class CustomConfig {
         }
     }
 
+    /**
+     * Reload all configurations
+     */
     public void reload(){
         Case.getInstance().setupConfigs();
     }
 
+    /**
+     * Save Cases.yml configuration
+     */
     public void saveCases() {
         try {
             cases.save(fileCases);
@@ -59,6 +71,10 @@ public class CustomConfig {
         }
 
     }
+
+    /**
+     * Save Config.yml configuration
+     */
     public void saveConfig() {
         try {
             config.save(fileConfig);
@@ -67,6 +83,9 @@ public class CustomConfig {
         }
     }
 
+    /**
+     * Save Keys.yml configuration
+     */
     public void saveKeys() {
         try {
             keys.save(fileKeys);
@@ -75,6 +94,9 @@ public class CustomConfig {
         }
     }
 
+    /**
+     * Save Animations.yml configuration
+     */
     public void saveAnimations() {
         try {
             animations.save(fileAnimations);
@@ -84,6 +106,9 @@ public class CustomConfig {
 
     }
 
+    /**
+     * Save lang configuration
+     */
     public void saveLang() {
         try {
             lang.save(fileLang);
@@ -93,6 +118,9 @@ public class CustomConfig {
     }
 
 
+    /**
+     * Save Data.yml configuration
+     */
     public void saveData() {
         try {
             data.save(fileData);
@@ -102,6 +130,10 @@ public class CustomConfig {
 
     }
 
+    /**
+     * Get Casees.yml configuration
+     * @return Configuration
+     */
     public YamlConfiguration getCases() {
         if(cases == null) {
             reload();
@@ -109,6 +141,10 @@ public class CustomConfig {
         return cases;
     }
 
+    /**
+     * Get Keys.yml configuration
+     * @return Configuration
+     */
     public YamlConfiguration getKeys() {
         if(keys == null) {
             reload();
@@ -116,6 +152,10 @@ public class CustomConfig {
         return keys;
     }
 
+    /**
+     * Get Config.yml configuration
+     * @return Configuration
+     */
     public YamlConfiguration getConfig() {
         if(config == null) {
             reload();
@@ -123,12 +163,21 @@ public class CustomConfig {
         return config;
     }
 
+    /**
+     * Get Animations.yml configuration
+     * @return Configuration
+     */
     public YamlConfiguration getAnimations() {
         if(animations == null) {
             reload();
         }
         return animations;
     }
+
+    /**
+     * Get Data.yml configuration
+     * @return Configuration
+     */
     public YamlConfiguration getData() {
         if(data == null) {
             reload();
@@ -136,6 +185,10 @@ public class CustomConfig {
         return data;
     }
 
+    /**
+     * Get language configuration
+     * @return Lang configuration
+     */
     public YamlConfiguration getLang() {
         return lang;
     }

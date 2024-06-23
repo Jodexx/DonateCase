@@ -44,6 +44,10 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
+    /**
+     * Get handlers
+     * @return handlers list
+     */
     public static HandlerList getHandlerList() {
         return handlers;
     }

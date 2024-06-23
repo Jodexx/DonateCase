@@ -15,6 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class for /dc addon subcommand implementation
+ */
 public class AddonCommand implements SubCommand {
     private final AddonManager manager = Case.getInstance().api.getAddonManager();
     @Override
@@ -27,7 +30,7 @@ public class AddonCommand implements SubCommand {
                 case "enable" : {
                     if (addon != null) {
                         if (!addon.isEnabled()) {
-                            manager.enableAddon(addon);
+                            manager.enableAddon(addon, AddonManager.PowerReason.DONATE_CASE);
                             Tools.msg(sender, "&aAddon &6" + addonName + " &aenabled successfully!");
                         } else {
                             Tools.msg(sender, "&cAddon &6" + addonName + " &calready enabled!");

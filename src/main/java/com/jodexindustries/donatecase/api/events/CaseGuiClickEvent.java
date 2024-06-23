@@ -30,6 +30,10 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
         return handlers;
     }
 
+    /**
+     * Get handlers
+     * @return handlers list
+     */
     public static @NotNull HandlerList getHandlerList() {
         return handlers;
     }

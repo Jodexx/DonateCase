@@ -14,6 +14,9 @@ import java.util.List;
 
 import static com.jodexindustries.donatecase.tools.Tools.resolveSDGCompletions;
 
+/**
+ * Class for /dc givekey subcommand implementation
+ */
 public class GiveKeyCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {

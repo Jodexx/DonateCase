@@ -14,6 +14,9 @@ import java.util.List;
 
 import static com.jodexindustries.donatecase.tools.Tools.resolveSDGCompletions;
 
+/**
+ * Class for /dc setkey subcommand implementation
+ */
 public class SetKeyCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {

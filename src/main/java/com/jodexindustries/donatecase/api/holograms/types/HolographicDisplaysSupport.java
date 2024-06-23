@@ -11,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import org.bukkit.block.Block;
 import java.util.HashMap;
 
+/**
+ * Class for HolographicDisplays Holograms implementation
+ */
 public class HolographicDisplaysSupport extends HologramManager {
 
 

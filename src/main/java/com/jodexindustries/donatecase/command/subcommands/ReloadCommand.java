@@ -9,6 +9,9 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for /dc reload subcommand implementation
+ */
 public class ReloadCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {

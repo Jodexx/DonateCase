@@ -29,6 +29,10 @@ public class AnimationUnregisteredEvent extends Event {
         return handlers;
     }
 
+    /**
+     * Get handlers
+     * @return handlers list
+     */
     public static HandlerList getHandlerList() {
         return handlers;
     }

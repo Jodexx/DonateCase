@@ -17,6 +17,14 @@ public class AnimationEndEvent extends PlayerEvent {
     String animation;
     CaseData.Item winItem;
 
+    /**
+     * Default constructor
+     * @param who Player, who opened case
+     * @param animation Case animation
+     * @param caseData Case data
+     * @param location Case location (or another, where animation was ended)
+     * @param winItem Player prize
+     */
     public AnimationEndEvent(@NotNull Player who, String animation, CaseData caseData, Location location, CaseData.Item winItem) {
         super(who);
         this.caseData = caseData;
@@ -65,6 +73,10 @@ public class AnimationEndEvent extends PlayerEvent {
         return handlers;
     }
 
+    /**
+     * Get handlers
+     * @return handlers list
+     */
     public static HandlerList getHandlerList() {
         return handlers;
     }

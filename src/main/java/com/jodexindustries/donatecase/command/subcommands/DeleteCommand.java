@@ -13,6 +13,9 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for /dc delete subcommand implementation
+ */
 public class DeleteCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {

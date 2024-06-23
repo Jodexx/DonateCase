@@ -15,6 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class for /dc command implementation with subcommands
+ */
 public class GlobalCommand implements CommandExecutor, TabCompleter {
 
 

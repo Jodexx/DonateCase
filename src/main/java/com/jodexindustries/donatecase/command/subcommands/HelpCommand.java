@@ -8,6 +8,9 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for /dc help subcommand implementation
+ */
 public class HelpCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {

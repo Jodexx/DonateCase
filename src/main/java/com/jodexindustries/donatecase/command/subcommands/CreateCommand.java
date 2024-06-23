@@ -12,6 +12,9 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class for /dc create subcommand implementation
+ */
 public class CreateCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {

@@ -24,6 +24,11 @@ import java.util.logging.Level;
 public class AnimationManager {
     private static final Map<String, Animation> registeredAnimations = new HashMap<>();
     private final Addon addon;
+
+    /**
+     * Default constructor
+     * @param addon An addon that will manage animations
+     */
     public AnimationManager(Addon addon) {
         this.addon = addon;
     }

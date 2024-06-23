@@ -10,6 +10,9 @@ import org.bukkit.block.Block;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * Class for Decent Holograms implementation
+ */
 public class DecentHologramsSupport extends HologramManager {
 
     private final HashMap<Block, Hologram> holograms = new HashMap<>();

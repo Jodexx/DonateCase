@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Class for /dc addons subcommand implementation
+ */
 public class AddonsCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {

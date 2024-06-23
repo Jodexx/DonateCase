@@ -2,6 +2,9 @@ package com.jodexindustries.donatecase.api.data;
 
 import org.bukkit.Location;
 
+/**
+ * Class for saving active cases data
+ */
 public class ActiveCase {
     /**
      * Case location
@@ -13,6 +16,11 @@ public class ActiveCase {
      */
     private final String caseType;
 
+    /**
+     * Default constructor
+     * @param location Case location
+     * @param caseType Case type
+     */
     public ActiveCase(Location location, String caseType) {
         this.location = location;
         this.caseType = caseType;
@@ -26,6 +34,7 @@ public class ActiveCase {
      * @return case type
      *
      */
+    @Deprecated
     public String getName() {
         return caseType;
     }
@@ -39,8 +48,8 @@ public class ActiveCase {
     }
 
     /**
-     * Get location
-     * @return location
+     * Get case location
+     * @return case location
      */
 
     public Location getLocation() {

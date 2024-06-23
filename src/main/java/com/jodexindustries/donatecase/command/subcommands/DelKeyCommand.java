@@ -12,6 +12,9 @@ import java.util.List;
 
 import static com.jodexindustries.donatecase.tools.Tools.resolveSDGCompletions;
 
+/**
+ * Class for /dc delkey subcommand implementation
+ */
 public class DelKeyCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {

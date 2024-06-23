@@ -44,6 +44,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Main DonateCase class for loading
+ */
 public class DonateCase extends JavaPlugin {
     public static DonateCase instance;
 
