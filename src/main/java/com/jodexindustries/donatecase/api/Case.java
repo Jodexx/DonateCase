@@ -359,7 +359,7 @@ public class Case{
             if (item.getGiveType().equalsIgnoreCase("ONE")) {
                 executeActions(player, caseData, item, null, false);
             } else {
-                choice = getChoice(item);
+                choice = getRandomActionChoice(item);
                 executeActions(player, caseData, item, choice, false);
             }
         }
@@ -396,7 +396,12 @@ public class Case{
 
         getCustomConfig().saveData();
     }
-    private static String getChoice(CaseData.Item item) {
+
+    /**
+     * Get random choice from item random action list
+     * @param item Case item
+     */
+    public static String getRandomActionChoice(CaseData.Item item) {
         String endCommand = "";
         Random random = new Random();
         int maxChance = 0;
@@ -420,71 +425,144 @@ public class Case{
         return endCommand;
     }
 
-    private static void executeActions(OfflinePlayer player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
+    /**
+     * Execute actions after case opening
+     * @param player Player, who opened
+     * @param caseData Case that was opened
+     * @param item The prize that was won
+     * @param choice In fact, these are actions that were selected from the RandomActions section
+     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseData.Item#getAlternativeActions()})
+     */
+   public static void executeActions(OfflinePlayer player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
         final String[] replacementRegex = {
                 "%player%:" + player.getName(),
-                "%casename%:" + caseData.getCaseType(), "%casedisplayname%:" + caseData.getCaseDisplayName(), "%casetitle%:" + caseData.getCaseTitle(),
-                "%group%:" + item.getGroup(), "%groupdisplayname%:" + item.getMaterial().getDisplayName()
+                "%casename%:" + caseData.getCaseType(),
+                "%casedisplayname%:" + caseData.getCaseDisplayName(),
+                "%casetitle%:" + caseData.getCaseTitle(),
+                "%group%:" + item.getGroup(),
+                "%groupdisplayname%:" + item.getMaterial().getDisplayName()
         };
-        List<String> actions = alternative ? item.getAlternativeActions() : item.getActions();
-        if(choice != null) {
-            CaseData.Item.RandomAction randomAction = item.getRandomAction(choice);
-            if(randomAction != null) actions = randomAction.getActions();
-        }
+
+        List<String> actions = getActionsBasedOnChoice(item, choice, alternative);
+
         for (String action : actions) {
             if (instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                 action = PAPISupport.setPlaceholders(player, action);
             }
+            action = Tools.rt(action, replacementRegex);
             action = Tools.rc(action);
-            int cooldown = 0;
-            Pattern pattern = Pattern.compile("\\[cooldown:(.*?)]");
-            Matcher matcher = pattern.matcher(action);
-            if (matcher.find()) {
-                action = action.replaceFirst("\\[cooldown:(.*?)]", "").trim();
-                cooldown = Integer.parseInt(matcher.group(1));
-            }
-            if (action.startsWith("[command] ")) {
-                action = action.replaceFirst("\\[command] ", "");
-                String finalAction = action;
-                Bukkit.getScheduler().runTaskLater(instance, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                        Tools.rt(finalAction, replacementRegex)), 20L * cooldown);
-            }
-            if (action.startsWith("[message] ")) {
-                action = action.replaceFirst("\\[message] ", "");
-                String finalAction = action;
-                Bukkit.getScheduler().runTaskLater(instance, () -> {
-                    if (player.getPlayer() != null) {
-                        player.getPlayer().sendMessage(
-                                Tools.rt(finalAction, replacementRegex));
-                    }
-                }, 20L * cooldown);
-            }
+            int cooldown = extractCooldown(action);
+            action = action.replaceFirst("\\[cooldown:(.*?)]", "").trim();
 
-            if (action.startsWith("[broadcast] ")) {
-                action = action.replaceFirst("\\[broadcast] ", "");
-                String finalAction = action;
-                Bukkit.getScheduler().runTaskLater(instance, () -> {
-                    for (Player p : Bukkit.getOnlinePlayers()) {
-                        p.sendMessage(
-                                Tools.rt(finalAction, replacementRegex));
-                    }
-                }, 20L * cooldown);
-            }
-            if (action.startsWith("[title] ")) {
-                action = action.replaceFirst("\\[title] ", "");
-                String[] args = action.split(";");
-                String title = args.length > 0 ? args[0] : "";
-                String subTitle = args.length > 1 ? args[1] : "";
-                Bukkit.getScheduler().runTaskLater(instance, () -> {
-                    if (player.getPlayer() != null) {
-                        player.getPlayer().sendTitle(
-                                Tools.rt(title, replacementRegex),
-                                Tools.rt(subTitle, replacementRegex), 10, 70, 20);
-                    }
-                }, 20L * cooldown);
-            }
+            executeAction(player, action, cooldown);
         }
     }
+
+    /**
+     * Get actions from case item
+     * @param item Case item
+     * @param choice In fact, these are actions that were selected from the RandomActions section
+     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseData.Item#getAlternativeActions()})
+     * @return list of selected actions
+     */
+    public static List<String> getActionsBasedOnChoice(CaseData.Item item, String choice, boolean alternative) {
+        if (choice != null) {
+            CaseData.Item.RandomAction randomAction = item.getRandomAction(choice);
+            if (randomAction != null) {
+                return randomAction.getActions();
+            }
+        }
+        return alternative ? item.getAlternativeActions() : item.getActions();
+    }
+
+    /**
+     * Extract cooldown from action string
+     * @param action Action string. Format [cooldown:int]
+     * @return cooldown
+     */
+    public static int extractCooldown(String action) {
+        Pattern pattern = Pattern.compile("\\[cooldown:(.*?)]");
+        Matcher matcher = pattern.matcher(action);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        }
+        return 0;
+    }
+
+    /**
+     * Execute action with specific cooldown
+     * @param player Player, who opened case (maybe another reason)
+     * @param action Action to be executed
+     * @param cooldown Cooldown in seconds
+     */
+    public static void executeAction(OfflinePlayer player, String action, int cooldown) {
+        if (action.startsWith("[command] ")) {
+            executeCommand(action.replaceFirst("\\[command] ", ""), cooldown);
+        } else if (action.startsWith("[message] ")) {
+            sendMessage(player, action.replaceFirst("\\[message] ", ""), cooldown);
+        } else if (action.startsWith("[broadcast] ")) {
+            broadcastMessage(action.replaceFirst("\\[broadcast] ", ""), cooldown);
+        } else if (action.startsWith("[title] ")) {
+            sendTitle(player, action.replaceFirst("\\[title] ", ""), cooldown);
+        }
+    }
+
+    /**
+     * Send command to console with specific cooldown
+     * @param command Console command
+     * @param cooldown Cooldown in seconds
+     */
+    public static void executeCommand(String command, int cooldown) {
+        Bukkit.getScheduler().runTaskLater(instance, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                command), 20L * cooldown);
+    }
+
+    /**
+     * Send chat message for player with specific cooldown
+     * @param player The player to whom the message will be sent
+     * @param message Chat message
+     * @param cooldown Cooldown in seconds
+     */
+    public static void sendMessage(OfflinePlayer player, String message, int cooldown) {
+        Bukkit.getScheduler().runTaskLater(instance, () -> {
+            if (player.getPlayer() != null) {
+                player.getPlayer().sendMessage(message);
+            }
+        }, 20L * cooldown);
+    }
+
+    /**
+     * Send broadcast message for all players on the server with specific cooldown
+     * @param message Broadcast message
+     * @param cooldown Cooldown in seconds
+     */
+    public static void broadcastMessage(String message, int cooldown) {
+        Bukkit.getScheduler().runTaskLater(instance, () -> {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                p.sendMessage(message);
+            }
+        }, 20L * cooldown);
+    }
+
+    /**
+     * Send title for player with specific cooldown
+     * @param player The player to whom the title will be sent
+     * @param message Title message. Format: "title;subtitle"
+     * @param cooldown Cooldown in seconds
+     */
+    public static void sendTitle(@NotNull OfflinePlayer player, @NotNull String message,  int cooldown) {
+        String[] args = message.split(";");
+        String title = args.length > 0 ? args[0] : "";
+        String subTitle = args.length > 1 ? args[1] : "";
+        Bukkit.getScheduler().runTaskLater(instance, () -> {
+            if (player.getPlayer() != null) {
+                player.getPlayer().sendTitle(
+                        title,
+                        subTitle, 10, 70, 20);
+            }
+        }, 20L * cooldown);
+    }
+
 
 
     /** Get plugin configuration manager
