@@ -113,33 +113,10 @@ public class CaseGui {
                             lore = Tools.rt(lore, template);
                         }
 
-                        List<String> slots = new ArrayList<>();
-                        if (configCase.isList("case.Gui.Items." + item + ".Slots")) {
-                            List<String> temp = configCase.getStringList("case.Gui.Items." + item + ".Slots");
-                            for (String slot : temp) {
-                                String[] values = slot.split("-", 2);
-                                if (values.length == 2) {
-                                    for (int i = Integer.parseInt(values[0]); i <= Integer.parseInt(values[1]); i++) {
-                                        slots.add(String.valueOf(i));
-                                    }
-                                } else {
-                                    slots.add(slot);
-                                }
-                            }
-                        } else {
-                            String[] slotArgs = configCase.getString("case.Gui.Items." + item + ".Slots", "0-0").split("-");
-                            int range1 = Integer.parseInt(slotArgs[0]);
-                            int range2 = range1;
-                            if (slotArgs.length >= 2) {
-                                range2 = Integer.parseInt(slotArgs[1]);
-                            }
-                            slots.addAll(IntStream.rangeClosed(range1, range2).mapToObj(String::valueOf).collect(Collectors.toList()));
-                        }
+                        List<String> slots = getItemSlots(configCase, item);
 
                         ItemStack itemStack = getItem(material, displayName, lore, c, p, enchanted, rgb, modelData);
-                        for (String slot : slots) {
-                            inventory.setItem(Integer.parseInt(slot), itemStack);
-                        }
+                        slots.forEach(slot -> inventory.setItem(Integer.parseInt(slot), itemStack));
                     }
                 }
             });
@@ -150,6 +127,33 @@ public class CaseGui {
             playersGui.remove(p.getUniqueId());
         }
     }
+
+    private List<String> getItemSlots(YamlConfiguration configCase, String item) {
+        List<String> slots = new ArrayList<>();
+        if (configCase.isList("case.Gui.Items." + item + ".Slots")) {
+            List<String> temp = configCase.getStringList("case.Gui.Items." + item + ".Slots");
+            for (String slot : temp) {
+                String[] values = slot.split("-", 2);
+                if (values.length == 2) {
+                    for (int i = Integer.parseInt(values[0]); i <= Integer.parseInt(values[1]); i++) {
+                        slots.add(String.valueOf(i));
+                    }
+                } else {
+                    slots.add(slot);
+                }
+            }
+        } else {
+            String[] slotArgs = configCase.getString("case.Gui.Items." + item + ".Slots", "0-0").split("-");
+            int range1 = Integer.parseInt(slotArgs[0]);
+            int range2 = range1;
+            if (slotArgs.length >= 2) {
+                range2 = Integer.parseInt(slotArgs[1]);
+            }
+            slots.addAll(IntStream.rangeClosed(range1, range2).mapToObj(String::valueOf).collect(Collectors.toList()));
+        }
+        return slots;
+    }
+
     public Inventory getInventory() {
         return inventory;
     }
