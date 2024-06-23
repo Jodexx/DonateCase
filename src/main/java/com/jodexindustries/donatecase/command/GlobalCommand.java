@@ -68,59 +68,68 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         boolean isMod = sender.hasPermission("donatecase.mod");
 
         if (!isAdmin && !isMod) {
-            for (String string : Case.getCustomConfig().getLang().getStringList("help-player")) {
-                Tools.msgRaw(sender, Tools.rt(string, "%cmd:" + label));
-            }
+            sendHelpMessages(sender, "help-player", label);
         } else {
-            for (String string : Case.getCustomConfig().getLang().getStringList("help")) {
-                Tools.msgRaw(sender, Tools.rt(string, "%cmd:" + label));
-            }
+            sendHelpMessages(sender, "help", label);
         }
 
         if (Case.getCustomConfig().getConfig().getBoolean("DonatCase.AddonsHelp", true)) {
-            Map<String, List<Map<String, SubCommand>>> addonsMap = new HashMap<>();
-            Case.getInstance().api.getSubCommandManager().getSubCommands().forEach((subCommandName, pair) -> {
-                SubCommand subCommand = pair.getFirst();
-                Addon addon = pair.getSecond();
-                addonsMap.computeIfAbsent(addon.getName(), k -> new ArrayList<>())
-                        .add(Collections.singletonMap(subCommandName, subCommand));
-            });
-
+            Map<String, List<Map<String, SubCommand>>> addonsMap = buildAddonsMap();
             if (Tools.isHasCommandForSender(sender, addonsMap)) {
-                addonsMap.forEach((addon, commands) -> {
-                    if (!addon.equalsIgnoreCase("DonateCase") && Tools.isHasCommandForSender(sender, addonsMap, addon)) {
-                        String addonNameFormat = Case.getCustomConfig().getLang().getString("help-addons.format.name");
-                        if (addonNameFormat != null && !addonNameFormat.isEmpty()) {
-                            Tools.msgRaw(sender, Tools.rt(addonNameFormat, "%addon:" + addon));
-                        }
-
-                        commands.forEach(command -> command.forEach((commandName, subCommand) -> {
-                            String description = subCommand.getDescription();
-                            if (description != null) {
-                                description = Tools.rt(Case.getCustomConfig().getLang().getString("help-addons.format.description"), "%description:" + description);
-                            } else {
-                                description = "";
-                            }
-                            StringBuilder builder = compileSubCommandArgs(subCommand.getArgs());
-
-                            boolean hasPermissionForSubCommand = isAdmin || isMod &&
-                                    (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER ||
-                                            subCommand.getType() == null) || sender.hasPermission("donatecase.player") && !isMod &&
-                                    (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null);
-
-                            if (hasPermissionForSubCommand) {
-                                Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("help-addons.format.command"),
-                                        "%cmd:" + commandName,
-                                        "%args:" + builder,
-                                        "%description:" + description
-                                ));
-                            }
-                        }));
-                    }
-                });
+                sendAddonHelpMessages(sender, addonsMap, isAdmin, isMod);
             }
         }
     }
+
+    private static void sendHelpMessages(CommandSender sender, String path, String label) {
+        for (String string : Case.getCustomConfig().getLang().getStringList(path)) {
+            Tools.msgRaw(sender, Tools.rt(string, "%cmd:" + label));
+        }
+    }
+
+    private static Map<String, List<Map<String, SubCommand>>> buildAddonsMap() {
+        Map<String, List<Map<String, SubCommand>>> addonsMap = new HashMap<>();
+        Case.getInstance().api.getSubCommandManager().getSubCommands().forEach((subCommandName, pair) -> {
+            SubCommand subCommand = pair.getFirst();
+            Addon addon = pair.getSecond();
+            addonsMap.computeIfAbsent(addon.getName(), k -> new ArrayList<>())
+                    .add(Collections.singletonMap(subCommandName, subCommand));
+        });
+        return addonsMap;
+    }
+
+    private static void sendAddonHelpMessages(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, boolean isAdmin, boolean isMod) {
+        addonsMap.forEach((addon, commands) -> {
+            if (!addon.equalsIgnoreCase("DonateCase") && Tools.isHasCommandForSender(sender, addonsMap, addon)) {
+                String addonNameFormat = Case.getCustomConfig().getLang().getString("help-addons.format.name");
+                if (addonNameFormat != null && !addonNameFormat.isEmpty()) {
+                    Tools.msgRaw(sender, Tools.rt(addonNameFormat, "%addon:" + addon));
+                }
+
+                commands.forEach(command -> command.forEach((commandName, subCommand) -> {
+                    String description = subCommand.getDescription();
+                    description = (description != null) ? Tools.rt(Case.getCustomConfig().getLang().getString("help-addons.format.description"), "%description:" + description) : "";
+
+                    StringBuilder argsBuilder = compileSubCommandArgs(subCommand.getArgs());
+
+                    if (hasPermissionForSubCommand(sender, isAdmin, isMod, subCommand)) {
+                        Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("help-addons.format.command"),
+                                "%cmd:" + commandName,
+                                "%args:" + argsBuilder,
+                                "%description:" + description
+                        ));
+                    }
+                }));
+            }
+        });
+    }
+
+    private static boolean hasPermissionForSubCommand(CommandSender sender, boolean isAdmin, boolean isMod, SubCommand subCommand) {
+        SubCommandType type = subCommand.getType();
+        return isAdmin || isMod && (type == SubCommandType.MODER || type == SubCommandType.PLAYER || type == null)
+                || sender.hasPermission("donatecase.player") && !isMod && (type == SubCommandType.PLAYER || type == null);
+    }
+
 
 
     private static @NotNull StringBuilder compileSubCommandArgs(String[] args) {
