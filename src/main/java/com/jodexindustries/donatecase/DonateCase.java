@@ -29,7 +29,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -40,9 +39,6 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Main DonateCase class for loading
@@ -57,6 +53,7 @@ public class DonateCase extends JavaPlugin {
     public PermissionDriver permissionDriver = null;
     public HologramDriver hologramDriver = null;
     public CaseManager api;
+    public CaseLoader loader;
 
     public CustomConfig customConfig;
     public CasesConfig casesConfig;
@@ -69,6 +66,7 @@ public class DonateCase extends JavaPlugin {
         long time = System.currentTimeMillis();
         instance = this;
         api = new CaseManager(this);
+        loader = new CaseLoader(this);
 
         loadLibraries();
 
@@ -196,7 +194,7 @@ public class DonateCase extends JavaPlugin {
 
         setupMySQL();
 
-        loadCases();
+        loader.load();
 
         customConfig.getConfig().addDefault("DonatCase.NoKeyWarningSound", "ENTITY_ENDERMAN_TELEPORT");
 
@@ -275,131 +273,6 @@ public class DonateCase extends JavaPlugin {
         api.getAnimationManager().registerAnimation("FULLWHEEL", new FullWheelAnimation());
 //        api.getAnimationManager().registerAnimation("TEST_WHEEL", new TestWheelAnimation());
         Logger.log("&aRegistered &cdefault &aanimations");
-    }
-
-    private void loadCases() {
-        Case.caseData.clear();
-        int count = 0;
-        for (String caseType : casesConfig.getCases().keySet()) {
-            YamlConfiguration config = casesConfig.getCase(caseType);
-            ConfigurationSection caseSection = config.getConfigurationSection("case");
-            if(caseSection == null) {
-                getLogger().warning("Case " + caseType + " has a broken case section, skipped.");
-                continue;
-            }
-            String caseTitle = caseSection.getString("Title");
-            caseTitle = caseTitle == null ? "" : Tools.rc(caseTitle);
-            String caseDisplayName = caseSection.getString("DisplayName");
-            caseDisplayName = caseDisplayName == null ? "" : Tools.rc(caseDisplayName);
-            String animationName = caseSection.getString("Animation");
-
-            String animationSound = caseSection.getString("AnimationSound", "NULL").toUpperCase();
-            float volume = (float) caseSection.getDouble("Sound.Volume");
-            float pitch = (float) caseSection.getDouble("Sound.Pitch");
-
-            Sound bukkitSound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
-            try {bukkitSound = Sound.valueOf(animationSound);} catch (IllegalArgumentException ignored) {}
-
-            CaseData.AnimationSound sound = new CaseData.AnimationSound(bukkitSound, volume, pitch);
-
-            boolean hologramEnabled = caseSection.getBoolean("Hologram.Toggle");
-            double hologramHeight = caseSection.getDouble("Hologram.Height");
-            int range = caseSection.getInt("Hologram.Range");
-            List<String> hologramMessage = caseSection.getStringList("Hologram.Message");
-            CaseData.Hologram hologram = hologramEnabled ? new CaseData.Hologram(true, hologramHeight, range, hologramMessage) : new CaseData.Hologram();
-
-            Map<String, CaseData.Item> items = new HashMap<>();
-            ConfigurationSection itemsSection = caseSection.getConfigurationSection("Items");
-            if(itemsSection != null) {
-                for (String item : itemsSection.getKeys(false)) {
-                    ConfigurationSection itemSection = itemsSection.getConfigurationSection(item);
-                    if(itemSection == null) {
-                        getLogger().warning("Case " + caseType + " has a broken item " + item + " section, skipped.");
-                        continue;
-                    }
-                    String group = itemSection.getString("Group", "");
-                    int chance = itemSection.getInt("Chance");
-                    String giveType = itemSection.getString("GiveType", "ONE");
-
-                    // get actions
-                    List<String> actions = itemSection.getStringList("Actions");
-
-                    // get alternative actions
-                    List<String> alternativeActions = itemSection.getStringList("AlternativeActions");
-
-                    // get random actions
-                    Map<String, CaseData.Item.RandomAction> randomActions = new HashMap<>();
-                    ConfigurationSection randomActionsSection = itemSection.getConfigurationSection("RandomActions");
-                    if (randomActionsSection != null) {
-                        for (String randomAction : randomActionsSection.getKeys(false)) {
-                            ConfigurationSection randomActionSection = randomActionsSection.getConfigurationSection(randomAction);
-                            if(randomActionSection != null) {
-                                int actionChance = randomActionSection.getInt("Chance");
-                                List<String> randomActionsList = randomActionSection.getStringList("Actions");
-                                String displayName = randomActionSection.getString("DisplayName");
-                                CaseData.Item.RandomAction randomActionObject = new CaseData.Item.RandomAction(actionChance, randomActionsList, displayName);
-                                randomActions.put(randomAction, randomActionObject);
-                            }
-                        }
-                    }
-
-                    // get rgb
-                    String[] rgb = null;
-                    String rgbString = itemSection.getString("Item.Rgb");
-                    if (rgbString != null) {
-                        rgb = rgbString.replaceAll(" ", "").split(",");
-                    }
-
-                    // get material
-                    String id = itemSection.getString("Item.ID", "STONE");
-                    String itemDisplayName = Tools.rc(itemSection.getString("Item.DisplayName"));
-                    boolean enchanted = itemSection.getBoolean("Item.Enchanted");
-                    ItemStack itemStack = Tools.getCaseItem(itemDisplayName, id, enchanted, rgb);
-                    CaseData.Item.Material material = new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted);
-
-                    CaseData.Item caseItem = new CaseData.Item(item, group, chance, material, giveType, actions, randomActions, rgb, alternativeActions);
-                    items.put(item, caseItem);
-                }
-            } else {
-                getLogger().warning("Case " + caseType + " has a broken case.Items section");
-            }
-            CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
-            if(!sql) {
-                ConfigurationSection dataSection = customConfig.getData().getConfigurationSection("Data");
-                if (dataSection != null) {
-
-                    ConfigurationSection caseDatasSection = dataSection.getConfigurationSection(caseType);
-                    if (caseDatasSection != null) {
-                        for (String i : caseDatasSection.getKeys(false)) {
-                            ConfigurationSection caseDataSection = caseDatasSection.getConfigurationSection(i);
-                            if (caseDataSection == null) continue;
-                            CaseData.HistoryData data = new CaseData.HistoryData(
-                                    caseDataSection.getString("Item"),
-                                    caseType,
-                                    caseDataSection.getString("Player"),
-                                    caseDataSection.getLong("Time"),
-                                    caseDataSection.getString("Group"),
-                                    caseDataSection.getString("Action"));
-                            historyData[Integer.parseInt(i)] = data;
-                        }
-                    }
-                }
-            }
-
-            Map<String, Integer> levelGroups = new HashMap<>();
-            ConfigurationSection lgSection = caseSection.getConfigurationSection("LevelGroups");
-            if(lgSection != null) {
-                for (String group : lgSection.getKeys(false)) {
-                    int level = lgSection.getInt(group);
-                    levelGroups.put(group, level);
-                }
-            }
-
-            CaseData caseData = new CaseData(caseType, caseDisplayName, caseTitle, animationName, sound, items, historyData, hologram, levelGroups);
-            Case.caseData.put(caseType, caseData);
-            count++;
-        }
-        Logger.log("&aLoaded &c" + count + " &acases!");
     }
 
     private void loadPermissionDriver() {
