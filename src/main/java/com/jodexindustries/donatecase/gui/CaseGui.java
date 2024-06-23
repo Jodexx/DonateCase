@@ -15,6 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -36,33 +37,19 @@ public class CaseGui {
             inventory = Bukkit.createInventory(null, configCase.getInt("case.Gui.Size", 45), Tools.rc(title));
             ConfigurationSection items = configCase.getConfigurationSection("case.Gui.Items");
             Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () -> {
-                List<CaseData.HistoryData> globalHistoryData = Case.getSortedHistoryData();
                 if (items != null) {
+                    List<CaseData.HistoryData> globalHistoryData = Case.getSortedHistoryData();
+
                     for (String item : items.getKeys(false)) {
                         String material = configCase.getString("case.Gui.Items." + item + ".Material", "STONE");
-                        String displayName = configCase.getString("case.Gui.Items." + item + ".DisplayName", "None");
-                        if (Case.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                            displayName = PAPISupport.setPlaceholders(p, displayName);
-                        }
+                        String displayName = PAPISupport.setPlaceholders(p,
+                                configCase.getString("case.Gui.Items." + item + ".DisplayName", "None"));
                         boolean enchanted = configCase.getBoolean("case.Gui.Items." + item + ".Enchanted");
                         String itemType = configCase.getString("case.Gui.Items." + item + ".Type", "DEFAULT");
                         List<String> lore = Tools.rc(configCase.getStringList("case.Gui.Items." + item + ".Lore"));
+                        lore = setPlaceholders(p, lore);
                         int modelData = configCase.getInt("case.Gui.Items." + item + ".ModelData", -1);
-                        String[] rgb = null;
-                        List<String> pLore = new ArrayList<>();
-                        for (String line : lore) {
-                            if (Case.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                                line = PAPISupport.setPlaceholders(p, line);
-                            }
-                            pLore.add(line);
-                        }
-                        lore = Tools.rc(pLore);
-                        if (material.toUpperCase().startsWith("LEATHER_")) {
-                            String rgbString = configCase.getString("case.Gui.Items." + item + ".Rgb");
-                            if (rgbString != null) {
-                                rgb = rgbString.replace(" ", "").split(",");
-                            }
-                        }
+                        String[] rgb = getRgb(configCase, material, item);
                         if (itemType.startsWith("HISTORY")) {
                             String[] typeArgs = itemType.split("-");
                             int index = Integer.parseInt(typeArgs[1]);
@@ -78,21 +65,8 @@ public class CaseGui {
                                 historyCaseData = historyCaseData.clone();
                             }
 
-                            CaseData.HistoryData data = null;
-                            if (isGlobal) {
-                                if (globalHistoryData.size() <= index) continue;
-                                data = globalHistoryData.get(index);
-                            } else {
-                                if (!Case.getInstance().sql) {
-                                    data = historyCaseData.getHistoryData()[index];
-                                } else {
-                                    List<CaseData.HistoryData> dbData = Case.sortHistoryDataByCase(globalHistoryData, caseType);
-                                    if (!dbData.isEmpty()) {
-                                        if (dbData.size() <= index) continue;
-                                        data = dbData.get(index);
-                                    }
-                                }
-                            }
+                            CaseData.HistoryData data = getHistoryData(caseType, isGlobal, globalHistoryData, index, historyCaseData);
+
                             if (data == null) continue;
                             if (isGlobal) historyCaseData = Case.getCase(data.getCaseType());
                             if (historyCaseData == null) continue;
@@ -126,6 +100,41 @@ public class CaseGui {
             Case.getInstance().getLogger().warning("Wrong GUI size! Use: 9, 18, 27, 36, 45, 54");
             playersGui.remove(p.getUniqueId());
         }
+    }
+
+    private List<String> setPlaceholders(Player p, List<String> lore) {
+        return lore.stream().map(line -> PAPISupport.setPlaceholders(p, line)).map(Tools::rc).collect(Collectors.toList());
+    }
+
+    @Nullable
+    private String[] getRgb(YamlConfiguration configCase, String material, String item) {
+        String[] rgb = null;
+        if (material.toUpperCase().startsWith("LEATHER_")) {
+            String rgbString = configCase.getString("case.Gui.Items." + item + ".Rgb");
+            if (rgbString != null) {
+                rgb = rgbString.replace(" ", "").split(",");
+            }
+        }
+        return rgb;
+    }
+
+    private CaseData.HistoryData getHistoryData(String caseType, boolean isGlobal, List<CaseData.HistoryData> globalHistoryData, int index, CaseData historyCaseData) {
+        CaseData.HistoryData data = null;
+        if (isGlobal) {
+            if (globalHistoryData.size() <= index) return null;
+            data = globalHistoryData.get(index);
+        } else {
+            if (!Case.getInstance().sql) {
+                data = historyCaseData.getHistoryData()[index];
+            } else {
+                List<CaseData.HistoryData> dbData = Case.sortHistoryDataByCase(globalHistoryData, caseType);
+                if (!dbData.isEmpty()) {
+                    if (dbData.size() <= index) return null;
+                    data = dbData.get(index);
+                }
+            }
+        }
+        return data;
     }
 
     private List<String> getItemSlots(YamlConfiguration configCase, String item) {
@@ -165,6 +174,7 @@ public class CaseGui {
     public Inventory getInventory() {
         return inventory;
     }
+
     private ItemStack getItem(String material, String displayName, List<String> lore, String c, Player p, boolean enchanted, String[] rgb, int modelData) {
         List<String> newLore = new ArrayList<>();
         if (lore != null) {
