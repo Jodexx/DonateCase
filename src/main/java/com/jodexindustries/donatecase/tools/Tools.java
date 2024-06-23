@@ -22,6 +22,7 @@ import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -639,52 +640,42 @@ public class Tools {
         return Integer.parseInt(builder.toString());
     }
 
+    public static boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, String addon) {
+        List<Map<String, SubCommand>> commands = addonsMap.get(addon);
+        return isHasCommandForSender(sender, commands);
+    }
+
     public static boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
         for (String addon : addonsMap.keySet()) {
             List<Map<String, SubCommand>> commands = addonsMap.get(addon);
-            for (Map<String, SubCommand> command : commands) {
-                for (String commandName : command.keySet()) {
-                    SubCommand subCommand = command.get(commandName);
-                    if(sender.hasPermission("donatecase.admin")) {
-                        if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                            return true;
-                        }
-                    } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
-                        if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                            return true;
-                        }
-                    } else if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
-                        if (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                            return true;
-                        }
+            if(isHasCommandForSender(sender, commands)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean isHasCommandForSender(CommandSender sender, List<Map<String, SubCommand>> commands) {
+        for (Map<String, SubCommand> command : commands) {
+            for (String commandName : command.keySet()) {
+                SubCommand subCommand = command.get(commandName);
+                if (sender.hasPermission("donatecase.admin")) {
+                    if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                        return true;
+                    }
+                } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
+                    if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                        return true;
+                    }
+                } else if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
+                    if (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
+                        return true;
                     }
                 }
             }
         }
         return false;
     }
-    public static boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, String addon) {
-            List<Map<String, SubCommand>> commands = addonsMap.get(addon);
-            for (Map<String, SubCommand> command : commands) {
-                for (String commandName : command.keySet()) {
-                    SubCommand subCommand = command.get(commandName);
-                    if (sender.hasPermission("donatecase.admin")) {
-                        if (subCommand.getType() == SubCommandType.ADMIN || subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                            return true;
-                        }
-                    } else if (sender.hasPermission("donatecase.mod") && !sender.hasPermission("donatecase.admin")) {
-                        if (subCommand.getType() == SubCommandType.MODER || subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                            return true;
-                        }
-                    } else if (sender.hasPermission("donatecase.player") && !sender.hasPermission("donatecase.admin") && !sender.hasPermission("donatecase.mod")) {
-                        if (subCommand.getType() == SubCommandType.PLAYER || subCommand.getType() == null) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        return false;
-    }
+
     public static EulerAngle getEulerAngleFromString(String angleString) {
         String[] angle;
         if (angleString == null) return new EulerAngle(0,0,0);
