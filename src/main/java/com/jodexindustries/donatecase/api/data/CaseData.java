@@ -23,10 +23,11 @@ public class CaseData implements Cloneable {
     private HistoryData[] historyData;
     private Hologram hologram;
     private Map<String, Integer> levelGroups;
+    private GUI gui;
 
     public CaseData(String caseType, String caseDisplayName, String caseTitle,
                     String animation, AnimationSound animationSound, Map<String,
-            Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups) {
+            Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups, GUI gui) {
         this.caseType = caseType;
         this.caseDisplayName = caseDisplayName;
         this.caseTitle = caseTitle;
@@ -36,6 +37,7 @@ public class CaseData implements Cloneable {
         this.historyData = historyData;
         this.hologram = hologram;
         this.levelGroups = levelGroups;
+        this.gui = gui;
     }
 
     @Override
@@ -257,6 +259,14 @@ public class CaseData implements Cloneable {
      */
     public void setLevelGroups(Map<String, Integer> levelGroups) {
         this.levelGroups = levelGroups;
+    }
+
+    public GUI getGui() {
+        return gui;
+    }
+
+    public void setGui(GUI gui) {
+        this.gui = gui;
     }
 
     /**
@@ -538,19 +548,21 @@ public class CaseData implements Cloneable {
             private ItemStack itemStack;
             private String displayName;
             private boolean enchanted;
+            private List<String> lore;
 
-            public Material(String id, ItemStack itemStack, String displayName, boolean enchanted) {
+            public Material(String id, ItemStack itemStack, String displayName, boolean enchanted, List<String> lore) {
                 this.itemStack = itemStack;
                 this.displayName = displayName;
                 this.enchanted = enchanted;
                 this.id = id;
+                this.lore = lore;
             }
 
             /**
              * Get win item itemStack
              * @return itemStack
              */
-            @NotNull
+            @Nullable
             public ItemStack getItemStack() {
                 return itemStack;
             }
@@ -586,7 +598,7 @@ public class CaseData implements Cloneable {
              */
             public void setDisplayName(String displayName) {
                 this.displayName = displayName;
-                if(this.itemStack.getItemMeta() != null) {
+                if(this.itemStack != null && this.itemStack.getItemMeta() != null) {
                     this.itemStack.getItemMeta().setDisplayName(displayName);
                 }
             }
@@ -626,6 +638,14 @@ public class CaseData implements Cloneable {
              */
             public void setId(String id) {
                 this.id = id;
+            }
+
+            public List<String> getLore() {
+                return lore;
+            }
+
+            public void setLore(List<String> lore) {
+                this.lore = lore;
             }
         }
 
@@ -948,6 +968,110 @@ public class CaseData implements Cloneable {
          */
         public List<String> getMessages() {
             return messages;
+        }
+    }
+
+    public static class GUI {
+        private int size;
+        private Map<String, GUI.Item> items;
+
+        public GUI(int size, Map<String, Item> items) {
+            this.size = size;
+            this.items = items;
+        }
+
+        public int getSize() {
+            return size;
+        }
+
+        public void setSize(int size) {
+            this.size = size;
+        }
+
+        public Map<String, Item> getItems() {
+            return items;
+        }
+
+        public void setItems(Map<String, Item> items) {
+            this.items = items;
+        }
+
+
+        public static class Item implements Cloneable {
+            private String itemName;
+            private String type;
+            private CaseData.Item.Material material;
+            private List<Integer> slots;
+            private int modelData;
+            private String[] rgb;
+
+
+            public Item(String itemName, String type, CaseData.Item.Material material, List<Integer> slots, int modelData, String[] rgb) {
+                this.itemName = itemName;
+                this.type = type;
+                this.material = material;
+                this.slots = slots;
+                this.modelData = modelData;
+                this.rgb = rgb;
+            }
+
+            public String getItemName() {
+                return itemName;
+            }
+
+            public void setItemName(String itemName) {
+                this.itemName = itemName;
+            }
+
+            public String getType() {
+                return type;
+            }
+
+            public void setType(String type) {
+                this.type = type;
+            }
+
+            public CaseData.Item.Material getMaterial() {
+                return material;
+            }
+
+            public void setMaterial(CaseData.Item.Material material) {
+                this.material = material;
+            }
+
+            public List<Integer> getSlots() {
+                return slots;
+            }
+
+            public void setSlots(List<Integer> slots) {
+                this.slots = slots;
+            }
+
+            public int getModelData() {
+                return modelData;
+            }
+
+            public void setModelData(int modelData) {
+                this.modelData = modelData;
+            }
+
+            public String[] getRgb() {
+                return rgb;
+            }
+
+            public void setRgb(String[] rgb) {
+                this.rgb = rgb;
+            }
+
+
+            @Override
+            public Item clone() {
+                try {
+                    return (Item) super.clone();
+                } catch (CloneNotSupportedException e) {
+                    throw new AssertionError();
+                }
+            }
         }
     }
 
