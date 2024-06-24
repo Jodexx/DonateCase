@@ -2,13 +2,10 @@ package com.jodexindustries.donatecase.tools;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
-import com.jodexindustries.donatecase.api.data.MaterialType;
-import com.jodexindustries.donatecase.api.data.SubCommand;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.BukkitArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.PacketArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
@@ -580,8 +577,8 @@ public class Tools {
         List<Integer> slots = new ArrayList<>();
         CaseData caseData = Case.getCase(c);
         if(caseData == null) return slots;
-        CaseData.GUI gui = caseData.getGui();
-        for (CaseData.GUI.Item item : gui.getItems().values()) {
+        GUI gui = caseData.getGui();
+        for (GUI.Item item : gui.getItems().values()) {
             String type = item.getType();
             if(type.startsWith("OPEN")) {
                 slots.addAll(item.getSlots());
@@ -595,10 +592,10 @@ public class Tools {
         Map<List<Integer>, String> map = new HashMap<>();
         CaseData caseData = Case.getCase(c);
         if(caseData == null) return map;
-        CaseData.GUI gui = caseData.getGui();
+        GUI gui = caseData.getGui();
         if(gui == null) return map;
 
-        for (CaseData.GUI.Item item : gui.getItems().values()) {
+        for (GUI.Item item : gui.getItems().values()) {
             String type = item.getType();
             if(type.startsWith("OPEN")) {
                 List<Integer> slots = item.getSlots();

@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.tools;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.GUI;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -54,7 +55,7 @@ public class CaseLoader {
         CaseData.HistoryData[] historyData = loadHistoryData(caseType);
         Map<String, Integer> levelGroups = loadLevelGroups(caseSection);
 
-        CaseData.GUI gui = loadGUI(caseSection);
+        GUI gui = loadGUI(caseSection);
 
         return new CaseData(caseType, caseDisplayName, caseTitle, animationName, sound, items, historyData, hologram, levelGroups, gui);
     }
@@ -206,7 +207,7 @@ public class CaseLoader {
         return levelGroups;
     }
 
-    private CaseData.GUI loadGUI(ConfigurationSection caseSection) {
+    private GUI loadGUI(ConfigurationSection caseSection) {
         ConfigurationSection guiSection = caseSection.getConfigurationSection("Gui");
 
         if(guiSection != null) {
@@ -218,8 +219,8 @@ public class CaseLoader {
             ConfigurationSection items = guiSection.getConfigurationSection("Items");
 
             if(items != null) {
-                Map<String, CaseData.GUI.Item> itemMap = loadGUIItems(items);
-                return new CaseData.GUI(size, itemMap);
+                Map<String, GUI.Item> itemMap = loadGUIItems(items);
+                return new GUI(size, itemMap);
             }
         }
 
@@ -227,12 +228,12 @@ public class CaseLoader {
     }
 
     @NotNull
-    private Map<String, CaseData.GUI.Item> loadGUIItems(@NotNull ConfigurationSection itemsSection) {
-        HashMap<String, CaseData.GUI.Item> itemMap = new HashMap<>();
+    private Map<String, GUI.Item> loadGUIItems(@NotNull ConfigurationSection itemsSection) {
+        HashMap<String, GUI.Item> itemMap = new HashMap<>();
         for (String i : itemsSection.getKeys(false)) {
             ConfigurationSection itemSection = itemsSection.getConfigurationSection(i);
             if(itemSection != null) {
-                CaseData.GUI.Item item = loadGUIItem(i, itemSection);
+                GUI.Item item = loadGUIItem(i, itemSection);
                 itemMap.put(i, item);
             }
         }
@@ -240,7 +241,7 @@ public class CaseLoader {
     }
 
 
-    private CaseData.GUI.Item loadGUIItem(String i, @NotNull ConfigurationSection itemSection) {
+    private GUI.Item loadGUIItem(String i, @NotNull ConfigurationSection itemSection) {
         String id = itemSection.getString("Material");
         String displayName = itemSection.getString("DisplayName", "");
         boolean enchanted = itemSection.getBoolean("Enchanted");
@@ -253,7 +254,7 @@ public class CaseLoader {
 
         CaseData.Item.Material material = new CaseData.Item.Material(id, null, displayName, enchanted, lore);
 
-        return new CaseData.GUI.Item(i, itemType, material, slots, modelData, rgb);
+        return new GUI.Item(i, itemType, material, slots, modelData, rgb);
     }
 
 

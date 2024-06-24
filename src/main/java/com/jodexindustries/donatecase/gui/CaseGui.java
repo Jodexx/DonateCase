@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.gui;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.GUI;
 import com.jodexindustries.donatecase.api.data.MaterialType;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
@@ -25,18 +26,18 @@ public class CaseGui {
     public CaseGui(Player p, CaseData caseData) {
         String title = caseData.getCaseTitle();
         String caseType = caseData.getCaseType();
-        CaseData.GUI gui = caseData.getGui();
+        GUI gui = caseData.getGui();
         inventory = Bukkit.createInventory(null, gui.getSize(), Tools.rc(title));
         Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () -> {
             List<CaseData.HistoryData> globalHistoryData = Case.getSortedHistoryData();
-            for (CaseData.GUI.Item item : gui.getItems().values()) {
+            for (GUI.Item item : gui.getItems().values()) {
                 processItem(caseType, p, item.clone(), globalHistoryData);
             }
         });
         p.openInventory(inventory);
     }
 
-    private void processItem(String caseType, Player p, CaseData.GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
+    private void processItem(String caseType, Player p, GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
         if (item.getType().startsWith("HISTORY")) {
             Object[] objects = handleHistoryItem(caseType, item, globalHistoryData);
             if (objects[0] != null) {
@@ -57,7 +58,7 @@ public class CaseGui {
         item.getSlots().forEach(slot -> inventory.setItem(slot, itemStack));
     }
 
-    private Object[] handleHistoryItem(String caseType, CaseData.GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
+    private Object[] handleHistoryItem(String caseType, GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
         Object[] objects = new Object[3];
 
         String[] typeArgs = item.getType().split("-");
@@ -138,7 +139,7 @@ public class CaseGui {
         return data;
     }
 
-    private ItemStack getItem(Player player, String caseType, CaseData.GUI.Item item) {
+    private ItemStack getItem(Player player, String caseType, GUI.Item item) {
         List<String> newLore = new ArrayList<>();
 
         List<String> lore = item.getMaterial().getLore();
