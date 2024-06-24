@@ -578,12 +578,13 @@ public class Tools {
 
     public static List<Integer> getOpenMaterialSlots(String c) {
         List<Integer> slots = new ArrayList<>();
-        ConfigurationSection section = Case.getCasesConfig().getCase(c).getConfigurationSection("case.Gui.Items");
-        if(section == null) return slots;
-        for (String item : section.getKeys(false)) {
-            if(Case.getCasesConfig().getCase(c).getString("case.Gui.Items." + item + ".Type", "").startsWith("OPEN")) {
-                List<Integer> list = Case.getCasesConfig().getCase(c).getIntegerList("case.Gui.Items." + item + ".Slots");
-                slots.addAll(list);
+        CaseData caseData = Case.getCase(c);
+        if(caseData == null) return slots;
+        CaseData.GUI gui = caseData.getGui();
+        for (CaseData.GUI.Item item : gui.getItems().values()) {
+            String type = item.getType();
+            if(type.startsWith("OPEN")) {
+                slots.addAll(item.getSlots());
             }
         }
         return slots;
@@ -592,12 +593,15 @@ public class Tools {
     @NotNull
     public static Map<List<Integer>, String> getOpenMaterialItemsBySlots(String c) {
         Map<List<Integer>, String> map = new HashMap<>();
-        ConfigurationSection section = Case.getCasesConfig().getCase(c).getConfigurationSection("case.Gui.Items");
-        if(section == null) return map;
-        for (String item : section.getKeys(false)) {
-            String type = section.getString(item + ".Type", "");
+        CaseData caseData = Case.getCase(c);
+        if(caseData == null) return map;
+        CaseData.GUI gui = caseData.getGui();
+        if(gui == null) return map;
+
+        for (CaseData.GUI.Item item : gui.getItems().values()) {
+            String type = item.getType();
             if(type.startsWith("OPEN")) {
-                List<Integer> slots = section.getIntegerList(item + ".Slots");
+                List<Integer> slots = item.getSlots();
                 type = type.contains("_") ? type.split("_")[1] : c;
                 map.put(slots, type);
             }
@@ -643,11 +647,11 @@ public class Tools {
      * @param version String, to be parsed
      * @return numbered version.
      * <br>
-     * <bold>Example:</bold> <br>
-     *  Input text: <code>2.2.2</code> <br>
-     *  Output: <code>2220</code> <br>
-     *  Input text: <code>2.2.2.2</code> <br>
-     *  Output: <code>2222</code>
+     * Example: <br>
+     * Input text: <code>2.2.2</code> <br>
+     * Output: <code>2220</code> <br>
+     * Input text: <code>2.2.2.2</code> <br>
+     * Output: <code>2222</code>
      */
     public static int getPluginVersion(String version) {
         StringBuilder builder = new StringBuilder();
