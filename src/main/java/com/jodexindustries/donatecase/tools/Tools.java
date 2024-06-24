@@ -458,6 +458,7 @@ public class Tools {
 
         return item;
     }
+
     public static ItemStack getBASE64Skull(String url, String displayName, List<String> lore) {
         ItemStack item = SkullCreator.itemFromUrl("http://textures.minecraft.net/texture/" + url);
         ItemMeta meta = item.getItemMeta();
@@ -551,6 +552,12 @@ public class Tools {
         }
         return item;
     }
+
+    /**
+     * Parse material type from string
+     * @param material String, to be parsed
+     * @return Parsed enum
+     */
     public static MaterialType getMaterialType(String material) {
         switch (material) {
             case "HEAD":
@@ -607,7 +614,11 @@ public class Tools {
         return null;
     }
 
-
+    /**
+     * Format string with Bukkit ChatColor and hex
+     * @param message String, to be formated
+     * @return String with format
+     */
     public static String hex(String message) {
         Pattern pattern = Pattern.compile("#[a-fA-F0-9]{6}");
         Matcher matcher = pattern.matcher(message);
@@ -627,6 +638,17 @@ public class Tools {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
+    /**
+     * Parse version from string
+     * @param version String, to be parsed
+     * @return numbered version.
+     * <br>
+     * <bold>Example:</bold> <br>
+     *  Input text: <code>2.2.2</code> <br>
+     *  Output: <code>2220</code> <br>
+     *  Input text: <code>2.2.2.2</code> <br>
+     *  Output: <code>2222</code>
+     */
     public static int getPluginVersion(String version) {
         StringBuilder builder = new StringBuilder();
         version = version.replaceAll("\\.", "");
@@ -652,6 +674,14 @@ public class Tools {
         }
         return false;
     }
+
+    /**
+     * Check sender for permission to executing commands
+     * Checks only if sender has permission for one or more commands, not all
+     * @param sender Player or Console
+     * @param commands List of commands, that loaded in DonateCase
+     * @return true, if sender has permission
+     */
     public static boolean isHasCommandForSender(CommandSender sender, List<Map<String, SubCommand>> commands) {
         for (Map<String, SubCommand> command : commands) {
             for (SubCommand subCommand : command.values()) {
@@ -663,6 +693,12 @@ public class Tools {
         return false;
     }
 
+    /**
+     * Check sender for permission to executing command
+     * @param sender Player or Console
+     * @param subCommand Sub command ,that loaded in DonateCase
+     * @return true, if sender has permission
+     */
     private static boolean hasPermissionForCommand(CommandSender sender, SubCommand subCommand) {
         SubCommandType type = subCommand.getType();
 
@@ -678,10 +714,15 @@ public class Tools {
     }
 
 
+    /**
+     * Parse EulerAngle from string
+     * @param angleString String to be parsed
+     * @return Alright, its just default Bukkit EulerAngle
+     */
     public static EulerAngle getEulerAngleFromString(String angleString) {
         String[] angle;
         if (angleString == null) return new EulerAngle(0,0,0);
-        angle = angleString.replace(" ", "").split(",");
+        angle = angleString.replaceAll(" ", "").split(",");
         try {
             double x = Double.parseDouble(angle[0]);
             double y = Double.parseDouble(angle[1]);
@@ -691,9 +732,18 @@ public class Tools {
             return new EulerAngle(0,0,0);
         }
     }
+
+    /**
+     * Get euler angle from Animations.yml
+     * @param path Path, used like animation name
+     * @return EulerAngle, that used in animations
+     */
     public static ArmorStandEulerAngle getArmorStandEulerAngle(String path) {
          ConfigurationSection section = Case.getCustomConfig().getAnimations().getConfigurationSection(path);
-         if(section == null) return new ArmorStandEulerAngle(new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0), new EulerAngle(0,0,0));
+         if(section == null) {
+             EulerAngle angle = new EulerAngle(0,0,0);
+             return new ArmorStandEulerAngle(angle, angle, angle, angle, angle, angle);
+         }
          EulerAngle head = getEulerAngleFromString(section.getString("Head"));
          EulerAngle body = getEulerAngleFromString(section.getString("Body"));
          EulerAngle rightArm = getEulerAngleFromString(section.getString("RightArm"));
