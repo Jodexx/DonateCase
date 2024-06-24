@@ -50,6 +50,9 @@ public class CaseData implements Cloneable {
                 ", animationSound=" + animationSound +
                 ", items=" + items +
                 ", historyData=" + Arrays.toString(historyData) +
+                ", hologram=" + hologram +
+                ", levelGroups=" + levelGroups +
+                ", gui=" + gui +
                 '}';
     }
 
@@ -543,7 +546,7 @@ public class CaseData implements Cloneable {
         /**
          * Class for the implementation of the winning item material
          */
-        public static class Material {
+        public static class Material implements Cloneable {
             private String id;
             private ItemStack itemStack;
             private String displayName;
@@ -575,14 +578,7 @@ public class CaseData implements Cloneable {
                 this.itemStack = itemStack;
             }
 
-            @Override
-            public String toString() {
-                return "Material{" +
-                        "itemStack=" + itemStack +
-                        ", displayName='" + displayName + '\'' +
-                        ", enchanted=" + enchanted +
-                        '}';
-            }
+
 
             /**
              * Get item display name
@@ -628,6 +624,7 @@ public class CaseData implements Cloneable {
              * Material id like HDB:1234, HEAD:name, RED_WOOL etc.
              * @return id
              */
+            @Nullable
             public String getId() {
                 return id;
             }
@@ -646,6 +643,26 @@ public class CaseData implements Cloneable {
 
             public void setLore(List<String> lore) {
                 this.lore = lore;
+            }
+
+            @Override
+            public Material clone() {
+                try {
+                    return (Material) super.clone();
+                } catch (CloneNotSupportedException e) {
+                    throw new AssertionError();
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "Material{" +
+                        "id='" + id + '\'' +
+                        ", itemStack=" + itemStack +
+                        ", displayName='" + displayName + '\'' +
+                        ", enchanted=" + enchanted +
+                        ", lore=" + lore +
+                        '}';
             }
         }
 
@@ -1067,10 +1084,24 @@ public class CaseData implements Cloneable {
             @Override
             public Item clone() {
                 try {
-                    return (Item) super.clone();
+                    Item item = (Item) super.clone();
+                    item.setMaterial(material.clone());
+                    return item;
                 } catch (CloneNotSupportedException e) {
                     throw new AssertionError();
                 }
+            }
+
+            @Override
+            public String toString() {
+                return "Item{" +
+                        "itemName='" + itemName + '\'' +
+                        ", type='" + type + '\'' +
+                        ", material=" + material +
+                        ", slots=" + slots +
+                        ", modelData=" + modelData +
+                        ", rgb=" + Arrays.toString(rgb) +
+                        '}';
             }
         }
     }
