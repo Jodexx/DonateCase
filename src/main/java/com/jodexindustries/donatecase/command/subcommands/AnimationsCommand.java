@@ -18,7 +18,7 @@ public class AnimationsCommand implements SubCommand {
         for (String addon : buildAnimationsMap().keySet()) {
             Tools.msgRaw(sender, "&6" + addon);
             for (String animation : buildAnimationsMap().get(addon)) {
-                Tools.msgRaw(sender, "&6" + animation);
+                Tools.msgRaw(sender, "&9- &a" + animation);
             }
         }
     }
@@ -37,11 +37,8 @@ public class AnimationsCommand implements SubCommand {
         Map<String, List<String>> animationsMap = new HashMap<>();
         Case.getInstance().api.getAnimationManager().getRegisteredAnimations().forEach((animationName, pair) -> {
             Addon addon = pair.getSecond();
-            animationsMap.computeIfAbsent(animationName, k -> new ArrayList<>());
-
-            List<String> animations = animationsMap.get(animationName);
+            List<String> animations = animationsMap.getOrDefault(addon.getName(), new ArrayList<>());
             animations.add(animationName);
-
 
             animationsMap.put(addon.getName(), animations);
         });
