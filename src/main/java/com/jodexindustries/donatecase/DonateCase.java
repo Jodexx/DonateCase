@@ -268,6 +268,7 @@ public class DonateCase extends JavaPlugin {
         api.getSubCommandManager().registerSubCommand("delete", new DeleteCommand());
         api.getSubCommandManager().registerSubCommand("addons", new AddonsCommand());
         api.getSubCommandManager().registerSubCommand("addon", new AddonCommand());
+        api.getSubCommandManager().registerSubCommand("animations", new AnimationsCommand());
     }
 
     private void registerDefaultAnimations() {
