@@ -37,8 +37,11 @@ public class CaseLoader {
             }
 
             CaseData caseData = loadCaseData(caseType, caseSection);
-            Case.caseData.put(caseType, caseData);
-            count++;
+
+            if(caseData != null) {
+                Case.caseData.put(caseType, caseData);
+                count++;
+            }
         }
 
         Logger.log("&aLoaded &c" + count + "&a cases!");
@@ -48,6 +51,11 @@ public class CaseLoader {
         String caseTitle = getStringOrDefault(caseSection, "Title");
         String caseDisplayName = getStringOrDefault(caseSection, "DisplayName");
         String animationName = caseSection.getString("Animation");
+
+        if(animationName == null) {
+            logWarning("Case " + caseType + " has no animation, skipped.");
+            return null;
+        }
 
         CaseData.AnimationSound sound = loadAnimationSound(caseSection);
         CaseData.Hologram hologram = loadHologram(caseSection);
