@@ -8,6 +8,7 @@ import com.jodexindustries.donatecase.api.events.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationUnregisteredEvent;
+import com.jodexindustries.donatecase.tools.Pair;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
@@ -22,7 +23,7 @@ import java.util.logging.Level;
  * Animation control class, registration, playing
  */
 public class AnimationManager {
-    private static final Map<String, Animation> registeredAnimations = new HashMap<>();
+    private static final Map<String, Pair<Animation, Addon>> registeredAnimations = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -39,7 +40,7 @@ public class AnimationManager {
      */
     public void registerAnimation(String name, Animation animation) {
         if(registeredAnimations.get(name) == null) {
-            registeredAnimations.put(name, animation);
+            registeredAnimations.put(name, new Pair<>(animation, addon));
             String animationPluginName = addon.getName();
             boolean isDefault = false;
             AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(name, animation, animationPluginName, isDefault);
@@ -85,45 +86,39 @@ public class AnimationManager {
         if(caseData == null) return;
         caseData = caseData.clone();
         String animation = caseData.getAnimation();
-        if(animation != null) {
-            if(isRegistered(animation)) {
-                if(CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {
-                    CaseManager.getHologramManager().removeHologram(location.getBlock());
-                }
+        if (isRegistered(animation)) {
+            if (CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {
+                CaseManager.getHologramManager().removeHologram(location.getBlock());
+            }
 
-                Animation animationClass = getRegisteredAnimation(animation);
-                if (animationClass != null) {
-                    CaseData.Item winItem = Case.getRandomItem(caseData);
-                    winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName()));
-                    AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, animation, caseData, location, winItem);
-                    Bukkit.getPluginManager().callEvent(preStartEvent);
+            Animation animationClass = getRegisteredAnimation(animation);
+            if (animationClass != null) {
+                CaseData.Item winItem = Case.getRandomItem(caseData);
+                winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, winItem.getMaterial().getDisplayName()));
+                AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, animation, caseData, location, winItem);
+                Bukkit.getPluginManager().callEvent(preStartEvent);
 
-                    ActiveCase activeCase = new ActiveCase(location, caseData.getCaseType());
-                    UUID uuid = UUID.randomUUID();
-                    Case.activeCases.put(uuid, activeCase);
-                    Case.activeCasesByLocation.put(location.getBlock().getLocation(), uuid);
+                ActiveCase activeCase = new ActiveCase(location, caseData.getCaseType());
+                UUID uuid = UUID.randomUUID();
+                Case.activeCases.put(uuid, activeCase);
+                Case.activeCasesByLocation.put(location.getBlock().getLocation(), uuid);
 
-                    animationClass.start(player,  Case.getCaseLocationByBlockLocation(location), uuid, caseData, preStartEvent.getWinItem());
-                    for (Player pl : Bukkit.getOnlinePlayers()) {
-                        if (Case.playersGui.containsKey(pl.getUniqueId())) {
-                            pl.closeInventory();
-                        }
+                animationClass.start(player, Case.getCaseLocationByBlockLocation(location), uuid, caseData, preStartEvent.getWinItem());
+                for (Player pl : Bukkit.getOnlinePlayers()) {
+                    if (Case.playersGui.containsKey(pl.getUniqueId())) {
+                        pl.closeInventory();
                     }
-                    // AnimationStart event
-                    AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, location, preStartEvent.getWinItem());
-                    Bukkit.getPluginManager().callEvent(startEvent);
-                } else {
-                    Case.getInstance().getLogger().warning("Animation " + animation + " not found!");
                 }
+                // AnimationStart event
+                AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, location, preStartEvent.getWinItem());
+                Bukkit.getPluginManager().callEvent(startEvent);
             } else {
-                Tools.msg(player, "&cAn error occurred while opening the case!");
-                Tools.msg(player, "&cContact the project administration!");
-                Case.getInstance().getLogger().log(Level.WARNING, "Case animation "  + animation + " does not exist!");
+                Case.getInstance().getLogger().warning("Animation " + animation + " not found!");
             }
         } else {
             Tools.msg(player, "&cAn error occurred while opening the case!");
             Tools.msg(player, "&cContact the project administration!");
-            Case.getInstance().getLogger().log(Level.WARNING, "Case animation name does not exist!");
+            Case.getInstance().getLogger().log(Level.WARNING, "Case animation " + animation + " does not exist!");
         }
     }
 
@@ -140,7 +135,7 @@ public class AnimationManager {
      * Get all registered animations
      * @return map with registered animations
      */
-    public Map<String, Animation> getRegisteredAnimations() {
+    public Map<String, Pair<Animation, Addon>> getRegisteredAnimations() {
         return registeredAnimations;
     }
 
@@ -152,7 +147,7 @@ public class AnimationManager {
     private Animation getRegisteredAnimation(String animation) {
         if (registeredAnimations.containsKey(animation)) {
             try {
-                Animation animationClass = getRegisteredAnimations().get(animation);
+                Animation animationClass = getRegisteredAnimations().get(animation).getFirst();
                 return animationClass.getClass().getDeclaredConstructor().newInstance();
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 Case.getInstance().getLogger().warning(e.getLocalizedMessage());
