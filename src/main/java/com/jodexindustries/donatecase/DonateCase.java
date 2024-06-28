@@ -9,6 +9,7 @@ import com.jodexindustries.donatecase.api.data.HologramDriver;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
+import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
@@ -205,6 +206,9 @@ public class DonateCase extends JavaPlugin {
         }
 
         checkLanguageVersion();
+
+        DonateCaseReloadEvent reloadEvent = new DonateCaseReloadEvent(this);
+        Bukkit.getPluginManager().callEvent(reloadEvent);
     }
 
     private void checkAndCreateFile(String fileName) {
