@@ -107,6 +107,7 @@ public class DonateCase extends JavaPlugin {
         if(api.getAddonManager() != null) api.getAddonManager().unloadAddons();
 
         api.getAnimationManager().unregisterAnimations();
+        api.getSubCommandManager().unregisterSubCommands();
 
         papi.unregister();
 
