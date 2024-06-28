@@ -53,7 +53,7 @@ public class SubCommandManager {
     }
 
     /**
-     * Unregister all animations
+     * Unregister all subcommands
      */
     public void unregisterSubCommands() {
         List<String> list = new ArrayList<>(getSubCommands().keySet());
