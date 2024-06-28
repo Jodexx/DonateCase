@@ -104,8 +104,9 @@ public class DonateCase extends JavaPlugin {
     public void onDisable() {
         DonateCaseDisableEvent donateCaseDisableEvent = new DonateCaseDisableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseDisableEvent);
-        api.getAnimationManager().unregisterAnimations();
         if(api.getAddonManager() != null) api.getAddonManager().unloadAddons();
+
+        api.getAnimationManager().unregisterAnimations();
 
         papi.unregister();
 
