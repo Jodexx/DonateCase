@@ -167,15 +167,14 @@ public class CaseGui {
             }
         }
         if (material == null) {
-            Case.getInstance().getLogger().warning("Material \"" + material + "\" is null! Case: " + caseType + " Item: " + item.getItemName());
-            return new ItemStack(Material.STONE);
+            return new ItemStack(Material.AIR);
         }
         String[] materialParts = material.split(":");
         MaterialType materialType = Tools.getMaterialType(materialParts[0]);
 
         if (materialType == null) {
             Case.getInstance().getLogger().warning("Material \"" + materialParts[0] + "\" not found! Case: " + caseType + " Item: " + item.getItemName());
-            return new ItemStack(Material.STONE);
+            return new ItemStack(Material.AIR);
         }
 
         switch (materialType) {
