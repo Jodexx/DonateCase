@@ -81,7 +81,7 @@ public class ShapeAnimation implements Animation {
                 }
 
                 if (i <= 15) {
-                    CaseData.Item winItem = Case.getRandomItem(caseData);
+                    CaseData.Item winItem = caseData.getRandomItem();
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                         as.setPose(armorStandEulerAngle);
                         as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());

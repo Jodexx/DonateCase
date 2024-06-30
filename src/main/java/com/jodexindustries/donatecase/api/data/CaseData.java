@@ -83,6 +83,10 @@ public class CaseData implements Cloneable {
         return items.getOrDefault(name, null);
     }
 
+    /**
+     * Get random item from case
+     * @return Random item
+     */
     public Item getRandomItem() {
         ProbabilityCollection<Item> collection = new ProbabilityCollection<>();
         for (Item item : items.values()) {

@@ -87,7 +87,7 @@ public class RainlyAnimation implements Animation {
 
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0 )) {
-                    CaseData.Item winItem = Case.getRandomItem(caseData);
+                    CaseData.Item winItem = caseData.getRandomItem();
                     String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
                     winItem.getMaterial().setDisplayName(winGroupDisplayName);
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {

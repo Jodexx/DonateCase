@@ -30,7 +30,7 @@ public class OpenCaseCommand implements SubCommand {
                         Case.removeKeys(caseName, playerName, 1);
                         CaseData data = Case.getCase(caseName);
                         if (data == null) return;
-                        CaseData.Item winGroup = Tools.getRandomGroup(data);
+                        CaseData.Item winGroup = data.getRandomItem();
                         Case.animationPreEnd(data, player, true, winGroup);
                     } else {
                         Tools.msg(player, Case.getCustomConfig().getLang().getString("no-keys"));

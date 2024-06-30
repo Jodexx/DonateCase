@@ -50,7 +50,7 @@ public class WheelAnimation implements Animation {
         // register items
         items.add(winItem);
         for (int i = 0; i < itemsCount; i++) {
-            CaseData.Item tempWinItem = Case.getRandomItem(caseData);
+            CaseData.Item tempWinItem = caseData.getRandomItem();
             items.add(tempWinItem);
             armorStands.add(spawnArmorStand(location, i, small));
         }
