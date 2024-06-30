@@ -9,6 +9,7 @@ import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.CasesConfig;
 import com.jodexindustries.donatecase.tools.CustomConfig;
+import com.jodexindustries.donatecase.tools.ProbabilityCollection;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
@@ -404,27 +405,13 @@ public class Case{
      * @param item Case item
      */
     public static String getRandomActionChoice(CaseData.Item item) {
-        String endCommand = "";
-        Random random = new Random();
-        int maxChance = 0;
-        int from = 0;
-        for (String command : item.getRandomActions().keySet()) {
-            CaseData.Item.RandomAction randomAction = item.getRandomAction(command);
+        ProbabilityCollection<String> collection = new ProbabilityCollection<>();
+        for (String name : item.getRandomActions().keySet()) {
+            CaseData.Item.RandomAction randomAction = item.getRandomAction(name);
             if(randomAction == null) continue;
-            maxChance += randomAction.getChance();
+            collection.add(name, randomAction.getChance());
         }
-        int rand = random.nextInt(maxChance);
-        for (String command : item.getRandomActions().keySet()) {
-            CaseData.Item.RandomAction randomAction = item.getRandomAction(command);
-            if(randomAction == null) continue;
-            int itemChance = randomAction.getChance();
-            if (from <= rand && rand < from + itemChance) {
-                endCommand = command;
-                break;
-            }
-            from += itemChance;
-        }
-        return endCommand;
+        return collection.get();
     }
 
     /**
