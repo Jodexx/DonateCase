@@ -176,18 +176,22 @@ public class CaseGui {
             Case.getInstance().getLogger().warning("Material \"" + materialParts[0] + "\" not found! Case: " + caseType + " Item: " + item.getItemName());
             return new ItemStack(Material.AIR);
         }
+        return createItem(materialType, materialParts, displayName, newLore, caseType, enchanted, rgb, modelData);
+    }
 
+
+    private ItemStack createItem(MaterialType materialType, String[] materialParts, String displayName, List<String> lore, String caseType, boolean enchanted, String[] rgb, int modelData) {
         switch (materialType) {
             case HEAD:
-                return Tools.getPlayerHead(materialParts[1], displayName, Tools.rt(newLore, "%case%:" + caseType));
+                return Tools.getPlayerHead(materialParts[1], displayName, Tools.rt(lore, "%case%:" + caseType));
             case HDB:
-                return HeadDatabaseSupport.getSkull(materialParts[1], displayName, Tools.rt(newLore, "%case%:" + caseType));
+                return HeadDatabaseSupport.getSkull(materialParts[1], displayName, Tools.rt(lore, "%case%:" + caseType));
             case CH:
-                return CustomHeadSupport.getSkull(materialParts[1], materialParts[2], displayName, Tools.rt(newLore, "%case%:" + caseType));
+                return CustomHeadSupport.getSkull(materialParts[1], materialParts[2], displayName, Tools.rt(lore, "%case%:" + caseType));
             case IA:
-                return ItemsAdderSupport.getItem(materialParts[1] + ":" + materialParts[2], displayName, Tools.rt(newLore, "%case%:" + caseType));
+                return ItemsAdderSupport.getItem(materialParts[1] + ":" + materialParts[2], displayName, Tools.rt(lore, "%case%:" + caseType));
             case BASE64:
-                return Tools.getBASE64Skull(materialParts[1], displayName, Tools.rt(newLore, "%case%:" + caseType));
+                return Tools.getBASE64Skull(materialParts[1], displayName, Tools.rt(lore, "%case%:" + caseType));
             default:
                 byte data = -1;
                 if(materialParts.length > 1)  {
@@ -195,7 +199,7 @@ public class CaseGui {
                         data = Byte.parseByte(materialParts[1]);
                     } catch (NumberFormatException ignored) {}
                 }
-                return Tools.createItem(Material.getMaterial(materialParts[0]), 1, data, displayName, Tools.rt(newLore, "%case%:" + caseType), enchanted, rgb, modelData);
+                return Tools.createItem(Material.getMaterial(materialParts[0]), 1, data, displayName, Tools.rt(lore, "%case%:" + caseType), enchanted, rgb, modelData);
         }
     }
 
