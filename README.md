@@ -18,7 +18,7 @@ Maven
 <dependency>
   <groupId>com.jodexindustries.donatecase</groupId>
   <artifactId>DonateCaseAPI</artifactId>
-  <version>2.2.2.9</version>
+  <version>2.2.3.1</version>
 </dependency>
 ```
 Gradle
@@ -29,5 +29,5 @@ maven {
 }
 ```
 ```gradle
-compileOnly("com.jodexindustries.donatecase:DonateCaseAPI:2.2.2.9")
+compileOnly("com.jodexindustries.donatecase:DonateCaseAPI:2.2.3.1")
 ```
