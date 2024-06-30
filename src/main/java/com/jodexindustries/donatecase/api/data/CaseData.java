@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api.data;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.jodexindustries.donatecase.tools.ProbabilityCollection;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -80,6 +81,14 @@ public class CaseData implements Cloneable {
     @Nullable
     public Item getItem(String name) {
         return items.getOrDefault(name, null);
+    }
+
+    public Item getRandomItem() {
+        ProbabilityCollection<Item> collection = new ProbabilityCollection<>();
+        for (Item item : items.values()) {
+            collection.add(item, item.chance);
+        }
+        return collection.get();
     }
 
     /**

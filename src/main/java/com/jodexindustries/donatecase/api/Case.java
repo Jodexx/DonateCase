@@ -307,11 +307,13 @@ public class Case{
 
     /**
      * Get random group from case
+     * @deprecated Use {@link CaseData#getRandomItem()} )} instead
      * @param c Case data
      * @return Item data
      */
+    @Deprecated
     public static CaseData.Item getRandomItem(CaseData c) {
-        return Tools.getRandomGroup(c);
+        return c.getRandomItem();
     }
 
     /**

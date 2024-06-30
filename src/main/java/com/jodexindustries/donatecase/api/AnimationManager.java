@@ -93,7 +93,7 @@ public class AnimationManager {
 
             Animation animationClass = getRegisteredAnimation(animation);
             if (animationClass != null) {
-                CaseData.Item winItem = Case.getRandomItem(caseData);
+                CaseData.Item winItem = caseData.getRandomItem();
                 winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, winItem.getMaterial().getDisplayName()));
                 AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, animation, caseData, location, winItem);
                 Bukkit.getPluginManager().callEvent(preStartEvent);

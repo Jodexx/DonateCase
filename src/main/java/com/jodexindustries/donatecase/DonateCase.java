@@ -181,7 +181,7 @@ public class DonateCase extends JavaPlugin {
         if(customConfig.getConfig().getConfigurationSection("DonatCase.Cases") != null) {
             new File(getDataFolder(), "cases").mkdir();
             Logger.log("&cOutdated cases format!");
-            Tools.convertCases();
+            Converter.convertCases();
         } else {
             if(!new File(getDataFolder(), "cases").exists()) {
                 new File(getDataFolder(), "cases").mkdir();
@@ -202,7 +202,7 @@ public class DonateCase extends JavaPlugin {
 
         if(customConfig.getCases().getString("config") == null || !customConfig.getCases().getString("config", "").equalsIgnoreCase("1.0")) {
             Logger.log("Conversion of case locations to a new method of storage...");
-            Tools.convertCasesLocation();
+            Converter.convertCasesLocation();
         }
 
         checkLanguageVersion();
@@ -233,7 +233,7 @@ public class DonateCase extends JavaPlugin {
         if (version == null || !version.equalsIgnoreCase("2.6")) {
             Logger.log("&cOutdated language config! Creating a new!");
             if(version != null && version.equalsIgnoreCase("2.5")) {
-                Tools.convertLanguage(customConfig.getLang());
+                Converter.convertLanguage(customConfig.getLang());
             } else {
                 File langRu = new File(getDataFolder(), "lang/ru_RU.yml");
                 langRu.renameTo(new File(getDataFolder(), "lang/ru_RU.yml.old"));

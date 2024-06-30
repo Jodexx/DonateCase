@@ -6,10 +6,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class for loading cases configurations
@@ -21,7 +18,7 @@ public class CasesConfig {
      * Default initialization constructor
      */
     public CasesConfig() {
-        for (File file : Tools.getCasesInFolder()) {
+        for (File file : getCasesInFolder()) {
             if (isYamlFile(file)) {
                 String name = getFileNameWithoutExtension(file);
                 YamlConfiguration caseConfig = YamlConfiguration.loadConfiguration(file);
@@ -131,6 +128,12 @@ public class CasesConfig {
         }
     }
 
+    public static List<File> getCasesInFolder() {
+        List<File> files = new ArrayList<>();
+        File directory = new File(Case.getInstance().getDataFolder(), "cases");
+        Collections.addAll(files, Objects.requireNonNull(directory.listFiles()));
+        return files;
+    }
 
     /**
      * Get all cases configurations
