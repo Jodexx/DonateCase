@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.tools;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.database.yaml.YamlData;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -16,14 +17,14 @@ public class CustomConfig {
     private final File fileKeys;
     private final File fileConfig;
     private final File fileAnimations;
-    private final File fileData;
     private YamlConfiguration lang;
     private File fileLang;
     private final YamlConfiguration cases;
     private final YamlConfiguration keys;
     private final YamlConfiguration config;
     private final YamlConfiguration animations;
-    private final YamlConfiguration data;
+
+    private final YamlData data;
 
     /**
      * Default initialization constructor
@@ -37,8 +38,8 @@ public class CustomConfig {
         keys = YamlConfiguration.loadConfiguration(fileKeys);
         fileConfig = new File(Case.getInstance().getDataFolder(), "Config.yml");
         config = YamlConfiguration.loadConfiguration(fileConfig);
-        fileData = new File(Case.getInstance().getDataFolder(), "Data.yml");
-        data = YamlConfiguration.loadConfiguration(fileData);
+
+        data = new YamlData();
 
         File path = new File(Case.getInstance().getDataFolder(), "lang");
         File[] listFiles = path.listFiles();
@@ -119,19 +120,7 @@ public class CustomConfig {
 
 
     /**
-     * Save Data.yml configuration
-     */
-    public void saveData() {
-        try {
-            data.save(fileData);
-        } catch (IOException var1) {
-            Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Data.yml");
-        }
-
-    }
-
-    /**
-     * Get Casees.yml configuration
+     * Get Cases.yml configuration
      * @return Configuration
      */
     public YamlConfiguration getCases() {
@@ -175,21 +164,14 @@ public class CustomConfig {
     }
 
     /**
-     * Get Data.yml configuration
-     * @return Configuration
-     */
-    public YamlConfiguration getData() {
-        if(data == null) {
-            reload();
-        }
-        return data;
-    }
-
-    /**
      * Get language configuration
      * @return Lang configuration
      */
     public YamlConfiguration getLang() {
         return lang;
+    }
+
+    public YamlData getData() {
+        return data;
     }
 }
