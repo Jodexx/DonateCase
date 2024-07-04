@@ -375,6 +375,19 @@ public class Case{
                         caseData.getAnimationSound().getPitch());
             }
         }
+
+        saveOpenInfo(caseData, player, item, choice);
+    }
+
+    /**
+     * Saving case open information
+     * Called in {@link Case#animationPreEnd} method
+     * @param caseData Case data
+     * @param player Player who opened
+     * @param item Win item
+     * @param choice In fact, these are actions that were selected from the RandomActions section
+     */
+    private static void saveOpenInfo(CaseData caseData, Player player, CaseData.Item item, String choice) {
         CaseData.HistoryData data = new CaseData.HistoryData(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
         CaseData.HistoryData[] list = caseData.getHistoryData();
         System.arraycopy(list, 0, list, 1, list.length - 1);
@@ -384,11 +397,7 @@ public class Case{
             CaseData.HistoryData tempData = list[i];
             if(tempData != null) {
                 if(!instance.sql) {
-                    getCustomConfig().getData().set("Data." + caseData.getCaseType() + "." + i + ".Player", tempData.getPlayerName());
-                    getCustomConfig().getData().set("Data." + caseData.getCaseType() + "." + i + ".Time", tempData.getTime());
-                    getCustomConfig().getData().set("Data." + caseData.getCaseType() + "." + i + ".Group", tempData.getGroup());
-                    getCustomConfig().getData().set("Data." + caseData.getCaseType() + "." + i + ".Item", tempData.getItem());
-                    getCustomConfig().getData().set("Data." + caseData.getCaseType() + "." + i + ".Action", tempData.getAction());
+                    getCustomConfig().getData().setHistoryData(caseData.getCaseType(), i, tempData);
                 } else {
                     if(instance.mysql != null) instance.mysql.setHistoryData(caseData.getCaseType(), i, tempData);
                 }
@@ -397,7 +406,13 @@ public class Case{
         CaseData finalCase = getCase(caseData.getCaseType());
         if(finalCase != null) finalCase.setHistoryData(list);
 
-        getCustomConfig().saveData();
+        getCustomConfig().getData().save();
+
+        if(!instance.sql) {
+            getCustomConfig().getData().addOpenCount(player.getName(), caseData.getCaseType());
+        } else {
+            if(instance.mysql != null) instance.mysql.addCount(player.getName(), caseData.getCaseType(), 1);
+        }
     }
 
     /**
