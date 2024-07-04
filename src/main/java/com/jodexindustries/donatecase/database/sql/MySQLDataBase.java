@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.database;
+package com.jodexindustries.donatecase.database.sql;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -7,21 +7,23 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.TableUtils;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.database.entities.HistoryDataTable;
-import com.jodexindustries.donatecase.database.entities.PlayerKeysTable;
+import com.jodexindustries.donatecase.database.sql.entities.HistoryDataTable;
+import com.jodexindustries.donatecase.database.sql.entities.OpenInfoTable;
+import com.jodexindustries.donatecase.database.sql.entities.PlayerKeysTable;
 import org.bukkit.Bukkit;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CaseDataBase {
+public class MySQLDataBase {
     private Dao<CaseData.HistoryData , String> historyDataTables;
     private Dao<PlayerKeysTable, String> playerKeysTables;
+    private Dao<OpenInfoTable, String> openInfoTables;
     private JdbcConnectionSource connectionSource;
     private final DonateCase instance;
 
-    public CaseDataBase(DonateCase instance, String database, String port, String host, String user, String password) {
+    public MySQLDataBase(DonateCase instance, String database, String port, String host, String user, String password) {
         this.instance = instance;
         try {
             String url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true";
@@ -30,6 +32,7 @@ public class CaseDataBase {
             TableUtils.createTableIfNotExists(connectionSource, PlayerKeysTable.class);
             historyDataTables = DaoManager.createDao(connectionSource, CaseData.HistoryData.class);
             playerKeysTables = DaoManager.createDao(connectionSource, PlayerKeysTable.class);
+            openInfoTables = DaoManager.createDao(connectionSource, OpenInfoTable.class);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -54,7 +57,7 @@ public class CaseDataBase {
     }
 
     public void setKey(String name, String player, int keys) {
-        Bukkit.getScheduler().runTaskAsynchronously(instance, () ->{
+        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
 
         try {
             List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
@@ -68,7 +71,7 @@ public class CaseDataBase {
             if (playerKeysTable == null) {
                 playerKeysTable = new PlayerKeysTable();
                 playerKeysTable.setPlayer(player);
-                playerKeysTable.setCaseName(name);
+                playerKeysTable.setCaseType(name);
                 playerKeysTable.setKeys(keys);
                 playerKeysTables.create(playerKeysTable);
             } else {
@@ -82,7 +85,71 @@ public class CaseDataBase {
         }
         });
     }
-    public void setHistoryData(String caseName, int index, CaseData.HistoryData data) {
+
+    /**
+     * Get count of opened cases by player
+     * @param player Player, who opened
+     * @param caseType Case type
+     * @return number of opened cases
+     */
+    public int getCount(String player, String caseType) {
+        try {
+            List<OpenInfoTable> results = openInfoTables.queryBuilder()
+                    .where()
+                    .eq("player", player)
+                    .and()
+                    .eq("case_name", caseType)
+                    .query();
+            OpenInfoTable openInfoTable = null;
+            if(!results.isEmpty()) openInfoTable = results.get(0);
+            if(openInfoTable!= null) return openInfoTable.getCount();
+        } catch (SQLException e) {
+            instance.getLogger().warning(e.getMessage());
+        }
+        return 0;
+    }
+
+    public void addCount(String player, String caseType, int count) {
+        int temp = getCount(player, caseType);
+        setCount(player, caseType, temp+count);
+    }
+
+    /**
+     * Set count of opened cases by player
+     * @param caseType Player, who opened
+     * @param player Case type
+     * @param count Number of opened cases
+     */
+    public void setCount(String player, String caseType, int count) {
+        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+            try {
+                List<OpenInfoTable> results = openInfoTables.queryBuilder()
+                        .where()
+                        .eq("player", player)
+                        .and()
+                        .eq("case_type", caseType)
+                        .query();
+                OpenInfoTable openInfoTable = null;
+                if(!results.isEmpty()) openInfoTable = results.get(0);
+                if (openInfoTable == null) {
+                    openInfoTable = new OpenInfoTable();
+                    openInfoTable.setPlayer(player);
+                    openInfoTable.setCaseType(caseType);
+                    openInfoTable.setCount(count);
+                    openInfoTables.create(openInfoTable);
+                } else {
+                    UpdateBuilder<OpenInfoTable, String> updateBuilder = openInfoTables.updateBuilder();
+                    updateBuilder.updateColumnValue("count", count);
+                    updateBuilder.where().eq("player", player).and().eq("case_type", caseType);
+                    updateBuilder.update();
+                }
+            } catch (SQLException e) {
+                instance.getLogger().warning(e.getMessage());
+            }
+        });
+    }
+
+    public void setHistoryData(String caseType, int index, CaseData.HistoryData data) {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             try {
                 CaseData.HistoryData historyDataTable = null;
@@ -90,7 +157,7 @@ public class CaseDataBase {
                         .where()
                         .eq("id", index)
                         .and()
-                        .eq("case_type", caseName)
+                        .eq("case_type", caseType)
                         .query();
                 if (!results.isEmpty()) historyDataTable = results.get(0);
                 if (historyDataTable == null) {
@@ -105,7 +172,7 @@ public class CaseDataBase {
                     updateBuilder.updateColumnValue("time", data.getTime());
                     updateBuilder.updateColumnValue("group", data.getGroup());
                     updateBuilder.updateColumnValue("action", data.getAction());
-                    updateBuilder.where().eq("id", index).and().eq("case_type", caseName);
+                    updateBuilder.where().eq("id", index).and().eq("case_type", caseType);
                     updateBuilder.update();
                 }
 
@@ -114,6 +181,8 @@ public class CaseDataBase {
             }
         });
     }
+
+
     public List<CaseData.HistoryData> getHistoryData() {
         List<CaseData.HistoryData> list = new ArrayList<>();
         try {
