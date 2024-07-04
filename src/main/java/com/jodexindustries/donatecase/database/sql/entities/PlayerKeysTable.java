@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.database.entities;
+package com.jodexindustries.donatecase.database.sql.entities;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -8,7 +8,7 @@ public class PlayerKeysTable {
     @DatabaseField(canBeNull = false)
     private String player;
     @DatabaseField(canBeNull = false, columnName = "case_name")
-    private String caseName;
+    private String caseType;
     @DatabaseField(canBeNull = false, defaultValue = "0")
     private int keys;
     public String getPlayer() {
@@ -19,12 +19,12 @@ public class PlayerKeysTable {
         this.player = player;
     }
 
-    public String getCaseName() {
-        return caseName;
+    public String getCaseType() {
+        return caseType;
     }
 
-    public void setCaseName(String caseName) {
-        this.caseName = caseName;
+    public void setCaseType(String caseType) {
+        this.caseType = caseType;
     }
 
     public int getKeys() {
