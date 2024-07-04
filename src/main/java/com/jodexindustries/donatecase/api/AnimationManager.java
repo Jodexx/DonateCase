@@ -39,7 +39,7 @@ public class AnimationManager {
      * @param animation Animation class
      */
     public void registerAnimation(String name, Animation animation) {
-        if(registeredAnimations.get(name) == null) {
+        if(registeredAnimations.containsKey(name)) {
             registeredAnimations.put(name, new Pair<>(animation, addon));
             String animationPluginName = addon.getName();
             boolean isDefault = false;
@@ -128,7 +128,7 @@ public class AnimationManager {
      * @return boolean
      */
     public boolean isRegistered(String name) {
-        return registeredAnimations.get(name) != null;
+        return registeredAnimations.containsKey(name);
     }
 
     /**
