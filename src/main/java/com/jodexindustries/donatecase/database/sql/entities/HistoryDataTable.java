@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.database.entities;
+package com.jodexindustries.donatecase.database.sql.entities;
 
 
 import com.j256.ormlite.field.DatabaseField;
