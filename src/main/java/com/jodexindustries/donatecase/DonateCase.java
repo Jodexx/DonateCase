@@ -16,7 +16,7 @@ import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.command.subcommands.*;
-import com.jodexindustries.donatecase.database.CaseDataBase;
+import com.jodexindustries.donatecase.database.sql.MySQLDataBase;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
@@ -48,7 +48,7 @@ import java.nio.file.Files;
 public class DonateCase extends JavaPlugin {
     public static DonateCase instance;
 
-    public CaseDataBase mysql;
+    public MySQLDataBase mysql;
     public HologramManager hologramManager = null;
     public PAPISupport papi = null;
     public LuckPerms luckPerms = null;
@@ -130,7 +130,7 @@ public class DonateCase extends JavaPlugin {
             String password = mysqlSection.getString("Password");
             (new BukkitRunnable() {
                 public void run() {
-                    mysql = new CaseDataBase(instance, base, port, host, user, password);
+                    mysql = new MySQLDataBase(instance, base, port, host, user, password);
                 }
             }).runTaskTimerAsynchronously(instance, 0L, 12000L);
             com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
