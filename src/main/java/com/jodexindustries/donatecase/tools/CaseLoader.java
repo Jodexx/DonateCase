@@ -173,29 +173,7 @@ public class CaseLoader {
         CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
 
         if (!plugin.sql) {
-            ConfigurationSection dataSection = plugin.customConfig.getData().getConfigurationSection("Data");
-
-            if (dataSection != null) {
-                ConfigurationSection section = dataSection.getConfigurationSection(caseType);
-
-                if (section != null) {
-                    for (String i : section.getKeys(false)) {
-                        ConfigurationSection caseDataSection = section.getConfigurationSection(i);
-
-                        if (caseDataSection != null) {
-                            CaseData.HistoryData data = new CaseData.HistoryData(
-                                    caseDataSection.getString("Item"),
-                                    caseType,
-                                    caseDataSection.getString("Player"),
-                                    caseDataSection.getLong("Time"),
-                                    caseDataSection.getString("Group"),
-                                    caseDataSection.getString("Action"));
-
-                            historyData[Integer.parseInt(i)] = data;
-                        }
-                    }
-                }
-            }
+            return plugin.customConfig.getData().getHistoryData(caseType);
         }
 
         return historyData;
