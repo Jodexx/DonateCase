@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class Placeholder extends PlaceholderExpansion {
 
-    SimpleCache<SimpleCache.InfoEntry, Integer> keysCache = new SimpleCache<>(10 * 1000);
+    private final SimpleCache<SimpleCache.InfoEntry, Integer> keysCache = new SimpleCache<>(10 * 1000);
 
-    SimpleCache<SimpleCache.InfoEntry, Integer> openCache = new SimpleCache<>(10 * 1000);
+    private final SimpleCache<SimpleCache.InfoEntry, Integer> openCache = new SimpleCache<>(10 * 1000);
 
 
 
