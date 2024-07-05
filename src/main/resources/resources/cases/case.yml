@@ -63,6 +63,7 @@ case:
         ID: IRON_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         DisplayName: '&7&l[&aVIP&7&l]'
         Enchanted: false
+      Index: 0
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
         - '[command] lp user %player% parent set %group%'
@@ -89,6 +90,7 @@ case:
         ID: GOLDEN_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         DisplayName: '&7&l[&bVIP&6+&7&l]'
         Enchanted: false
+      Index: 1
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
         - '[command] lp user %player% parent set %group%'
@@ -113,6 +115,7 @@ case:
         ID: DIAMOND_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         DisplayName: '&7&l[&5Deluxe&7&l]'
         Enchanted: false
+      Index: 2
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
         - '[command] lp user %player% parent set %group%'
@@ -136,6 +139,7 @@ case:
         ID: NETHERITE_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         DisplayName: '&7&l[&dLegend&7&l]'
         Enchanted: false
+      Index: 3
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
         - '[command] lp user %player% parent set %group%'
