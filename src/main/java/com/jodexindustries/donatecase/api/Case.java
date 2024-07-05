@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -130,13 +131,43 @@ public class Case{
 
     /**
      * Get the keys to a certain player's case
-     * @param caseType Case caseType
+     * @param caseType Case type
      * @param player Player name
      * @return Number of keys
      */
-
     public static int getKeys(String caseType, String player) {
-        return instance.sql ? (instance.mysql == null ? 0 : instance.mysql.getKey(caseType, player)) : getCustomConfig().getKeys().getInt("DonatCase.Cases." + caseType + "." + player);
+        return getKeysAsync(caseType, player).join();
+    }
+
+    /**
+     * Get the keys to a certain player's case
+     * @param caseType Case type
+     * @param player Player name
+     * @return CompletableFuture of keys
+     */
+    public static CompletableFuture<Integer> getKeysAsync(String caseType, String player) {
+        return CompletableFuture.supplyAsync(() -> instance.sql ? (instance.mysql == null ? 0 : instance.mysql.getKeys(caseType, player).join()) : getCustomConfig().getKeys().getInt("DonatCase.Cases." + caseType + "." + player));
+    }
+
+    /**
+     * Get count of opened cases by player
+     * @param caseType Case type
+     * @param player Player, who opened
+     * @return opened count
+     */
+    public static int getOpenCount(String caseType, String player) {
+        return getOpenCountAsync(caseType, player).join();
+    }
+
+    /**
+     * Get count of opened cases by player
+     * @param caseType Case type
+     * @param player Player, who opened
+     * @return CompletableFuture of open count
+     */
+    public static CompletableFuture<Integer> getOpenCountAsync(String caseType, String player) {
+        return CompletableFuture.supplyAsync(() -> instance.sql ? (instance.mysql == null ? 0 : instance.mysql.getCount(player, caseType).join()) : getCustomConfig().getData().getOpenCount(player, caseType)
+        );
     }
 
     /**
@@ -618,22 +649,35 @@ public class Case{
      * @return list of HistoryData (sorted by time)
      */
     public static List<CaseData.HistoryData> getSortedHistoryData() {
-        if(!instance.sql) {
-            return caseData.values().stream()
-                    .filter(Objects::nonNull)
-                    .flatMap(data -> {
-                        CaseData.HistoryData[] historyData = data.getHistoryData();
-                        return historyData != null ? Arrays.stream(historyData) : Stream.empty();
-                    })
-                    .filter(Objects::nonNull)
-                    .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
-                    .collect(Collectors.toList());
-        } else {
-            if(instance.mysql == null) return new ArrayList<>();
-            return instance.mysql.getHistoryData().stream().filter(Objects::nonNull)
-                    .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
-                    .collect(Collectors.toList());
-        }
+        return getAsyncSortedHistoryData().join();
+    }
+
+    /**
+     * Get sorted history data from all cases with CompletableFuture
+     * @return list of HistoryData (sorted by time)
+     */
+    public static CompletableFuture<List<CaseData.HistoryData>> getAsyncSortedHistoryData() {
+        CompletableFuture<List<CaseData.HistoryData>> future = new CompletableFuture<>();
+        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+            List<CaseData.HistoryData> historyData;
+            if(!instance.sql) {
+                historyData = caseData.values().stream()
+                        .filter(Objects::nonNull)
+                        .flatMap(data -> {
+                            CaseData.HistoryData[] temp = data.getHistoryData();
+                            return temp != null ? Arrays.stream(temp) : Stream.empty();
+                        })
+                        .filter(Objects::nonNull)
+                        .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                        .collect(Collectors.toList());
+            } else {
+                historyData = instance.mysql.getHistoryData().join().stream().filter(Objects::nonNull)
+                        .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                        .collect(Collectors.toList());
+            }
+            future.complete(historyData);
+        });
+        return future;
     }
 
     /**
