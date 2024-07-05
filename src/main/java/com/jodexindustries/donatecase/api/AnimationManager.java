@@ -39,7 +39,7 @@ public class AnimationManager {
      * @param animation Animation class
      */
     public void registerAnimation(String name, Animation animation) {
-        if(registeredAnimations.containsKey(name)) {
+        if(!isRegistered(name)) {
             registeredAnimations.put(name, new Pair<>(animation, addon));
             String animationPluginName = addon.getName();
             boolean isDefault = false;
@@ -56,7 +56,7 @@ public class AnimationManager {
      * @param name Animation name
      */
     public void unregisterAnimation(String name) {
-        if(registeredAnimations.containsKey(name)) {
+        if(isRegistered(name)) {
             registeredAnimations.remove(name);
             AnimationUnregisteredEvent animationUnRegisteredEvent = new AnimationUnregisteredEvent(name);
             Bukkit.getServer().getPluginManager().callEvent(animationUnRegisteredEvent);
@@ -145,7 +145,7 @@ public class AnimationManager {
      * @return Animation class instance
      */
     private Animation getRegisteredAnimation(String animation) {
-        if (registeredAnimations.containsKey(animation)) {
+        if (isRegistered(animation)) {
             try {
                 Animation animationClass = getRegisteredAnimations().get(animation).getFirst();
                 return animationClass.getClass().getDeclaredConstructor().newInstance();
