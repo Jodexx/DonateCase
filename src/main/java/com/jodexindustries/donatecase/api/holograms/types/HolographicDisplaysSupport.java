@@ -51,7 +51,7 @@ public class HolographicDisplaysSupport extends HologramManager {
 
     @Override
     public void removeAllHolograms() {
-        this.holograms.forEach((key, value) -> value.delete());
+        this.holograms.values().forEach(Hologram::delete);
         this.holograms.clear();
     }
 }

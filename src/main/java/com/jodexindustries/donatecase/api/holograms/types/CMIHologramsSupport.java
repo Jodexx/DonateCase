@@ -53,7 +53,7 @@ public class CMIHologramsSupport extends HologramManager {
 
     @Override
     public void removeAllHolograms() {
-        this.holograms.forEach((key, value) -> value.remove());
+        this.holograms.values().forEach(CMIHologram::remove);
         this.holograms.clear();
     }
 }
