@@ -97,8 +97,9 @@ public class MySQLDataBase {
      * @param caseType Case type
      * @return number of opened cases
      */
-    public CompletableFuture<Integer> getCount(String player, String caseType) {
+    public CompletableFuture<Integer> getOpenCount(String player, String caseType) {
         return CompletableFuture.supplyAsync(() -> {
+            OpenInfoTable openInfoTable = null;
             try {
                 List<OpenInfoTable> results = openInfoTables.queryBuilder()
                         .where()
@@ -106,19 +107,17 @@ public class MySQLDataBase {
                         .and()
                         .eq("case_type", caseType)
                         .query();
-                OpenInfoTable openInfoTable = null;
                 if(!results.isEmpty()) openInfoTable = results.get(0);
-                if(openInfoTable != null) return (openInfoTable.getCount());
             } catch (SQLException e) {
                 instance.getLogger().warning(e.getMessage());
             }
-            instance.getLogger().info("Checked");
+            if(openInfoTable != null) return (openInfoTable.getCount());
             return 0;
         });
     }
 
     public void addCount(String player, String caseType, int count) {
-        getCount(player, caseType).thenAcceptAsync((integer) -> setCount(player, caseType, integer+count));
+        getOpenCount(player, caseType).thenAcceptAsync((integer) -> setCount(player, caseType, integer+count));
     }
 
     /**
