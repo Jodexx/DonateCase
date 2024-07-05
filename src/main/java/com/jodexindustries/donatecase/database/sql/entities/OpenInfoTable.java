@@ -35,4 +35,13 @@ public class OpenInfoTable {
     public void setCount(int count) {
         this.count = count;
     }
+
+    @Override
+    public String toString() {
+        return "OpenInfoTable{" +
+                "player='" + player + '\'' +
+                ", caseType='" + caseType + '\'' +
+                ", count=" + count +
+                '}';
+    }
 }
