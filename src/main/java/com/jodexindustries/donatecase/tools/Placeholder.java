@@ -37,6 +37,17 @@ public class Placeholder extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         if(params.startsWith("keys")) {
+            return processKeys(params, player);
+        }
+
+        if(params.startsWith("open_count")) {
+            return processOpenCount(params, player);
+        }
+        return null;
+    }
+
+    private String processKeys(@NotNull String params, OfflinePlayer player) {
+        if(params.startsWith("keys")) {
             String[] parts = params.split("_", 2);
             int keys = 0;
             for (String caseType : Case.caseData.keySet()) {
@@ -72,7 +83,10 @@ public class Placeholder extends PlaceholderExpansion {
                 return String.valueOf(keys);
             }
         }
+        return null;
+    }
 
+    private String processOpenCount(@NotNull String params, OfflinePlayer player) {
         if(params.startsWith("open_count")) {
             String[] parts = params.split("_", 3);
             int openCount = 0;
