@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.tools.Tools;
 import eu.decentsoftware.holograms.api.DHAPI;
+import eu.decentsoftware.holograms.api.DecentHologramsAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import org.bukkit.block.Block;
 
@@ -44,7 +45,8 @@ public class DecentHologramsSupport extends HologramManager {
 
     @Override
     public void removeAllHolograms() {
-        this.holograms.forEach((key, value) -> value.delete());
+        this.holograms.values().forEach(Hologram::delete);
+        DecentHologramsAPI.get().getHologramManager().getHolograms().stream().filter(hologram -> hologram.getName().startsWith("DonateCase")).forEach(Hologram::delete);
         this.holograms.clear();
     }
 }
