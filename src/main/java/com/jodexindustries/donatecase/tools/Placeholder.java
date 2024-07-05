@@ -2,13 +2,7 @@ package com.jodexindustries.donatecase.tools;
 
 import java.text.NumberFormat;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListenableFutureTask;
 import com.jodexindustries.donatecase.api.Case;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
@@ -16,40 +10,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class Placeholder extends PlaceholderExpansion {
 
-    private final LoadingCache<String, Integer> keys = CacheBuilder.newBuilder()
-            .maximumSize(1000)
-            .refreshAfterWrite(10, TimeUnit.SECONDS)
-            .build(
-                    new CacheLoader<String, Integer>() {
-                        @Override
-                        public Integer load(@NotNull String params) {
-                            String[] args = params.split("_");
-                            String player = args[0];
-                            String caseType = args[1];
-                            return Case.getKeys(caseType, player);
-                        }
+    SimpleCache<SimpleCache.InfoEntry, Integer> keysCache = new SimpleCache<>(10 * 1000);
 
-                        @Override
-                        public ListenableFuture<Integer> reload(@NotNull String params, @NotNull Integer prev) {
-                            return ListenableFutureTask.create(() -> getKeysByParams(params).join());
-                        }
-                    });
+    SimpleCache<SimpleCache.InfoEntry, Integer> openCache = new SimpleCache<>(10 * 1000);
 
-    private final LoadingCache<String[], Integer> openCount = CacheBuilder.newBuilder()
-            .maximumSize(1000)
-            .refreshAfterWrite(10, TimeUnit.SECONDS)
-            .build(
-                    new CacheLoader<String[], Integer>() {
-                        @Override
-                        public Integer load(String @NotNull [] params) {
-                            return getOpenCountByParams(params).join();
-                        }
-
-                        @Override
-                        public ListenableFuture<Integer> reload(String @NotNull [] params, @NotNull Integer prev) {
-                            return ListenableFutureTask.create(() -> getOpenCountByParams(params).join());
-                        }
-                    });
 
 
     public @NotNull String getAuthor() {
@@ -74,8 +38,13 @@ public class Placeholder extends PlaceholderExpansion {
             String[] parts = params.split("_", 2);
             int keys = 0;
             for (String caseType : Case.caseData.keySet()) {
-                String param = player.getName() + "_" + caseType;
-                keys += this.keys.getUnchecked(param);
+                SimpleCache.InfoEntry entry = new SimpleCache.InfoEntry(player.getName(), caseType);
+                Integer cachedKeys = keysCache.get(entry);
+                if(cachedKeys == null) {
+                    cachedKeys = getKeysByParams(entry).join();
+                    keysCache.put(entry, cachedKeys);
+                }
+                keys += cachedKeys;
             }
             if(parts.length == 1) {
                 return String.valueOf(keys);
@@ -86,8 +55,13 @@ public class Placeholder extends PlaceholderExpansion {
 
         if (params.startsWith("keys_")) {
             String[] parts = params.split("_", 3);
-            String param = player.getName() + "_" + parts[1];
-            int keys = this.keys.getUnchecked(param);
+            SimpleCache.InfoEntry entry = new SimpleCache.InfoEntry(player.getName(), parts[1]);
+            Integer cachedKeys = keysCache.get(entry);
+            if(cachedKeys == null) {
+                cachedKeys = getKeysByParams(entry).join();
+                keysCache.put(entry, cachedKeys);
+            }
+            int keys = cachedKeys;
             if(parts.length == 2) {
                 return String.valueOf(keys);
             } else if(parts[2].equalsIgnoreCase("format")) {
@@ -101,8 +75,13 @@ public class Placeholder extends PlaceholderExpansion {
             String[] parts = params.split("_", 3);
             int openCount = 0;
             for (String caseType : Case.caseData.keySet()) {
-                String[] param = {player.getName(), caseType};
-                openCount += this.openCount.getUnchecked(param);
+                SimpleCache.InfoEntry entry = new SimpleCache.InfoEntry(player.getName(), caseType);
+                Integer cachedCount = openCache.get(entry);
+                if(cachedCount == null) {
+                    cachedCount = getOpenCountByParams(entry).join();
+                    openCache.put(entry, cachedCount);
+                }
+                openCount += cachedCount;
             }
             if (parts.length == 2) {
                 return String.valueOf(openCount);
@@ -115,14 +94,18 @@ public class Placeholder extends PlaceholderExpansion {
 
         if(params.startsWith("open_count_")) {
             String[] parts = params.split("_", 4);
-            String[] param = {player.getName(), parts[2]};
-            int openCount = this.openCount.getUnchecked(param);
+            SimpleCache.InfoEntry entry = new SimpleCache.InfoEntry(player.getName(), parts[2]);
+            Integer cachedCount = openCache.get(entry);
+            if(cachedCount == null) {
+                cachedCount = getOpenCountByParams(entry).join();
+                openCache.put(entry, cachedCount);
+            }
             if(parts.length == 3) {
-                return String.valueOf(openCount);
+                return String.valueOf(cachedCount);
             } else if(parts[3].equalsIgnoreCase("format")) {
-                return NumberFormat.getNumberInstance().format(openCount);
+                return NumberFormat.getNumberInstance().format(cachedCount);
             } else {
-                return String.valueOf(openCount);
+                return String.valueOf(cachedCount);
             }
         }
         return null;
@@ -131,19 +114,14 @@ public class Placeholder extends PlaceholderExpansion {
     /*
      * <player>_<case>
      */
-    private CompletableFuture<Integer> getKeysByParams(String params) {
-        String[] args = params.split("_");
-        String player = args[0];
-        String caseType = args[1];
-        return Case.getKeysAsync(caseType, player);
+    private CompletableFuture<Integer> getKeysByParams(SimpleCache.InfoEntry entry) {
+        return Case.getKeysAsync(entry.getCaseType(), entry.getPlayer());
     }
 
     /*
      * <player>_<case>
      */
-    private CompletableFuture<Integer> getOpenCountByParams(String[] params) {
-        String player = params[0];
-        String caseType = params[1];
-        return Case.getOpenCountAsync(caseType, player);
+    private CompletableFuture<Integer> getOpenCountByParams(SimpleCache.InfoEntry entry) {
+        return Case.getOpenCountAsync(entry.getCaseType(), entry.getPlayer());
     }
 }
