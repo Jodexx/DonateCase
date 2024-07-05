@@ -46,7 +46,6 @@ public class DecentHologramsSupport extends HologramManager {
     @Override
     public void removeAllHolograms() {
         this.holograms.values().forEach(Hologram::delete);
-        DecentHologramsAPI.get().getHologramManager().getHolograms().stream().filter(hologram -> hologram.getName().startsWith("DonateCase")).forEach(Hologram::delete);
         this.holograms.clear();
     }
 }
