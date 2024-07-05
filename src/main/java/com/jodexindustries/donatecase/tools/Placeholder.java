@@ -19,7 +19,6 @@ public class Placeholder extends PlaceholderExpansion {
     private final LoadingCache<String, Integer> keys = CacheBuilder.newBuilder()
             .maximumSize(1000)
             .refreshAfterWrite(10, TimeUnit.SECONDS)
-            .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(
                     new CacheLoader<String, Integer>() {
                         @Override
@@ -36,22 +35,18 @@ public class Placeholder extends PlaceholderExpansion {
                         }
                     });
 
-    private final LoadingCache<String, Integer> openCount = CacheBuilder.newBuilder()
+    private final LoadingCache<String[], Integer> openCount = CacheBuilder.newBuilder()
             .maximumSize(1000)
             .refreshAfterWrite(10, TimeUnit.SECONDS)
-            .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(
-                    new CacheLoader<String, Integer>() {
+                    new CacheLoader<String[], Integer>() {
                         @Override
-                        public Integer load(@NotNull String params) {
-                            String[] args = params.split("_");
-                            String player = args[0];
-                            String caseType = args[1];
-                            return Case.getOpenCount(caseType, player);
+                        public Integer load(String @NotNull [] params) {
+                            return getOpenCountByParams(params).join();
                         }
 
                         @Override
-                        public ListenableFuture<Integer> reload(@NotNull String params, @NotNull Integer prev) {
+                        public ListenableFuture<Integer> reload(String @NotNull [] params, @NotNull Integer prev) {
                             return ListenableFutureTask.create(() -> getOpenCountByParams(params).join());
                         }
                     });
@@ -73,6 +68,7 @@ public class Placeholder extends PlaceholderExpansion {
         return true;
     }
 
+    @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         if(params.startsWith("keys")) {
             String[] parts = params.split("_", 2);
@@ -105,7 +101,7 @@ public class Placeholder extends PlaceholderExpansion {
             String[] parts = params.split("_", 3);
             int openCount = 0;
             for (String caseType : Case.caseData.keySet()) {
-                String param = player.getName() + "_" + caseType;
+                String[] param = {player.getName(), caseType};
                 openCount += this.openCount.getUnchecked(param);
             }
             if (parts.length == 2) {
@@ -119,7 +115,7 @@ public class Placeholder extends PlaceholderExpansion {
 
         if(params.startsWith("open_count_")) {
             String[] parts = params.split("_", 4);
-            String param = player.getName() + "_" + parts[2];
+            String[] param = {player.getName(), parts[2]};
             int openCount = this.openCount.getUnchecked(param);
             if(parts.length == 3) {
                 return String.valueOf(openCount);
@@ -145,10 +141,9 @@ public class Placeholder extends PlaceholderExpansion {
     /*
      * <player>_<case>
      */
-    private CompletableFuture<Integer> getOpenCountByParams(String params) {
-        String[] args = params.split("_");
-        String player = args[0];
-        String caseType = args[1];
+    private CompletableFuture<Integer> getOpenCountByParams(String[] params) {
+        String player = params[0];
+        String caseType = params[1];
         return Case.getOpenCountAsync(caseType, player);
     }
 }
