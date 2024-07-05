@@ -1,13 +1,61 @@
 package com.jodexindustries.donatecase.tools;
 
 import java.text.NumberFormat;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListenableFutureTask;
 import com.jodexindustries.donatecase.api.Case;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class Placeholder extends PlaceholderExpansion {
+
+    private final LoadingCache<String, Integer> keys = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .refreshAfterWrite(10, TimeUnit.SECONDS)
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .build(
+                    new CacheLoader<String, Integer>() {
+                        @Override
+                        public Integer load(@NotNull String params) {
+                            String[] args = params.split("_");
+                            String player = args[0];
+                            String caseType = args[1];
+                            return Case.getKeys(caseType, player);
+                        }
+
+                        @Override
+                        public ListenableFuture<Integer> reload(@NotNull String params, @NotNull Integer prev) {
+                            return ListenableFutureTask.create(() -> getKeysByParams(params).join());
+                        }
+                    });
+
+    private final LoadingCache<String, Integer> openCount = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .refreshAfterWrite(10, TimeUnit.SECONDS)
+            .expireAfterAccess(10, TimeUnit.MINUTES)
+            .build(
+                    new CacheLoader<String, Integer>() {
+                        @Override
+                        public Integer load(@NotNull String params) {
+                            String[] args = params.split("_");
+                            String player = args[0];
+                            String caseType = args[1];
+                            return Case.getOpenCount(caseType, player);
+                        }
+
+                        @Override
+                        public ListenableFuture<Integer> reload(@NotNull String params, @NotNull Integer prev) {
+                            return ListenableFutureTask.create(() -> getOpenCountByParams(params).join());
+                        }
+                    });
+
 
     public @NotNull String getAuthor() {
         return "JodexIndustries";
@@ -29,8 +77,9 @@ public class Placeholder extends PlaceholderExpansion {
         if(params.startsWith("keys")) {
             String[] parts = params.split("_", 2);
             int keys = 0;
-            for (String caseName : Case.caseData.keySet()) {
-                keys += Case.getKeys(caseName, player.getName());
+            for (String caseType : Case.caseData.keySet()) {
+                String param = player.getName() + "_" + caseType;
+                keys += this.keys.getUnchecked(param);
             }
             if(parts.length == 1) {
                 return String.valueOf(keys);
@@ -38,18 +87,68 @@ public class Placeholder extends PlaceholderExpansion {
                 return NumberFormat.getNumberInstance().format(keys);
             }
         }
+
         if (params.startsWith("keys_")) {
             String[] parts = params.split("_", 3);
-            int s = Case.getKeys(parts[1], player.getName());
+            String param = player.getName() + "_" + parts[1];
+            int keys = this.keys.getUnchecked(param);
             if(parts.length == 2) {
-                return String.valueOf(s);
+                return String.valueOf(keys);
             } else if(parts[2].equalsIgnoreCase("format")) {
-                return NumberFormat.getNumberInstance().format(s);
+                return NumberFormat.getNumberInstance().format(keys);
             } else {
-                return String.valueOf(s);
+                return String.valueOf(keys);
             }
-        } else {
-            return null;
         }
+
+        if(params.startsWith("open_count")) {
+            String[] parts = params.split("_", 3);
+            int openCount = 0;
+            for (String caseType : Case.caseData.keySet()) {
+                String param = player.getName() + "_" + caseType;
+                openCount += this.openCount.getUnchecked(param);
+            }
+            if (parts.length == 2) {
+                return String.valueOf(openCount);
+            } else if (parts[2].equalsIgnoreCase("format")) {
+                return NumberFormat.getNumberInstance().format(openCount);
+            } else {
+                return String.valueOf(openCount);
+            }
+        }
+
+        if(params.startsWith("open_count_")) {
+            String[] parts = params.split("_", 4);
+            String param = player.getName() + "_" + parts[2];
+            int openCount = this.openCount.getUnchecked(param);
+            if(parts.length == 3) {
+                return String.valueOf(openCount);
+            } else if(parts[3].equalsIgnoreCase("format")) {
+                return NumberFormat.getNumberInstance().format(openCount);
+            } else {
+                return String.valueOf(openCount);
+            }
+        }
+        return null;
+    }
+
+    /*
+     * <player>_<case>
+     */
+    private CompletableFuture<Integer> getKeysByParams(String params) {
+        String[] args = params.split("_");
+        String player = args[0];
+        String caseType = args[1];
+        return Case.getKeysAsync(caseType, player);
+    }
+
+    /*
+     * <player>_<case>
+     */
+    private CompletableFuture<Integer> getOpenCountByParams(String params) {
+        String[] args = params.split("_");
+        String player = args[0];
+        String caseType = args[1];
+        return Case.getOpenCountAsync(caseType, player);
     }
 }
