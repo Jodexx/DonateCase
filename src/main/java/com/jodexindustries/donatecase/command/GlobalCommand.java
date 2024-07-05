@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.tools.Pair;
 import com.jodexindustries.donatecase.tools.Tools;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
 /**
  * Class for /dc command implementation with subcommands
  */
@@ -23,36 +26,39 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
-        if (args.length == 0) {
-            sendHelp(sender, label);
-        } else {
-            String subCommandName = args[0];
-            Pair<SubCommand, Addon> pair = Case.getInstance().api.getSubCommandManager().getSubCommands().get(subCommandName);
-
-            if (pair == null) {
+        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+            if (args.length == 0) {
                 sendHelp(sender, label);
-                return true;
-            }
-
-            SubCommand subCommand = pair.getFirst();
-            if (subCommand == null) {
-                sendHelp(sender, label);
-                return true;
-            }
-
-            SubCommandType type = subCommand.getType();
-            boolean hasAdminPermission = sender.hasPermission("donatecase.admin");
-            boolean hasModPermission = sender.hasPermission("donatecase.mod");
-            boolean hasPlayerPermission = sender.hasPermission("donatecase.player");
-
-            if (type == SubCommandType.ADMIN && hasAdminPermission ||
-                    type == SubCommandType.MODER && (hasModPermission || hasAdminPermission) ||
-                    (type == SubCommandType.PLAYER || type == null) && (hasPlayerPermission || hasModPermission || hasAdminPermission)) {
-                subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
             } else {
-                Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("no-permission")));
+                String subCommandName = args[0];
+                Pair<SubCommand, Addon> pair = Case.getInstance().api.getSubCommandManager().getSubCommands().get(subCommandName);
+
+                if (pair == null) {
+                    sendHelp(sender, label);
+                    return;
+                }
+
+                SubCommand subCommand = pair.getFirst();
+                if (subCommand == null) {
+                    sendHelp(sender, label);
+                    return;
+                }
+
+                SubCommandType type = subCommand.getType();
+                boolean hasAdminPermission = sender.hasPermission("donatecase.admin");
+                boolean hasModPermission = sender.hasPermission("donatecase.mod");
+                boolean hasPlayerPermission = sender.hasPermission("donatecase.player");
+
+                if (type == SubCommandType.ADMIN && hasAdminPermission ||
+                        type == SubCommandType.MODER && (hasModPermission || hasAdminPermission) ||
+                        (type == SubCommandType.PLAYER || type == null) && (hasPlayerPermission || hasModPermission || hasAdminPermission)) {
+                    subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
+                } else {
+                    Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("no-permission")));
+                }
             }
-        }
+        });
+
         return true;
     }
 
