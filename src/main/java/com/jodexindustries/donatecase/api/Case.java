@@ -166,7 +166,7 @@ public class Case{
      * @return CompletableFuture of open count
      */
     public static CompletableFuture<Integer> getOpenCountAsync(String caseType, String player) {
-        return CompletableFuture.supplyAsync(() -> instance.sql ? (instance.mysql == null ? 0 : instance.mysql.getCount(player, caseType).join()) : getCustomConfig().getData().getOpenCount(player, caseType)
+        return CompletableFuture.supplyAsync(() -> instance.sql ? (instance.mysql == null ? 0 : instance.mysql.getOpenCount(player, caseType).join()) : getCustomConfig().getData().getOpenCount(player, caseType)
         );
     }
 
