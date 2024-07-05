@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class MySQLDataBase {
     private Dao<CaseData.HistoryData , String> historyDataTables;
@@ -30,6 +31,7 @@ public class MySQLDataBase {
             connectionSource = new JdbcConnectionSource(url, user, password);
             TableUtils.createTableIfNotExists(connectionSource, HistoryDataTable.class);
             TableUtils.createTableIfNotExists(connectionSource, PlayerKeysTable.class);
+            TableUtils.createTableIfNotExists(connectionSource, OpenInfoTable.class);
             historyDataTables = DaoManager.createDao(connectionSource, CaseData.HistoryData.class);
             playerKeysTables = DaoManager.createDao(connectionSource, PlayerKeysTable.class);
             openInfoTables = DaoManager.createDao(connectionSource, OpenInfoTable.class);
@@ -38,51 +40,54 @@ public class MySQLDataBase {
         }
     }
 
-    public int getKey(String name, String player) {
-        try {
-            List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
-                    .where()
-                    .eq("player", player)
-                    .and()
-                    .eq("case_name", name)
-                    .query();
+    public CompletableFuture<Integer> getKeys(String name, String player) {
+        return CompletableFuture.supplyAsync(() -> {
+            int keys = 0;
+            try {
+                List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
+                        .where()
+                        .eq("player", player)
+                        .and()
+                        .eq("case_name", name)
+                        .query();
 
-            if (!results.isEmpty()) {
-                return results.get(0).getKeys();
+                if (!results.isEmpty()) {
+                    keys = results.get(0).getKeys();
+                }
+            } catch (SQLException e) {
+                instance.getLogger().warning(e.getMessage());
             }
-        } catch (SQLException e) {
-            instance.getLogger().warning(e.getMessage());
-        }
-        return 0;
+            return keys;
+        });
     }
 
     public void setKey(String name, String player, int keys) {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
 
-        try {
-            List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
-                    .where()
-                    .eq("player", player)
-                    .and()
-                    .eq("case_name", name)
-                    .query();
-            PlayerKeysTable playerKeysTable = null;
-            if(!results.isEmpty()) playerKeysTable = results.get(0);
-            if (playerKeysTable == null) {
-                playerKeysTable = new PlayerKeysTable();
-                playerKeysTable.setPlayer(player);
-                playerKeysTable.setCaseType(name);
-                playerKeysTable.setKeys(keys);
-                playerKeysTables.create(playerKeysTable);
-            } else {
-                UpdateBuilder<PlayerKeysTable, String> updateBuilder = playerKeysTables.updateBuilder();
-                updateBuilder.updateColumnValue("keys", keys);
-                updateBuilder.where().eq("player", player).and().eq("case_name", name);
-                updateBuilder.update();
+            try {
+                List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
+                        .where()
+                        .eq("player", player)
+                        .and()
+                        .eq("case_name", name)
+                        .query();
+                PlayerKeysTable playerKeysTable = null;
+                if (!results.isEmpty()) playerKeysTable = results.get(0);
+                if (playerKeysTable == null) {
+                    playerKeysTable = new PlayerKeysTable();
+                    playerKeysTable.setPlayer(player);
+                    playerKeysTable.setCaseType(name);
+                    playerKeysTable.setKeys(keys);
+                    playerKeysTables.create(playerKeysTable);
+                } else {
+                    UpdateBuilder<PlayerKeysTable, String> updateBuilder = playerKeysTables.updateBuilder();
+                    updateBuilder.updateColumnValue("keys", keys);
+                    updateBuilder.where().eq("player", player).and().eq("case_name", name);
+                    updateBuilder.update();
+                }
+            } catch (SQLException e) {
+                instance.getLogger().warning(e.getMessage());
             }
-        } catch (SQLException e) {
-            instance.getLogger().warning(e.getMessage());
-        }
         });
     }
 
@@ -92,26 +97,28 @@ public class MySQLDataBase {
      * @param caseType Case type
      * @return number of opened cases
      */
-    public int getCount(String player, String caseType) {
-        try {
-            List<OpenInfoTable> results = openInfoTables.queryBuilder()
-                    .where()
-                    .eq("player", player)
-                    .and()
-                    .eq("case_name", caseType)
-                    .query();
-            OpenInfoTable openInfoTable = null;
-            if(!results.isEmpty()) openInfoTable = results.get(0);
-            if(openInfoTable!= null) return openInfoTable.getCount();
-        } catch (SQLException e) {
-            instance.getLogger().warning(e.getMessage());
-        }
-        return 0;
+    public CompletableFuture<Integer> getCount(String player, String caseType) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                List<OpenInfoTable> results = openInfoTables.queryBuilder()
+                        .where()
+                        .eq("player", player)
+                        .and()
+                        .eq("case_type", caseType)
+                        .query();
+                OpenInfoTable openInfoTable = null;
+                if(!results.isEmpty()) openInfoTable = results.get(0);
+                if(openInfoTable != null) return (openInfoTable.getCount());
+            } catch (SQLException e) {
+                instance.getLogger().warning(e.getMessage());
+            }
+            instance.getLogger().info("Checked");
+            return 0;
+        });
     }
 
     public void addCount(String player, String caseType, int count) {
-        int temp = getCount(player, caseType);
-        setCount(player, caseType, temp+count);
+        getCount(player, caseType).thenAcceptAsync((integer) -> setCount(player, caseType, integer+count));
     }
 
     /**
@@ -183,35 +190,41 @@ public class MySQLDataBase {
     }
 
 
-    public List<CaseData.HistoryData> getHistoryData() {
-        List<CaseData.HistoryData> list = new ArrayList<>();
-        try {
-            list = historyDataTables.queryForAll();
-        } catch (SQLException e) {
-            instance.getLogger().warning(e.getMessage());
-        }
-        return list;
+    public CompletableFuture<List<CaseData.HistoryData>> getHistoryData() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return historyDataTables.queryForAll();
+            } catch (SQLException e) {
+                instance.getLogger().warning(e.getMessage());
+            }
+            return new ArrayList<>();
+        });
     }
-    public List<CaseData.HistoryData> getHistoryDataByCaseType(String caseType) {
-        List<CaseData.HistoryData> list = new ArrayList<>();
-        try {
-            list = historyDataTables.queryBuilder()
-                    .where()
-                    .eq("case_type", caseType)
-                    .query();
-        } catch (SQLException e) {
-            instance.getLogger().warning(e.getMessage());
-        }
-        return list;
+
+    public CompletableFuture<List<CaseData.HistoryData>> getHistoryDataByCaseType(String caseType) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<CaseData.HistoryData> list = new ArrayList<>();
+            try {
+                list = historyDataTables.queryBuilder()
+                        .where()
+                        .eq("case_type", caseType)
+                        .query();
+            } catch (SQLException e) {
+                instance.getLogger().warning(e.getMessage());
+            }
+            return list;
+        });
     }
 
 
     public void delAllKey() {
-        try {
-            playerKeysTables.deleteBuilder().delete();
-        } catch (SQLException e) {
-            instance.getLogger().warning(e.getMessage());
-        }
+        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+            try {
+                playerKeysTables.deleteBuilder().delete();
+            } catch (SQLException e) {
+                instance.getLogger().warning(e.getMessage());
+            }
+        });
     }
 
     public void close() {
