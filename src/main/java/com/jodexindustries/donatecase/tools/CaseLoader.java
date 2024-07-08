@@ -25,7 +25,7 @@ public class CaseLoader {
         int count = 0;
 
         for (String caseType : plugin.casesConfig.getCases().keySet()) {
-            YamlConfiguration config = plugin.casesConfig.getCase(caseType);
+            YamlConfiguration config = plugin.casesConfig.getCase(caseType).getSecond();
             ConfigurationSection caseSection = config.getConfigurationSection("case");
 
             if (caseSection == null) {
@@ -171,7 +171,7 @@ public class CaseLoader {
         String id = itemSection.getString("Item.ID", "STONE");
         String itemDisplayName = Tools.rc(itemSection.getString("Item.DisplayName"));
         boolean enchanted = itemSection.getBoolean("Item.Enchanted");
-        ItemStack itemStack = Tools.getCaseItem(itemDisplayName, id, enchanted, loadRgb(itemSection, "Item.Rg"));
+        ItemStack itemStack = Tools.getCaseItem(itemDisplayName, id, enchanted, loadRgb(itemSection, "Item.Rgb"));
 
         return new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted, null);
     }
