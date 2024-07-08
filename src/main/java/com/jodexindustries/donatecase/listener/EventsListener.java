@@ -84,7 +84,7 @@ public class EventsListener implements Listener {
                                 sound = Sound.valueOf(Case.getCustomConfig().getConfig().getString("DonatCase.NoKeyWarningSound"));
                             } catch (IllegalArgumentException ignore) {}
                             p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
-                            String noKey = Case.getCasesConfig().getCase(caseType).getString("Messages.NoKey");
+                            String noKey = Case.getCasesConfig().getCase(caseType).getSecond().getString("Messages.NoKey");
                             if (noKey == null) noKey = Case.getCustomConfig().getLang().getString("no-keys");
                             Tools.msg(p, noKey);
                         }
