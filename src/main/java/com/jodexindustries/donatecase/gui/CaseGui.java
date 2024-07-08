@@ -170,7 +170,7 @@ public class CaseGui {
             return new ItemStack(Material.AIR);
         }
         String[] materialParts = material.split(":");
-        MaterialType materialType = Tools.getMaterialType(materialParts[0]);
+        MaterialType materialType = MaterialType.fromString((materialParts[0]));
 
         if (materialType == null) {
             Case.getInstance().getLogger().warning("Material \"" + materialParts[0] + "\" not found! Case: " + caseType + " Item: " + item.getItemName());
@@ -192,6 +192,8 @@ public class CaseGui {
                 return ItemsAdderSupport.getItem(materialParts[1] + ":" + materialParts[2], displayName, Tools.rt(lore, "%case%:" + caseType));
             case BASE64:
                 return Tools.getBASE64Skull(materialParts[1], displayName, Tools.rt(lore, "%case%:" + caseType));
+            case MCURL:
+                return Tools.getMCURLSkull(materialParts[1], displayName, Tools.rt(lore, "%case%:" + caseType));
             default:
                 byte data = -1;
                 if(materialParts.length > 1)  {
