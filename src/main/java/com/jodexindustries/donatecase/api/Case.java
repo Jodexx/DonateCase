@@ -17,7 +17,6 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -317,16 +316,6 @@ public class Case{
         }
 
         return false;
-    }
-    /**
-     * Get all cases in "cases" folder
-     * @return cases
-     * @deprecated
-     * <p> Use {@link Case#getCasesConfig()} instead</p>
-     */
-    @Deprecated
-    public static Map<String, YamlConfiguration> getCases() {
-        return instance.casesConfig.getCases();
     }
 
     /**
