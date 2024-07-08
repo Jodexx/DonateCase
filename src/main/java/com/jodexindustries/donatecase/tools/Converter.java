@@ -34,7 +34,7 @@ public class Converter {
             }
 
             // Convert materials in the GUI section
-            convertMaterialsInSection(caseSection.getConfigurationSection("Gui"), "Material");
+            convertMaterialsInSection(caseSection.getConfigurationSection("Gui.Items"), "Material");
 
             // Convert materials in the win items section
             convertMaterialsInSection(caseSection.getConfigurationSection("Items"), "Item.ID");
