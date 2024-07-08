@@ -6,7 +6,6 @@ import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.tools.Pair;
 import com.jodexindustries.donatecase.tools.Tools;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
-
 /**
  * Class for /dc command implementation with subcommands
  */
@@ -26,7 +23,6 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
-        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             if (args.length == 0) {
                 sendHelp(sender, label);
             } else {
@@ -35,13 +31,13 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
                 if (pair == null) {
                     sendHelp(sender, label);
-                    return;
+                    return false;
                 }
 
                 SubCommand subCommand = pair.getFirst();
                 if (subCommand == null) {
                     sendHelp(sender, label);
-                    return;
+                    return false;
                 }
 
                 SubCommandType type = subCommand.getType();
@@ -57,7 +53,6 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("no-permission")));
                 }
             }
-        });
 
         return true;
     }
