@@ -12,7 +12,7 @@ import java.util.*;
  * Class for loading cases configurations
  */
 public class CasesConfig {
-    private final Map<String, YamlConfiguration> cases = new HashMap<>();
+    private final Map<String, Pair<File, YamlConfiguration>> cases = new HashMap<>();
 
     /**
      * Default initialization constructor
@@ -26,7 +26,7 @@ public class CasesConfig {
                     if (!processItems(caseConfig, name, file)) {
                         Case.getInstance().getLogger().warning("Case " + name + " has a broken case.Items section, skipped.");
                     }
-                    cases.put(name, caseConfig);
+                    cases.put(name, new Pair<>(file, caseConfig));
                 } else {
                     Case.getInstance().getLogger().warning("Case " + name + " has a broken case section, skipped.");
                 }
@@ -137,18 +137,20 @@ public class CasesConfig {
 
     /**
      * Get all cases configurations
+     *
      * @return map of configuration
      */
-    public Map<String, YamlConfiguration> getCases() {
+    public Map<String, Pair<File, YamlConfiguration>> getCases() {
         return cases;
     }
 
     /**
      * Get case configuration
+     *
      * @param name Case type (file name without .yml)
      * @return case configuration
      */
-     public YamlConfiguration getCase(String name) {
+     public Pair<File, YamlConfiguration> getCase(String name) {
         return cases.get(name);
      }
 }
