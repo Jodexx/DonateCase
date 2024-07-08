@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.command.subcommands;
 
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -21,14 +22,16 @@ public class KeysCommand implements SubCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (args.length < 1) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                handlePlayer(sender, player);
+        Bukkit.getScheduler().runTaskAsynchronously(DonateCase.instance, () -> {
+            if (args.length < 1) {
+                if (sender instanceof Player) {
+                    Player player = (Player) sender;
+                    handlePlayer(sender, player);
+                }
+            } else {
+                handleMod(sender, args[0]);
             }
-        } else {
-            handleMod(sender, args[0]);
-        }
+        });
     }
 
     private void handlePlayer(CommandSender sender, Player player) {

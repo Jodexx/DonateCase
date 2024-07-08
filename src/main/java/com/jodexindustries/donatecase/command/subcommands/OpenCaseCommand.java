@@ -25,16 +25,17 @@ public class OpenCaseCommand implements SubCommand {
             if (args.length >= 1) {
                 String caseName = args[0];
                 if (Case.hasCaseByType(caseName)) {
-                    int keys = Case.getKeys(caseName, playerName);
-                    if (keys >= 1) {
-                        Case.removeKeys(caseName, playerName, 1);
-                        CaseData data = Case.getCase(caseName);
-                        if (data == null) return;
-                        CaseData.Item winGroup = data.getRandomItem();
-                        Case.animationPreEnd(data, player, true, winGroup);
-                    } else {
-                        Tools.msg(player, Case.getCustomConfig().getLang().getString("no-keys"));
-                    }
+                    Case.getKeysAsync(caseName, playerName).thenAcceptAsync((keys) -> {
+                        if (keys >= 1) {
+                            Case.removeKeys(caseName, playerName, 1);
+                            CaseData data = Case.getCase(caseName);
+                            if (data == null) return;
+                            CaseData.Item winGroup = data.getRandomItem();
+                            Case.animationPreEnd(data, player, true, winGroup);
+                        } else {
+                            Tools.msg(player, Case.getCustomConfig().getLang().getString("no-keys"));
+                        }
+                    });
                 } else {
                     Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
                 }
