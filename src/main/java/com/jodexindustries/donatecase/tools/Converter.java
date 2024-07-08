@@ -1,6 +1,8 @@
 package com.jodexindustries.donatecase.tools;
 
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.MaterialType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -15,6 +17,47 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Converter {
+
+    public static void convertBASE64(DonateCase plugin) {
+        for (String caseType : plugin.casesConfig.getCases().keySet()) {
+            Pair<File, YamlConfiguration> pair = plugin.casesConfig.getCases().get(caseType);
+            YamlConfiguration config = pair.getSecond();
+            String version = config.getString("config");
+            if(version != null) continue;
+
+            ConfigurationSection caseSection = config.getConfigurationSection("case");
+            if (caseSection == null) continue;
+
+            ConfigurationSection guiSection = caseSection.getConfigurationSection("Gui");
+            if(guiSection == null) continue;
+
+            ConfigurationSection itemsSection = guiSection.getConfigurationSection("Items");
+            if(itemsSection == null) continue;
+
+            for (String item : itemsSection.getKeys(false)) {
+                ConfigurationSection itemSection = itemsSection.getConfigurationSection(item);
+                if(itemSection == null) continue;
+
+                String material = itemSection.getString("Material", "DEFAULT");
+                String[] materialParts = material.split(":");
+
+                MaterialType materialType = MaterialType.fromString(materialParts[0]);
+                if(materialType != MaterialType.BASE64) continue;
+
+                material = material.replace(materialParts[0], MaterialType.MCURL.name());
+
+                itemSection.set("Material", material);
+            }
+
+            config.set("config", "1.0");
+
+            try {
+                config.save(pair.getFirst());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     public static void convertCasesLocation() {
         ConfigurationSection cases_ = Case.getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases");
