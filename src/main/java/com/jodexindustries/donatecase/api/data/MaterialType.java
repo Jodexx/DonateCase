@@ -14,9 +14,14 @@ public enum MaterialType {
      */
     HEAD,
     /**
-     * Minecraft url head
+     * Minecraft BASE64 head
      */
     BASE64,
+
+    /**
+     * Minecraft url head
+     */
+    MCURL,
     /**
      * ItemsAdder
      */
@@ -24,5 +29,18 @@ public enum MaterialType {
     /**
      * Default Bukkit material
      */
-    DEFAULT
+    DEFAULT;
+
+    /**
+     * Parse material type from string
+     * @param material String, to be parsed
+     * @return Parsed enum
+     */
+    public static MaterialType fromString(String material) {
+        MaterialType materialType = DEFAULT;
+        try {
+            materialType = MaterialType.valueOf(material.toUpperCase());
+        } catch (IllegalArgumentException ignored) {}
+        return materialType;
+    }
 }
