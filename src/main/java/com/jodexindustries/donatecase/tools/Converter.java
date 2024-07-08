@@ -38,7 +38,9 @@ public class Converter {
                 ConfigurationSection itemSection = itemsSection.getConfigurationSection(item);
                 if(itemSection == null) continue;
 
-                String material = itemSection.getString("Material", "DEFAULT");
+                String material = itemSection.getString("Material");
+                if(material == null) continue;
+
                 String[] materialParts = material.split(":");
 
                 MaterialType materialType = MaterialType.fromString(materialParts[0]);
@@ -49,10 +51,31 @@ public class Converter {
                 itemSection.set("Material", material);
             }
 
+            ConfigurationSection winItems = caseSection.getConfigurationSection("Items");
+            if(winItems == null) continue;
+
+            for (String winItem : winItems.getKeys(false)) {
+                ConfigurationSection winItemSection = winItems.getConfigurationSection(winItem);
+                if(winItemSection == null) continue;
+
+                String material = winItemSection.getString("Item.ID");
+                if(material == null) continue;
+
+                String[] materialParts = material.split(":");
+
+                MaterialType materialType = MaterialType.fromString(materialParts[0]);
+                if(materialType != MaterialType.BASE64) continue;
+
+                material = material.replace(materialParts[0], MaterialType.MCURL.name());
+
+                winItemSection.set("Item.ID", material);
+            }
+
             config.set("config", "1.0");
 
             try {
                 config.save(pair.getFirst());
+                plugin.getLogger().info("BASE64 converted successfully");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
