@@ -194,6 +194,8 @@ public class DonateCase extends JavaPlugin {
         casesConfig = new CasesConfig();
         usePackets = customConfig.getConfig().getBoolean("DonatCase.UsePackets") && getServer().getPluginManager().isPluginEnabled("ProtocolLib");
 
+        Converter.convertBASE64(this);
+
         setupMySQL();
 
         loader.load();
