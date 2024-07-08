@@ -206,8 +206,7 @@ public class Tools {
         return item;
     }
 
-    public static ItemStack getBASE64Skull(String url, String displayName, List<String> lore) {
-        ItemStack item = SkullCreator.itemFromUrl("http://textures.minecraft.net/texture/" + url);
+    private static void setMeta(ItemStack item, String displayName, List<String> lore) {
         ItemMeta meta = item.getItemMeta();
         if(meta != null) {
             meta.setDisplayName(rc(displayName));
@@ -216,17 +215,33 @@ public class Tools {
             }
             item.setItemMeta(meta);
         }
+    }
+
+    public static ItemStack getMCURLSkull(String url, String displayName, List<String> lore) {
+        ItemStack item = SkullCreator.itemFromUrl("http://textures.minecraft.net/texture/" + url);
+        setMeta(item, displayName, lore);
         return item;
     }
-    public static ItemStack getBASE64Skull(String url, String displayName) {
-        return getBASE64Skull(url, displayName, null);
+
+    public static ItemStack getBASE64Skull(String base64, String displayName, List<String> lore) {
+        ItemStack item = SkullCreator.itemFromBase64(base64);
+        setMeta(item, displayName, lore);
+        return item;
+    }
+
+    public static ItemStack getBASE64Skull(String base64, String displayName) {
+        return getBASE64Skull(base64, displayName, null);
+    }
+
+    public static ItemStack getMCURLSkull(String url, String displayName) {
+        return getMCURLSkull(url, displayName, null);
     }
 
     @NotNull
     public static ItemStack getCaseItem(String displayName, String id, boolean enchanted, String[] rgb) {
         String[] materialParts = id.split(":");
 
-        MaterialType materialType = getMaterialType(materialParts[0]);
+        MaterialType materialType = MaterialType.fromString(materialParts[0]);
         ItemStack winItem;
         switch (materialType) {
             case HEAD:
@@ -243,6 +258,9 @@ public class Tools {
                 break;
             case BASE64:
                 winItem = getBASE64Skull(materialParts[1], displayName);
+                break;
+            case MCURL:
+                winItem = getMCURLSkull(materialParts[1], displayName);
                 break;
             default:
                 byte data = (materialParts.length > 1) ? Byte.parseByte(materialParts[1]) : -1;
@@ -305,6 +323,7 @@ public class Tools {
      * @param material String, to be parsed
      * @return Parsed enum
      */
+    @Deprecated
     public static MaterialType getMaterialType(String material) {
         switch (material) {
             case "HEAD":
@@ -315,6 +334,8 @@ public class Tools {
                 return MaterialType.CH;
             case "BASE64":
                 return MaterialType.BASE64;
+            case "MCURL":
+                return MaterialType.MCURL;
             case "IA":
                 return MaterialType.IA;
             default:
