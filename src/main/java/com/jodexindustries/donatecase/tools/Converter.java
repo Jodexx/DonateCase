@@ -23,64 +23,67 @@ public class Converter {
             Pair<File, YamlConfiguration> pair = plugin.casesConfig.getCases().get(caseType);
             YamlConfiguration config = pair.getSecond();
             String version = config.getString("config");
-            if(version != null) continue;
+
+            if (version != null) {
+                continue;
+            }
 
             ConfigurationSection caseSection = config.getConfigurationSection("case");
-            if (caseSection == null) continue;
-
-            ConfigurationSection guiSection = caseSection.getConfigurationSection("Gui");
-            if(guiSection == null) continue;
-
-            ConfigurationSection itemsSection = guiSection.getConfigurationSection("Items");
-            if(itemsSection == null) continue;
-
-            for (String item : itemsSection.getKeys(false)) {
-                ConfigurationSection itemSection = itemsSection.getConfigurationSection(item);
-                if(itemSection == null) continue;
-
-                String material = itemSection.getString("Material");
-                if(material == null) continue;
-
-                String[] materialParts = material.split(":");
-
-                MaterialType materialType = MaterialType.fromString(materialParts[0]);
-                if(materialType != MaterialType.BASE64) continue;
-
-                material = material.replace(materialParts[0], MaterialType.MCURL.name());
-
-                itemSection.set("Material", material);
+            if (caseSection == null) {
+                continue;
             }
 
-            ConfigurationSection winItems = caseSection.getConfigurationSection("Items");
-            if(winItems == null) continue;
+            // Convert materials in the GUI section
+            convertMaterialsInSection(caseSection.getConfigurationSection("Gui"), "Material");
 
-            for (String winItem : winItems.getKeys(false)) {
-                ConfigurationSection winItemSection = winItems.getConfigurationSection(winItem);
-                if(winItemSection == null) continue;
+            // Convert materials in the win items section
+            convertMaterialsInSection(caseSection.getConfigurationSection("Items"), "Item.ID");
 
-                String material = winItemSection.getString("Item.ID");
-                if(material == null) continue;
-
-                String[] materialParts = material.split(":");
-
-                MaterialType materialType = MaterialType.fromString(materialParts[0]);
-                if(materialType != MaterialType.BASE64) continue;
-
-                material = material.replace(materialParts[0], MaterialType.MCURL.name());
-
-                winItemSection.set("Item.ID", material);
-            }
-
+            // Set the config version
             config.set("config", "1.0");
 
             try {
                 config.save(pair.getFirst());
-                plugin.getLogger().info("BASE64 converted successfully");
+                plugin.getLogger().info("BASE64 converted successfully for case type: " + caseType);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("Failed to save config for case type: " + caseType, e);
             }
         }
     }
+
+    /**
+     * Converts materials in the specified section by replacing BASE64 materials with MCURL.
+     *
+     * @param section the configuration section to process
+     * @param materialKey the key used to identify material strings within the section
+     */
+    private static void convertMaterialsInSection(ConfigurationSection section, String materialKey) {
+        if (section == null) {
+            return;
+        }
+
+        for (String key : section.getKeys(false)) {
+            ConfigurationSection itemSection = section.getConfigurationSection(key);
+            if (itemSection == null) {
+                continue;
+            }
+
+            String material = itemSection.getString(materialKey);
+            if (material == null) {
+                continue;
+            }
+
+            String[] materialParts = material.split(":");
+            MaterialType materialType = MaterialType.fromString(materialParts[0]);
+            if (materialType != MaterialType.BASE64) {
+                continue;
+            }
+
+            material = material.replace(materialParts[0], MaterialType.MCURL.name());
+            itemSection.set(materialKey, material);
+        }
+    }
+
 
     public static void convertCasesLocation() {
         ConfigurationSection cases_ = Case.getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases");
