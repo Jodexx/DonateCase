@@ -57,6 +57,7 @@ public class DonateCase extends JavaPlugin {
     public HologramDriver hologramDriver = null;
     public CaseManager api;
     public CaseLoader loader;
+    public BukkitLibraryManager libraryManager;
 
     public CustomConfig customConfig;
     public CasesConfig casesConfig;
@@ -377,9 +378,9 @@ public class DonateCase extends JavaPlugin {
                 .version("6.1")
                 .id("ormlite")
                 .build();
-        BukkitLibraryManager bukkitLibraryManager = new BukkitLibraryManager(this);
-        bukkitLibraryManager.addMavenCentral();
-        bukkitLibraryManager.loadLibrary(lib);
+        libraryManager = new BukkitLibraryManager(this);
+        libraryManager.addMavenCentral();
+        libraryManager.loadLibrary(lib);
     }
 
     private void loadMetrics() {
