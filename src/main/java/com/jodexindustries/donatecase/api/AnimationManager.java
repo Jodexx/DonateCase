@@ -15,7 +15,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -146,12 +145,7 @@ public class AnimationManager {
      */
     private Animation getRegisteredAnimation(String animation) {
         if (isRegistered(animation)) {
-            try {
-                Animation animationClass = getRegisteredAnimations().get(animation).getFirst();
-                return animationClass.getClass().getDeclaredConstructor().newInstance();
-            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                Case.getInstance().getLogger().warning(e.getLocalizedMessage());
-            }
+            return getRegisteredAnimations().get(animation).getFirst();
         }
         return null;
     }
