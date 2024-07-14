@@ -8,8 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.logging.Level;
 
 /**
@@ -19,19 +19,24 @@ public abstract class InternalJavaAddon implements InternalAddon {
 
     private boolean isEnabled = false;
 
-    private String version;
-    private String name;
     private ClassLoader classLoader;
     private InternalAddonLogger internalAddonLogger;
     private File file;
-    private URLClassLoader urlClassLoader;
+    private InternalAddonClassLoader urlClassLoader;
     private CaseManager caseAPI;
+    private InternalAddonDescription description;
 
-    public InternalJavaAddon() {}
+    public InternalJavaAddon() {
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        if (classLoader instanceof InternalAddonClassLoader) {
+            ((InternalAddonClassLoader) classLoader).initialize(this);
+        } else {
+            throw new IllegalArgumentException("InternalJavaAddon requires " + InternalAddonClassLoader.class.getName());
+        }
+    }
 
-    public void init(String version, String name, File file, URLClassLoader loader) {
-        this.version = version;
-        this.name = name;
+    void init(InternalAddonDescription description, File file, InternalAddonClassLoader loader) {
+        this.description = description;
         this.file = file;
         this.classLoader = this.getClass().getClassLoader();
         this.urlClassLoader = loader;
@@ -77,7 +82,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
     }
     @Override
     public @NotNull File getDataFolder() {
-        File data = new File(getDonateCase().getDataFolder(), "addons/" + name);
+        File data = new File(getDonateCase().getDataFolder(), "addons/" + getDescription().getName());
         if(!data.exists()) {
             data.mkdir();
         }
@@ -85,11 +90,11 @@ public abstract class InternalJavaAddon implements InternalAddon {
     }
     @Override
     public String getVersion() {
-        return version;
+        return getDescription().getVersion();
     }
     @Override
     public @NotNull String getName() {
-        return name;
+        return getDescription().getName();
     }
     @Override
     public void saveResource(@NotNull String resourcePath, boolean replace) {
@@ -113,7 +118,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
 
         try {
             if (!outFile.exists() || replace) {
-                OutputStream out = new FileOutputStream(outFile);
+                OutputStream out = Files.newOutputStream(outFile.toPath());
                 byte[] buf = new byte[1024];
                 int len;
                 while ((len = in.read(buf)) > 0) {
@@ -155,7 +160,11 @@ public abstract class InternalJavaAddon implements InternalAddon {
         return internalAddonLogger;
     }
 
-    public URLClassLoader getUrlClassLoader() {
+    public InternalAddonClassLoader getUrlClassLoader() {
         return urlClassLoader;
+    }
+
+    public InternalAddonDescription getDescription() {
+        return description;
     }
 }

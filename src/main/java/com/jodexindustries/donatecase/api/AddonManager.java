@@ -1,22 +1,23 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
+import com.jodexindustries.donatecase.api.addon.internal.InternalAddonDescription;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
+import com.jodexindustries.donatecase.api.addon.internal.InvalidAddonException;
 import com.jodexindustries.donatecase.api.events.AddonDisableEvent;
 import com.jodexindustries.donatecase.api.events.AddonEnableEvent;
+import net.byteflux.libby.Library;
+import net.byteflux.libby.LibraryManager;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
-import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 /**
@@ -25,6 +26,7 @@ import java.util.logging.Level;
 public class AddonManager {
 
     private static final Map<String, InternalJavaAddon> addons = new HashMap<>();
+    private static final  List<InternalAddonClassLoader> loaders = new CopyOnWriteArrayList<>();
     private final Addon addon;
 
     /**
@@ -75,52 +77,54 @@ public class AddonManager {
      */
     public boolean loadAddon(File file, PowerReason reason) {
         if (file.isFile() && file.getName().endsWith(".jar")) {
-            try (JarFile jarFile = new JarFile(file)) {
-                JarEntry entry = jarFile.getJarEntry("addon.yml");
-                if (entry != null) {
-                    InputStream input = jarFile.getInputStream(entry);
-                    Yaml yaml = new Yaml();
-                    Map<String, Object> data = yaml.load(input);
-                    String name = (String) data.get("name");
-                    String mainClassName = (String) data.get("main");
-                    String version = String.valueOf(data.get("version"));
-                    Case.getInstance().getLogger().info("Loading " + name + " addon v" + version);
-                    if(addons.get(name) != null) {
-                        if(name.equalsIgnoreCase("DonateCase")) {
-                            Case.getInstance().getLogger().warning("Addon " + file.getName() + " trying to load with DonateCase name! Abort.");
-                            return false;
-                        }
-                        Case.getInstance().getLogger().warning("Addon with name " + name + " already loaded!");
+            InternalAddonDescription description;
+            try {
+                description = new InternalAddonDescription(file);
+            } catch (IOException | InvalidAddonException e) {
+                throw new RuntimeException(e);
+            }
+
+            Case.getInstance().getLogger().info("Loading " + description.getName() + " addon v" + description.getVersion());
+            if (addons.get(description.getName()) != null) {
+                if (description.getName().equalsIgnoreCase("DonateCase")) {
+                    Case.getInstance().getLogger().warning("Addon " + file.getName() + " trying to load with DonateCase name! Abort.");
+                    return false;
+                }
+                Case.getInstance().getLogger().warning("Addon with name " + description.getName() + " already loaded!");
+                return false;
+            }
+
+            loadLibraries(description.getLibraries());
+            InternalAddonClassLoader loader;
+            try {
+                loader = new InternalAddonClassLoader(DonateCase.instance.getClass().getClassLoader(), description, file, this);
+            } catch (IOException | InvalidAddonException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                InternalJavaAddon addon = loader.getAddon();
+                addons.put(description.getName(), addon);
+                loaders.add(loader);
+                enableAddon(addon, reason);
+                return true;
+            } catch (Throwable e) {
+                addons.remove(description.getName());
+                try {
+                    loader.close();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                if (e.getCause() instanceof ClassNotFoundException) {
+                    ClassNotFoundException error = (ClassNotFoundException) e.getCause();
+                    if (error.getLocalizedMessage().contains("JavaAddon")) {
+                        Case.getInstance().getLogger().log(Level.SEVERE,
+                                "Error occurred while enabling addon " + description.getName() + " v" + description.getVersion() +
+                                        "\nIncompatible DonateCaseAPI! Contact with developer or update addon!", e);
                         return false;
                     }
-                    URLClassLoader loader = new URLClassLoader(new URL[]{file.toURI().toURL()}, this.getClass().getClassLoader());
-                    try {
-                        Class<?> mainClass = Class.forName(mainClassName, true, loader);
-                        InternalJavaAddon addon = (InternalJavaAddon) mainClass.getDeclaredConstructor().newInstance();
-                        addon.init(version, name, file, loader);
-                        addons.put(name, addon);
-                        enableAddon(addon, reason);
-                        return true;
-                    } catch (Throwable e) {
-                        addons.remove(name);
-                        closeClassLoader(loader);
-                        if(e.getCause() instanceof ClassNotFoundException) {
-                            ClassNotFoundException error = (ClassNotFoundException) e.getCause();
-                            if(error.getLocalizedMessage().contains("JavaAddon")) {
-                                Case.getInstance().getLogger().log(Level.SEVERE,
-                                        "Error occurred while enabling addon " + name + " v" + version +
-                                                "\nIncompatible DonateCaseAPI! Contact with developer or update addon!", e);
-                                return false;
-                            }
-                        }
-                        Case.getInstance().getLogger().log(Level.SEVERE,
-                                "Error occurred while enabling addon " + name + " v" + version, e);
-                    }
-                } else {
-                    Case.getInstance().getLogger().warning("Addon " + file.getName() + " trying to load without addon.yml! Abort.");
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+                Case.getInstance().getLogger().log(Level.SEVERE,
+                        "Error occurred while enabling addon " + description.getName() + " v" + description.getVersion(), e);
             }
         }
         return false;
@@ -245,7 +249,8 @@ public class AddonManager {
         try {
             disableAddon(addon);
             addons.remove(addon.getName());
-            closeClassLoader(addon.getUrlClassLoader());
+            loaders.remove(addon.getUrlClassLoader());
+            addon.getUrlClassLoader().close();
             return true;
         } catch (Throwable e) {
             e.printStackTrace();
@@ -267,15 +272,39 @@ public class AddonManager {
         return addons.values();
     }
 
-    private boolean closeClassLoader(URLClassLoader loader) {
-        try {
-            loader.close();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void loadLibraries(List<String> libraries) {
+        LibraryManager manager = DonateCase.instance.libraryManager;
+        for (String lib : libraries) {
+            String[] params = lib.split(":");
+            if(params.length == 3) {
+                String groupId = params[0];
+                String artifactId = params[1];
+                String version = params[2];
+                Library library = Library.builder()
+                        .groupId(groupId)
+                        .artifactId(artifactId)
+                        .version(version)
+                        .build();
+                try {
+                    manager.loadLibrary(library);
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        return false;
     }
+
+    @Nullable
+    public Class<?> getClassByName(String name, boolean resolve) {
+        for (InternalAddonClassLoader loader : loaders){
+            try {
+                return loader.loadClass0(name, resolve, false);
+            }catch (ClassNotFoundException ignore){
+            }
+        }
+        return null;
+    }
+
     public enum PowerReason {
         DONATE_CASE,
         ADDON
