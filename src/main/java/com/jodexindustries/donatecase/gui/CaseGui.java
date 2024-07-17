@@ -88,19 +88,30 @@ public class CaseGui {
 
         if (material.equalsIgnoreCase("DEFAULT")) material = historyItem.getMaterial().getId();
 
-        CaseData.Item.RandomAction randomAction = historyItem.getRandomAction(data.getAction());
-        String randomActionDisplayName = randomAction != null ? randomAction.getDisplayName() : "";
         DateFormat formatter = new SimpleDateFormat(Case.getCustomConfig().getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
         String dateFormatted = formatter.format(new Date(data.getTime()));
-        String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "open_case_again";
+        String group = data.getGroup();
+        String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "group_not_found";
+        String action = data.getAction() != null ? data.getAction() : group;
+
+        String randomActionDisplayName = "random_action_not_found";
+        if(data.getAction() != null && !data.getAction().isEmpty()) {
+            CaseData.Item.RandomAction randomAction = historyItem.getRandomAction(data.getAction());
+            if(randomAction != null) {
+                randomActionDisplayName = randomAction.getDisplayName();
+            }
+        } else {
+            randomActionDisplayName = groupDisplayName;
+        }
+
         String[] template = {
-                "%action%:" + data.getAction(),
+                "%action%:" + action,
                 "%actiondisplayname%:" + randomActionDisplayName,
                 "%casedisplayname%:" + historyCaseData.getCaseDisplayName(),
                 "%casename%:" + data.getCaseType(),
                 "%casetitle%:" + historyCaseData.getCaseTitle(),
                 "%time%:" + dateFormatted,
-                "%group%:" + data.getGroup(),
+                "%group%:" + group,
                 "%player%:" + data.getPlayerName(),
                 "%groupdisplayname%:" + groupDisplayName
         };
