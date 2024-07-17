@@ -5,6 +5,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Called when the case action is registered in DonateCase
+ */
 public class CaseActionRegisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final String caseActionName;
