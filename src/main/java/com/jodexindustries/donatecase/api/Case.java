@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.gui.CaseGui;
@@ -453,29 +452,26 @@ public class Case{
      * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseData.Item#getAlternativeActions()})
      */
    public static void executeActions(OfflinePlayer player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
-        final String[] replacementRegex = {
-                "%player%:" + player.getName(),
-                "%casename%:" + caseData.getCaseType(),
-                "%casedisplayname%:" + caseData.getCaseDisplayName(),
-                "%casetitle%:" + caseData.getCaseTitle(),
-                "%group%:" + item.getGroup(),
-                "%groupdisplayname%:" + item.getMaterial().getDisplayName()
-        };
+       final String[] replacementRegex = {
+               "%player%:" + player.getName(),
+               "%casename%:" + caseData.getCaseType(),
+               "%casedisplayname%:" + caseData.getCaseDisplayName(),
+               "%casetitle%:" + caseData.getCaseTitle(),
+               "%group%:" + item.getGroup(),
+               "%groupdisplayname%:" + item.getMaterial().getDisplayName()
+       };
 
-        List<String> actions = getActionsBasedOnChoice(item, choice, alternative);
+       List<String> actions = getActionsBasedOnChoice(item, choice, alternative);
 
-        for (String action : actions) {
-            if (instance.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-                action = PAPISupport.setPlaceholders(player, action);
-            }
-            action = Tools.rt(action, replacementRegex);
-            action = Tools.rc(action);
-            int cooldown = extractCooldown(action);
-            action = action.replaceFirst("\\[cooldown:(.*?)]", "").trim();
+       for (String action : actions) {
 
-            executeAction(player, action, cooldown);
-        }
-    }
+           action = Tools.rc(Tools.rt(PAPISupport.setPlaceholders(player, action), replacementRegex));
+           int cooldown = extractCooldown(action);
+           action = action.replaceFirst("\\[cooldown:(.*?)]", "");
+
+           executeAction(player, action, cooldown);
+       }
+   }
 
     /**
      * Get actions from case item
@@ -515,13 +511,15 @@ public class Case{
      * @param cooldown Cooldown in seconds
      */
     public static void executeAction(OfflinePlayer player, String action, int cooldown) {
-        for (Map.Entry<String, Pair<CaseAction, Addon>> entry : instance.api.getActionManager().getRegisteredActions().entrySet()) {
-            if(action.startsWith(entry.getKey())) {
-                action = action.replaceFirst(entry.getKey(), "");
-                entry.getValue().getFirst().execute(player, action, cooldown);
-                return;
-            }
-        }
+        String temp = ActionManager.getByStart(action);
+        if(temp == null) return;
+
+        String context = action.replace(temp, "").trim();
+
+        CaseAction caseAction = ActionManager.getRegisteredAction(temp);
+        if(caseAction == null) return;
+
+        caseAction.execute(player, context, cooldown);
     }
 
     /** Get plugin configuration manager
