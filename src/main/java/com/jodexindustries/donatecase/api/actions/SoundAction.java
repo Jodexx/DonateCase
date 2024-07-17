@@ -24,6 +24,7 @@ public class SoundAction implements CaseAction {
             if(args.length >= 1) {
                 sound = Sound.valueOf(args[0].toUpperCase());
             } else {
+                Case.getInstance().getLogger().warning("Sound not found!");
                 return;
             }
         } catch (IllegalArgumentException e) {
