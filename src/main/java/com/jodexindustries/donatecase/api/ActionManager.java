@@ -3,10 +3,13 @@ package com.jodexindustries.donatecase.api;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.CaseAction;
 import com.jodexindustries.donatecase.api.events.CaseActionRegisteredEvent;
+import com.jodexindustries.donatecase.api.events.CaseActionUnregisteredEvent;
 import com.jodexindustries.donatecase.tools.Pair;
 import org.bukkit.Bukkit;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,6 +59,30 @@ public class ActionManager {
     }
 
     /**
+     * Unregister action
+     * @param name Action name
+     */
+    public void unregisterActions(String name) {
+        if(isRegistered(name)) {
+            registeredActions.remove(name);
+            CaseActionUnregisteredEvent event = new CaseActionUnregisteredEvent(name);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+        } else {
+            Case.getInstance().getLogger().warning("CaseAction with name " + name + " already unregistered!");
+        }
+    }
+
+    /**
+     * Unregister all actions
+     */
+    public void unregisterActions() {
+        List<String> list = new ArrayList<>(getRegisteredActions().keySet());
+        for (String s : list) {
+            unregisterActions(s);
+        }
+    }
+
+    /**
      * Check for action registration
      * @param name action name
      * @return boolean
@@ -77,7 +104,7 @@ public class ActionManager {
      * @param action CaseAction name
      * @return CaseAction class instance
      */
-    private CaseAction getRegisteredAction(String action) {
+    public CaseAction getRegisteredAction(String action) {
         if (isRegistered(action)) {
             return getRegisteredActions().get(action).getFirst();
         }
