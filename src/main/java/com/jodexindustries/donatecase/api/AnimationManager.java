@@ -143,7 +143,7 @@ public class AnimationManager {
      * @param animation Animation name
      * @return Animation class instance
      */
-    private Animation getRegisteredAnimation(String animation) {
+    public Animation getRegisteredAnimation(String animation) {
         if (isRegistered(animation)) {
             return getRegisteredAnimations().get(animation).getFirst();
         }
