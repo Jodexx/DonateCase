@@ -1,16 +1,11 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.api.data.ActiveCase;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.PlayerOpenCase;
-import com.jodexindustries.donatecase.api.data.PermissionDriver;
+import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.gui.CaseGui;
-import com.jodexindustries.donatecase.tools.CasesConfig;
-import com.jodexindustries.donatecase.tools.CustomConfig;
-import com.jodexindustries.donatecase.tools.ProbabilityCollection;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -108,24 +103,24 @@ public class Case{
     }
 
     /**
-     * Add case keys to a specific player
+     * Add case keys to a specific player (async)
      * @param caseType Case type
      * @param player Player name
      * @param keys Number of keys
      */
     public static void addKeys(String caseType, String player, int keys) {
-        setKeys(caseType, player, getKeys(caseType, player) + keys);
+        getKeysAsync(caseType, player).thenAcceptAsync(integer -> setKeys(caseType, player, integer + keys));
     }
 
     /**
-     * Delete case keys for a specific player
+     * Delete case keys for a specific player (async)
      * @param caseType Case name
      * @param player Player name
      * @param keys Number of keys
      */
 
     public static void removeKeys(String caseType, String player, int keys) {
-        setKeys(caseType, player, getKeys(caseType, player) - keys);
+        getKeysAsync(caseType, player).thenAcceptAsync(integer -> setKeys(caseType, player, integer - keys));
     }
 
     /**
@@ -164,7 +159,7 @@ public class Case{
      * @param player Player, who opened
      * @return CompletableFuture of open count
      */
-    public static CompletableFuture<Integer> getOpenCountAsync(String caseType, String player) {
+    public static CompletableFuture<Integer>  getOpenCountAsync(String caseType, String player) {
         return CompletableFuture.supplyAsync(() -> instance.sql ? (instance.mysql == null ? 0 : instance.mysql.getOpenCount(player, caseType).join()) : getCustomConfig().getData().getOpenCount(player, caseType)
         );
     }
@@ -520,74 +515,14 @@ public class Case{
      * @param cooldown Cooldown in seconds
      */
     public static void executeAction(OfflinePlayer player, String action, int cooldown) {
-        if (action.startsWith("[command] ")) {
-            executeCommand(action.replaceFirst("\\[command] ", ""), cooldown);
-        } else if (action.startsWith("[message] ")) {
-            sendMessage(player, action.replaceFirst("\\[message] ", ""), cooldown);
-        } else if (action.startsWith("[broadcast] ")) {
-            broadcastMessage(action.replaceFirst("\\[broadcast] ", ""), cooldown);
-        } else if (action.startsWith("[title] ")) {
-            sendTitle(player, action.replaceFirst("\\[title] ", ""), cooldown);
+        for (Map.Entry<String, Pair<CaseAction, Addon>> entry : instance.api.getActionManager().getRegisteredActions().entrySet()) {
+            if(action.startsWith(entry.getKey())) {
+                action = action.replaceFirst(entry.getKey(), "");
+                entry.getValue().getFirst().execute(player, action, cooldown);
+                return;
+            }
         }
     }
-
-    /**
-     * Send command to console with specific cooldown
-     * @param command Console command
-     * @param cooldown Cooldown in seconds
-     */
-    public static void executeCommand(String command, int cooldown) {
-        Bukkit.getScheduler().runTaskLater(instance, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                command), 20L * cooldown);
-    }
-
-    /**
-     * Send chat message for player with specific cooldown
-     * @param player The player to whom the message will be sent
-     * @param message Chat message
-     * @param cooldown Cooldown in seconds
-     */
-    public static void sendMessage(OfflinePlayer player, String message, int cooldown) {
-        Bukkit.getScheduler().runTaskLater(instance, () -> {
-            if (player.getPlayer() != null) {
-                player.getPlayer().sendMessage(message);
-            }
-        }, 20L * cooldown);
-    }
-
-    /**
-     * Send broadcast message for all players on the server with specific cooldown
-     * @param message Broadcast message
-     * @param cooldown Cooldown in seconds
-     */
-    public static void broadcastMessage(String message, int cooldown) {
-        Bukkit.getScheduler().runTaskLater(instance, () -> {
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                p.sendMessage(message);
-            }
-        }, 20L * cooldown);
-    }
-
-    /**
-     * Send title for player with specific cooldown
-     * @param player The player to whom the title will be sent
-     * @param message Title message. Format: "title;subtitle"
-     * @param cooldown Cooldown in seconds
-     */
-    public static void sendTitle(@NotNull OfflinePlayer player, @NotNull String message,  int cooldown) {
-        String[] args = message.split(";");
-        String title = args.length > 0 ? args[0] : "";
-        String subTitle = args.length > 1 ? args[1] : "";
-        Bukkit.getScheduler().runTaskLater(instance, () -> {
-            if (player.getPlayer() != null) {
-                player.getPlayer().sendTitle(
-                        title,
-                        subTitle, 10, 70, 20);
-            }
-        }, 20L * cooldown);
-    }
-
-
 
     /** Get plugin configuration manager
      * @return configuration manager instance
