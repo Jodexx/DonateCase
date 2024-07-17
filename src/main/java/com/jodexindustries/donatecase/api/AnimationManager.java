@@ -41,7 +41,7 @@ public class AnimationManager {
         if(!isRegistered(name)) {
             registeredAnimations.put(name, new Pair<>(animation, addon));
             String animationPluginName = addon.getName();
-            boolean isDefault = false;
+            boolean isDefault = animationPluginName.equalsIgnoreCase("DonateCase");
             AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(name, animation, animationPluginName, isDefault);
             Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
         } else {
