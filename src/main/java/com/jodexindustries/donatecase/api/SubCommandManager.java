@@ -31,7 +31,10 @@ public class SubCommandManager {
     public void registerSubCommand(String commandName, SubCommand subCommand) {
         if(registeredSubCommands.get(commandName.toLowerCase()) == null) {
             registeredSubCommands.put(commandName.toLowerCase(), new Pair<>(subCommand, addon));
-            SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(commandName);
+            String addonSubCommandName = addon.getName();
+            boolean isDefault = addonSubCommandName.equalsIgnoreCase("DonateCase");
+            SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(commandName,
+                    subCommand, addonSubCommandName, isDefault);
             Bukkit.getServer().getPluginManager().callEvent(subCommandRegisteredEvent);
         } else {
             Case.getInstance().getLogger().warning("Sub command " + commandName + " already registered!");
