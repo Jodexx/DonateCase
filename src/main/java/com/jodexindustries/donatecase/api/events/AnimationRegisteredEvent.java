@@ -10,16 +10,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AnimationRegisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    String animationName;
-    Animation animationClass;
-    boolean isDefault;
-    String animationPluginName;
+    private final String animationName;
+    private final Animation animationClass;
+    private final boolean isDefault;
+    private final String animationAddonName;
 
-    public AnimationRegisteredEvent(String animationName, Animation animationClass, String animationPluginName, boolean isDefault) {
+    public AnimationRegisteredEvent(String animationName, Animation animationClass, String animationAddonName, boolean isDefault) {
         this.animationName = animationName;
         this.animationClass = animationClass;
         this.isDefault = isDefault;
-        this.animationPluginName = animationPluginName;
+        this.animationAddonName = animationAddonName;
     }
 
     /**
@@ -31,11 +31,11 @@ public class AnimationRegisteredEvent extends Event {
     }
 
     /**
-     * Get animation plugin name
-     * @return animation plugin name
+     * Get animation addon name
+     * @return animation addon name
      */
-    public String getAnimationPluginName() {
-        return animationPluginName;
+    public String getAnimationAddonName() {
+        return animationAddonName;
     }
 
     /**
@@ -49,7 +49,7 @@ public class AnimationRegisteredEvent extends Event {
     /** Get animation class
      * @return animation class
      */
-    public Animation getAnimationClass() {
+    public Animation getAnimation() {
         return animationClass;
     }
 
