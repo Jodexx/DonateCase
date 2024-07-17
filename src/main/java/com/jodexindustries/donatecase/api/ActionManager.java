@@ -6,6 +6,8 @@ import com.jodexindustries.donatecase.api.events.CaseActionRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.CaseActionUnregisteredEvent;
 import com.jodexindustries.donatecase.tools.Pair;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,7 +89,7 @@ public class ActionManager {
      * @param name action name
      * @return boolean
      */
-    public boolean isRegistered(String name) {
+    public static boolean isRegistered(String name) {
         return getRegisteredActions().containsKey(name);
     }
 
@@ -95,7 +97,7 @@ public class ActionManager {
      * Get all registered animations
      * @return map with registered animations
      */
-    public Map<String, Pair<CaseAction, Addon>> getRegisteredActions() {
+    public static Map<String, Pair<CaseAction, Addon>> getRegisteredActions() {
         return registeredActions;
     }
 
@@ -104,10 +106,20 @@ public class ActionManager {
      * @param action CaseAction name
      * @return CaseAction class instance
      */
-    public CaseAction getRegisteredAction(String action) {
+    @Nullable
+    public static CaseAction getRegisteredAction(@NotNull String action) {
         if (isRegistered(action)) {
             return getRegisteredActions().get(action).getFirst();
         }
         return null;
+    }
+
+    /**
+     * Get registered action by string start
+     * @param string String to be parsed
+     * @return Case action name
+     */
+    public static @Nullable String getByStart(@NotNull final String string) {
+        return registeredActions.keySet().stream().filter(string::startsWith).findFirst().orElse(null);
     }
 }
