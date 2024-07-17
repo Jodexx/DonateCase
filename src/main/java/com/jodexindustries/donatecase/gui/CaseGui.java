@@ -71,9 +71,8 @@ public class CaseGui {
             Case.getInstance().getLogger().warning("Case " + caseType + " HistoryData is null!");
             return objects;
         }
-        if (!isGlobal) {
-            historyCaseData = historyCaseData.clone();
-        }
+
+        if (!isGlobal) historyCaseData = historyCaseData.clone();
 
         CaseData.HistoryData data = getHistoryData(caseType, isGlobal, globalHistoryData, index, historyCaseData);
         if (data == null) return objects;
@@ -87,6 +86,20 @@ public class CaseGui {
         if(material == null) material = "HEAD:" + data.getPlayerName();
 
         if (material.equalsIgnoreCase("DEFAULT")) material = historyItem.getMaterial().getId();
+
+        String[] template = getTemplate(historyCaseData, data, historyItem);
+
+        String displayName = Tools.rt(item.getMaterial().getDisplayName(), template);
+        List<String> lore = Tools.rt(item.getMaterial().getLore(), template);
+
+        objects[0] = material;
+        objects[1] = displayName;
+        objects[2] = lore;
+
+        return objects;
+    }
+
+    private String[] getTemplate(CaseData historyCaseData, CaseData.HistoryData data, CaseData.Item historyItem) {
 
         DateFormat formatter = new SimpleDateFormat(Case.getCustomConfig().getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
         String dateFormatted = formatter.format(new Date(data.getTime()));
@@ -104,7 +117,7 @@ public class CaseGui {
             randomActionDisplayName = groupDisplayName;
         }
 
-        String[] template = {
+        return new String[]{
                 "%action%:" + action,
                 "%actiondisplayname%:" + randomActionDisplayName,
                 "%casedisplayname%:" + historyCaseData.getCaseDisplayName(),
@@ -115,14 +128,6 @@ public class CaseGui {
                 "%player%:" + data.getPlayerName(),
                 "%groupdisplayname%:" + groupDisplayName
         };
-
-        String displayName = Tools.rt(item.getMaterial().getDisplayName(), template);
-        List<String> lore = Tools.rt(item.getMaterial().getLore(), template);
-        objects[0] = material;
-        objects[1] = displayName;
-        objects[2] = lore;
-
-        return objects;
     }
 
     private List<String> setPlaceholders(Player p, List<String> lore) {
