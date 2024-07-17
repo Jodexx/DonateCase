@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.tools;
 
 import java.text.NumberFormat;
-import java.util.concurrent.CompletableFuture;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.tools.caching.SimpleCache;
@@ -54,7 +53,7 @@ public class Placeholder extends PlaceholderExpansion {
                 InfoEntry entry = new InfoEntry(player.getName(), caseType);
                 Integer cachedKeys = keysCache.get(entry);
                 if(cachedKeys == null) {
-                    cachedKeys = getKeysByParams(entry).join();
+                    cachedKeys = getKeysByParams(entry);
                     keysCache.put(entry, cachedKeys);
                 }
                 keys += cachedKeys;
@@ -71,7 +70,7 @@ public class Placeholder extends PlaceholderExpansion {
             InfoEntry entry = new InfoEntry(player.getName(), parts[1]);
             Integer cachedKeys = keysCache.get(entry);
             if(cachedKeys == null) {
-                cachedKeys = getKeysByParams(entry).join();
+                cachedKeys = getKeysByParams(entry);
                 keysCache.put(entry, cachedKeys);
             }
             int keys = cachedKeys;
@@ -94,7 +93,7 @@ public class Placeholder extends PlaceholderExpansion {
                 InfoEntry entry = new InfoEntry(player.getName(), caseType);
                 Integer cachedCount = openCache.get(entry);
                 if(cachedCount == null) {
-                    cachedCount = getOpenCountByParams(entry).join();
+                    cachedCount = getOpenCountByParams(entry);
                     openCache.put(entry, cachedCount);
                 }
                 openCount += cachedCount;
@@ -113,7 +112,7 @@ public class Placeholder extends PlaceholderExpansion {
             InfoEntry entry = new InfoEntry(player.getName(), parts[2]);
             Integer cachedCount = openCache.get(entry);
             if(cachedCount == null) {
-                cachedCount = getOpenCountByParams(entry).join();
+                cachedCount = getOpenCountByParams(entry);
                 openCache.put(entry, cachedCount);
             }
             if(parts.length == 3) {
@@ -127,17 +126,11 @@ public class Placeholder extends PlaceholderExpansion {
         return null;
     }
 
-    /*
-     * <player>_<case>
-     */
-    private CompletableFuture<Integer> getKeysByParams(InfoEntry entry) {
-        return Case.getKeysAsync(entry.getCaseType(), entry.getPlayer());
+    private Integer getKeysByParams(InfoEntry entry) {
+        return Case.getKeys(entry.getCaseType(), entry.getPlayer());
     }
 
-    /*
-     * <player>_<case>
-     */
-    private CompletableFuture<Integer> getOpenCountByParams(InfoEntry entry) {
-        return Case.getOpenCountAsync(entry.getCaseType(), entry.getPlayer());
+    private Integer getOpenCountByParams(InfoEntry entry) {
+        return Case.getOpenCount(entry.getCaseType(), entry.getPlayer());
     }
 }
