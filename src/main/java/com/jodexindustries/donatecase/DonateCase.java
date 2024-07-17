@@ -283,7 +283,6 @@ public class DonateCase extends JavaPlugin {
         api.getAnimationManager().registerAnimation("RAINLY", new RainlyAnimation());
         api.getAnimationManager().registerAnimation("FIREWORK", new FireworkAnimation());
         api.getAnimationManager().registerAnimation("FULLWHEEL", new FullWheelAnimation());
-//        api.getAnimationManager().registerAnimation("TEST_WHEEL", new TestWheelAnimation());
         Logger.log("&aRegistered &cdefault &aanimations");
     }
 
@@ -292,6 +291,7 @@ public class DonateCase extends JavaPlugin {
         api.getActionManager().registerAction("[message]", new MessageAction());
         api.getActionManager().registerAction("[title]", new TitleAction());
         api.getActionManager().registerAction("[broadcast]", new BroadcastAction());
+        api.getActionManager().registerAction("[sound]", new SoundAction());
         Logger.log("&aRegistered &cdefault &aactions");
     }
 
