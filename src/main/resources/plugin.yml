@@ -18,7 +18,6 @@ softdepend:
 api-version: 1.13
 commands:
   donatecase:
-    usage: /donatecase
     aliases: [dc]
 permissions:
   donatecase.player:
