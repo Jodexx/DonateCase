@@ -4,6 +4,7 @@ import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.j256.ormlite.logger.Level;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
+import com.jodexindustries.donatecase.api.actions.*;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
@@ -85,6 +86,7 @@ public class DonateCase extends JavaPlugin {
         registerDefaultCommand();
         registerDefaultSubCommands();
         registerDefaultAnimations();
+        registerDefaultActions();
 
         loadHologramManager();
 
@@ -110,6 +112,7 @@ public class DonateCase extends JavaPlugin {
 
         api.getAnimationManager().unregisterAnimations();
         api.getSubCommandManager().unregisterSubCommands();
+        api.getActionManager().unregisterActions();
 
         papi.unregister();
 
@@ -282,6 +285,14 @@ public class DonateCase extends JavaPlugin {
         api.getAnimationManager().registerAnimation("FULLWHEEL", new FullWheelAnimation());
 //        api.getAnimationManager().registerAnimation("TEST_WHEEL", new TestWheelAnimation());
         Logger.log("&aRegistered &cdefault &aanimations");
+    }
+
+    private void registerDefaultActions() {
+        api.getActionManager().registerAction("[command]", new CommandAction());
+        api.getActionManager().registerAction("[message]", new MessageAction());
+        api.getActionManager().registerAction("[title]", new TitleAction());
+        api.getActionManager().registerAction("[broadcast]", new BroadcastAction());
+        Logger.log("&aRegistered &cdefault &aactions");
     }
 
     private void loadPermissionDriver() {
