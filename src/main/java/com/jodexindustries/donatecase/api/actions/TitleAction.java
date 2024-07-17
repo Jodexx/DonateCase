@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api.actions;
 import com.jodexindustries.donatecase.api.data.CaseAction;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 import static com.jodexindustries.donatecase.DonateCase.instance;
 
@@ -15,7 +16,7 @@ public class TitleAction implements CaseAction {
      * @param cooldown Cooldown in seconds
      */
     @Override
-    public void execute(OfflinePlayer player, String context, int cooldown) {
+    public void execute(@NotNull OfflinePlayer player, @NotNull String context, int cooldown) {
         String[] args = context.split(";");
         String title = args.length > 0 ? args[0] : "";
         String subTitle = args.length > 1 ? args[1] : "";

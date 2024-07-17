@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.data.CaseAction;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import static com.jodexindustries.donatecase.DonateCase.instance;
 
@@ -14,7 +15,7 @@ public class BroadcastAction implements CaseAction {
      * @param cooldown Cooldown in seconds
      */
     @Override
-    public void execute(OfflinePlayer player, String context, int cooldown) {
+    public void execute(@NotNull OfflinePlayer player, @NotNull String context, int cooldown) {
         Bukkit.getScheduler().runTaskLater(instance, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.sendMessage(context);

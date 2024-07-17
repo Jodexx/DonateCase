@@ -1,10 +1,11 @@
 package com.jodexindustries.donatecase.api.data;
 
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for registering case actions
  */
 public interface CaseAction {
-    void execute(OfflinePlayer player, String context, int cooldown);
+    void execute(@NotNull OfflinePlayer player, @NotNull String context, int cooldown);
 }
