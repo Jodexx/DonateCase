@@ -69,7 +69,7 @@ public class SubCommandManager {
      * Get all subcommands
      * @return String - sub command name <br> SubCommand - Class that implements the SubCommand interface
      */
-    public Map<String, Pair<SubCommand, Addon>> getSubCommands() {
+    public static Map<String, Pair<SubCommand, Addon>> getSubCommands() {
         return registeredSubCommands;
     }
 
@@ -80,7 +80,7 @@ public class SubCommandManager {
      * @param subCommandName Sub command name
      * @return Tab completions
      */
-    public List<String> getTabCompletionsForSubCommand(CommandSender sender, String subCommandName, String[] args) {
+    public static List<String> getTabCompletionsForSubCommand(CommandSender sender, String subCommandName, String[] args) {
         SubCommand subCommand = registeredSubCommands.get(subCommandName.toLowerCase()).getFirst();
         if (subCommand != null) {
             return subCommand.getTabCompletions(sender, args);

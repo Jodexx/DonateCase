@@ -14,6 +14,7 @@ import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -126,7 +127,7 @@ public class AnimationManager {
      * @param name animation name
      * @return boolean
      */
-    public boolean isRegistered(String name) {
+    public static boolean isRegistered(String name) {
         return registeredAnimations.containsKey(name);
     }
 
@@ -134,7 +135,7 @@ public class AnimationManager {
      * Get all registered animations
      * @return map with registered animations
      */
-    public Map<String, Pair<Animation, Addon>> getRegisteredAnimations() {
+    public static Map<String, Pair<Animation, Addon>> getRegisteredAnimations() {
         return registeredAnimations;
     }
 
@@ -143,7 +144,8 @@ public class AnimationManager {
      * @param animation Animation name
      * @return Animation class instance
      */
-    public Animation getRegisteredAnimation(String animation) {
+    @Nullable
+    public static Animation getRegisteredAnimation(String animation) {
         if (isRegistered(animation)) {
             return getRegisteredAnimations().get(animation).getFirst();
         }
