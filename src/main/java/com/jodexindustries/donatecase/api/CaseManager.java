@@ -14,6 +14,7 @@ public class CaseManager {
     private final AddonManager addonManager;
     private final AnimationManager animationManager;
     private final SubCommandManager subCommandManager;
+    private final ActionManager actionManager;
     private final Addon addon;
 
     /**
@@ -25,6 +26,7 @@ public class CaseManager {
         this.addonManager = new AddonManager(addon);
         this.subCommandManager = new SubCommandManager(addon);
         this.animationManager = new AnimationManager(addon);
+        this.actionManager = new ActionManager(addon);
     }
 
     /**
@@ -36,6 +38,7 @@ public class CaseManager {
         this.addonManager = new AddonManager(addon);
         this.subCommandManager = new SubCommandManager(addon);
         this.animationManager = new AnimationManager(addon);
+        this.actionManager = new ActionManager(addon);
     }
 
     /**
@@ -76,6 +79,14 @@ public class CaseManager {
      */
     public static HologramManager getHologramManager() {
         return Case.getInstance().hologramManager;
+    }
+
+    /**
+     * Get case action manager
+     * @return ActionManager instance
+     */
+    public ActionManager getActionManager() {
+        return actionManager;
     }
 
     /**
