@@ -47,7 +47,7 @@ public class ActionManager {
     }
 
     public void registerAction(String name, CaseAction action) {
-        if(isRegistered(name)) {
+        if(!isRegistered(name)) {
             registeredActions.put(name, new Pair<>(action, addon));
             String actionAddonName = addon.getName();
             boolean isDefault = actionAddonName.equalsIgnoreCase("DonateCase");
