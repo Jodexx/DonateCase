@@ -5,7 +5,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when the animation is registered in DonateCase
+ * Called when the animation is unregistered in DonateCase
  */
 public class AnimationUnregisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
