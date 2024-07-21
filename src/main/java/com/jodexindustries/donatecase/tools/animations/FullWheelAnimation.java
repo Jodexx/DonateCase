@@ -149,13 +149,13 @@ public class FullWheelAnimation implements Animation {
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
-        if(item.getMaterial().getItemStack().getType() != Material.AIR) {
-            as.setEquipment(itemSlot, item.getMaterial().getItemStack());
-        }
         as.setAngle(armorStandEulerAngle);
         as.setCustomName(item.getMaterial().getDisplayName());
         as.setCustomNameVisible(true);
         as.spawn();
+        if(item.getMaterial().getItemStack().getType() != Material.AIR) {
+            as.setEquipment(itemSlot, item.getMaterial().getItemStack());
+        }
         return as;
     }
 }
