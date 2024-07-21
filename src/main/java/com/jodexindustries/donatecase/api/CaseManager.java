@@ -5,6 +5,8 @@ import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 
 /**
@@ -21,7 +23,7 @@ public class CaseManager {
      * Constructor for initializing addon's CaseManager
      * @param addon Internal addon
      */
-    public CaseManager(Addon addon) {
+    public CaseManager(@NotNull Addon addon) {
         this.addon = addon;
         this.addonManager = new AddonManager(addon);
         this.subCommandManager = new SubCommandManager(addon);
@@ -33,7 +35,7 @@ public class CaseManager {
      * Constructor for initializing addon's CaseManager
      * @param plugin External addon
      */
-    public CaseManager(Plugin plugin) {
+    public CaseManager(@NotNull Plugin plugin) {
         this.addon = new ExternalJavaAddon(plugin);
         this.addonManager = new AddonManager(addon);
         this.subCommandManager = new SubCommandManager(addon);
@@ -45,6 +47,7 @@ public class CaseManager {
      * Get plugin instance
      * @return DonateCase instance
      */
+    @NotNull
     public DonateCase getInstance() {
         return Case.getInstance();
     }
@@ -53,6 +56,7 @@ public class CaseManager {
      * Get addon manager for addons manipulate
      * @return AddonManager instance
      */
+    @NotNull
     public AddonManager getAddonManager() {
         return this.addonManager;
     }
@@ -61,6 +65,7 @@ public class CaseManager {
      * Get animation manager for animations manipulate
      * @return AnimationManager instance
      */
+    @NotNull
     public AnimationManager getAnimationManager() {
         return this.animationManager;
     }
@@ -69,6 +74,7 @@ public class CaseManager {
      * Get sub command manager
      * @return SubCommandManager instance
      */
+    @NotNull
     public SubCommandManager getSubCommandManager() {
         return this.subCommandManager;
     }
@@ -77,6 +83,7 @@ public class CaseManager {
      * Get hologram manager
      * @return HologramManager instance
      */
+    @Nullable
     public static HologramManager getHologramManager() {
         return Case.getInstance().hologramManager;
     }
@@ -85,6 +92,7 @@ public class CaseManager {
      * Get case action manager
      * @return ActionManager instance
      */
+    @NotNull
     public ActionManager getActionManager() {
         return actionManager;
     }
@@ -94,6 +102,7 @@ public class CaseManager {
      * Can be cast to Addon from DonateCase if it's really loaded addon by DonateCase
      * @return Addon object
      */
+    @NotNull
     public Addon getAddon() {
         return addon;
     }
