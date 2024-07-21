@@ -549,4 +549,21 @@ public class Tools {
         return list;
     }
 
+    /**
+     * Sort case items by index
+     * @param items Map with Case items
+     * @return New map with sorted items
+     */
+    public static Map<String, CaseData.Item> sortItemsByIndex(Map<String, CaseData.Item> items) {
+        return items.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(CaseData.Item::getIndex)))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+    }
+
 }
