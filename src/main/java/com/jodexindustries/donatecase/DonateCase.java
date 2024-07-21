@@ -378,7 +378,7 @@ public class DonateCase extends JavaPlugin {
 
     public void loadHolograms() {
         ConfigurationSection section = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
-        if(section == null || section.getKeys(false).isEmpty()) return;
+        if (section == null || section.getKeys(false).isEmpty()) return;
         for (String caseName : section.getKeys(false)) {
             String caseType = Case.getCaseTypeByCustomName(caseName);
             CaseData caseData = Case.getCase(caseType);
@@ -387,11 +387,6 @@ public class DonateCase extends JavaPlugin {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }
-    }
-
-
-    public boolean isUsePackets() {
-        return usePackets;
     }
 
     private void loadLibraries() {
