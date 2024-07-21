@@ -45,11 +45,11 @@ import java.util.stream.Collectors;
 
 public class Tools {
 
-    public static ArmorStandCreator createArmorStand() {
-        if(Case.getInstance().isUsePackets()) {
-            return new PacketArmorStandCreator();
+    public static ArmorStandCreator createArmorStand(Location location) {
+        if(Case.getInstance().usePackets) {
+            return new PacketArmorStandCreator(location);
         } else {
-            return new BukkitArmorStandCreator();
+            return new BukkitArmorStandCreator(location);
         }
     }
 
