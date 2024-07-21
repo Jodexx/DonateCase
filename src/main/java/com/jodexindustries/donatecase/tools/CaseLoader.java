@@ -56,7 +56,7 @@ public class CaseLoader {
 
         CaseData.AnimationSound sound = loadAnimationSound(caseSection);
         CaseData.Hologram hologram = loadHologram(caseSection);
-        Map<String, CaseData.Item> items = loadItems(caseType, caseSection);
+        Map<String, CaseData.Item> items = Tools.sortItemsByIndex(loadItems(caseType, caseSection));
 
         CaseData.HistoryData[] historyData = loadHistoryData(caseType);
         Map<String, Integer> levelGroups = loadLevelGroups(caseSection);
@@ -115,15 +115,7 @@ public class CaseLoader {
             logWarning("Case " + caseType + " has a broken case.Items section");
         }
 
-        return items.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(CaseData.Item::getIndex)))
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, e2) -> e1,
-                        LinkedHashMap::new
-                ));
+        return items;
     }
 
     private CaseData.Item loadItem(String item, ConfigurationSection itemSection) {
