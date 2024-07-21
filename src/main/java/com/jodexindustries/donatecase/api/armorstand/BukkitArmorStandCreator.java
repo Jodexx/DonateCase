@@ -8,12 +8,17 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.util.EulerAngle;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class BukkitArmorStandCreator implements ArmorStandCreator {
-    private ArmorStand entity;
-    @Override
-    public void spawnArmorStand(Location location) {
+    private final ArmorStand entity;
+
+    public BukkitArmorStandCreator(Location location) {
         entity = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         entity.setMetadata("case", new FixedMetadataValue(DonateCase.instance, "case"));
     }
@@ -29,8 +34,43 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
     }
 
     @Override
+    public void setMarker(boolean marker) {
+        entity.setMarker(marker);
+    }
+
+    @Override
+    public void setCollidable(boolean collidable) {
+        entity.setCollidable(collidable);
+    }
+
+    @Override
+    public void setCustomNameVisible(boolean flag) {
+        entity.setCustomNameVisible(flag);
+    }
+
+    @Override
+    public void setMetadata(@NotNull String metadata, @NotNull MetadataValue value) {
+        entity.setMetadata(metadata, value);
+    }
+
+    @NotNull
+    @Override
+    public List<MetadataValue> getMetadata(@NotNull String metadataKey) {
+        return entity.getMetadata(metadataKey);
+    }
+
+    @Override
+    public boolean hasMetadata(@NotNull String metadataKey) {
+        return entity.hasMetadata(metadataKey);
+    }
+
+    @Override
+    public void removeMetadata(@NotNull String metadataKey, @NotNull Plugin owningPlugin) {
+        entity.removeMetadata(metadataKey, owningPlugin);
+    }
+
+    @Override
     public void setCustomName(String displayName) {
-        entity.setCustomNameVisible(true);
         entity.setCustomName(displayName);
     }
 
@@ -72,7 +112,7 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
     }
 
     @Override
-    public void setPose(ArmorStandEulerAngle angle) {
+    public void setAngle(ArmorStandEulerAngle angle) {
         entity.setHeadPose(angle.getHead());
         entity.setBodyPose(angle.getBody());
         entity.setLeftArmPose(angle.getLeftArm());
