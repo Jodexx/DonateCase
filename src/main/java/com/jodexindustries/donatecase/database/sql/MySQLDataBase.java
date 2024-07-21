@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.database.sql;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.TableUtils;
 import com.jodexindustries.donatecase.DonateCase;
@@ -38,6 +39,7 @@ public class MySQLDataBase {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
     }
 
     public CompletableFuture<Integer> getKeys(String name, String player) {
