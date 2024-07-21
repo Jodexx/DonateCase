@@ -85,6 +85,7 @@ public class AnimationManager {
         CaseData caseData = Case.getCase(caseType);
         if(caseData == null) return;
         caseData = caseData.clone();
+        caseData.setItems(Tools.sortItemsByIndex(caseData.getItems()));
         String animation = caseData.getAnimation();
         if (isRegistered(animation)) {
             if (CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {

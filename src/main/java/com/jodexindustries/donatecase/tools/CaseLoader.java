@@ -56,7 +56,7 @@ public class CaseLoader {
 
         CaseData.AnimationSound sound = loadAnimationSound(caseSection);
         CaseData.Hologram hologram = loadHologram(caseSection);
-        Map<String, CaseData.Item> items = Tools.sortItemsByIndex(loadItems(caseType, caseSection));
+        Map<String, CaseData.Item> items = loadItems(caseType, caseSection);
 
         CaseData.HistoryData[] historyData = loadHistoryData(caseType);
         Map<String, Integer> levelGroups = loadLevelGroups(caseSection);
