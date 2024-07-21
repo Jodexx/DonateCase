@@ -110,29 +110,31 @@ public class EventsListener implements Listener {
 
     @EventHandler (priority = EventPriority.HIGHEST)
     public void PlayerInteract(PlayerInteractEvent e) {
-        if(e.getHand() == EquipmentSlot.OFF_HAND) return;
-        if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            Player p = e.getPlayer();
-            assert e.getClickedBlock() != null;
+        if (e.getHand() == EquipmentSlot.OFF_HAND) return;
+        Player p = e.getPlayer();
+        if(e.getClickedBlock() != null &&
+                (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK)) {
             Location blockLocation = e.getClickedBlock().getLocation();
             if (Case.hasCaseByLocation(blockLocation)) {
                 String caseType = Case.getCaseTypeByLocation(blockLocation);
-                if(caseType == null) return;
+                if (caseType == null) return;
                 e.setCancelled(true);
-                CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType);
+                CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType, e.getAction());
                 Bukkit.getServer().getPluginManager().callEvent(event);
-                if (!event.isCancelled()) {
-                    if (!Case.activeCasesByLocation.containsKey(blockLocation)) {
-                        if (Case.hasCaseByType(caseType)) {
-                            CaseData caseData = Case.getCase(caseType);
-                            if(caseData == null) return;
-                            Case.openGui(p, caseData, blockLocation);
+                if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                    if (!event.isCancelled()) {
+                        if (!Case.activeCasesByLocation.containsKey(blockLocation)) {
+                            if (Case.hasCaseByType(caseType)) {
+                                CaseData caseData = Case.getCase(caseType);
+                                if (caseData == null) return;
+                                Case.openGui(p, caseData, blockLocation);
+                            } else {
+                                Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
+                                Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
+                            }
                         } else {
-                            Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
-                            Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
+                            Tools.msg(p, Case.getCustomConfig().getLang().getString("case-opens"));
                         }
-                    } else {
-                        Tools.msg(p, Case.getCustomConfig().getLang().getString("case-opens"));
                     }
                 }
             }

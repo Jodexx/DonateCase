@@ -4,6 +4,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,14 +14,27 @@ import org.jetbrains.annotations.NotNull;
 public class CaseInteractEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     protected boolean cancel;
-    Block block;
-    String caseType;
-    public CaseInteractEvent(@NotNull final Player who, @NotNull final Block block, @NotNull final String caseType) {
+    private final Block block;
+    private final String caseType;
+    private final Action action;
+
+    public CaseInteractEvent(@NotNull final Player who, @NotNull final Block block, @NotNull final String caseType, @NotNull final Action action) {
         super(who);
         this.block = block;
         this.caseType = caseType;
-        cancel = false;
+        this.cancel = false;
+        this.action = action;
     }
+
+    /**
+     * Can be only LEFT_CLICK_BLOCK and RIGHT_CLICK_BLOCK
+     * @return click block action
+     */
+    @NotNull
+    public Action getAction() {
+        return action;
+    }
+
     @NotNull
     public Block getClickedBlock() {
         return block;
