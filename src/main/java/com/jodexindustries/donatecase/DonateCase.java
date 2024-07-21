@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
-import com.j256.ormlite.logger.Level;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
 import com.jodexindustries.donatecase.api.actions.*;
@@ -22,6 +21,7 @@ import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
+import com.jodexindustries.donatecase.tools.support.PacketEventsSupport;
 import net.byteflux.libby.BukkitLibraryManager;
 import net.byteflux.libby.Library;
 import net.luckperms.api.LuckPerms;
@@ -42,6 +42,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.util.logging.Level;
 
 /**
  * Main DonateCase class for loading
@@ -59,12 +60,18 @@ public class DonateCase extends JavaPlugin {
     public CaseManager api;
     public CaseLoader loader;
     public BukkitLibraryManager libraryManager;
+    public PacketEventsSupport packetEventsSupport;
 
     public CustomConfig customConfig;
     public CasesConfig casesConfig;
 
-    private boolean usePackets = true;
+    public boolean usePackets = true;
     public boolean sql = false;
+
+    @Override
+    public void onLoad() {
+        loadLibraries();
+    }
 
     @Override
     public void onEnable() {
@@ -72,8 +79,6 @@ public class DonateCase extends JavaPlugin {
         instance = this;
         api = new CaseManager(this);
         loader = new CaseLoader(this);
-
-        loadLibraries();
 
         setupConfigs();
 
@@ -94,6 +99,8 @@ public class DonateCase extends JavaPlugin {
 
         loadPlaceholderAPI();
 
+        loadPacketEventsAPI();
+
         api.getAddonManager().loadAddons();
 
         DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
@@ -108,18 +115,17 @@ public class DonateCase extends JavaPlugin {
     public void onDisable() {
         DonateCaseDisableEvent donateCaseDisableEvent = new DonateCaseDisableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseDisableEvent);
-        if(api.getAddonManager() != null) api.getAddonManager().unloadAddons();
 
+        api.getAddonManager().unloadAddons();
         api.getAnimationManager().unregisterAnimations();
         api.getSubCommandManager().unregisterSubCommands();
         api.getActionManager().unregisterActions();
 
-        papi.unregister();
-
-        if (mysql != null) {
-            mysql.close();
-        }
+        if(papi != null) papi.unregister();
+        if(packetEventsSupport != null) packetEventsSupport.unload();
+        if(mysql != null) mysql.close();
         if(hologramManager != null) hologramManager.removeAllHolograms();
+
         cleanCache();
     }
     private void setupMySQL() {
@@ -137,13 +143,18 @@ public class DonateCase extends JavaPlugin {
                     mysql = new MySQLDataBase(instance, base, port, host, user, password);
                 }
             }).runTaskTimerAsynchronously(instance, 0L, 12000L);
-            com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
         }
     }
     private void loadPlaceholderAPI() {
         papi = new PAPISupport();
         papi.register();
     }
+
+    private void loadPacketEventsAPI() {
+        packetEventsSupport = new PacketEventsSupport(this);
+        packetEventsSupport.load();
+    }
+
     private void loadUpdater() {
         if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
@@ -196,7 +207,8 @@ public class DonateCase extends JavaPlugin {
             }
         }
         casesConfig = new CasesConfig();
-        usePackets = customConfig.getConfig().getBoolean("DonatCase.UsePackets") && getServer().getPluginManager().isPluginEnabled("ProtocolLib");
+        usePackets = customConfig.getConfig().getBoolean("DonatCase.UsePackets") &&
+                getServer().getPluginManager().isPluginEnabled("packetevents");
 
         Converter.convertBASE64(this);
 
@@ -383,15 +395,45 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadLibraries() {
-        Library lib = Library.builder()
+        Library orm = Library.builder()
                 .groupId("com{}j256{}ormlite")
                 .artifactId("ormlite-jdbc")
                 .version("6.1")
                 .id("ormlite")
                 .build();
+        Library entityLibSpigot = Library.builder()
+                .groupId("com{}github{}tofaa2{}entitylib")
+                .artifactId("spigot")
+                .version("2.4.7-SNAPSHOT")
+                .url("https://jitpack.io/com/github/Tofaa2/EntityLib/spigot/2.4.7-SNAPSHOT/spigot-2.4.7-SNAPSHOT.jar")
+                .build();
+        Library entityLibAPI = Library.builder()
+                .groupId("com{}github{}tofaa2{}entitylib")
+                .artifactId("api")
+                .version("2.4.7-SNAPSHOT")
+                .url("https://jitpack.io/com/github/Tofaa2/EntityLib/api/2.4.7-SNAPSHOT/api-2.4.7-SNAPSHOT.jar")
+                .build();
+        Library entityLibCommon = Library.builder()
+                .groupId("com{}github{}tofaa2{}entitylib")
+                .artifactId("common")
+                .version("2.4.7-SNAPSHOT")
+                .url("https://jitpack.io/com/github/Tofaa2/EntityLib/common/2.4.7-SNAPSHOT/common-2.4.7-SNAPSHOT.jar")
+                .build();
         libraryManager = new BukkitLibraryManager(this);
+        libraryManager.addRepository("https://repo.jodexindustries.xyz/releases/");
         libraryManager.addMavenCentral();
-        libraryManager.loadLibrary(lib);
+        loadLibrary(orm);
+        loadLibrary(entityLibCommon);
+        loadLibrary(entityLibAPI);
+        loadLibrary(entityLibSpigot);
+    }
+
+    private void loadLibrary(Library library) {
+        try {
+            libraryManager.loadLibrary(library);
+        } catch (RuntimeException e) {
+            getLogger().log(Level.WARNING, e.getMessage());
+        }
     }
 
     private void loadMetrics() {
