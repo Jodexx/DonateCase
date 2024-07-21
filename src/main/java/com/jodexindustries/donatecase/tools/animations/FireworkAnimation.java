@@ -27,8 +27,7 @@ public class FireworkAnimation implements Animation {
         winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, displayName));
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
-        ArmorStandCreator as = Tools.createArmorStand();
-        as.spawnArmorStand(location);
+        ArmorStandCreator as = Tools.createArmorStand(location);
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Firework.Pose");
 
         itemSlot = EquipmentSlot.valueOf(Case.getCustomConfig().getAnimations().getString("Firework.ItemSlot", "HEAD").toUpperCase());
@@ -36,6 +35,7 @@ public class FireworkAnimation implements Animation {
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
+        as.spawn();
         (new BukkitRunnable() {
             int i; //ticks count
             Location l;
@@ -68,8 +68,10 @@ public class FireworkAnimation implements Animation {
                         if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                             as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                         }
-                        as.setPose(armorStandEulerAngle);
+                        as.setAngle(armorStandEulerAngle);
                         as.setCustomName(displayName);
+                        as.setCustomNameVisible(true);
+                        as.updateMeta();
                         Case.animationPreEnd(caseData, player, true, winItem);
                     }
                     if (this.i >= 30) {

@@ -24,14 +24,14 @@ public class ShapeAnimation implements Animation {
     public void start(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
         location.add(0.5, -0.1, 0.5);
         location.setYaw(-70.0F);
-        final ArmorStandCreator as = Tools.createArmorStand();
-        as.spawnArmorStand(location);
+        final ArmorStandCreator as = Tools.createArmorStand(location);
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Shape.Pose");
         itemSlot = EquipmentSlot.valueOf(Case.getCustomConfig().getAnimations().getString("Shape.ItemSlot", "HEAD").toUpperCase());
         boolean small = Case.getCustomConfig().getAnimations().getBoolean("Shape.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
+        as.spawn();
 
         float whiteSize = (float) Case.getCustomConfig().getAnimations().getDouble("Shape.Particle.White.Size");
         float orangeSize = (float) Case.getCustomConfig().getAnimations().getDouble("Shape.Particle.Orange.Size");
@@ -72,8 +72,9 @@ public class ShapeAnimation implements Animation {
                         if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                             as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                         }
-                        as.setPose(armorStandEulerAngle);
+                        as.setAngle(armorStandEulerAngle);
                         as.setCustomName(winItem.getMaterial().getDisplayName());
+                        as.updateMeta();
                         Tools.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
                         Case.animationPreEnd(caseData, player, true, winItem);
 
@@ -83,19 +84,17 @@ public class ShapeAnimation implements Animation {
                 if (i <= 15) {
                     CaseData.Item winItem = caseData.getRandomItem();
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
-                        as.setPose(armorStandEulerAngle);
+                        as.setAngle(armorStandEulerAngle);
                         as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                     }
                     String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
                     winItem.getMaterial().setDisplayName(winGroupDisplayName);
                     as.setCustomName(Tools.rc(winGroupDisplayName));
+                    as.setCustomNameVisible(true);
+                    as.updateMeta();
                     if (this.i <= 8) {
-                        if (!Bukkit.getVersion().contains("1.12")) {
-                            Particle.DustOptions dustOptions = new Particle.DustOptions(finalOrangeColor,orangeSize);
-                            Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
-                        } else {
-                            Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0);
-                        }
+                        Particle.DustOptions dustOptions = new Particle.DustOptions(finalOrangeColor,orangeSize);
+                        Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
                     }
                 }
 

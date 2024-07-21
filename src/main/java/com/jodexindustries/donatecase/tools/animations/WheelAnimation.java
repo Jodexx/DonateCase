@@ -125,16 +125,17 @@ public class WheelAnimation implements Animation {
         }
     private ArmorStandCreator spawnArmorStand(Location location, int index, boolean small) {
         CaseData.Item item = items.get(index);
-        ArmorStandCreator as = Tools.createArmorStand();
-        as.spawnArmorStand(location);
+        ArmorStandCreator as = Tools.createArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
         if(item.getMaterial().getItemStack().getType() != Material.AIR) {
             as.setEquipment(itemSlot, items.get(index).getMaterial().getItemStack());
         }
-        as.setPose(armorStandEulerAngle);
+        as.setAngle(armorStandEulerAngle);
         as.setCustomName(item.getMaterial().getDisplayName());
+        as.setCustomNameVisible(true);
+        as.spawn();
         return as;
     }
 }

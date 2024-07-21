@@ -145,16 +145,17 @@ public class FullWheelAnimation implements Animation {
     }
     private ArmorStandCreator spawnArmorStand(CaseData c, Location location, int index, boolean small) {
         CaseData.Item item = c.getItem(items.get(index));
-        ArmorStandCreator as = Tools.createArmorStand();
-        as.spawnArmorStand(location);
+        ArmorStandCreator as = Tools.createArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
         if(item.getMaterial().getItemStack().getType() != Material.AIR) {
             as.setEquipment(itemSlot, item.getMaterial().getItemStack());
         }
-        as.setPose(armorStandEulerAngle);
+        as.setAngle(armorStandEulerAngle);
         as.setCustomName(item.getMaterial().getDisplayName());
+        as.setCustomNameVisible(true);
+        as.spawn();
         return as;
     }
 }

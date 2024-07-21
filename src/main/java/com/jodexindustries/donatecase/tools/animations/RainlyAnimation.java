@@ -39,8 +39,7 @@ public class RainlyAnimation implements Animation {
         Location cloud3 = rain3.clone().add(0, 0.5, 0);
         Location cloud4 = rain4.clone().add(0, 0.5, 0);
         location.setYaw(-70.0F);
-        ArmorStandCreator as = Tools.createArmorStand();
-        as.spawnArmorStand(location);
+        ArmorStandCreator as = Tools.createArmorStand(location);
         as.setVisible(false);
         as.setGravity(false);
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Rainly.Pose");
@@ -50,6 +49,7 @@ public class RainlyAnimation implements Animation {
         boolean small = Case.getCustomConfig().getAnimations().getBoolean("Rainly.SmallArmorStand", true);
 
         as.setSmall(small);
+        as.spawn();
         (new BukkitRunnable() {
             int i; // count of ticks
             double t;
@@ -77,8 +77,10 @@ public class RainlyAnimation implements Animation {
                         if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                             as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                         }
-                        as.setPose(armorStandEulerAngle);
+                        as.setAngle(armorStandEulerAngle);
                         as.setCustomName(winGroupDisplayName);
+                        as.setCustomNameVisible(true);
+                        as.updateMeta();
                         Case.animationPreEnd(caseData, player, false, winItem);
                         loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 0);
                         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
@@ -93,8 +95,10 @@ public class RainlyAnimation implements Animation {
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                         as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                     }
-                    as.setPose(armorStandEulerAngle);
+                    as.setAngle(armorStandEulerAngle);
                     as.setCustomName(winItem.getMaterial().getDisplayName());
+                    as.setCustomNameVisible(true);
+                    as.updateMeta();
                     loc.getWorld().playSound(loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 5.0F);
                     // firework particles
                     this.t += 0.25;
