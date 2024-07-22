@@ -20,7 +20,7 @@ Item:
 DonateCase підтримує декілька ID предметів для голів
 ### Голова игрока
 ```yml
-Item
+Item:
   ID: HEAD:_Jodex__ # HEAD:<ім'я гравця>
 ```
 ### [HeadDataBase](https://www.spigotmc.org/resources/head-database.14280/)

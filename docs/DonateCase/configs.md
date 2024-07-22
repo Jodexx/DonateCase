@@ -16,7 +16,7 @@ sidebar_position: 3
 │   └── ua_UA.yml
 ├── Cases.yml # cases data
 ├── Config.yml # configuration file
-├── Data.yml # history data file
+├── Data.yml # data file
 ├── Keys.yml # keys data
 ├── Animations.yml # animations configuration
 └──
@@ -56,7 +56,7 @@ DonatCase:
   NoKeyWarningSound: ENTITY_ENDERMAN_TELEPORT
   DateFormat: "dd.MM HH:mm:ss"
   AddonsHelp: true # Show help list for addons commands?
-  UsePackets: false # don't change this
+  UsePackets: false # 1.18+ for using packets, you need to install packetevents plugin
 ```
 </details>
 
@@ -65,6 +65,7 @@ DonatCase:
 <summary>case.yml</summary>
 
 ```yml
+config: 1.0
 case:
   Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL, FULLWHEEL see: https://wiki.jodexindustries.xyz/docs/DonateCase/animations
   AnimationSound: ENTITY_EXPERIENCE_ORB_PICKUP # remove this line if you don't want to play sound
@@ -108,16 +109,16 @@ case:
         DisplayName: "&bOpen Case"
         Enchanted: false
         Lore:
-        - '&6The case can be bought on the website: &cJodexIndustries.xyz'
-        - ''
-        - '&7Keys: %keys%'
-        - ''
-        - '&6Drops:'
-        - '&7&l[&aVIP&7&l] - &b&n50%'
-        - '&7&l[&bVIP&6+&7&l] - &b&n25%'
-        - '&7&l[&5Deluxe&7&l] - &b&n15%'
-        - '&7&l[&dLegend&7&l] - &b&n10%'
-        - ''
+          - '&6The case can be bought on the website: &cJodexIndustries.xyz'
+          - ''
+          - '&7Keys: %keys%'
+          - ''
+          - '&6Drops:'
+          - '&7&l[&aVIP&7&l] - &b&n50%'
+          - '&7&l[&bVIP&6+&7&l] - &b&n25%'
+          - '&7&l[&5Deluxe&7&l] - &b&n15%'
+          - '&7&l[&dLegend&7&l] - &b&n10%'
+          - ''
         Slots: # or Slots: 0-10 (range)
           - 22
         Material: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
@@ -130,6 +131,7 @@ case:
         ID: IRON_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         DisplayName: '&7&l[&aVIP&7&l]'
         Enchanted: false
+      Index: 0
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
         - '[command] lp user %player% parent set %group%'
@@ -156,6 +158,7 @@ case:
         ID: GOLDEN_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         DisplayName: '&7&l[&bVIP&6+&7&l]'
         Enchanted: false
+      Index: 1
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
         - '[command] lp user %player% parent set %group%'
@@ -180,6 +183,7 @@ case:
         ID: DIAMOND_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         DisplayName: '&7&l[&5Deluxe&7&l]'
         Enchanted: false
+      Index: 2
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
         - '[command] lp user %player% parent set %group%'
@@ -203,6 +207,7 @@ case:
         ID: NETHERITE_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         DisplayName: '&7&l[&dLegend&7&l]'
         Enchanted: false
+      Index: 3
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
         - '[command] lp user %player% parent set %group%'
@@ -294,10 +299,14 @@ Wheel:
   ItemsCount: 6
   CircleSpeed: 0.5
   CircleRadius: 1.5
+  LiftingAlongX: 0
   LiftingAlongY: 0
-  UseFlame: true # NEW
+  LiftingAlongZ: 0
+  Flame:
+    Enabled: true
+    Particle: FLAME
   Scroll:
-    Time: 100 # NEW
+    Time: 100
     Sound: UI_BUTTON_CLICK
     Volume: 10
     Pitch: 1
@@ -314,8 +323,12 @@ FullWheel:
     LeftLeg: 0, 0, 0
   CircleSpeed: 0.5
   CircleRadius: 1.5
+  LiftingAlongX: 0
   LiftingAlongY: 0
-  UseFlame: true
+  LiftingAlongZ: 0
+  Flame:
+    Enabled: true
+    Particle: FLAME
   Scroll:
     Time: 100
     Sound: UI_BUTTON_CLICK

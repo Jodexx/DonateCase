@@ -22,7 +22,7 @@ Item:
 DonateCase supports several options for custom heads
 ### Player head
 ```yml
-Item
+Item:
   ID: HEAD:_Jodex__ # HEAD:<Player name>
 ```
 ### [HeadDataBase](https://www.spigotmc.org/resources/head-database.14280/)
