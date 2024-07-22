@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api.armorstand;
 
 import com.jodexindustries.donatecase.DonateCase;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EntityEquipment;
@@ -14,12 +15,18 @@ import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 public class BukkitArmorStandCreator implements ArmorStandCreator {
     private final ArmorStand entity;
 
     public BukkitArmorStandCreator(Location location) {
-        entity = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+        World world = location.getWorld();
+        if (world == null) {
+            entity = null;
+            return;
+        }
+        entity = (ArmorStand) world.spawnEntity(location, EntityType.ARMOR_STAND);
         entity.setMetadata("case", new FixedMetadataValue(DonateCase.instance, "case"));
     }
 
@@ -36,6 +43,11 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
     @Override
     public void setMarker(boolean marker) {
         entity.setMarker(marker);
+    }
+
+    @Override
+    public void setGlowing(boolean glowing) {
+        entity.setGlowing(glowing);
     }
 
     @Override
@@ -134,6 +146,21 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
     @Override
     public Location getLocation() {
         return entity.getLocation();
+    }
+
+    @Override
+    public @NotNull UUID getUniqueId() {
+        return entity.getUniqueId();
+    }
+
+    @Override
+    public boolean isPacket() {
+        return false;
+    }
+
+    @Override
+    public ArmorStand getArmorStand() {
+        return entity;
     }
 
     @Override

@@ -7,6 +7,7 @@ import me.tofaa.entitylib.meta.other.ArmorStandMeta;
 import me.tofaa.entitylib.wrapper.WrapperLivingEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +17,7 @@ import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 public class PacketArmorStandCreator implements ArmorStandCreator {
     private Location location;
@@ -135,6 +137,11 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
     }
 
     @Override
+    public void setGlowing(boolean glowing) {
+        meta.setGlowing(glowing);
+    }
+
+    @Override
     public void setCollidable(boolean collidable) {}
 
     @Override
@@ -166,6 +173,21 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
     @Override
     public Location getLocation() {
         return location;
+    }
+
+    @Override
+    public @NotNull UUID getUniqueId() {
+        return entity.getUuid();
+    }
+
+    @Override
+    public boolean isPacket() {
+        return true;
+    }
+
+    @Override
+    public ArmorStand getArmorStand() {
+        return null;
     }
 
     @Override
