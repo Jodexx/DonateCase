@@ -16,10 +16,18 @@ import java.util.stream.IntStream;
 
 public class CaseLoader {
    private final DonateCase plugin;
+
+    /**
+     * Default constructor
+     * @param plugin DonateCase plugin object
+     */
     public CaseLoader(DonateCase plugin) {
         this.plugin = plugin;
     }
 
+    /**
+     * Load all cases from "cases" folder to memory
+     */
     public void load() {
         Case.caseData.clear();
         int count = 0;

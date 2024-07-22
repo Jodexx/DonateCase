@@ -18,6 +18,17 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
     private final String caseType;
     private final boolean isOpenItem;
 
+    /**
+     * Default constructor
+     * @param view Inventory view
+     * @param type Slot type
+     * @param slot Slot index
+     * @param click Click type
+     * @param action Action type
+     * @param location Location where opened case
+     * @param caseType Case type
+     * @param isOpenItem Is OPEN item type
+     */
     public CaseGuiClickEvent(@NotNull InventoryView view, @NotNull InventoryType.SlotType type, int slot, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull Location location, String caseType, boolean isOpenItem) {
         super(view, type, slot, click, action);
         this.location = location;
@@ -40,6 +51,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
 
     /**
      * Get case location
+     * @return Case location
      */
     public Location getLocation() {
         return location;
@@ -47,6 +59,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
 
     /**
      * Get case type
+     * @return case type
      */
     public String getCaseType() {
         return caseType;
@@ -54,6 +67,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
 
     /**
      * Check for "OPEN" item
+     * @return result
      */
     public boolean isOpenItem() {
         return isOpenItem;

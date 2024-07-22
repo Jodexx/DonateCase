@@ -13,11 +13,21 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CaseInteractEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
+    /**
+     * true if you wish to cancel this event
+     */
     protected boolean cancel;
     private final Block block;
     private final String caseType;
     private final Action action;
 
+    /**
+     * Default constructor
+     * @param who Player who interact
+     * @param block Block to interact
+     * @param caseType Case type
+     * @param action Interact action
+     */
     public CaseInteractEvent(@NotNull final Player who, @NotNull final Block block, @NotNull final String caseType, @NotNull final Action action) {
         super(who);
         this.block = block;
@@ -35,6 +45,10 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
         return action;
     }
 
+    /**
+     * Get clicked block
+     * @return block
+     */
     @NotNull
     public Block getClickedBlock() {
         return block;

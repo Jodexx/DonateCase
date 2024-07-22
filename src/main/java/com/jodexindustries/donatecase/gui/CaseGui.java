@@ -20,6 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class for initializing case GUI
+ */
 public class CaseGui {
     private final Inventory inventory;
 

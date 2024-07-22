@@ -12,14 +12,22 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AnimationPreStartEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-    CaseData caseData;
-    Location location;
-    String animation;
-    CaseData.Item winItem;
+    private final CaseData caseData;
+    private final Location location;
+    private final String animation;
+    private CaseData.Item winItem;
 
-    public AnimationPreStartEvent(@NotNull Player who, String animation, CaseData c, Location location, CaseData.Item winItem) {
+    /**
+     * Default constructor
+     * @param who Player who opened
+     * @param animation Case animations
+     * @param caseData Case data
+     * @param location Location where opened
+     * @param winItem Win item
+     */
+    public AnimationPreStartEvent(@NotNull Player who, String animation, final CaseData caseData, Location location, CaseData.Item winItem) {
         super(who);
-        this.caseData = c;
+        this.caseData = caseData;
         this.location = location;
         this.animation = animation;
         this.winItem = winItem;
