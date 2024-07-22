@@ -1,6 +1,9 @@
 package com.jodexindustries.donatecase;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
+import com.alessiodp.libby.BukkitLibraryManager;
+import com.alessiodp.libby.Library;
+import com.alessiodp.libby.logging.LogLevel;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
 import com.jodexindustries.donatecase.api.actions.*;
@@ -22,8 +25,6 @@ import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.animations.*;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import com.jodexindustries.donatecase.tools.support.PacketEventsSupport;
-import net.byteflux.libby.BukkitLibraryManager;
-import net.byteflux.libby.Library;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.*;
@@ -394,7 +395,6 @@ public class DonateCase extends JavaPlugin {
                 .groupId("com{}j256{}ormlite")
                 .artifactId("ormlite-jdbc")
                 .version("6.1")
-                .id("ormlite")
                 .build();
         Library entityLibSpigot = Library.builder()
                 .groupId("com{}github{}tofaa2{}entitylib")
@@ -415,17 +415,16 @@ public class DonateCase extends JavaPlugin {
                 .url("https://jitpack.io/com/github/Tofaa2/EntityLib/common/2.4.7-SNAPSHOT/common-2.4.7-SNAPSHOT.jar")
                 .build();
         libraryManager = new BukkitLibraryManager(this);
-        libraryManager.addRepository("https://repo.jodexindustries.xyz/releases/");
+        libraryManager.setLogLevel(LogLevel.WARN);
+        libraryManager.addJitPack();
         libraryManager.addMavenCentral();
         loadLibrary(orm);
-        loadLibrary(entityLibCommon);
-        loadLibrary(entityLibAPI);
-        loadLibrary(entityLibSpigot);
+        loadLibrary(entityLibCommon, entityLibSpigot, entityLibAPI);
     }
 
-    private void loadLibrary(Library library) {
+    private void loadLibrary(Library... libraries) {
         try {
-            libraryManager.loadLibrary(library);
+            libraryManager.loadLibraries(libraries);
         } catch (RuntimeException e) {
             getLogger().log(Level.WARNING, e.getMessage());
         }

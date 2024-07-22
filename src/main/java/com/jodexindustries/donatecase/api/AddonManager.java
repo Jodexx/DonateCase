@@ -8,8 +8,8 @@ import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.addon.internal.InvalidAddonException;
 import com.jodexindustries.donatecase.api.events.AddonDisableEvent;
 import com.jodexindustries.donatecase.api.events.AddonEnableEvent;
-import net.byteflux.libby.Library;
-import net.byteflux.libby.LibraryManager;
+import com.alessiodp.libby.Library;
+import com.alessiodp.libby.LibraryManager;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
