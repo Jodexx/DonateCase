@@ -164,6 +164,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
         return urlClassLoader;
     }
 
+    @Override
     public InternalAddonDescription getDescription() {
         return description;
     }

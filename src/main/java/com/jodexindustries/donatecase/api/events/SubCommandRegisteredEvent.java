@@ -16,6 +16,13 @@ public class SubCommandRegisteredEvent extends Event {
     private final String subCommandAddonName;
     private final boolean isDefault;
 
+    /**
+     * Default constructor
+     * @param subCommandName Sub command name
+     * @param subCommand Sub command class
+     * @param subCommandAddonName Sub command addon name
+     * @param isDefault Is default?
+     */
     public SubCommandRegisteredEvent(String subCommandName, SubCommand subCommand,
                                      String subCommandAddonName, boolean isDefault) {
         this.subCommandName = subCommandName;

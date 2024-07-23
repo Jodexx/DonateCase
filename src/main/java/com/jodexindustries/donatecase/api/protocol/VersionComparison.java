@@ -23,5 +23,5 @@ public enum VersionComparison {
     /*
     The server version is older than or equal to the compared server version.
      */
-    OLDER_THAN_OR_EQUALS;
+    OLDER_THAN_OR_EQUALS
 }

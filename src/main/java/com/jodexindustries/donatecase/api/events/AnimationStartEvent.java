@@ -12,12 +12,21 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AnimationStartEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-    CaseData caseData;
-    Location location;
-    String animation;
-    CaseData.Item winItem;
+    private final CaseData caseData;
+    private final Location location;
+    private final String animation;
+    private final CaseData.Item winItem;
 
-    public AnimationStartEvent(@NotNull Player who, String animation, CaseData caseData, Location location, CaseData.Item winItem) {
+    /**
+     * Default constructor
+     * @param who Player who opened case
+     * @param animation Animation name
+     * @param caseData Case data
+     * @param location Location where opened
+     * @param winItem Win item
+     */
+    public AnimationStartEvent(@NotNull Player who, @NotNull String animation, @NotNull CaseData caseData,
+                               @NotNull Location location, @NotNull CaseData.Item winItem) {
         super(who);
         this.caseData = caseData;
         this.location = location;

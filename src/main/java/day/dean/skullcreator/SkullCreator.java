@@ -200,7 +200,7 @@ public class SkullCreator {
                 metaProfileField.set(meta, makeProfile(b64));
 
             } catch (NoSuchFieldException | IllegalAccessException ex2) {
-                ex2.printStackTrace();
+                throw new RuntimeException(ex);
             }
         }
     }

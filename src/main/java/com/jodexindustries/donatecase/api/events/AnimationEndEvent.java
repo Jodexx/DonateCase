@@ -12,10 +12,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AnimationEndEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-    CaseData caseData;
-    Location location;
-    String animation;
-    CaseData.Item winItem;
+    private final CaseData caseData;
+    private final Location location;
+    private final String animation;
+    private final CaseData.Item winItem;
 
     /**
      * Default constructor

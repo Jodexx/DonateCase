@@ -43,7 +43,6 @@ import java.util.TreeSet;
  * <li>Which "block" the random number falls in is the element that is selected
  * <li>Therefore "block"s with larger probability have a greater chance of being
  * selected than those with smaller probability.
- *
  * </ul>
  *
  * @author Lewys Davies
@@ -118,7 +117,7 @@ public final class ProbabilityCollection<E> {
             throw new IllegalArgumentException("Probability must be greater than 0");
         }
 
-        ProbabilitySetElement<E> entry = new ProbabilitySetElement<E>(object, probability);
+        ProbabilitySetElement<E> entry = new ProbabilitySetElement<>(object, probability);
         entry.setIndex(this.totalProbability + 1);
 
         this.collection.add(entry);

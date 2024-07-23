@@ -19,8 +19,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class FullWheelAnimation implements Animation {
 
-    List<String> items = new ArrayList<>();
-    List<ArmorStandCreator> armorStands = new ArrayList<>();
+    final List<String> items = new ArrayList<>();
+    final List<ArmorStandCreator> armorStands = new ArrayList<>();
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 

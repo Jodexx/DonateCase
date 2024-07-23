@@ -15,6 +15,13 @@ public class AnimationRegisteredEvent extends Event {
     private final boolean isDefault;
     private final String animationAddonName;
 
+    /**
+     * Default constructor
+     * @param animationName Animation name
+     * @param animationClass Animation class
+     * @param animationAddonName Animation addon name
+     * @param isDefault Is default?
+     */
     public AnimationRegisteredEvent(String animationName, Animation animationClass, String animationAddonName, boolean isDefault) {
         this.animationName = animationName;
         this.animationClass = animationClass;

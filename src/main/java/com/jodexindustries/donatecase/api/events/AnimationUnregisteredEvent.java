@@ -9,8 +9,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AnimationUnregisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    String animationName;
+    private final String animationName;
 
+    /**
+     * Default constructor
+     * @param animationName Unregistered animation name
+     */
     public AnimationUnregisteredEvent(String animationName) {
         this.animationName = animationName;
     }

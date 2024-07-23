@@ -15,6 +15,13 @@ public class CaseActionRegisteredEvent extends Event {
     private final boolean isDefault;
     private final String caseActionAddonName;
 
+    /**
+     * Default constructor
+     * @param caseActionName Case action name
+     * @param caseAction Case action class
+     * @param caseActionAddonName Case action addon name
+     * @param isDefault Is default?
+     */
     public CaseActionRegisteredEvent(String caseActionName, CaseAction caseAction, String caseActionAddonName, boolean isDefault) {
         this.caseActionName = caseActionName;
         this.caseAction = caseAction;

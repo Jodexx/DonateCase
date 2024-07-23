@@ -18,8 +18,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class WheelAnimation implements Animation {
 
-    List<CaseData.Item> items = new ArrayList<>();
-    List<ArmorStandCreator> armorStands = new ArrayList<>();
+    final List<CaseData.Item> items = new ArrayList<>();
+    final List<ArmorStandCreator> armorStands = new ArrayList<>();
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 

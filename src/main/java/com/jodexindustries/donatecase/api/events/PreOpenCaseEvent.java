@@ -13,9 +13,15 @@ import org.jetbrains.annotations.NotNull;
 public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     protected boolean cancel;
-    String caseType;
-    Block block;
+    private final String caseType;
+    private final Block block;
 
+    /**
+     * Default constructor
+     * @param who Player who opened
+     * @param caseType Case type
+     * @param block Case block
+     */
     public PreOpenCaseEvent(@NotNull final Player who, @NotNull final String caseType, Block block) {
         super(who);
         this.caseType = caseType;

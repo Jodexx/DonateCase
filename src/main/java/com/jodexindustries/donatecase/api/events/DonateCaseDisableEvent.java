@@ -11,6 +11,10 @@ import org.jetbrains.annotations.NotNull;
 public class DonateCaseDisableEvent extends PluginEvent {
     private static final HandlerList handlers = new HandlerList();
 
+    /**
+     * Default constructor
+     * @param plugin DonateCase instance
+     */
     public DonateCaseDisableEvent(@NotNull Plugin plugin) {
         super(plugin);
     }

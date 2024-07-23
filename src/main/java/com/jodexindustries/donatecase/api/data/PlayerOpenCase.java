@@ -18,6 +18,12 @@ public class PlayerOpenCase {
      */
     private final UUID playerUUID;
 
+    /**
+     * Default constructor
+     * @param location Location of opened case
+     * @param caseType Case type
+     * @param uuid Player UUID
+     */
     public PlayerOpenCase(Location location, String caseType, UUID uuid) {
         this.location = location;
         this.caseType = caseType;

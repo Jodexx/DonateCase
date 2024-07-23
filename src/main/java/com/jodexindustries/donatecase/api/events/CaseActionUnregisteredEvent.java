@@ -11,6 +11,10 @@ public class CaseActionUnregisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final String caseActionName;
 
+    /**
+     * Default constructor
+     * @param caseActionName Case action name
+     */
     public CaseActionUnregisteredEvent(String caseActionName) {
         this.caseActionName = caseActionName;
     }

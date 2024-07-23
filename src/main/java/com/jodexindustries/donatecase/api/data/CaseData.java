@@ -26,6 +26,19 @@ public class CaseData implements Cloneable {
     private Map<String, Integer> levelGroups;
     private GUI gui;
 
+    /**
+     * Default constructor
+     * @param caseType Case type
+     * @param caseDisplayName Case display name
+     * @param caseTitle Case title (GUI)
+     * @param animation Animation name
+     * @param animationSound Animation sound (when ended)
+     * @param items Items list
+     * @param historyData History data array
+     * @param hologram Hologram object
+     * @param levelGroups Map with level groups
+     * @param gui GUI object
+     */
     public CaseData(String caseType, String caseDisplayName, String caseTitle,
                     String animation, AnimationSound animationSound, Map<String,
             Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups, GUI gui) {

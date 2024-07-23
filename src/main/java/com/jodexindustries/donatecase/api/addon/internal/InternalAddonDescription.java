@@ -16,6 +16,7 @@ public class InternalAddonDescription {
     private final String mainClass;
     private final String version;
     private final List<String> libraries;
+    private final List<String> authors;
 
     public InternalAddonDescription(File file) throws IOException, InvalidAddonException {
         JarFile jarFile = new JarFile(file);
@@ -27,6 +28,15 @@ public class InternalAddonDescription {
                 name = (String) data.get("name");
                 mainClass = (String) data.get("main");
                 version = String.valueOf(data.get("version"));
+
+                authors = new ArrayList<>();
+
+                if(data.get("author") != null) authors.add(data.get("author").toString());
+                if(data.get("authors") != null) {
+                    for (Object o : (Iterable<?>) data.get("authors")) {
+                        authors.add(o.toString());
+                    }
+                }
 
                 libraries = new ArrayList<>();
 
@@ -55,5 +65,9 @@ public class InternalAddonDescription {
 
     public List<String> getLibraries() {
         return libraries;
+    }
+
+    public List<String> getAuthors() {
+        return authors;
     }
 }

@@ -11,6 +11,11 @@ import org.jetbrains.annotations.NotNull;
 public class SubCommandUnregisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final String subCommandName;
+
+    /**
+     * Default constructor
+     * @param subCommandName Sub command name
+     */
     public SubCommandUnregisteredEvent(String subCommandName) {
         this.subCommandName = subCommandName;
     }

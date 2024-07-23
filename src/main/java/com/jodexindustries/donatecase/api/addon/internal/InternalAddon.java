@@ -16,4 +16,5 @@ public interface InternalAddon extends Addon {
     InputStream getResource(@NotNull String filename);
     Plugin getDonateCase();
     CaseManager getCaseAPI();
+    InternalAddonDescription getDescription();
 }

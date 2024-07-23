@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.command.subcommands;
 
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -35,7 +35,7 @@ public class AnimationsCommand implements SubCommand {
 
     private static Map<String, List<String>> buildAnimationsMap() {
         Map<String, List<String>> animationsMap = new HashMap<>();
-        Case.getInstance().api.getAnimationManager().getRegisteredAnimations().forEach((animationName, pair) -> {
+        AnimationManager.getRegisteredAnimations().forEach((animationName, pair) -> {
             Addon addon = pair.getSecond();
             List<String> animations = animationsMap.getOrDefault(addon.getName(), new ArrayList<>());
             animations.add(animationName);
