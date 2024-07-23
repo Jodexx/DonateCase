@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddonDescription;
@@ -97,7 +96,7 @@ public class AddonManager {
             loadLibraries(description.getLibraries());
             InternalAddonClassLoader loader;
             try {
-                loader = new InternalAddonClassLoader(DonateCase.instance.getClass().getClassLoader(), description, file, this);
+                loader = new InternalAddonClassLoader(Case.getInstance().getClass().getClassLoader(), description, file, this);
             } catch (IOException | InvalidAddonException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -112,7 +111,7 @@ public class AddonManager {
                 try {
                     loader.close();
                 } catch (IOException ex) {
-                    ex.printStackTrace();
+                    Case.getInstance().getLogger().log(Level.SEVERE, e.getLocalizedMessage(), e.getCause());
                 }
                 if (e.getCause() instanceof ClassNotFoundException) {
                     ClassNotFoundException error = (ClassNotFoundException) e.getCause();
@@ -253,7 +252,7 @@ public class AddonManager {
             addon.getUrlClassLoader().close();
             return true;
         } catch (Throwable e) {
-            e.printStackTrace();
+            Case.getInstance().getLogger().log(Level.SEVERE, e.getLocalizedMessage(), e.getCause());
         }
         return false;
     }
@@ -273,7 +272,7 @@ public class AddonManager {
     }
 
     private void loadLibraries(List<String> libraries) {
-        LibraryManager manager = DonateCase.instance.libraryManager;
+        LibraryManager manager = Case.getInstance().libraryManager;
         for (String lib : libraries) {
             String[] params = lib.split(":");
             if(params.length == 3) {
@@ -288,7 +287,7 @@ public class AddonManager {
                 try {
                     manager.loadLibrary(library);
                 } catch (RuntimeException e) {
-                    e.printStackTrace();
+                    Case.getInstance().getLogger().log(Level.WARNING, "Error with loading library " + lib, e);
                 }
             }
         }
