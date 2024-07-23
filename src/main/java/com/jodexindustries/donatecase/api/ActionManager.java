@@ -44,6 +44,10 @@ public class ActionManager {
     private static final Map<String, Pair<CaseAction, Addon>> registeredActions = new HashMap<>();
     private final Addon addon;
 
+    /**
+     * Default constructor
+     * @param addon An addon that will manage actions
+     */
     public ActionManager(Addon addon) {
         this.addon = addon;
     }
