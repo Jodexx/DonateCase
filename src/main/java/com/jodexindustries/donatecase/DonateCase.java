@@ -64,7 +64,7 @@ public class DonateCase extends JavaPlugin {
 
     public Config config;
 
-    public boolean usePackets = true;
+    public boolean usePackets = false;
     public boolean sql = false;
 
     @Override
@@ -155,9 +155,6 @@ public class DonateCase extends JavaPlugin {
 
     public void loadConfig() {
         config = new Config(this);
-
-        usePackets = config.getConfig().getBoolean("DonatCase.UsePackets") &&
-                getServer().getPluginManager().isPluginEnabled("packetevents");
 
         mysql = new MySQLDataBase(instance);
         mysql.connect();

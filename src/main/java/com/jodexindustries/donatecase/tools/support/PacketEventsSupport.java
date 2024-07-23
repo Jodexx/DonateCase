@@ -9,22 +9,19 @@ import me.tofaa.entitylib.APIConfig;
 import me.tofaa.entitylib.EntityLib;
 import me.tofaa.entitylib.spigot.SpigotEntityLibPlatform;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Level;
 
 public class PacketEventsSupport {
-    private final JavaPlugin plugin;
+    private final DonateCase plugin;
 
-    private final boolean enabled;
-
-    public PacketEventsSupport(JavaPlugin plugin) {
+    public PacketEventsSupport(DonateCase plugin) {
         this.plugin = plugin;
-        this.enabled = Bukkit.getPluginManager().isPluginEnabled("packetevents");
     }
 
     public void load() {
-        if(enabled) {
+        boolean usePackets = plugin.config.getConfig().getBoolean("DonatCase.UsePackets");
+        if(usePackets) {
             ServerVersion version = getServerVersion();
             Logger.log("&aLoading &bpacketevents &ahooking...");
             Logger.log("&aServer version: &b" + version.getReleaseName());
@@ -43,15 +40,12 @@ public class PacketEventsSupport {
                 EntityLib.init(platform, settings);
                 if (PacketEvents.getAPI().isLoaded()) {
                     Logger.log("&aHooked to &bpacketevents");
+                    DonateCase.instance.usePackets = true;
                 }
             } catch (Exception e) {
                 plugin.getLogger().log(Level.WARNING, "packetevents hooking canceled!", e);
             }
         }
-    }
-
-    public boolean isEnabled() {
-        return enabled;
     }
 
     private ServerVersion getServerVersion() {
