@@ -9,7 +9,6 @@ import com.jodexindustries.donatecase.api.armorstand.PacketArmorStandCreator;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
-import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
 import day.dean.skullcreator.SkullCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -70,7 +69,7 @@ public class Tools {
 
     public static void msg(CommandSender s, String msg) {
         if (s != null) {
-            msgRaw(s, Case.getCustomConfig().getLang().getString("prefix") + msg);
+            msgRaw(s, Case.getConfig().getLang().getString("prefix") + msg);
         }
     }
 
@@ -237,6 +236,15 @@ public class Tools {
         return getMCURLSkull(url, displayName, null);
     }
 
+    public static ItemStack getItemsAdderItem(@NotNull String namespace, String displayName, List<String> lore) {
+        if (Case.getInstance().getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
+            return DonateCase.instance.itemsAdderSupport.getItem(namespace, displayName, lore);
+        } else {
+            Logger.log("&eYou're using an item from ItemsAdder, but it's not loaded on the server!");
+        }
+        return new ItemStack(Material.AIR);
+    }
+
     @NotNull
     public static ItemStack getCaseItem(String displayName, String id, boolean enchanted, String[] rgb) {
         String[] materialParts = id.split(":");
@@ -254,7 +262,7 @@ public class Tools {
                 winItem = CustomHeadSupport.getSkull(materialParts[1], materialParts[2], displayName, null);
                 break;
             case IA:
-                winItem = ItemsAdderSupport.getItem(materialParts[1] + ":" + materialParts[2], displayName, null);
+                winItem = getItemsAdderItem(materialParts[1] + ":" + materialParts[2], displayName, null);
                 break;
             case BASE64:
                 winItem = getBASE64Skull(materialParts[1], displayName);
@@ -511,7 +519,7 @@ public class Tools {
      * @return EulerAngle, that used in animations
      */
     public static ArmorStandEulerAngle getArmorStandEulerAngle(String path) {
-         ConfigurationSection section = Case.getCustomConfig().getAnimations().getConfigurationSection(path);
+         ConfigurationSection section = Case.getConfig().getAnimations().getConfigurationSection(path);
          if(section == null) {
              EulerAngle angle = new EulerAngle(0,0,0);
              return new ArmorStandEulerAngle(angle, angle, angle, angle, angle, angle);

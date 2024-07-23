@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.command;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -27,7 +28,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                 sendHelp(sender, label);
             } else {
                 String subCommandName = args[0];
-                Pair<SubCommand, Addon> pair = Case.getInstance().api.getSubCommandManager().getSubCommands().get(subCommandName);
+                Pair<SubCommand, Addon> pair = SubCommandManager.getSubCommands().get(subCommandName);
 
                 if (pair == null) {
                     sendHelp(sender, label);
@@ -50,7 +51,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                         (type == SubCommandType.PLAYER || type == null) && (hasPlayerPermission || hasModPermission || hasAdminPermission)) {
                     subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
                 } else {
-                    Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("no-permission")));
+                    Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
                 }
             }
 
@@ -59,7 +60,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     public static void sendHelp(CommandSender sender, String label) {
         if (!sender.hasPermission("donatecase.player")) {
-            Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("no-permission")));
+            Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
             return;
         }
 
@@ -74,7 +75,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             sendHelpMessages(sender, "help", label);
         }
 
-        if (Case.getCustomConfig().getConfig().getBoolean("DonatCase.AddonsHelp", true)) {
+        if (Case.getConfig().getConfig().getBoolean("DonatCase.AddonsHelp", true)) {
             Map<String, List<Map<String, SubCommand>>> addonsMap = buildAddonsMap();
             if (Tools.isHasCommandForSender(sender, addonsMap)) {
                 sendAddonHelpMessages(sender, addonsMap, isAdmin, isMod);
@@ -83,14 +84,14 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
     }
 
     private static void sendHelpMessages(CommandSender sender, String path, String label) {
-        for (String string : Case.getCustomConfig().getLang().getStringList(path)) {
+        for (String string : Case.getConfig().getLang().getStringList(path)) {
             Tools.msgRaw(sender, Tools.rt(string, "%cmd:" + label));
         }
     }
 
     private static Map<String, List<Map<String, SubCommand>>> buildAddonsMap() {
         Map<String, List<Map<String, SubCommand>>> addonsMap = new HashMap<>();
-        Case.getInstance().api.getSubCommandManager().getSubCommands().forEach((subCommandName, pair) -> {
+        SubCommandManager.getSubCommands().forEach((subCommandName, pair) -> {
             SubCommand subCommand = pair.getFirst();
             Addon addon = pair.getSecond();
             addonsMap.computeIfAbsent(addon.getName(), k -> new ArrayList<>())
@@ -102,19 +103,19 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
     private static void sendAddonHelpMessages(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, boolean isAdmin, boolean isMod) {
         addonsMap.forEach((addon, commands) -> {
             if (!addon.equalsIgnoreCase("DonateCase") && Tools.isHasCommandForSender(sender, addonsMap, addon)) {
-                String addonNameFormat = Case.getCustomConfig().getLang().getString("help-addons.format.name");
+                String addonNameFormat = Case.getConfig().getLang().getString("help-addons.format.name");
                 if (addonNameFormat != null && !addonNameFormat.isEmpty()) {
                     Tools.msgRaw(sender, Tools.rt(addonNameFormat, "%addon:" + addon));
                 }
 
                 commands.forEach(command -> command.forEach((commandName, subCommand) -> {
                     String description = subCommand.getDescription();
-                    description = (description != null) ? Tools.rt(Case.getCustomConfig().getLang().getString("help-addons.format.description"), "%description:" + description) : "";
+                    description = (description != null) ? Tools.rt(Case.getConfig().getLang().getString("help-addons.format.description"), "%description:" + description) : "";
 
                     StringBuilder argsBuilder = compileSubCommandArgs(subCommand.getArgs());
 
                     if (hasPermissionForSubCommand(sender, isAdmin, isMod, subCommand)) {
-                        Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("help-addons.format.command"),
+                        Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("help-addons.format.command"),
                                 "%cmd:" + commandName,
                                 "%args:" + argsBuilder,
                                 "%description:" + description
@@ -156,7 +157,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             boolean isMod = sender.hasPermission("donatecase.mod");
             boolean isPlayer = sender.hasPermission("donatecase.player");
 
-            Map<String, Pair<SubCommand, Addon>> subCommands = Case.getInstance().api.getSubCommandManager().getSubCommands();
+            Map<String, Pair<SubCommand, Addon>> subCommands = SubCommandManager.getSubCommands();
 
             for (Map.Entry<String, Pair<SubCommand, Addon>> entry : subCommands.entrySet()) {
                 String subCommandName = entry.getKey();
@@ -167,8 +168,8 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     value.add(subCommandName);
                 }
             }
-        } else if (Case.getInstance().api.getSubCommandManager().getSubCommands().containsKey(args[0])) {
-            return Case.getInstance().api.getSubCommandManager().getTabCompletionsForSubCommand(sender, args[0], Arrays.copyOfRange(args, 1, args.length));
+        } else if (SubCommandManager.getSubCommands().containsKey(args[0])) {
+            return SubCommandManager.getTabCompletionsForSubCommand(sender, args[0], Arrays.copyOfRange(args, 1, args.length));
         } else {
             return new ArrayList<>();
         }

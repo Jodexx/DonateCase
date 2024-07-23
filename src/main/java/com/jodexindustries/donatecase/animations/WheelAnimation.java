@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.tools.animations;
+package com.jodexindustries.donatecase.animations;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
@@ -6,7 +6,6 @@ import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -17,13 +16,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class FullWheelAnimation implements Animation {
+public class WheelAnimation implements Animation {
 
-    List<String> items = new ArrayList<>();
+    List<CaseData.Item> items = new ArrayList<>();
     List<ArmorStandCreator> armorStands = new ArrayList<>();
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
-
 
     @Override
     public void start(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
@@ -33,49 +31,30 @@ public class FullWheelAnimation implements Animation {
         loc.setPitch(pitch);
         loc.setYaw(yaw);
         loc.add(0.5, 0, 0.5);
+        int itemsCount = Case.getConfig().getAnimations().getInt("Wheel.ItemsCount");
+        armorStandEulerAngle = Tools.getArmorStandEulerAngle("Wheel.Pose");
+        itemSlot = EquipmentSlot.valueOf(Case.getConfig().getAnimations().getString("Wheel.ItemSlot", "HEAD").toUpperCase());
+        boolean small = Case.getConfig().getAnimations().getBoolean("Wheel.SmallArmorStand", true);
+        int animationTime = Case.getConfig().getAnimations().getInt("Wheel.Scroll.Time", 100);
+        final Location flocation = loc.clone().add(0 + Case.getConfig().getAnimations().getDouble("Wheel.LiftingAlongX"),
+                -1 + Case.getConfig().getAnimations().getDouble("Wheel.LiftingAlongY"),
+                0 + Case.getConfig().getAnimations().getDouble("Wheel.LiftingAlongZ"));
+        boolean needSound = Case.getConfig().getAnimations().getString("Wheel.Scroll.Sound") != null;
+        Sound sound = Sound.valueOf(Case.getConfig().getAnimations().getString("Wheel.Scroll.Sound"));
+        float volume = (float) Case.getConfig().getAnimations().getDouble("Wheel.Scroll.Volume");
+        float vpitch = (float) Case.getConfig().getAnimations().getDouble("Wheel.Scroll.Pitch");
+        final double speed = Case.getConfig().getAnimations().getDouble("Wheel.CircleSpeed");
+        final double radius = Case.getConfig().getAnimations().getDouble("Wheel.CircleRadius");
+        final boolean useFlame = Case.getConfig().getAnimations().getBoolean("Wheel.Flame.Enabled");
+        final Particle flameParticle = Particle.valueOf(Case.getConfig().getAnimations().getString("Wheel.Flame.Particle", "FLAME"));
         // register items
-        int itemsCount = caseData.getItems().size();
-        int i = 1;
-        String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
-        winItem.getMaterial().setDisplayName(winGroupDisplayName);
-
-
-
-        armorStandEulerAngle = Tools.getArmorStandEulerAngle("FullWheel.Pose");
-
-        boolean needSound = Case.getCustomConfig().getAnimations().getString("FullWheel.Scroll.Sound") != null;
-        Sound sound = Sound.valueOf(Case.getCustomConfig().getAnimations().getString("FullWheel.Scroll.Sound"));
-        float volume = (float) Case.getCustomConfig().getAnimations().getDouble("FullWheel.Scroll.Volume");
-        float vpitch = (float) Case.getCustomConfig().getAnimations().getDouble("FullWheel.Scroll.Pitch");
-        int animationTime = Case.getCustomConfig().getAnimations().getInt("FullWheel.Scroll.Time", 100);
-
-        final double speed = Case.getCustomConfig().getAnimations().getDouble("FullWheel.CircleSpeed");
-        final double radius = Case.getCustomConfig().getAnimations().getDouble("FullWheel.CircleRadius");
-        final boolean useFlame = Case.getCustomConfig().getAnimations().getBoolean("FullWheel.Flame.Enabled");
-        final Particle flameParticle = Particle.valueOf(Case.getCustomConfig().getAnimations().getString("FullWheel.Flame.Particle", "FLAME"));
-
-        final Location flocation = loc.clone().add(0 + Case.getCustomConfig().getAnimations().getDouble("FullWheel.LiftingAlongX"),
-                -1 + Case.getCustomConfig().getAnimations().getDouble("FullWheel.LiftingAlongY"),
-                0 + Case.getCustomConfig().getAnimations().getDouble("FullWheel.LiftingAlongZ"));
-
-        itemSlot = EquipmentSlot.valueOf(Case.getCustomConfig().getAnimations().getString("FullWheel.ItemSlot", "HEAD").toUpperCase());
-        boolean small = Case.getCustomConfig().getAnimations().getBoolean("FullWheel.SmallArmorStand", true);
-        // win group
-        items.add(winItem.getItemName());
-        armorStands.add(spawnArmorStand(caseData, location, 0, small));
-
-        // another groups
-        for (String itemName : caseData.getItems().keySet()) {
-            if(itemName.equalsIgnoreCase(winItem.getItemName())) continue;
-            CaseData.Item item = caseData.getItem(itemName);
-            String displayName = item.getMaterial().getDisplayName();
-            item.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, displayName));
-            items.add(itemName);
-            armorStands.add(spawnArmorStand(caseData, location, i, small));
-            i++;
+        items.add(winItem);
+        for (int i = 0; i < itemsCount; i++) {
+            CaseData.Item tempWinItem = caseData.getRandomItem();
+            items.add(tempWinItem);
+            armorStands.add(spawnArmorStand(location, i, small));
         }
-
-        double baseAngle = loc.getDirection().angle(new Vector(0, 0, 1));
+        double baseAngle = loc.clone().getDirection().angle(new Vector(0, 0, 1));
         final double[] lastCompletedRotation = {0.0};
         final double rotationThreshold = Math.PI / (itemsCount * speed);
         AtomicInteger ticks = new AtomicInteger();
@@ -85,24 +64,23 @@ public class FullWheelAnimation implements Animation {
         final double[] speedAx = {speed};
 
         Bukkit.getScheduler().runTaskTimer(Case.getInstance(), (task) -> {
-
             ticks.getAndIncrement();
-            double angle = ticks.get() / 20.0 * speedAx[0] * 2 * Math.PI;
+            double angle = ticks.get() / (20.0 * (animationTime / 100D) ) * speedAx[0] * 2 * Math.PI;
 
-            if (ticks.get() < animationTime) {
+            if (ticks.get() < animationTime + 1) {
                 // flame
                 if (useFlame) {
-                    yAx[0] += 6.0 / animationTime * speedAx[0];
+                    yAx[0] += (radius + 4.0) / animationTime * speedAx[0];
                     radiusAx[0] -= 0.015 / (animationTime / 100.0);
                     double theta = ticks.get() / (20.0 / (speedAx[0] * 6));
                     double dx = (radiusAx[0] / 1.1) * Math.sin(theta);
                     double dy = (radiusAx[0] / 1.1) * Math.cos(theta);
-                    Location particleLocation = flocation.clone().subtract(0, 1.5, 0).add(dx, 1.5 + yAx[0], dy);
+                    Location particleLocation = flocation.clone().add(dx, yAx[0], dy);
                     particleLocation.getWorld().spawnParticle(flameParticle, particleLocation, 1, 0, 0, 0, 0, null);
                     double theta2 = theta + Math.PI;
                     double dx2 = (radiusAx[0] / 1.1) * Math.sin(theta2);
                     double dy2 = (radiusAx[0] / 1.1) * Math.cos(theta2);
-                    Location particleLocation2 = flocation.clone().subtract(0, 1.5, 0).add(dx2, 1.5 + yAx[0], dy2);
+                    Location particleLocation2 = flocation.clone().add(dx2, yAx[0], dy2);
                     particleLocation2.getWorld().spawnParticle(flameParticle, particleLocation2, 1, 0, 0, 0, 0, null);
                 }
                 // armor stands
@@ -140,11 +118,13 @@ public class FullWheelAnimation implements Animation {
                 items.clear();
                 armorStands.clear();
             }
-                speedAx[0] *= 1 - speed / (animationTime - 2);
-        }, 0L, 0L);
-    }
-    private ArmorStandCreator spawnArmorStand(CaseData c, Location location, int index, boolean small) {
-        CaseData.Item item = c.getItem(items.get(index));
+            if (ticks.get() < animationTime + 1) {
+                speedAx[0] *= 1 - (speed / (animationTime - 2) );
+            }
+            }, 0L, 0L);
+        }
+    private ArmorStandCreator spawnArmorStand(Location location, int index, boolean small) {
+        CaseData.Item item = items.get(index);
         ArmorStandCreator as = Tools.createArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);
@@ -154,7 +134,7 @@ public class FullWheelAnimation implements Animation {
         as.setCustomNameVisible(true);
         as.spawn();
         if(item.getMaterial().getItemStack().getType() != Material.AIR) {
-            as.setEquipment(itemSlot, item.getMaterial().getItemStack());
+            as.setEquipment(itemSlot, items.get(index).getMaterial().getItemStack());
         }
         return as;
     }

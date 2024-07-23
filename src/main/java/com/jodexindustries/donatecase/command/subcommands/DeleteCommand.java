@@ -26,9 +26,9 @@ public class DeleteCommand implements SubCommand {
                 if (Case.hasCaseByLocation(l)) {
                     Case.deleteCaseByLocation(l);
                     if(CaseManager.getHologramManager() != null) CaseManager.getHologramManager().removeHologram(l.getBlock());
-                    Tools.msg(sender, Case.getCustomConfig().getLang().getString("case-removed"));
+                    Tools.msg(sender, Case.getConfig().getLang().getString("case-removed"));
                 } else {
-                    Tools.msg(sender, Case.getCustomConfig().getLang().getString("block-is-not-case"));
+                    Tools.msg(sender, Case.getConfig().getLang().getString("block-is-not-case"));
                 }
             }
         } else if (args.length == 1) {
@@ -37,9 +37,9 @@ public class DeleteCommand implements SubCommand {
                 Location location = Case.getCaseLocationByCustomName(name);
                 if(CaseManager.getHologramManager() != null) if(location != null) CaseManager.getHologramManager().removeHologram(location.getBlock());
                 Case.deleteCaseByName(name);
-                Tools.msg(sender, Case.getCustomConfig().getLang().getString("case-removed"));
+                Tools.msg(sender, Case.getConfig().getLang().getString("case-removed"));
             } else {
-                Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("case-does-not-exist"), "%case:" + name));
+                Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + name));
             }
         }
     }
@@ -48,7 +48,7 @@ public class DeleteCommand implements SubCommand {
     public List<String> getTabCompletions(CommandSender sender, String[] args) {
         List<String> value;
         if (args.length == 1) {
-            ConfigurationSection section = Case.getCustomConfig().getCases().getConfigurationSection("DonatCase.Cases");
+            ConfigurationSection section = Case.getConfig().getCases().getConfigurationSection("DonatCase.Cases");
             if (section != null) {
                 value = new ArrayList<>(section.getKeys(false));
             } else {

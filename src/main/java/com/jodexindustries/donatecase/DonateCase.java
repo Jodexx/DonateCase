@@ -4,6 +4,7 @@ import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.alessiodp.libby.BukkitLibraryManager;
 import com.alessiodp.libby.Library;
 import com.alessiodp.libby.logging.LogLevel;
+import com.jodexindustries.donatecase.animations.*;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
 import com.jodexindustries.donatecase.api.actions.*;
@@ -19,10 +20,11 @@ import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.command.subcommands.*;
+import com.jodexindustries.donatecase.config.Config;
 import com.jodexindustries.donatecase.database.sql.MySQLDataBase;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
-import com.jodexindustries.donatecase.tools.animations.*;
+import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import com.jodexindustries.donatecase.tools.support.PacketEventsSupport;
 import net.luckperms.api.LuckPerms;
@@ -30,12 +32,8 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,10 +59,10 @@ public class DonateCase extends JavaPlugin {
     public CaseManager api;
     public CaseLoader loader;
     public BukkitLibraryManager libraryManager;
+    public ItemsAdderSupport itemsAdderSupport;
     public PacketEventsSupport packetEventsSupport;
 
-    public CustomConfig customConfig;
-    public CasesConfig casesConfig;
+    public Config config;
 
     public boolean usePackets = true;
     public boolean sql = false;
@@ -81,11 +79,12 @@ public class DonateCase extends JavaPlugin {
         api = new CaseManager(this);
         loader = new CaseLoader(this);
 
-        setupConfigs();
+        loadConfig();
 
         loadUpdater();
 
         loadPermissionDriver();
+        loadHologramManager();
 
         loadMetrics();
 
@@ -94,13 +93,13 @@ public class DonateCase extends JavaPlugin {
         registerDefaultAnimations();
         registerDefaultActions();
 
-        loadHologramManager();
-
         loadHolograms();
 
         loadPlaceholderAPI();
 
         loadPacketEventsAPI();
+
+        loadItemsAdderAPI();
 
         api.getAddonManager().loadAddons();
 
@@ -126,25 +125,9 @@ public class DonateCase extends JavaPlugin {
         if(mysql != null) mysql.close();
         if(hologramManager != null) hologramManager.removeAllHolograms();
 
-        cleanCache();
+        Case.cleanCache();
     }
-    private void setupMySQL() {
-        ConfigurationSection mysqlSection = customConfig.getConfig().getConfigurationSection("DonatCase.MySql");
-        if(mysqlSection == null) return;
-        sql = mysqlSection.getBoolean("Enabled");
-        if (sql) {
-            String base = mysqlSection.getString("DataBase");
-            String port = mysqlSection.getString("Port");
-            String host = mysqlSection.getString("Host");
-            String user = mysqlSection.getString("User");
-            String password = mysqlSection.getString("Password");
-            (new BukkitRunnable() {
-                public void run() {
-                    mysql = new MySQLDataBase(instance, base, port, host, user, password);
-                }
-            }).runTaskTimerAsynchronously(instance, 0L, 12000L);
-        }
-    }
+
     private void loadPlaceholderAPI() {
         papi = new PAPISupport();
         papi.register();
@@ -155,8 +138,12 @@ public class DonateCase extends JavaPlugin {
         packetEventsSupport.load();
     }
 
+    private void loadItemsAdderAPI() {
+        if (Case.getInstance().getServer().getPluginManager().isPluginEnabled("ItemsAdder")) itemsAdderSupport = new ItemsAdderSupport(this);
+    }
+
     private void loadUpdater() {
-        if (customConfig.getConfig().getBoolean("DonatCase.UpdateChecker")) {
+        if (config.getConfig().getBoolean("DonatCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
                 if (Tools.getPluginVersion(getDescription().getVersion()) < Tools.getPluginVersion(version)) {
                     Logger.log(ChatColor.GREEN + "There is a new update " + version +  " available.");
@@ -165,106 +152,22 @@ public class DonateCase extends JavaPlugin {
             });
         }
     }
-    public void cleanCache() {
-        Bukkit.getWorlds().forEach(world -> world.getEntitiesByClass(ArmorStand.class).stream().filter(stand -> stand.hasMetadata("case")).forEachOrdered(Entity::remove));
-        Case.playersGui.clear();
-        Case.caseData.clear();
-        Case.activeCases.clear();
-        Case.activeCasesByLocation.clear();
-    }
 
-    public void setupConfigs() {
-        String[] files = {
-                "Config.yml",
-                "Cases.yml",
-                "Keys.yml",
-                "Animations.yml",
-                "Data.yml",
-                "lang/ru_RU.yml",
-                "lang/en_US.yml",
-                "lang/ua_UA.yml"
-        };
+    public void loadConfig() {
+        config = new Config(this);
 
-        for (String file : files) {
-            checkAndCreateFile(file);
-        }
-
-        customConfig = new CustomConfig();
-        checkAndUpdateConfig(customConfig.getConfig(), "Config.yml", "2.5");
-        checkAndUpdateConfig(customConfig.getAnimations(), "Animations.yml", "1.3");
-
-        if(customConfig.getConfig().getConfigurationSection("DonatCase.Cases") != null) {
-            new File(getDataFolder(), "cases").mkdir();
-            Logger.log("&cOutdated cases format!");
-            Converter.convertCases();
-        } else {
-            if(!new File(getDataFolder(), "cases").exists()) {
-                new File(getDataFolder(), "cases").mkdir();
-            }
-            casesConfig = new CasesConfig();
-            if(casesConfig.getCases().isEmpty()) {
-                saveResource("cases/case.yml", false);
-            }
-        }
-        casesConfig = new CasesConfig();
-        usePackets = customConfig.getConfig().getBoolean("DonatCase.UsePackets") &&
+        usePackets = config.getConfig().getBoolean("DonatCase.UsePackets") &&
                 getServer().getPluginManager().isPluginEnabled("packetevents");
 
-        Converter.convertBASE64(this);
-
-        setupMySQL();
+        mysql = new MySQLDataBase(instance);
+        mysql.connect();
 
         loader.load();
-
-        customConfig.getConfig().addDefault("DonatCase.NoKeyWarningSound", "ENTITY_ENDERMAN_TELEPORT");
-
-        if(customConfig.getCases().getString("config") == null || !customConfig.getCases().getString("config", "").equalsIgnoreCase("1.0")) {
-            Logger.log("Conversion of case locations to a new method of storage...");
-            Converter.convertCasesLocation();
-        }
-
-        checkLanguageVersion();
 
         DonateCaseReloadEvent reloadEvent = new DonateCaseReloadEvent(this);
         Bukkit.getPluginManager().callEvent(reloadEvent);
     }
 
-    private void checkAndCreateFile(String fileName) {
-        if (!(new File(getDataFolder(), fileName)).exists()) {
-            saveResource(fileName, false);
-        }
-    }
-
-    private void checkAndUpdateConfig(YamlConfiguration config, String fileName, String expectedValue) {
-        if (config.getString("config") == null || !config.getString("config", "").equals(expectedValue)) {
-            Logger.log("&cOutdated " + fileName + "! Creating a new!");
-            File configFile = new File(getDataFolder(), fileName);
-            configFile.renameTo(new File(getDataFolder(), fileName + ".old"));
-            saveResource(fileName, false);
-            customConfig = new CustomConfig();
-        }
-    }
-
-
-    private void checkLanguageVersion() {
-        String version = customConfig.getLang().getString("config");
-        if (version == null || !version.equalsIgnoreCase("2.6")) {
-            Logger.log("&cOutdated language config! Creating a new!");
-            if(version != null && version.equalsIgnoreCase("2.5")) {
-                Converter.convertLanguage(customConfig.getLang());
-            } else {
-                File langRu = new File(getDataFolder(), "lang/ru_RU.yml");
-                langRu.renameTo(new File(getDataFolder(), "lang/ru_RU.yml.old"));
-                saveResource("lang/ru_RU.yml", false);
-                File langEn = new File(getDataFolder(), "lang/en_US.yml");
-                langEn.renameTo(new File(getDataFolder(), "lang/en_US.yml.old"));
-                saveResource("lang/en_US.yml", false);
-                File langUa = new File(getDataFolder(), "lang/ua_UA.yml");
-                langUa.renameTo(new File(getDataFolder(), "lang/ua_UA.yml.old"));
-                saveResource("lang/ua_UA.yml", false);
-            }
-        }
-    }
     private void registerDefaultCommand() {
         PluginCommand command = getCommand("donatecase");
         if(command != null) {
@@ -287,6 +190,7 @@ public class DonateCase extends JavaPlugin {
         api.getSubCommandManager().registerSubCommand("addons", new AddonsCommand());
         api.getSubCommandManager().registerSubCommand("addon", new AddonCommand());
         api.getSubCommandManager().registerSubCommand("animations", new AnimationsCommand());
+        Logger.log("&aRegistered &cdefault &acommands");
     }
 
     private void registerDefaultAnimations() {
@@ -308,18 +212,19 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadPermissionDriver() {
-        setupLuckPerms();
-        setupVault();
-        PermissionDriver temp = PermissionDriver.getDriver(customConfig.getConfig().getString("DonatCase.PermissionDriver", "vault"));
+        loadLuckPerms();
+        loadVault();
+        PermissionDriver temp = PermissionDriver.getDriver(config.getConfig().getString("DonatCase.PermissionDriver", "vault"));
         if (temp == PermissionDriver.vault && permission != null) {
             permissionDriver = temp;
         }
         if (temp == PermissionDriver.luckperms && luckPerms != null) {
             permissionDriver = temp;
         }
+        if(permissionDriver != null) Logger.log("&aUsing &b" + permissionDriver + " &aas permission driver");
     }
 
-    private void setupVault() {
+    private void loadVault() {
         if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             RegisteredServiceProvider<Permission> permissionProvider = this.getServer().getServicesManager().getRegistration(Permission.class);
             if (permissionProvider != null) {
@@ -328,7 +233,7 @@ public class DonateCase extends JavaPlugin {
         }
     }
 
-    private void setupLuckPerms() {
+    private void loadLuckPerms() {
         if(Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) {
             RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
             if (provider != null) {
@@ -338,7 +243,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadHologramManager() {
-        String driverName = customConfig.getConfig().getString("DonatCase.HologramDriver", "decentholograms");
+        String driverName = config.getConfig().getString("DonatCase.HologramDriver", "decentholograms");
         hologramDriver = HologramDriver.getDriver(driverName);
 
         if (tryInitializeHologramManager(hologramDriver)) {
@@ -350,6 +255,7 @@ public class DonateCase extends JavaPlugin {
                 return;
             }
         }
+        if(hologramManager != null) Logger.log("&aUsing &b" + hologramDriver + " &aas hologram driver");
     }
 
     private boolean tryInitializeHologramManager(HologramDriver driver) {
@@ -377,7 +283,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     public void loadHolograms() {
-        ConfigurationSection section = customConfig.getCases().getConfigurationSection("DonatCase.Cases");
+        ConfigurationSection section = config.getCases().getConfigurationSection("DonatCase.Cases");
         if (section == null || section.getKeys(false).isEmpty()) return;
         for (String caseName : section.getKeys(false)) {
             String caseType = Case.getCaseTypeByCustomName(caseName);
@@ -431,7 +337,7 @@ public class DonateCase extends JavaPlugin {
 
     private void loadMetrics() {
         Metrics metrics = new Metrics(this, 18709);
-        metrics.addCustomChart(new Metrics.SimplePie("language", () -> customConfig.getConfig().getString("DonatCase.Languages")));
+        metrics.addCustomChart(new Metrics.SimplePie("language", () -> config.getConfig().getString("DonatCase.Languages")));
     }
 
     public void saveResource(@NotNull String resourcePath, boolean replace) {

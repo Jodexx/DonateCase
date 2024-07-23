@@ -19,7 +19,7 @@ public class PAPISupport {
     public void register() {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             placeholder.register();
-            Logger.log("&aPlaceholders registered!");
+            Logger.log("&aHooked to &bPlaceholderAPI");
         }
     }
     public void unregister() {

@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.tools.support;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.protocol.ServerVersion;
+import com.jodexindustries.donatecase.tools.Logger;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.tofaa.entitylib.APIConfig;
 import me.tofaa.entitylib.EntityLib;
@@ -25,12 +26,12 @@ public class PacketEventsSupport {
     public void load() {
         if(enabled) {
             ServerVersion version = getServerVersion();
-            plugin.getLogger().info("Loading PacketEvents hooking...");
-            plugin.getLogger().info("Server version: " + version.getReleaseName());
-            plugin.getLogger().info("Server protocol version: " + version.getProtocolVersion());
+            Logger.log("&aLoading &bpacketevents &ahooking...");
+            Logger.log("&aServer version: &b" + version.getReleaseName());
+            Logger.log("&aServer protocol version: &b" + version.getProtocolVersion());
             if(getServerVersion().isOlderThan(ServerVersion.V_1_18)) {
                 DonateCase.instance.usePackets = false;
-                DonateCase.instance.getLogger().warning("Server version older than V_1_18. PacketEvents hooking disabled!");
+                plugin.getLogger().warning("Server version older than V_1_18. PacketEvents hooking disabled!");
                 return;
             }
             try {
@@ -41,10 +42,10 @@ public class PacketEventsSupport {
                         .trackPlatformEntities();
                 EntityLib.init(platform, settings);
                 if (PacketEvents.getAPI().isLoaded()) {
-                    plugin.getLogger().info("PacketEvents hooking complete.");
+                    Logger.log("&aHooked to &bpacketevents");
                 }
             } catch (Exception e) {
-                plugin.getLogger().log(Level.WARNING, "PacketEvents hooking canceled!", e);
+                plugin.getLogger().log(Level.WARNING, "packetevents hooking canceled!", e);
             }
         }
     }

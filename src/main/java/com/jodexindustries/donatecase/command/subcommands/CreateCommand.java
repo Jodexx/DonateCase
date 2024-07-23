@@ -26,19 +26,19 @@ public class CreateCommand implements SubCommand {
                 String caseName = args[1];
                 if (Case.hasCaseByType(caseType)) {
                     if (Case.hasCaseByLocation(l)) {
-                        Tools.msg(sender, Case.getCustomConfig().getLang().getString("case-already-created"));
+                        Tools.msg(sender, Case.getConfig().getLang().getString("case-already-created"));
                     } else {
                         if (!Case.hasCaseByCustomName(caseName)) {
                             Case.saveLocation(caseName, caseType, l);
-                            Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("case-added"),
+                            Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-added"),
                                     "%casename:" + caseName, "%casetype:" + caseType));
                         } else {
-                            Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("case-already-exist"),
+                            Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-already-exist"),
                                     "%casename:" + caseName));
                         }
                     }
                 } else {
-                    Tools.msg(sender, Tools.rt(Case.getCustomConfig().getLang().getString("case-does-not-exist"),
+                    Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"),
                             "%case:" + caseType));
                 }
             } else {
@@ -49,7 +49,7 @@ public class CreateCommand implements SubCommand {
 
     @Override
     public List<String> getTabCompletions(CommandSender sender, String[] args) {
-        List<String> list = new ArrayList<>(Case.getCasesConfig().getCases().keySet());
+        List<String> list = new ArrayList<>(Case.getConfig().getCasesConfig().getCases().keySet());
         if(args.length >= 2) {
             return new ArrayList<>();
         }

@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.tools.animations;
+package com.jodexindustries.donatecase.animations;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
@@ -30,8 +30,8 @@ public class FireworkAnimation implements Animation {
         ArmorStandCreator as = Tools.createArmorStand(location);
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Firework.Pose");
 
-        itemSlot = EquipmentSlot.valueOf(Case.getCustomConfig().getAnimations().getString("Firework.ItemSlot", "HEAD").toUpperCase());
-        boolean small = Case.getCustomConfig().getAnimations().getBoolean("Firework.SmallArmorStand", true);
+        itemSlot = EquipmentSlot.valueOf(Case.getConfig().getAnimations().getString("Firework.ItemSlot", "HEAD").toUpperCase());
+        boolean small = Case.getConfig().getAnimations().getBoolean("Firework.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
@@ -49,10 +49,10 @@ public class FireworkAnimation implements Animation {
                     Firework firework = Objects.requireNonNull(loc.getWorld()).spawn(loc, Firework.class);
                     FireworkMeta data = firework.getFireworkMeta();
                     data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
-                    for (String color : Case.getCustomConfig().getAnimations().getStringList("Firework.FireworkColors")) {
+                    for (String color : Case.getConfig().getAnimations().getStringList("Firework.FireworkColors")) {
                         data.addEffect(FireworkEffect.builder().withColor(Tools.parseColor(color)).build());
                     }
-                    data.setPower(Case.getCustomConfig().getAnimations().getInt("Firework.Power"));
+                    data.setPower(Case.getConfig().getAnimations().getInt("Firework.Power"));
                     firework.setFireworkMeta(data);
                 }
                 Location las = as.getLocation().clone();

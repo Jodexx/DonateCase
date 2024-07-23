@@ -32,8 +32,8 @@ public class CaseLoader {
         Case.caseData.clear();
         int count = 0;
 
-        for (String caseType : plugin.casesConfig.getCases().keySet()) {
-            YamlConfiguration config = plugin.casesConfig.getCase(caseType).getSecond();
+        for (String caseType : plugin.config.getCasesConfig().getCases().keySet()) {
+            YamlConfiguration config = plugin.config.getCasesConfig().getCase(caseType).getSecond();
             ConfigurationSection caseSection = config.getConfigurationSection("case");
 
             if (caseSection == null) {
@@ -180,7 +180,7 @@ public class CaseLoader {
         CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
 
         if (!plugin.sql) {
-            return plugin.customConfig.getData().getHistoryData(caseType);
+            return plugin.config.getData().getHistoryData(caseType);
         }
 
         return historyData;

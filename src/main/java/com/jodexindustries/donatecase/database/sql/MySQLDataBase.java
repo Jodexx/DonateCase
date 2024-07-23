@@ -12,6 +12,7 @@ import com.jodexindustries.donatecase.database.sql.entities.HistoryDataTable;
 import com.jodexindustries.donatecase.database.sql.entities.OpenInfoTable;
 import com.jodexindustries.donatecase.database.sql.entities.PlayerKeysTable;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,14 +20,31 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class MySQLDataBase {
-    private Dao<CaseData.HistoryData , String> historyDataTables;
+    private Dao<CaseData.HistoryData, String> historyDataTables;
     private Dao<PlayerKeysTable, String> playerKeysTables;
     private Dao<OpenInfoTable, String> openInfoTables;
     private JdbcConnectionSource connectionSource;
+
     private final DonateCase instance;
 
-    public MySQLDataBase(DonateCase instance, String database, String port, String host, String user, String password) {
+    public MySQLDataBase(DonateCase instance) {
         this.instance = instance;
+        com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
+    }
+
+    public void connect() {
+        ConfigurationSection mysqlSection = instance.config.getConfig().getConfigurationSection("DonatCase.MySql");
+        if (mysqlSection == null) return;
+
+        instance.sql = mysqlSection.getBoolean("Enabled");
+        if (!instance.sql) return;
+
+        String database = mysqlSection.getString("DataBase");
+        String port = mysqlSection.getString("Port");
+        String host = mysqlSection.getString("Host");
+        String user = mysqlSection.getString("User");
+        String password = mysqlSection.getString("Password");
+
         try {
             String url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true";
             connectionSource = new JdbcConnectionSource(url, user, password);
@@ -39,7 +57,6 @@ public class MySQLDataBase {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
     }
 
     public CompletableFuture<Integer> getKeys(String name, String player) {
@@ -95,7 +112,8 @@ public class MySQLDataBase {
 
     /**
      * Get count of opened cases by player
-     * @param player Player, who opened
+     *
+     * @param player   Player, who opened
      * @param caseType Case type
      * @return number of opened cases
      */
@@ -109,24 +127,25 @@ public class MySQLDataBase {
                         .and()
                         .eq("case_type", caseType)
                         .query();
-                if(!results.isEmpty()) openInfoTable = results.get(0);
+                if (!results.isEmpty()) openInfoTable = results.get(0);
             } catch (SQLException e) {
                 instance.getLogger().warning(e.getMessage());
             }
-            if(openInfoTable != null) return (openInfoTable.getCount());
+            if (openInfoTable != null) return (openInfoTable.getCount());
             return 0;
         });
     }
 
     public void addCount(String player, String caseType, int count) {
-        getOpenCount(player, caseType).thenAcceptAsync((integer) -> setCount(player, caseType, integer+count));
+        getOpenCount(player, caseType).thenAcceptAsync((integer) -> setCount(player, caseType, integer + count));
     }
 
     /**
      * Set count of opened cases by player
+     *
      * @param caseType Player, who opened
-     * @param player Case type
-     * @param count Number of opened cases
+     * @param player   Case type
+     * @param count    Number of opened cases
      */
     public void setCount(String player, String caseType, int count) {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
@@ -138,7 +157,7 @@ public class MySQLDataBase {
                         .eq("case_type", caseType)
                         .query();
                 OpenInfoTable openInfoTable = null;
-                if(!results.isEmpty()) openInfoTable = results.get(0);
+                if (!results.isEmpty()) openInfoTable = results.get(0);
                 if (openInfoTable == null) {
                     openInfoTable = new OpenInfoTable();
                     openInfoTable.setPlayer(player);
@@ -229,10 +248,12 @@ public class MySQLDataBase {
     }
 
     public void close() {
-        try {
-            connectionSource.close();
-        } catch (Exception e) {
-            instance.getLogger().warning(e.getMessage());
+        if (connectionSource != null) {
+            try {
+                connectionSource.close();
+            } catch (Exception e) {
+                instance.getLogger().warning(e.getMessage());
+            }
         }
     }
 

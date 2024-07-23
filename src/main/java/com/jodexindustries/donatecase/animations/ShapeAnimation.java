@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.tools.animations;
+package com.jodexindustries.donatecase.animations;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
@@ -26,17 +26,17 @@ public class ShapeAnimation implements Animation {
         location.setYaw(-70.0F);
         final ArmorStandCreator as = Tools.createArmorStand(location);
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Shape.Pose");
-        itemSlot = EquipmentSlot.valueOf(Case.getCustomConfig().getAnimations().getString("Shape.ItemSlot", "HEAD").toUpperCase());
-        boolean small = Case.getCustomConfig().getAnimations().getBoolean("Shape.SmallArmorStand", true);
+        itemSlot = EquipmentSlot.valueOf(Case.getConfig().getAnimations().getString("Shape.ItemSlot", "HEAD").toUpperCase());
+        boolean small = Case.getConfig().getAnimations().getBoolean("Shape.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
         as.spawn();
 
-        float whiteSize = (float) Case.getCustomConfig().getAnimations().getDouble("Shape.Particle.White.Size");
-        float orangeSize = (float) Case.getCustomConfig().getAnimations().getDouble("Shape.Particle.Orange.Size");
-        String rgbString = Case.getCustomConfig().getAnimations().getString("Shape.Particle.Orange.Rgb");
-        String whiteRgbString = Case.getCustomConfig().getAnimations().getString("Shape.Particle.White.Rgb");
+        float whiteSize = (float) Case.getConfig().getAnimations().getDouble("Shape.Particle.White.Size");
+        float orangeSize = (float) Case.getConfig().getAnimations().getDouble("Shape.Particle.Orange.Size");
+        String rgbString = Case.getConfig().getAnimations().getString("Shape.Particle.Orange.Rgb");
+        String whiteRgbString = Case.getConfig().getAnimations().getString("Shape.Particle.White.Rgb");
         int red;
         int green;
         int blue;

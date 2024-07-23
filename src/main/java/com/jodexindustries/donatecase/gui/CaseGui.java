@@ -7,7 +7,6 @@ import com.jodexindustries.donatecase.api.data.MaterialType;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
-import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -104,7 +103,7 @@ public class CaseGui {
 
     private String[] getTemplate(CaseData historyCaseData, CaseData.HistoryData data, CaseData.Item historyItem) {
 
-        DateFormat formatter = new SimpleDateFormat(Case.getCustomConfig().getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
+        DateFormat formatter = new SimpleDateFormat(Case.getConfig().getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
         String dateFormatted = formatter.format(new Date(data.getTime()));
         String group = data.getGroup();
         String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "group_not_found";
@@ -208,7 +207,7 @@ public class CaseGui {
             case CH:
                 return CustomHeadSupport.getSkull(materialParts[1], materialParts[2], displayName, Tools.rt(lore, "%case%:" + caseType));
             case IA:
-                return ItemsAdderSupport.getItem(materialParts[1] + ":" + materialParts[2], displayName, Tools.rt(lore, "%case%:" + caseType));
+                return Tools.getItemsAdderItem(materialParts[1] + ":" + materialParts[2], displayName, Tools.rt(lore, "%case%:" + caseType));
             case BASE64:
                 return Tools.getBASE64Skull(materialParts[1], displayName, Tools.rt(lore, "%case%:" + caseType));
             case MCURL:

@@ -1,6 +1,7 @@
-package com.jodexindustries.donatecase.tools;
+package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.tools.Pair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 

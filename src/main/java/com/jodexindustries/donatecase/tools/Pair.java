@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.tools;
 public class Pair<A, B> {
     A first = null;
     B second = null;
-
     public Pair(A first, B second) {
         this.first = first;
         this.second = second;

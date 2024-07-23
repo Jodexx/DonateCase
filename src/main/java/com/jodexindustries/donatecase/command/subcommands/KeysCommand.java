@@ -36,24 +36,24 @@ public class KeysCommand implements SubCommand {
 
     private void handlePlayer(CommandSender sender, Player player) {
         if (sender.hasPermission("donatecase.player")) {
-            for (String message : Case.getCustomConfig().getLang().getStringList("my-keys")) {
+            for (String message : Case.getConfig().getLang().getStringList("my-keys")) {
                 String formattedMessage = formatMessage(player.getName(), player, message);
                 sender.sendMessage(formattedMessage);
             }
         } else {
-            Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("no-permission")));
+            Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
         }
     }
 
     private void handleMod(CommandSender sender, String target) {
         if (sender.hasPermission("donatecase.mod")) {
-            for (String message : Case.getCustomConfig().getLang().getStringList("player-keys")) {
+            for (String message : Case.getConfig().getLang().getStringList("player-keys")) {
                 Player targetPlayer = Bukkit.getPlayerExact(target);
                 String formattedMessage = formatMessage(target, targetPlayer, message);
                 sender.sendMessage(formattedMessage.replace("%player", target));
             }
         } else {
-            Tools.msgRaw(sender, Tools.rt(Case.getCustomConfig().getLang().getString("no-permission")));
+            Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
         }
     }
 
