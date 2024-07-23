@@ -33,23 +33,23 @@ public class Case{
     /**
      * Active cases
      */
-    public static HashMap<UUID, ActiveCase> activeCases = new HashMap<>();
+    public final static HashMap<UUID, ActiveCase> activeCases = new HashMap<>();
 
     /**
      * Active cases, but by location
      */
-    public static HashMap<Location, UUID> activeCasesByLocation = new HashMap<>();
+    public final static HashMap<Location, UUID> activeCasesByLocation = new HashMap<>();
 
 
     /**
      * Players, who opened cases (open gui)
      */
-    public static HashMap<UUID, PlayerOpenCase> playersGui = new HashMap<>();
+    public final static HashMap<UUID, PlayerOpenCase> playersGui = new HashMap<>();
 
     /**
      * Loaded cases in runtime
      */
-    public static HashMap<String, CaseData> caseData = new HashMap<>();
+    public final static HashMap<String, CaseData> caseData = new HashMap<>();
 
     /**
      * Save case location
