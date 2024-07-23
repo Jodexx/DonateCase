@@ -48,6 +48,11 @@ public class ActionManager {
         this.addon = addon;
     }
 
+    /**
+     * Register action
+     * @param name Action name, like: "[command]"
+     * @param action Action class
+     */
     public void registerAction(String name, CaseAction action) {
         if(!isRegistered(name)) {
             registeredActions.put(name, new Pair<>(action, addon));
