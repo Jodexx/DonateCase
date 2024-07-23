@@ -200,11 +200,11 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultActions() {
-        api.getActionManager().registerAction("[command]", new CommandAction());
-        api.getActionManager().registerAction("[message]", new MessageAction());
-        api.getActionManager().registerAction("[title]", new TitleAction());
-        api.getActionManager().registerAction("[broadcast]", new BroadcastAction());
-        api.getActionManager().registerAction("[sound]", new SoundAction());
+        api.getActionManager().registerAction("[command]", new CommandActionImpl());
+        api.getActionManager().registerAction("[message]", new MessageActionImpl());
+        api.getActionManager().registerAction("[title]", new TitleActionImpl());
+        api.getActionManager().registerAction("[broadcast]", new BroadcastActionImpl());
+        api.getActionManager().registerAction("[sound]", new SoundActionImpl());
         Logger.log("&aRegistered &cdefault &aactions");
     }
 

@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class CommandAction implements CaseAction {
+public class CommandActionImpl implements CaseAction {
     /**
      * Send command to console with specific cooldown<br>
      * {@code - "[command] (command)"}

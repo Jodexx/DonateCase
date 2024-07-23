@@ -7,7 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 
-public class SoundAction implements CaseAction {
+public class SoundActionImpl implements CaseAction {
     /**
      * Player sound for player with specific cooldown<br>
      * {@code - "[sound] (sound) (volume) (pitch)"}
