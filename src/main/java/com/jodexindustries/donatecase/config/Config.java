@@ -103,6 +103,11 @@ public class Config {
         this.lang = YamlConfiguration.loadConfiguration(fileLang);
         checkLanguageVersion();
 
+        long caching = getConfig().getLong("DonatCase.Caching");
+        if(caching > 0) {
+            Case.keysCache.setMaxAge(caching);
+            Case.openCache.setMaxAge(caching);
+        }
     }
 
     /**
