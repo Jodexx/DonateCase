@@ -163,6 +163,7 @@ public class Case {
      * @param caseType Case type
      * @param player Player name
      * @return Number of keys
+     * @since 2.2.3.8
      */
     public static int getKeysCache(String caseType, String player) {
         int keys;
@@ -210,6 +211,7 @@ public class Case {
      * @param caseType Case type
      * @param player Player, who opened
      * @return opened count
+     * @since 2.2.3.8
      */
     public static int getOpenCountCache(String caseType, String player) {
         int openCount;
@@ -591,6 +593,7 @@ public class Case {
 
     /** Get plugin configuration manager
      * @return configuration manager instance
+     * @since 2.2.3.8
      */
     @NotNull
     public static Config getConfig() {
@@ -762,12 +765,19 @@ public class Case {
         return false;
     }
 
-
+    /**
+     * Trying to clean all entities with "case" metadata value,
+     * all loaded cases in runtime,
+     * all active cases, keys and open caches
+     * @since 2.2.3.8
+     */
     public static void cleanCache() {
         Bukkit.getWorlds().forEach(world -> world.getEntitiesByClass(ArmorStand.class).stream().filter(stand -> stand.hasMetadata("case")).forEachOrdered(Entity::remove));
         Case.playersGui.clear();
         Case.caseData.clear();
         Case.activeCases.clear();
         Case.activeCasesByLocation.clear();
+        keysCache.clear();
+        openCache.clear();
     }
 }
