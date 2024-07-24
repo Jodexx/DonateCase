@@ -30,7 +30,7 @@ public enum ServerVersion {
     //1.20 and 1.20.1 have the same protocol version. 1.20.3 and 1.20.4 have the same protocol version. 1.20.5 and 1.20.6 have the same protocol version
     V_1_20(763), V_1_20_1(763), V_1_20_2(764), V_1_20_3(765), V_1_20_4(765), V_1_20_5(766), V_1_20_6(766),
     V_1_21(767),
-    ERROR(-1, true);
+    ERROR(-1);
 
     private static final ServerVersion[] REVERSED_VALUES;
 
@@ -52,15 +52,6 @@ public enum ServerVersion {
     ServerVersion(int protocolVersion) {
         this.protocolVersion = protocolVersion;
         this.name = name().substring(2).replace("_", ".");
-    }
-
-    ServerVersion(int protocolVersion, boolean isNotRelease) {
-        this.protocolVersion = protocolVersion;
-        if (isNotRelease) {
-            this.name = name();
-        } else {
-            this.name = name().substring(2).replace("_", ".");
-        }
     }
 
     public static ServerVersion[] reversedValues() {
