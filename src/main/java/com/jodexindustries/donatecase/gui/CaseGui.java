@@ -167,17 +167,19 @@ public class CaseGui {
         String[] rgb = item.getRgb();
         int modelData = item.getModelData();
         if (lore != null) {
+            lore = Tools.rt(lore, "%case%:" + caseType);
             for (String string : lore) {
                 String placeholder = Tools.getLocalPlaceholder(string);
+                String tempCaseType = caseType;
                 if (placeholder.startsWith("keys")) {
                     if (placeholder.startsWith("keys_")) {
                         String[] parts = placeholder.split("_");
                         if (parts.length >= 2) {
-                            caseType = parts[1];
+                            tempCaseType = parts[1];
                         }
                     }
                     if(player != null) {
-                        newLore.add(string.replace("%" + placeholder + "%", String.valueOf(Case.getKeys(caseType, player.getName()))));
+                        newLore.add(string.replace("%" + placeholder + "%", String.valueOf(Case.getKeysCache(tempCaseType, player.getName()))));
                     }
                 } else {
                     newLore.add(string);
@@ -201,17 +203,17 @@ public class CaseGui {
     private ItemStack createItem(MaterialType materialType, String[] materialParts, String displayName, List<String> lore, String caseType, boolean enchanted, String[] rgb, int modelData) {
         switch (materialType) {
             case HEAD:
-                return Tools.getPlayerHead(materialParts[1], displayName, Tools.rt(lore, "%case%:" + caseType));
+                return Tools.getPlayerHead(materialParts[1], displayName, lore);
             case HDB:
-                return HeadDatabaseSupport.getSkull(materialParts[1], displayName, Tools.rt(lore, "%case%:" + caseType));
+                return HeadDatabaseSupport.getSkull(materialParts[1], displayName, lore);
             case CH:
-                return CustomHeadSupport.getSkull(materialParts[1], materialParts[2], displayName, Tools.rt(lore, "%case%:" + caseType));
+                return CustomHeadSupport.getSkull(materialParts[1], materialParts[2], displayName, lore);
             case IA:
-                return Tools.getItemsAdderItem(materialParts[1] + ":" + materialParts[2], displayName, Tools.rt(lore, "%case%:" + caseType));
+                return Tools.getItemsAdderItem(materialParts[1] + ":" + materialParts[2], displayName, lore);
             case BASE64:
-                return Tools.getBASE64Skull(materialParts[1], displayName, Tools.rt(lore, "%case%:" + caseType));
+                return Tools.getBASE64Skull(materialParts[1], displayName, lore);
             case MCURL:
-                return Tools.getMCURLSkull(materialParts[1], displayName, Tools.rt(lore, "%case%:" + caseType));
+                return Tools.getMCURLSkull(materialParts[1], displayName, lore);
             default:
                 byte data = -1;
                 if(materialParts.length > 1)  {
@@ -219,7 +221,7 @@ public class CaseGui {
                         data = Byte.parseByte(materialParts[1]);
                     } catch (NumberFormatException ignored) {}
                 }
-                return Tools.createItem(Material.getMaterial(materialParts[0]), 1, data, displayName, Tools.rt(lore, "%case%:" + caseType), enchanted, rgb, modelData);
+                return Tools.createItem(Material.getMaterial(materialParts[0]), 1, data, displayName, lore, enchanted, rgb, modelData);
         }
     }
 
