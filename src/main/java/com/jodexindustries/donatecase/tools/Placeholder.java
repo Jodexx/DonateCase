@@ -3,19 +3,11 @@ package com.jodexindustries.donatecase.tools;
 import java.text.NumberFormat;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.tools.caching.SimpleCache;
-import com.jodexindustries.donatecase.tools.caching.entry.InfoEntry;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class Placeholder extends PlaceholderExpansion {
-
-    private final SimpleCache<InfoEntry, Integer> keysCache = new SimpleCache<>(10 * 1000);
-
-    private final SimpleCache<InfoEntry, Integer> openCache = new SimpleCache<>(10 * 1000);
-
-
 
     public @NotNull String getAuthor() {
         return "JodexIndustries";
@@ -35,48 +27,37 @@ public class Placeholder extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
-        if(params.startsWith("keys")) {
+        if (params.startsWith("keys")) {
             return processKeys(params, player);
         }
 
-        if(params.startsWith("open_count")) {
+        if (params.startsWith("open_count")) {
             return processOpenCount(params, player);
         }
         return null;
     }
 
     private String processKeys(@NotNull String params, OfflinePlayer player) {
-        if(params.startsWith("keys")) {
+        if (params.startsWith("keys")) {
             String[] parts = params.split("_", 2);
             int keys = 0;
             for (String caseType : Case.caseData.keySet()) {
-                InfoEntry entry = new InfoEntry(player.getName(), caseType);
-                Integer cachedKeys = keysCache.get(entry);
-                if(cachedKeys == null) {
-                    cachedKeys = getKeysByParams(entry);
-                    keysCache.put(entry, cachedKeys);
-                }
+                int cachedKeys = Case.getKeysCache(caseType, player.getName());
                 keys += cachedKeys;
             }
-            if(parts.length == 1) {
+            if (parts.length == 1) {
                 return String.valueOf(keys);
-            } else if(parts[1].equalsIgnoreCase("format")) {
+            } else if (parts[1].equalsIgnoreCase("format")) {
                 return NumberFormat.getNumberInstance().format(keys);
             }
         }
 
         if (params.startsWith("keys_")) {
             String[] parts = params.split("_", 3);
-            InfoEntry entry = new InfoEntry(player.getName(), parts[1]);
-            Integer cachedKeys = keysCache.get(entry);
-            if(cachedKeys == null) {
-                cachedKeys = getKeysByParams(entry);
-                keysCache.put(entry, cachedKeys);
-            }
-            int keys = cachedKeys;
-            if(parts.length == 2) {
+            int keys = Case.getKeysCache(parts[1], player.getName());
+            if (parts.length == 2) {
                 return String.valueOf(keys);
-            } else if(parts[2].equalsIgnoreCase("format")) {
+            } else if (parts[2].equalsIgnoreCase("format")) {
                 return NumberFormat.getNumberInstance().format(keys);
             } else {
                 return String.valueOf(keys);
@@ -86,17 +67,11 @@ public class Placeholder extends PlaceholderExpansion {
     }
 
     private String processOpenCount(@NotNull String params, OfflinePlayer player) {
-        if(params.startsWith("open_count")) {
+        if (params.startsWith("open_count")) {
             String[] parts = params.split("_", 3);
             int openCount = 0;
             for (String caseType : Case.caseData.keySet()) {
-                InfoEntry entry = new InfoEntry(player.getName(), caseType);
-                Integer cachedCount = openCache.get(entry);
-                if(cachedCount == null) {
-                    cachedCount = getOpenCountByParams(entry);
-                    openCache.put(entry, cachedCount);
-                }
-                openCount += cachedCount;
+                openCount += Case.getOpenCountCache(caseType, player.getName());
             }
             if (parts.length == 2) {
                 return String.valueOf(openCount);
@@ -107,17 +82,12 @@ public class Placeholder extends PlaceholderExpansion {
             }
         }
 
-        if(params.startsWith("open_count_")) {
+        if (params.startsWith("open_count_")) {
             String[] parts = params.split("_", 4);
-            InfoEntry entry = new InfoEntry(player.getName(), parts[2]);
-            Integer cachedCount = openCache.get(entry);
-            if(cachedCount == null) {
-                cachedCount = getOpenCountByParams(entry);
-                openCache.put(entry, cachedCount);
-            }
-            if(parts.length == 3) {
+            Integer cachedCount = Case.getOpenCountCache(parts[2], player.getName());
+            if (parts.length == 3) {
                 return String.valueOf(cachedCount);
-            } else if(parts[3].equalsIgnoreCase("format")) {
+            } else if (parts[3].equalsIgnoreCase("format")) {
                 return NumberFormat.getNumberInstance().format(cachedCount);
             } else {
                 return String.valueOf(cachedCount);
@@ -126,11 +96,4 @@ public class Placeholder extends PlaceholderExpansion {
         return null;
     }
 
-    private Integer getKeysByParams(InfoEntry entry) {
-        return Case.getKeys(entry.getCaseType(), entry.getPlayer());
-    }
-
-    private Integer getOpenCountByParams(InfoEntry entry) {
-        return Case.getOpenCount(entry.getCaseType(), entry.getPlayer());
-    }
 }
