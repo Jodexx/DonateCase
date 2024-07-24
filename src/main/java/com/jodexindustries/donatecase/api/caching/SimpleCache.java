@@ -71,4 +71,12 @@ public class SimpleCache<K, V> {
         return System.currentTimeMillis() - entry.getTimestamp() <= (maxAge * 50);
     }
 
+    /**
+     * Removes all the mappings from this map (optional operation).
+     * The map will be empty after this call returns.
+     */
+    public void clear() {
+        cache.clear();
+    }
+
 }
