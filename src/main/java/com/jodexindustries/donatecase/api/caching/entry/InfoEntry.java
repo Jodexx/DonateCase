@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.tools.caching.entry;
+package com.jodexindustries.donatecase.api.caching.entry;
 
 import java.util.Objects;
 
