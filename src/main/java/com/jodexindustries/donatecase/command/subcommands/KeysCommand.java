@@ -58,15 +58,14 @@ public class KeysCommand implements SubCommand {
     }
 
     private String formatMessage(String name, Player player, String message) {
-        if (player != null && Case.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            message = PAPISupport.setPlaceholders(player, message);
-        }
+        if (player != null) message = PAPISupport.setPlaceholders(player, message);
+
         String placeholder = Tools.getLocalPlaceholder(message);
         String result = "0";
         if (placeholder.startsWith("keys_")) {
             String[] parts = placeholder.split("_");
-            String caseTitle = parts[1];
-            int keys = Case.getKeys(caseTitle, name);
+            String caseType = parts[1];
+            int keys = Case.getKeys(caseType, name);
             if (parts.length == 2) {
                 result = String.valueOf(keys);
             } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
