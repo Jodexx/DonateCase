@@ -7,6 +7,8 @@ import com.jodexindustries.donatecase.config.CasesConfig;
 import com.jodexindustries.donatecase.config.Config;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.*;
+import com.jodexindustries.donatecase.api.caching.SimpleCache;
+import com.jodexindustries.donatecase.api.caching.entry.InfoEntry;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -54,6 +56,16 @@ public class Case {
      * Loaded cases in runtime
      */
     public final static HashMap<String, CaseData> caseData = new HashMap<>();
+
+    /**
+     * Cache map for storing number of player's keys
+     */
+    public final static SimpleCache<InfoEntry, Integer> keysCache = new SimpleCache<>(100);
+
+    /**
+     * Cache map for storing number of player's cases opens
+     */
+    public final static SimpleCache<InfoEntry, Integer> openCache = new SimpleCache<>(100);
 
     /**
      * Save case location
@@ -147,6 +159,31 @@ public class Case {
     }
 
     /**
+     * Get the keys to a certain player's case from cache
+     * @param caseType Case type
+     * @param player Player name
+     * @return Number of keys
+     */
+    public static int getKeysCache(String caseType, String player) {
+        int keys;
+        InfoEntry entry = new InfoEntry(player, caseType);
+        Integer cachedKeys = keysCache.get(entry);
+        if(cachedKeys == null) {
+            getKeysAsync(caseType, player).thenAcceptAsync(integer -> keysCache.put(entry, integer));
+            // Get previous, if current is null
+            Integer previous = keysCache.getPrevious(entry);
+            if(previous != null) {
+                keys = previous;
+            } else {
+                keys = getKeys(caseType, player);
+            }
+        } else {
+            keys = cachedKeys;
+        }
+        return keys;
+    }
+
+    /**
      * Get count of opened cases by player
      * @param caseType Case type
      * @param player Player, who opened
@@ -165,6 +202,31 @@ public class Case {
     public static CompletableFuture<Integer>  getOpenCountAsync(String caseType, String player) {
         return CompletableFuture.supplyAsync(() -> instance.sql ? (instance.mysql == null ? 0 : instance.mysql.getOpenCount(player, caseType).join()) : getConfig().getData().getOpenCount(player, caseType)
         );
+    }
+
+    /**
+     * Get count of opened cases by player from cache
+     * @param caseType Case type
+     * @param player Player, who opened
+     * @return opened count
+     */
+    public static int getOpenCountCache(String caseType, String player) {
+        int openCount;
+        InfoEntry entry = new InfoEntry(player, caseType);
+        Integer cachedKeys = openCache.get(entry);
+        if(cachedKeys == null) {
+            getOpenCountAsync(caseType, player).thenAcceptAsync(integer -> openCache.put(entry, integer));
+            // Get previous, if current is null
+            Integer previous = keysCache.getPrevious(entry);
+            if(previous != null) {
+                openCount = previous;
+            } else {
+                openCount = getOpenCount(caseType, player);
+            }
+        } else {
+            openCount = cachedKeys;
+        }
+        return openCount;
     }
 
     /**
