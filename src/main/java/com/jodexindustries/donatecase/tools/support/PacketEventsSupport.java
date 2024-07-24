@@ -38,6 +38,7 @@ public class PacketEventsSupport {
                         .tickTickables()
                         .trackPlatformEntities();
                 EntityLib.init(platform, settings);
+
                 if (PacketEvents.getAPI().isLoaded()) {
                     Logger.log("&aHooked to &bpacketevents");
                     DonateCase.instance.usePackets = true;
@@ -46,6 +47,10 @@ public class PacketEventsSupport {
                 plugin.getLogger().log(Level.WARNING, "packetevents hooking canceled!", e);
             }
         }
+    }
+
+    public void unload() {
+        PacketEvents.getAPI().terminate();
     }
 
     private ServerVersion getServerVersion() {
