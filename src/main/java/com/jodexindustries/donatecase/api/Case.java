@@ -169,7 +169,6 @@ public class Case {
         InfoEntry entry = new InfoEntry(player, caseType);
         Integer cachedKeys = keysCache.get(entry);
         if(cachedKeys == null) {
-            getKeysAsync(caseType, player).thenAcceptAsync(integer -> keysCache.put(entry, integer));
             // Get previous, if current is null
             Integer previous = keysCache.getPrevious(entry);
             if(previous != null) {
@@ -177,6 +176,8 @@ public class Case {
             } else {
                 keys = getKeys(caseType, player);
             }
+
+            getKeysAsync(caseType, player).thenAcceptAsync(integer -> keysCache.put(entry, integer));
         } else {
             keys = cachedKeys;
         }
