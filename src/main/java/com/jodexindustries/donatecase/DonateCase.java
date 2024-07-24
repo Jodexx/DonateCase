@@ -124,6 +124,7 @@ public class DonateCase extends JavaPlugin {
         if(papi != null) papi.unregister();
         if(mysql != null) mysql.close();
         if(hologramManager != null) hologramManager.removeAllHolograms();
+        if(packetEventsSupport != null) packetEventsSupport.unload();
 
         Case.cleanCache();
     }
