@@ -5,6 +5,7 @@ import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.GUI;
 import com.jodexindustries.donatecase.api.data.MaterialType;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.Trio;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
 import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
@@ -41,16 +42,10 @@ public class CaseGui {
 
     private void processItem(String caseType, Player p, GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
         if (item.getType().startsWith("HISTORY")) {
-            Object[] objects = handleHistoryItem(caseType, item, globalHistoryData);
-            if (objects[0] != null) {
-                item.getMaterial().setId((String) objects[0]);
-            }
-            if (objects[1] != null) {
-                item.getMaterial().setDisplayName((String) objects[1]);
-            }
-            if (objects[2] != null) {
-                item.getMaterial().setLore((List<String>) objects[2]);
-            }
+            Trio<String, String, List<String>> trio = handleHistoryItem(caseType, item, globalHistoryData);
+            if (trio.getFirst() != null) item.getMaterial().setId(trio.getFirst());
+            if (trio.getSecond() != null) item.getMaterial().setDisplayName(trio.getSecond());
+            if (trio.getThird() != null) item.getMaterial().setLore(trio.getThird());
         }
         // update item placeholders
         item.getMaterial().setDisplayName(PAPISupport.setPlaceholders(p, item.getMaterial().getDisplayName()));
@@ -60,8 +55,8 @@ public class CaseGui {
         item.getSlots().forEach(slot -> inventory.setItem(slot, itemStack));
     }
 
-    private Object[] handleHistoryItem(String caseType, GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
-        Object[] objects = new Object[3];
+    private Trio<String, String, List<String>> handleHistoryItem(String caseType, GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
+        Trio<String, String, List<String>> trio = new Trio<>();
 
         String[] typeArgs = item.getType().split("-");
         int index = Integer.parseInt(typeArgs[1]);
@@ -71,19 +66,19 @@ public class CaseGui {
         CaseData historyCaseData = isGlobal ? null : Case.getCase(caseType);
         if (historyCaseData == null && !isGlobal) {
             Case.getInstance().getLogger().warning("Case " + caseType + " HistoryData is null!");
-            return objects;
+            return trio;
         }
 
         if (!isGlobal) historyCaseData = historyCaseData.clone();
 
         CaseData.HistoryData data = getHistoryData(caseType, isGlobal, globalHistoryData, index, historyCaseData);
-        if (data == null) return objects;
+        if (data == null) return trio;
 
         if (isGlobal) historyCaseData = Case.getCase(data.getCaseType());
-        if (historyCaseData == null) return objects;
+        if (historyCaseData == null) return trio;
 
         CaseData.Item historyItem = historyCaseData.getItem(data.getItem());
-        if (historyItem == null) return objects;
+        if (historyItem == null) return trio;
         String material = item.getMaterial().getId();
         if(material == null) material = "HEAD:" + data.getPlayerName();
 
@@ -94,11 +89,11 @@ public class CaseGui {
         String displayName = Tools.rt(item.getMaterial().getDisplayName(), template);
         List<String> lore = Tools.rt(item.getMaterial().getLore(), template);
 
-        objects[0] = material;
-        objects[1] = displayName;
-        objects[2] = lore;
+        trio.setFirst(material);
+        trio.setSecond(displayName);
+        trio.setThird(lore);
 
-        return objects;
+        return trio;
     }
 
     private String[] getTemplate(CaseData historyCaseData, CaseData.HistoryData data, CaseData.Item historyItem) {
@@ -196,11 +191,11 @@ public class CaseGui {
             Case.getInstance().getLogger().warning("Material \"" + materialParts[0] + "\" not found! Case: " + caseType + " Item: " + item.getItemName());
             return new ItemStack(Material.AIR);
         }
-        return createItem(materialType, materialParts, displayName, newLore, caseType, enchanted, rgb, modelData);
+        return createItem(materialType, materialParts, displayName, newLore, enchanted, rgb, modelData);
     }
 
 
-    private ItemStack createItem(MaterialType materialType, String[] materialParts, String displayName, List<String> lore, String caseType, boolean enchanted, String[] rgb, int modelData) {
+    private ItemStack createItem(MaterialType materialType, String[] materialParts, String displayName, List<String> lore, boolean enchanted, String[] rgb, int modelData) {
         switch (materialType) {
             case HEAD:
                 return Tools.getPlayerHead(materialParts[1], displayName, lore);
