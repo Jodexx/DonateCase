@@ -214,7 +214,7 @@ public final class ProbabilityCollection<E> {
          * @param object object
          * @param probability share within the collection
          */
-        protected ProbabilitySetElement(T object, int probability) {
+        private ProbabilitySetElement(T object, int probability) {
             this.object = object;
             this.probability = probability;
         }
