@@ -60,12 +60,12 @@ public class Case {
     /**
      * Cache map for storing number of player's keys
      */
-    public final static SimpleCache<InfoEntry, Integer> keysCache = new SimpleCache<>(100);
+    public final static SimpleCache<InfoEntry, Integer> keysCache = new SimpleCache<>(20);
 
     /**
      * Cache map for storing number of player's cases opens
      */
-    public final static SimpleCache<InfoEntry, Integer> openCache = new SimpleCache<>(100);
+    public final static SimpleCache<InfoEntry, Integer> openCache = new SimpleCache<>(20);
 
     /**
      * Save case location
