@@ -57,6 +57,9 @@ DonatCase:
   DateFormat: "dd.MM HH:mm:ss"
   AddonsHelp: true # Show help list for addons commands?
   UsePackets: false # 1.18+ for using packets, you need to install packetevents plugin
+  # Caching for getting number of keys and case opens
+  # Actually used in placeholders (GUI and PlaceholderAPI)
+  Caching: 20 # in ticks
 ```
 </details>
 
