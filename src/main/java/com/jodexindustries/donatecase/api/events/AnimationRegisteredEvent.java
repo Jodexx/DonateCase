@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.Animation;
+import com.jodexindustries.donatecase.api.data.IAnimation;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class AnimationRegisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final String animationName;
-    private final Animation animationClass;
+    private final Class<? extends IAnimation> animationClass;
     private final boolean isDefault;
     private final String animationAddonName;
 
@@ -22,7 +22,7 @@ public class AnimationRegisteredEvent extends Event {
      * @param animationAddonName Animation addon name
      * @param isDefault Is default?
      */
-    public AnimationRegisteredEvent(String animationName, Animation animationClass, String animationAddonName, boolean isDefault) {
+    public AnimationRegisteredEvent(String animationName, Class<? extends IAnimation> animationClass, String animationAddonName, boolean isDefault) {
         this.animationName = animationName;
         this.animationClass = animationClass;
         this.isDefault = isDefault;
@@ -53,10 +53,12 @@ public class AnimationRegisteredEvent extends Event {
         return isDefault;
     }
 
-    /** Get animation class
+    /**
+     * Get animation class
+     *
      * @return animation class
      */
-    public Animation getAnimation() {
+    public Class<? extends IAnimation> getAnimation() {
         return animationClass;
     }
 
