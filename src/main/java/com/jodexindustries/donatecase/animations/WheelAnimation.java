@@ -2,9 +2,9 @@ package com.jodexindustries.donatecase.animations;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
-import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -16,18 +16,31 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class WheelAnimation implements Animation {
+public class WheelAnimation extends JavaAnimation {
 
     final List<CaseData.Item> items = new ArrayList<>();
     final List<ArmorStandCreator> armorStands = new ArrayList<>();
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 
+    /**
+     * Constructor for initializing
+     *
+     * @param player   Player who opened case
+     * @param location Case location
+     * @param uuid     Active case uuid
+     * @param caseData Case data
+     * @param winItem  winItem
+     */
+    public WheelAnimation(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
+        super(player, location, uuid, caseData, winItem);
+    }
+
     @Override
-    public void start(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
-        final Location loc = location.clone();
-        float pitch = Math.round(location.getPitch() / 90.0f) * 90.0f;
-        float yaw = Math.round(location.getYaw() / 90.0f) * 90.0f;
+    public void start() {
+        final Location loc = getLocation().clone();
+        float pitch = Math.round(getLocation().getPitch() / 90.0f) * 90.0f;
+        float yaw = Math.round(getLocation().getYaw() / 90.0f) * 90.0f;
         loc.setPitch(pitch);
         loc.setYaw(yaw);
         loc.add(0.5, 0, 0.5);
@@ -48,11 +61,11 @@ public class WheelAnimation implements Animation {
         final boolean useFlame = Case.getConfig().getAnimations().getBoolean("Wheel.Flame.Enabled");
         final Particle flameParticle = Particle.valueOf(Case.getConfig().getAnimations().getString("Wheel.Flame.Particle", "FLAME"));
         // register items
-        items.add(winItem);
+        items.add(getWinItem());
         for (int i = 0; i < itemsCount; i++) {
-            CaseData.Item tempWinItem = caseData.getRandomItem();
+            CaseData.Item tempWinItem = getCaseData().getRandomItem();
             items.add(tempWinItem);
-            armorStands.add(spawnArmorStand(location, i, small));
+            armorStands.add(spawnArmorStand(getLocation(), i, small));
         }
         double baseAngle = loc.clone().getDirection().angle(new Vector(0, 0, 1));
         final double[] lastCompletedRotation = {0.0};
@@ -106,7 +119,7 @@ public class WheelAnimation implements Animation {
                 }
             }
             if (ticks.get() == animationTime + 1) {
-                Case.animationPreEnd(caseData, player, true, winItem);
+                Case.animationPreEnd(getCaseData(), getPlayer(), true, getWinItem());
             }
             // End
             if (ticks.get() >= animationTime + 20) {
@@ -114,7 +127,7 @@ public class WheelAnimation implements Animation {
                 for (ArmorStandCreator stand : armorStands) {
                     stand.remove();
                 }
-                Case.animationEnd(caseData, player, uuid, winItem);
+                Case.animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
                 items.clear();
                 armorStands.clear();
             }

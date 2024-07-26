@@ -2,10 +2,10 @@ package com.jodexindustries.donatecase.animations;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
-import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
@@ -18,19 +18,24 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class FireworkAnimation implements Animation {
-    private EquipmentSlot itemSlot;
-    private ArmorStandEulerAngle armorStandEulerAngle;
+public class FireworkAnimation extends JavaAnimation {
+    private final EquipmentSlot itemSlot;
+    private final ArmorStandEulerAngle armorStandEulerAngle;
 
-    public void start(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
-        String displayName = winItem.getMaterial().getDisplayName();
-        winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, displayName));
-        location.add(0.5, -0.1, 0.5);
-        location.setYaw(-70.0F);
-        ArmorStandCreator as = Tools.createArmorStand(location);
-        armorStandEulerAngle = Tools.getArmorStandEulerAngle("Firework.Pose");
+    public FireworkAnimation(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
+        super(player, location, uuid, caseData, winItem);
 
         itemSlot = EquipmentSlot.valueOf(Case.getConfig().getAnimations().getString("Firework.ItemSlot", "HEAD").toUpperCase());
+        armorStandEulerAngle = Tools.getArmorStandEulerAngle("Firework.Pose");
+    }
+
+    public void start() {
+        String displayName = getWinItem().getMaterial().getDisplayName();
+        getWinItem().getMaterial().setDisplayName(PAPISupport.setPlaceholders(getPlayer(), displayName));
+        getLocation().add(0.5, -0.1, 0.5);
+        getLocation().setYaw(-70.0F);
+        ArmorStandCreator as = Tools.createArmorStand(getLocation());
+
         boolean small = Case.getConfig().getAnimations().getBoolean("Firework.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
@@ -65,19 +70,19 @@ public class FireworkAnimation implements Animation {
                 }
                 if (this.i >= 7) {
                     if (this.i == 10) {
-                        if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
-                            as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
+                        if(getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
+                            as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
                         }
                         as.setAngle(armorStandEulerAngle);
                         as.setCustomName(displayName);
                         as.setCustomNameVisible(true);
                         as.updateMeta();
-                        Case.animationPreEnd(caseData, player, true, winItem);
+                        Case.animationPreEnd(getCaseData(), getPlayer(), true, getWinItem());
                     }
                     if (this.i >= 30) {
                         as.remove();
                         this.cancel();
-                        Case.animationEnd(caseData, player, uuid, winItem);
+                        Case.animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
                     }
                 }
 

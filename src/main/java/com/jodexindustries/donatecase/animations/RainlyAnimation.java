@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Location;
@@ -19,17 +20,30 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class RainlyAnimation implements Animation {
+public class RainlyAnimation extends JavaAnimation {
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 
+    /**
+     * Constructor for initializing
+     *
+     * @param player   Player who opened case
+     * @param location Case location
+     * @param uuid     Active case uuid
+     * @param caseData Case data
+     * @param winItem  winItem
+     */
+    public RainlyAnimation(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
+        super(player, location, uuid, caseData, winItem);
+    }
+
     @Override
-    public void start(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
-        final Location loc = location.clone();
+    public void start() {
+        final Location loc = getLocation().clone();
         final String FallingParticle = Case.getConfig().getAnimations().getString("Rainly.FallingParticle");
-        String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
-        winItem.getMaterial().setDisplayName(winGroupDisplayName);
-        location.add(0.5, 1, 0.5);
+        String winGroupDisplayName = PAPISupport.setPlaceholders(getPlayer(),getWinItem().getMaterial().getDisplayName());
+        getWinItem().getMaterial().setDisplayName(winGroupDisplayName);
+        getLocation().add(0.5, 1, 0.5);
         Location rain1 = loc.clone().add(-1.5, 3, -1.5);
         Location rain2 = loc.clone().add(2.5, 3, -1.5);
         Location rain3 = loc.clone().add(2.5, 3, 2.5);
@@ -38,8 +52,8 @@ public class RainlyAnimation implements Animation {
         Location cloud2 = rain2.clone().add(0, 0.5, 0);
         Location cloud3 = rain3.clone().add(0, 0.5, 0);
         Location cloud4 = rain4.clone().add(0, 0.5, 0);
-        location.setYaw(-70.0F);
-        ArmorStandCreator as = Tools.createArmorStand(location);
+        getLocation().setYaw(-70.0F);
+        ArmorStandCreator as = Tools.createArmorStand(getLocation());
         as.setVisible(false);
         as.setGravity(false);
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Rainly.Pose");
@@ -74,14 +88,14 @@ public class RainlyAnimation implements Animation {
                     this.l.setYaw(las.getYaw());
                     if (this.i == 32) {
                         // win item and title
-                        if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
-                            as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
+                        if(getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
+                            as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
                         }
                         as.setAngle(armorStandEulerAngle);
                         as.setCustomName(winGroupDisplayName);
                         as.setCustomNameVisible(true);
                         as.updateMeta();
-                        Case.animationPreEnd(caseData, player, false, winItem);
+                        Case.animationPreEnd(getCaseData(), getPlayer(), false, getWinItem());
                         loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 0);
                         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                     }
@@ -89,8 +103,8 @@ public class RainlyAnimation implements Animation {
 
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0 )) {
-                    CaseData.Item winItem = caseData.getRandomItem();
-                    String winGroupDisplayName = PAPISupport.setPlaceholders(player,winItem.getMaterial().getDisplayName());
+                    CaseData.Item winItem = getCaseData().getRandomItem();
+                    String winGroupDisplayName = PAPISupport.setPlaceholders(getPlayer(), winItem.getMaterial().getDisplayName());
                     winItem.getMaterial().setDisplayName(winGroupDisplayName);
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                         as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
@@ -121,7 +135,7 @@ public class RainlyAnimation implements Animation {
                 if (this.i >= 70) {
                     as.remove();
                     this.cancel();
-                    Case.animationEnd(caseData, player, uuid, winItem);
+                    Case.animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
                 }
 
                 ++this.i;
