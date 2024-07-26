@@ -19,7 +19,7 @@ public class MainPlugin extends JavaPlugin implements Listener {
         subCommandManager.registerSubCommand("test", new TestCommand());
         // register animation
         AnimationManager animationManager = api.getAnimationManager();
-        animationManager.registerAnimation("test", new TestAnimation());
+        animationManager.registerAnimation("test", TestAnimation.class);
         // register event listener
         getServer().getPluginManager().registerEvents(this, this);
     }

@@ -19,9 +19,10 @@ public class MainAddon extends InternalJavaAddon implements Listener {
         subCommandManager.registerSubCommand("test", new TestCommand());
         // register animation
         AnimationManager animationManager = api.getAnimationManager();
-        animationManager.registerAnimation("test", new TestAnimation());
+        animationManager.registerAnimation("test", TestAnimation.class);
         // register event listener
         getDonateCase().getServer().getPluginManager().registerEvents(this, getDonateCase());
+
     }
 
     @Override
