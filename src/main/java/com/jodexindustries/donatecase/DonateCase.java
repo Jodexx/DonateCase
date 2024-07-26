@@ -135,12 +135,14 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadPacketEventsAPI() {
-        packetEventsSupport = new PacketEventsSupport(this);
-        packetEventsSupport.load();
+        if(getServer().getPluginManager().isPluginEnabled("packetevents")) {
+            packetEventsSupport = new PacketEventsSupport(this);
+            packetEventsSupport.load();
+        }
     }
 
     private void loadItemsAdderAPI() {
-        if (Case.getInstance().getServer().getPluginManager().isPluginEnabled("ItemsAdder")) itemsAdderSupport = new ItemsAdderSupport(this);
+        if (getServer().getPluginManager().isPluginEnabled("ItemsAdder")) itemsAdderSupport = new ItemsAdderSupport(this);
     }
 
     private void loadUpdater() {
@@ -157,7 +159,7 @@ public class DonateCase extends JavaPlugin {
     public void loadConfig() {
         config = new Config(this);
 
-        mysql = new MySQLDataBase(instance);
+        mysql = new MySQLDataBase(this);
         mysql.connect();
 
         loader.load();
