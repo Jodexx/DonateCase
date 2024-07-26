@@ -136,8 +136,12 @@ public class DonateCase extends JavaPlugin {
 
     private void loadPacketEventsAPI() {
         if(getServer().getPluginManager().isPluginEnabled("packetevents")) {
-            packetEventsSupport = new PacketEventsSupport(this);
-            packetEventsSupport.load();
+            try {
+                packetEventsSupport = new PacketEventsSupport(this);
+                packetEventsSupport.load();
+            } catch (NoClassDefFoundError e) {
+                getLogger().log(Level.WARNING, "packetevents hooking canceled!", e);
+            }
         }
     }
 
@@ -194,11 +198,11 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultAnimations() {
-        api.getAnimationManager().registerAnimation("SHAPE", new ShapeAnimation());
-        api.getAnimationManager().registerAnimation("WHEEL", new WheelAnimation());
-        api.getAnimationManager().registerAnimation("RAINLY", new RainlyAnimation());
-        api.getAnimationManager().registerAnimation("FIREWORK", new FireworkAnimation());
-        api.getAnimationManager().registerAnimation("FULLWHEEL", new FullWheelAnimation());
+        api.getAnimationManager().registerAnimation("SHAPE", ShapeAnimation.class);
+        api.getAnimationManager().registerAnimation("WHEEL", WheelAnimation.class);
+        api.getAnimationManager().registerAnimation("RAINLY", RainlyAnimation.class);
+        api.getAnimationManager().registerAnimation("FIREWORK", FireworkAnimation.class);
+        api.getAnimationManager().registerAnimation("FULLWHEEL", FullWheelAnimation.class);
         Logger.log("&aRegistered &cdefault &aanimations");
     }
 
@@ -323,8 +327,7 @@ public class DonateCase extends JavaPlugin {
         libraryManager.setLogLevel(LogLevel.WARN);
         libraryManager.addJitPack();
         libraryManager.addMavenCentral();
-        loadLibrary(orm);
-        loadLibrary(entityLibCommon, entityLibSpigot, entityLibAPI);
+        loadLibrary(orm, entityLibCommon, entityLibSpigot, entityLibAPI);
     }
 
     private void loadLibrary(Library... libraries) {
