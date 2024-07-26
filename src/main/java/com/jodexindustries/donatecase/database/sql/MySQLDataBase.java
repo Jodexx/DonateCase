@@ -29,7 +29,6 @@ public class MySQLDataBase {
 
     public MySQLDataBase(DonateCase instance) {
         this.instance = instance;
-        com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
     }
 
     public void connect() {
@@ -57,6 +56,7 @@ public class MySQLDataBase {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
     }
 
     public CompletableFuture<Integer> getKeys(String name, String player) {
