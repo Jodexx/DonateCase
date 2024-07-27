@@ -1,7 +1,3 @@
-import groovy.namespace.QName
-import groovy.util.Node
-import groovy.util.NodeList
-
 buildscript {
     repositories {
         mavenCentral()
