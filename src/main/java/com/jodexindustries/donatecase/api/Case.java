@@ -349,6 +349,7 @@ public class Case {
     /**
      * Is there a case with a type?
      * @param caseType Case type
+     * @return true - if case found in memory
      */
     public static boolean hasCaseByType(String caseType) {
         if(caseData.isEmpty()) {
@@ -361,6 +362,7 @@ public class Case {
      * <p>
      * In other words, whether a case has been created
      * @param name Case name
+     * @return true - if case created on the server
      */
     public static boolean hasCaseByCustomName(String name) {
         if(getConfig().getCases().getConfigurationSection("DonatCase.Cases") == null) {
@@ -372,6 +374,7 @@ public class Case {
     /**
      * Is there a case with a specific title?
      * @param title Case title
+     * @return true - if case found in memory
      */
     public static boolean hasCaseByTitle(String title) {
         for (CaseData data : caseData.values()) {
@@ -383,6 +386,7 @@ public class Case {
 
     /**
      * @deprecated  Use {@link Config#getCasesConfig()} instead
+     * @return CasesConfig object
      */
     @Deprecated
     public static CasesConfig getCasesConfig() {
@@ -501,6 +505,7 @@ public class Case {
     /**
      * Get random choice from item random action list
      * @param item Case item
+     * @return random action name
      */
     public static String getRandomActionChoice(CaseData.Item item) {
         ProbabilityCollection<String> collection = new ProbabilityCollection<>();
@@ -614,6 +619,7 @@ public class Case {
      * @param p Player
      * @param caseData Case type
      * @param blockLocation Block location
+     * @return opened inventory object
      */
     public static Inventory openGui(Player p, CaseData caseData, Location blockLocation) {
         Inventory inventory = null;

@@ -978,6 +978,7 @@ public class CaseData implements Cloneable {
          *
          * @param enabled if the hologram enabled or not
          * @param height of the hologram from the ground
+         * @param range the range, when player will see hologram
          * @param messages the hologram will display
          */
         public Hologram(boolean enabled, double height, int range, List<String> messages) {

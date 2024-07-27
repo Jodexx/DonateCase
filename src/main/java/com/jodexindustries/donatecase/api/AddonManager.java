@@ -45,6 +45,7 @@ public class AddonManager {
 
     /**
      * Load all addons from "addons" folder with reason
+     * @param reason Reason of addon loading
      */
     public void loadAddons(PowerReason reason) {
         File addonsDir = new File(Case.getInstance().getDataFolder(), "addons");
