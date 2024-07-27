@@ -71,7 +71,7 @@ public class Config {
         checkAndUpdateConfig(animations, "Animations.yml", "1.3");
 
         checkConvertCases();
-        casesConfig = new CasesConfig(this);
+        casesConfig = new CasesConfig(plugin);
         converter.convertBASE64();
 
         checkConvertLocations();

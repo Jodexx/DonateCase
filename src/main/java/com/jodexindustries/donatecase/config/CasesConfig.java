@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.tools.Pair;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,8 +18,12 @@ public class CasesConfig {
 
     /**
      * Default initialization constructor
+     * @param plugin Plugin object
      */
-    public CasesConfig() {
+    public CasesConfig(Plugin plugin) {
+        if(getCasesInFolder().isEmpty())
+            plugin.saveResource("cases/case.yml", false);
+
         for (File file : getCasesInFolder()) {
             if (isYamlFile(file)) {
                 String name = getFileNameWithoutExtension(file);
@@ -146,7 +151,8 @@ public class CasesConfig {
     public static List<File> getCasesInFolder() {
         List<File> files = new ArrayList<>();
         File directory = new File(Case.getInstance().getDataFolder(), "cases");
-        Collections.addAll(files, Objects.requireNonNull(directory.listFiles()));
+        File[] array = directory.listFiles();
+        if(array != null) Collections.addAll(files, array);
         return files;
     }
 
