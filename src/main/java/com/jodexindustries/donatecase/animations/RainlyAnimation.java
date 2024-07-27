@@ -2,7 +2,6 @@ package com.jodexindustries.donatecase.animations;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
-import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.DonateCase;
@@ -13,29 +12,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class RainlyAnimation extends JavaAnimation {
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
-
-    /**
-     * Constructor for initializing
-     *
-     * @param player   Player who opened case
-     * @param location Case location
-     * @param uuid     Active case uuid
-     * @param caseData Case data
-     * @param winItem  winItem
-     */
-    public RainlyAnimation(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
-        super(player, location, uuid, caseData, winItem);
-    }
 
     @Override
     public void start() {

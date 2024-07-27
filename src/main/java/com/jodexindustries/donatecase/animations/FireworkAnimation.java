@@ -3,32 +3,28 @@ package com.jodexindustries.donatecase.animations;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.entity.Firework;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class FireworkAnimation extends JavaAnimation {
     private final EquipmentSlot itemSlot;
     private final ArmorStandEulerAngle armorStandEulerAngle;
 
-    public FireworkAnimation(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
-        super(player, location, uuid, caseData, winItem);
-
+    public FireworkAnimation() {
         itemSlot = EquipmentSlot.valueOf(Case.getConfig().getAnimations().getString("Firework.ItemSlot", "HEAD").toUpperCase());
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("Firework.Pose");
     }
 
+    @Override
     public void start() {
         String displayName = getWinItem().getMaterial().getDisplayName();
         getWinItem().getMaterial().setDisplayName(PAPISupport.setPlaceholders(getPlayer(), displayName));

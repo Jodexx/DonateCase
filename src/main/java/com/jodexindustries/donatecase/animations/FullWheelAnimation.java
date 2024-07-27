@@ -8,13 +8,11 @@ import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class FullWheelAnimation extends JavaAnimation {
@@ -23,20 +21,6 @@ public class FullWheelAnimation extends JavaAnimation {
     final List<ArmorStandCreator> armorStands = new ArrayList<>();
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
-
-    /**
-     * Constructor for initializing
-     *
-     * @param player   Player who opened case
-     * @param location Case location
-     * @param uuid     Active case uuid
-     * @param caseData Case data
-     * @param winItem  winItem
-     */
-    public FullWheelAnimation(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
-        super(player, location, uuid, caseData, winItem);
-    }
-
 
     @Override
     public void start() {

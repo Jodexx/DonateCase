@@ -9,29 +9,14 @@ import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Objects;
-import java.util.UUID;
 
-    public class ShapeAnimation extends JavaAnimation {
+public class ShapeAnimation extends JavaAnimation {
         private EquipmentSlot itemSlot;
         private ArmorStandEulerAngle armorStandEulerAngle;
-
-        /**
-         * Constructor for initializing
-         *
-         * @param player   Player who opened case
-         * @param location Case location
-         * @param uuid     Active case uuid
-         * @param caseData Case data
-         * @param winItem  winItem
-         */
-        public ShapeAnimation(Player player, Location location, UUID uuid, CaseData caseData, CaseData.Item winItem) {
-            super(player, location, uuid, caseData, winItem);
-        }
 
         @Override
         public void start() {
