@@ -24,8 +24,8 @@ Maven
 Gradle
 ```gradle
 maven {
-    name "JodexIndustries"
-    url "https://repo.jodexindustries.xyz/releases"
+    name = "JodexIndustries"
+    url = "https://repo.jodexindustries.xyz/releases"
 }
 ```
 ```gradle
