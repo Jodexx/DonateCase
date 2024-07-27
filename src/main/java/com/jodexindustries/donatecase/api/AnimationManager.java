@@ -1,10 +1,7 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.ActiveCase;
-import com.jodexindustries.donatecase.api.data.Animation;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.IAnimation;
+import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.events.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
@@ -26,7 +23,7 @@ import java.util.logging.Level;
  * Animation control class, registration, playing
  */
 public class AnimationManager {
-    private static final Map<String, Pair<Class<? extends IAnimation>, Addon>> registeredAnimations = new HashMap<>();
+    private static final Map<String, Pair<Class<? extends JavaAnimation>, Addon>> registeredAnimations = new HashMap<>();
     private static final Map<String, Pair<Animation, Addon>> oldAnimations = new HashMap<>();
     private final Addon addon;
 
@@ -43,7 +40,7 @@ public class AnimationManager {
      * @param name Animation name
      * @param animation Animation class
      */
-    public void registerAnimation(String name, Class<? extends IAnimation> animation) {
+    public void registerAnimation(String name, Class<? extends JavaAnimation> animation) {
         if(!isRegistered(name)) {
             registeredAnimations.put(name, new Pair<>(animation, addon));
             String animationPluginName = addon.getName();
@@ -146,12 +143,10 @@ public class AnimationManager {
         if (isRegistered(animation, true)) {
             javaAnimation = getRegisteredOldAnimation(animation);
         } else {
-            Class<? extends IAnimation> animationClass = getRegisteredAnimation(animation);
+            Class<? extends JavaAnimation> animationClass = getRegisteredAnimation(animation);
             if (animationClass != null) {
                 try {
-                    javaAnimation = animationClass.getDeclaredConstructor(Player.class, Location.class, UUID.class,
-                                    CaseData.class, CaseData.Item.class)
-                            .newInstance(player, Case.getCaseLocationByBlockLocation(location), uuid, caseData, preStartEvent.getWinItem());
+                    javaAnimation = animationClass.getDeclaredConstructor().newInstance();
                 } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
                          IllegalAccessException ignored) {
                 }
@@ -164,8 +159,10 @@ public class AnimationManager {
 
         Case.activeCases.put(uuid, activeCase);
         Case.activeCasesByLocation.put(location.getBlock().getLocation(), uuid);
-        if (javaAnimation instanceof IAnimation) {
-            IAnimation anim = (IAnimation) javaAnimation;
+        if (javaAnimation instanceof JavaAnimation) {
+            JavaAnimation anim = (JavaAnimation) javaAnimation;
+            anim.init(player, Case.getCaseLocationByBlockLocation(location),
+                    uuid, caseData, preStartEvent.getWinItem());
             anim.start();
         } else {
             Animation anim = (Animation) javaAnimation;
@@ -202,7 +199,7 @@ public class AnimationManager {
      * @return map with registered animations
      */
     @NotNull
-    public static Map<String, Pair<Class<? extends IAnimation>, Addon>> getRegisteredAnimations() {
+    public static Map<String, Pair<Class<? extends JavaAnimation>, Addon>> getRegisteredAnimations() {
         return registeredAnimations;
     }
 
@@ -213,7 +210,7 @@ public class AnimationManager {
      * @return Animation class instance
      */
     @Nullable
-    public static Class<? extends IAnimation> getRegisteredAnimation(String animation) {
+    public static Class<? extends JavaAnimation> getRegisteredAnimation(String animation) {
         if (isRegistered(animation)) {
             return getRegisteredAnimations().get(animation).getFirst();
         }
