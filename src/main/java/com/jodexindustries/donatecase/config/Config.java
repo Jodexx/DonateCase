@@ -35,6 +35,7 @@ public class Config {
 
     /**
      * Default initialization constructor
+     * @param plugin Plugin object
      */
     public Config(DonateCase plugin) {
         this.plugin = plugin;
@@ -70,10 +71,7 @@ public class Config {
         checkAndUpdateConfig(animations, "Animations.yml", "1.3");
 
         checkConvertCases();
-        casesConfig = new CasesConfig();
-        if(casesConfig.getCases().isEmpty()) {
-            plugin.saveResource("cases/case.yml", false);
-        }
+        casesConfig = new CasesConfig(this);
         converter.convertBASE64();
 
         checkConvertLocations();
