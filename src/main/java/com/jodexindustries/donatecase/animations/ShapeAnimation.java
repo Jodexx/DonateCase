@@ -74,7 +74,7 @@ public class ShapeAnimation extends JavaAnimation {
                             as.setCustomName(getWinItem().getMaterial().getDisplayName());
                             as.updateMeta();
                             Tools.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
-                            Case.animationPreEnd(getCaseData(), getPlayer(), true, getWinItem());
+                            Case.animationPreEnd(getCaseData(), getPlayer(), true, getWinItem(), getLocation());
 
                         }
                     }
