@@ -16,6 +16,7 @@ softdepend:
   - Multiverse-Core
   - MultiWorld
   - packetevents
+  - ItemsAdder
 api-version: 1.16
 commands:
   donatecase:
