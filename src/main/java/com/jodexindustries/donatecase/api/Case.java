@@ -10,6 +10,7 @@ import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
 import com.jodexindustries.donatecase.api.caching.entry.InfoEntry;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
+import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -420,11 +421,22 @@ public class Case {
      * @param uuid Active case uuid
      */
     public static void animationEnd(CaseData caseData, Player player, UUID uuid, CaseData.Item item) {
+        animationEnd(caseData, Bukkit.getOfflinePlayer(player.getUniqueId()), uuid, item);
+    }
+
+    /**
+     * Animation end method for custom animations is called to completely end the animation
+     * @param item Item data
+     * @param caseData Case data
+     * @param player Player who opened (offline player)
+     * @param uuid Active case uuid
+     */
+    public static void animationEnd(CaseData caseData, OfflinePlayer player, UUID uuid, CaseData.Item item) {
         ActiveCase activeCase = activeCases.get(uuid);
         Location location = activeCase.getLocation();
         activeCasesByLocation.remove(location.getBlock().getLocation());
         activeCases.remove(uuid);
-        if(CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {
+        if (CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {
             CaseManager.getHologramManager().createHologram(location.getBlock(), caseData);
         }
         AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, caseData.getAnimation(), caseData, location, item);
@@ -433,16 +445,32 @@ public class Case {
 
     /**
      * Animation pre end method for custom animations is called to grant a group, send a message, and more
+     * @deprecated for Vault group check
      * @param caseData Case data
      * @param player Player who opened
      * @param needSound Boolean sound
      * @param item Win item data
      */
+    @Deprecated
     public static void animationPreEnd(CaseData caseData, Player player, boolean needSound, CaseData.Item item) {
+        animationPreEnd(caseData, player, needSound, item, Bukkit.getWorlds().get(0).getSpawnLocation());
+    }
+
+    /**
+     * Animation pre end method for custom animations is called to grant a group, send a message, and more
+     * @param caseData Case data
+     * @param player Player who opened
+     * @param needSound Boolean sound
+     * @param item Win item data
+     * @param location Location where case was opened
+     */
+    public static void animationPreEnd(CaseData caseData, OfflinePlayer player, boolean needSound, CaseData.Item item, Location location) {
         String choice = "";
         Map<String, Integer> levelGroups = getDefaultLevelGroup();
         if(!caseData.getLevelGroups().isEmpty()) levelGroups = caseData.getLevelGroups();
-        String playerGroup = getPlayerGroup(player);
+        World world = location.getWorld();
+        if(world == null) world = Bukkit.getWorlds().get(0);
+        String playerGroup = getPlayerGroup(world.getName(), player);
         if(isAlternative(levelGroups, playerGroup, item.getGroup())) {
             executeActions(player, caseData, item, null, true);
         } else {
@@ -457,9 +485,9 @@ public class Case {
         // Sound
         if (needSound) {
             if (caseData.getAnimationSound() != null) {
-                player.playSound(player.getLocation(), caseData.getAnimationSound().getSound(),
-                        caseData.getAnimationSound().getVolume(),
-                        caseData.getAnimationSound().getPitch());
+                    world.playSound(location, caseData.getAnimationSound().getSound(),
+                            caseData.getAnimationSound().getVolume(),
+                            caseData.getAnimationSound().getPitch());
             }
         }
 
@@ -474,7 +502,7 @@ public class Case {
      * @param item Win item
      * @param choice In fact, these are actions that were selected from the RandomActions section
      */
-    private static void saveOpenInfo(CaseData caseData, Player player, CaseData.Item item, String choice) {
+    private static void saveOpenInfo(CaseData caseData, OfflinePlayer player, CaseData.Item item, String choice) {
         CaseData.HistoryData data = new CaseData.HistoryData(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
         CaseData.HistoryData[] list = caseData.getHistoryData();
         System.arraycopy(list, 0, list, 1, list.length - 1);
@@ -726,13 +754,17 @@ public class Case {
 
     /**
      * Get player primary group from Vault or LuckPerms
+     * @param world Player world
      * @param player Bukkit player
      * @return player primary group
      */
-    public static String getPlayerGroup(Player player) {
+    public static String getPlayerGroup(String world, OfflinePlayer player) {
         String group = null;
-        if(instance.permissionDriver == PermissionDriver.vault) if(instance.permission != null) group = instance.permission.getPrimaryGroup(player);
-        if(instance.permissionDriver == PermissionDriver.luckperms) if(instance.luckPerms != null) group = instance.luckPerms.getPlayerAdapter(Player.class).getUser(player).getPrimaryGroup();
+        if(instance.permissionDriver == PermissionDriver.vault) if(instance.permission != null) group = instance.permission.getPrimaryGroup(world, player);
+        if(instance.permissionDriver == PermissionDriver.luckperms) if(instance.luckPerms != null) {
+            User user = instance.luckPerms.getUserManager().getUser(player.getUniqueId());
+            if(user != null) group = user.getPrimaryGroup();
+        }
         return group;
     }
 
