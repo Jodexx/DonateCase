@@ -2,20 +2,21 @@ package com.jodexindustries.donatecase.api.events;
 
 import com.jodexindustries.donatecase.api.data.CaseData;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when the animation ends
  */
-public class AnimationEndEvent extends PlayerEvent {
+public class AnimationEndEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final CaseData caseData;
     private final Location location;
     private final String animation;
     private final CaseData.Item winItem;
+    private final OfflinePlayer player;
 
     /**
      * Default constructor
@@ -25,8 +26,8 @@ public class AnimationEndEvent extends PlayerEvent {
      * @param location Case location (or another, where animation was ended)
      * @param winItem Player prize
      */
-    public AnimationEndEvent(@NotNull Player who, String animation, CaseData caseData, Location location, CaseData.Item winItem) {
-        super(who);
+    public AnimationEndEvent(@NotNull OfflinePlayer who, String animation, CaseData caseData, Location location, CaseData.Item winItem) {
+        this.player = who;
         this.caseData = caseData;
         this.location = location;
         this.animation = animation;
@@ -79,5 +80,13 @@ public class AnimationEndEvent extends PlayerEvent {
      */
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    /**
+     * Get who opened
+     * @return player
+     */
+    public OfflinePlayer getPlayer() {
+        return player;
     }
 }
