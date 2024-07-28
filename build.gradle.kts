@@ -12,8 +12,8 @@ plugins {
 }
 
 group = "com.jodexindustries.donatecase"
-val api = "2.2.4.0"
-version = "2.2.4.1"
+val api = "2.2.4.2"
+version = "2.2.4.2"
 
 repositories {
     mavenCentral()
@@ -115,7 +115,7 @@ publishing {
 tasks.javadoc {
     (options as StandardJavadocDocletOptions).apply {
         links(
-            "https://docs.oracle.com/javase/8/docs/api/",
+            "https://docs.oracle.com/en/java/javase/22/docs/api/",
             "https://helpch.at/docs/1.16.5/",
             "https://javadoc.io/static/net.luckperms/api/5.4/",
             "https://milkbowl.github.io/VaultAPI/"
