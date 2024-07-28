@@ -27,7 +27,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.arcaniax:HeadDatabase-API:1.3.1")
     compileOnly("de.likewhat.customheads:CustomHeads:3.0.7")
-    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.1")
+    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.3-beta-14")
     compileOnly("com.mojang:authlib:1.5.25")
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.6")
     compileOnly(fileTree("libs").include("*.jar"))
