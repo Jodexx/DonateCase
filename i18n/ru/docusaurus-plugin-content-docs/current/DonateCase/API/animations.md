@@ -21,7 +21,7 @@ import org.bukkit.Bukkit;
 public class TestAnimation extends JavaAnimation {
     @Override
     public void start() {
-        Case.animationPreEnd(getCaseData(), getPlayer(), true, getWinItem());
+        Case.animationPreEnd(getCaseData(), getPlayer(), true, getWinItem(), getLocation());
         Bukkit.getScheduler().runTaskLater(Case.getInstance(), () -> Case.animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem()),20L);
     }
 }
