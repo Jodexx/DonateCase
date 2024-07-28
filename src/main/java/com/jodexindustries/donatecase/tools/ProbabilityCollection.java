@@ -113,9 +113,7 @@ public final class ProbabilityCollection<E> {
             throw new IllegalArgumentException("Cannot add null object");
         }
 
-        if (probability <= 0) {
-            throw new IllegalArgumentException("Probability must be greater than 0");
-        }
+        if (probability <= 0) probability = 1;
 
         ProbabilitySetElement<E> entry = new ProbabilitySetElement<>(object, probability);
         entry.setIndex(this.totalProbability + 1);
