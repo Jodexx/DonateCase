@@ -83,11 +83,10 @@ public class DonateCase extends JavaPlugin {
     @Override
     public void onEnable() {
         long time = System.currentTimeMillis();
+
+        loadConfig();
+
         loader = new CaseLoader(this);
-
-        loadUpdater();
-
-        loadMetrics();
 
         registerDefaultCommand();
         registerDefaultSubCommands();
@@ -106,7 +105,10 @@ public class DonateCase extends JavaPlugin {
         loadItemsAdderAPI();
         loadOraxenAPI();
 
-        loadConfig();
+        loader.load();
+
+        loadUpdater();
+        loadMetrics();
 
         api.getAddonManager().enableAddons();
 
@@ -178,8 +180,6 @@ public class DonateCase extends JavaPlugin {
 
         mysql = new MySQLDataBase(this);
         mysql.connect();
-
-        loader.load();
 
         DonateCaseReloadEvent reloadEvent = new DonateCaseReloadEvent(this);
         Bukkit.getPluginManager().callEvent(reloadEvent);
