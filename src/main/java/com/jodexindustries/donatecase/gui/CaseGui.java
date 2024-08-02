@@ -209,6 +209,8 @@ public class CaseGui {
                 return Tools.getBASE64Skull(materialParts[1], displayName, lore);
             case MCURL:
                 return Tools.getMCURLSkull(materialParts[1], displayName, lore);
+            case ORAXEN:
+                return Tools.getOraxenItem(materialParts[1], displayName, lore);
             default:
                 byte data = -1;
                 if(materialParts.length > 1)  {
