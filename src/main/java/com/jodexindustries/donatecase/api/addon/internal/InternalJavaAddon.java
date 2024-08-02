@@ -73,12 +73,15 @@ public abstract class InternalJavaAddon implements InternalAddon {
     public void onEnable() {}
 
     @Override
-    public CaseManager getCaseAPI() {
+    public void onLoad() {}
+
+    @Override
+    public @NotNull CaseManager getCaseAPI() {
         return this.caseAPI;
     }
 
     @Override
-    public Plugin getDonateCase() {
+    public @NotNull Plugin getDonateCase() {
         return Case.getInstance();
     }
 
@@ -131,12 +134,13 @@ public abstract class InternalJavaAddon implements InternalAddon {
             getLogger().log(Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, ex);
         }
     }
+
     @Nullable
     @Override
     public InputStream getResource(@NotNull String filename) {
 
         try {
-            URL url = getClassLoader().getResource(filename);
+            URL url = getUrlClassLoader().getResource(filename);
 
             if (url == null) {
                 return null;
@@ -163,7 +167,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
     }
 
     @Override
-    public InternalAddonDescription getDescription() {
+    public @NotNull InternalAddonDescription getDescription() {
         return description;
     }
 }
