@@ -17,6 +17,7 @@ softdepend:
   - MultiWorld
   - packetevents
   - ItemsAdder
+  - Oraxen
 api-version: 1.16
 commands:
   donatecase:
