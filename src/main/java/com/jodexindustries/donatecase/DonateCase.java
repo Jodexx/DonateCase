@@ -8,10 +8,12 @@ import com.jodexindustries.donatecase.animations.*;
 import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
+import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.actions.*;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
+import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
@@ -77,7 +79,7 @@ public class DonateCase extends JavaPlugin {
         loadLibraries();
 
         api = new CaseManager(this);
-        api.getAddonManager().loadAddons(AddonManager.PowerReason.DONATE_CASE);
+        api.getAddonManager().loadAddons();
     }
 
     @Override
@@ -123,7 +125,7 @@ public class DonateCase extends JavaPlugin {
         DonateCaseDisableEvent donateCaseDisableEvent = new DonateCaseDisableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseDisableEvent);
 
-        api.getAddonManager().unloadAddons();
+        api.getAddonManager().unloadAddons(AddonManager.PowerReason.DONATE_CASE);
         api.getAnimationManager().unregisterAnimations();
         api.getSubCommandManager().unregisterSubCommands();
         api.getActionManager().unregisterActions();
