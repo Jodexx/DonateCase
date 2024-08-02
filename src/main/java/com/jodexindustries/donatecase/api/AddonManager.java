@@ -40,7 +40,7 @@ public class AddonManager {
      * Load all addons from "addons" folder
      */
     public void loadAddons() {
-        File addonsDir = new File(Case.getInstance().getDataFolder(), "addons");
+        File addonsDir = getAddonsFolder();
         File[] files = addonsDir.listFiles();
         if (!addonsDir.exists()) {
             addonsDir.mkdir();
@@ -298,6 +298,15 @@ public class AddonManager {
     @Nullable
     public static InternalJavaAddon getAddon(String addon) {
         return addons.get(addon);
+    }
+
+    public static File getAddonsFolder() {
+        return new File(Case.getInstance().getDataFolder(), "addons");
+    }
+
+    @Nullable
+    public static InternalAddonClassLoader getAddonClassLoader(File file) {
+        return loaders.stream().filter(loader -> loader.getFile().equals(file)).findFirst().orElse(null);
     }
 
     public static Collection<InternalJavaAddon> getAddons() {
