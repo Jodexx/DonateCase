@@ -5,6 +5,7 @@ import com.alessiodp.libby.BukkitLibraryManager;
 import com.alessiodp.libby.Library;
 import com.alessiodp.libby.logging.LogLevel;
 import com.jodexindustries.donatecase.animations.*;
+import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
 import com.jodexindustries.donatecase.api.actions.*;
@@ -71,22 +72,20 @@ public class DonateCase extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        instance = this;
+
         loadLibraries();
+
+        api = new CaseManager(this);
+        api.getAddonManager().loadAddons(AddonManager.PowerReason.DONATE_CASE);
     }
 
     @Override
     public void onEnable() {
         long time = System.currentTimeMillis();
-        instance = this;
-        api = new CaseManager(this);
         loader = new CaseLoader(this);
 
-        loadConfig();
-
         loadUpdater();
-
-        loadPermissionDriver();
-        loadHologramManager();
 
         loadMetrics();
 
@@ -94,6 +93,9 @@ public class DonateCase extends JavaPlugin {
         registerDefaultSubCommands();
         registerDefaultAnimations();
         registerDefaultActions();
+
+        loadPermissionDriver();
+        loadHologramManager();
 
         loadHolograms();
 
@@ -104,7 +106,9 @@ public class DonateCase extends JavaPlugin {
         loadItemsAdderAPI();
         loadOraxenAPI();
 
-        api.getAddonManager().loadAddons();
+        loadConfig();
+
+        api.getAddonManager().enableAddons();
 
         DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(donateCaseEnableEvent);
@@ -302,13 +306,16 @@ public class DonateCase extends JavaPlugin {
             String caseType = Case.getCaseTypeByCustomName(caseName);
             CaseData caseData = Case.getCase(caseType);
             Location location = Case.getCaseLocationByCustomName(caseName);
-            if (caseData != null && caseData.getHologram().isEnabled() && location != null && location.getWorld() != null && hologramManager != null && !Case.activeCasesByLocation.containsKey(location)) {
+            if (caseData != null && caseData.getHologram().isEnabled() && location != null
+                    && location.getWorld() != null && hologramManager != null
+                    && !Case.activeCasesByLocation.containsKey(location)) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }
     }
 
     private void loadLibraries() {
+        getLogger().info("Loading libraries...");
         Library orm = Library.builder()
                 .groupId("com{}j256{}ormlite")
                 .artifactId("ormlite-jdbc")
@@ -337,6 +344,7 @@ public class DonateCase extends JavaPlugin {
         libraryManager.addJitPack();
         libraryManager.addMavenCentral();
         loadLibrary(orm, entityLibCommon, entityLibSpigot, entityLibAPI);
+        getLogger().info("Libraries loaded!");
     }
 
     private void loadLibrary(Library... libraries) {
@@ -373,20 +381,24 @@ public class DonateCase extends JavaPlugin {
 
         try {
             if (!outFile.exists() || replace) {
-                OutputStream out = Files.newOutputStream(outFile.toPath());
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                out.close();
-                in.close();
+                saveFromInputStream(in, outFile);
             } else {
                 getLogger().log(java.util.logging.Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }
         } catch (IOException ex) {
             getLogger().log(java.util.logging.Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, ex);
         }
+    }
+
+    public static void saveFromInputStream(InputStream in, File outFile) throws IOException {
+        OutputStream out = Files.newOutputStream(outFile.toPath());
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        out.close();
+        in.close();
     }
 
     @Nullable
