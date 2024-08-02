@@ -25,6 +25,7 @@ import com.jodexindustries.donatecase.database.sql.MySQLDataBase;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
+import com.jodexindustries.donatecase.tools.support.OraxenSupport;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import com.jodexindustries.donatecase.tools.support.PacketEventsSupport;
 import net.luckperms.api.LuckPerms;
@@ -59,7 +60,8 @@ public class DonateCase extends JavaPlugin {
     public CaseManager api;
     public CaseLoader loader;
     public BukkitLibraryManager libraryManager;
-    public ItemsAdderSupport itemsAdderSupport;
+    public ItemsAdderSupport itemsAdderSupport = null;
+    public OraxenSupport oraxenSupport = null;
     public PacketEventsSupport packetEventsSupport;
 
     public Config config;
@@ -100,6 +102,7 @@ public class DonateCase extends JavaPlugin {
         loadPacketEventsAPI();
 
         loadItemsAdderAPI();
+        loadOraxenAPI();
 
         api.getAddonManager().loadAddons();
 
@@ -130,8 +133,10 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadPlaceholderAPI() {
-        papi = new PAPISupport();
-        papi.register();
+        if(getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            papi = new PAPISupport();
+            papi.register();
+        }
     }
 
     private void loadPacketEventsAPI() {
@@ -147,6 +152,10 @@ public class DonateCase extends JavaPlugin {
 
     private void loadItemsAdderAPI() {
         if (getServer().getPluginManager().isPluginEnabled("ItemsAdder")) itemsAdderSupport = new ItemsAdderSupport(this);
+    }
+
+    private void loadOraxenAPI() {
+        if(getServer().getPluginManager().isPluginEnabled("Oraxen")) oraxenSupport = new OraxenSupport(this);
     }
 
     private void loadUpdater() {
