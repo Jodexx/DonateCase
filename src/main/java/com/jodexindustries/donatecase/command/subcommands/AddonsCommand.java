@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.command.subcommands;
 
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -18,7 +18,7 @@ import java.util.List;
 public class AddonsCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
-        List<InternalJavaAddon> addons = new ArrayList<>(Case.getInstance().api.getAddonManager().getAddons());
+        List<InternalJavaAddon> addons = new ArrayList<>(AddonManager.getAddons());
         addons.sort(Comparator.comparing(InternalJavaAddon::getName));
         Tools.msgRaw(sender, "&7Currently loaded addons in DonateCase (&a" + addons.size() + "&7): " + compileAddons(addons));
     }
