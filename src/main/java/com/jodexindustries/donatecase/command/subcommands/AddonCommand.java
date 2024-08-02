@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.command.subcommands;
 
 import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -20,17 +21,19 @@ import java.util.stream.Collectors;
  */
 public class AddonCommand implements SubCommand {
     private final AddonManager manager = Case.getInstance().api.getAddonManager();
+
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(args.length >= 2) {
+        if (args.length >= 2) {
             String action = args[0];
             String addonName = args[1];
-            InternalJavaAddon addon = AddonManager.getAddon(addonName);
+
             switch (action) {
-                case "enable" : {
+                case "enable": {
+                    InternalJavaAddon addon = AddonManager.getAddon(addonName);
                     if (addon != null) {
                         if (!addon.isEnabled()) {
-                            if(manager.enableAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
+                            if (manager.enableAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
                                 Tools.msg(sender, "&aAddon &6" + addonName + " &aenabled successfully!");
                             } else {
                                 Tools.msg(sender, "&cThere was an error enabling the addon &6" + addonName + "&c. Check out the console.");
@@ -43,9 +46,10 @@ public class AddonCommand implements SubCommand {
                     }
                     break;
                 }
-                case "disable" : {
-                    if(addon != null) {
-                        if(addon.isEnabled()) {
+                case "disable": {
+                    InternalJavaAddon addon = AddonManager.getAddon(addonName);
+                    if (addon != null) {
+                        if (addon.isEnabled()) {
                             manager.disableAddon(addon, AddonManager.PowerReason.DONATE_CASE);
                             Tools.msg(sender, "&aAddon &6" + addonName + " &adisabled successfully!");
                         } else {
@@ -56,12 +60,12 @@ public class AddonCommand implements SubCommand {
                     }
                     break;
                 }
-                case "load" : {
-                    File addonsFolder = new File(Case.getInstance().getDataFolder(), "addons");
-                    File addonFile = new File(addonsFolder, addonName);
-                    if(addon == null) {
+                case "load": {
+                    File addonFile = new File(AddonManager.getAddonsFolder(), addonName);
+                    InternalAddonClassLoader loader = AddonManager.getAddonClassLoader(addonFile);
+                    if (loader == null) {
                         if (manager.loadAddon(addonFile)) {
-                            if(manager.enableAddon(addonName, AddonManager.PowerReason.DONATE_CASE)) {
+                            if (manager.enableAddon(addonName, AddonManager.PowerReason.DONATE_CASE)) {
                                 Tools.msg(sender, "&aAddon &6" + addonName + " &aloaded successfully!");
                             } else {
                                 Tools.msg(sender, "&cThere was an error enabling the addon &6" + addonName + "&c. Check out the console.");
@@ -74,9 +78,11 @@ public class AddonCommand implements SubCommand {
                     }
                     break;
                 }
-                case "unload" : {
-                    if(addon != null) {
-                        if(manager.unloadAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
+                case "unload": {
+                    File addonFile = new File(AddonManager.getAddonsFolder(), addonName);
+                    InternalAddonClassLoader loader = AddonManager.getAddonClassLoader(addonFile);
+                    if (loader != null) {
+                        if (manager.unloadAddon(loader.getAddon(), AddonManager.PowerReason.DONATE_CASE)) {
                             Tools.msg(sender, "&aAddon &6" + addonName + " &aunloaded successfully!");
                         } else {
                             Tools.msg(sender, "&cThere was an error unloading the addon &6" + addonName + "&c. Check out the console.");
