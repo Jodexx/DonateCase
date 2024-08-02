@@ -30,8 +30,11 @@ public class AddonCommand implements SubCommand {
                 case "enable" : {
                     if (addon != null) {
                         if (!addon.isEnabled()) {
-                            manager.enableAddon(addon, AddonManager.PowerReason.DONATE_CASE);
-                            Tools.msg(sender, "&aAddon &6" + addonName + " &aenabled successfully!");
+                            if(manager.enableAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
+                                Tools.msg(sender, "&aAddon &6" + addonName + " &aenabled successfully!");
+                            } else {
+                                Tools.msg(sender, "&cThere was an error enabling the addon &6" + addonName + "&c. Check out the console.");
+                            }
                         } else {
                             Tools.msg(sender, "&cAddon &6" + addonName + " &calready enabled!");
                         }
@@ -43,7 +46,7 @@ public class AddonCommand implements SubCommand {
                 case "disable" : {
                     if(addon != null) {
                         if(addon.isEnabled()) {
-                            manager.disableAddon(addon);
+                            manager.disableAddon(addon, AddonManager.PowerReason.DONATE_CASE);
                             Tools.msg(sender, "&aAddon &6" + addonName + " &adisabled successfully!");
                         } else {
                             Tools.msg(sender, "&cAddon &6" + addonName + "&calready disabled!");
@@ -57,9 +60,12 @@ public class AddonCommand implements SubCommand {
                     File addonsFolder = new File(Case.getInstance().getDataFolder(), "addons");
                     File addonFile = new File(addonsFolder, addonName);
                     if(addon == null) {
-                        if (manager.loadAddon(addonFile, AddonManager.PowerReason.DONATE_CASE)) {
-                            manager.enableAddon(addonName, AddonManager.PowerReason.DONATE_CASE);
-                            Tools.msg(sender, "&aAddon &6" + addonName + " &aloaded successfully!");
+                        if (manager.loadAddon(addonFile)) {
+                            if(manager.enableAddon(addonName, AddonManager.PowerReason.DONATE_CASE)) {
+                                Tools.msg(sender, "&aAddon &6" + addonName + " &aloaded successfully!");
+                            } else {
+                                Tools.msg(sender, "&cThere was an error enabling the addon &6" + addonName + "&c. Check out the console.");
+                            }
                         } else {
                             Tools.msg(sender, "&cThere was an error loading the addon &6" + addonName + "&c. Check out the console.");
                         }
@@ -70,7 +76,7 @@ public class AddonCommand implements SubCommand {
                 }
                 case "unload" : {
                     if(addon != null) {
-                        if(manager.unloadAddon(addon)) {
+                        if(manager.unloadAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
                             Tools.msg(sender, "&aAddon &6" + addonName + " &aunloaded successfully!");
                         } else {
                             Tools.msg(sender, "&cThere was an error unloading the addon &6" + addonName + "&c. Check out the console.");
