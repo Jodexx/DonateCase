@@ -62,27 +62,35 @@ public class AddonCommand implements SubCommand {
                 }
                 case "load": {
                     File addonFile = new File(AddonManager.getAddonsFolder(), addonName);
-                    InternalAddonClassLoader loader = AddonManager.getAddonClassLoader(addonFile);
-                    if (loader == null) {
-                        if (manager.loadAddon(addonFile)) {
-                            if (manager.enableAddon(addonName, AddonManager.PowerReason.DONATE_CASE)) {
-                                Tools.msg(sender, "&aAddon &6" + addonName + " &aloaded successfully!");
+                    if(addonFile.exists()) {
+                        InternalAddonClassLoader loader = AddonManager.getAddonClassLoader(addonFile);
+                        if (loader == null) {
+                            if (manager.loadAddon(addonFile)) {
+                                loader = AddonManager.getAddonClassLoader(addonFile);
+                                assert loader != null;
+
+                                InternalJavaAddon addon = loader.getAddon();
+
+                                if (manager.enableAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
+                                    Tools.msg(sender, "&aAddon &6" + addon.getName() + " &aloaded successfully!");
+                                } else {
+                                    Tools.msg(sender, "&cThere was an error enabling the addon &6" + addon.getName() + "&c. Check out the console.");
+                                }
                             } else {
-                                Tools.msg(sender, "&cThere was an error enabling the addon &6" + addonName + "&c. Check out the console.");
+                                Tools.msg(sender, "&cThere was an error loading the addon &6" + addonName + "&c. Check out the console.");
                             }
                         } else {
-                            Tools.msg(sender, "&cThere was an error loading the addon &6" + addonName + "&c. Check out the console.");
+                            Tools.msg(sender, "&cAddon &6" + addonName + " &calready loaded!");
                         }
                     } else {
-                        Tools.msg(sender, "&cAddon &6" + addonName + " &calready loaded!");
+                        Tools.msg(sender, "&cFile &6" + addonName + " &cnot found!");
                     }
                     break;
                 }
                 case "unload": {
-                    File addonFile = new File(AddonManager.getAddonsFolder(), addonName);
-                    InternalAddonClassLoader loader = AddonManager.getAddonClassLoader(addonFile);
-                    if (loader != null) {
-                        if (manager.unloadAddon(loader.getAddon(), AddonManager.PowerReason.DONATE_CASE)) {
+                    InternalJavaAddon addon = AddonManager.getAddon(addonName);
+                    if (addon != null) {
+                        if (manager.unloadAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
                             Tools.msg(sender, "&aAddon &6" + addonName + " &aunloaded successfully!");
                         } else {
                             Tools.msg(sender, "&cThere was an error unloading the addon &6" + addonName + "&c. Check out the console.");
