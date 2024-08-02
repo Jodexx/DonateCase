@@ -109,13 +109,6 @@ public class Config {
     }
 
     /**
-     * Reload all configurations
-     */
-    public void reload(){
-        Case.getInstance().loadConfig();
-    }
-
-    /**
      * Save Cases.yml configuration
      */
     public void saveCases() {
@@ -233,7 +226,7 @@ public class Config {
      */
     public YamlConfiguration getCases() {
         if(cases == null) {
-            reload();
+            Case.getInstance().loadConfig();
         }
         return cases;
     }
@@ -244,7 +237,7 @@ public class Config {
      */
     public YamlConfiguration getKeys() {
         if(keys == null) {
-            reload();
+            Case.getInstance().loadConfig();
         }
         return keys;
     }
@@ -255,7 +248,7 @@ public class Config {
      */
     public YamlConfiguration getConfig() {
         if(config == null) {
-            reload();
+            Case.getInstance().loadConfig();
         }
         return config;
     }
@@ -266,7 +259,7 @@ public class Config {
      */
     public YamlConfiguration getAnimations() {
         if(animations == null) {
-            reload();
+            Case.getInstance().loadConfig();
         }
         return animations;
     }
