@@ -25,7 +25,7 @@ import java.util.logging.Level;
 public class AddonManager {
 
     private static final Map<String, InternalJavaAddon> addons = new HashMap<>();
-    private static final  List<InternalAddonClassLoader> loaders = new CopyOnWriteArrayList<>();
+    private static final List<InternalAddonClassLoader> loaders = new CopyOnWriteArrayList<>();
     private final Addon addon;
 
     /**
@@ -40,22 +40,14 @@ public class AddonManager {
      * Load all addons from "addons" folder
      */
     public void loadAddons() {
-        loadAddons(PowerReason.DONATE_CASE);
-    }
-
-    /**
-     * Load all addons from "addons" folder with reason
-     * @param reason Reason of addon loading
-     */
-    public void loadAddons(PowerReason reason) {
         File addonsDir = new File(Case.getInstance().getDataFolder(), "addons");
         File[] files = addonsDir.listFiles();
-        if(!addonsDir.exists()) {
+        if (!addonsDir.exists()) {
             addonsDir.mkdir();
         }
-        if(files != null) {
+        if (files != null) {
             for (File file : files) {
-                loadAddon(file, reason);
+                loadAddon(file);
             }
         }
     }
@@ -66,16 +58,6 @@ public class AddonManager {
      * @return true, if successful
      */
     public boolean loadAddon(File file) {
-        return loadAddon(file, PowerReason.DONATE_CASE);
-    }
-
-    /**
-     * Load specific addon with reason
-     * @param file addon jar file
-     * @param reason Load reason
-     * @return true, if successful
-     */
-    public boolean loadAddon(File file, PowerReason reason) {
         if (file.isFile() && file.getName().endsWith(".jar")) {
             InternalAddonDescription description;
             try {
@@ -98,14 +80,16 @@ public class AddonManager {
             InternalAddonClassLoader loader;
             try {
                 loader = new InternalAddonClassLoader(Case.getInstance().getClass().getClassLoader(), description, file, this);
-            } catch (IOException | InvalidAddonException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
+            } catch (Throwable t) {
+                Case.getInstance().getLogger().log(Level.SEVERE,
+                        "Error occurred while loading addon " + description.getName() + " v" + description.getVersion(), t);
+                return false;
             }
             try {
                 InternalJavaAddon addon = loader.getAddon();
                 addons.put(description.getName(), addon);
                 loaders.add(loader);
-                enableAddon(addon, reason);
+                addon.onLoad();
                 return true;
             } catch (Throwable e) {
                 addons.remove(description.getName());
@@ -130,14 +114,20 @@ public class AddonManager {
         return false;
     }
 
+    /**
+     * Enable all loaded addons
+     */
+    public void enableAddons() {
+        addons.values().forEach(addon -> enableAddon(addon, PowerReason.DONATE_CASE));
+    }
 
     /**
      * Enable addon by name
      * @param addon addon name
      */
-    public void enableAddon(@NotNull String addon) {
-        InternalJavaAddon javaInternalAddon = addons.get(addon);
-        enableAddon(javaInternalAddon, PowerReason.DONATE_CASE);
+    @Deprecated
+    public boolean enableAddon(@NotNull String addon) {
+        return enableAddon(addon, PowerReason.DONATE_CASE);
     }
 
     /**
@@ -145,13 +135,19 @@ public class AddonManager {
      * @param addon addon name
      * @param reason Enable reason
      */
-    public void enableAddon(@NotNull String addon, PowerReason reason) {
+    public boolean enableAddon(@NotNull String addon, PowerReason reason) {
         InternalJavaAddon javaInternalAddon = addons.get(addon);
-        enableAddon(javaInternalAddon, reason);
+        if(javaInternalAddon == null) return false;
+        return enableAddon(javaInternalAddon, reason);
     }
 
-    public void enableAddon(@NotNull InternalJavaAddon addon) {
-        enableAddon(addon, PowerReason.DONATE_CASE);
+    /**
+     * Enable addon by instance
+     * @param addon addon name
+     */
+    @Deprecated
+    public boolean enableAddon(@NotNull InternalJavaAddon addon) {
+        return enableAddon(addon, PowerReason.DONATE_CASE);
     }
 
     /**
@@ -159,25 +155,30 @@ public class AddonManager {
      * @param addon addon instance
      * @param reason Enable reason
      */
-    public void enableAddon(@NotNull InternalJavaAddon addon, PowerReason reason) {
-        if(!addon.isEnabled()) {
-            Case.getInstance().getLogger().info("Enabling " + addon.getName() + " addon v" + addon.getVersion());
-            addon.setEnabled(true);
+    public boolean enableAddon(@NotNull InternalJavaAddon addon, PowerReason reason) {
+        try {
+            if (!addon.isEnabled()) {
+                Case.getInstance().getLogger().info("Enabling " + addon.getName() + " addon v" + addon.getVersion());
+                addon.setEnabled(true);
 
-            AddonEnableEvent addonEnableEvent = new AddonEnableEvent(addon, this.addon, reason);
-            Bukkit.getPluginManager().callEvent(addonEnableEvent);
-        } else {
-            Case.getInstance().getLogger().warning("Addon with name " + addon.getName() + " already enabled!");
+                AddonEnableEvent addonEnableEvent = new AddonEnableEvent(addon, this.addon, reason);
+                Bukkit.getPluginManager().callEvent(addonEnableEvent);
+                return true;
+            }
+        } catch (Throwable t) {
+            Case.getInstance().getLogger().log(Level.SEVERE,
+                    "Error occurred while enabling addon " + addon.getName() + " v" + addon.getVersion(), t);
         }
+        return false;
     }
 
     /**
      * Disable addon by name
      * @param addon addon name
      */
-    public void disableAddon(@NotNull String addon) {
-        InternalJavaAddon javaInternalAddon = addons.get(addon);
-        disableAddon(javaInternalAddon);
+    @Deprecated
+    public boolean disableAddon(@NotNull String addon) {
+        return disableAddon(addon, PowerReason.ADDON);
     }
 
     /**
@@ -185,17 +186,19 @@ public class AddonManager {
      * @param addon addon name
      * @param reason Disable reason
      */
-    public void disableAddon(@NotNull String addon, PowerReason reason) {
+    public boolean disableAddon(@NotNull String addon, PowerReason reason) {
         InternalJavaAddon javaInternalAddon = addons.get(addon);
-        disableAddon(javaInternalAddon, reason);
+        if (javaInternalAddon == null) return false;
+        return disableAddon(javaInternalAddon, reason);
     }
 
     /**
      * Disable addon by instance
      * @param addon addon instance
      */
-    public void disableAddon(@NotNull InternalJavaAddon addon) {
-        disableAddon(addon, PowerReason.DONATE_CASE);
+    @Deprecated
+    public boolean disableAddon(@NotNull InternalJavaAddon addon) {
+        return disableAddon(addon, PowerReason.DONATE_CASE);
     }
 
     /**
@@ -203,26 +206,38 @@ public class AddonManager {
      * @param addon addon instance
      * @param reason Disable reason
      */
-    public void disableAddon(@NotNull InternalJavaAddon addon, PowerReason reason) {
-        if(addon.isEnabled()) {
-            Case.getInstance().getLogger().info("Disabling " + addon.getName() + " addon v" + addon.getVersion());
-            addon.setEnabled(false);
-            AddonDisableEvent addonDisableEvent = new AddonDisableEvent(addon, this.addon, reason);
-            Bukkit.getPluginManager().callEvent(addonDisableEvent);
-        } else {
-            Case.getInstance().getLogger().warning("Addon with name " + addon.getName() + " already disabled!");
+    public boolean disableAddon(@NotNull InternalJavaAddon addon, PowerReason reason) {
+        try {
+            if (addon.isEnabled()) {
+                Case.getInstance().getLogger().info("Disabling " + addon.getName() + " addon v" + addon.getVersion());
+                addon.setEnabled(false);
+                AddonDisableEvent addonDisableEvent = new AddonDisableEvent(addon, this.addon, reason);
+                Bukkit.getPluginManager().callEvent(addonDisableEvent);
+                return true;
+            }
+        } catch (Throwable t) {
+            Case.getInstance().getLogger().log(Level.SEVERE,
+                    "Error occurred while disabling addon " + addon.getName() + " v" + addon.getVersion(), t);
         }
+        return false;
     }
 
     /**
-     * Disable all loaded addons
+     * Unload all loaded addons with reason
+     * @param reason Unload reason
      */
-    public void unloadAddons() {
-        List<String> list = new ArrayList<>(addons.keySet());
-        for (String addon : list) {
-            unloadAddon(addon);
-        }
+    public void unloadAddons(PowerReason reason) {
+        List<InternalJavaAddon> list = new ArrayList<>(addons.values());
+        list.forEach(addon -> unloadAddon(addon, reason));
         addons.clear();
+    }
+
+    /**
+     * Unload all loaded addons
+     */
+    @Deprecated
+    public void unloadAddons() {
+        unloadAddons(PowerReason.ADDON);
     }
 
     /**
@@ -230,14 +245,21 @@ public class AddonManager {
      * @param addon addon name
      * @return true, if successful
      */
+    @Deprecated
     public boolean unloadAddon(@NotNull String addon) {
+        return unloadAddon(addon, PowerReason.ADDON);
+    }
+
+    /**
+     * Unload addon by name with reason
+     * @param addon addon name
+     * @param reason Unload reason
+     * @return true, if successful
+     */
+    public boolean unloadAddon(@NotNull String addon, PowerReason reason) {
         InternalJavaAddon javaInternalAddon = addons.get(addon);
-        if(javaInternalAddon == null) {
-            Case.getInstance().getLogger().warning("Addon " + addon + " already unloaded!");
-            return false;
-        } else {
-            return unloadAddon(javaInternalAddon);
-        }
+        if(javaInternalAddon == null) return false;
+        return unloadAddon(javaInternalAddon, reason);
     }
 
     /**
@@ -245,9 +267,19 @@ public class AddonManager {
      * @param addon addon instance
      * @return true, if successful
      */
+    @Deprecated
     public boolean unloadAddon(@NotNull InternalJavaAddon addon) {
+        return unloadAddon(addon, PowerReason.ADDON);
+    }
+
+    /**
+     * Unload addon by instance
+     * @param addon addon instance
+     * @return true, if successful
+     */
+    public boolean unloadAddon(@NotNull InternalJavaAddon addon, PowerReason reason) {
         try {
-            disableAddon(addon);
+            disableAddon(addon, reason);
             addons.remove(addon.getName());
             loaders.remove(addon.getUrlClassLoader());
             addon.getUrlClassLoader().close();
@@ -264,11 +296,11 @@ public class AddonManager {
      * @return addon
      */
     @Nullable
-    public InternalJavaAddon getAddon(String addon) {
+    public static InternalJavaAddon getAddon(String addon) {
         return addons.get(addon);
     }
 
-    public Collection<InternalJavaAddon> getAddons() {
+    public static Collection<InternalJavaAddon> getAddons() {
         return addons.values();
     }
 
@@ -296,11 +328,10 @@ public class AddonManager {
 
     @Nullable
     public Class<?> getClassByName(String name, boolean resolve) {
-        for (InternalAddonClassLoader loader : loaders){
+        for (InternalAddonClassLoader loader : loaders) {
             try {
                 return loader.loadClass0(name, resolve, false);
-            }catch (ClassNotFoundException ignore){
-            }
+            } catch (ClassNotFoundException ignore) {}
         }
         return null;
     }
