@@ -237,12 +237,31 @@ public class Tools {
     }
 
     public static ItemStack getItemsAdderItem(@NotNull String namespace, String displayName, List<String> lore) {
-        if (Case.getInstance().getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
-            return DonateCase.instance.itemsAdderSupport.getItem(namespace, displayName, lore);
+        ItemStack item = new ItemStack(Material.STONE);
+
+        if (DonateCase.instance.itemsAdderSupport != null) {
+            item = DonateCase.instance.itemsAdderSupport.getItem(namespace);
         } else {
             Logger.log("&eYou're using an item from ItemsAdder, but it's not loaded on the server!");
         }
-        return new ItemStack(Material.AIR);
+
+        setMeta(item, displayName, lore);
+
+        return item;
+    }
+
+    public static ItemStack getOraxenItem(@NotNull String id, String displayname, List<String> lore) {
+        ItemStack item = new ItemStack(Material.STONE);
+
+        if(DonateCase.instance.oraxenSupport != null) {
+            item = DonateCase.instance.oraxenSupport.getItem(id);
+        } else {
+            Logger.log("&eYou're using an item from Oraxen, but it's not loaded on the server!");
+        }
+
+        setMeta(item, displayname, lore);
+
+        return item;
     }
 
     @NotNull
@@ -269,6 +288,9 @@ public class Tools {
                 break;
             case MCURL:
                 winItem = getMCURLSkull(materialParts[1], displayName);
+                break;
+            case ORAXEN:
+                winItem = getOraxenItem(materialParts[1], displayName, null);
                 break;
             default:
                 byte data = (materialParts.length > 1) ? Byte.parseByte(materialParts[1]) : -1;
