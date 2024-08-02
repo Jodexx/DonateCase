@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.addon.internal;
 
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
 import org.bukkit.plugin.Plugin;
@@ -9,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
 import java.util.logging.Level;
 
 /**
@@ -60,6 +60,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
             }
         }
     }
+
     @Override
     public boolean isEnabled() {
         return isEnabled;
@@ -80,6 +81,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
     public Plugin getDonateCase() {
         return Case.getInstance();
     }
+
     @Override
     public @NotNull File getDataFolder() {
         File data = new File(getDonateCase().getDataFolder(), "addons/" + getDescription().getName());
@@ -88,14 +90,17 @@ public abstract class InternalJavaAddon implements InternalAddon {
         }
         return data;
     }
+
     @Override
     public String getVersion() {
         return getDescription().getVersion();
     }
+
     @Override
     public @NotNull String getName() {
         return getDescription().getName();
     }
+
     @Override
     public void saveResource(@NotNull String resourcePath, boolean replace) {
         if (resourcePath.isEmpty()) {
@@ -118,14 +123,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
 
         try {
             if (!outFile.exists() || replace) {
-                OutputStream out = Files.newOutputStream(outFile.toPath());
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                out.close();
-                in.close();
+                DonateCase.saveFromInputStream(in, outFile);
             } else {
                 getLogger().log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }
