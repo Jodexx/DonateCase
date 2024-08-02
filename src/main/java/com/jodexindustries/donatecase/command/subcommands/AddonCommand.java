@@ -56,7 +56,8 @@ public class AddonCommand implements SubCommand {
                 case "load" : {
                     File addonsFolder = new File(Case.getInstance().getDataFolder(), "addons");
                     File addonFile = new File(addonsFolder, addonName);
-                    if (manager.loadAddon(addonFile)) {
+                    if (manager.loadAddon(addonFile, AddonManager.PowerReason.DONATE_CASE)) {
+                        manager.enableAddon(addonName, AddonManager.PowerReason.DONATE_CASE);
                         Tools.msg(sender, "&aAddon &6" + addonName + " &aloaded successfully!");
                     } else {
                         Tools.msg(sender, "&cThere was an error loading the addon &6" + addonName + "&c. Check out the console.");
