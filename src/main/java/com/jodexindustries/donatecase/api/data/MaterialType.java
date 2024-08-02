@@ -5,14 +5,17 @@ public enum MaterialType {
      * HeadDataBase
      */
     HDB,
+
     /**
      * CustomHeads
      */
     CH,
+
     /**
      * Minecraft head (by nick)
      */
     HEAD,
+
     /**
      * Minecraft BASE64 head
      */
@@ -22,10 +25,17 @@ public enum MaterialType {
      * Minecraft url head
      */
     MCURL,
+
     /**
      * ItemsAdder
      */
     IA,
+
+    /**
+     * Oraxen
+     */
+    ORAXEN,
+
     /**
      * Default Bukkit material
      */
