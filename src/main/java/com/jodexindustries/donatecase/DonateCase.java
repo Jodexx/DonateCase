@@ -96,8 +96,6 @@ public class DonateCase extends JavaPlugin {
         loadPermissionDriver();
         loadHologramManager();
 
-        loadHolograms();
-
         loadPlaceholderAPI();
 
         loadPacketEventsAPI();
@@ -105,7 +103,8 @@ public class DonateCase extends JavaPlugin {
         loadItemsAdderAPI();
         loadOraxenAPI();
 
-        loader.load();
+        loadCases();
+        loadHolograms();
 
         loadUpdater();
         loadMetrics();
@@ -183,6 +182,10 @@ public class DonateCase extends JavaPlugin {
 
         DonateCaseReloadEvent reloadEvent = new DonateCaseReloadEvent(this);
         Bukkit.getPluginManager().callEvent(reloadEvent);
+    }
+
+    public void loadCases() {
+        loader.load();
     }
 
     private void registerDefaultCommand() {
@@ -263,34 +266,35 @@ public class DonateCase extends JavaPlugin {
         String driverName = config.getConfig().getString("DonatCase.HologramDriver", "decentholograms");
         hologramDriver = HologramDriver.getDriver(driverName);
 
-        if (tryInitializeHologramManager(hologramDriver)) {
-            return;
-        }
+        tryInitializeHologramManager(hologramDriver);
 
-        for (HologramDriver fallbackDriver : HologramDriver.values()) {
-            if (tryInitializeHologramManager(fallbackDriver)) {
-                return;
+        if(hologramManager == null) {
+            for (HologramDriver fallbackDriver : HologramDriver.values()) {
+                if (tryInitializeHologramManager(fallbackDriver)) {
+                    break;
+                }
             }
         }
+
         if(hologramManager != null) Logger.log("&aUsing &b" + hologramDriver + " &aas hologram driver");
     }
 
     private boolean tryInitializeHologramManager(HologramDriver driver) {
         switch (driver) {
             case cmi:
-                if (Bukkit.getPluginManager().isPluginEnabled("CMI") && CMIModule.holograms.isEnabled()) {
+                if (getServer().getPluginManager().isPluginEnabled("CMI") && CMIModule.holograms.isEnabled()) {
                     hologramManager = new CMIHologramsSupport();
                     return true;
                 }
                 break;
             case decentholograms:
-                if (Bukkit.getPluginManager().isPluginEnabled("DecentHolograms")) {
+                if (getServer().getPluginManager().isPluginEnabled("DecentHolograms")) {
                     hologramManager = new DecentHologramsSupport();
                     return true;
                 }
                 break;
             case holographicdisplays:
-                if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+                if (getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
                     hologramManager = new HolographicDisplaysSupport();
                     return true;
                 }
