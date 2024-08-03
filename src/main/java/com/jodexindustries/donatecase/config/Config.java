@@ -101,6 +101,9 @@ public class Config {
         this.lang = YamlConfiguration.loadConfiguration(fileLang);
         checkLanguageVersion();
 
+        // Convert after language file loaded
+        converter.convertNoKeyActions();
+
         long caching = getConfig().getLong("DonatCase.Caching");
         if(caching > 0) {
             Case.keysCache.setMaxAge(caching);
