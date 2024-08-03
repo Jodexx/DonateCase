@@ -8,7 +8,6 @@ import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -79,14 +78,9 @@ public class EventsListener implements Listener {
                             Case.getInstance().api.getAnimationManager().startAnimation(p, location, caseType);
                         } else {
                             p.closeInventory();
-                            Sound sound = Sound.ENTITY_ENDERMAN_TELEPORT;
-                            try {
-                                sound = Sound.valueOf(Case.getConfig().getConfig().getString("DonatCase.NoKeyWarningSound"));
-                            } catch (IllegalArgumentException ignore) {}
-                            p.playSound(p.getLocation(), sound, 1.0F, 0.4F);
-                            String noKey = Case.getConfig().getCasesConfig().getCase(caseType).getSecond().getString("Messages.NoKey");
-                            if (noKey == null) noKey = Case.getConfig().getLang().getString("no-keys");
-                            Tools.msg(p, noKey);
+                            CaseData caseData = Case.getCase(caseType);
+                            if(caseData == null) return;
+                            Case.executeActions(p, caseData.getNoKeyActions());
                         }
                     }
                 } else {
