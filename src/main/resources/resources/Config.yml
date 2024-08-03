@@ -22,7 +22,6 @@ DonatCase:
     vipplus: 2
     vip: 1
     default: 0
-  NoKeyWarningSound: ENTITY_ENDERMAN_TELEPORT
   DateFormat: "dd.MM HH:mm:ss"
   AddonsHelp: true # Show help list for addons commands?
   UsePackets: false # 1.18+ for using packets, you need to install packetevents plugin
