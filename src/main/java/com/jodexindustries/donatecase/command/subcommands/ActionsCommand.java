@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.command.subcommands;
 
 import com.jodexindustries.donatecase.api.ActionManager;
-import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
