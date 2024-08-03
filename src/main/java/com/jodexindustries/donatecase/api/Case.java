@@ -565,14 +565,7 @@ public class Case {
 
        List<String> actions = getActionsBasedOnChoice(item, choice, alternative);
 
-       for (String action : actions) {
-
-           action = Tools.rc(Tools.rt(PAPISupport.setPlaceholders(player, action), replacementRegex));
-           int cooldown = extractCooldown(action);
-           action = action.replaceFirst("\\[cooldown:(.*?)]", "");
-
-           executeAction(player, action, cooldown);
-       }
+       executeActions(player, actions);
    }
 
     /**
@@ -604,6 +597,22 @@ public class Case {
             return Integer.parseInt(matcher.group(1));
         }
         return 0;
+    }
+
+    /**
+     * Execute actions
+     * @param player Player, who opened case (maybe another reason)
+     * @param actions List of actions
+     */
+    public static void executeActions(OfflinePlayer player, List<String> actions) {
+        for (String action : actions) {
+
+            action = Tools.rc(PAPISupport.setPlaceholders(player, action));
+            int cooldown = extractCooldown(action);
+            action = action.replaceFirst("\\[cooldown:(.*?)]", "");
+
+            executeAction(player, action, cooldown);
+        }
     }
 
     /**
