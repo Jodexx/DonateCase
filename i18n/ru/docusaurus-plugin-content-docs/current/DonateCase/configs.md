@@ -51,7 +51,6 @@ DonatCase:
     vipplus: 2
     vip: 1
     default: 0
-  NoKeyWarningSound: ENTITY_ENDERMAN_TELEPORT
   DateFormat: "dd.MM HH:mm:ss"
   AddonsHelp: true # Show help list for addons commands?
   UsePackets: false # 1.18+ for using packets, you need to install packetevents plugin
@@ -66,7 +65,7 @@ DonatCase:
 <summary>case.yml</summary>
 
 ```yml
-config: 1.0
+config: 1.1
 case:
   Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL, FULLWHEEL see: https://wiki.jodexindustries.xyz/docs/DonateCase/animations
   AnimationSound: ENTITY_EXPERIENCE_ORB_PICKUP # remove this line if you don't want to play sound
@@ -83,6 +82,10 @@ case:
     # The message that will be displayed.
     Message:
       - '&6DonateCase'
+
+  NoKeyActions:
+    - "[message] &cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.com"
+    - "[sound] ENTITY_ENDERMAN_TELEPORT"
 
   LevelGroups: # delete all of this section, if you want to use default LevelGroups from Config.yml
     legend: 4
@@ -225,6 +228,7 @@ case:
           Actions:
             - '[command] say something'
             - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+
 ```
 </details>
 
