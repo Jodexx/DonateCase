@@ -17,6 +17,7 @@ public class ReloadCommand implements SubCommand {
     public void execute(CommandSender sender, String[] args) {
         if(args.length == 0) {
             Case.getInstance().loadConfig();
+            Case.getInstance().loadCases();
             if(Case.getInstance().hologramManager != null) Case.getInstance().hologramManager.removeAllHolograms();
             Case.getInstance().loadHolograms();
             Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("config-reloaded")));
@@ -24,6 +25,7 @@ public class ReloadCommand implements SubCommand {
             if(args[0].equalsIgnoreCase("cache")) {
                 Case.cleanCache();
                 Case.getInstance().loadConfig();
+                Case.getInstance().loadCases();
                 Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("config-cache-reloaded", "&aReloaded all DonateCase Cache")));
             }
         }
