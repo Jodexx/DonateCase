@@ -107,7 +107,9 @@ public class Case {
      * Set null case keys to a specific player
      * @param caseType Case type
      * @param player Player name
+     * @deprecated Use {@link #setKeys(String, String, int)} instead
      */
+    @Deprecated
     public static void setNullKeys(String caseType, String player) {
         if (!instance.sql) {
             getConfig().getKeys().set("DonatCase.Cases." + caseType + "." + player, 0);
