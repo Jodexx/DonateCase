@@ -51,6 +51,8 @@ help:
   - '&9/%cmd reload &3- &2Reload config'
   - '&9/%cmd addons &3- &2Show loaded addons'
   - '&9/%cmd addon &7(&aenable&7/&cdisable&7 | &aload&7/&cunload&7) (&aAddon&7) &3- &2Manage addons'
+  - '&9/%cmd animations &3- &2Show list of registered animations'
+  - '&9/%cmd actions &3- &2Show list of registered actions'
 
 help-addons:
   format:
