@@ -603,6 +603,7 @@ public class Case {
      * Execute actions
      * @param player Player, who opened case (maybe another reason)
      * @param actions List of actions
+     * @since 2.2.4.3
      */
     public static void executeActions(OfflinePlayer player, List<String> actions) {
         for (String action : actions) {
