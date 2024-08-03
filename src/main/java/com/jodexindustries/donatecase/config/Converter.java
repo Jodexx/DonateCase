@@ -23,6 +23,38 @@ public class Converter {
         this.config = config;
     }
 
+    public void convertNoKeyActions() {
+        for (String caseType : config.getCasesConfig().getCases().keySet()) {
+            Pair<File, YamlConfiguration> pair = config.getCasesConfig().getCases().get(caseType);
+            YamlConfiguration caseConfig = pair.getSecond();
+            String version = caseConfig.getString("config");
+
+            if (version != null && version.equalsIgnoreCase("1.1")) continue;
+
+            ConfigurationSection caseSection = caseConfig.getConfigurationSection("case");
+            if (caseSection == null) {
+                continue;
+            }
+
+            List<String> noKeyActions = caseSection.getStringList("NoKeyActions");
+            noKeyActions.add("[sound] " + config.getConfig().getString("DonatCase.NoKeyWarningSound"));
+            noKeyActions.add("[message] " + config.getLang().getString("no-keys"));
+
+            config.getConfig().set("DonatCase.NoKeyWarningSound", null);
+
+            caseSection.set("NoKeyActions", noKeyActions);
+
+            caseConfig.set("config", "1.1");
+
+            try {
+                caseConfig.save(pair.getFirst());
+                config.getPlugin().getLogger().info("NoKeyActions converted successfully for case type: " + caseType);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to save config for case type: " + caseType, e);
+            }
+        }
+    }
+
     public void convertBASE64() {
         for (String caseType : config.getCasesConfig().getCases().keySet()) {
             Pair<File, YamlConfiguration> pair = config.getCasesConfig().getCases().get(caseType);
