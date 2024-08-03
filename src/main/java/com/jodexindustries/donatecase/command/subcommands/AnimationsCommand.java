@@ -15,9 +15,10 @@ import java.util.*;
 public class AnimationsCommand implements SubCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
-        for (String addon : buildAnimationsMap().keySet()) {
-            Tools.msgRaw(sender, "&6" + addon);
-            for (String animation : buildAnimationsMap().get(addon)) {
+        Map<String, List<String>> animationsMap = buildAnimationsMap();
+        for (Map.Entry<String, List<String>> entry : animationsMap.entrySet()) {
+            Tools.msgRaw(sender, "&6" + entry.getKey());
+            for (String animation : entry.getValue()) {
                 Tools.msgRaw(sender, "&9- &a" + animation);
             }
         }
@@ -37,6 +38,14 @@ public class AnimationsCommand implements SubCommand {
         Map<String, List<String>> animationsMap = new HashMap<>();
         AnimationManager.getRegisteredAnimations().forEach((animationName, pair) -> {
             Addon addon = pair.getSecond();
+            List<String> animations = animationsMap.getOrDefault(addon.getName(), new ArrayList<>());
+            animations.add(animationName);
+
+            animationsMap.put(addon.getName(), animations);
+        });
+
+        AnimationManager.getOldAnimations().forEach((animationName, oldPair) -> {
+            Addon addon = oldPair.getSecond();
             List<String> animations = animationsMap.getOrDefault(addon.getName(), new ArrayList<>());
             animations.add(animationName);
 
