@@ -38,9 +38,7 @@ public class SetKeyCommand implements SubCommand {
                 String caseDisplayName = data.getCaseDisplayName();
                 Case.setKeys(caseName, player, keys);
                 Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-sets"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
-                if (Case.getConfig().getConfig().getBoolean("DonatCase.SetKeysTargetMessage")) {
-                    Tools.msg(target, Tools.rt(Case.getConfig().getLang().getString("keys-sets-target"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
-                }
+                Tools.msg(target, Tools.rt(Case.getConfig().getLang().getString("keys-sets-target"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
             } else {
                 Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
             }

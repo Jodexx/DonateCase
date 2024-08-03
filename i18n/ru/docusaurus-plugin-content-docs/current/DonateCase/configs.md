@@ -41,8 +41,6 @@ DonatCase:
     User: 'root'
     Password: 'password'
   Languages: en #ru/en/ua
-  #Are messages to the player about adding keys included?
-  SetKeysTargetMessage: true
   HologramDriver: DecentHolograms # CMI, DecentHolograms or HolographicDisplays
   PermissionDriver: luckperms # luckperms or vault
   # Only if Vault enabled
