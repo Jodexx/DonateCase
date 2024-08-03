@@ -204,6 +204,15 @@ public class AnimationManager {
     }
 
     /**
+     * Get all old registered animations
+     * @return map with old animations
+     */
+    @Deprecated
+    public static Map<String, Pair<Animation, Addon>> getOldAnimations() {
+        return oldAnimations;
+    }
+
+    /**
      * Get registered animation
      *
      * @param animation Animation name
