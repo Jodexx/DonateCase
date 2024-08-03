@@ -116,9 +116,20 @@ public class AddonManager {
 
     /**
      * Enable all loaded addons
+     * @since 2.2.4.3
      */
+    @Deprecated
     public void enableAddons() {
-        addons.values().forEach(addon -> enableAddon(addon, PowerReason.DONATE_CASE));
+        enableAddons(PowerReason.ADDON);
+    }
+
+    /**
+     * Enable all loaded addons with reason
+     * @param reason Loading reason
+     * @since 2.2.4.3
+     */
+    public void enableAddons(PowerReason reason) {
+        addons.values().forEach(addon -> enableAddon(addon, reason));
     }
 
     /**
@@ -127,7 +138,7 @@ public class AddonManager {
      */
     @Deprecated
     public boolean enableAddon(@NotNull String addon) {
-        return enableAddon(addon, PowerReason.DONATE_CASE);
+        return enableAddon(addon, PowerReason.ADDON);
     }
 
     /**
@@ -147,7 +158,7 @@ public class AddonManager {
      */
     @Deprecated
     public boolean enableAddon(@NotNull InternalJavaAddon addon) {
-        return enableAddon(addon, PowerReason.DONATE_CASE);
+        return enableAddon(addon, PowerReason.ADDON);
     }
 
     /**
@@ -198,7 +209,7 @@ public class AddonManager {
      */
     @Deprecated
     public boolean disableAddon(@NotNull InternalJavaAddon addon) {
-        return disableAddon(addon, PowerReason.DONATE_CASE);
+        return disableAddon(addon, PowerReason.ADDON);
     }
 
     /**
@@ -225,6 +236,7 @@ public class AddonManager {
     /**
      * Unload all loaded addons with reason
      * @param reason Unload reason
+     * @since 2.2.4.3
      */
     public void unloadAddons(PowerReason reason) {
         List<InternalJavaAddon> list = new ArrayList<>(addons.values());
@@ -300,10 +312,21 @@ public class AddonManager {
         return addons.get(addon);
     }
 
+    /**
+     * Gets "addons" folder
+     * @return The folder
+     * @since 2.2.4.3
+     */
     public static File getAddonsFolder() {
         return new File(Case.getInstance().getDataFolder(), "addons");
     }
 
+    /**
+     * Gets InternalAddonClassLoader
+     * @param file Addon jar file
+     * @return InternalAddon ClassLoader
+     * @since 2.2.4.3
+     */
     @Nullable
     public static InternalAddonClassLoader getAddonClassLoader(File file) {
         return loaders.stream().filter(loader -> loader.getFile().equals(file)).findFirst().orElse(null);

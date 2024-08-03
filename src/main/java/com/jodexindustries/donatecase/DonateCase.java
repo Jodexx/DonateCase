@@ -109,7 +109,7 @@ public class DonateCase extends JavaPlugin {
         loadUpdater();
         loadMetrics();
 
-        api.getAddonManager().enableAddons();
+        api.getAddonManager().enableAddons(AddonManager.PowerReason.DONATE_CASE);
 
         DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
         getServer().getPluginManager().callEvent(donateCaseEnableEvent);
