@@ -112,8 +112,8 @@ public class DonateCase extends JavaPlugin {
         api.getAddonManager().enableAddons();
 
         DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
-        Bukkit.getServer().getPluginManager().callEvent(donateCaseEnableEvent);
-        Bukkit.getPluginManager().registerEvents(new EventsListener(), this);
+        getServer().getPluginManager().callEvent(donateCaseEnableEvent);
+        getServer().getPluginManager().registerEvents(new EventsListener(), this);
 
         Logger.log(ChatColor.GREEN + "Enabled in " + (System.currentTimeMillis() - time) + "ms");
     }
@@ -122,7 +122,7 @@ public class DonateCase extends JavaPlugin {
     @Override
     public void onDisable() {
         DonateCaseDisableEvent donateCaseDisableEvent = new DonateCaseDisableEvent(this);
-        Bukkit.getServer().getPluginManager().callEvent(donateCaseDisableEvent);
+        getServer().getPluginManager().callEvent(donateCaseDisableEvent);
 
         api.getAddonManager().unloadAddons(AddonManager.PowerReason.DONATE_CASE);
         api.getAnimationManager().unregisterAnimations();
@@ -181,7 +181,7 @@ public class DonateCase extends JavaPlugin {
         mysql.connect();
 
         DonateCaseReloadEvent reloadEvent = new DonateCaseReloadEvent(this);
-        Bukkit.getPluginManager().callEvent(reloadEvent);
+        getServer().getPluginManager().callEvent(reloadEvent);
     }
 
     public void loadCases() {
@@ -245,8 +245,8 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadVault() {
-        if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
-            RegisteredServiceProvider<Permission> permissionProvider = this.getServer().getServicesManager().getRegistration(Permission.class);
+        if(getServer().getPluginManager().isPluginEnabled("Vault")) {
+            RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
             if (permissionProvider != null) {
                 permission = permissionProvider.getProvider();
             }
@@ -254,8 +254,8 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadLuckPerms() {
-        if(Bukkit.getPluginManager().isPluginEnabled("LuckPerms")) {
-            RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        if(getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
+            RegisteredServiceProvider<LuckPerms> provider = getServer().getServicesManager().getRegistration(LuckPerms.class);
             if (provider != null) {
                 luckPerms = provider.getProvider();
             }
