@@ -25,6 +25,7 @@ public class CaseData implements Cloneable {
     private Hologram hologram;
     private Map<String, Integer> levelGroups;
     private GUI gui;
+    private List<String> noKeyActions;
 
     /**
      * Default constructor
@@ -38,10 +39,11 @@ public class CaseData implements Cloneable {
      * @param hologram Hologram object
      * @param levelGroups Map with level groups
      * @param gui GUI object
+     * @param noKeyActions NoKeyActions
      */
     public CaseData(String caseType, String caseDisplayName, String caseTitle,
                     String animation, AnimationSound animationSound, Map<String,
-            Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups, GUI gui) {
+            Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups, GUI gui, List<String> noKeyActions) {
         this.caseType = caseType;
         this.caseDisplayName = caseDisplayName;
         this.caseTitle = caseTitle;
@@ -52,6 +54,7 @@ public class CaseData implements Cloneable {
         this.hologram = hologram;
         this.levelGroups = levelGroups;
         this.gui = gui;
+        this.noKeyActions = noKeyActions;
     }
 
     @Override
@@ -296,6 +299,22 @@ public class CaseData implements Cloneable {
 
     public void setGui(GUI gui) {
         this.gui = gui;
+    }
+
+    /**
+     * Gets actions to be performed if a player tries to open a case without keys
+     * @return List of actions
+     */
+    public List<String> getNoKeyActions() {
+        return noKeyActions;
+    }
+
+    /**
+     * Set actions to be performed if a player tries to open a case without keys
+     * @param noKeyActions List of actions
+     */
+    public void setNoKeyActions(List<String> noKeyActions) {
+        this.noKeyActions = noKeyActions;
     }
 
     /**

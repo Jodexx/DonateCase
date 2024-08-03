@@ -71,7 +71,10 @@ public class CaseLoader {
 
         GUI gui = loadGUI(caseSection);
 
-        return new CaseData(caseType, caseDisplayName, caseTitle, animationName, sound, items, historyData, hologram, levelGroups, gui);
+        List<String> noKeyActions = caseSection.getStringList("NoKeyActions");
+
+        return new CaseData(caseType, caseDisplayName, caseTitle, animationName, sound, items, historyData,
+                hologram, levelGroups, gui, noKeyActions);
     }
 
     private String getStringOrDefault(ConfigurationSection section, String path) {
