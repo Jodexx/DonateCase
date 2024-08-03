@@ -563,7 +563,7 @@ public class Case {
                "%groupdisplayname%:" + item.getMaterial().getDisplayName()
        };
 
-       List<String> actions = getActionsBasedOnChoice(item, choice, alternative);
+       List<String> actions = Tools.rt(getActionsBasedOnChoice(item, choice, alternative), replacementRegex);
 
        executeActions(player, actions);
    }
