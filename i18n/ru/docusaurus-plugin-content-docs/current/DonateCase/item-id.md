@@ -50,3 +50,9 @@ Item:
   ID: MCURL:3ba311761e3234810bb2b451f6bd0b506f8cb48e1195bef784eb7e2c6095d277 #MCURL:<texture-id> (Minecraft-URL)
 ```
 ![Пример MCURL](../assets/base64.png)
+
+### [Oraxen](https://www.spigotmc.org/resources/%E2%98%84%EF%B8%8F-oraxen-custom-items-blocks-emotes-furniture-resourcepack-and-gui-1-18-1-21.72448/)
+```yml
+Item:
+  ID: ORAXEN:test # ORAXEN:<id>
+```
