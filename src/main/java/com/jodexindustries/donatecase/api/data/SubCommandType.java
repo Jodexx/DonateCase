@@ -1,5 +1,7 @@
 package com.jodexindustries.donatecase.api.data;
 
+import org.bukkit.command.CommandSender;
+
 /**
  * Class to define command type
  */
@@ -8,13 +10,24 @@ public enum SubCommandType {
     /**
      * User with player rights can use, and see this command in tab completer (donatecase.player)
      */
-    PLAYER,
+    PLAYER("donatecase.player"),
     /**
      * User with moder rights can use, and see this command in tab completer (donatecase.moder)
      */
-    MODER,
+    MODER("donatecase.moder"),
     /**
      * User with admin rights can use, and see this command in tab completer (donatecase.admin)
      */
-    ADMIN
+    ADMIN("donatecase.admin");
+
+    private final String permission;
+
+    SubCommandType(String permission) {
+        this.permission = permission;
+    }
+
+    public boolean hasPermission(CommandSender sender) {
+        return sender.hasPermission(permission);
+    }
+
 }
