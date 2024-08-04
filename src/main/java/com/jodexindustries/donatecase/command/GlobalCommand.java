@@ -42,17 +42,9 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                 }
 
                 SubCommandType type = subCommand.getType();
-                boolean hasAdminPermission = sender.hasPermission("donatecase.admin");
-                boolean hasModPermission = sender.hasPermission("donatecase.mod");
-                boolean hasPlayerPermission = sender.hasPermission("donatecase.player");
 
-                if (type == SubCommandType.ADMIN && hasAdminPermission ||
-                        type == SubCommandType.MODER && (hasModPermission || hasAdminPermission) ||
-                        (type == SubCommandType.PLAYER || type == null) && (hasPlayerPermission || hasModPermission || hasAdminPermission)) {
-                    subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
-                } else {
-                    Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
-                }
+                if(type == null || type.hasPermission(sender)) subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
+                else Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
             }
 
         return true;
@@ -66,10 +58,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
         Tools.msgRaw(sender, Tools.rt("&aDonateCase " + Case.getInstance().getDescription().getVersion() + " &7by &c_Jodex__"));
 
-        boolean isAdmin = sender.hasPermission("donatecase.admin");
-        boolean isMod = sender.hasPermission("donatecase.mod");
-
-        if (!isAdmin && !isMod) {
+        if (!sender.hasPermission("donatecase.mod")) {
             sendHelpMessages(sender, "help-player", label);
         } else {
             sendHelpMessages(sender, "help", label);
@@ -78,7 +67,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         if (Case.getConfig().getConfig().getBoolean("DonatCase.AddonsHelp", true)) {
             Map<String, List<Map<String, SubCommand>>> addonsMap = buildAddonsMap();
             if (Tools.isHasCommandForSender(sender, addonsMap)) {
-                sendAddonHelpMessages(sender, addonsMap, isAdmin, isMod);
+                sendAddonHelpMessages(sender, addonsMap);
             }
         }
     }
@@ -100,7 +89,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         return addonsMap;
     }
 
-    private static void sendAddonHelpMessages(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, boolean isAdmin, boolean isMod) {
+    private static void sendAddonHelpMessages(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
         addonsMap.forEach((addon, commands) -> {
             if (!addon.equalsIgnoreCase("DonateCase") && Tools.isHasCommandForSender(sender, addonsMap, addon)) {
                 String addonNameFormat = Case.getConfig().getLang().getString("help-addons.format.name");
@@ -113,8 +102,9 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     description = (description != null) ? Tools.rt(Case.getConfig().getLang().getString("help-addons.format.description"), "%description:" + description) : "";
 
                     StringBuilder argsBuilder = compileSubCommandArgs(subCommand.getArgs());
+                    SubCommandType type = subCommand.getType();
 
-                    if (hasPermissionForSubCommand(sender, isAdmin, isMod, subCommand)) {
+                    if (type == null || type.hasPermission(sender)) {
                         Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("help-addons.format.command"),
                                 "%cmd:" + commandName,
                                 "%args:" + argsBuilder,
@@ -126,23 +116,13 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         });
     }
 
-    private static boolean hasPermissionForSubCommand(CommandSender sender, boolean isAdmin, boolean isMod, SubCommand subCommand) {
-        SubCommandType type = subCommand.getType();
-        return isAdmin || isMod && (type == SubCommandType.MODER || type == SubCommandType.PLAYER || type == null)
-                || sender.hasPermission("donatecase.player") && !isMod && (type == SubCommandType.PLAYER || type == null);
-    }
-
-
-
     private static @NotNull StringBuilder compileSubCommandArgs(String[] args) {
         StringBuilder builder = new StringBuilder();
-        if(args != null) {
-            for (int i = 0; i < args.length; i++) {
-                builder.append(args[i]);
-                if (i < args.length - 1) {
-                    builder.append(" ");
-                }
+        if (args != null) {
+            for (String arg : args) {
+                builder.append(arg).append(" ");
             }
+            builder.setLength(builder.length() - 1);
         }
         return builder;
     }
@@ -153,10 +133,6 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         List<String> value = new ArrayList<>();
 
         if (args.length == 1) {
-            boolean isAdmin = sender.hasPermission("donatecase.admin");
-            boolean isMod = sender.hasPermission("donatecase.mod");
-            boolean isPlayer = sender.hasPermission("donatecase.player");
-
             Map<String, Pair<SubCommand, Addon>> subCommands = SubCommandManager.getSubCommands();
 
             for (Map.Entry<String, Pair<SubCommand, Addon>> entry : subCommands.entrySet()) {
@@ -164,7 +140,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                 SubCommand subCommand = entry.getValue().getFirst();
                 SubCommandType type = subCommand.getType();
 
-                if (isAdmin || isMod && (type == SubCommandType.MODER || type == SubCommandType.PLAYER || type == null) || isPlayer && !isMod && (type == SubCommandType.PLAYER || type == null)) {
+                if (type == null || type.hasPermission(sender)) {
                     value.add(subCommandName);
                 }
             }
