@@ -19,7 +19,7 @@ public class CaseData implements Cloneable {
     private String caseDisplayName;
     private String caseTitle;
     private String animation;
-    private AnimationSound animationSound;
+    @Deprecated private AnimationSound animationSound = null;
     private Map<String, Item> items;
     private HistoryData[] historyData;
     private Hologram hologram;
@@ -33,7 +33,6 @@ public class CaseData implements Cloneable {
      * @param caseDisplayName Case display name
      * @param caseTitle Case title (GUI)
      * @param animation Animation name
-     * @param animationSound Animation sound (when ended)
      * @param items Items list
      * @param historyData History data array
      * @param hologram Hologram object
@@ -42,13 +41,12 @@ public class CaseData implements Cloneable {
      * @param noKeyActions NoKeyActions
      */
     public CaseData(String caseType, String caseDisplayName, String caseTitle,
-                    String animation, AnimationSound animationSound, Map<String,
+                    String animation, Map<String,
             Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups, GUI gui, List<String> noKeyActions) {
         this.caseType = caseType;
         this.caseDisplayName = caseDisplayName;
         this.caseTitle = caseTitle;
         this.animation = animation;
-        this.animationSound = animationSound;
         this.items = items;
         this.historyData = historyData;
         this.hologram = hologram;
@@ -64,7 +62,6 @@ public class CaseData implements Cloneable {
                 ", caseDisplayName='" + caseDisplayName + '\'' +
                 ", caseTitle='" + caseTitle + '\'' +
                 ", animation='" + animation + '\'' +
-                ", animationSound=" + animationSound +
                 ", items=" + items +
                 ", historyData=" + Arrays.toString(historyData) +
                 ", hologram=" + hologram +
@@ -131,6 +128,7 @@ public class CaseData implements Cloneable {
      * Get animation sound
      * @return CaseData.AnimationSound
      */
+    @Deprecated
     public AnimationSound getAnimationSound() {
         return animationSound;
     }
@@ -139,6 +137,7 @@ public class CaseData implements Cloneable {
      * Set animation sound
      * @param animationSound CaseData.AnimationSound
      */
+    @Deprecated
     public void setAnimationSound(AnimationSound animationSound) {
         this.animationSound = animationSound;
     }
@@ -203,9 +202,6 @@ public class CaseData implements Cloneable {
     public CaseData clone() {
         try {
             CaseData clonedCaseData = (CaseData) super.clone();
-
-            // Clone the nested classes
-            clonedCaseData.animationSound = this.animationSound.clone();
 
             // Deep clone the map of items
             clonedCaseData.items = cloneItemsMap(this.items);
@@ -752,6 +748,7 @@ public class CaseData implements Cloneable {
     /**
      * Class for implementing animation sound in a case
      */
+    @Deprecated
     public static class AnimationSound implements Cloneable {
         private Sound sound;
         private float volume;
