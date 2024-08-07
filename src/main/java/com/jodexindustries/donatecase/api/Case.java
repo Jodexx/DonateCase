@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.*;
+import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.config.CasesConfig;
 import com.jodexindustries.donatecase.config.Config;
@@ -667,10 +668,10 @@ public class Case {
 
         String context = action.replace(temp, "").trim();
 
-        CaseAction caseAction = ActionManager.getRegisteredAction(temp);
-        if(caseAction == null) return;
+        ActionExecutor actionExecutor = ActionManager.getRegisteredAction(temp);
+        if(actionExecutor == null) return;
 
-        caseAction.execute(player, context, cooldown);
+        actionExecutor.execute(player, context, cooldown);
     }
 
     /** Get plugin configuration manager

@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.CaseAction;
+import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -11,20 +11,20 @@ import org.jetbrains.annotations.NotNull;
 public class CaseActionRegisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final String caseActionName;
-    private final CaseAction caseAction;
+    private final ActionExecutor actionExecutor;
     private final boolean isDefault;
     private final String caseActionAddonName;
 
     /**
      * Default constructor
      * @param caseActionName Case action name
-     * @param caseAction Case action class
+     * @param actionExecutor Case action class
      * @param caseActionAddonName Case action addon name
      * @param isDefault Is default?
      */
-    public CaseActionRegisteredEvent(String caseActionName, CaseAction caseAction, String caseActionAddonName, boolean isDefault) {
+    public CaseActionRegisteredEvent(String caseActionName, ActionExecutor actionExecutor, String caseActionAddonName, boolean isDefault) {
         this.caseActionName = caseActionName;
-        this.caseAction = caseAction;
+        this.actionExecutor = actionExecutor;
         this.isDefault = isDefault;
         this.caseActionAddonName = caseActionAddonName;
     }
@@ -49,8 +49,8 @@ public class CaseActionRegisteredEvent extends Event {
      * Get CaseAction class
      * @return CaseAction
      */
-    public CaseAction getCaseAction() {
-        return caseAction;
+    public ActionExecutor getCaseAction() {
+        return actionExecutor;
     }
 
     /**
