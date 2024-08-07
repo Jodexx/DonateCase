@@ -63,7 +63,7 @@ public class AnimationManager {
      */
     @Deprecated
     public void registerAnimation(String name, Class<? extends JavaAnimation> animation) {
-        registerAnimation(name, animation, null);
+        registerAnimation(name, animation, "Nothing to say");
     }
 
     /**
