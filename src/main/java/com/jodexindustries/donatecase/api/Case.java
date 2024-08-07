@@ -475,7 +475,7 @@ public class Case {
      */
     public static void animationPreEnd(CaseData caseData, OfflinePlayer player, UUID uuid, CaseData.Item item) {
         ActiveCase activeCase = activeCases.get(uuid);
-        Location location = activeCase.getLocation();
+        Location location = activeCase != null ? activeCase.getLocation() : null;
         animationPreEnd(caseData, player, location, item);
     }
 
@@ -488,7 +488,7 @@ public class Case {
      * @since 2.2.4.4
      */
     public static void animationPreEnd(CaseData caseData, OfflinePlayer player, Location location, CaseData.Item item) {
-        World world = location.getWorld();
+        World world = location != null ? location.getWorld() : null;
         if(world == null) world = Bukkit.getWorlds().get(0);
 
         String choice = "";
