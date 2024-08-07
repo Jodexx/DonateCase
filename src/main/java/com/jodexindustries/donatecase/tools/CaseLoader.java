@@ -57,8 +57,8 @@ public class CaseLoader {
     }
 
     private CaseData loadCaseData(String caseType, ConfigurationSection caseSection) {
-        String caseTitle = caseSection.getString("Title");
-        String caseDisplayName = caseSection.getString("DisplayName");
+        String caseTitle = Tools.rc(caseSection.getString("Title", ""));
+        String caseDisplayName = Tools.rc(caseSection.getString("DisplayName", ""));
         String animationName = caseSection.getString("Animation");
 
         if(animationName == null) {

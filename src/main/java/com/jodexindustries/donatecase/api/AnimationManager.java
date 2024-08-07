@@ -158,7 +158,7 @@ public class AnimationManager {
         }
 
         Case.activeCases.put(uuid, activeCase);
-        Case.activeCasesByLocation.put(location.getBlock().getLocation(), uuid);
+        Case.activeCasesByLocation.put(location, uuid);
 
         Location caseLocation = Case.getCaseLocationByBlockLocation(location);
         if (javaAnimation instanceof JavaAnimation) {
