@@ -37,7 +37,7 @@ public class SubCommandManager {
                     subCommand, addonSubCommandName, isDefault);
             Bukkit.getServer().getPluginManager().callEvent(subCommandRegisteredEvent);
         } else {
-            Case.getInstance().getLogger().warning("Sub command " + commandName + " already registered!");
+            addon.getLogger().warning("Sub command " + commandName + " already registered!");
         }
     }
 
@@ -51,7 +51,7 @@ public class SubCommandManager {
             SubCommandUnregisteredEvent subCommandUnregisteredEvent = new SubCommandUnregisteredEvent(commandName);
             Bukkit.getServer().getPluginManager().callEvent(subCommandUnregisteredEvent);
         } else {
-            Case.getInstance().getLogger().warning("Sub command " + commandName + " already unregistered!");
+            addon.getLogger().warning("Sub command " + commandName + " already unregistered!");
         }
     }
 

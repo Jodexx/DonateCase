@@ -65,7 +65,7 @@ public class ActionManager {
             CaseActionRegisteredEvent event = new CaseActionRegisteredEvent(name, action, actionAddonName, isDefault);
             Bukkit.getPluginManager().callEvent(event);
         } else {
-            Case.getInstance().getLogger().warning("CaseAction with name " + name + " already registered!");
+            addon.getLogger().warning("CaseAction with name " + name + " already registered!");
         }
     }
 
@@ -73,23 +73,23 @@ public class ActionManager {
      * Unregister action
      * @param name Action name
      */
-    public void unregisterActions(String name) {
+    public void unregisterAction(String name) {
         if(isRegistered(name)) {
             registeredActions.remove(name);
             CaseActionUnregisteredEvent event = new CaseActionUnregisteredEvent(name);
             Bukkit.getServer().getPluginManager().callEvent(event);
         } else {
-            Case.getInstance().getLogger().warning("CaseAction with name " + name + " already unregistered!");
+            addon.getLogger().warning("CaseAction with name " + name + " already unregistered!");
         }
     }
 
     /**
      * Unregister all actions
      */
-    public void unregisterActions() {
+    public void unregisterAction() {
         List<String> list = new ArrayList<>(getRegisteredActions().keySet());
         for (String s : list) {
-            unregisterActions(s);
+            unregisterAction(s);
         }
     }
 

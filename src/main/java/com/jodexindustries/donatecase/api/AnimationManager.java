@@ -48,7 +48,7 @@ public class AnimationManager {
             AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(name, animation, animationPluginName, isDefault);
             Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
         } else {
-            Case.getInstance().getLogger().warning("Animation with name " + name + " already registered!");
+            addon.getLogger().warning("Animation with name " + name + " already registered!");
         }
     }
 
@@ -67,7 +67,7 @@ public class AnimationManager {
                     animationPluginName, isDefault);
             Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
         } else {
-            Case.getInstance().getLogger().warning("Animation with name " + name + " already registered!");
+            addon.getLogger().warning("Animation with name " + name + " already registered!");
         }
     }
     
@@ -82,7 +82,7 @@ public class AnimationManager {
             AnimationUnregisteredEvent animationUnRegisteredEvent = new AnimationUnregisteredEvent(name);
             Bukkit.getServer().getPluginManager().callEvent(animationUnRegisteredEvent);
         } else {
-            Case.getInstance().getLogger().warning("Animation with name " + name + " already unregistered!");
+            addon.getLogger().warning("Animation with name " + name + " already unregistered!");
         }
     }
 
@@ -97,7 +97,7 @@ public class AnimationManager {
             AnimationUnregisteredEvent animationUnRegisteredEvent = new AnimationUnregisteredEvent(name);
             Bukkit.getServer().getPluginManager().callEvent(animationUnRegisteredEvent);
         } else {
-            Case.getInstance().getLogger().warning("Animation with name " + name + " already unregistered!");
+            addon.getLogger().warning("Animation with name " + name + " already unregistered!");
         }
     }
 
@@ -127,7 +127,7 @@ public class AnimationManager {
         if (!isRegistered(animation) && !isRegistered(animation, true)) {
             Tools.msg(player, "&cAn error occurred while opening the case!");
             Tools.msg(player, "&cContact the project administration!");
-            Case.getInstance().getLogger().log(Level.WARNING, "Case animation " + animation + " does not exist!");
+            addon.getLogger().log(Level.WARNING, "Case animation " + animation + " does not exist!");
             return;
         }
 
@@ -159,15 +159,17 @@ public class AnimationManager {
 
         Case.activeCases.put(uuid, activeCase);
         Case.activeCasesByLocation.put(location.getBlock().getLocation(), uuid);
+
+        Location caseLocation = Case.getCaseLocationByBlockLocation(location);
         if (javaAnimation instanceof JavaAnimation) {
             JavaAnimation anim = (JavaAnimation) javaAnimation;
-            anim.init(player, Case.getCaseLocationByBlockLocation(location),
+            anim.init(player, caseLocation,
                     uuid, caseData, preStartEvent.getWinItem());
             anim.start();
         } else {
             Animation anim = (Animation) javaAnimation;
             if (anim != null) {
-                anim.start(player, Case.getCaseLocationByBlockLocation(location), uuid, caseData, preStartEvent.getWinItem());
+                anim.start(player, caseLocation, uuid, caseData, preStartEvent.getWinItem());
             }
         }
         for (Player pl : Bukkit.getOnlinePlayers()) {
