@@ -80,6 +80,11 @@ public class GUI {
             this.slots = slots;
         }
 
+        /**
+         * @deprecated Use {@link CaseData.Item.Material#getModelData()}
+         * @return item model data
+         */
+        @Deprecated
         public int getModelData() {
             return modelData;
         }
