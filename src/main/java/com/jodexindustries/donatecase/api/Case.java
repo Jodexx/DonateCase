@@ -277,13 +277,11 @@ public class Case {
      * @param loc Case location
      * @return Boolean
      */
-
     public static boolean hasCaseByLocation(Location loc) {
-        ConfigurationSection cases_ = getConfig().getCases().getConfigurationSection("DonatCase.Cases");
-        if(cases_ == null) {
-            return false;
-        }
-        for (String name : cases_.getValues(false).keySet()) {
+        ConfigurationSection casesSection = getConfig().getCases().getConfigurationSection("DonatCase.Cases");
+        if(casesSection == null) return false;
+
+        for (String name : casesSection.getValues(false).keySet()) {
             ConfigurationSection caseSection = getConfig().getCases().getConfigurationSection("DonatCase.Cases." + name);
             if(caseSection == null || caseSection.getString("location") == null) {
                 return false;
@@ -324,25 +322,27 @@ public class Case {
 
             String[] worldLocation = location.split(";");
             World world = Bukkit.getWorld(worldLocation[0]);
-            Location temp = new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
+            try {
+                Location temp = new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
 
-            if (temp.equals(loc)) {
-                switch (infoType) {
-                    case "type":
-                        object = clazz.cast(caseSection.getString("type"));
-                        break;
-                    case "name":
-                        object = clazz.cast(name);
-                        break;
-                    case "location": {
-                        Location result = temp.clone();
-                        result.setPitch(Float.parseFloat(worldLocation[4]));
-                        result.setYaw(Float.parseFloat(worldLocation[5]));
-                        object = clazz.cast(result);
-                        break;
+                if (temp.equals(loc)) {
+                    switch (infoType) {
+                        case "type":
+                            object = clazz.cast(caseSection.getString("type"));
+                            break;
+                        case "name":
+                            object = clazz.cast(name);
+                            break;
+                        case "location": {
+                            Location result = temp.clone();
+                            result.setPitch(Float.parseFloat(worldLocation[4]));
+                            result.setYaw(Float.parseFloat(worldLocation[5]));
+                            object = clazz.cast(result);
+                            break;
+                        }
                     }
                 }
-            }
+            } catch (Exception ignored) {}
         }
         return object;
     }
