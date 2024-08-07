@@ -175,11 +175,7 @@ public class Case {
         if(cachedKeys == null) {
             // Get previous, if current is null
             Integer previous = keysCache.getPrevious(entry);
-            if(previous != null) {
-                keys = previous;
-            } else {
-                keys = getKeys(caseType, player);
-            }
+            keys = previous != null ? previous : getKeys(caseType, player);
 
             getKeysAsync(caseType, player).thenAcceptAsync(integer -> keysCache.put(entry, integer));
         } else {
@@ -224,11 +220,7 @@ public class Case {
             getOpenCountAsync(caseType, player).thenAcceptAsync(integer -> openCache.put(entry, integer));
             // Get previous, if current is null
             Integer previous = keysCache.getPrevious(entry);
-            if(previous != null) {
-                openCount = previous;
-            } else {
-                openCount = getOpenCount(caseType, player);
-            }
+            openCount = previous != null ? previous : getOpenCount(caseType, player);
         } else {
             openCount = cachedKeys;
         }
@@ -291,9 +283,10 @@ public class Case {
      * @param infoType Information type ("type", "name" or "location")
      * @return Case information
      */
-    private static Object getCaseInfoByLocation(Location loc, String infoType) {
+    private static <T> T getCaseInfoByLocation(Location loc, String infoType, Class<T> clazz) {
+        T object = null;
         ConfigurationSection casesSection = getConfig().getCases().getConfigurationSection("DonatCase.Cases");
-        if (casesSection == null) return null;
+        if (casesSection == null) return object;
 
         for (String name : casesSection.getValues(false).keySet()) {
             ConfigurationSection caseSection = casesSection.getConfigurationSection(name);
@@ -308,18 +301,23 @@ public class Case {
 
             if (temp.equals(loc)) {
                 switch (infoType) {
-                    case "type": return caseSection.getString("type");
-                    case "name": return name;
+                    case "type":
+                        object = clazz.cast(caseSection.getString("type"));
+                        break;
+                    case "name":
+                        object = clazz.cast(name);
+                        break;
                     case "location": {
                         Location result = temp.clone();
                         result.setPitch(Float.parseFloat(worldLocation[4]));
                         result.setYaw(Float.parseFloat(worldLocation[5]));
-                        return result;
+                        object = clazz.cast(result);
+                        break;
                     }
                 }
             }
         }
-        return null;
+        return object;
     }
 
     /**
@@ -328,7 +326,7 @@ public class Case {
      * @return Case type
      */
     public static String getCaseTypeByLocation(Location loc) {
-        return (String) getCaseInfoByLocation(loc, "type");
+        return getCaseInfoByLocation(loc, "type", String.class);
     }
 
     /**
@@ -337,16 +335,16 @@ public class Case {
      * @return Case name
      */
     public static String getCaseCustomNameByLocation(Location loc) {
-        return (String) getCaseInfoByLocation(loc, "name");
+        return getCaseInfoByLocation(loc, "name", String.class);
     }
 
     /**
      * Get case location (in Cases.yml) by block location
-     * @param blockLocation Block location
+     * @param loc Block location
      * @return case location in Cases.yml (with yaw and pitch)
      */
-    public static Location getCaseLocationByBlockLocation(Location blockLocation) {
-        return (Location) getCaseInfoByLocation(blockLocation, "location");
+    public static Location getCaseLocationByBlockLocation(Location loc) {
+        return getCaseInfoByLocation(loc, "location", Location.class);
     }
 
     /**
@@ -355,11 +353,9 @@ public class Case {
      * @return true - if case found in memory
      */
     public static boolean hasCaseByType(String caseType) {
-        if(caseData.isEmpty()) {
-            return false;
-        }
-        return caseData.containsKey(caseType);
+        return !caseData.isEmpty() && caseData.containsKey(caseType);
     }
+
     /**
      * Is there a case with a specific custom name?
      * <p>
@@ -368,10 +364,11 @@ public class Case {
      * @return true - if case created on the server
      */
     public static boolean hasCaseByCustomName(String name) {
-        if(getConfig().getCases().getConfigurationSection("DonatCase.Cases") == null) {
-            return false;
-        } else
-            return Objects.requireNonNull(getConfig().getCases().getConfigurationSection("DonatCase.Cases")).contains(name);
+        ConfigurationSection section = getConfig().getCases().getConfigurationSection("DonatCase.Cases");
+        if(section == null) return false;
+
+        return getConfig().getCases().getConfigurationSection("DonatCase.Cases") != null
+                && section.contains(name);
     }
 
     /**
@@ -380,11 +377,7 @@ public class Case {
      * @return true - if case found in memory
      */
     public static boolean hasCaseByTitle(String title) {
-        for (CaseData data : caseData.values()) {
-            if(data.getCaseTitle().equalsIgnoreCase(title)) return true;
-        }
-
-        return false;
+        return caseData.values().stream().anyMatch(data -> data.getCaseTitle().equalsIgnoreCase(title));
     }
 
     /**
@@ -423,7 +416,7 @@ public class Case {
      * @param uuid Active case uuid
      */
     public static void animationEnd(CaseData caseData, Player player, UUID uuid, CaseData.Item item) {
-        animationEnd(caseData, Bukkit.getOfflinePlayer(player.getUniqueId()), uuid, item);
+        animationEnd(caseData, (OfflinePlayer) player, uuid, item);
     }
 
     /**
@@ -447,11 +440,11 @@ public class Case {
 
     /**
      * Animation pre end method for custom animations is called to grant a group, send a message, and more
-     * @deprecated for Vault group check
      * @param caseData Case data
      * @param player Player who opened
      * @param needSound Boolean sound
      * @param item Win item data
+     * @deprecated Use {@link #animationPreEnd(CaseData, OfflinePlayer, Location, CaseData.Item)} instead
      */
     @Deprecated
     public static void animationPreEnd(CaseData caseData, Player player, boolean needSound, CaseData.Item item) {
@@ -462,16 +455,46 @@ public class Case {
      * Animation pre end method for custom animations is called to grant a group, send a message, and more
      * @param caseData Case data
      * @param player Player who opened
-     * @param needSound Boolean sound
+     * @param ignoredNeedSound Boolean sound
      * @param item Win item data
      * @param location Location where case was opened
+     * @deprecated Use {@link #animationPreEnd(CaseData, OfflinePlayer, Location, CaseData.Item)} instead
      */
-    public static void animationPreEnd(CaseData caseData, OfflinePlayer player, boolean needSound, CaseData.Item item, Location location) {
+    @Deprecated
+    public static void animationPreEnd(CaseData caseData, OfflinePlayer player, boolean ignoredNeedSound, CaseData.Item item, Location location) {
+        animationPreEnd(caseData, player, activeCasesByLocation.get(location.getBlock().getLocation()), item);
+    }
+
+    /**
+     * Animation pre end method for custom animations is called to grant a group, send a message, and more
+     * @param caseData Case data
+     * @param player Player who opened (offline player)
+     * @param uuid Active case uuid
+     * @param item Item data
+     * @since 2.2.4.4
+     */
+    public static void animationPreEnd(CaseData caseData, OfflinePlayer player, UUID uuid, CaseData.Item item) {
+        ActiveCase activeCase = activeCases.get(uuid);
+        Location location = activeCase.getLocation();
+        animationPreEnd(caseData, player, location, item);
+    }
+
+    /**
+     * Animation pre end method for custom animations is called to grant a group, send a message, and more
+     * @param caseData Case data
+     * @param player Player who opened (offline player)
+     * @param location Active case block location
+     * @param item Item data
+     * @since 2.2.4.4
+     */
+    public static void animationPreEnd(CaseData caseData, OfflinePlayer player, Location location, CaseData.Item item) {
+        World world = location.getWorld();
+        if(world == null) world = Bukkit.getWorlds().get(0);
+
         String choice = "";
         Map<String, Integer> levelGroups = getDefaultLevelGroup();
         if(!caseData.getLevelGroups().isEmpty()) levelGroups = caseData.getLevelGroups();
-        World world = location.getWorld();
-        if(world == null) world = Bukkit.getWorlds().get(0);
+
         String playerGroup = getPlayerGroup(world.getName(), player);
         if(isAlternative(levelGroups, playerGroup, item.getGroup())) {
             executeActions(player, caseData, item, null, true);
@@ -481,15 +504,6 @@ public class Case {
             } else {
                 choice = getRandomActionChoice(item);
                 executeActions(player, caseData, item, choice, false);
-            }
-        }
-
-        // Sound
-        if (needSound) {
-            if (caseData.getAnimationSound() != null) {
-                    world.playSound(location, caseData.getAnimationSound().getSound(),
-                            caseData.getAnimationSound().getVolume(),
-                            caseData.getAnimationSound().getPitch());
             }
         }
 
@@ -520,6 +534,8 @@ public class Case {
                 }
             }
         }
+
+        // Set history data in memory
         CaseData finalCase = getCase(caseData.getCaseType());
         if(finalCase != null) finalCase.setHistoryData(list);
 
