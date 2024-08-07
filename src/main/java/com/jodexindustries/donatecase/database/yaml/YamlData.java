@@ -71,6 +71,7 @@ public class YamlData {
         data.set("Data." + caseType + "." + index + ".Group", historyData.getGroup());
         data.set("Data." + caseType + "." + index + ".Item", historyData.getItem());
         data.set("Data." + caseType + "." + index + ".Action", historyData.getAction());
+        save();
     }
 
     /**
@@ -84,12 +85,14 @@ public class YamlData {
     }
 
     /**
-     * Add 1 opened case by player
+     * Set count of case opens by player
      * @param player Player who opened
      * @param caseType Case type
+     * @param openCount Open count
      */
-    public void addOpenCount(String player, String caseType) {
-        data.set("Open." + player + "." + caseType, getOpenCount(player,caseType) + 1);
+    public void setOpenCount(String player, String caseType, int openCount) {
+        data.set("Open." + player + "." + caseType, openCount);
+        save();
     }
 
     /**
