@@ -68,10 +68,6 @@ DonatCase:
 config: 1.1
 case:
   Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL, FULLWHEEL see: https://wiki.jodexindustries.xyz/docs/DonateCase/animations
-  AnimationSound: ENTITY_EXPERIENCE_ORB_PICKUP # remove this line if you don't want to play sound
-  Sound:
-    Volume: 10
-    Pitch: 5
   Hologram: # Thanks CrazyCrates for realisation
     # Toggle on and off the holograms for the crates.
     Toggle: true

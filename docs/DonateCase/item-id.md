@@ -4,10 +4,10 @@ title: Items ID
 sidebar_position: 6
 ---
 
-# DonateCase Itemd ID
+# DonateCase Items ID
 
 ## Minecraft items
-DonateCase support several options for minecraft items
+DonateCase support several options for Minecraft items
 ### Material names
 ```yml
 Item:
