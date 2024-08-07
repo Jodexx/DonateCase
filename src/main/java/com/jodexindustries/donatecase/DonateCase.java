@@ -224,11 +224,16 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultActions() {
-        api.getActionManager().registerAction("[command]", new CommandActionImpl());
-        api.getActionManager().registerAction("[message]", new MessageActionImpl());
-        api.getActionManager().registerAction("[title]", new TitleActionImpl());
-        api.getActionManager().registerAction("[broadcast]", new BroadcastActionImpl());
-        api.getActionManager().registerAction("[sound]", new SoundActionImpl());
+        api.getActionManager().registerAction("[command]", new CommandActionExecutorImpl(),
+                "Sends a command to the console");
+        api.getActionManager().registerAction("[message]", new MessageActionExecutorImpl(),
+                "Sends a message in the player's chat");
+        api.getActionManager().registerAction("[title]", new TitleActionExecutorImpl(),
+                "Sends a title to the player");
+        api.getActionManager().registerAction("[broadcast]", new BroadcastActionExecutorImpl(),
+                "Sends a broadcast to the players");
+        api.getActionManager().registerAction("[sound]", new SoundActionExecutorImpl(),
+                "Sends a sound to the player");
         Logger.log("&aRegistered &cdefault &aactions");
     }
 
