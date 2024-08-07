@@ -57,8 +57,8 @@ public class CaseLoader {
     }
 
     private CaseData loadCaseData(String caseType, ConfigurationSection caseSection) {
-        String caseTitle = getStringOrDefault(caseSection, "Title");
-        String caseDisplayName = getStringOrDefault(caseSection, "DisplayName");
+        String caseTitle = caseSection.getString("Title");
+        String caseDisplayName = caseSection.getString("DisplayName");
         String animationName = caseSection.getString("Animation");
 
         if(animationName == null) {
@@ -78,11 +78,6 @@ public class CaseLoader {
 
         return new CaseData(caseType, caseDisplayName, caseTitle, animationName, items, historyData,
                 hologram, levelGroups, gui, noKeyActions);
-    }
-
-    private String getStringOrDefault(ConfigurationSection section, String path) {
-        String value = section.getString(path);
-        return value == null ? "" : Tools.rc(value);
     }
 
     private CaseData.Hologram loadHologram(ConfigurationSection caseSection) {
