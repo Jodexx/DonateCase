@@ -106,8 +106,7 @@ public class EventsListener implements Listener {
     public void PlayerInteract(PlayerInteractEvent e) {
         if (e.getHand() == EquipmentSlot.OFF_HAND) return;
         Player p = e.getPlayer();
-        if(e.getClickedBlock() != null &&
-                (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.LEFT_CLICK_BLOCK)) {
+        if(e.getClickedBlock() != null) {
             Location blockLocation = e.getClickedBlock().getLocation();
             if (Case.hasCaseByLocation(blockLocation)) {
                 String caseType = Case.getCaseTypeByLocation(blockLocation);
