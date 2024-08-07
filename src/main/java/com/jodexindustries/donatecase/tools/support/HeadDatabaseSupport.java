@@ -13,7 +13,7 @@ import java.util.List;
 public class HeadDatabaseSupport {
     public static ItemStack getSkull(String id, String displayName, List<String> lore) {
         ItemStack item = new ItemStack(Material.STONE);
-        if (Case.getInstance().getServer().getPluginManager().isPluginEnabled("HeadDataBase")) {
+        if (Case.getInstance().getServer().getPluginManager().isPluginEnabled("HeadDatabase")) {
             HeadDatabaseAPI api = new HeadDatabaseAPI();
             try {
                 item = api.getItemHead(id);
@@ -31,7 +31,7 @@ public class HeadDatabaseSupport {
                 item.setItemMeta(itemMeta);
             }
         } else {
-            Logger.log("&eYou're using an head from HeadDataBase, but it's not loaded on the server!");
+            Logger.log("&eYou're using an head from HeadDatabase, but it's not loaded on the server!");
         }
         return item;
     }
