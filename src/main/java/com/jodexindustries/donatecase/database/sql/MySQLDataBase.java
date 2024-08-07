@@ -80,7 +80,7 @@ public class MySQLDataBase {
         });
     }
 
-    public void setKey(String name, String player, int keys) {
+    public void setKeys(String name, String player, int keys) {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
 
             try {
@@ -134,10 +134,6 @@ public class MySQLDataBase {
             if (openInfoTable != null) return (openInfoTable.getCount());
             return 0;
         });
-    }
-
-    public void addCount(String player, String caseType, int count) {
-        getOpenCount(player, caseType).thenAcceptAsync((integer) -> setCount(player, caseType, integer + count));
     }
 
     /**
