@@ -98,7 +98,7 @@ public class Case {
             getConfig().getKeys().set("DonatCase.Cases." + caseType + "." + player, keys == 0 ? null : keys);
             getConfig().saveKeys();
         } else {
-            if(instance.mysql != null) instance.mysql.setKey(caseType, player, keys);
+            if(instance.mysql != null) instance.mysql.setKeys(caseType, player, keys);
         }
 
     }
@@ -115,7 +115,7 @@ public class Case {
             getConfig().getKeys().set("DonatCase.Cases." + caseType + "." + player, 0);
             getConfig().saveKeys();
         } else {
-            if(instance.mysql != null) instance.mysql.setKey(caseType, player, 0);
+            if(instance.mysql != null) instance.mysql.setKeys(caseType, player, 0);
         }
 
     }
@@ -201,8 +201,9 @@ public class Case {
      * @return CompletableFuture of open count
      */
     public static CompletableFuture<Integer>  getOpenCountAsync(String caseType, String player) {
-        return CompletableFuture.supplyAsync(() -> instance.sql ? (instance.mysql == null ? 0 : instance.mysql.getOpenCount(player, caseType).join()) : getConfig().getData().getOpenCount(player, caseType)
-        );
+        return CompletableFuture.supplyAsync(() -> instance.sql ? (instance.mysql == null ? 0 :
+                instance.mysql.getOpenCount(player, caseType).join()) :
+                getConfig().getData().getOpenCount(player, caseType));
     }
 
     /**
@@ -225,6 +226,32 @@ public class Case {
             openCount = cachedKeys;
         }
         return openCount;
+    }
+
+    /**
+     * Set case keys to a specific player (async)
+     * @param caseType Case type
+     * @param player Player name
+     * @param openCount Opened count
+     * @since 2.2.4.4
+     */
+    public static void setOpenCount(String caseType, String player, int openCount) {
+        if (!instance.sql) {
+            getConfig().getData().setOpenCount(player, caseType, openCount);
+        } else {
+            if(instance.mysql != null) instance.mysql.setCount(caseType, player, openCount);
+        }
+    }
+
+    /**
+     * Add count of opened cases by player (async)
+     * @param caseType Case type
+     * @param player Player name
+     * @param openCount Opened count
+     * @since 2.2.4.4
+     */
+    public static void addOpenCount(String caseType, String player, int openCount) {
+        getOpenCountAsync(caseType, player).thenAcceptAsync(integer -> setOpenCount(caseType, player, integer + openCount));
     }
 
     /**
@@ -539,13 +566,7 @@ public class Case {
         CaseData finalCase = getCase(caseData.getCaseType());
         if(finalCase != null) finalCase.setHistoryData(list);
 
-        getConfig().getData().save();
-
-        if(!instance.sql) {
-            getConfig().getData().addOpenCount(player.getName(), caseData.getCaseType());
-        } else {
-            if(instance.mysql != null) instance.mysql.addCount(player.getName(), caseData.getCaseType(), 1);
-        }
+        addOpenCount(player.getName(), caseData.getCaseType(), 1);
     }
 
     /**
