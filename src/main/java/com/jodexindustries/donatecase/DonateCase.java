@@ -340,28 +340,16 @@ public class DonateCase extends JavaPlugin {
                 .version("6.1")
                 .build();
         Library entityLibSpigot = Library.builder()
-                .groupId("com{}github{}tofaa2{}entitylib")
+                .groupId("me{}tofaa{}entitylib")
                 .artifactId("spigot")
                 .version("2.4.7-SNAPSHOT")
-                .url("https://jitpack.io/com/github/Tofaa2/EntityLib/spigot/2.4.7-SNAPSHOT/spigot-2.4.7-SNAPSHOT.jar")
-                .build();
-        Library entityLibAPI = Library.builder()
-                .groupId("com{}github{}tofaa2{}entitylib")
-                .artifactId("api")
-                .version("2.4.7-SNAPSHOT")
-                .url("https://jitpack.io/com/github/Tofaa2/EntityLib/api/2.4.7-SNAPSHOT/api-2.4.7-SNAPSHOT.jar")
-                .build();
-        Library entityLibCommon = Library.builder()
-                .groupId("com{}github{}tofaa2{}entitylib")
-                .artifactId("common")
-                .version("2.4.7-SNAPSHOT")
-                .url("https://jitpack.io/com/github/Tofaa2/EntityLib/common/2.4.7-SNAPSHOT/common-2.4.7-SNAPSHOT.jar")
+                .resolveTransitiveDependencies(true)
                 .build();
         libraryManager = new BukkitLibraryManager(this);
         libraryManager.setLogLevel(LogLevel.WARN);
-        libraryManager.addJitPack();
+        libraryManager.addRepository("https://maven.evokegames.gg/snapshots");
         libraryManager.addMavenCentral();
-        loadLibrary(orm, entityLibCommon, entityLibSpigot, entityLibAPI);
+        loadLibrary(orm, entityLibSpigot);
         getLogger().info("Libraries loaded!");
     }
 
