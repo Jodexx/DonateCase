@@ -3,11 +3,8 @@ package com.jodexindustries.donatecase.gui;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.GUI;
-import com.jodexindustries.donatecase.api.data.MaterialType;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.Trio;
-import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
-import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -160,7 +157,7 @@ public class CaseGui {
         String displayName = item.getMaterial().getDisplayName();
         boolean enchanted = item.getMaterial().isEnchanted();
         String[] rgb = item.getRgb();
-        int modelData = item.getModelData();
+        int modelData = item.getMaterial().getModelData();
         if (lore != null) {
             lore = Tools.rt(lore, "%case%:" + caseType);
             for (String string : lore) {
@@ -184,43 +181,10 @@ public class CaseGui {
         if (material == null) {
             return new ItemStack(Material.AIR);
         }
-        String[] materialParts = material.split(":");
-        MaterialType materialType = MaterialType.fromString((materialParts[0]));
 
-        if (materialType == null) {
-            Case.getInstance().getLogger().warning("Material \"" + materialParts[0] + "\" not found! Case: " + caseType + " Item: " + item.getItemName());
-            return new ItemStack(Material.AIR);
-        }
-        return createItem(materialType, materialParts, displayName, newLore, enchanted, rgb, modelData);
+        return Tools.getCaseItem(material, displayName, newLore, enchanted, rgb, modelData);
     }
 
-
-    private ItemStack createItem(MaterialType materialType, String[] materialParts, String displayName, List<String> lore, boolean enchanted, String[] rgb, int modelData) {
-        switch (materialType) {
-            case HEAD:
-                return Tools.getPlayerHead(materialParts[1], displayName, lore);
-            case HDB:
-                return HeadDatabaseSupport.getSkull(materialParts[1], displayName, lore);
-            case CH:
-                return CustomHeadSupport.getSkull(materialParts[1], materialParts[2], displayName, lore);
-            case IA:
-                return Tools.getItemsAdderItem(materialParts[1] + ":" + materialParts[2], displayName, lore);
-            case BASE64:
-                return Tools.getBASE64Skull(materialParts[1], displayName, lore);
-            case MCURL:
-                return Tools.getMCURLSkull(materialParts[1], displayName, lore);
-            case ORAXEN:
-                return Tools.getOraxenItem(materialParts[1], displayName, lore);
-            default:
-                byte data = -1;
-                if(materialParts.length > 1)  {
-                    try {
-                        data = Byte.parseByte(materialParts[1]);
-                    } catch (NumberFormatException ignored) {}
-                }
-                return Tools.createItem(Material.getMaterial(materialParts[0]), 1, data, displayName, lore, enchanted, rgb, modelData);
-        }
-    }
 
     public Inventory getInventory() {
         return inventory;

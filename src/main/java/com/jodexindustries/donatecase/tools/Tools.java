@@ -8,7 +8,6 @@ import com.jodexindustries.donatecase.api.armorstand.BukkitArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.PacketArmorStandCreator;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
-import com.jodexindustries.donatecase.tools.support.HeadDatabaseSupport;
 import day.dean.skullcreator.SkullCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -137,10 +136,6 @@ public class Tools {
         }
     }
 
-    public static ItemStack createItem(Material ma, int amount, int data, String dn, boolean enchant, String[] rgb) {
-        return createItem(ma, amount, data, dn, null, enchant, rgb, -1);
-    }
-
     public static Color parseColor(String s) {
 
         Color color;
@@ -228,14 +223,6 @@ public class Tools {
         return item;
     }
 
-    public static ItemStack getBASE64Skull(String base64, String displayName) {
-        return getBASE64Skull(base64, displayName, null);
-    }
-
-    public static ItemStack getMCURLSkull(String url, String displayName) {
-        return getMCURLSkull(url, displayName, null);
-    }
-
     public static ItemStack getItemsAdderItem(@NotNull String namespace, String displayName, List<String> lore) {
         ItemStack item = new ItemStack(Material.STONE);
 
@@ -243,6 +230,20 @@ public class Tools {
             item = DonateCase.instance.itemsAdderSupport.getItem(namespace);
         } else {
             Logger.log("&eYou're using an item from ItemsAdder, but it's not loaded on the server!");
+        }
+
+        setMeta(item, displayName, lore);
+
+        return item;
+    }
+
+    public static ItemStack getHeadDatabaseItem(@NotNull String id, String displayName, List<String> lore) {
+        ItemStack item = new ItemStack(Material.STONE);
+
+        if (DonateCase.instance.headDatabaseSupport != null) {
+            item = DonateCase.instance.headDatabaseSupport.getSkull(id);
+        } else {
+            Logger.log("&eYou're using an item from HeadDatabase, but it's not loaded on the server!");
         }
 
         setMeta(item, displayName, lore);
@@ -265,36 +266,36 @@ public class Tools {
     }
 
     @NotNull
-    public static ItemStack getCaseItem(String displayName, String id, boolean enchanted, String[] rgb) {
+    public static ItemStack getCaseItem(String id, String displayName, List<String> lore, boolean enchanted, String[] rgb, int modelData) {
         String[] materialParts = id.split(":");
 
         MaterialType materialType = MaterialType.fromString(materialParts[0]);
         ItemStack winItem;
         switch (materialType) {
             case HEAD:
-                winItem = getPlayerHead(materialParts[1], displayName, null);
+                winItem = getPlayerHead(materialParts[1], displayName, lore);
                 break;
             case HDB:
-                winItem = HeadDatabaseSupport.getSkull(materialParts[1], displayName, null);
+                winItem = getHeadDatabaseItem(materialParts[1], displayName, lore);
                 break;
             case CH:
-                winItem = CustomHeadSupport.getSkull(materialParts[1], materialParts[2], displayName, null);
+                winItem = CustomHeadSupport.getSkull(materialParts[1], materialParts[2], displayName, lore);
                 break;
             case IA:
-                winItem = getItemsAdderItem(materialParts[1] + ":" + materialParts[2], displayName, null);
+                winItem = getItemsAdderItem(materialParts[1] + ":" + materialParts[2], displayName, lore);
                 break;
             case BASE64:
-                winItem = getBASE64Skull(materialParts[1], displayName);
+                winItem = getBASE64Skull(materialParts[1], displayName, lore);
                 break;
             case MCURL:
-                winItem = getMCURLSkull(materialParts[1], displayName);
+                winItem = getMCURLSkull(materialParts[1], displayName, lore);
                 break;
             case ORAXEN:
-                winItem = getOraxenItem(materialParts[1], displayName, null);
+                winItem = getOraxenItem(materialParts[1], displayName, lore);
                 break;
             default:
                 byte data = (materialParts.length > 1) ? Byte.parseByte(materialParts[1]) : -1;
-                winItem = createItem(Material.getMaterial(materialParts[0]), 1, data, displayName, enchanted, rgb);
+                winItem = createItem(Material.getMaterial(materialParts[0]), 1, data, displayName, lore, enchanted, rgb, modelData);
                 break;
         }
 
@@ -346,32 +347,6 @@ public class Tools {
             }
         }
         return item;
-    }
-
-    /**
-     * Parse material type from string
-     * @param material String, to be parsed
-     * @return Parsed enum
-     */
-    @Deprecated
-    public static MaterialType getMaterialType(String material) {
-        switch (material) {
-            case "HEAD":
-                return MaterialType.HEAD;
-            case "HDB":
-                return MaterialType.HDB;
-            case "CH":
-                return MaterialType.CH;
-            case "BASE64":
-                return MaterialType.BASE64;
-            case "MCURL":
-                return MaterialType.MCURL;
-            case "IA":
-                return MaterialType.IA;
-            default:
-                break;
-        }
-        return MaterialType.DEFAULT;
     }
 
     public static List<Integer> getOpenMaterialSlots(String c) {
