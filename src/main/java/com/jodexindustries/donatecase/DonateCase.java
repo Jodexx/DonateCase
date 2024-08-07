@@ -215,11 +215,16 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultAnimations() {
-        api.getAnimationManager().registerAnimation("SHAPE", ShapeAnimation.class);
-        api.getAnimationManager().registerAnimation("WHEEL", WheelAnimation.class);
-        api.getAnimationManager().registerAnimation("RAINLY", RainlyAnimation.class);
-        api.getAnimationManager().registerAnimation("FIREWORK", FireworkAnimation.class);
-        api.getAnimationManager().registerAnimation("FULLWHEEL", FullWheelAnimation.class);
+        api.getAnimationManager().registerAnimation("SHAPE", ShapeAnimation.class,
+                "Items flip through and a shape appears");
+        api.getAnimationManager().registerAnimation("WHEEL", WheelAnimation.class,
+                "Random items revolve around the case");
+        api.getAnimationManager().registerAnimation("RAINLY", RainlyAnimation.class,
+                "Rain drips from the clouds");
+        api.getAnimationManager().registerAnimation("FIREWORK", FireworkAnimation.class,
+                "Fireworks fly to the skies and a prize appears");
+        api.getAnimationManager().registerAnimation("FULLWHEEL", FullWheelAnimation.class,
+                "All items from the case revolve around it");
         Logger.log("&aRegistered &cdefault &aanimations");
     }
 
