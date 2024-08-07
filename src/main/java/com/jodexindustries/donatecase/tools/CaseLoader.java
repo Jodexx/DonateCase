@@ -122,10 +122,9 @@ public class CaseLoader {
         List<String> actions = itemSection.getStringList("Actions");
         List<String> alternativeActions = itemSection.getStringList("AlternativeActions");
         Map<String, CaseData.Item.RandomAction> randomActions = loadRandomActions(itemSection);
-        String[] rgb = loadRgb(itemSection, "Item.Rgb");
         CaseData.Item.Material material = loadMaterial(itemSection);
 
-        return new CaseData.Item(item, group, chance, index, material, giveType, actions, randomActions, rgb, alternativeActions);
+        return new CaseData.Item(item, group, chance, index, material, giveType, actions, randomActions, alternativeActions);
     }
 
     private Map<String, CaseData.Item.RandomAction> loadRandomActions(ConfigurationSection itemSection) {
