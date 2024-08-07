@@ -1,37 +1,41 @@
 package com.jodexindustries.donatecase.tools.support;
 
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.tools.Logger;
-import com.jodexindustries.donatecase.tools.Tools;
+import me.arcaniax.hdb.api.DatabaseLoadEvent;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+public class HeadDatabaseSupport implements Listener {
+    private boolean itemsLoaded = false;
 
-public class HeadDatabaseSupport {
-    public static ItemStack getSkull(String id, String displayName, List<String> lore) {
+    public HeadDatabaseSupport(Plugin plugin) {
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        Logger.log("&aHooked to &bHeadDatabase");
+    }
+
+    @EventHandler
+    public void onItemsLoaded(DatabaseLoadEvent e) {
+        itemsLoaded = true;
+    }
+
+    @NotNull
+    public ItemStack getSkull(@NotNull String id) {
         ItemStack item = new ItemStack(Material.STONE);
-        if (Case.getInstance().getServer().getPluginManager().isPluginEnabled("HeadDatabase")) {
+
+        if (itemsLoaded) {
             HeadDatabaseAPI api = new HeadDatabaseAPI();
             try {
                 item = api.getItemHead(id);
             } catch (NullPointerException nullPointerException) {
                 Logger.log("&eCould not find the head you were looking for");
             }
-            ItemMeta itemMeta = item.getItemMeta();
-            if (itemMeta != null) {
-                if(displayName != null) {
-                    itemMeta.setDisplayName(Tools.rc(displayName));
-                }
-                if (lore != null) {
-                    itemMeta.setLore(Tools.rc(lore));
-                }
-                item.setItemMeta(itemMeta);
-            }
         } else {
-            Logger.log("&eYou're using an head from HeadDatabase, but it's not loaded on the server!");
+            Logger.log("&eHeadDatabase skulls not loaded! Try to &6/dc reload");
         }
         return item;
     }
