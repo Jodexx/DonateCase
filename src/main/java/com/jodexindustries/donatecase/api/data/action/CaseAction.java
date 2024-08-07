@@ -7,11 +7,13 @@ import org.jetbrains.annotations.NotNull;
 public class CaseAction implements ActionExecutor {
     private final ActionExecutor executor;
     private final Addon addon;
+    private final String name;
     private final String description;
 
-    public CaseAction(ActionExecutor executor, Addon addon, String description) {
+    public CaseAction(ActionExecutor executor, Addon addon, String name, String description) {
         this.executor = executor;
         this.addon = addon;
+        this.name = name;
         this.description = description;
 
     }
@@ -27,5 +29,14 @@ public class CaseAction implements ActionExecutor {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return name + " (" + description + ")";
     }
 }
