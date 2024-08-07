@@ -73,7 +73,7 @@ public class FireworkAnimation extends JavaAnimation {
                         as.setCustomName(displayName);
                         as.setCustomNameVisible(true);
                         as.updateMeta();
-                        Case.animationPreEnd(getCaseData(), getPlayer(), true, getWinItem(), getLocation());
+                        Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
                     }
                     if (this.i >= 30) {
                         as.remove();

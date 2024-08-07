@@ -31,7 +31,7 @@ public class OpenCaseCommand implements SubCommand {
                             CaseData data = Case.getCase(caseName);
                             if (data == null) return;
                             CaseData.Item winGroup = data.getRandomItem();
-                            Case.animationPreEnd(data, player, true, winGroup, player.getLocation());
+                            Case.animationPreEnd(data, player, player.getLocation(), winGroup);
                         } else {
                             Tools.msg(player, Case.getConfig().getLang().getString("no-keys"));
                         }

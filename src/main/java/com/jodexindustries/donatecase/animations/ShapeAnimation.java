@@ -33,34 +33,20 @@ public class ShapeAnimation extends JavaAnimation {
 
             float whiteSize = (float) Case.getConfig().getAnimations().getDouble("Shape.Particle.White.Size");
             float orangeSize = (float) Case.getConfig().getAnimations().getDouble("Shape.Particle.Orange.Size");
-            String rgbString = Case.getConfig().getAnimations().getString("Shape.Particle.Orange.Rgb");
-            String whiteRgbString = Case.getConfig().getAnimations().getString("Shape.Particle.White.Rgb");
-            int red;
-            int green;
-            int blue;
-            Color orangeColor = Color.ORANGE;
-            Color whiteColor = Color.WHITE;
-            if (rgbString != null) {
-                String[] rgb = rgbString.replaceAll(" ", "").split(",");
-                red = Integer.parseInt(rgb[0]);
-                green = Integer.parseInt(rgb[1]);
-                blue = Integer.parseInt(rgb[2]);
-                orangeColor = Color.fromRGB(red, green, blue);
-            }
-            if (whiteRgbString != null) {
-                String[] rgb = whiteRgbString.replaceAll(" ", "").split(",");
-                red = Integer.parseInt(rgb[0]);
-                green = Integer.parseInt(rgb[1]);
-                blue = Integer.parseInt(rgb[2]);
-                whiteColor = Color.fromRGB(red, green, blue);
-            }
-            Color finalOrangeColor = orangeColor;
-            Color finalWhiteColor = whiteColor;
+            final String orangeRgbString = Case.getConfig().getAnimations().getString("Shape.Particle.Orange.Rgb");
+            final String whiteRgbString = Case.getConfig().getAnimations().getString("Shape.Particle.White.Rgb");
+
+            final Color orangeColor = Tools.fromRGBString(orangeRgbString, Color.ORANGE);
+            final Color whiteColor = Tools.fromRGBString(whiteRgbString, Color.WHITE);
+
             (new BukkitRunnable() {
                 int i; //ticks count
                 double t;
                 Location l;
 
+
+
+                @Override
                 public void run() {
                     if (i == 0) {
                         l = as.getLocation();
@@ -74,7 +60,7 @@ public class ShapeAnimation extends JavaAnimation {
                             as.setCustomName(getWinItem().getMaterial().getDisplayName());
                             as.updateMeta();
                             Tools.launchFirework(this.l.clone().add(0.0, 0.8, 0.0));
-                            Case.animationPreEnd(getCaseData(), getPlayer(), true, getWinItem(), getLocation());
+                            Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
 
                         }
                     }
@@ -91,7 +77,7 @@ public class ShapeAnimation extends JavaAnimation {
                         as.setCustomNameVisible(true);
                         as.updateMeta();
                         if (this.i <= 8) {
-                            Particle.DustOptions dustOptions = new Particle.DustOptions(finalOrangeColor, orangeSize);
+                            Particle.DustOptions dustOptions = new Particle.DustOptions(orangeColor, orangeSize);
                             Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
                         }
                     }
@@ -114,7 +100,7 @@ public class ShapeAnimation extends JavaAnimation {
                             final double z = 0.09 * (9.5 - this.t * 2.5) * Math.sin(this.t + phi);
                             loc.add(x, 0.0, z);
                             if (!Bukkit.getVersion().contains("1.12")) {
-                                Particle.DustOptions dustOptions = new Particle.DustOptions(finalWhiteColor, whiteSize);
+                                Particle.DustOptions dustOptions = new Particle.DustOptions(whiteColor, whiteSize);
                                 Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.REDSTONE, this.l.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0, dustOptions);
                             } else {
                                 Objects.requireNonNull(l.getWorld()).spawnParticle(Particle.FIREWORKS_SPARK, this.l.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0);

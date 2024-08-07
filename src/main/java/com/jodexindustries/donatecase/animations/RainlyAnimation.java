@@ -79,7 +79,7 @@ public class RainlyAnimation extends JavaAnimation {
                         as.setCustomName(winGroupDisplayName);
                         as.setCustomNameVisible(true);
                         as.updateMeta();
-                        Case.animationPreEnd(getCaseData(), getPlayer(), false, getWinItem(), getLocation());
+                        Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
                         loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 0);
                         loc.getWorld().playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
                     }

@@ -104,7 +104,7 @@ public class WheelAnimation extends JavaAnimation {
                 }
             }
             if (ticks.get() == animationTime + 1) {
-                Case.animationPreEnd(getCaseData(), getPlayer(), true, getWinItem(), getLocation());
+                Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
             }
             // End
             if (ticks.get() >= animationTime + 20) {
