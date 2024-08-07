@@ -4,7 +4,8 @@ import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.GUI;
-import org.bukkit.Sound;
+import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -49,6 +50,9 @@ public class CaseLoader {
             }
         }
 
+        DonateCaseReloadEvent reloadEvent = new DonateCaseReloadEvent(plugin, DonateCaseReloadEvent.Type.CASES);
+        Bukkit.getPluginManager().callEvent(reloadEvent);
+
         Logger.log("&aLoaded &c" + count + "&a cases!");
     }
 
@@ -62,7 +66,6 @@ public class CaseLoader {
             return null;
         }
 
-        CaseData.AnimationSound sound = loadAnimationSound(caseSection);
         CaseData.Hologram hologram = loadHologram(caseSection);
         Map<String, CaseData.Item> items = loadItems(caseType, caseSection);
 
@@ -73,26 +76,13 @@ public class CaseLoader {
 
         List<String> noKeyActions = caseSection.getStringList("NoKeyActions");
 
-        return new CaseData(caseType, caseDisplayName, caseTitle, animationName, sound, items, historyData,
+        return new CaseData(caseType, caseDisplayName, caseTitle, animationName, items, historyData,
                 hologram, levelGroups, gui, noKeyActions);
     }
 
     private String getStringOrDefault(ConfigurationSection section, String path) {
         String value = section.getString(path);
         return value == null ? "" : Tools.rc(value);
-    }
-
-    private CaseData.AnimationSound loadAnimationSound(ConfigurationSection caseSection) {
-        String animationSound = caseSection.getString("AnimationSound", "NULL").toUpperCase();
-        float volume = (float) caseSection.getDouble("Sound.Volume");
-        float pitch = (float) caseSection.getDouble("Sound.Pitch");
-
-        Sound bukkitSound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
-        try {
-            bukkitSound = Sound.valueOf(animationSound);
-        } catch (IllegalArgumentException ignored) {}
-
-        return new CaseData.AnimationSound(bukkitSound, volume, pitch);
     }
 
     private CaseData.Hologram loadHologram(ConfigurationSection caseSection) {
