@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.*;
+import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.events.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
@@ -23,7 +24,7 @@ import java.util.logging.Level;
  * Animation control class, registration, playing
  */
 public class AnimationManager {
-    private static final Map<String, Pair<Class<? extends JavaAnimation>, Addon>> registeredAnimations = new HashMap<>();
+    private static final Map<String, CaseAnimation> registeredAnimations = new HashMap<>();
     private static final Map<String, Pair<Animation, Addon>> oldAnimations = new HashMap<>();
     private final Addon addon;
 
@@ -39,10 +40,12 @@ public class AnimationManager {
      * Register custom animation
      * @param name Animation name
      * @param animation Animation class
+     * @param description Animation description
      */
-    public void registerAnimation(String name, Class<? extends JavaAnimation> animation) {
+    public void registerAnimation(String name, Class<? extends JavaAnimation> animation, String description) {
         if(!isRegistered(name)) {
-            registeredAnimations.put(name, new Pair<>(animation, addon));
+            CaseAnimation caseAnimation = new CaseAnimation(animation, addon, name, description);
+            registeredAnimations.put(name, caseAnimation);
             String animationPluginName = addon.getName();
             boolean isDefault = animationPluginName.equalsIgnoreCase("DonateCase");
             AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(name, animation, animationPluginName, isDefault);
@@ -50,6 +53,17 @@ public class AnimationManager {
         } else {
             addon.getLogger().warning("Animation with name " + name + " already registered!");
         }
+    }
+
+    /**
+     * Register custom animation
+     * @param name Animation name
+     * @param animation Animation class
+     * @deprecated Use {@link #registerAnimation(String, Class, String)} instead
+     */
+    @Deprecated
+    public void registerAnimation(String name, Class<? extends JavaAnimation> animation) {
+        registerAnimation(name, animation, null);
     }
 
     /**
@@ -143,8 +157,10 @@ public class AnimationManager {
         if (isRegistered(animation, true)) {
             javaAnimation = getRegisteredOldAnimation(animation);
         } else {
-            Class<? extends JavaAnimation> animationClass = getRegisteredAnimation(animation);
-            if (animationClass != null) {
+            CaseAnimation caseAnimation = getRegisteredAnimation(animation);
+
+            if (caseAnimation != null) {
+                Class<? extends JavaAnimation> animationClass = caseAnimation.getAnimation();
                 try {
                     javaAnimation = animationClass.getDeclaredConstructor().newInstance();
                 } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
@@ -201,7 +217,7 @@ public class AnimationManager {
      * @return map with registered animations
      */
     @NotNull
-    public static Map<String, Pair<Class<? extends JavaAnimation>, Addon>> getRegisteredAnimations() {
+    public static Map<String, CaseAnimation> getRegisteredAnimations() {
         return registeredAnimations;
     }
 
@@ -221,9 +237,9 @@ public class AnimationManager {
      * @return Animation class instance
      */
     @Nullable
-    public static Class<? extends JavaAnimation> getRegisteredAnimation(String animation) {
+    public static CaseAnimation getRegisteredAnimation(String animation) {
         if (isRegistered(animation)) {
-            return getRegisteredAnimations().get(animation).getFirst();
+            return getRegisteredAnimations().get(animation);
         }
         return null;
     }
