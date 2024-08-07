@@ -1,10 +1,10 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.CaseAction;
+import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
+import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.events.CaseActionRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.CaseActionUnregisteredEvent;
-import com.jodexindustries.donatecase.tools.Pair;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +41,7 @@ import java.util.Map;
  * Default actions like: {@code [command], [broadcast], [message], [title], etc.} loading here.
  */
 public class ActionManager {
-    private static final Map<String, Pair<CaseAction, Addon>> registeredActions = new HashMap<>();
+    private static final Map<String, CaseAction> registeredActions = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -53,20 +53,33 @@ public class ActionManager {
     }
 
     /**
+     *
      * Register action
      * @param name Action name, like: "[command]"
-     * @param action Action class
+     * @param actionExecutor Action executor
+     * @param description Action description
      */
-    public void registerAction(String name, CaseAction action) {
+    public void registerAction(String name, ActionExecutor actionExecutor, String description) {
         if(!isRegistered(name)) {
-            registeredActions.put(name, new Pair<>(action, addon));
+            CaseAction caseAction = new CaseAction(actionExecutor, addon, description);
+            registeredActions.put(name, caseAction);
             String actionAddonName = addon.getName();
             boolean isDefault = actionAddonName.equalsIgnoreCase("DonateCase");
-            CaseActionRegisteredEvent event = new CaseActionRegisteredEvent(name, action, actionAddonName, isDefault);
+            CaseActionRegisteredEvent event = new CaseActionRegisteredEvent(name, caseAction, actionAddonName, isDefault);
             Bukkit.getPluginManager().callEvent(event);
         } else {
             addon.getLogger().warning("CaseAction with name " + name + " already registered!");
         }
+    }
+
+    /**
+     * Register action
+     * @param name Action name, like: "[command]"
+     * @param actionExecutor Action executor
+     */
+    @Deprecated
+    public void registerAction(String name, ActionExecutor actionExecutor) {
+        registerAction(name, actionExecutor, null);
     }
 
     /**
@@ -106,7 +119,7 @@ public class ActionManager {
      * Get all registered animations
      * @return map with registered animations
      */
-    public static Map<String, Pair<CaseAction, Addon>> getRegisteredActions() {
+    public static Map<String, CaseAction> getRegisteredActions() {
         return registeredActions;
     }
 
@@ -118,7 +131,7 @@ public class ActionManager {
     @Nullable
     public static CaseAction getRegisteredAction(@NotNull String action) {
         if (isRegistered(action)) {
-            return getRegisteredActions().get(action).getFirst();
+            return getRegisteredActions().get(action);
         }
         return null;
     }
