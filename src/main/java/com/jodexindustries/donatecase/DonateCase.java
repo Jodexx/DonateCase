@@ -127,7 +127,7 @@ public class DonateCase extends JavaPlugin {
         api.getAddonManager().unloadAddons(AddonManager.PowerReason.DONATE_CASE);
         api.getAnimationManager().unregisterAnimations();
         api.getSubCommandManager().unregisterSubCommands();
-        api.getActionManager().unregisterActions();
+        api.getActionManager().unregisterAction();
 
         if(papi != null) papi.unregister();
         if(mysql != null) mysql.close();
@@ -180,7 +180,7 @@ public class DonateCase extends JavaPlugin {
         mysql = new MySQLDataBase(this);
         mysql.connect();
 
-        DonateCaseReloadEvent reloadEvent = new DonateCaseReloadEvent(this);
+        DonateCaseReloadEvent reloadEvent = new DonateCaseReloadEvent(this, DonateCaseReloadEvent.Type.CONFIG);
         getServer().getPluginManager().callEvent(reloadEvent);
     }
 
