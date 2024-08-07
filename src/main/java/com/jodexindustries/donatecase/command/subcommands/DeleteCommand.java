@@ -24,9 +24,14 @@ public class DeleteCommand implements SubCommand {
                 Player player = (Player) sender;
                 Location l = player.getTargetBlock(null, 5).getLocation();
                 if (Case.hasCaseByLocation(l)) {
-                    Case.deleteCaseByLocation(l);
-                    if(CaseManager.getHologramManager() != null) CaseManager.getHologramManager().removeHologram(l.getBlock());
-                    Tools.msg(sender, Case.getConfig().getLang().getString("case-removed"));
+                    if(!Case.activeCasesByLocation.containsKey(l)) {
+                        Case.deleteCaseByLocation(l);
+                        if (CaseManager.getHologramManager() != null)
+                            CaseManager.getHologramManager().removeHologram(l.getBlock());
+                        Tools.msg(sender, Case.getConfig().getLang().getString("case-removed"));
+                    } else {
+                        Tools.msg(sender, Case.getConfig().getLang().getString("case-opens"));
+                    }
                 } else {
                     Tools.msg(sender, Case.getConfig().getLang().getString("block-is-not-case"));
                 }
@@ -35,9 +40,14 @@ public class DeleteCommand implements SubCommand {
             String name = args[0];
             if (Case.hasCaseByCustomName(name)) {
                 Location location = Case.getCaseLocationByCustomName(name);
-                if(CaseManager.getHologramManager() != null) if(location != null) CaseManager.getHologramManager().removeHologram(location.getBlock());
-                Case.deleteCaseByName(name);
-                Tools.msg(sender, Case.getConfig().getLang().getString("case-removed"));
+                if(!Case.activeCasesByLocation.containsKey(location)) {
+                    if (CaseManager.getHologramManager() != null)
+                        if (location != null) CaseManager.getHologramManager().removeHologram(location.getBlock());
+                    Case.deleteCaseByName(name);
+                    Tools.msg(sender, Case.getConfig().getLang().getString("case-removed"));
+                } else {
+                    Tools.msg(sender, Case.getConfig().getLang().getString("case-opens"));
+                }
             } else {
                 Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + name));
             }
