@@ -11,12 +11,15 @@ import org.jetbrains.annotations.NotNull;
 public class DonateCaseReloadEvent extends PluginEvent {
     private static final HandlerList handlers = new HandlerList();
 
+    private final Type type;
+
     /**
      * Default constructor
      * @param plugin DonateCase instance
      */
-    public DonateCaseReloadEvent(@NotNull Plugin plugin) {
+    public DonateCaseReloadEvent(@NotNull Plugin plugin, Type type) {
         super(plugin);
+        this.type = type;
     }
 
     @NotNull
@@ -30,5 +33,18 @@ public class DonateCaseReloadEvent extends PluginEvent {
      */
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    /**
+     * Get reload Type
+     * @return CONFIG or CASES
+     */
+    public Type getType() {
+        return type;
+    }
+
+    public enum Type {
+        CONFIG,
+        CASES
     }
 }
