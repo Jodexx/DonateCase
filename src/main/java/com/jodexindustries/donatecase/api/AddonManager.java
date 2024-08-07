@@ -129,7 +129,8 @@ public class AddonManager {
      * @since 2.2.4.3
      */
     public void enableAddons(PowerReason reason) {
-        addons.values().forEach(addon -> enableAddon(addon, reason));
+        Collection<InternalJavaAddon> list = addons.values();
+        list.forEach(internalJavaAddon -> enableAddon(internalJavaAddon, reason));
     }
 
     /**
