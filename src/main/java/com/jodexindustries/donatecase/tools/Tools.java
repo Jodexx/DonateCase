@@ -455,7 +455,7 @@ public class Tools {
         StringBuilder builder = new StringBuilder();
         version = version.replaceAll("\\.", "");
         if(version.length() < 4) {
-            builder.append(version).append("0");
+            for (int i = 0; i < 4 - version.length(); i++) builder.append(version).append("0");
         } else {
             builder.append(version);
         }
@@ -468,13 +468,7 @@ public class Tools {
     }
 
     public static boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
-        for (String addon : addonsMap.keySet()) {
-            List<Map<String, SubCommand>> commands = addonsMap.get(addon);
-            if(isHasCommandForSender(sender, commands)) {
-                return true;
-            }
-        }
-        return false;
+        return addonsMap.keySet().stream().map(addonsMap::get).anyMatch(commands -> isHasCommandForSender(sender, commands));
     }
 
     /**
@@ -485,36 +479,22 @@ public class Tools {
      * @return true, if sender has permission
      */
     public static boolean isHasCommandForSender(CommandSender sender, List<Map<String, SubCommand>> commands) {
-        for (Map<String, SubCommand> command : commands) {
-            for (SubCommand subCommand : command.values()) {
-                if (hasPermissionForCommand(sender, subCommand)) {
-                    return true;
-                }
+        return commands.stream().flatMap(command -> command.values().stream()).anyMatch(subCommand -> subCommand.getType().hasPermission(sender));
+    }
+
+    public static Color fromRGBString(String string, Color def) {
+        if(string != null) {
+            String[] rgb = string.replaceAll(" ", "").split(",");
+            try {
+                int red = Integer.parseInt(rgb[0]);
+                int green = Integer.parseInt(rgb[1]);
+                int blue = Integer.parseInt(rgb[2]);
+                def = Color.fromRGB(red, green, blue);
+            } catch (NumberFormatException ignored) {
             }
         }
-        return false;
+        return def;
     }
-
-    /**
-     * Check sender for permission to executing command
-     * @param sender Player or Console
-     * @param subCommand Sub command ,that loaded in DonateCase
-     * @return true, if sender has permission
-     */
-    private static boolean hasPermissionForCommand(CommandSender sender, SubCommand subCommand) {
-        SubCommandType type = subCommand.getType();
-
-        if (sender.hasPermission("donatecase.admin")) {
-            return type == SubCommandType.ADMIN || type == SubCommandType.MODER || type == SubCommandType.PLAYER || type == null;
-        } else if (sender.hasPermission("donatecase.mod")) {
-            return type == SubCommandType.MODER || type == SubCommandType.PLAYER || type == null;
-        } else if (sender.hasPermission("donatecase.player")) {
-            return type == SubCommandType.PLAYER || type == null;
-        }
-
-        return false;
-    }
-
 
     /**
      * Parse EulerAngle from string
