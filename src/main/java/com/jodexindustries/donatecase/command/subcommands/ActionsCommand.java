@@ -1,9 +1,9 @@
 package com.jodexindustries.donatecase.command.subcommands;
 
 import com.jodexindustries.donatecase.api.ActionManager;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.command.CommandSender;
 
@@ -16,11 +16,11 @@ public class ActionsCommand implements SubCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        Map<String, List<String>> actionsMap = buildActionsMap();
-        for (Map.Entry<String, List<String>> entry : actionsMap.entrySet()) {
+        Map<String, List<CaseAction>> actionsMap = buildActionsMap();
+        for (Map.Entry<String, List<CaseAction>> entry : actionsMap.entrySet()) {
             Tools.msgRaw(sender, "&6" + entry.getKey());
-            for (String action : entry.getValue()) {
-                Tools.msgRaw(sender, "&9- &a" + action);
+            for (CaseAction action : entry.getValue()) {
+                Tools.msgRaw(sender, "&9- &a" + action.getName() + " &3- &2" + action.getDescription());
             }
         }
     }
@@ -35,15 +35,19 @@ public class ActionsCommand implements SubCommand {
         return SubCommandType.ADMIN;
     }
 
-    private static Map<String, List<String>> buildActionsMap() {
-        Map<String, List<String>> actionsMap = new HashMap<>();
-        ActionManager.getRegisteredActions().forEach((action, pair) -> {
-            Addon addon = pair.getSecond();
+    /**
+     * Key - Addon name
+     * Value - list of CaseAction
+     */
+    private static Map<String, List<CaseAction>> buildActionsMap() {
+        Map<String, List<CaseAction>> actionsMap = new HashMap<>();
+        ActionManager.getRegisteredActions().forEach((name, caseAction) -> {
+            String addon = caseAction.getAddon().getName();
 
-            List<String> actions = actionsMap.getOrDefault(addon.getName(), new ArrayList<>());
-            actions.add(action);
+            List<CaseAction> actions = actionsMap.getOrDefault(addon, new ArrayList<>());
+            actions.add(caseAction);
 
-            actionsMap.put(addon.getName(), actions);
+            actionsMap.put(addon, actions);
         });
 
         return actionsMap;
