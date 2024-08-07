@@ -1,5 +1,7 @@
 package com.jodexindustries.donatecase.api.addon;
 
+import java.util.logging.Logger;
+
 /**
  * Represent an Addon
  */
@@ -24,4 +26,13 @@ public interface Addon {
      * @return true if this addon is enabled, otherwise false
      */
     boolean isEnabled();
+
+    /**
+     * Returns the addon logger associated with this server's logger. The
+     * returned logger automatically tags all log messages with the addon's
+     * name.
+     *
+     * @return Logger associated with this addon
+     */
+    Logger getLogger();
 }
