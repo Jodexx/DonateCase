@@ -38,6 +38,7 @@ public class DonateCaseReloadEvent extends PluginEvent {
     /**
      * Get reload Type
      * @return CONFIG or CASES
+     * @since 2.2.4.4
      */
     public Type getType() {
         return type;
