@@ -25,10 +25,7 @@ import com.jodexindustries.donatecase.config.Config;
 import com.jodexindustries.donatecase.database.sql.MySQLDataBase;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
-import com.jodexindustries.donatecase.tools.support.ItemsAdderSupport;
-import com.jodexindustries.donatecase.tools.support.OraxenSupport;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
-import com.jodexindustries.donatecase.tools.support.PacketEventsSupport;
+import com.jodexindustries.donatecase.tools.support.*;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.*;
@@ -63,6 +60,7 @@ public class DonateCase extends JavaPlugin {
     public BukkitLibraryManager libraryManager;
     public ItemsAdderSupport itemsAdderSupport = null;
     public OraxenSupport oraxenSupport = null;
+    public HeadDatabaseSupport headDatabaseSupport = null;
     public PacketEventsSupport packetEventsSupport;
 
     public Config config;
@@ -102,6 +100,7 @@ public class DonateCase extends JavaPlugin {
 
         loadItemsAdderAPI();
         loadOraxenAPI();
+        loadHeadDatabaseAPI();
 
         loadCases();
         loadHolograms();
@@ -161,6 +160,10 @@ public class DonateCase extends JavaPlugin {
 
     private void loadOraxenAPI() {
         if(getServer().getPluginManager().isPluginEnabled("Oraxen")) oraxenSupport = new OraxenSupport(this);
+    }
+
+    private void loadHeadDatabaseAPI() {
+        if (getServer().getPluginManager().isPluginEnabled("HeadDatabase")) headDatabaseSupport = new HeadDatabaseSupport(this);
     }
 
     private void loadUpdater() {
