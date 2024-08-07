@@ -605,13 +605,15 @@ public class CaseData implements Cloneable {
             private String displayName;
             private boolean enchanted;
             private List<String> lore;
+            private int modelData;
 
-            public Material(String id, ItemStack itemStack, String displayName, boolean enchanted, List<String> lore) {
+            public Material(String id, ItemStack itemStack, String displayName, boolean enchanted, List<String> lore, int modelData) {
                 this.itemStack = itemStack;
                 this.displayName = displayName;
                 this.enchanted = enchanted;
                 this.id = id;
                 this.lore = lore;
+                this.modelData = modelData;
             }
 
             /**
@@ -716,6 +718,17 @@ public class CaseData implements Cloneable {
                         ", enchanted=" + enchanted +
                         ", lore=" + lore +
                         '}';
+            }
+
+            public int getModelData() {
+                return modelData;
+            }
+
+            public void setModelData(int modelData) {
+                this.modelData = modelData;
+                if(this.itemStack != null && this.itemStack.getItemMeta() != null) {
+                    this.itemStack.getItemMeta().setCustomModelData(modelData);
+                }
             }
         }
 
