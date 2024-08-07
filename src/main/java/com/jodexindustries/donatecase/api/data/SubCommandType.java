@@ -12,9 +12,9 @@ public enum SubCommandType {
      */
     PLAYER("donatecase.player"),
     /**
-     * User with moder rights can use, and see this command in tab completer (donatecase.moder)
+     * User with moder rights can use, and see this command in tab completer (donatecase.mod)
      */
-    MODER("donatecase.moder"),
+    MODER("donatecase.mod"),
     /**
      * User with admin rights can use, and see this command in tab completer (donatecase.admin)
      */
