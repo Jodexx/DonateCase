@@ -1,12 +1,12 @@
 package com.jodexindustries.donatecase.api.actions;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.CaseAction;
+import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class TitleActionImpl implements CaseAction {
+public class TitleActionExecutorImpl implements ActionExecutor {
     /**
      * Send title for player with specific cooldown<br>
      * {@code - "[title] (title);(subtitle)"}

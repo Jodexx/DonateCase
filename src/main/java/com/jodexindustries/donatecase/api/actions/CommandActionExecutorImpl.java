@@ -1,12 +1,12 @@
 package com.jodexindustries.donatecase.api.actions;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.CaseAction;
+import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class CommandActionImpl implements CaseAction {
+public class CommandActionExecutorImpl implements ActionExecutor {
     /**
      * Send command to console with specific cooldown<br>
      * {@code - "[command] (command)"}

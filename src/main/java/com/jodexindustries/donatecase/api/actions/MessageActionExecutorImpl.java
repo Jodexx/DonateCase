@@ -1,12 +1,12 @@
 package com.jodexindustries.donatecase.api.actions;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.CaseAction;
+import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class MessageActionImpl implements CaseAction {
+public class MessageActionExecutorImpl implements ActionExecutor {
     /**
      * Send chat message for player with specific cooldown<br>
      * {@code - "[message] (message)"}

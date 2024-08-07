@@ -1,13 +1,13 @@
 package com.jodexindustries.donatecase.api.actions;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.CaseAction;
+import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 
-public class SoundActionImpl implements CaseAction {
+public class SoundActionExecutorImpl implements ActionExecutor {
     /**
      * Player sound for player with specific cooldown<br>
      * {@code - "[sound] (sound) (volume) (pitch)"}

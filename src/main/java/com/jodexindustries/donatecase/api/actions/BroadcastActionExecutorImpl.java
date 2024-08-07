@@ -1,13 +1,13 @@
 package com.jodexindustries.donatecase.api.actions;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.CaseAction;
+import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class BroadcastActionImpl implements CaseAction {
+public class BroadcastActionExecutorImpl implements ActionExecutor {
     /**
      * Send broadcast message for all players on the server with specific cooldown<br>
      * {@code - "[broadcast] (message)"}
