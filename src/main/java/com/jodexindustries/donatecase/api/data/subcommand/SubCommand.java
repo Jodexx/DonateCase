@@ -1,0 +1,151 @@
+package com.jodexindustries.donatecase.api.data.subcommand;
+
+import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.data.SubCommandType;
+import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
+    private final Addon addon;
+    private final String name;
+
+    private SubCommandExecutor executor;
+    private SubCommandTabCompleter tabCompleter;
+
+    private String description;
+    private SubCommandType type;
+    private String[] args;
+
+    public SubCommand(String name, Addon addon) {
+        this.addon = addon;
+        this.name = name;
+    }
+
+
+    @Override
+    public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
+        if(executor != null) executor.execute(sender, label, args);
+    }
+
+    @Override
+    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
+        if(tabCompleter == null) return new ArrayList<>();
+        return tabCompleter.getTabCompletions(sender, label, args);
+    }
+
+    public SubCommandExecutor getExecutor() {
+        return executor;
+    }
+
+    public void setExecutor(SubCommandExecutor executor) {
+        this.executor = executor;
+    }
+
+    public SubCommandTabCompleter getTabCompleter() {
+        return tabCompleter;
+    }
+
+    public void setTabCompleter(SubCommandTabCompleter tabCompleter) {
+        this.tabCompleter = tabCompleter;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public SubCommandType getType() {
+        return type;
+    }
+
+    public void setType(SubCommandType type) {
+        this.type = type;
+    }
+
+    public String[] getArgs() {
+        return args;
+    }
+
+    public void setArgs(String[] args) {
+        this.args = args;
+    }
+
+    public Addon getAddon() {
+        return addon;
+    }
+
+    @Override
+    public String toString() {
+        return "SubCommand{" +
+                "addon=" + addon +
+                ", name='" + name + '\'' +
+                ", executor=" + executor +
+                ", tabCompleter=" + tabCompleter +
+                ", description='" + description + '\'' +
+                ", type=" + type +
+                ", args=" + Arrays.toString(args) +
+                '}';
+    }
+
+    public static class Builder {
+        private final Addon addon;
+        private final String name;
+
+        private SubCommandExecutor executor;
+        private SubCommandTabCompleter tabCompleter;
+        private String description;
+        private SubCommandType type;
+        private String[] args;
+
+        public Builder(String name, Addon addon) {
+            this.addon = addon;
+            this.name = name;
+        }
+
+        public Builder executor(SubCommandExecutor executor) {
+            this.executor = executor;
+            return this;
+        }
+
+        public Builder tabCompleter(SubCommandTabCompleter tabCompleter) {
+            this.tabCompleter = tabCompleter;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder type(SubCommandType type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder args(String[] args) {
+            this.args = args;
+            return this;
+        }
+
+        public SubCommand build() {
+            SubCommand subCommand = new SubCommand(name, addon);
+            subCommand.setExecutor(executor);
+            subCommand.setTabCompleter(tabCompleter);
+            subCommand.setDescription(description);
+            subCommand.setType(type);
+            subCommand.setArgs(args);
+            return subCommand;
+        }
+    }
+}
