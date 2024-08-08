@@ -551,4 +551,18 @@ public class Tools {
                 ));
     }
 
+    /**
+     * Extract cooldown from action string
+     * @param action Action string. Format [cooldown:int]
+     * @return cooldown
+     */
+    public static int extractCooldown(String action) {
+        Pattern pattern = Pattern.compile("\\[cooldown:(.*?)]");
+        Matcher matcher = pattern.matcher(action);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        }
+        return 0;
+    }
+
 }
