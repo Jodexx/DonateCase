@@ -1,13 +1,17 @@
 package com.jodexindustries.donatecase.command.subcommands;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -16,12 +20,22 @@ import static com.jodexindustries.donatecase.tools.Tools.resolveSDGCompletions;
 /**
  * Class for /dc delkey subcommand implementation
  */
-public class DelKeyCommand implements SubCommand {
+public class DelKeyCommand implements SubCommandExecutor, SubCommandTabCompleter {
+
+    public DelKeyCommand(SubCommandManager manager) {
+        SubCommand subCommand = manager.builder("delkey")
+                .executor(this)
+                .tabCompleter(this)
+                .type(SubCommandType.ADMIN)
+                .build();
+        manager.registerSubCommand(subCommand);
+    }
+
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () -> {
             if (args.length == 0) {
-                GlobalCommand.sendHelp(sender, "dc");
+                GlobalCommand.sendHelp(sender, label);
             } else if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("all")) {
                     if (!Case.getInstance().sql) {
@@ -65,12 +79,8 @@ public class DelKeyCommand implements SubCommand {
     }
 
     @Override
-    public List<String> getTabCompletions(CommandSender sender, String[] args) {
+    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         return resolveSDGCompletions(args);
     }
 
-    @Override
-    public SubCommandType getType() {
-        return SubCommandType.MODER;
-    }
 }

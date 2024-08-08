@@ -2,13 +2,17 @@ package com.jodexindustries.donatecase.command.subcommands;
 
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.SubCommand;
+import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -18,10 +22,19 @@ import java.util.stream.Collectors;
 /**
  * Class for /dc keys subcommand implementation
  */
-public class KeysCommand implements SubCommand {
+public class KeysCommand implements SubCommandExecutor, SubCommandTabCompleter {
+
+    public KeysCommand(SubCommandManager manager) {
+        SubCommand subCommand = manager.builder("keys")
+                .executor(this)
+                .tabCompleter(this)
+                .type(SubCommandType.PLAYER)
+                .build();
+        manager.registerSubCommand(subCommand);
+    }
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         Bukkit.getScheduler().runTaskAsynchronously(DonateCase.instance, () -> {
             if (args.length < 1) {
                 if (sender instanceof Player) {
@@ -77,15 +90,11 @@ public class KeysCommand implements SubCommand {
 
 
     @Override
-    public List<String> getTabCompletions(CommandSender sender, String[] args) {
+    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         if (args.length != 1 || !sender.hasPermission("donatecase.mod")) {
             return new ArrayList<>();
         }
         return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(px -> px.startsWith(args[0])).collect(Collectors.toList());
     }
 
-    @Override
-    public SubCommandType getType() {
-        return SubCommandType.PLAYER;
-    }
 }

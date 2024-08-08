@@ -1,21 +1,35 @@
 package com.jodexindustries.donatecase.command.subcommands;
 
 import com.jodexindustries.donatecase.api.ActionManager;
-import com.jodexindustries.donatecase.api.data.SubCommand;
+import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 /**
  * Class for /dc actions subcommand implementation
  */
-public class ActionsCommand implements SubCommand {
+public class ActionsCommand implements SubCommandExecutor, SubCommandTabCompleter {
+
+    public ActionsCommand(SubCommandManager manager) {
+        SubCommand subCommand = manager.builder("actions")
+                .executor(this)
+                .tabCompleter(this)
+                .type(SubCommandType.ADMIN)
+                .build();
+        manager.registerSubCommand(subCommand);
+    }
+
 
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         Map<String, List<CaseAction>> actionsMap = buildActionsMap();
         for (Map.Entry<String, List<CaseAction>> entry : actionsMap.entrySet()) {
             Tools.msgRaw(sender, "&6" + entry.getKey());
@@ -26,13 +40,8 @@ public class ActionsCommand implements SubCommand {
     }
 
     @Override
-    public List<String> getTabCompletions(CommandSender sender, String[] args) {
+    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         return new ArrayList<>();
-    }
-
-    @Override
-    public SubCommandType getType() {
-        return SubCommandType.ADMIN;
     }
 
     /**

@@ -2,13 +2,17 @@ package com.jodexindustries.donatecase.command.subcommands;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
-import com.jodexindustries.donatecase.api.data.SubCommand;
+import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +20,19 @@ import java.util.List;
 /**
  * Class for /dc delete subcommand implementation
  */
-public class DeleteCommand implements SubCommand {
+public class DeleteCommand implements SubCommandExecutor, SubCommandTabCompleter {
+
+    public DeleteCommand(SubCommandManager manager) {
+        SubCommand subCommand = manager.builder("delete")
+                .executor(this)
+                .tabCompleter(this)
+                .type(SubCommandType.ADMIN)
+                .build();
+        manager.registerSubCommand(subCommand);
+    }
+
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         if (args.length == 0) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
@@ -57,7 +71,7 @@ public class DeleteCommand implements SubCommand {
     }
 
     @Override
-    public List<String> getTabCompletions(CommandSender sender, String[] args) {
+    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         List<String> value;
         if (args.length == 1) {
             ConfigurationSection section = Case.getConfig().getCases().getConfigurationSection("DonatCase.Cases");
@@ -72,8 +86,4 @@ public class DeleteCommand implements SubCommand {
         return value;
     }
 
-    @Override
-    public SubCommandType getType() {
-        return SubCommandType.ADMIN;
-    }
 }

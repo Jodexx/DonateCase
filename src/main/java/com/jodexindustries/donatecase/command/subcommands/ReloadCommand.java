@@ -1,10 +1,14 @@
 package com.jodexindustries.donatecase.command.subcommands;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.SubCommand;
+import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +16,19 @@ import java.util.List;
 /**
  * Class for /dc reload subcommand implementation
  */
-public class ReloadCommand implements SubCommand {
+public class ReloadCommand implements SubCommandExecutor, SubCommandTabCompleter {
+
+    public ReloadCommand(SubCommandManager manager) {
+        SubCommand subCommand = manager.builder("reload")
+                .executor(this)
+                .tabCompleter(this)
+                .type(SubCommandType.ADMIN)
+                .build();
+        manager.registerSubCommand(subCommand);
+    }
+
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         if(args.length == 0) {
             Case.getInstance().loadConfig();
             Case.getInstance().loadCases();
@@ -32,7 +46,7 @@ public class ReloadCommand implements SubCommand {
     }
 
     @Override
-    public List<String> getTabCompletions(CommandSender sender, String[] args) {
+    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         List<String> list = new ArrayList<>();
         if(args.length == 1) {
             list.add("cache");
@@ -40,8 +54,4 @@ public class ReloadCommand implements SubCommand {
         return list;
     }
 
-    @Override
-    public SubCommandType getType() {
-        return SubCommandType.ADMIN;
-    }
 }

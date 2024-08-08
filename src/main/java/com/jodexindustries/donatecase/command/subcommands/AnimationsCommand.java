@@ -1,21 +1,34 @@
 package com.jodexindustries.donatecase.command.subcommands;
 
 import com.jodexindustries.donatecase.api.AnimationManager;
+import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 /**
  * Class for /dc animations subcommand implementation
  */
-public class AnimationsCommand implements SubCommand {
+public class AnimationsCommand implements SubCommandExecutor, SubCommandTabCompleter {
+
+    public AnimationsCommand(SubCommandManager manager) {
+        com.jodexindustries.donatecase.api.data.subcommand.SubCommand subCommand = manager.builder("animations")
+                .executor(this)
+                .tabCompleter(this)
+                .type(SubCommandType.ADMIN)
+                .build();
+        manager.registerSubCommand(subCommand);
+    }
+
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         Map<String, List<CaseAnimation>> animationsMap = buildAnimationsMap();
         for (Map.Entry<String, List<CaseAnimation>> entry : animationsMap.entrySet()) {
             Tools.msgRaw(sender, "&6" + entry.getKey());
@@ -26,13 +39,8 @@ public class AnimationsCommand implements SubCommand {
     }
 
     @Override
-    public List<String> getTabCompletions(CommandSender sender, String[] args) {
+    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         return new ArrayList<>();
-    }
-
-    @Override
-    public SubCommandType getType() {
-        return SubCommandType.ADMIN;
     }
 
     private static Map<String, List<CaseAnimation>> buildAnimationsMap() {

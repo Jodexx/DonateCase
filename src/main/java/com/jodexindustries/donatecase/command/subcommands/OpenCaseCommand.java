@@ -1,13 +1,17 @@
 package com.jodexindustries.donatecase.command.subcommands;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +20,19 @@ import java.util.List;
 /**
  * Class for /dc opencase subcommand implementation
  */
-public class OpenCaseCommand implements SubCommand {
+public class OpenCaseCommand implements SubCommandExecutor, SubCommandTabCompleter {
+
+    public OpenCaseCommand(SubCommandManager manager) {
+        SubCommand subCommand = manager.builder("opencase")
+                .executor(this)
+                .tabCompleter(this)
+                .type(SubCommandType.PLAYER)
+                .build();
+        manager.registerSubCommand(subCommand);
+    }
+
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         if (sender instanceof Player) {
             String playerName = sender.getName();
             Player player = (Player) sender;
@@ -40,13 +54,13 @@ public class OpenCaseCommand implements SubCommand {
                     Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
                 }
             } else {
-                GlobalCommand.sendHelp(sender, "dc");
+                GlobalCommand.sendHelp(sender, label);
             }
         }
     }
 
     @Override
-    public List<String> getTabCompletions(CommandSender sender, String[] args) {
+    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         List<String> list = new ArrayList<>(Case.getConfig().getCasesConfig().getCases().keySet());
         if(args.length >= 2) {
             return new ArrayList<>();
@@ -54,8 +68,4 @@ public class OpenCaseCommand implements SubCommand {
         return list;
     }
 
-    @Override
-    public SubCommandType getType() {
-        return SubCommandType.PLAYER;
-    }
 }

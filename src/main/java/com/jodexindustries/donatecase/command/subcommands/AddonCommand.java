@@ -2,13 +2,17 @@ package com.jodexindustries.donatecase.command.subcommands;
 
 import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
-import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,13 +23,22 @@ import java.util.stream.Collectors;
 /**
  * Class for /dc addon subcommand implementation
  */
-public class AddonCommand implements SubCommand {
+public class AddonCommand implements SubCommandExecutor, SubCommandTabCompleter {
     private final AddonManager manager = Case.getInstance().api.getAddonManager();
 
+    public AddonCommand(SubCommandManager manager) {
+        SubCommand subCommand = manager.builder("addon")
+                .executor(this)
+                .tabCompleter(this)
+                .type(SubCommandType.ADMIN)
+                .build();
+        manager.registerSubCommand(subCommand);
+    }
+
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         if (args.length < 2) {
-            GlobalCommand.sendHelp(sender, "dc");
+            GlobalCommand.sendHelp(sender, label);
             return;
         }
 
@@ -46,14 +59,14 @@ public class AddonCommand implements SubCommand {
                 handleUnloadCommand(sender, addonName);
                 break;
             default:
-                GlobalCommand.sendHelp(sender, "dc");
+                GlobalCommand.sendHelp(sender, label);
                 break;
         }
     }
 
 
     @Override
-    public List<String> getTabCompletions(CommandSender sender, String[] args) {
+    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         List<String> list = new ArrayList<>();
         if (args.length == 1) {
             list.add("enable");
@@ -149,11 +162,6 @@ public class AddonCommand implements SubCommand {
 
     private void handleAddonSuccess(CommandSender sender, String addonName, String action) {
         Tools.msg(sender, "&aAddon &6" + addonName + " &a" + action + " successfully!");
-    }
-
-    @Override
-    public SubCommandType getType() {
-        return SubCommandType.ADMIN;
     }
 
     private List<String> getAddons() {

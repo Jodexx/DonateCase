@@ -3,9 +3,8 @@ package com.jodexindustries.donatecase.command;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
-import com.jodexindustries.donatecase.tools.Pair;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,14 +27,8 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                 sendHelp(sender, label);
             } else {
                 String subCommandName = args[0];
-                Pair<SubCommand, Addon> pair = SubCommandManager.getSubCommands().get(subCommandName);
+                SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
 
-                if (pair == null) {
-                    sendHelp(sender, label);
-                    return false;
-                }
-
-                SubCommand subCommand = pair.getFirst();
                 if (subCommand == null) {
                     sendHelp(sender, label);
                     return false;
@@ -43,7 +36,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
                 SubCommandType type = subCommand.getType();
 
-                if(type == null || type.hasPermission(sender)) subCommand.execute(sender, Arrays.copyOfRange(args, 1, args.length));
+                if(type == null || type.hasPermission(sender)) subCommand.execute(sender, label, Arrays.copyOfRange(args, 1, args.length));
                 else Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
             }
 
@@ -80,9 +73,8 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     private static Map<String, List<Map<String, SubCommand>>> buildAddonsMap() {
         Map<String, List<Map<String, SubCommand>>> addonsMap = new HashMap<>();
-        SubCommandManager.getSubCommands().forEach((subCommandName, pair) -> {
-            SubCommand subCommand = pair.getFirst();
-            Addon addon = pair.getSecond();
+        SubCommandManager.getSubCommands().forEach((subCommandName, subCommand) -> {
+            Addon addon = subCommand.getAddon();
             addonsMap.computeIfAbsent(addon.getName(), k -> new ArrayList<>())
                     .add(Collections.singletonMap(subCommandName, subCommand));
         });
@@ -133,11 +125,11 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         List<String> value = new ArrayList<>();
 
         if (args.length == 1) {
-            Map<String, Pair<SubCommand, Addon>> subCommands = SubCommandManager.getSubCommands();
+            Map<String, SubCommand> subCommands = SubCommandManager.getSubCommands();
 
-            for (Map.Entry<String, Pair<SubCommand, Addon>> entry : subCommands.entrySet()) {
+            for (Map.Entry<String, SubCommand> entry : subCommands.entrySet()) {
                 String subCommandName = entry.getKey();
-                SubCommand subCommand = entry.getValue().getFirst();
+                SubCommand subCommand = entry.getValue();
                 SubCommandType type = subCommand.getType();
 
                 if (type == null || type.hasPermission(sender)) {
@@ -145,7 +137,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                 }
             }
         } else if (SubCommandManager.getSubCommands().containsKey(args[0])) {
-            return SubCommandManager.getTabCompletionsForSubCommand(sender, args[0], Arrays.copyOfRange(args, 1, args.length));
+            return SubCommandManager.getTabCompletionsForSubCommand(sender, args[0], label, Arrays.copyOfRange(args, 1, args.length));
         } else {
             return new ArrayList<>();
         }

@@ -1,11 +1,15 @@
 package com.jodexindustries.donatecase.command.subcommands;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.SubCommand;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +17,19 @@ import java.util.List;
 /**
  * Class for /dc cases subcommand implementation
  */
-public class CasesCommand implements SubCommand {
+public class CasesCommand implements SubCommandExecutor, SubCommandTabCompleter {
+
+    public CasesCommand(SubCommandManager manager) {
+        SubCommand subCommand = manager.builder("cases")
+                .executor(this)
+                .tabCompleter(this)
+                .type(SubCommandType.MODER)
+                .build();
+        manager.registerSubCommand(subCommand);
+    }
+
     @Override
-    public void execute(CommandSender sender, String[] args) {
+    public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         int num = 0;
         for (String caseName : Case.getConfig().getCasesConfig().getCases().keySet()) {
             num++;
@@ -29,12 +43,8 @@ public class CasesCommand implements SubCommand {
     }
 
     @Override
-    public List<String> getTabCompletions(CommandSender sender, String[] args) {
+    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         return new ArrayList<>();
     }
 
-    @Override
-    public SubCommandType getType() {
-        return SubCommandType.MODER;
-    }
 }
