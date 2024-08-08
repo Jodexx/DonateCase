@@ -1,12 +1,12 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.events.SubCommandRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.SubCommandUnregisteredEvent;
-import com.jodexindustries.donatecase.tools.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,8 +17,13 @@ import java.util.Map;
  * Class for managing subcommands, registering commands.
  */
 public class SubCommandManager {
-    public static final Map<String, Pair<SubCommand, Addon>> registeredSubCommands = new HashMap<>();
+    public static final Map<String, SubCommand> registeredSubCommands = new HashMap<>();
     private final Addon addon;
+
+    /**
+     * Default constructor
+     * @param addon An addon that will manage subcommands
+     */
     public SubCommandManager(Addon addon) {
         this.addon = addon;
     }
@@ -26,19 +31,52 @@ public class SubCommandManager {
     /**
      * Register sub command
      * @param commandName Sub command name to register
-     * @param subCommand Class that implements the SubCommand interface
+     * @param executor Class that implements the SubCommand interface
+     * @return true, if successful
      */
-    public void registerSubCommand(String commandName, SubCommand subCommand) {
-        if(registeredSubCommands.get(commandName.toLowerCase()) == null) {
-            registeredSubCommands.put(commandName.toLowerCase(), new Pair<>(subCommand, addon));
-            String addonSubCommandName = addon.getName();
-            boolean isDefault = addonSubCommandName.equalsIgnoreCase("DonateCase");
-            SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(commandName,
-                    subCommand, addonSubCommandName, isDefault);
+    @Deprecated
+    public boolean registerSubCommand(String commandName, com.jodexindustries.donatecase.api.data.SubCommand executor) {
+        SubCommand subCommand = new SubCommand(commandName, addon);
+        subCommand.setExecutor((sender, label, args) -> executor.execute(sender, args));
+        subCommand.setTabCompleter((sender, label, args) -> executor.getTabCompletions(sender, args));
+        subCommand.setType(executor.getType());
+        subCommand.setArgs(executor.getArgs());
+        subCommand.setDescription(executor.getDescription());
+        return registerSubCommand(subCommand);
+    }
+
+    /**
+     * Gets Builder for creating sub command
+     * @param name Sub command name to create
+     * @see #registerSubCommand(SubCommand)
+     * @return SubCommand Builder
+     */
+    @NotNull
+    public SubCommand.Builder builder(String name) {
+        return new SubCommand.Builder(name, addon);
+    }
+
+    /**
+     * Register sub command
+     * @see #builder(String)
+     * @param subCommand SubCommand object
+     * @return true, if successful
+     */
+    public boolean registerSubCommand(SubCommand subCommand) {
+        String name = subCommand.getName();
+        if (registeredSubCommands.get(name.toLowerCase()) == null) {
+            registeredSubCommands.put(name.toLowerCase(), subCommand);
+
+            boolean isDefault = addon.getName().equalsIgnoreCase("DonateCase");
+
+            SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(subCommand,
+                    addon, isDefault);
             Bukkit.getServer().getPluginManager().callEvent(subCommandRegisteredEvent);
+            return true;
         } else {
-            addon.getLogger().warning("Sub command " + commandName + " already registered!");
+            addon.getLogger().warning("Sub command " + name + " already registered!");
         }
+        return false;
     }
 
     /**
@@ -69,7 +107,7 @@ public class SubCommandManager {
      * Get all subcommands
      * @return String - sub command name <br> SubCommand - Class that implements the SubCommand interface
      */
-    public static Map<String, Pair<SubCommand, Addon>> getSubCommands() {
+    public static Map<String, SubCommand> getSubCommands() {
         return registeredSubCommands;
     }
 
@@ -80,10 +118,10 @@ public class SubCommandManager {
      * @param subCommandName Sub command name
      * @return Tab completions
      */
-    public static List<String> getTabCompletionsForSubCommand(CommandSender sender, String subCommandName, String[] args) {
-        SubCommand subCommand = registeredSubCommands.get(subCommandName.toLowerCase()).getFirst();
+    public static List<String> getTabCompletionsForSubCommand(CommandSender sender, String subCommandName, String label, String[] args) {
+        SubCommand subCommand = registeredSubCommands.get(subCommandName.toLowerCase());
         if (subCommand != null) {
-            return subCommand.getTabCompletions(sender, args);
+            return subCommand.getTabCompletions(sender, label, args);
         }
         return null;
     }
