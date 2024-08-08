@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Interface for registering sub commands
  */
-
+@Deprecated
 public interface SubCommand {
     /**
      * Executes the given sub command
