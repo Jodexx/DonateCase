@@ -59,34 +59,36 @@ public class EventsListener implements Listener {
             Location location = playerOpenCase.getLocation();
             CaseGuiClickEvent caseGuiClickEvent = new CaseGuiClickEvent(e.getView(), e.getSlotType(), e.getSlot(), e.getClick(), e.getAction(), location, caseType, isOpenItem);
             Bukkit.getServer().getPluginManager().callEvent(caseGuiClickEvent);
-            if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY && e.getInventory().getType() == InventoryType.CHEST && isOpenItem) {
-                String openMaterialType = Tools.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
-                if(openMaterialType != null) caseType = openMaterialType;
+            if(!caseGuiClickEvent.isCancelled()) {
+                if (e.getAction() != InventoryAction.MOVE_TO_OTHER_INVENTORY
+                        && e.getInventory().getType() == InventoryType.CHEST && isOpenItem) {
+                    String openMaterialType = Tools.getOpenMaterialTypeByMapBySlot(caseType, e.getRawSlot());
+                    if (openMaterialType != null) caseType = openMaterialType;
 
-                if (Case.hasCaseByType(caseType)) {
-                    PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, location.getBlock());
-                    Bukkit.getServer().getPluginManager().callEvent(event);
-                    if (!event.isCancelled()) {
-                        if (Case.getKeys(caseType, playerName) >= 1) {
-                            Case.removeKeys(caseType, playerName, 1);
+                    if (Case.hasCaseByType(caseType)) {
+                        PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, location.getBlock());
+                        Bukkit.getServer().getPluginManager().callEvent(event);
+                        if (!event.isCancelled()) {
+                            if (Case.getKeys(caseType, playerName) >= 1) {
+                                Case.removeKeys(caseType, playerName, 1);
 
-                            OpenCaseEvent openEvent = new OpenCaseEvent(p, caseType, location.getBlock());
-                            Bukkit.getServer().getPluginManager().callEvent(openEvent);
+                                OpenCaseEvent openEvent = new OpenCaseEvent(p, caseType, location.getBlock());
+                                Bukkit.getServer().getPluginManager().callEvent(openEvent);
 
-                            p.closeInventory();
-
-                            Case.getInstance().api.getAnimationManager().startAnimation(p, location, caseType);
-                        } else {
-                            p.closeInventory();
-                            CaseData caseData = Case.getCase(caseType);
-                            if(caseData == null) return;
-                            Case.executeActions(p, caseData.getNoKeyActions());
+                                if (!openEvent.isCancelled())
+                                    Case.getInstance().api.getAnimationManager().startAnimation(p, location, caseType);
+                            } else {
+                                CaseData caseData = Case.getCase(caseType);
+                                if (caseData == null) return;
+                                Case.executeActions(p, caseData.getNoKeyActions());
+                            }
                         }
+                    } else {
+                        Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
+                        Case.getInstance().getLogger().log(Level.WARNING, "Case with name " + caseType + " not exist!");
                     }
-                } else {
+
                     p.closeInventory();
-                    Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
-                    Case.getInstance().getLogger().log(Level.WARNING, "Case with name " + caseType + " not exist!");
                 }
             }
         }
@@ -106,28 +108,26 @@ public class EventsListener implements Listener {
     public void PlayerInteract(PlayerInteractEvent e) {
         if (e.getHand() == EquipmentSlot.OFF_HAND) return;
         Player p = e.getPlayer();
-        if(e.getClickedBlock() != null) {
+        if (e.getClickedBlock() != null) {
             Location blockLocation = e.getClickedBlock().getLocation();
-            if (Case.hasCaseByLocation(blockLocation)) {
-                String caseType = Case.getCaseTypeByLocation(blockLocation);
-                if (caseType == null) return;
-                e.setCancelled(true);
-                CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType, e.getAction());
-                Bukkit.getServer().getPluginManager().callEvent(event);
-                if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                    if (!event.isCancelled()) {
-                        if (!Case.activeCasesByLocation.containsKey(blockLocation)) {
-                            if (Case.hasCaseByType(caseType)) {
-                                CaseData caseData = Case.getCase(caseType);
-                                if (caseData == null) return;
-                                Case.openGui(p, caseData, blockLocation);
-                            } else {
-                                Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
-                                Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
-                            }
+            String caseType = Case.getCaseTypeByLocation(blockLocation);
+            if (caseType == null) return;
+            e.setCancelled(true);
+            CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType, e.getAction());
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                if (!event.isCancelled()) {
+                    if (!Case.activeCasesByLocation.containsKey(blockLocation)) {
+                        if (Case.hasCaseByType(caseType)) {
+                            CaseData caseData = Case.getCase(caseType);
+                            if (caseData == null) return;
+                            Case.openGui(p, caseData, blockLocation);
                         } else {
-                            Tools.msg(p, Case.getConfig().getLang().getString("case-opens"));
+                            Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
+                            Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
                         }
+                    } else {
+                        Tools.msg(p, Case.getConfig().getLang().getString("case-opens"));
                     }
                 }
             }
