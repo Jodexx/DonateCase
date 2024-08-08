@@ -36,7 +36,7 @@ public class EventsListener implements Listener {
     @EventHandler (priority = EventPriority.HIGH)
     public void onAdminJoined(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if (Case.getConfig().getConfig().getBoolean("DonatCase.UpdateChecker")) {
+        if (Case.getConfig().getConfig().getBoolean("DonateCase.UpdateChecker")) {
             if (p.hasPermission("donatecase.admin")) {
                 new UpdateChecker(Case.getInstance(), 106701).getVersion((version) -> {
                     if (Tools.getPluginVersion(Case.getInstance().getDescription().getVersion()) < Tools.getPluginVersion(version)) {

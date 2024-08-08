@@ -57,7 +57,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             sendHelpMessages(sender, "help", label);
         }
 
-        if (Case.getConfig().getConfig().getBoolean("DonatCase.AddonsHelp", true)) {
+        if (Case.getConfig().getConfig().getBoolean("DonateCase.AddonsHelp", true)) {
             Map<String, List<Map<String, SubCommand>>> addonsMap = buildAddonsMap();
             if (Tools.isHasCommandForSender(sender, addonsMap)) {
                 sendAddonHelpMessages(sender, addonsMap);

@@ -23,6 +23,29 @@ public class Converter {
         this.config = config;
     }
 
+    public void convertConfig() {
+        ConfigurationSection configSection = config.getConfig().getConfigurationSection("DonateCase");
+        if(configSection != null) {
+            config.getConfig().set("DonateCase", configSection);
+            config.getConfig().set("DonatCase", null);
+            config.saveConfig();
+        }
+
+        ConfigurationSection keysSection = config.getKeys().getConfigurationSection("DonateCase");
+        if(keysSection != null) {
+            config.getKeys().set("DonateCase", keysSection);
+            config.getKeys().set("DonatCase", null);
+            config.saveKeys();
+        }
+
+        ConfigurationSection casesSection = config.getCases().getConfigurationSection("DonateCase");
+        if(casesSection != null) {
+            config.getCases().set("DonateCase", casesSection);
+            config.getCases().set("DonatCase", null);
+            config.saveCases();
+        }
+    }
+
     public void convertNoKeyActions() {
         for (String caseType : config.getCasesConfig().getCases().keySet()) {
             Pair<File, YamlConfiguration> pair = config.getCasesConfig().getCases().get(caseType);
@@ -37,10 +60,10 @@ public class Converter {
             }
 
             List<String> noKeyActions = caseSection.getStringList("NoKeyActions");
-            noKeyActions.add("[sound] " + config.getConfig().getString("DonatCase.NoKeyWarningSound"));
+            noKeyActions.add("[sound] " + config.getConfig().getString("DonateCase.NoKeyWarningSound"));
             noKeyActions.add("[message] " + config.getLang().getString("no-keys"));
 
-            config.getConfig().set("DonatCase.NoKeyWarningSound", null);
+            config.getConfig().set("DonateCase.NoKeyWarningSound", null);
 
             caseSection.set("NoKeyActions", noKeyActions);
 
@@ -123,7 +146,7 @@ public class Converter {
 
 
     public void convertCasesLocation() {
-        ConfigurationSection cases_ = config.getCases().getConfigurationSection("DonatCase.Cases");
+        ConfigurationSection cases_ = config.getCases().getConfigurationSection("DonateCase.Cases");
         if(cases_ != null) {
             for (String name : cases_.getValues(false).keySet()) {
                 if (cases_.getString(name + ".location") == null) {
@@ -137,7 +160,7 @@ public class Converter {
                             world = lv.getWorld().getName();
                         }
                         String location = world + ";" + lv.getX() + ";" + lv.getY() + ";" + lv.getZ() + ";" + lv.getPitch() + ";" + lv.getYaw();
-                        config.getCases().set("DonatCase.Cases." + name + ".location", location);
+                        config.getCases().set("DonateCase.Cases." + name + ".location", location);
                     }
                 }
             }
@@ -148,7 +171,7 @@ public class Converter {
     }
 
     public void convertCases() {
-        ConfigurationSection cases = config.getConfig().getConfigurationSection("DonatCase.Cases");
+        ConfigurationSection cases = config.getConfig().getConfigurationSection("DonateCase.Cases");
         if (cases != null) {
             for (String caseName : cases.getKeys(false)) {
                 File folder = new File(config.getPlugin().getDataFolder(), "cases");
@@ -157,19 +180,19 @@ public class Converter {
                     caseFile = new File(folder, caseName + ".yml");
                     caseFile.createNewFile();
                     YamlConfiguration caseConfig = YamlConfiguration.loadConfiguration(caseFile);
-                    caseConfig.set("case", config.getConfig().getConfigurationSection("DonatCase.Cases." + caseName));
-                    String defaultMaterial = config.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiMaterial");
-                    String defaultDisplayName = config.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiMaterialName");
-                    boolean defaultEnchanted = config.getConfig().getBoolean("DonatCase.Cases." + caseName + ".Gui.GuiMaterialEnchant");
-                    List<String> defaultLore = config.getConfig().getStringList("DonatCase.Cases." + caseName + ".Gui.GuiMaterialLore");
+                    caseConfig.set("case", config.getConfig().getConfigurationSection("DonateCase.Cases." + caseName));
+                    String defaultMaterial = config.getConfig().getString("DonateCase.Cases." + caseName + ".Gui.GuiMaterial");
+                    String defaultDisplayName = config.getConfig().getString("DonateCase.Cases." + caseName + ".Gui.GuiMaterialName");
+                    boolean defaultEnchanted = config.getConfig().getBoolean("DonateCase.Cases." + caseName + ".Gui.GuiMaterialEnchant");
+                    List<String> defaultLore = config.getConfig().getStringList("DonateCase.Cases." + caseName + ".Gui.GuiMaterialLore");
                     List<Integer> defaultSlots = new ArrayList<>();
                     defaultSlots.add(0);
                     defaultSlots.add(8);
 
-                    String openMaterial = config.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterial");
-                    String openDisplayName = config.getConfig().getString("DonatCase.Cases." + caseName + ".Gui.DisplayName");
-                    boolean openEnchanted = config.getConfig().getBoolean("DonatCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterialEnchant");
-                    List<String> openLore = config.getConfig().getStringList("DonatCase.Cases." + caseName + ".Gui.Lore");
+                    String openMaterial = config.getConfig().getString("DonateCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterial");
+                    String openDisplayName = config.getConfig().getString("DonateCase.Cases." + caseName + ".Gui.DisplayName");
+                    boolean openEnchanted = config.getConfig().getBoolean("DonateCase.Cases." + caseName + ".Gui.GuiOpenCaseMaterialEnchant");
+                    List<String> openLore = config.getConfig().getStringList("DonateCase.Cases." + caseName + ".Gui.Lore");
                     List<Integer> openSlots = new ArrayList<>();
                     openSlots.add(22);
 
@@ -196,7 +219,7 @@ public class Converter {
                 }
             }
         }
-        config.getConfig().set("DonatCase.Cases", null);
+        config.getConfig().set("DonateCase.Cases", null);
        config.saveConfig();
     }
 
@@ -224,21 +247,21 @@ public class Converter {
         lang.set("CaseAlreadyHasByName", null);
         lang.set("case-already-exist", caseAlreadyHasByName);
 
-        String hasDonatCase = lang.getString("HasDonatCase");
-        lang.set("HasDonatCase", null);
-        lang.set("case-already-created", hasDonatCase);
+        String hasDonateCase = lang.getString("HasDonateCase");
+        lang.set("HasDonateCase", null);
+        lang.set("case-already-created", hasDonateCase);
 
-        String addDonatCase = lang.getString("AddDonatCase");
-        lang.set("AddDonatCase", null);
-        lang.set("case-added", addDonatCase);
+        String addDonateCase = lang.getString("AddDonateCase");
+        lang.set("AddDonateCase", null);
+        lang.set("case-added", addDonateCase);
 
-        String RemoveDonatCase = lang.getString("RemoveDonatCase");
-        lang.set("RemoveDonatCase", null);
-        lang.set("case-removed", RemoveDonatCase);
+        String RemoveDonateCase = lang.getString("RemoveDonateCase");
+        lang.set("RemoveDonateCase", null);
+        lang.set("case-removed", RemoveDonateCase);
 
-        String blockDontDonatCase = lang.getString("BlockDontDonatCase");
-        lang.set("BlockDontDonatCase", null);
-        lang.set("block-is-not-case", blockDontDonatCase);
+        String blockDontDonateCase = lang.getString("BlockDontDonateCase");
+        lang.set("BlockDontDonateCase", null);
+        lang.set("block-is-not-case", blockDontDonateCase);
 
         String giveKeys = lang.getString("GiveKeys");
         lang.set("GiveKeys", null);
@@ -264,9 +287,9 @@ public class Converter {
         lang.set("ClearAllKeys", null);
         lang.set("all-keys-cleared", clearAllKeys);
 
-        String destoryDonatCase = lang.getString("DestoryDonatCase");
-        lang.set("DestoryDonatCase", null);
-        lang.set("case-destroy-disallow", destoryDonatCase);
+        String destoryDonateCase = lang.getString("DestoryDonateCase");
+        lang.set("DestoryDonateCase", null);
+        lang.set("case-destroy-disallow", destoryDonateCase);
 
         String noKey = lang.getString("NoKey");
         lang.set("NoKey", null);

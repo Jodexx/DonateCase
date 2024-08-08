@@ -29,7 +29,7 @@ sidebar_position: 3
 ```yml
 config: '2.5' #DON'T CHANGE THIS PLEASE
 
-DonatCase:
+DonateCase:
   #Do I need to check for plugin updates?
   UpdateChecker: true
   #MySQL Settings

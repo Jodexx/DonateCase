@@ -95,7 +95,7 @@ public class CaseGui {
 
     private String[] getTemplate(CaseData historyCaseData, CaseData.HistoryData data, CaseData.Item historyItem) {
 
-        DateFormat formatter = new SimpleDateFormat(Case.getConfig().getConfig().getString("DonatCase.DateFormat", "dd.MM HH:mm:ss"));
+        DateFormat formatter = new SimpleDateFormat(Case.getConfig().getConfig().getString("DonateCase.DateFormat", "dd.MM HH:mm:ss"));
         String dateFormatted = formatter.format(new Date(data.getTime()));
         String group = data.getGroup();
         String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "group_not_found";

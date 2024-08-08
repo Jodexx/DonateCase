@@ -65,10 +65,10 @@ public class Config {
         fileConfig = new File(Case.getInstance().getDataFolder(), "Config.yml");
         config = YamlConfiguration.loadConfiguration(fileConfig);
 
-        config.addDefault("DonatCase.NoKeyWarningSound", "ENTITY_ENDERMAN_TELEPORT");
-
         checkAndUpdateConfig(config, "Config.yml", "2.5");
         checkAndUpdateConfig(animations, "Animations.yml", "1.3");
+
+        converter.convertConfig();
 
         checkConvertCases();
         casesConfig = new CasesConfig(plugin);
@@ -89,7 +89,7 @@ public class Config {
             return;
         }
 
-        String lang = getConfig().getString("DonatCase.Languages");
+        String lang = getConfig().getString("DonateCase.Languages");
 
         for (File file : listFiles) {
             if (file.getName().toLowerCase().split("_")[0].equalsIgnoreCase(lang)) {
@@ -104,7 +104,7 @@ public class Config {
         // Convert after language file loaded
         converter.convertNoKeyActions();
 
-        long caching = getConfig().getLong("DonatCase.Caching");
+        long caching = getConfig().getLong("DonateCase.Caching");
         if(caching > 0) {
             Case.keysCache.setMaxAge(caching);
             Case.openCache.setMaxAge(caching);
@@ -184,7 +184,7 @@ public class Config {
     }
 
     private void checkConvertCases() {
-        if(config.getConfigurationSection("DonatCase.Cases") != null) {
+        if(config.getConfigurationSection("DonateCase.Cases") != null) {
             new File(plugin.getDataFolder(), "cases").mkdir();
             Logger.log("&cOutdated cases format!");
             converter.convertCases();

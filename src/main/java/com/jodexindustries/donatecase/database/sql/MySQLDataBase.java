@@ -32,7 +32,7 @@ public class MySQLDataBase {
     }
 
     public void connect() {
-        ConfigurationSection mysqlSection = instance.config.getConfig().getConfigurationSection("DonatCase.MySql");
+        ConfigurationSection mysqlSection = instance.config.getConfig().getConfigurationSection("DonateCase.MySql");
         if (mysqlSection == null) return;
 
         instance.sql = mysqlSection.getBoolean("Enabled");

@@ -106,6 +106,8 @@ public class DonateCase extends JavaPlugin {
         loadUpdater();
         loadMetrics();
 
+        disableSpawnProtection();
+
         api.getAddonManager().enableAddons(AddonManager.PowerReason.DONATE_CASE);
 
         DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
@@ -165,7 +167,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadUpdater() {
-        if (config.getConfig().getBoolean("DonatCase.UpdateChecker")) {
+        if (config.getConfig().getBoolean("DonateCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
                 if (Tools.getPluginVersion(getDescription().getVersion()) < Tools.getPluginVersion(version)) {
                     Logger.log(ChatColor.GREEN + "There is a new update " + version +  " available.");
@@ -251,7 +253,7 @@ public class DonateCase extends JavaPlugin {
     private void loadPermissionDriver() {
         loadLuckPerms();
         loadVault();
-        PermissionDriver temp = PermissionDriver.getDriver(config.getConfig().getString("DonatCase.PermissionDriver", "vault"));
+        PermissionDriver temp = PermissionDriver.getDriver(config.getConfig().getString("DonateCase.PermissionDriver", "vault"));
         if (temp == PermissionDriver.vault && permission != null) {
             permissionDriver = temp;
         }
@@ -280,7 +282,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadHologramManager() {
-        String driverName = config.getConfig().getString("DonatCase.HologramDriver", "decentholograms");
+        String driverName = config.getConfig().getString("DonateCase.HologramDriver", "decentholograms");
         hologramDriver = HologramDriver.getDriver(driverName);
 
         tryInitializeHologramManager(hologramDriver);
@@ -321,7 +323,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     public void loadHolograms() {
-        ConfigurationSection section = config.getCases().getConfigurationSection("DonatCase.Cases");
+        ConfigurationSection section = config.getCases().getConfigurationSection("DonateCase.Cases");
         if (section == null || section.getKeys(false).isEmpty()) return;
         for (String caseName : section.getKeys(false)) {
             String caseType = Case.getCaseTypeByCustomName(caseName);
@@ -366,7 +368,14 @@ public class DonateCase extends JavaPlugin {
 
     private void loadMetrics() {
         Metrics metrics = new Metrics(this, 18709);
-        metrics.addCustomChart(new Metrics.SimplePie("language", () -> config.getConfig().getString("DonatCase.Languages")));
+        metrics.addCustomChart(new Metrics.SimplePie("language", () -> config.getConfig().getString("DonateCase.Languages")));
+    }
+
+    private void disableSpawnProtection() {
+        if(config.getConfig().getBoolean("DonateCase.DisableSpawnProtection", false)) {
+            getServer().setSpawnRadius(0);
+            Logger.log("&aSpawn protection disabled!");
+        }
     }
 
     public void saveResource(@NotNull String resourcePath, boolean replace) {

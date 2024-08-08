@@ -1,6 +1,6 @@
 config: '2.5' #DON'T CHANGE THIS PLEASE
 
-DonatCase:
+DonateCase:
   #Do I need to check for plugin updates?
   UpdateChecker: true
   #MySQL Settings
@@ -28,3 +28,5 @@ DonatCase:
   # Caching for getting number of keys and case opens
   # Actually used in placeholders (GUI and PlaceholderAPI)
   Caching: 20 # in ticks
+  # Set spawn-protection to 0 in server.properties
+  DisableSpawnProtection: true

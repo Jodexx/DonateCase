@@ -20,7 +20,7 @@ public class PacketEventsSupport {
     }
 
     public void load() {
-        boolean usePackets = plugin.config.getConfig().getBoolean("DonatCase.UsePackets");
+        boolean usePackets = plugin.config.getConfig().getBoolean("DonateCase.UsePackets");
         if(usePackets) {
             ServerVersion version = getServerVersion();
             Logger.log("&aLoading &bpacketevents &ahooking...");

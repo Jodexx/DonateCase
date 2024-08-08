@@ -74,7 +74,7 @@ public class DeleteCommand implements SubCommandExecutor, SubCommandTabCompleter
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         List<String> value;
         if (args.length == 1) {
-            ConfigurationSection section = Case.getConfig().getCases().getConfigurationSection("DonatCase.Cases");
+            ConfigurationSection section = Case.getConfig().getCases().getConfigurationSection("DonateCase.Cases");
             if (section != null) {
                 value = new ArrayList<>(section.getKeys(false));
             } else {

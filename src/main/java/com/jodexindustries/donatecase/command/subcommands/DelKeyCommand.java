@@ -39,7 +39,7 @@ public class DelKeyCommand implements SubCommandExecutor, SubCommandTabCompleter
             } else if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("all")) {
                     if (!Case.getInstance().sql) {
-                        Case.getConfig().getKeys().set("DonatCase.Cases", null);
+                        Case.getConfig().getKeys().set("DonateCase.Cases", null);
                         Case.getConfig().saveKeys();
                     } else {
                         Case.getInstance().mysql.delAllKey();
