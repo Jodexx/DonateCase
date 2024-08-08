@@ -20,14 +20,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -100,23 +97,6 @@ public class Case {
             getConfig().saveKeys();
         } else {
             if(instance.mysql != null) instance.mysql.setKeys(caseType, player, keys);
-        }
-
-    }
-
-    /**
-     * Set null case keys to a specific player
-     * @param caseType Case type
-     * @param player Player name
-     * @deprecated Use {@link #setKeys(String, String, int)} instead
-     */
-    @Deprecated
-    public static void setNullKeys(String caseType, String player) {
-        if (!instance.sql) {
-            getConfig().getKeys().set("DonatCase.Cases." + caseType + "." + player, 0);
-            getConfig().saveKeys();
-        } else {
-            if(instance.mysql != null) instance.mysql.setKeys(caseType, player, 0);
         }
 
     }
@@ -259,6 +239,7 @@ public class Case {
      * Delete case by location in Cases.yml
      * @param loc Case location
      */
+    @Deprecated
     public static void deleteCaseByLocation(Location loc) {
         getConfig().getCases().set("DonatCase.Cases." + getCaseCustomNameByLocation(loc), null);
         getConfig().saveCases();
@@ -279,28 +260,7 @@ public class Case {
      * @return Boolean
      */
     public static boolean hasCaseByLocation(Location loc) {
-        ConfigurationSection casesSection = getConfig().getCases().getConfigurationSection("DonatCase.Cases");
-        if(casesSection == null) return false;
-
-        for (String name : casesSection.getValues(false).keySet()) {
-            ConfigurationSection caseSection = getConfig().getCases().getConfigurationSection("DonatCase.Cases." + name);
-            if(caseSection == null || caseSection.getString("location") == null) {
-                return false;
-            } else {
-                String type = caseSection.getString("type");
-                String location = caseSection.getString("location");
-                if(hasCaseByType(type) && location != null) {
-                    String[] worldLocation = location.split(";");
-                    World world = Bukkit.getWorld(worldLocation[0]);
-                    Location temp = new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
-                    if (temp.equals(loc)) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
+        return getCaseTypeByLocation(loc) != null;
     }
 
     /**
@@ -312,7 +272,7 @@ public class Case {
     private static <T> T getCaseInfoByLocation(Location loc, String infoType, Class<T> clazz) {
         T object = null;
         ConfigurationSection casesSection = getConfig().getCases().getConfigurationSection("DonatCase.Cases");
-        if (casesSection == null) return object;
+        if (casesSection == null) return null;
 
         for (String name : casesSection.getValues(false).keySet()) {
             ConfigurationSection caseSection = casesSection.getConfigurationSection(name);
@@ -415,17 +375,6 @@ public class Case {
     @Deprecated
     public static CasesConfig getCasesConfig() {
         return instance.config.getCasesConfig();
-    }
-
-    /**
-     * Get random group from case
-     * @deprecated Use {@link CaseData#getRandomItem()} instead
-     * @param c Case data
-     * @return Item data
-     */
-    @Deprecated
-    public static CaseData.Item getRandomItem(CaseData c) {
-        return c.getRandomItem();
     }
 
     /**
@@ -626,20 +575,6 @@ public class Case {
     }
 
     /**
-     * Extract cooldown from action string
-     * @param action Action string. Format [cooldown:int]
-     * @return cooldown
-     */
-    public static int extractCooldown(String action) {
-        Pattern pattern = Pattern.compile("\\[cooldown:(.*?)]");
-        Matcher matcher = pattern.matcher(action);
-        if (matcher.find()) {
-            return Integer.parseInt(matcher.group(1));
-        }
-        return 0;
-    }
-
-    /**
      * Execute actions
      * @param player Player, who opened case (maybe another reason)
      * @param actions List of actions
@@ -649,7 +584,7 @@ public class Case {
         for (String action : actions) {
 
             action = Tools.rc(PAPISupport.setPlaceholders(player, action));
-            int cooldown = extractCooldown(action);
+            int cooldown = Tools.extractCooldown(action);
             action = action.replaceFirst("\\[cooldown:(.*?)]", "");
 
             executeAction(player, action, cooldown);
@@ -694,20 +629,19 @@ public class Case {
 
     /**
      * Open case gui
-     * @param p Player
-     * @param caseData Case type
+     * May be nullable, if player already opened gui
+     *
+     * @param p             Player
+     * @param caseData      Case type
      * @param blockLocation Block location
-     * @return opened inventory object
      */
-    public static Inventory openGui(Player p, CaseData caseData, Location blockLocation) {
-        Inventory inventory = null;
+    public static void openGui(Player p, CaseData caseData, Location blockLocation) {
         if (!playersGui.containsKey(p.getUniqueId())) {
             playersGui.put(p.getUniqueId(), new PlayerOpenCase(blockLocation, caseData.getCaseType(), p.getUniqueId()));
-            inventory = new CaseGui(p, caseData).getInventory();
+            new CaseGui(p, caseData);
         } else {
-            instance.getLogger().warning("Player " + p.getName() + " already opened case!");
+            instance.getLogger().warning("Player " + p.getName() + " already opened case: " + caseData.getCaseType());
         }
-        return inventory;
     }
 
     /**
@@ -734,6 +668,7 @@ public class Case {
      * Get sorted history data from all cases
      * @return list of HistoryData (sorted by time)
      */
+    @Deprecated
     public static List<CaseData.HistoryData> getSortedHistoryData() {
         return getAsyncSortedHistoryData().join();
     }
@@ -743,27 +678,17 @@ public class Case {
      * @return list of HistoryData (sorted by time)
      */
     public static CompletableFuture<List<CaseData.HistoryData>> getAsyncSortedHistoryData() {
-        CompletableFuture<List<CaseData.HistoryData>> future = new CompletableFuture<>();
-        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
-            List<CaseData.HistoryData> historyData;
-            if(!instance.sql) {
-                historyData = caseData.values().stream()
-                        .filter(Objects::nonNull)
-                        .flatMap(data -> {
-                            CaseData.HistoryData[] temp = data.getHistoryData();
-                            return temp != null ? Arrays.stream(temp) : Stream.empty();
-                        })
-                        .filter(Objects::nonNull)
-                        .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
-                        .collect(Collectors.toList());
-            } else {
-                historyData = instance.mysql.getHistoryData().join().stream().filter(Objects::nonNull)
-                        .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
-                        .collect(Collectors.toList());
-            }
-            future.complete(historyData);
-        });
-        return future;
+        return CompletableFuture.supplyAsync(() -> !instance.sql ? caseData.values().stream()
+                .filter(Objects::nonNull)
+                .flatMap(data -> {
+                    CaseData.HistoryData[] temp = data.getHistoryData();
+                    return temp != null ? Arrays.stream(temp) : Stream.empty();
+                })
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                .collect(Collectors.toList()) : instance.mysql.getHistoryData().join().stream().filter(Objects::nonNull)
+                .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                .collect(Collectors.toList()));
     }
 
     /**
