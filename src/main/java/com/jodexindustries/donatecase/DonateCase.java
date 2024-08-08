@@ -106,8 +106,6 @@ public class DonateCase extends JavaPlugin {
         loadUpdater();
         loadMetrics();
 
-        disableSpawnProtection();
-
         api.getAddonManager().enableAddons(AddonManager.PowerReason.DONATE_CASE);
 
         DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
@@ -182,6 +180,8 @@ public class DonateCase extends JavaPlugin {
 
         mysql = new MySQLDataBase(this);
         mysql.connect();
+
+        disableSpawnProtection();
 
         DonateCaseReloadEvent reloadEvent = new DonateCaseReloadEvent(this, DonateCaseReloadEvent.Type.CONFIG);
         getServer().getPluginManager().callEvent(reloadEvent);
