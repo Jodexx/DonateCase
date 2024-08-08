@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.SubCommand;
+import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -11,23 +12,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class SubCommandRegisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private final String subCommandName;
     private final SubCommand subCommand;
-    private final String subCommandAddonName;
+    private final Addon addon;
     private final boolean isDefault;
 
     /**
      * Default constructor
-     * @param subCommandName Sub command name
      * @param subCommand Sub command class
-     * @param subCommandAddonName Sub command addon name
+     * @param addon Sub command addon
      * @param isDefault Is default?
      */
-    public SubCommandRegisteredEvent(String subCommandName, SubCommand subCommand,
-                                     String subCommandAddonName, boolean isDefault) {
-        this.subCommandName = subCommandName;
+    public SubCommandRegisteredEvent(SubCommand subCommand,
+                                     Addon addon, boolean isDefault) {
         this.subCommand = subCommand;
-        this.subCommandAddonName = subCommandAddonName;
+        this.addon = addon;
         this.isDefault = isDefault;
     }
 
@@ -49,8 +47,9 @@ public class SubCommandRegisteredEvent extends Event {
      * Get subcommand name
      * @return subcommand name
      */
+    @Deprecated
     public String getSubCommandName() {
-        return subCommandName;
+        return subCommand.getName();
     }
 
     /**
@@ -62,18 +61,18 @@ public class SubCommandRegisteredEvent extends Event {
     }
 
     /**
-     * Get SubCommand addon name
-     * @return addon name
-     */
-    public String getSubCommandAddonName() {
-        return subCommandAddonName;
-    }
-
-    /**
      * Get if this SubCommand is default
      * @return boolean
      */
     public boolean isDefault() {
         return isDefault;
+    }
+
+    /**
+     * Get subcommand addon
+     * @return Addon object
+     */
+    public Addon getAddon() {
+        return addon;
     }
 }
