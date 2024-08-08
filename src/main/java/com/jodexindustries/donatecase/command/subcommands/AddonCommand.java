@@ -32,77 +32,18 @@ public class AddonCommand implements SubCommand {
         String action = args[0];
         String addonName = args[1];
 
-        InternalJavaAddon addon;
-        InternalAddonClassLoader loader;
-
         switch (action) {
             case "enable":
-                addon = AddonManager.getAddon(addonName);
-                if (addon == null) {
-                    Tools.msg(sender, "&cAddon &6" + addonName + " &cnot loaded!");
-                    return;
-                }
-                if (addon.isEnabled()) {
-                    Tools.msg(sender, "&cAddon &6" + addonName + " &calready enabled!");
-                    return;
-                }
-                if (manager.enableAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
-                    handleAddonSuccess(sender, addonName, "enabled");
-                } else {
-                    handleAddonError(sender, addonName, "enabling");
-                }
+                handleEnableCommand(sender, addonName);
                 break;
             case "disable":
-                addon = AddonManager.getAddon(addonName);
-                if (addon == null) {
-                    Tools.msg(sender, "&cAddon &6" + addonName + " &cnot loaded!");
-                    return;
-                }
-                if (!addon.isEnabled()) {
-                    Tools.msg(sender, "&cAddon &6" + addonName + "&calready disabled!");
-                    return;
-                }
-                manager.disableAddon(addon, AddonManager.PowerReason.DONATE_CASE);
-                handleAddonSuccess(sender, addonName, "disabled");
+                handleDisableCommand(sender, addonName);
                 break;
             case "load":
-                File addonFile = new File(AddonManager.getAddonsFolder(), addonName);
-                if (!addonFile.exists()) {
-                    Tools.msg(sender, "&cFile &6" + addonName + " &cnot found!");
-                    return;
-                }
-                loader = AddonManager.getAddonClassLoader(addonFile);
-                if (loader != null) {
-                    Tools.msg(sender, "&cAddon &6" + addonName + " &calready loaded!");
-                    return;
-                }
-                if (manager.loadAddon(addonFile)) {
-                    loader = AddonManager.getAddonClassLoader(addonFile);
-                    if (loader == null) {
-                        handleAddonError(sender, addonName, "loading");
-                        return;
-                    }
-                    addon = loader.getAddon();
-                    if (manager.enableAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
-                        handleAddonSuccess(sender, addonName, "loaded");
-                    } else {
-                        handleAddonError(sender, addonName, "enabling");
-                    }
-                } else {
-                    handleAddonError(sender, addonName, "loading");
-                }
+                handleLoadCommand(sender, addonName);
                 break;
             case "unload":
-                addon = AddonManager.getAddon(addonName);
-                if (addon == null) {
-                    Tools.msg(sender, "&cAddon &6" + addonName + " &calready unloaded!");
-                    return;
-                }
-                if (manager.unloadAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
-                    handleAddonSuccess(sender, addonName, "unloaded");
-                } else {
-                    handleAddonError(sender, addonName, "unloading");
-                }
+                handleUnloadCommand(sender, addonName);
                 break;
             default:
                 GlobalCommand.sendHelp(sender, "dc");
@@ -114,19 +55,92 @@ public class AddonCommand implements SubCommand {
     @Override
     public List<String> getTabCompletions(CommandSender sender, String[] args) {
         List<String> list = new ArrayList<>();
-        if(args.length == 1) {
+        if (args.length == 1) {
             list.add("enable");
             list.add("disable");
             list.add("load");
             list.add("unload");
         }
-        if(args.length == 2) {
-            if(args[0].equalsIgnoreCase("enable")) return getDisabledAddons();
-            if(args[0].equalsIgnoreCase("disable")) return getEnabledAddons();
-            if(args[0].equalsIgnoreCase("unload")) return getAddons();
-            if(args[0].equalsIgnoreCase("load")) return getAddonsFiles();
+        if (args.length == 2) {
+            if (args[0].equalsIgnoreCase("enable")) return getDisabledAddons();
+            if (args[0].equalsIgnoreCase("disable")) return getEnabledAddons();
+            if (args[0].equalsIgnoreCase("unload")) return getAddons();
+            if (args[0].equalsIgnoreCase("load")) return getAddonsFiles();
         }
         return list;
+    }
+
+    private void handleEnableCommand(CommandSender sender, String addonName) {
+        InternalJavaAddon addon = AddonManager.getAddon(addonName);
+        if (addon == null) {
+            Tools.msg(sender, "&cAddon &6" + addonName + " &cnot loaded!");
+            return;
+        }
+        if (addon.isEnabled()) {
+            Tools.msg(sender, "&cAddon &6" + addonName + " &calready enabled!");
+            return;
+        }
+        if (manager.enableAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
+            handleAddonSuccess(sender, addonName, "enabled");
+        } else {
+            handleAddonError(sender, addonName, "enabling");
+        }
+    }
+
+    private void handleDisableCommand(CommandSender sender, String addonName) {
+        InternalJavaAddon addon = AddonManager.getAddon(addonName);
+        if (addon == null) {
+            Tools.msg(sender, "&cAddon &6" + addonName + " &cnot loaded!");
+            return;
+        }
+        if (!addon.isEnabled()) {
+            Tools.msg(sender, "&cAddon &6" + addonName + "&calready disabled!");
+            return;
+        }
+        manager.disableAddon(addon, AddonManager.PowerReason.DONATE_CASE);
+        handleAddonSuccess(sender, addonName, "disabled");
+    }
+
+    private void handleLoadCommand(CommandSender sender, String addonName) {
+        File addonFile = new File(AddonManager.getAddonsFolder(), addonName);
+        if (!addonFile.exists()) {
+            Tools.msg(sender, "&cFile &6" + addonName + " &cnot found!");
+            return;
+        }
+
+        InternalAddonClassLoader loader = AddonManager.getAddonClassLoader(addonFile);
+        if (loader != null) {
+            Tools.msg(sender, "&cAddon &6" + addonName + " &calready loaded!");
+            return;
+        }
+        if (manager.loadAddon(addonFile)) {
+            loader = AddonManager.getAddonClassLoader(addonFile);
+            if (loader == null) {
+                handleAddonError(sender, addonName, "loading");
+                return;
+            }
+            InternalJavaAddon addon = loader.getAddon();
+            if (manager.enableAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
+                handleAddonSuccess(sender, addonName, "loaded");
+            } else {
+                handleAddonError(sender, addonName, "enabling");
+            }
+        } else {
+            handleAddonError(sender, addonName, "loading");
+        }
+    }
+
+    private void handleUnloadCommand(CommandSender sender, String addonName) {
+        InternalJavaAddon addon = AddonManager.getAddon(addonName);
+        if (addon == null) {
+            Tools.msg(sender, "&cAddon &6" + addonName + " &calready unloaded!");
+            return;
+        }
+        if (manager.unloadAddon(addon, AddonManager.PowerReason.DONATE_CASE)) {
+            handleAddonSuccess(sender, addonName, "unloaded");
+        } else {
+            handleAddonError(sender, addonName, "unloading");
+        }
     }
 
     private void handleAddonError(CommandSender sender, String addonName, String action) {
@@ -147,7 +161,7 @@ public class AddonCommand implements SubCommand {
     }
 
     private List<String> getDisabledAddons() {
-        return AddonManager.getAddons().stream().filter(internalJavaAddon -> !internalJavaAddon.isEnabled() ).map(InternalJavaAddon::getName).collect(Collectors.toList());
+        return AddonManager.getAddons().stream().filter(internalJavaAddon -> !internalJavaAddon.isEnabled()).map(InternalJavaAddon::getName).collect(Collectors.toList());
     }
 
     private List<String> getEnabledAddons() {
@@ -158,7 +172,8 @@ public class AddonCommand implements SubCommand {
         List<String> addons = new ArrayList<>();
         File addonsDir = new File(Case.getInstance().getDataFolder(), "addons");
         File[] files = addonsDir.listFiles();
-        if(files == null) return addons;
+        if (files == null) return addons;
         return Arrays.stream(files).map(File::getName).filter(name -> name.endsWith(".jar")).collect(Collectors.toList());
     }
+
 }
