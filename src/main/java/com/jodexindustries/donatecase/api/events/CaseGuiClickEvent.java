@@ -17,6 +17,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
     private final Location location;
     private final String caseType;
     private final boolean isOpenItem;
+    private boolean cancel;
 
     /**
      * Default constructor
@@ -71,5 +72,19 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
      */
     public boolean isOpenItem() {
         return isOpenItem;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancel;
+    }
+
+    /**
+     * Cancel click. If you cancel this event, then GUI will not activate an animation from OPEN item.
+     * @param toCancel true or false
+     */
+    @Override
+    public void setCancelled(boolean toCancel) {
+        this.cancel = toCancel;
     }
 }
