@@ -66,6 +66,8 @@ public class DonateCase extends JavaPlugin {
     public boolean usePackets = false;
     public boolean sql = false;
 
+    private boolean spawnProtectionDisabled = false;
+
     @Override
     public void onLoad() {
         instance = this;
@@ -373,8 +375,9 @@ public class DonateCase extends JavaPlugin {
 
     private void disableSpawnProtection() {
         if(config.getConfig().getBoolean("DonateCase.DisableSpawnProtection", false)) {
-            if(getServer().getSpawnRadius() > 0) {
+            if(getServer().getSpawnRadius() > 0 && !spawnProtectionDisabled) {
                 getServer().setSpawnRadius(0);
+                spawnProtectionDisabled = true;
                 Logger.log("&aSpawn protection disabled!");
             }
         }
