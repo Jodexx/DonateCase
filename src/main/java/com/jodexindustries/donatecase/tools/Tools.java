@@ -455,7 +455,7 @@ public class Tools {
      * @return true, if sender has permission
      */
     public static boolean isHasCommandForSender(CommandSender sender, List<Map<String, SubCommand>> commands) {
-        return commands.stream().flatMap(command -> command.values().stream()).anyMatch(subCommand -> subCommand.getType().hasPermission(sender));
+        return commands.stream().flatMap(command -> command.values().stream()).map(SubCommand::getType).anyMatch(type -> type == null || type.hasPermission(sender));
     }
 
     public static Color fromRGBString(String string, Color def) {
