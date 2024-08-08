@@ -24,21 +24,21 @@ public class Converter {
     }
 
     public void convertConfig() {
-        ConfigurationSection configSection = config.getConfig().getConfigurationSection("DonateCase");
+        ConfigurationSection configSection = config.getConfig().getConfigurationSection("DonatCase");
         if(configSection != null) {
             config.getConfig().set("DonateCase", configSection);
             config.getConfig().set("DonatCase", null);
             config.saveConfig();
         }
 
-        ConfigurationSection keysSection = config.getKeys().getConfigurationSection("DonateCase");
+        ConfigurationSection keysSection = config.getKeys().getConfigurationSection("DonatCase");
         if(keysSection != null) {
             config.getKeys().set("DonateCase", keysSection);
             config.getKeys().set("DonatCase", null);
             config.saveKeys();
         }
 
-        ConfigurationSection casesSection = config.getCases().getConfigurationSection("DonateCase");
+        ConfigurationSection casesSection = config.getCases().getConfigurationSection("DonatCase");
         if(casesSection != null) {
             config.getCases().set("DonateCase", casesSection);
             config.getCases().set("DonatCase", null);
