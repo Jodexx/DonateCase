@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SecondCommand extends SubCommand {
@@ -25,6 +26,6 @@ public class SecondCommand extends SubCommand {
 
     @Override
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        return List.of("1", "2", "3");
+        return new ArrayList<>();
     }
 }
