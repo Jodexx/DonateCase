@@ -50,6 +50,7 @@ public class SubCommandManager {
      * @param name Sub command name to create
      * @see #registerSubCommand(SubCommand)
      * @return SubCommand Builder
+     * @since 2.2.4.5
      */
     @NotNull
     public SubCommand.Builder builder(String name) {
@@ -61,6 +62,7 @@ public class SubCommandManager {
      * @see #builder(String)
      * @param subCommand SubCommand object
      * @return true, if successful
+     * @since 2.2.4.5
      */
     public boolean registerSubCommand(SubCommand subCommand) {
         String name = subCommand.getName();

@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * @since 2.2.4.5
+ */
 public interface SubCommandTabCompleter {
     /**
      * Get command tab completions

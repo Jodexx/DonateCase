@@ -629,6 +629,7 @@ public class Case {
 
     /**
      * Open case gui
+     * <br/>
      * May be nullable, if player already opened gui
      *
      * @param p             Player

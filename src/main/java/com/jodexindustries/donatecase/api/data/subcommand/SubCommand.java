@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @since 2.2.4.5
+ */
 public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
     private final Addon addon;
     private final String name;
