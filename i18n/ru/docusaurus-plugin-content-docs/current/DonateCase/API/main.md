@@ -12,4 +12,4 @@ sidebar_position: 1
 | [Внедрение в DonateCase](implementing)        |[JavaDocs](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/latest) |
 | [Регистрация ивентов](register-events)             |[GitHub](https://github.com/Jodexx/DonateCaseAPI)                                                                   |
 | [Регистрация анимаций](register-animations)  |[Помощь](https://discord.gg/NVE4vWnJ9j)                                                                               |
-| [Регистрация субкоманд](register-subcommands) |
+| [Регистрация субкоманд](register-subcommands) |[Пример аддона](https://github.com/Jodexx/DonateCase/tree/main/TestAddon)

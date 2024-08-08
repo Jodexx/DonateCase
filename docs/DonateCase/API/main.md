@@ -12,4 +12,4 @@ Welcome to the DonateCaseAPI wiki!
 | [Implementing DonateCase](implementing)        |[JavaDocs](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/latest) |
 | [Register events](register-events)             |[GitHub](https://github.com/Jodexx/DonateCaseAPI)                                                                   |
 | [Register new animation](register-animations)  |[Help](https://discord.gg/NVE4vWnJ9j)                                                                               |
-| [Register new sub command](register-subcommands) |
+| [Register new sub command](register-subcommands) |[Example addon](https://github.com/Jodexx/DonateCase/tree/main/TestAddon)
