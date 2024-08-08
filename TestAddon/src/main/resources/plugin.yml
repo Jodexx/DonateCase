@@ -1,4 +1,4 @@
 name: TestPluginAddon
-version: '${version}'
-main: com.jodexindustries.testpluginaddon.MainPlugin
+version: '1.0.0'
+main: com.jodexindustries.testaddon.boot.MainPlugin
 api-version: '1.16'
