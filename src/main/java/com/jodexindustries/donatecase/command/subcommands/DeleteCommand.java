@@ -23,9 +23,10 @@ public class DeleteCommand implements SubCommand {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 Location l = player.getTargetBlock(null, 5).getLocation();
-                if (Case.hasCaseByLocation(l)) {
+                String customName = Case.getCaseCustomNameByLocation(l);
+                if (customName != null) {
                     if(!Case.activeCasesByLocation.containsKey(l)) {
-                        Case.deleteCaseByLocation(l);
+                        Case.deleteCaseByName(customName);
                         if (CaseManager.getHologramManager() != null)
                             CaseManager.getHologramManager().removeHologram(l.getBlock());
                         Tools.msg(sender, Case.getConfig().getLang().getString("case-removed"));
@@ -38,11 +39,12 @@ public class DeleteCommand implements SubCommand {
             }
         } else if (args.length == 1) {
             String name = args[0];
-            if (Case.hasCaseByCustomName(name)) {
-                Location location = Case.getCaseLocationByCustomName(name);
+            Location location = Case.getCaseLocationByCustomName(name);
+            if (location != null) {
                 if(!Case.activeCasesByLocation.containsKey(location)) {
                     if (CaseManager.getHologramManager() != null)
-                        if (location != null) CaseManager.getHologramManager().removeHologram(location.getBlock());
+                        CaseManager.getHologramManager().removeHologram(location.getBlock());
+
                     Case.deleteCaseByName(name);
                     Tools.msg(sender, Case.getConfig().getLang().getString("case-removed"));
                 } else {

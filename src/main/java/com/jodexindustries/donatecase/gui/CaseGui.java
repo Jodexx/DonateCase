@@ -28,12 +28,12 @@ public class CaseGui {
         String caseType = caseData.getCaseType();
         GUI gui = caseData.getGui();
         inventory = Bukkit.createInventory(null, gui.getSize(), Tools.rc(title));
-        Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () -> {
-            List<CaseData.HistoryData> globalHistoryData = Case.getSortedHistoryData();
+        Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () ->
+                Case.getAsyncSortedHistoryData().thenAcceptAsync((historyData) -> {
             for (GUI.Item item : gui.getItems().values()) {
-                processItem(caseType, p, item.clone(), globalHistoryData);
+                processItem(caseType, p, item.clone(), historyData);
             }
-        });
+        }));
         p.openInventory(inventory);
     }
 
