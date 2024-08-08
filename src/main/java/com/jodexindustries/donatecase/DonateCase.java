@@ -5,9 +5,7 @@ import com.alessiodp.libby.BukkitLibraryManager;
 import com.alessiodp.libby.Library;
 import com.alessiodp.libby.logging.LogLevel;
 import com.jodexindustries.donatecase.animations.*;
-import com.jodexindustries.donatecase.api.AddonManager;
-import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.CaseManager;
+import com.jodexindustries.donatecase.api.*;
 import com.jodexindustries.donatecase.api.actions.*;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
@@ -200,47 +198,52 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultSubCommands() {
-        api.getSubCommandManager().registerSubCommand("reload", new ReloadCommand());
-        api.getSubCommandManager().registerSubCommand("givekey", new GiveKeyCommand());
-        api.getSubCommandManager().registerSubCommand("delkey", new DelKeyCommand());
-        api.getSubCommandManager().registerSubCommand("setkey", new SetKeyCommand());
-        api.getSubCommandManager().registerSubCommand("keys", new KeysCommand());
-        api.getSubCommandManager().registerSubCommand("cases", new CasesCommand());
-        api.getSubCommandManager().registerSubCommand("opencase", new OpenCaseCommand());
-        api.getSubCommandManager().registerSubCommand("help", new HelpCommand());
-        api.getSubCommandManager().registerSubCommand("create", new CreateCommand());
-        api.getSubCommandManager().registerSubCommand("delete", new DeleteCommand());
-        api.getSubCommandManager().registerSubCommand("addons", new AddonsCommand());
-        api.getSubCommandManager().registerSubCommand("addon", new AddonCommand());
-        api.getSubCommandManager().registerSubCommand("animations", new AnimationsCommand());
-        api.getSubCommandManager().registerSubCommand("actions", new ActionsCommand());
+        SubCommandManager manager = api.getSubCommandManager();
+
+        new ReloadCommand(manager);
+        new GiveKeyCommand(manager);
+        new DelKeyCommand(manager);
+        new SetKeyCommand(manager);
+        new KeysCommand(manager);
+        new CasesCommand(manager);
+        new OpenCaseCommand(manager);
+        new HelpCommand(manager);
+        new CreateCommand(manager);
+        new DeleteCommand(manager);
+        new AddonsCommand(manager);
+        new AddonCommand(manager);
+        new AnimationsCommand(manager);
+        new ActionsCommand(manager);
+
         Logger.log("&aRegistered &cdefault &acommands");
     }
 
     private void registerDefaultAnimations() {
-        api.getAnimationManager().registerAnimation("SHAPE", ShapeAnimation.class,
+        AnimationManager manager = api.getAnimationManager();
+        manager.registerAnimation("SHAPE", ShapeAnimation.class,
                 "Items flip through and a shape appears");
-        api.getAnimationManager().registerAnimation("WHEEL", WheelAnimation.class,
+        manager.registerAnimation("WHEEL", WheelAnimation.class,
                 "Random items revolve around the case");
-        api.getAnimationManager().registerAnimation("RAINLY", RainlyAnimation.class,
+        manager.registerAnimation("RAINLY", RainlyAnimation.class,
                 "Rain drips from the clouds");
-        api.getAnimationManager().registerAnimation("FIREWORK", FireworkAnimation.class,
+        manager.registerAnimation("FIREWORK", FireworkAnimation.class,
                 "Fireworks fly to the skies and a prize appears");
-        api.getAnimationManager().registerAnimation("FULLWHEEL", FullWheelAnimation.class,
+        manager.registerAnimation("FULLWHEEL", FullWheelAnimation.class,
                 "All items from the case revolve around it");
         Logger.log("&aRegistered &cdefault &aanimations");
     }
 
     private void registerDefaultActions() {
-        api.getActionManager().registerAction("[command]", new CommandActionExecutorImpl(),
+        ActionManager manager = api.getActionManager();
+        manager.registerAction("[command]", new CommandActionExecutorImpl(),
                 "Sends a command to the console");
-        api.getActionManager().registerAction("[message]", new MessageActionExecutorImpl(),
+        manager.registerAction("[message]", new MessageActionExecutorImpl(),
                 "Sends a message in the player's chat");
-        api.getActionManager().registerAction("[title]", new TitleActionExecutorImpl(),
+        manager.registerAction("[title]", new TitleActionExecutorImpl(),
                 "Sends a title to the player");
-        api.getActionManager().registerAction("[broadcast]", new BroadcastActionExecutorImpl(),
+        manager.registerAction("[broadcast]", new BroadcastActionExecutorImpl(),
                 "Sends a broadcast to the players");
-        api.getActionManager().registerAction("[sound]", new SoundActionExecutorImpl(),
+        manager.registerAction("[sound]", new SoundActionExecutorImpl(),
                 "Sends a sound to the player");
         Logger.log("&aRegistered &cdefault &aactions");
     }
