@@ -373,8 +373,10 @@ public class DonateCase extends JavaPlugin {
 
     private void disableSpawnProtection() {
         if(config.getConfig().getBoolean("DonateCase.DisableSpawnProtection", false)) {
-            getServer().setSpawnRadius(0);
-            Logger.log("&aSpawn protection disabled!");
+            if(getServer().getSpawnRadius() > 0) {
+                getServer().setSpawnRadius(0);
+                Logger.log("&aSpawn protection disabled!");
+            }
         }
     }
 
