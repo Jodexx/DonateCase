@@ -169,33 +169,26 @@ public class Tools {
             meta.setDisplayName(rc(displayName));
 
             List<String> lore = material.getLore();
-            if (lore != null) {
-                meta.setLore(rc(lore));
-            }
+            if (lore != null) meta.setLore(rc(lore));
             int modelData = material.getModelData();
-            if (modelData != -1) {
-                meta.setCustomModelData(modelData);
+            if (modelData != -1) meta.setCustomModelData(modelData);
+
+            if (!item.getType().isAir()) {
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                meta.addItemFlags(ItemFlag.HIDE_DYE);
+                meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                if (material.isEnchanted()) item.addUnsafeEnchantment(Enchantment.LURE, 1);
             }
+
+            item.setItemMeta(meta);
+
             String[] rgb = material.getRgb();
             if (rgb != null && meta instanceof LeatherArmorMeta) {
                 LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) meta;
                 leatherArmorMeta.setColor(fromRGBString(rgb, Color.WHITE));
                 item.setItemMeta(leatherArmorMeta);
             }
-
-            if (!item.getType().isAir()) {
-                meta = item.getItemMeta();
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                meta.addItemFlags(ItemFlag.HIDE_DYE);
-                meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-                if (material.isEnchanted()) {
-                    item.addUnsafeEnchantment(Enchantment.LURE, 1);
-
-                }
-            }
-
-            item.setItemMeta(meta);
         }
     }
 
