@@ -1,15 +1,15 @@
 package com.jodexindustries.donatecase.tools;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.MaterialManager;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.*;
+import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.BukkitArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.PacketArmorStandCreator;
 import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.tools.support.CustomHeadSupport;
-import day.dean.skullcreator.SkullCreator;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -29,7 +29,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -139,26 +138,8 @@ public class Tools {
 
     public static Color parseColor(String s) {
 
-        Color color;
-        String[] split = s.split(" ");
-        if (split.length > 2) {
-            try {
-                // RGB
-                int red = Integer.parseInt(split[0]);
-                int green = Integer.parseInt(split[1]);
-                int blue = Integer.parseInt(split[2]);
-                color = Color.fromRGB(red, green, blue);
-
-            } catch (NumberFormatException e) {
-                // Name
-                return getColor(s);
-
-            }
-        } else {
-            // Name
-            return getColor(s);
-        }
-
+        Color color = fromRGBString(s, null);
+        if(color == null) color = getColor(s);
         return color;
     }
     public static Color getColor(String color) {
@@ -180,172 +161,82 @@ public class Tools {
         return null;
     }
 
-    public static ItemStack getPlayerHead(String player, String displayName, List<String> lore) {
-        Material type = Material.getMaterial("SKULL_ITEM");
-        ItemStack item;
-        if (type == null) {
-            item = new ItemStack(Objects.requireNonNull(Material.getMaterial("PLAYER_HEAD")));
-        } else {
-            item = new ItemStack(Objects.requireNonNull(Material.getMaterial("SKULL_ITEM")), 1, (short) 3);
-        }
-        SkullMeta meta = (SkullMeta) item.getItemMeta();
-        if (meta != null) {
-            meta.setOwner(player);
-            meta.setDisplayName(rc(displayName));
-            if(lore != null) {
-                meta.setLore(rc(lore));
-            }
-            item.setItemMeta(meta);
-        }
-
-        return item;
-    }
-
-    private static void setMeta(ItemStack item, String displayName, List<String> lore) {
+    private static void setMeta(ItemStack item, CaseData.Item.Material material) {
         ItemMeta meta = item.getItemMeta();
-        if(meta != null) {
+        if (meta != null) {
+            String displayName = material.getDisplayName();
             meta.setDisplayName(rc(displayName));
+
+            List<String> lore = material.getLore();
             if (lore != null) {
                 meta.setLore(rc(lore));
             }
+            int modelData = material.getModelData();
+            if (modelData != -1) {
+                meta.setCustomModelData(modelData);
+            }
+            String[] rgb = material.getRgb();
+            if (rgb != null && meta instanceof LeatherArmorMeta) {
+                LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) meta;
+                leatherArmorMeta.setColor(fromRGBString(rgb, Color.WHITE));
+                item.setItemMeta(leatherArmorMeta);
+            }
+
+            if (!item.getType().isAir()) {
+                meta = item.getItemMeta();
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                meta.addItemFlags(ItemFlag.HIDE_DYE);
+                meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+                if (material.isEnchanted()) {
+                    item.addUnsafeEnchantment(Enchantment.LURE, 1);
+
+                }
+            }
+
             item.setItemMeta(meta);
         }
     }
 
-    public static ItemStack getMCURLSkull(String url, String displayName, List<String> lore) {
-        ItemStack item = SkullCreator.itemFromUrl("http://textures.minecraft.net/texture/" + url);
-        setMeta(item, displayName, lore);
-        return item;
-    }
-
-    public static ItemStack getBASE64Skull(String base64, String displayName, List<String> lore) {
-        ItemStack item = SkullCreator.itemFromBase64(base64);
-        setMeta(item, displayName, lore);
-        return item;
-    }
-
-    public static ItemStack getItemsAdderItem(@NotNull String namespace, String displayName, List<String> lore) {
-        ItemStack item = new ItemStack(Material.STONE);
-
-        if (DonateCase.instance.itemsAdderSupport != null) {
-            item = DonateCase.instance.itemsAdderSupport.getItem(namespace);
-        } else {
-            Logger.log("&eYou're using an item from ItemsAdder, but it's not loaded on the server!");
-        }
-
-        setMeta(item, displayName, lore);
-
-        return item;
-    }
-
-    public static ItemStack getHeadDatabaseItem(@NotNull String id, String displayName, List<String> lore) {
-        ItemStack item = new ItemStack(Material.STONE);
-
-        if (DonateCase.instance.headDatabaseSupport != null) {
-            item = DonateCase.instance.headDatabaseSupport.getSkull(id);
-        } else {
-            Logger.log("&eYou're using an item from HeadDatabase, but it's not loaded on the server!");
-        }
-
-        setMeta(item, displayName, lore);
-
-        return item;
-    }
-
-    public static ItemStack getOraxenItem(@NotNull String id, String displayname, List<String> lore) {
-        ItemStack item = new ItemStack(Material.STONE);
-
-        if(DonateCase.instance.oraxenSupport != null) {
-            item = DonateCase.instance.oraxenSupport.getItem(id);
-        } else {
-            Logger.log("&eYou're using an item from Oraxen, but it's not loaded on the server!");
-        }
-
-        setMeta(item, displayname, lore);
-
-        return item;
-    }
-
     @NotNull
-    public static ItemStack getCaseItem(String id, String displayName, List<String> lore, boolean enchanted, String[] rgb, int modelData) {
-        String[] materialParts = id.split(":");
+    public static ItemStack getCaseItem(CaseData.Item.Material material) {
+        ItemStack winItem = null;
+        String id = material.getId();
+        String temp = id != null ? MaterialManager.getByStart(id) : null;
 
-        MaterialType materialType = MaterialType.fromString(materialParts[0]);
-        ItemStack winItem;
-        switch (materialType) {
-            case HEAD:
-                winItem = getPlayerHead(materialParts[1], displayName, lore);
-                break;
-            case HDB:
-                winItem = getHeadDatabaseItem(materialParts[1], displayName, lore);
-                break;
-            case CH:
-                winItem = CustomHeadSupport.getSkull(materialParts[1], materialParts[2], displayName, lore);
-                break;
-            case IA:
-                winItem = getItemsAdderItem(materialParts[1] + ":" + materialParts[2], displayName, lore);
-                break;
-            case BASE64:
-                winItem = getBASE64Skull(materialParts[1], displayName, lore);
-                break;
-            case MCURL:
-                winItem = getMCURLSkull(materialParts[1], displayName, lore);
-                break;
-            case ORAXEN:
-                winItem = getOraxenItem(materialParts[1], displayName, lore);
-                break;
-            default:
-                byte data = (materialParts.length > 1) ? Byte.parseByte(materialParts[1]) : -1;
-                winItem = createItem(Material.getMaterial(materialParts[0]), 1, data, displayName, lore, enchanted, rgb, modelData);
-                break;
+        if(temp != null) {
+            CaseMaterial caseMaterial = MaterialManager.getRegisteredMaterial(temp);
+            if(caseMaterial != null) {
+                String context = id.replace(temp, "").replaceFirst(":", "").trim();
+                winItem = caseMaterial.handle(context);
+            }
         }
+
+        if(winItem == null) winItem = createItem(material);
+
+        setMeta(winItem, material);
 
         return winItem;
     }
 
-    public static ItemStack createItem(Material ma, int amount, int data, String dn, List<String> lore, boolean enchant, String[] rgb, int modelData) {
+    public static ItemStack createItem(CaseData.Item.Material material) {
         ItemStack item;
-        if(ma == null) return new ItemStack(Material.STONE);
-        if(data == -1) {
-            item = new ItemStack(ma, amount);
+        String id = material.getId();
+        if (id == null) return new ItemStack(Material.STONE);
+
+        String[] materialParts = id.split(":");
+
+        Material ma = Material.getMaterial(materialParts[0]);
+
+        byte data = (materialParts.length > 1) ? Byte.parseByte(materialParts[1]) : -1;
+
+        if (ma == null) return new ItemStack(Material.STONE);
+        if (data == -1) {
+            item = new ItemStack(ma, 1);
         } else if (Bukkit.getVersion().contains("1.12.2")) {
-            item = new ItemStack(ma, amount, (short) 1, (byte) data);
+            item = new ItemStack(ma, 1, (short) 1, data);
         } else {
-            item = new ItemStack(ma, amount);
-        }
-        if(enchant && !ma.equals(Material.AIR)) {
-            item.addUnsafeEnchantment(Enchantment.LURE, 1);
-        }
-        ItemMeta m = item.getItemMeta();
-        if(m != null) {
-            if (dn != null) {
-                m.setDisplayName(rc(dn));
-            }
-
-            if (lore != null) {
-
-                m.setLore(rc(lore));
-            }
-            if(modelData != -1) {
-                m.setCustomModelData(modelData);
-            }
-            if (!ma.equals(Material.AIR)) {
-                m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                m.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                m.addItemFlags(ItemFlag.HIDE_DYE);
-                m.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-            }
-
-            item.setItemMeta(m);
-
-            if (rgb != null && m instanceof LeatherArmorMeta) {
-                LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) m;
-                int r = Integer.parseInt(rgb[0]);
-                int g = Integer.parseInt(rgb[1]);
-                int b = Integer.parseInt(rgb[2]);
-                leatherArmorMeta.setColor(Color.fromRGB(r, g, b));
-                item.setItemMeta(leatherArmorMeta);
-            }
+            item = new ItemStack(ma, 1);
         }
         return item;
     }
@@ -458,9 +349,8 @@ public class Tools {
         return commands.stream().flatMap(command -> command.values().stream()).map(SubCommand::getType).anyMatch(type -> type == null || type.hasPermission(sender));
     }
 
-    public static Color fromRGBString(String string, Color def) {
-        if(string != null) {
-            String[] rgb = string.replaceAll(" ", "").split(",");
+    public static Color fromRGBString(String[] rgb, Color def) {
+        if(rgb.length >= 3) {
             try {
                 int red = Integer.parseInt(rgb[0]);
                 int green = Integer.parseInt(rgb[1]);
@@ -468,6 +358,14 @@ public class Tools {
                 def = Color.fromRGB(red, green, blue);
             } catch (NumberFormatException ignored) {
             }
+        }
+        return def;
+    }
+
+    public static Color fromRGBString(String string, Color def) {
+        if(string != null) {
+            String[] rgb = string.replaceAll(" ", "").split(",");
+            def = fromRGBString(rgb, def);
         }
         return def;
     }
