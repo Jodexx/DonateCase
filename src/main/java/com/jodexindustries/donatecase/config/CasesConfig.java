@@ -45,8 +45,8 @@ public class CasesConfig {
      * @param file File for checking
      * @return result
      */
-    private boolean isYamlFile(File file) {
-        return file.getName().endsWith(".yml");
+    private static boolean isYamlFile(File file) {
+        return file.getName().endsWith(".yml") || file.getName().endsWith(".yaml");
     }
 
     /**
@@ -54,7 +54,7 @@ public class CasesConfig {
      * @param file File for checking
      * @return File name without format
      */
-    private String getFileNameWithoutExtension(File file) {
+    private static String getFileNameWithoutExtension(File file) {
         String fileName = file.getName();
         return fileName.substring(0, fileName.length() - 4); // remove ".yml"
     }
@@ -88,7 +88,7 @@ public class CasesConfig {
         return true;
     }
 
-    private List<String> collectActions(YamlConfiguration caseConfig, String item, String giveCommand, List<String> giveCommands) {
+    private static List<String> collectActions(YamlConfiguration caseConfig, String item, String giveCommand, List<String> giveCommands) {
         List<String> actions = new ArrayList<>();
         if (giveCommand != null) {
             actions.add("[command] " + giveCommand);
@@ -106,7 +106,7 @@ public class CasesConfig {
         return actions;
     }
 
-    private List<String> collectRandomActions(YamlConfiguration caseConfig, String item, ConfigurationSection giveSection) {
+    private static List<String> collectRandomActions(YamlConfiguration caseConfig, String item, ConfigurationSection giveSection) {
         List<String> randomActions = new ArrayList<>();
         if (giveSection != null) {
             for (String choice : giveSection.getKeys(false)) {
@@ -127,7 +127,7 @@ public class CasesConfig {
         return randomActions;
     }
 
-    private void clearOldConfig(YamlConfiguration caseConfig, String item) {
+    private static void clearOldConfig(YamlConfiguration caseConfig, String item) {
         caseConfig.set("case.Items." + item + ".Title", null);
         caseConfig.set("case.Items." + item + ".SubTitle", null);
         caseConfig.set("case.Items." + item + ".Commands", null);
@@ -136,7 +136,7 @@ public class CasesConfig {
         caseConfig.set("case.Items." + item + ".GiveCommands", null);
     }
 
-    private void saveConfig(YamlConfiguration caseConfig, File file) {
+    private static void saveConfig(YamlConfiguration caseConfig, File file) {
         try {
             caseConfig.save(file);
         } catch (IOException e) {
