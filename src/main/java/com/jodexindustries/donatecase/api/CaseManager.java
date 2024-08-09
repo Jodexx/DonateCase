@@ -17,6 +17,7 @@ public class CaseManager {
     private final AnimationManager animationManager;
     private final SubCommandManager subCommandManager;
     private final ActionManager actionManager;
+    private final MaterialManager materialManager;
     private final Addon addon;
 
     /**
@@ -29,6 +30,7 @@ public class CaseManager {
         this.subCommandManager = new SubCommandManager(addon);
         this.animationManager = new AnimationManager(addon);
         this.actionManager = new ActionManager(addon);
+        this.materialManager = new MaterialManager(addon);
     }
 
     /**
@@ -41,6 +43,7 @@ public class CaseManager {
         this.subCommandManager = new SubCommandManager(addon);
         this.animationManager = new AnimationManager(addon);
         this.actionManager = new ActionManager(addon);
+        this.materialManager = new MaterialManager(addon);
     }
 
     /**
@@ -95,6 +98,16 @@ public class CaseManager {
     @NotNull
     public ActionManager getActionManager() {
         return actionManager;
+    }
+
+    /**
+     * Get case material manager
+     * @return MaterialManager instance
+     * @since 2.2.4.8
+     */
+    @NotNull
+    public MaterialManager getMaterialManager() {
+        return materialManager;
     }
 
     /**
