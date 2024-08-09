@@ -100,9 +100,7 @@ public class SubCommandManager {
      */
     public void unregisterSubCommands() {
         List<String> list = new ArrayList<>(getSubCommands().keySet());
-        for (String s : list) {
-            unregisterSubCommand(s);
-        }
+        list.forEach(this::unregisterSubCommand);
     }
 
     /**
@@ -122,9 +120,6 @@ public class SubCommandManager {
      */
     public static List<String> getTabCompletionsForSubCommand(CommandSender sender, String subCommandName, String label, String[] args) {
         SubCommand subCommand = registeredSubCommands.get(subCommandName.toLowerCase());
-        if (subCommand != null) {
-            return subCommand.getTabCompletions(sender, label, args);
-        }
-        return null;
+        return subCommand != null ? subCommand.getTabCompletions(sender, label, args) : null;
     }
 }

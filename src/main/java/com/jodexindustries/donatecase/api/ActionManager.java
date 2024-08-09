@@ -130,10 +130,7 @@ public class ActionManager {
      */
     @Nullable
     public static CaseAction getRegisteredAction(@NotNull String action) {
-        if (isRegistered(action)) {
-            return registeredActions.get(action);
-        }
-        return null;
+        return registeredActions.get(action);
     }
 
     /**

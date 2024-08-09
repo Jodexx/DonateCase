@@ -208,8 +208,7 @@ public class AnimationManager {
     }
 
     public static boolean isRegistered(String name, boolean old) {
-        if(old) return oldAnimations.containsKey(name);
-        return isRegistered(name);
+        return old ? oldAnimations.containsKey(name) : isRegistered(name);
     }
 
     /**
@@ -238,10 +237,7 @@ public class AnimationManager {
      */
     @Nullable
     public static CaseAnimation getRegisteredAnimation(String animation) {
-        if (isRegistered(animation)) {
-            return getRegisteredAnimations().get(animation);
-        }
-        return null;
+        return registeredAnimations.get(animation);
     }
 
     /**
@@ -252,10 +248,7 @@ public class AnimationManager {
     @Nullable
     @Deprecated
     public static Animation getRegisteredOldAnimation(String animation) {
-        if (isRegistered(animation, true)) {
-            return oldAnimations.get(animation).getFirst();
-        }
-        return null;
+        return isRegistered(animation, true) ? oldAnimations.get(animation).getFirst() : null;
     }
 
 }
