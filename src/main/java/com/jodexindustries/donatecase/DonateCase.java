@@ -60,6 +60,7 @@ public class DonateCase extends JavaPlugin {
     public ItemsAdderSupport itemsAdderSupport = null;
     public OraxenSupport oraxenSupport = null;
     public HeadDatabaseSupport headDatabaseSupport = null;
+    public CustomHeadsSupport customHeadsSupport = null;
     public PacketEventsSupport packetEventsSupport;
 
     public Config config;
@@ -103,6 +104,7 @@ public class DonateCase extends JavaPlugin {
         loadItemsAdderAPI();
         loadOraxenAPI();
         loadHeadDatabaseAPI();
+        loadCustomHeadsAPI();
 
         loadCases();
         loadHolograms();
@@ -141,8 +143,11 @@ public class DonateCase extends JavaPlugin {
 
     private void loadPlaceholderAPI() {
         if(getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            papi = new PAPISupport();
-            papi.register();
+            try {
+                papi = new PAPISupport();
+            } catch (Exception e) {
+                Logger.log("&cError hooking to &bPlaceholderAPI&c: " + e.getMessage());
+            }
         }
     }
 
@@ -150,9 +155,8 @@ public class DonateCase extends JavaPlugin {
         if(getServer().getPluginManager().isPluginEnabled("packetevents")) {
             try {
                 packetEventsSupport = new PacketEventsSupport(this);
-                packetEventsSupport.load();
-            } catch (NoClassDefFoundError e) {
-                getLogger().log(Level.WARNING, "packetevents hooking canceled!", e);
+            } catch (Exception e) {
+                Logger.log("&cError hooking to &bpacketevents&c: " + e.getMessage());
             }
         }
     }
@@ -168,11 +172,33 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadOraxenAPI() {
-        if(getServer().getPluginManager().isPluginEnabled("Oraxen")) oraxenSupport = new OraxenSupport(this);
+        if(getServer().getPluginManager().isPluginEnabled("Oraxen")) {
+            try {
+                oraxenSupport = new OraxenSupport(this);
+            } catch (Exception e) {
+                Logger.log("&cError hooking to &bOraxen&c: " + e.getMessage());
+            }
+        }
     }
 
     private void loadHeadDatabaseAPI() {
-        if (getServer().getPluginManager().isPluginEnabled("HeadDatabase")) headDatabaseSupport = new HeadDatabaseSupport(this);
+        if (getServer().getPluginManager().isPluginEnabled("HeadDatabase")) {
+            try {
+                headDatabaseSupport = new HeadDatabaseSupport(this);
+            } catch (Exception e) {
+                Logger.log("&cError hooking to &bHeadDatabase&c: " + e.getMessage());
+            }
+        }
+    }
+
+    private void loadCustomHeadsAPI() {
+        if(getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+            try {
+                customHeadsSupport = new CustomHeadsSupport();
+            } catch (Exception e) {
+                Logger.log("&cError hooking to &bCustomHeads&c: " + e.getMessage());
+            }
+        }
     }
 
     private void loadUpdater() {
