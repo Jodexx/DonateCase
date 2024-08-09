@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.tools.support;
 import com.jodexindustries.donatecase.tools.Logger;
 import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent;
-import dev.lone.itemsadder.api.NotActuallyItemsAdderException;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,7 +33,7 @@ public class ItemsAdderSupport implements Listener {
                 } else {
                     Logger.log("&eCould not find the item you were looking for by ItemsAdder support. Namespace: " + namespace);
                 }
-            } catch (NotActuallyItemsAdderException ignored) {
+            } catch (Exception ignored) {
                 Logger.log("&eCould not find the item you were looking for by ItemsAdder support. Namespace: " + namespace);
             }
         } else {
@@ -43,7 +42,4 @@ public class ItemsAdderSupport implements Listener {
         return item;
     }
 
-    public boolean areItemsLoaded() {
-        return itemsLoaded;
-    }
 }
