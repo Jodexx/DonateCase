@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.api.data;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jodexindustries.donatecase.tools.ProbabilityCollection;
-import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +18,6 @@ public class CaseData implements Cloneable {
     private String caseDisplayName;
     private String caseTitle;
     private String animation;
-    @Deprecated private AnimationSound animationSound = null;
     private Map<String, Item> items;
     private HistoryData[] historyData;
     private Hologram hologram;
@@ -122,24 +120,6 @@ public class CaseData implements Cloneable {
      */
     public void setItems(Map<String, Item> items) {
         this.items = items;
-    }
-
-    /**
-     * Get animation sound
-     * @return CaseData.AnimationSound
-     */
-    @Deprecated
-    public AnimationSound getAnimationSound() {
-        return animationSound;
-    }
-
-    /**
-     * Set animation sound
-     * @param animationSound CaseData.AnimationSound
-     */
-    @Deprecated
-    public void setAnimationSound(AnimationSound animationSound) {
-        this.animationSound = animationSound;
     }
 
     /**
@@ -587,14 +567,17 @@ public class CaseData implements Cloneable {
             private boolean enchanted;
             private List<String> lore;
             private int modelData;
+            private String[] rgb;
 
-            public Material(String id, ItemStack itemStack, String displayName, boolean enchanted, List<String> lore, int modelData) {
+            public Material(String id, ItemStack itemStack, String displayName, boolean enchanted,
+                            List<String> lore, int modelData, String[] rgb) {
                 this.itemStack = itemStack;
                 this.displayName = displayName;
                 this.enchanted = enchanted;
                 this.id = id;
                 this.lore = lore;
                 this.modelData = modelData;
+                this.rgb = rgb;
             }
 
             /**
@@ -660,7 +643,6 @@ public class CaseData implements Cloneable {
              * Material id like HDB:1234, HEAD:name, RED_WOOL etc.
              * @return id
              */
-            @Nullable
             public String getId() {
                 return id;
             }
@@ -697,6 +679,8 @@ public class CaseData implements Cloneable {
                         ", itemStack=" + itemStack +
                         ", displayName='" + displayName + '\'' +
                         ", enchanted=" + enchanted +
+                        ", modelData=" + modelData +
+                        ", rgb=" + Arrays.toString(rgb) +
                         ", lore=" + lore +
                         '}';
             }
@@ -710,6 +694,14 @@ public class CaseData implements Cloneable {
                 if(this.itemStack != null && this.itemStack.getItemMeta() != null) {
                     this.itemStack.getItemMeta().setCustomModelData(modelData);
                 }
+            }
+
+            public String[] getRgb() {
+                return rgb;
+            }
+
+            public void setRgb(String[] rgb) {
+                this.rgb = rgb;
             }
         }
 
@@ -739,88 +731,6 @@ public class CaseData implements Cloneable {
 
     }
 
-    /**
-     * Class for implementing animation sound in a case
-     */
-    @Deprecated
-    public static class AnimationSound implements Cloneable {
-        private Sound sound;
-        private float volume;
-        private float pitch;
-
-        public AnimationSound(Sound sound, float volume, float pitch) {
-            this.sound = sound;
-            this.volume = volume;
-            this.pitch = pitch;
-        }
-
-        /**
-         * Get animation sound
-         * @return Bukkit sound
-         */
-        public Sound getSound() {
-            return sound;
-        }
-
-        /**
-         * Set animation sound
-         * @param sound Bukkit sound
-         */
-        public void setSound(Sound sound) {
-            this.sound = sound;
-        }
-
-        /**
-         * Get animation sound volume
-         * @return volume
-         */
-        public float getVolume() {
-            return volume;
-        }
-
-        /**
-         * Set animation sound volume
-         * @param volume volume
-         */
-        public void setVolume(float volume) {
-            this.volume = volume;
-        }
-
-        /**
-         * Get animation sound pitch
-         * @return pitch
-         */
-        public float getPitch() {
-            return pitch;
-        }
-
-        /**
-         * Set animation sound pitch
-         * @param pitch pitch
-         */
-
-        public void setPitch(float pitch) {
-            this.pitch = pitch;
-        }
-
-        @Override
-        public String toString() {
-            return "AnimationSound{" +
-                    "sound=" + sound +
-                    ", volume=" + volume +
-                    ", pitch=" + pitch +
-                    '}';
-        }
-
-        @Override
-        public AnimationSound clone() {
-            try {
-                return (AnimationSound) super.clone();
-            } catch (CloneNotSupportedException e) {
-                throw new AssertionError(e);
-            }
-        }
-    }
     /**
      * Class to implement information about case opening histories
      */
