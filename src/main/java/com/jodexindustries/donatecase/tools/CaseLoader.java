@@ -159,10 +159,14 @@ public class CaseLoader {
         String itemDisplayName = Tools.rc(itemSection.getString("Item.DisplayName"));
         boolean enchanted = itemSection.getBoolean("Item.Enchanted");
         int modelData = itemSection.getInt("Item.ModelData", -1);
-        ItemStack itemStack = Tools.getCaseItem(id, itemDisplayName, null,
-                enchanted, loadRgb(itemSection, "Item.Rgb"), modelData);
+        String[] rgb = loadRgb(itemSection, "Item.Rgb");
 
-        return new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted, null, modelData);
+        CaseData.Item.Material material = new CaseData.Item.Material(id, null, itemDisplayName, enchanted, null, modelData, rgb);
+
+        ItemStack itemStack = Tools.getCaseItem(material);
+        material.setItemStack(itemStack);
+
+        return material;
     }
 
     private CaseData.HistoryData[] loadHistoryData(String caseType) {
@@ -234,9 +238,10 @@ public class CaseLoader {
         List<Integer> slots = getItemSlots(itemSection);
 
 
-        CaseData.Item.Material material = new CaseData.Item.Material(id, null, displayName, enchanted, lore, modelData);
+        CaseData.Item.Material material = new CaseData.Item.Material(id, null, displayName, enchanted,
+                lore, modelData, rgb);
 
-        return new GUI.Item(i, itemType, material, slots, modelData, rgb);
+        return new GUI.Item(i, itemType, material, slots);
     }
 
 
