@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api.data;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -35,17 +34,13 @@ public class GUI {
         private String type;
         private CaseData.Item.Material material;
         private List<Integer> slots;
-        private int modelData;
-        private String[] rgb;
 
 
-        public Item(String itemName, String type, CaseData.Item.Material material, List<Integer> slots, int modelData, String[] rgb) {
+        public Item(String itemName, String type, CaseData.Item.Material material, List<Integer> slots) {
             this.itemName = itemName;
             this.type = type;
             this.material = material;
             this.slots = slots;
-            this.modelData = modelData;
-            this.rgb = rgb;
         }
 
         public String getItemName() {
@@ -86,19 +81,31 @@ public class GUI {
          */
         @Deprecated
         public int getModelData() {
-            return modelData;
+            return getMaterial().getModelData();
         }
 
+        /**
+         * @deprecated Use {@link CaseData.Item.Material#setModelData(int)}
+         */
+        @Deprecated
         public void setModelData(int modelData) {
-            this.modelData = modelData;
+            getMaterial().setModelData(modelData);
         }
 
+        /**
+         * @deprecated Use {@link CaseData.Item.Material#getRgb()}
+         */
+        @Deprecated
         public String[] getRgb() {
-            return rgb;
+            return getMaterial().getRgb();
         }
 
+        /**
+         * @deprecated Use {@link CaseData.Item.Material#setRgb(String[])}
+         */
+        @Deprecated
         public void setRgb(String[] rgb) {
-            this.rgb = rgb;
+            getMaterial().setRgb(rgb);
         }
 
 
@@ -120,8 +127,6 @@ public class GUI {
                     ", type='" + type + '\'' +
                     ", material=" + material +
                     ", slots=" + slots +
-                    ", modelData=" + modelData +
-                    ", rgb=" + Arrays.toString(rgb) +
                     '}';
         }
     }
