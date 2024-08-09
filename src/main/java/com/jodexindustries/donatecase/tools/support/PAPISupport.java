@@ -11,12 +11,10 @@ public class PAPISupport {
 
     public PAPISupport() {
         this.placeholder = new Placeholder();
-    }
-
-    public void register() {
         placeholder.register();
         Logger.log("&aHooked to &bPlaceholderAPI");
     }
+
     public void unregister() {
         placeholder.unregister();
     }
