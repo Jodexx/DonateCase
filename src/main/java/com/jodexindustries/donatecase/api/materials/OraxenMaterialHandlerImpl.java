@@ -16,7 +16,7 @@ public class OraxenMaterialHandlerImpl implements MaterialHandler {
         if(DonateCase.instance.oraxenSupport != null) {
             item = DonateCase.instance.oraxenSupport.getItem(context);
         } else {
-            Logger.log("&eYou're using an item from Oraxen, but it's not loaded on the server!");
+            Logger.log("&eYou're using an item from Oraxen, but it's not loaded on the server! Context: " + context);
         }
         return item;
     }

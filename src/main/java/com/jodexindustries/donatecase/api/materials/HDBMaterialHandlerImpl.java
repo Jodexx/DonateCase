@@ -16,7 +16,7 @@ public class HDBMaterialHandlerImpl implements MaterialHandler {
         if (DonateCase.instance.headDatabaseSupport != null) {
             item = DonateCase.instance.headDatabaseSupport.getSkull(context);
         } else {
-            Logger.log("&eYou're using an item from HeadDatabase, but it's not loaded on the server!");
+            Logger.log("&eYou're using an item from HeadDatabase, but it's not loaded on the server! Context: " + context);
         }
         return item;
     }

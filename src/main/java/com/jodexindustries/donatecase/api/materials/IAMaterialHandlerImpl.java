@@ -16,7 +16,7 @@ public class IAMaterialHandlerImpl implements MaterialHandler {
         if (DonateCase.instance.itemsAdderSupport != null) {
             item = DonateCase.instance.itemsAdderSupport.getItem(context);
         } else {
-            Logger.log("&eYou're using an item from ItemsAdder, but it's not loaded on the server!");
+            Logger.log("&eYou're using an item from ItemsAdder, but it's not loaded on the server! Context: " + context);
         }
         return item;
     }
