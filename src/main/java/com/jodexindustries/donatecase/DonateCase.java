@@ -253,6 +253,7 @@ public class DonateCase extends JavaPlugin {
         new AddonCommand(manager);
         new AnimationsCommand(manager);
         new ActionsCommand(manager);
+        new MaterialsCommand(manager);
 
         Logger.log("&aRegistered &cdefault &acommands");
     }
