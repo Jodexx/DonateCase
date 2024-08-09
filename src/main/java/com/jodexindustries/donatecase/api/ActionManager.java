@@ -99,11 +99,9 @@ public class ActionManager {
     /**
      * Unregister all actions
      */
-    public void unregisterAction() {
+    public void unregisterActions() {
         List<String> list = new ArrayList<>(getRegisteredActions().keySet());
-        for (String s : list) {
-            unregisterAction(s);
-        }
+        list.forEach(this::unregisterAction);
     }
 
     /**
