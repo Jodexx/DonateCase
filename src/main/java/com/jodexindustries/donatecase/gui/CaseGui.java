@@ -38,17 +38,18 @@ public class CaseGui {
     }
 
     private void processItem(String caseType, Player p, GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
+        CaseData.Item.Material material = item.getMaterial();
         if (item.getType().startsWith("HISTORY")) {
             Trio<String, String, List<String>> trio = handleHistoryItem(caseType, item, globalHistoryData);
-            if (trio.getFirst() != null) item.getMaterial().setId(trio.getFirst());
-            if (trio.getSecond() != null) item.getMaterial().setDisplayName(trio.getSecond());
-            if (trio.getThird() != null) item.getMaterial().setLore(trio.getThird());
+            if (trio.getFirst() != null) material.setId(trio.getFirst());
+            if (trio.getSecond() != null) material.setDisplayName(trio.getSecond());
+            if (trio.getThird() != null) material.setLore(trio.getThird());
         }
         // update item placeholders
-        item.getMaterial().setDisplayName(PAPISupport.setPlaceholders(p, item.getMaterial().getDisplayName()));
-        item.getMaterial().setLore(setPlaceholders(p, Tools.rc(item.getMaterial().getLore())));
+        material.setDisplayName(PAPISupport.setPlaceholders(p, material.getDisplayName()));
+        material.setLore(setPlaceholders(p, Tools.rc(material.getLore())));
 
-        ItemStack itemStack = getItem(p, caseType, item);
+        ItemStack itemStack = getItem(p, caseType, material);
         item.getSlots().forEach(slot -> inventory.setItem(slot, itemStack));
     }
 
@@ -149,15 +150,11 @@ public class CaseGui {
         return data;
     }
 
-    private ItemStack getItem(Player player, String caseType, GUI.Item item) {
+    private ItemStack getItem(Player player, String caseType, CaseData.Item.Material item) {
         List<String> newLore = new ArrayList<>();
 
-        List<String> lore = item.getMaterial().getLore();
-        String material = item.getMaterial().getId();
-        String displayName = item.getMaterial().getDisplayName();
-        boolean enchanted = item.getMaterial().isEnchanted();
-        String[] rgb = item.getRgb();
-        int modelData = item.getMaterial().getModelData();
+        List<String> lore = item.getLore();
+        String material = item.getId();
         if (lore != null) {
             lore = Tools.rt(lore, "%case%:" + caseType);
             for (String string : lore) {
@@ -178,11 +175,13 @@ public class CaseGui {
                 }
             }
         }
+        item.setLore(newLore);
+
         if (material == null) {
             return new ItemStack(Material.AIR);
         }
 
-        return Tools.getCaseItem(material, displayName, newLore, enchanted, rgb, modelData);
+        return Tools.getCaseItem(item);
     }
 
 
