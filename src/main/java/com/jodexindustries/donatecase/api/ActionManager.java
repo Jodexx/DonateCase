@@ -112,7 +112,7 @@ public class ActionManager {
      * @return boolean
      */
     public static boolean isRegistered(String name) {
-        return getRegisteredActions().containsKey(name);
+        return registeredActions.containsKey(name);
     }
 
     /**
@@ -131,7 +131,7 @@ public class ActionManager {
     @Nullable
     public static CaseAction getRegisteredAction(@NotNull String action) {
         if (isRegistered(action)) {
-            return getRegisteredActions().get(action);
+            return registeredActions.get(action);
         }
         return null;
     }
