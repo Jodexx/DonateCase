@@ -177,9 +177,7 @@ public class CaseGui {
         }
         item.setLore(newLore);
 
-        if (material == null) {
-            return new ItemStack(Material.AIR);
-        }
+        if (material == null) return new ItemStack(Material.AIR);
 
         return Tools.getCaseItem(item);
     }
