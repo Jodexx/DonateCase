@@ -17,6 +17,7 @@ import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
+import com.jodexindustries.donatecase.api.materials.*;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.command.subcommands.*;
 import com.jodexindustries.donatecase.config.Config;
@@ -90,6 +91,7 @@ public class DonateCase extends JavaPlugin {
         registerDefaultSubCommands();
         registerDefaultAnimations();
         registerDefaultActions();
+        registerDefaultMaterials();
 
         loadPermissionDriver();
         loadHologramManager();
@@ -126,7 +128,8 @@ public class DonateCase extends JavaPlugin {
         api.getAddonManager().unloadAddons(AddonManager.PowerReason.DONATE_CASE);
         api.getAnimationManager().unregisterAnimations();
         api.getSubCommandManager().unregisterSubCommands();
-        api.getActionManager().unregisterAction();
+        api.getActionManager().unregisterActions();
+        api.getMaterialManager().unregisterMaterials();
 
         if(papi != null) papi.unregister();
         if(mysql != null) mysql.close();
@@ -155,7 +158,13 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadItemsAdderAPI() {
-        if (getServer().getPluginManager().isPluginEnabled("ItemsAdder")) itemsAdderSupport = new ItemsAdderSupport(this);
+        if (getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
+            try {
+                itemsAdderSupport = new ItemsAdderSupport(this);
+            } catch (Exception e) {
+                Logger.log("&cError hooking to &bItemsAdder&c: " + e.getMessage());
+            }
+        }
     }
 
     private void loadOraxenAPI() {
@@ -250,6 +259,25 @@ public class DonateCase extends JavaPlugin {
         manager.registerAction("[sound]", new SoundActionExecutorImpl(),
                 "Sends a sound to the player");
         Logger.log("&aRegistered &cdefault &aactions");
+    }
+
+    private void registerDefaultMaterials() {
+        MaterialManager manager = api.getMaterialManager();
+        manager.registerMaterial("BASE64", new BASE64MaterialHandlerImpl(),
+                "Heads from Minecraft-heads by BASE64 value");
+        manager.registerMaterial("MCURL", new MCURLMaterialHandlerImpl(),
+                "Heads from Minecraft-heads by Minecrat-URL");
+        manager.registerMaterial("HEAD", new HEADMaterialHandlerImpl(),
+                "Default Minecraft heads by nickname");
+        manager.registerMaterial("IA", new IAMaterialHandlerImpl(),
+                "Items from ItemsAdder plugin");
+        manager.registerMaterial("ORAXEN", new OraxenMaterialHandlerImpl(),
+                "Items from Oraxen plugin");
+        manager.registerMaterial("CH", new CHMaterialHandlerImpl(),
+                "Heads from CustomHeads plugin");
+        manager.registerMaterial("HDB", new HDBMaterialHandlerImpl(),
+                "Heads from HeadDatabase plugin");
+        Logger.log("&aRegistered &cdefault &amaterials");
     }
 
     private void loadPermissionDriver() {
