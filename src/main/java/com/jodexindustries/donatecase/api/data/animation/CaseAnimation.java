@@ -3,7 +3,7 @@ package com.jodexindustries.donatecase.api.data.animation;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
 
-public final class CaseAnimation {
+public class CaseAnimation {
     private final Class<? extends JavaAnimation> animation;
     private final Addon addon;
     private final String name;
