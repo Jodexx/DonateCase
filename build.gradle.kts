@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "com.jodexindustries.donatecase"
-val api = "2.2.4.8"
+val api = "2.2.4.9"
 version = "2.2.4.9"
 
 repositories {
