@@ -237,48 +237,6 @@ public class Tools {
         return item;
     }
 
-    public static List<Integer> getOpenMaterialSlots(String c) {
-        List<Integer> slots = new ArrayList<>();
-        CaseData caseData = Case.getCase(c);
-        if(caseData == null) return slots;
-        GUI gui = caseData.getGui();
-        for (GUI.Item item : gui.getItems().values()) {
-            String type = item.getType();
-            if(type.startsWith("OPEN")) {
-                slots.addAll(item.getSlots());
-            }
-        }
-        return slots;
-    }
-
-    @NotNull
-    public static Map<List<Integer>, String> getOpenMaterialItemsBySlots(String c) {
-        Map<List<Integer>, String> map = new HashMap<>();
-        CaseData caseData = Case.getCase(c);
-        if(caseData == null) return map;
-        GUI gui = caseData.getGui();
-        if(gui == null) return map;
-
-        for (GUI.Item item : gui.getItems().values()) {
-            String type = item.getType();
-            if(type.startsWith("OPEN")) {
-                List<Integer> slots = item.getSlots();
-                type = type.contains("_") ? type.split("_")[1] : c;
-                map.put(slots, type);
-            }
-        }
-        return map;
-    }
-
-    public static String getOpenMaterialTypeByMapBySlot(String c, int slot) {
-        for (Map.Entry<List<Integer>, String> entry : getOpenMaterialItemsBySlots(c).entrySet()) {
-            if(entry.getKey().contains(slot)) {
-                return entry.getValue();
-            }
-        }
-        return null;
-    }
-
     /**
      * Format string with Bukkit ChatColor and hex
      * @param message String, to be formated
