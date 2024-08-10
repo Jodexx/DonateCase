@@ -1,5 +1,7 @@
 package com.jodexindustries.donatecase.api.data;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +28,14 @@ public class GUI {
 
     public void setItems(Map<String, Item> items) {
         this.items = items;
+    }
+
+    @Nullable
+    public String getItemTypeBySlot(int slot) {
+        for (GUI.Item item : items.values()) {
+            if(item.getSlots().contains(slot)) return item.getType();
+        }
+        return null;
     }
 
 
