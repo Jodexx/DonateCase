@@ -6,7 +6,6 @@ import com.alessiodp.libby.Library;
 import com.alessiodp.libby.logging.LogLevel;
 import com.jodexindustries.donatecase.animations.*;
 import com.jodexindustries.donatecase.api.*;
-import com.jodexindustries.donatecase.api.actions.*;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
@@ -17,7 +16,10 @@ import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
-import com.jodexindustries.donatecase.api.materials.*;
+import com.jodexindustries.donatecase.api.impl.actions.*;
+import com.jodexindustries.donatecase.api.impl.items.HISTORYItemHandlerImpl;
+import com.jodexindustries.donatecase.api.impl.items.OPENItemClickHandlerImpl;
+import com.jodexindustries.donatecase.api.impl.materials.*;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.command.subcommands.*;
 import com.jodexindustries.donatecase.config.Config;
@@ -93,6 +95,7 @@ public class DonateCase extends JavaPlugin {
         registerDefaultAnimations();
         registerDefaultActions();
         registerDefaultMaterials();
+        registerDefaultGUITypedItems();
 
         loadPermissionDriver();
         loadHologramManager();
@@ -132,6 +135,7 @@ public class DonateCase extends JavaPlugin {
         api.getSubCommandManager().unregisterSubCommands();
         api.getActionManager().unregisterActions();
         api.getMaterialManager().unregisterMaterials();
+        api.getGuiTypedItemManager().unregisterItems();
 
         if(papi != null) papi.unregister();
         if(mysql != null) mysql.close();
@@ -305,6 +309,15 @@ public class DonateCase extends JavaPlugin {
         manager.registerMaterial("HDB", new HDBMaterialHandlerImpl(),
                 "Heads from HeadDatabase plugin");
         Logger.log("&aRegistered &cdefault &amaterials");
+    }
+
+    private void registerDefaultGUITypedItems() {
+        GUITypedItemManager manager = api.getGuiTypedItemManager();
+
+        new OPENItemClickHandlerImpl(manager);
+        new HISTORYItemHandlerImpl(manager);
+
+        Logger.log("&aRegistered &cdefault &agui typed items");
     }
 
     private void loadPermissionDriver() {
