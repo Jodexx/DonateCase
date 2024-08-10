@@ -9,7 +9,6 @@ import com.jodexindustries.donatecase.api.data.gui.TypedItemHandler;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -50,9 +49,7 @@ public class CaseGui {
                 GUITypedItem typedItem = GUITypedItemManager.getRegisteredItem(temp);
                 if(typedItem != null) {
                     TypedItemHandler handler = typedItem.getItemHandler();
-                    if(handler != null) {
-                        item = handler.handle(this, caseData, item);
-                    }
+                    if(handler != null) item = handler.handle(this, caseData, item);
                 }
             }
         }
@@ -60,54 +57,42 @@ public class CaseGui {
 
         // update item placeholders
         material.setDisplayName(PAPISupport.setPlaceholders(p, material.getDisplayName()));
-        material.setLore(setPlaceholders(p, Tools.rc(material.getLore())));
+        material.setLore(setPlaceholders(p, caseData.getCaseType(), material.getLore()));
 
-        ItemStack itemStack = getItem(p, caseData.getCaseType(), material);
+        ItemStack itemStack = Tools.getCaseItem(material);
         item.getSlots().forEach(slot -> inventory.setItem(slot, itemStack));
     }
 
 
 
-    private List<String> setPlaceholders(Player p, List<String> lore) {
-        return lore.stream()
+    private List<String> setPlaceholders(Player p, String caseType, List<String> lore) {
+        lore = Tools.rt(lore, "%case%:" + caseType);
+        List<String> newLore = new ArrayList<>(lore.size());
+
+        for (String string : lore) {
+            String placeholder = Tools.getLocalPlaceholder(string);
+
+            if (placeholder.startsWith("keys") && p != null) {
+
+                if (placeholder.startsWith("keys_")) {
+                    String[] parts = placeholder.split("_", 2);
+                    if (parts.length == 2) {
+                        caseType = parts[1];
+                    }
+                }
+
+                string = string.replace("%" + placeholder + "%",
+                        String.valueOf(Case.getKeysCache(caseType, p.getName())));
+            }
+
+            newLore.add(string);
+        }
+
+        return newLore.stream()
                 .map(line -> PAPISupport.setPlaceholders(p, line))
                 .map(Tools::rc)
                 .collect(Collectors.toList());
     }
-
-
-    private ItemStack getItem(Player player, String caseType, CaseData.Item.Material item) {
-        List<String> newLore = new ArrayList<>();
-
-        List<String> lore = item.getLore();
-        String material = item.getId();
-        if (lore != null) {
-            lore = Tools.rt(lore, "%case%:" + caseType);
-            for (String string : lore) {
-                String placeholder = Tools.getLocalPlaceholder(string);
-                String tempCaseType = caseType;
-                if (placeholder.startsWith("keys")) {
-                    if (placeholder.startsWith("keys_")) {
-                        String[] parts = placeholder.split("_");
-                        if (parts.length >= 2) {
-                            tempCaseType = parts[1];
-                        }
-                    }
-                    if(player != null) {
-                        newLore.add(string.replace("%" + placeholder + "%", String.valueOf(Case.getKeysCache(tempCaseType, player.getName()))));
-                    }
-                } else {
-                    newLore.add(string);
-                }
-            }
-        }
-        item.setLore(newLore);
-
-        if (material == null) return new ItemStack(Material.AIR);
-
-        return Tools.getCaseItem(item);
-    }
-
 
     public Inventory getInventory() {
         return inventory;
