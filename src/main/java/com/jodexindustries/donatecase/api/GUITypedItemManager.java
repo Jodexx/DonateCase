@@ -97,7 +97,7 @@ public class GUITypedItemManager {
      */
     @Nullable
     public static GUITypedItem getRegisteredItem(@NotNull String id) {
-        return registeredItems.get(id);
+        return registeredItems.get(id.toLowerCase());
     }
 
     /**
@@ -107,6 +107,6 @@ public class GUITypedItemManager {
      * @since 2.2.4.9
      */
     public static @Nullable String getByStart(@NotNull final String string) {
-        return registeredItems.keySet().stream().filter(string::startsWith).findFirst().orElse(null);
+        return registeredItems.keySet().stream().filter(string.toLowerCase()::startsWith).findFirst().orElse(null);
     }
 }
