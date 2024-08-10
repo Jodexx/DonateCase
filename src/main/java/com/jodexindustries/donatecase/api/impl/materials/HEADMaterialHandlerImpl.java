@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api.materials;
+package com.jodexindustries.donatecase.api.impl.materials;
 
 import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
 import org.bukkit.Material;

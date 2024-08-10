@@ -1,25 +1,25 @@
-package com.jodexindustries.donatecase.api.actions;
+package com.jodexindustries.donatecase.api.impl.actions;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class BroadcastActionExecutorImpl implements ActionExecutor {
+public class MessageActionExecutorImpl implements ActionExecutor {
     /**
-     * Send broadcast message for all players on the server with specific cooldown<br>
-     * {@code - "[broadcast] (message)"}
+     * Send chat message for player with specific cooldown<br>
+     * {@code - "[message] (message)"}
      *
-     * @param context Broadcast message
+     * @param player The player to whom the message will be sent
+     * @param context Chat message
      * @param cooldown Cooldown in seconds
      */
     @Override
     public void execute(@NotNull OfflinePlayer player, @NotNull String context, int cooldown) {
         Bukkit.getScheduler().runTaskLater(Case.getInstance(), () -> {
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                p.sendMessage(context);
+            if (player.getPlayer() != null) {
+                player.getPlayer().sendMessage(context);
             }
         }, 20L * cooldown);
     }
