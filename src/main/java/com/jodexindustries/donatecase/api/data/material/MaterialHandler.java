@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public interface MaterialHandler {
 
     /**
-     *
+     * Called when the item is initialized
      * @param context Material id context
      * @return ItemStack of completed material
      */
