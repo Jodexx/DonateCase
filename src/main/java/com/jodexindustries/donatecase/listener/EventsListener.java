@@ -125,11 +125,7 @@ public class EventsListener implements Listener {
 
     @EventHandler
     public void InventoryClose(InventoryCloseEvent e) {
-        Player p = (Player)e.getPlayer();
-        if (Case.hasCaseByTitle(e.getView().getTitle())) {
-            Case.playersGui.remove(p.getUniqueId());
-        }
-
+        Case.playersGui.remove(e.getPlayer().getUniqueId());
     }
 
     @EventHandler
