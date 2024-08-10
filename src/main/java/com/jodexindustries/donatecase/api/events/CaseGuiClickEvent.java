@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.events;
 
+import com.jodexindustries.donatecase.api.data.CaseData;
 import org.bukkit.Location;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.ClickType;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class CaseGuiClickEvent extends InventoryClickEvent {
     private static final HandlerList handlers = new HandlerList();
     private final Location location;
-    private final String caseType;
+    private final CaseData caseData;
     private final boolean isOpenItem;
     private boolean cancel;
 
@@ -27,13 +28,15 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
      * @param click Click type
      * @param action Action type
      * @param location Location where opened case
-     * @param caseType Case type
+     * @param caseData Case data
      * @param isOpenItem Is OPEN item type
      */
-    public CaseGuiClickEvent(@NotNull InventoryView view, @NotNull InventoryType.SlotType type, int slot, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull Location location, String caseType, boolean isOpenItem) {
+    public CaseGuiClickEvent(@NotNull InventoryView view, @NotNull InventoryType.SlotType type,
+                             int slot, @NotNull ClickType click, @NotNull InventoryAction action,
+                             @NotNull Location location, CaseData caseData, boolean isOpenItem) {
         super(view, type, slot, click, action);
         this.location = location;
-        this.caseType = caseType;
+        this.caseData = caseData;
         this.isOpenItem = isOpenItem;
     }
     @NotNull
@@ -59,11 +62,20 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
     }
 
     /**
+     * Get case data
+     * @return case data
+     */
+    public CaseData getCaseData() {
+        return caseData;
+    }
+
+    /**
      * Get case type
      * @return case type
      */
+    @Deprecated
     public String getCaseType() {
-        return caseType;
+        return caseData.getCaseType();
     }
 
     /**
