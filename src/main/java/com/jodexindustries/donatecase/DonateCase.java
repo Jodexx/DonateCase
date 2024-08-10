@@ -145,7 +145,7 @@ public class DonateCase extends JavaPlugin {
         if(getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             try {
                 papi = new PAPISupport();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 Logger.log("&cError hooking to &bPlaceholderAPI&c: " + e.getMessage());
             }
         }
@@ -155,7 +155,7 @@ public class DonateCase extends JavaPlugin {
         if(getServer().getPluginManager().isPluginEnabled("packetevents")) {
             try {
                 packetEventsSupport = new PacketEventsSupport(this);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 Logger.log("&cError hooking to &bpacketevents&c: " + e.getMessage());
             }
         }
@@ -165,7 +165,7 @@ public class DonateCase extends JavaPlugin {
         if (getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
             try {
                 itemsAdderSupport = new ItemsAdderSupport(this);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 Logger.log("&cError hooking to &bItemsAdder&c: " + e.getMessage());
             }
         }
@@ -175,7 +175,7 @@ public class DonateCase extends JavaPlugin {
         if(getServer().getPluginManager().isPluginEnabled("Oraxen")) {
             try {
                 oraxenSupport = new OraxenSupport(this);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 Logger.log("&cError hooking to &bOraxen&c: " + e.getMessage());
             }
         }
@@ -185,7 +185,7 @@ public class DonateCase extends JavaPlugin {
         if (getServer().getPluginManager().isPluginEnabled("HeadDatabase")) {
             try {
                 headDatabaseSupport = new HeadDatabaseSupport(this);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 Logger.log("&cError hooking to &bHeadDatabase&c: " + e.getMessage());
             }
         }
@@ -195,7 +195,7 @@ public class DonateCase extends JavaPlugin {
         if(getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
             try {
                 customHeadsSupport = new CustomHeadsSupport();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 Logger.log("&cError hooking to &bCustomHeads&c: " + e.getMessage());
             }
         }
