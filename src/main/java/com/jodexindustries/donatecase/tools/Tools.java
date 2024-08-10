@@ -33,7 +33,6 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -169,7 +168,7 @@ public class Tools {
             meta.setDisplayName(rc(displayName));
 
             List<String> lore = material.getLore();
-            if (lore != null) meta.setLore(rc(lore));
+            meta.setLore(rc(lore));
             int modelData = material.getModelData();
             if (modelData != -1) meta.setCustomModelData(modelData);
 
@@ -207,18 +206,17 @@ public class Tools {
         }
 
         if(winItem == null) winItem = createItem(material);
-        if(winItem == null) winItem = new ItemStack(Material.STONE);
 
         setMeta(winItem, material);
 
         return winItem;
     }
 
-    @Nullable
+    @NotNull
     public static ItemStack createItem(CaseData.Item.Material material) {
-        ItemStack item;
+        ItemStack item = new ItemStack(Material.STONE);
         String id = material.getId();
-        if (id == null) return null;
+        if (id == null) return item;
 
         String[] materialParts = id.split(":");
 
@@ -226,7 +224,7 @@ public class Tools {
 
         byte data = (materialParts.length > 1) ? Byte.parseByte(materialParts[1]) : -1;
 
-        if (ma == null) return null;
+        if (ma == null) return item;
         if (data == -1) {
             item = new ItemStack(ma, 1);
         } else if (Bukkit.getVersion().contains("1.12.2")) {
