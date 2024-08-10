@@ -13,7 +13,7 @@ plugins {
 
 group = "com.jodexindustries.donatecase"
 val api = "2.2.4.8"
-version = "2.2.4.8"
+version = "2.2.4.9"
 
 repositories {
     mavenCentral()
@@ -35,7 +35,7 @@ dependencies {
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.j256.ormlite:ormlite-jdbc:6.1")
     compileOnly("com.github.retrooper:packetevents-spigot:2.4.0")
-    compileOnly("me.tofaa.entitylib:spigot:2.4.7-SNAPSHOT")
+    compileOnly("me.tofaa.entitylib:spigot:2.4.8-SNAPSHOT")
     compileOnly("io.th0rgal:oraxen:1.179.0")
     implementation("com.alessiodp.libby:libby-bukkit:2.0.0-SNAPSHOT")
 }
