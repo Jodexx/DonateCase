@@ -216,10 +216,12 @@ public class CaseLoader {
     @NotNull
     private Map<String, GUI.Item> loadGUIItems(@NotNull ConfigurationSection itemsSection) {
         HashMap<String, GUI.Item> itemMap = new HashMap<>();
+        Set<Integer> currentSlots = new HashSet<>();
+
         for (String i : itemsSection.getKeys(false)) {
             ConfigurationSection itemSection = itemsSection.getConfigurationSection(i);
             if(itemSection != null) {
-                GUI.Item item = loadGUIItem(i, itemSection);
+                GUI.Item item = loadGUIItem(i, itemSection, currentSlots);
                 itemMap.put(i, item);
             }
         }
@@ -227,7 +229,7 @@ public class CaseLoader {
     }
 
 
-    private GUI.Item loadGUIItem(String i, @NotNull ConfigurationSection itemSection) {
+    private GUI.Item loadGUIItem(String i, @NotNull ConfigurationSection itemSection, Set<Integer> currentSlots) {
         String id = itemSection.getString("Material");
         String displayName = itemSection.getString("DisplayName", "");
         boolean enchanted = itemSection.getBoolean("Enchanted");
@@ -237,6 +239,10 @@ public class CaseLoader {
         String[] rgb = loadRgb(itemSection, "Rgb");
         List<Integer> slots = getItemSlots(itemSection);
 
+        if(slots.removeIf(currentSlots::contains))
+            plugin.getLogger().warning("Item " + i + " contains duplicated slots, removing..");
+
+        currentSlots.addAll(slots);
 
         CaseData.Item.Material material = new CaseData.Item.Material(id, null, displayName, enchanted,
                 lore, modelData, rgb);
@@ -282,7 +288,7 @@ public class CaseLoader {
         plugin.getLogger().warning(message);
     }
 
-    private boolean isValidGuiSize(int size) {
+    private static boolean isValidGuiSize(int size) {
         return size >= 9 && size <= 54 && size % 9 == 0;
     }
 
