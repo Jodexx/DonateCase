@@ -1,10 +1,12 @@
 package com.jodexindustries.donatecase.gui;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.GUITypedItemManager;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.GUI;
+import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
+import com.jodexindustries.donatecase.api.data.gui.TypedItemHandler;
 import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.Trio;
 import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,8 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,108 +22,51 @@ import java.util.stream.Collectors;
  */
 public class CaseGui {
     private final Inventory inventory;
+    private List<CaseData.HistoryData> globalHistoryData;
 
     public CaseGui(Player p, CaseData caseData) {
         String title = caseData.getCaseTitle();
-        String caseType = caseData.getCaseType();
         GUI gui = caseData.getGui();
         inventory = Bukkit.createInventory(null, gui.getSize(), Tools.rc(title));
         Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () ->
                 Case.getAsyncSortedHistoryData().thenAcceptAsync((historyData) -> {
+                    globalHistoryData = historyData;
             for (GUI.Item item : gui.getItems().values()) {
-                processItem(caseType, p, item.clone(), historyData);
+                processItem(caseData, p, item.clone());
             }
         }));
         p.openInventory(inventory);
     }
 
-    private void processItem(String caseType, Player p, GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
-        CaseData.Item.Material material = item.getMaterial();
-        if (item.getType().startsWith("HISTORY")) {
-            Trio<String, String, List<String>> trio = handleHistoryItem(caseType, item, globalHistoryData);
-            if (trio.getFirst() != null) material.setId(trio.getFirst());
-            if (trio.getSecond() != null) material.setDisplayName(trio.getSecond());
-            if (trio.getThird() != null) material.setLore(trio.getThird());
+    public List<CaseData.HistoryData> getGlobalHistoryData() {
+        return globalHistoryData;
+    }
+
+    private void processItem(CaseData caseData, Player p, GUI.Item item) {
+        String itemType = item.getType();
+        if(itemType != null) {
+            String temp = GUITypedItemManager.getByStart(itemType);
+            if(temp != null) {
+                GUITypedItem typedItem = GUITypedItemManager.getRegisteredItem(temp);
+                if(typedItem != null) {
+                    TypedItemHandler handler = typedItem.getItemHandler();
+                    if(handler != null) {
+                        item = handler.handle(this, caseData, item);
+                    }
+                }
+            }
         }
+        CaseData.Item.Material material = item.getMaterial();
+
         // update item placeholders
         material.setDisplayName(PAPISupport.setPlaceholders(p, material.getDisplayName()));
         material.setLore(setPlaceholders(p, Tools.rc(material.getLore())));
 
-        ItemStack itemStack = getItem(p, caseType, material);
+        ItemStack itemStack = getItem(p, caseData.getCaseType(), material);
         item.getSlots().forEach(slot -> inventory.setItem(slot, itemStack));
     }
 
-    private Trio<String, String, List<String>> handleHistoryItem(String caseType, GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
-        Trio<String, String, List<String>> trio = new Trio<>();
 
-        String[] typeArgs = item.getType().split("-");
-        int index = Integer.parseInt(typeArgs[1]);
-        caseType = (typeArgs.length >= 3) ? typeArgs[2] : caseType;
-        boolean isGlobal = caseType.equalsIgnoreCase("GLOBAL");
-
-        CaseData historyCaseData = isGlobal ? null : Case.getCase(caseType);
-        if (historyCaseData == null && !isGlobal) {
-            Case.getInstance().getLogger().warning("Case " + caseType + " HistoryData is null!");
-            return trio;
-        }
-
-        if (!isGlobal) historyCaseData = historyCaseData.clone();
-
-        CaseData.HistoryData data = getHistoryData(caseType, isGlobal, globalHistoryData, index, historyCaseData);
-        if (data == null) return trio;
-
-        if (isGlobal) historyCaseData = Case.getCase(data.getCaseType());
-        if (historyCaseData == null) return trio;
-
-        CaseData.Item historyItem = historyCaseData.getItem(data.getItem());
-        if (historyItem == null) return trio;
-        String material = item.getMaterial().getId();
-        if(material == null) material = "HEAD:" + data.getPlayerName();
-
-        if (material.equalsIgnoreCase("DEFAULT")) material = historyItem.getMaterial().getId();
-
-        String[] template = getTemplate(historyCaseData, data, historyItem);
-
-        String displayName = Tools.rt(item.getMaterial().getDisplayName(), template);
-        List<String> lore = Tools.rt(item.getMaterial().getLore(), template);
-
-        trio.setFirst(material);
-        trio.setSecond(displayName);
-        trio.setThird(lore);
-
-        return trio;
-    }
-
-    private String[] getTemplate(CaseData historyCaseData, CaseData.HistoryData data, CaseData.Item historyItem) {
-
-        DateFormat formatter = new SimpleDateFormat(Case.getConfig().getConfig().getString("DonateCase.DateFormat", "dd.MM HH:mm:ss"));
-        String dateFormatted = formatter.format(new Date(data.getTime()));
-        String group = data.getGroup();
-        String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "group_not_found";
-        String action = data.getAction() != null ? data.getAction() : group;
-
-        String randomActionDisplayName = "random_action_not_found";
-        if(data.getAction() != null && !data.getAction().isEmpty()) {
-            CaseData.Item.RandomAction randomAction = historyItem.getRandomAction(data.getAction());
-            if(randomAction != null) {
-                randomActionDisplayName = randomAction.getDisplayName();
-            }
-        } else {
-            randomActionDisplayName = groupDisplayName;
-        }
-
-        return new String[]{
-                "%action%:" + action,
-                "%actiondisplayname%:" + randomActionDisplayName,
-                "%casedisplayname%:" + historyCaseData.getCaseDisplayName(),
-                "%casename%:" + data.getCaseType(),
-                "%casetitle%:" + historyCaseData.getCaseTitle(),
-                "%time%:" + dateFormatted,
-                "%group%:" + group,
-                "%player%:" + data.getPlayerName(),
-                "%groupdisplayname%:" + groupDisplayName
-        };
-    }
 
     private List<String> setPlaceholders(Player p, List<String> lore) {
         return lore.stream()
@@ -132,23 +75,6 @@ public class CaseGui {
                 .collect(Collectors.toList());
     }
 
-    private CaseData.HistoryData getHistoryData(String caseType, boolean isGlobal, List<CaseData.HistoryData> globalHistoryData, int index, CaseData historyCaseData) {
-        CaseData.HistoryData data = null;
-        if (isGlobal) {
-            if (globalHistoryData.size() <= index) return null;
-            data = globalHistoryData.get(index);
-        } else {
-            if (!Case.getInstance().sql) {
-                data = historyCaseData.getHistoryData()[index];
-            } else {
-                List<CaseData.HistoryData> dbData = Case.sortHistoryDataByCase(globalHistoryData, caseType);
-                if (!dbData.isEmpty() && dbData.size() > index) {
-                    data = dbData.get(index);
-                }
-            }
-        }
-        return data;
-    }
 
     private ItemStack getItem(Player player, String caseType, CaseData.Item.Material item) {
         List<String> newLore = new ArrayList<>();
