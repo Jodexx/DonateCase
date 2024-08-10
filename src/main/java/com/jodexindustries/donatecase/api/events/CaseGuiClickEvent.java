@@ -17,7 +17,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
     private static final HandlerList handlers = new HandlerList();
     private final Location location;
     private final CaseData caseData;
-    private final boolean isOpenItem;
+    private final String itemType;
     private boolean cancel;
 
     /**
@@ -29,15 +29,15 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
      * @param action Action type
      * @param location Location where opened case
      * @param caseData Case data
-     * @param isOpenItem Is OPEN item type
+     * @param itemType GUI item type
      */
     public CaseGuiClickEvent(@NotNull InventoryView view, @NotNull InventoryType.SlotType type,
                              int slot, @NotNull ClickType click, @NotNull InventoryAction action,
-                             @NotNull Location location, CaseData caseData, boolean isOpenItem) {
+                             @NotNull Location location, CaseData caseData, String itemType) {
         super(view, type, slot, click, action);
         this.location = location;
         this.caseData = caseData;
-        this.isOpenItem = isOpenItem;
+        this.itemType = itemType;
     }
     @NotNull
     @Override
@@ -79,11 +79,20 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
     }
 
     /**
+     * Get GUI item type
+     * @return item type
+     */
+    public String getItemType() {
+        return itemType;
+    }
+
+    /**
      * Check for "OPEN" item
      * @return result
      */
+    @Deprecated
     public boolean isOpenItem() {
-        return isOpenItem;
+        return itemType.equalsIgnoreCase("OPEN");
     }
 
     @Override
