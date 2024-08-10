@@ -10,9 +10,9 @@ public class PlayerOpenCase {
      */
     private final Location location;
     /**
-     *  Case type
+     *  Case data
      */
-    private final String caseType;
+    private final CaseData caseData;
     /**
      * Player UUID
      */
@@ -21,12 +21,12 @@ public class PlayerOpenCase {
     /**
      * Default constructor
      * @param location Location of opened case
-     * @param caseType Case type
+     * @param caseData Case data
      * @param uuid Player UUID
      */
-    public PlayerOpenCase(Location location, String caseType, UUID uuid) {
+    public PlayerOpenCase(Location location, CaseData caseData, UUID uuid) {
         this.location = location;
-        this.caseType = caseType;
+        this.caseData = caseData;
         this.playerUUID = uuid;
     }
 
@@ -34,37 +34,31 @@ public class PlayerOpenCase {
      * Player UUID
      * @return UUID
      */
-
     public UUID getPlayerUUID() {
         return playerUUID;
     }
 
     /**
-     * Get case type
-     * @return case type
+     * Get case data
+     * @return case data
      */
-
-    public String getCaseType() {
-        return caseType;
+    public CaseData getCaseData() {
+        return caseData;
     }
 
     /**
      * Get case type
-     * @deprecated
-     * This method does not match the field name
-     * <p> Use {@link PlayerOpenCase#getCaseType()} instead</p>
      * @return case type
      */
     @Deprecated
-    public String getName() {
-        return caseType;
+    public String getCaseType() {
+        return caseData.getCaseType();
     }
 
     /**
      * Get location
      * @return location
      */
-
     public Location getLocation() {
         return location;
     }
@@ -73,7 +67,7 @@ public class PlayerOpenCase {
     public String toString() {
         return "OpenCase{" +
                 "location=" + location +
-                ", name='" + caseType + '\'' +
+                ", caseData='" + caseData + '\'' +
                 ", playerUUID=" + playerUUID +
                 '}';
     }

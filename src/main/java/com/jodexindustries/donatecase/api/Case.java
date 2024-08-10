@@ -638,7 +638,7 @@ public class Case {
      */
     public static void openGui(Player p, CaseData caseData, Location blockLocation) {
         if (!playersGui.containsKey(p.getUniqueId())) {
-            playersGui.put(p.getUniqueId(), new PlayerOpenCase(blockLocation, caseData.getCaseType(), p.getUniqueId()));
+            playersGui.put(p.getUniqueId(), new PlayerOpenCase(blockLocation, caseData, p.getUniqueId()));
             new CaseGui(p, caseData);
         } else {
             instance.getLogger().warning("Player " + p.getName() + " already opened case: " + caseData.getCaseType());
