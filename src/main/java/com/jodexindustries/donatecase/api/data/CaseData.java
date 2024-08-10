@@ -575,7 +575,7 @@ public class CaseData implements Cloneable {
                 this.displayName = displayName;
                 this.enchanted = enchanted;
                 this.id = id;
-                this.lore = lore;
+                this.lore = lore == null ? new ArrayList<>() : lore;
                 this.modelData = modelData;
                 this.rgb = rgb;
             }
@@ -643,6 +643,7 @@ public class CaseData implements Cloneable {
              * Material id like HDB:1234, HEAD:name, RED_WOOL etc.
              * @return id
              */
+            @Nullable
             public String getId() {
                 return id;
             }
@@ -655,12 +656,13 @@ public class CaseData implements Cloneable {
                 this.id = id;
             }
 
+            @NotNull
             public List<String> getLore() {
                 return lore;
             }
 
             public void setLore(List<String> lore) {
-                this.lore = lore;
+                this.lore = lore == null ? new ArrayList<>() : lore;
             }
 
             @Override
