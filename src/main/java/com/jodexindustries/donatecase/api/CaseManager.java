@@ -18,6 +18,7 @@ public class CaseManager {
     private final SubCommandManager subCommandManager;
     private final ActionManager actionManager;
     private final MaterialManager materialManager;
+    private final GUITypedItemManager guiTypedItemManager;
     private final Addon addon;
 
     /**
@@ -31,6 +32,7 @@ public class CaseManager {
         this.animationManager = new AnimationManager(addon);
         this.actionManager = new ActionManager(addon);
         this.materialManager = new MaterialManager(addon);
+        this.guiTypedItemManager = new GUITypedItemManager(addon);
     }
 
     /**
@@ -44,6 +46,7 @@ public class CaseManager {
         this.animationManager = new AnimationManager(addon);
         this.actionManager = new ActionManager(addon);
         this.materialManager = new MaterialManager(addon);
+        this.guiTypedItemManager = new GUITypedItemManager(addon);
     }
 
     /**
@@ -108,6 +111,16 @@ public class CaseManager {
     @NotNull
     public MaterialManager getMaterialManager() {
         return materialManager;
+    }
+
+    /**
+     * Get GUI typed item manager
+     * @return GUITypedItemManager instance
+     * @since 2.2.4.9
+     */
+    @NotNull
+    public GUITypedItemManager getGuiTypedItemManager() {
+        return guiTypedItemManager;
     }
 
     /**
