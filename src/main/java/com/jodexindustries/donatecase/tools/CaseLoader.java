@@ -149,17 +149,12 @@ public class CaseLoader {
         return randomActions;
     }
 
-    private String[] loadRgb(ConfigurationSection itemSection, String path) {
-        String rgbString = itemSection.getString(path);
-        return rgbString == null ? null : rgbString.replaceAll(" ", "").split(",");
-    }
-
     private CaseData.Item.Material loadMaterial(ConfigurationSection itemSection) {
         String id = itemSection.getString("Item.ID", "STONE");
         String itemDisplayName = Tools.rc(itemSection.getString("Item.DisplayName"));
         boolean enchanted = itemSection.getBoolean("Item.Enchanted");
         int modelData = itemSection.getInt("Item.ModelData", -1);
-        String[] rgb = loadRgb(itemSection, "Item.Rgb");
+        String[] rgb = Tools.parseRGB(itemSection.getString("Item.Rgb"));
 
         CaseData.Item.Material material = new CaseData.Item.Material(id, null, itemDisplayName, enchanted, null, modelData, rgb);
 
@@ -236,7 +231,7 @@ public class CaseLoader {
         String itemType = itemSection.getString("Type", "DEFAULT");
         List<String> lore = itemSection.getStringList("Lore");
         int modelData = itemSection.getInt("ModelData", -1);
-        String[] rgb = loadRgb(itemSection, "Rgb");
+        String[] rgb = Tools.parseRGB(itemSection.getString("Rgb"));
         List<Integer> slots = getItemSlots(itemSection);
 
         if(slots.removeIf(currentSlots::contains))

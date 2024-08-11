@@ -137,11 +137,11 @@ public class Tools {
     }
 
     public static Color parseColor(String s) {
-
         Color color = fromRGBString(s, null);
         if(color == null) color = getColor(s);
         return color;
     }
+
     public static Color getColor(String color) {
         Field[] fields = Color.class.getFields();
         for (Field field : fields) {
@@ -301,6 +301,11 @@ public class Tools {
         return commands.stream().flatMap(command -> command.values().stream()).map(SubCommand::getType).anyMatch(type -> type == null || type.hasPermission(sender));
     }
 
+    public static String[] parseRGB(String string) {
+        if(string == null) return null;
+        return string.replaceAll(" ", "").split(",");
+    }
+
     public static Color fromRGBString(String[] rgb, Color def) {
         if(rgb.length >= 3) {
             try {
@@ -315,10 +320,7 @@ public class Tools {
     }
 
     public static Color fromRGBString(String string, Color def) {
-        if(string != null) {
-            String[] rgb = string.replaceAll(" ", "").split(",");
-            def = fromRGBString(rgb, def);
-        }
+        if(string != null) def = fromRGBString(parseRGB(string), def);
         return def;
     }
 
