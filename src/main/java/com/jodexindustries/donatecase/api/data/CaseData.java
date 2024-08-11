@@ -615,9 +615,6 @@ public class CaseData implements Cloneable {
              */
             public void setDisplayName(String displayName) {
                 this.displayName = displayName;
-                if(this.itemStack != null && this.itemStack.getItemMeta() != null) {
-                    this.itemStack.getItemMeta().setDisplayName(displayName);
-                }
             }
 
             /**
@@ -633,12 +630,7 @@ public class CaseData implements Cloneable {
              * @param enchanted boolean
              */
             public void setEnchanted(boolean enchanted) {
-                    if (enchanted) {
-                        this.itemStack.addUnsafeEnchantment(Enchantment.LURE, 1);
-                    } else {
-                        this.itemStack.removeEnchantment(Enchantment.LURE);
-                    }
-                    this.enchanted = enchanted;
+                this.enchanted = enchanted;
             }
 
             /**
@@ -695,9 +687,6 @@ public class CaseData implements Cloneable {
 
             public void setModelData(int modelData) {
                 this.modelData = modelData;
-                if(this.itemStack != null && this.itemStack.getItemMeta() != null) {
-                    this.itemStack.getItemMeta().setCustomModelData(modelData);
-                }
             }
 
             public String[] getRgb() {
