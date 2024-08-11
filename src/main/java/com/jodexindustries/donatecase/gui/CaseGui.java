@@ -14,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
@@ -21,35 +22,47 @@ import java.util.stream.Collectors;
  */
 public class CaseGui {
     private final Inventory inventory;
+    private final CaseData caseData;
     private List<CaseData.HistoryData> globalHistoryData;
 
     public CaseGui(Player p, CaseData caseData) {
+        this.caseData = caseData;
+
         String title = caseData.getCaseTitle();
         GUI gui = caseData.getGui();
         inventory = Bukkit.createInventory(null, gui.getSize(), Tools.rc(title));
         Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () ->
                 Case.getAsyncSortedHistoryData().thenAcceptAsync((historyData) -> {
                     globalHistoryData = historyData;
-            for (GUI.Item item : gui.getItems().values()) {
-                processItem(caseData, p, item.clone());
-            }
-        }));
+                    for (GUI.Item item : gui.getItems().values()) {
+                        try {
+                            processItem(p, item);
+                        } catch (Throwable e) {
+                            Case.getInstance().getLogger().log(Level.WARNING,
+                                    "Error occurred while loading item " + item.getItemName() + ":", e);
+                        }
+                    }
+                }));
         p.openInventory(inventory);
+    }
+
+    public CaseData getCaseData() {
+        return caseData;
     }
 
     public List<CaseData.HistoryData> getGlobalHistoryData() {
         return globalHistoryData;
     }
 
-    private void processItem(CaseData caseData, Player p, GUI.Item item) {
+    private void processItem(Player p, GUI.Item item) {
         String itemType = item.getType();
-        if(itemType != null) {
+        if (!itemType.equalsIgnoreCase("DEFAULT")) {
             String temp = GUITypedItemManager.getByStart(itemType);
-            if(temp != null) {
+            if (temp != null) {
                 GUITypedItem typedItem = GUITypedItemManager.getRegisteredItem(temp);
-                if(typedItem != null) {
+                if (typedItem != null) {
                     TypedItemHandler handler = typedItem.getItemHandler();
-                    if(handler != null) item = handler.handle(this, caseData, item);
+                    if (handler != null) item = handler.handle(this, item);
                 }
             }
         }
@@ -62,7 +75,6 @@ public class CaseGui {
         ItemStack itemStack = Tools.getCaseItem(material);
         item.getSlots().forEach(slot -> inventory.setItem(slot, itemStack));
     }
-
 
 
     private List<String> setPlaceholders(Player p, String caseType, List<String> lore) {
