@@ -35,7 +35,7 @@ Events:
 > **Список всех доступных событий [здесь](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/latest/.cache/unpack/com/jodexindustries/donatecase/api/events/package-summary.html)**
 
 ## Действия
-### [Все действия DonateCase](../items-settings#действия)
+### [Все действия DonateCase](../items-settings#дії)
 ### DCEventManager действия
 #### Вызов метода
 Пример

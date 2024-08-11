@@ -80,6 +80,30 @@ History0:
 ```
 You can use `HISTORY-[index]-GLOBAL` option, if you want to display sorted opens of all cases
 
+#### History not found
+Advanced customization is also available for this type of item. If the recent discovery index is not yet populated (the case has not been opened), you can set a completely different item instead of history in the ``HistoryNotFound`` section:
+```yaml
+History0:
+  DisplayName: '&c%player%'
+  Enchanted: false
+  Lore:
+  - '&6Group &f- &c%group%'
+  - '&6Time &f- &c%time%'
+  - ''
+  Slots:
+  - 36
+  # Material: TRIPWIRE_HOOK - Material will already be player_head if commented out, can be DEFAULT if you want to use the winning item's material
+  Type: HISTORY-0-case # 0 - index of recent case openings, range 0-9; case - case type, if empty, will be the default case (optional)
+  HistoryNotFound: # Section for unfilled indexes
+    DisplayName: "&cNot found"
+    Material: BARRIER
+    #Enchanted: false
+    #Lore:
+    # - "&cSorry..."
+    #ModelData: 1234
+    #Rgb: 255,255,255.
+```
+
 ## Setup win items
 `Group` - A group that is given to the player as a prize <br />
 `Chance` - The chance at which this prize is awarded <br />
