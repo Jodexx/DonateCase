@@ -22,6 +22,7 @@ import com.jodexindustries.donatecase.api.impl.items.OPENItemClickHandlerImpl;
 import com.jodexindustries.donatecase.api.impl.materials.*;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.command.subcommands.*;
+import com.jodexindustries.donatecase.config.CaseLoader;
 import com.jodexindustries.donatecase.config.Config;
 import com.jodexindustries.donatecase.database.sql.MySQLDataBase;
 import com.jodexindustries.donatecase.listener.EventsListener;
