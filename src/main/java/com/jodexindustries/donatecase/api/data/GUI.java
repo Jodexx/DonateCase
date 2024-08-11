@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.data;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -85,11 +86,12 @@ public class GUI implements Cloneable{
             this.itemName = itemName;
         }
 
+        @NotNull
         public String getType() {
             return type;
         }
 
-        public void setType(String type) {
+        public void setType(@NotNull String type) {
             this.type = type;
         }
 
