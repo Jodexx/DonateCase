@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api.data.gui;
 
-import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.GUI;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import org.jetbrains.annotations.NotNull;
@@ -14,10 +13,9 @@ public interface TypedItemHandler {
      * Called when tried to handle item in GUI <br/>
      * Actually you can manipulate all items in GUI
      * @param caseGui Opened GUI
-     * @param caseData Case data
      * @param item Current item
      * @return Completed GUI.Item
      */
     @NotNull
-    GUI.@NotNull Item handle(@NotNull CaseGui caseGui, @NotNull CaseData caseData, @NotNull GUI.Item item);
+    GUI.@NotNull Item handle(@NotNull CaseGui caseGui, @NotNull GUI.Item item);
 }
