@@ -9,6 +9,8 @@ import com.jodexindustries.donatecase.api.data.gui.TypedItemHandler;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.Trio;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
@@ -28,13 +30,30 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
     @NotNull
     @Override
-    public GUI.Item handle(@NotNull CaseGui caseGui, @NotNull CaseData caseData, GUI.@NotNull Item item) {
+    public GUI.Item handle(@NotNull CaseGui caseGui, GUI.@NotNull Item item) {
+        CaseData caseData = caseGui.getCaseData();
         CaseData.Item.Material material = item.getMaterial();
 
         Trio<String, String, List<String>> trio = handleHistoryItem(caseData, item, caseGui.getGlobalHistoryData());
-        if (trio.getFirst() != null) material.setId(trio.getFirst());
-        if (trio.getSecond() != null) material.setDisplayName(trio.getSecond());
-        if (trio.getThird() != null) material.setLore(trio.getThird());
+        if (trio.getFirst() != null) {
+            material.setId(trio.getFirst());
+            material.setDisplayName(trio.getSecond());
+            material.setLore(trio.getThird());
+        } else {
+            YamlConfiguration config = Case.getConfig().getCasesConfig().getCase(caseData.getCaseType()).getSecond();
+            String path = "case.Gui.Items." + item.getItemName() + ".HistoryNotFound";
+            ConfigurationSection section = config.getConfigurationSection(path);
+            if(section != null) {
+                material.setId(section.getString("Material"));
+                material.setDisplayName(section.getString("DisplayName"));
+                material.setLore(section.getStringList("Lore"));
+                material.setEnchanted(section.getBoolean("Enchanted"));
+                material.setRgb(Tools.parseRGB(section.getString("Rgb")));
+                material.setModelData(section.getInt("ModelData", -1));
+            } else {
+                material.setId("AIR");
+            }
+        }
 
         return item;
     }
