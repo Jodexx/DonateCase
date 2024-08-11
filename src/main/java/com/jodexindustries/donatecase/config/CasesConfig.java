@@ -56,7 +56,7 @@ public class CasesConfig {
      */
     private static String getFileNameWithoutExtension(File file) {
         String fileName = file.getName();
-        return fileName.substring(0, fileName.length() - 4); // remove ".yml"
+        return fileName.lastIndexOf(".") == -1 ? fileName : fileName.substring(0, fileName.lastIndexOf("."));
     }
 
     private boolean processItems(YamlConfiguration caseConfig, String caseName, File file) {
