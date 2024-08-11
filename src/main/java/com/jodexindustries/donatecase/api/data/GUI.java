@@ -2,10 +2,11 @@ package com.jodexindustries.donatecase.api.data;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GUI {
+public class GUI implements Cloneable{
     private int size;
     private Map<String, Item> items;
 
@@ -36,6 +37,29 @@ public class GUI {
             if(item.getSlots().contains(slot)) return item.getType();
         }
         return null;
+    }
+
+    /**
+     * Clone method for GUI deep clone
+     */
+    private static Map<String, Item> cloneItemsMap(Map<String, Item> originalMap) {
+        Map<String, Item> clonedMap = new HashMap<>();
+        for (Map.Entry<String, Item> entry : originalMap.entrySet()) {
+            clonedMap.put(entry.getKey(), entry.getValue().clone());
+        }
+        return clonedMap;
+    }
+
+    @Override
+    public GUI clone() {
+        try {
+            GUI clone = (GUI) super.clone();
+            clone.items = cloneItemsMap(this.items);
+
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
 
@@ -123,7 +147,7 @@ public class GUI {
         public Item clone() {
             try {
                 Item item = (Item) super.clone();
-                item.setMaterial(material.clone());
+                item.material = this.material.clone();
                 return item;
             } catch (CloneNotSupportedException e) {
                 throw new AssertionError();

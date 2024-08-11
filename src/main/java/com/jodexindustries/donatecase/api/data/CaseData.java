@@ -186,6 +186,8 @@ public class CaseData implements Cloneable {
             // Deep clone the map of items
             clonedCaseData.items = cloneItemsMap(this.items);
 
+            clonedCaseData.gui = this.gui.clone();
+
             // Deep clone the array of historyData
             clonedCaseData.historyData = cloneHistoryDataArray(this.historyData);
 
