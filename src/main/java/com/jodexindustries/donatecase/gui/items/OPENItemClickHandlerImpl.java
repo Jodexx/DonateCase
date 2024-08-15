@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.impl.items;
+package com.jodexindustries.donatecase.gui.items;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.GUITypedItemManager;
