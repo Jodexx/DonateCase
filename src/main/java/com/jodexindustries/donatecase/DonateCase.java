@@ -16,15 +16,15 @@ import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
-import com.jodexindustries.donatecase.api.impl.actions.*;
-import com.jodexindustries.donatecase.api.impl.items.HISTORYItemHandlerImpl;
-import com.jodexindustries.donatecase.api.impl.items.OPENItemClickHandlerImpl;
-import com.jodexindustries.donatecase.api.impl.materials.*;
 import com.jodexindustries.donatecase.command.GlobalCommand;
-import com.jodexindustries.donatecase.command.subcommands.*;
+import com.jodexindustries.donatecase.command.impl.*;
 import com.jodexindustries.donatecase.config.CaseLoader;
 import com.jodexindustries.donatecase.config.Config;
 import com.jodexindustries.donatecase.database.sql.MySQLDataBase;
+import com.jodexindustries.donatecase.impl.actions.*;
+import com.jodexindustries.donatecase.impl.items.HISTORYItemHandlerImpl;
+import com.jodexindustries.donatecase.impl.items.OPENItemClickHandlerImpl;
+import com.jodexindustries.donatecase.impl.materials.*;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.tools.support.*;
@@ -150,6 +150,7 @@ public class DonateCase extends JavaPlugin {
         if(getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             try {
                 papi = new PAPISupport();
+                papi.register();
             } catch (Throwable e) {
                 Logger.log("&cError hooking to &bPlaceholderAPI&c: " + e.getMessage());
             }
