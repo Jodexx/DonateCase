@@ -23,7 +23,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -361,30 +360,6 @@ public class Tools {
          EulerAngle rightLeg = getEulerAngleFromString(section.getString("RightLeg"));
          EulerAngle leftLeg = getEulerAngleFromString(section.getString("LeftLeg"));
          return new ArmorStandEulerAngle(head,body,rightArm, leftArm, rightLeg,leftLeg);
-    }
-
-    /**
-     * This method used in SetKeyCommand, DelKeyCommand and GiveKeyCommand classes
-     * Not for API usable
-     * @param args tab completion args
-     * @return list of completions
-     */
-    @NotNull
-    public static List<String> resolveSDGCompletions(String[] args) {
-        List<String> value = new ArrayList<>(Case.getConfig().getCasesConfig().getCases().keySet());
-        List<String> list = new ArrayList<>();
-        if (args.length == 1) {
-            list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(px -> px.startsWith(args[0])).collect(Collectors.toList()));
-            return list;
-        } else if (args.length >= 3) {
-            return new ArrayList<>();
-        }
-        if (args[args.length - 1].isEmpty()) {
-            list = value;
-        } else {
-            list.addAll(value.stream().filter(tmp -> tmp.startsWith(args[args.length - 1])).collect(Collectors.toList()));
-        }
-        return list;
     }
 
     /**

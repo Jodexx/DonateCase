@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.jodexindustries.donatecase.tools.Tools.resolveSDGCompletions;
+import static com.jodexindustries.donatecase.command.GlobalCommand.resolveSDGCompletions;
 
 /**
  * Class for /dc setkey subcommand implementation

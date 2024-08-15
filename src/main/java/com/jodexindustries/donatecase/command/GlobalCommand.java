@@ -6,10 +6,12 @@ import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.tools.Tools;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -19,7 +21,6 @@ import java.util.stream.Collectors;
  * Class for /dc command implementation with subcommands
  */
 public class GlobalCommand implements CommandExecutor, TabCompleter {
-
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
@@ -151,6 +152,30 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                 .filter(tmp -> tmp.startsWith(args[args.length - 1]))
                 .sorted()
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * This method used in SetKeyCommand, DelKeyCommand and GiveKeyCommand classes
+     * Not for API usable
+     * @param args tab completion args
+     * @return list of completions
+     */
+    @NotNull
+    public static List<String> resolveSDGCompletions(String[] args) {
+        List<String> value = new ArrayList<>(Case.getConfig().getCasesConfig().getCases().keySet());
+        List<String> list = new ArrayList<>();
+        if (args.length == 1) {
+            list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(px -> px.startsWith(args[0])).collect(Collectors.toList()));
+            return list;
+        } else if (args.length >= 3) {
+            return new ArrayList<>();
+        }
+        if (args[args.length - 1].isEmpty()) {
+            list = value;
+        } else {
+            list.addAll(value.stream().filter(tmp -> tmp.startsWith(args[args.length - 1])).collect(Collectors.toList()));
+        }
+        return list;
     }
 
 
