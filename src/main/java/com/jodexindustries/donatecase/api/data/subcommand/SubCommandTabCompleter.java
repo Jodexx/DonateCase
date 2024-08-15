@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
+ * Interface for implement subcommand tab completer
  * @since 2.2.4.5
  */
 public interface SubCommandTabCompleter {

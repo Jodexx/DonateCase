@@ -67,6 +67,11 @@ public class Case {
     public final static SimpleCache<InfoEntry, Integer> openCache = new SimpleCache<>(20);
 
     /**
+     * Default constructor, but actually not used. All methods are static.
+     */
+    public Case() {}
+
+    /**
      * Save case location
      * @param caseName Case name (custom)
      * @param type Case type (config)
@@ -364,6 +369,7 @@ public class Case {
      * @param title Case title
      * @return true - if case found in memory
      */
+    @Deprecated
     public static boolean hasCaseByTitle(String title) {
         return caseData.values().stream().anyMatch(data -> data.getCaseTitle().equalsIgnoreCase(title));
     }

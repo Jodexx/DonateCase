@@ -17,6 +17,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * Class for loading CaseData's from cases folder
+ */
 public class CaseLoader {
    private final DonateCase plugin;
 

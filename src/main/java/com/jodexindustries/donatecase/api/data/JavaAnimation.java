@@ -28,14 +28,6 @@ public abstract class JavaAnimation implements IAnimation {
         this.winItem = winItem;
     }
 
-    /**
-     * Method to start animation
-     */
-    @Override
-    public void start() {
-
-    }
-
     public Player getPlayer() {
         return player;
     }

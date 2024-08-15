@@ -207,6 +207,13 @@ public class AnimationManager {
         return registeredAnimations.containsKey(name);
     }
 
+    /**
+     /**
+     * Check for animation registration
+     * @param name animation name
+     * @param old if true - search by old registered animations
+     * @return boolean
+     */
     public static boolean isRegistered(String name, boolean old) {
         return old ? oldAnimations.containsKey(name) : isRegistered(name);
     }

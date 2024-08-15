@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.api.data;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jodexindustries.donatecase.tools.ProbabilityCollection;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -271,10 +270,18 @@ public class CaseData implements Cloneable {
         this.levelGroups = levelGroups;
     }
 
+    /**
+     * Gets GUI storage object
+     * @return GUI object
+     */
     public GUI getGui() {
         return gui;
     }
 
+    /**
+     * Set GUI storage object
+     * @param gui object
+     */
     public void setGui(GUI gui) {
         this.gui = gui;
     }
@@ -469,10 +476,20 @@ public class CaseData implements Cloneable {
             this.alternativeActions = alternativeActions;
         }
 
+        /**
+         * Gets item index. <br/>
+         * Used for items sorting
+         * @return index
+         */
         public int getIndex() {
             return index;
         }
 
+        /**
+         * Set item index <br/>
+         * Used for items sorting
+         * @param index item index
+         */
         public void setIndex(int index) {
             this.index = index;
         }
@@ -681,18 +698,34 @@ public class CaseData implements Cloneable {
                         '}';
             }
 
+            /**
+             * Gets custom model data
+             * @return custom model data
+             */
             public int getModelData() {
                 return modelData;
             }
 
+            /**
+             * Set custom model data
+             * @param modelData custom model data
+             */
             public void setModelData(int modelData) {
                 this.modelData = modelData;
             }
 
+            /**
+             * Gets array of rgb
+             * @return rgb array
+             */
             public String[] getRgb() {
                 return rgb;
             }
 
+            /**
+             * Set array of rgb
+             * @param rgb array
+             */
             public void setRgb(String[] rgb) {
                 this.rgb = rgb;
             }
@@ -769,8 +802,16 @@ public class CaseData implements Cloneable {
         private String caseType;
         @DatabaseField(columnName = "action")
         private String action;
-        public HistoryData() {}
 
+        /**
+         * Default constructor
+         * @param item Item name
+         * @param caseType Case type
+         * @param playerName Player name
+         * @param time Timestamp
+         * @param group Group name
+         * @param action Action name
+         */
         public HistoryData(String item, String caseType, String playerName, long time, String group, String action) {
             this.item = item;
             this.playerName = playerName;
@@ -828,7 +869,6 @@ public class CaseData implements Cloneable {
          * Get timestamp, when case successful opened
          * @return timestamp
          */
-
         public long getTime() {
             return time;
         }
@@ -853,7 +893,6 @@ public class CaseData implements Cloneable {
          * Get action (like group, but from RandomActions section)
          * @return action
          */
-
         public String getAction() {
             return action;
         }

@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * Interface for handling (inventory) click on item event
  * @since 2.2.4.9
  */
 public interface TypedItemClickHandler {

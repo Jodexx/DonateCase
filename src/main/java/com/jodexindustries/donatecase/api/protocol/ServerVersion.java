@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author retrooper
  * @see <a href="https://wiki.vg/Protocol_version_numbers">https://wiki.vg/Protocol_version_numbers</a>
- * @since 1.6.9
  */
 public enum ServerVersion {
     V_1_7_10(5),

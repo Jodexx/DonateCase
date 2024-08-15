@@ -5,6 +5,7 @@ import com.jodexindustries.donatecase.gui.CaseGui;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * Interface for handling item creating
  * @since 2.2.4.9
  */
 public interface TypedItemHandler {

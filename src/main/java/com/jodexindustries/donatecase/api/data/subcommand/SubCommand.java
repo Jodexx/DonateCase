@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Class for subcommand storage
  * @since 2.2.4.5
  */
 public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {

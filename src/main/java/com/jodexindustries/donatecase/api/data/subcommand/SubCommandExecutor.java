@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * Interface for implement subcommand executor
  * @since 2.2.4.5
  */
 public interface SubCommandExecutor {

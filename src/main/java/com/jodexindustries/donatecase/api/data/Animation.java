@@ -5,6 +5,10 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
+/**
+ * Old interface for custom animations implementation
+ * @deprecated use {@link JavaAnimation}
+ */
 @Deprecated
 public interface Animation {
     /**
