@@ -23,23 +23,26 @@ public class CaseData implements Cloneable {
     private Map<String, Integer> levelGroups;
     private GUI gui;
     private List<String> noKeyActions;
+    private OpenType openType;
 
     /**
      * Default constructor
-     * @param caseType Case type
+     *
+     * @param caseType        Case type
      * @param caseDisplayName Case display name
-     * @param caseTitle Case title (GUI)
-     * @param animation Animation name
-     * @param items Items list
-     * @param historyData History data array
-     * @param hologram Hologram object
-     * @param levelGroups Map with level groups
-     * @param gui GUI object
-     * @param noKeyActions NoKeyActions
+     * @param caseTitle       Case title (GUI)
+     * @param animation       Animation name
+     * @param items           Items list
+     * @param historyData     History data array
+     * @param hologram        Hologram object
+     * @param levelGroups     Map with level groups
+     * @param gui             GUI object
+     * @param noKeyActions    NoKeyActions
+     * @param openType        Open type
      */
-    public CaseData(String caseType, String caseDisplayName, String caseTitle,
-                    String animation, Map<String,
-            Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups, GUI gui, List<String> noKeyActions) {
+    public CaseData(String caseType, String caseDisplayName, String caseTitle, String animation, Map<String,
+            Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups, GUI gui,
+                    List<String> noKeyActions, @NotNull OpenType openType) {
         this.caseType = caseType;
         this.caseDisplayName = caseDisplayName;
         this.caseTitle = caseTitle;
@@ -50,6 +53,7 @@ public class CaseData implements Cloneable {
         this.levelGroups = levelGroups;
         this.gui = gui;
         this.noKeyActions = noKeyActions;
+        this.openType = openType;
     }
 
     @Override
@@ -69,6 +73,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Get case history data
+     *
      * @return history data
      */
     public HistoryData[] getHistoryData() {
@@ -77,6 +82,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Get case items
+     *
      * @return items
      */
     public Map<String, Item> getItems() {
@@ -85,6 +91,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Get case item
+     *
      * @param name item name
      * @return item
      */
@@ -95,6 +102,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Get random item from case
+     *
      * @return Random item
      */
     public Item getRandomItem() {
@@ -107,6 +115,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Set case history data
+     *
      * @param historyData history data
      */
     public void setHistoryData(HistoryData[] historyData) {
@@ -115,6 +124,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Set case items
+     *
      * @param items map of CaseData.Item items
      */
     public void setItems(Map<String, Item> items) {
@@ -123,6 +133,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Get animation
+     *
      * @return animation
      */
     @NotNull
@@ -132,6 +143,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Set animation
+     *
      * @param animation animation
      */
     public void setAnimation(String animation) {
@@ -140,6 +152,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Get case title
+     *
      * @return title
      */
     public String getCaseTitle() {
@@ -148,6 +161,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Set case title
+     *
      * @param caseTitle title
      */
     public void setCaseTitle(String caseTitle) {
@@ -156,11 +170,10 @@ public class CaseData implements Cloneable {
 
     /**
      * Get case type
-     * @deprecated
-     * This method does not match the field name
-     * <p> Use {@link CaseData#getCaseType()} instead</p>
-     * @return case type
      *
+     * @return case type
+     * @deprecated This method does not match the field name
+     * <p> Use {@link CaseData#getCaseType()} instead</p>
      */
     @Deprecated
     public String getCaseName() {
@@ -169,6 +182,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Get case type
+     *
      * @return case type
      * @since 2.2.1.8
      */
@@ -202,7 +216,7 @@ public class CaseData implements Cloneable {
     private static HistoryData[] cloneHistoryDataArray(HistoryData[] originalArray) {
         HistoryData[] newArray = new HistoryData[originalArray.length];
         for (int i = 0; i < originalArray.length; i++) {
-            if(originalArray[i] != null) {
+            if (originalArray[i] != null) {
                 newArray[i] = originalArray[i].clone();
             }
         }
@@ -222,6 +236,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Get case display name (case.DisplayName path in case config)
+     *
      * @return case display name
      */
 
@@ -231,6 +246,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Set case display name (case.DisplayName path in case config)
+     *
      * @param caseDisplayName new display name
      */
 
@@ -240,6 +256,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Get case hologram
+     *
      * @return case hologram class
      */
     public Hologram getHologram() {
@@ -248,6 +265,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Set case hologram
+     *
      * @param hologram case hologram class
      */
     public void setHologram(Hologram hologram) {
@@ -256,6 +274,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Get case LevelGroups (optional setting for each case)
+     *
      * @return map of LevelGroups
      */
     public Map<String, Integer> getLevelGroups() {
@@ -264,6 +283,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Set case LevelGroups (optional setting for each case)
+     *
      * @param levelGroups map of LevelGroups
      */
     public void setLevelGroups(Map<String, Integer> levelGroups) {
@@ -272,6 +292,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Gets GUI storage object
+     *
      * @return GUI object
      */
     public GUI getGui() {
@@ -280,6 +301,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Set GUI storage object
+     *
      * @param gui object
      */
     public void setGui(GUI gui) {
@@ -288,6 +310,7 @@ public class CaseData implements Cloneable {
 
     /**
      * Gets actions to be performed if a player tries to open a case without keys
+     *
      * @return List of actions
      * @since 2.2.4.3
      */
@@ -297,11 +320,31 @@ public class CaseData implements Cloneable {
 
     /**
      * Set actions to be performed if a player tries to open a case without keys
+     *
      * @param noKeyActions List of actions
      * @since 2.2.4.3
      */
     public void setNoKeyActions(List<String> noKeyActions) {
         this.noKeyActions = noKeyActions;
+    }
+
+    /**
+     * Gets case open type
+     *
+     * @return open type
+     */
+    @NotNull
+    public OpenType getOpenType() {
+        return openType;
+    }
+
+    /**
+     * Set case open type
+     *
+     * @param openType open type
+     */
+    public void setOpenType(OpenType openType) {
+        this.openType = openType;
     }
 
     /**
@@ -316,18 +359,19 @@ public class CaseData implements Cloneable {
         private String giveType;
         private List<String> actions;
         private List<String> alternativeActions;
-        private Map<String,RandomAction> randomActions;
+        private Map<String, RandomAction> randomActions;
 
         /**
          * Default constructor
-         * @param itemName Item name
-         * @param group Item group
-         * @param chance Item chance
-         * @param index Item index
-         * @param material Item material
-         * @param giveType Item give type
-         * @param actions Item actions
-         * @param randomActions Item random actions
+         *
+         * @param itemName           Item name
+         * @param group              Item group
+         * @param chance             Item chance
+         * @param index              Item index
+         * @param material           Item material
+         * @param giveType           Item give type
+         * @param actions            Item actions
+         * @param randomActions      Item random actions
          * @param alternativeActions Item alternative actions
          */
         public Item(String itemName, String group, int chance, int index, Material material,
@@ -345,6 +389,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get map of random actions
+         *
          * @return random actions
          */
         public Map<String, RandomAction> getRandomActions() {
@@ -353,6 +398,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get random action
+         *
          * @param name random action name
          * @return CaseData.RandomAction
          */
@@ -363,6 +409,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Set random actions
+         *
          * @param randomActions map of random actions
          */
         public void setRandomActions(Map<String, RandomAction> randomActions) {
@@ -371,6 +418,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get item actions
+         *
          * @return actions
          */
         public List<String> getActions() {
@@ -379,6 +427,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Set item actions
+         *
          * @param actions actions
          */
         public void setActions(List<String> actions) {
@@ -387,6 +436,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get item give type
+         *
          * @return give type
          */
         public String getGiveType() {
@@ -395,6 +445,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Set item give type
+         *
          * @param giveType give type
          */
         public void setGiveType(String giveType) {
@@ -403,6 +454,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get item material (CaseData.Material)
+         *
          * @return CaseData.Material
          */
         @NotNull
@@ -412,6 +464,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Set item material (CaseData.Material)
+         *
          * @param material CaseData.Material
          */
         public void setMaterial(Material material) {
@@ -420,6 +473,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get item chance
+         *
          * @return chance
          */
         public int getChance() {
@@ -428,6 +482,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Set item chance
+         *
          * @param chance chance
          */
         public void setChance(int chance) {
@@ -436,6 +491,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get item group
+         *
          * @return grouo
          */
         public String getGroup() {
@@ -444,6 +500,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Set item group
+         *
          * @param group group
          */
         public void setGroup(String group) {
@@ -464,6 +521,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get item name (like path of item in case config)
+         *
          * @return item name
          */
         public String getItemName() {
@@ -473,6 +531,7 @@ public class CaseData implements Cloneable {
         /**
          * Get alternative actions
          * These actions are performed when LevelGroups is enabled and the player's group has a higher level than the one they won from the case
+         *
          * @return list of actions
          */
         public List<String> getAlternativeActions() {
@@ -482,6 +541,7 @@ public class CaseData implements Cloneable {
         /**
          * Set alternative actions
          * These actions are performed when LevelGroups is enabled and the player's group has a higher level than the one they won from the case
+         *
          * @param alternativeActions list of actions
          */
         public void setAlternativeActions(List<String> alternativeActions) {
@@ -491,6 +551,7 @@ public class CaseData implements Cloneable {
         /**
          * Gets item index. <br/>
          * Used for items sorting
+         *
          * @return index
          */
         public int getIndex() {
@@ -500,6 +561,7 @@ public class CaseData implements Cloneable {
         /**
          * Set item index <br/>
          * Used for items sorting
+         *
          * @param index item index
          */
         public void setIndex(int index) {
@@ -516,8 +578,9 @@ public class CaseData implements Cloneable {
 
             /**
              * Default constructor
-             * @param chance action chance
-             * @param actions list of actions
+             *
+             * @param chance      action chance
+             * @param actions     list of actions
              * @param displayName action display name
              */
             public RandomAction(int chance, List<String> actions, String displayName) {
@@ -528,6 +591,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Get random actions
+             *
              * @return random actions
              */
             public List<String> getActions() {
@@ -537,6 +601,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Set random actions
+             *
              * @param actions random actions
              */
             public void setActions(List<String> actions) {
@@ -545,6 +610,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Get random action chance
+             *
              * @return chance
              */
             public int getChance() {
@@ -553,6 +619,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Set random action chance
+             *
              * @param chance chance
              */
             public void setChance(int chance) {
@@ -566,6 +633,7 @@ public class CaseData implements Cloneable {
                         ", actions=" + actions +
                         '}';
             }
+
             @Override
             public RandomAction clone() {
                 try {
@@ -578,6 +646,7 @@ public class CaseData implements Cloneable {
             /**
              * Get display name of random action
              * Path in case config: RandomActions.(action).DisplayName
+             *
              * @return display name of random action
              */
             public String getDisplayName() {
@@ -587,6 +656,7 @@ public class CaseData implements Cloneable {
             /**
              * Set display name of random action
              * Path in case config: RandomActions.(action).DisplayName
+             *
              * @param displayName display name of random action
              */
             public void setDisplayName(String displayName) {
@@ -608,13 +678,14 @@ public class CaseData implements Cloneable {
 
             /**
              * Default constructor
-             * @param id Material id
-             * @param itemStack Material ItemStack
+             *
+             * @param id          Material id
+             * @param itemStack   Material ItemStack
              * @param displayName Material display name
-             * @param enchanted Is material enchanted
-             * @param lore Material lore
-             * @param modelData Material custom model data
-             * @param rgb Material rgb
+             * @param enchanted   Is material enchanted
+             * @param lore        Material lore
+             * @param modelData   Material custom model data
+             * @param rgb         Material rgb
              */
             public Material(String id, @Nullable ItemStack itemStack, String displayName, boolean enchanted,
                             List<String> lore, int modelData, String[] rgb) {
@@ -629,6 +700,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Get win item itemStack
+             *
              * @return itemStack
              */
             @Nullable
@@ -638,6 +710,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Set itemStack for win item
+             *
              * @param itemStack itemStack
              */
             public void setItemStack(ItemStack itemStack) {
@@ -646,6 +719,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Get item display name
+             *
              * @return display name
              */
             public String getDisplayName() {
@@ -654,6 +728,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Set item displayName
+             *
              * @param displayName display name
              */
             public void setDisplayName(String displayName) {
@@ -662,6 +737,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Check if item enchanted
+             *
              * @return boolean
              */
             public boolean isEnchanted() {
@@ -670,6 +746,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Set item enchanted
+             *
              * @param enchanted boolean
              */
             public void setEnchanted(boolean enchanted) {
@@ -678,6 +755,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Material id like HDB:1234, HEAD:name, RED_WOOL etc.
+             *
              * @return id
              */
             @Nullable
@@ -687,6 +765,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Set material id
+             *
              * @param id material id
              */
             public void setId(String id) {
@@ -695,6 +774,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Gets material lore
+             *
              * @return material lore
              */
             @NotNull
@@ -704,6 +784,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Set material lore
+             *
              * @param lore material lore
              */
             public void setLore(List<String> lore) {
@@ -734,6 +815,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Gets custom model data
+             *
              * @return custom model data
              */
             public int getModelData() {
@@ -742,6 +824,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Set custom model data
+             *
              * @param modelData custom model data
              */
             public void setModelData(int modelData) {
@@ -750,6 +833,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Gets array of rgb
+             *
              * @return rgb array
              */
             public String[] getRgb() {
@@ -758,6 +842,7 @@ public class CaseData implements Cloneable {
 
             /**
              * Set array of rgb
+             *
              * @param rgb array
              */
             public void setRgb(String[] rgb) {
@@ -814,12 +899,13 @@ public class CaseData implements Cloneable {
 
         /**
          * Default constructor
-         * @param item Item name
-         * @param caseType Case type
+         *
+         * @param item       Item name
+         * @param caseType   Case type
          * @param playerName Player name
-         * @param time Timestamp
-         * @param group Group name
-         * @param action Action name
+         * @param time       Timestamp
+         * @param group      Group name
+         * @param action     Action name
          */
         public HistoryData(String item, String caseType, String playerName, long time, String group, String action) {
             this.item = item;
@@ -852,6 +938,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Set history item name
+         *
          * @param item item name
          */
         public void setItem(String item) {
@@ -860,6 +947,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Set history player name
+         *
          * @param playerName player name
          */
         public void setPlayerName(String playerName) {
@@ -868,6 +956,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Set history timestamp
+         *
          * @param time timestamp
          */
         public void setTime(long time) {
@@ -876,6 +965,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Set history group name
+         *
          * @param group group name
          */
         public void setGroup(String group) {
@@ -884,6 +974,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Set history case type
+         *
          * @param caseType case type
          */
         public void setCaseType(String caseType) {
@@ -892,6 +983,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Set history action name
+         *
          * @param action action name
          */
         public void setAction(String action) {
@@ -900,6 +992,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get material id like HDB:1234, HEAD:name, RED_WOOL etc.
+         *
          * @return material id
          */
         public int getId() {
@@ -907,7 +1000,8 @@ public class CaseData implements Cloneable {
         }
 
         /**
-         *  Set material id like HDB:1234, HEAD:name, RED_WOOL etc.
+         * Set material id like HDB:1234, HEAD:name, RED_WOOL etc.
+         *
          * @param id material id
          */
         public void setId(int id) {
@@ -916,6 +1010,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get player name, who opened case
+         *
          * @return player name
          */
         public String getPlayerName() {
@@ -924,6 +1019,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get timestamp, when case successful opened
+         *
          * @return timestamp
          */
         public long getTime() {
@@ -932,6 +1028,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get win group
+         *
          * @return win group
          */
         public String getGroup() {
@@ -940,6 +1037,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get case type
+         *
          * @return case type
          */
         public String getCaseType() {
@@ -948,6 +1046,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get action (like group, but from RandomActions section)
+         *
          * @return action
          */
         public String getAction() {
@@ -956,6 +1055,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get win item name (like path of item in case config)
+         *
          * @return win item name
          */
         public String getItem() {
@@ -987,9 +1087,9 @@ public class CaseData implements Cloneable {
         /**
          * A secondary constructor to build a hologram.
          *
-         * @param enabled if the hologram enabled or not
-         * @param height of the hologram from the ground
-         * @param range the range, when player will see hologram
+         * @param enabled  if the hologram enabled or not
+         * @param height   of the hologram from the ground
+         * @param range    the range, when player will see hologram
          * @param messages the hologram will display
          */
         public Hologram(boolean enabled, double height, int range, List<String> messages) {
@@ -1033,6 +1133,33 @@ public class CaseData implements Cloneable {
          */
         public List<String> getMessages() {
             return messages;
+        }
+    }
+
+    /**
+     * Type of case opening (animation starting)
+     */
+    public enum OpenType {
+        /**
+         * Case will be opened from GUI
+         */
+        GUI,
+        /**
+         * Case will be opened from BLOCK click
+         */
+        BLOCK;
+
+        /**
+         * Get open type
+         * @param type string
+         * @return open type, if null, return GUI
+         */
+        @NotNull
+        public static OpenType getOpenType(@NotNull String type) {
+            try {
+                return valueOf(type.toUpperCase());
+            } catch (IllegalArgumentException ignored) {}
+            return GUI;
         }
     }
 

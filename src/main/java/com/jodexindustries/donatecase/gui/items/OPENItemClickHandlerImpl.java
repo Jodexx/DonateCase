@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
+
     public OPENItemClickHandlerImpl(GUITypedItemManager manager) {
         GUITypedItem item = manager.builder("OPEN")
                 .click(this)
@@ -27,7 +28,6 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
         Location location = e.getLocation();
         String itemType = e.getItemType();
         Player p = (Player) e.getWhoClicked();
-        String playerName = p.getName();
         CaseData caseData = e.getCaseData();
         String caseType = caseData.getCaseType();
 
@@ -38,20 +38,22 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
 
         PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, location.getBlock());
         Bukkit.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            if (Case.getKeys(caseType, playerName) >= 1) {
-                Case.removeKeys(caseType, playerName, 1);
-
-                OpenCaseEvent openEvent = new OpenCaseEvent(p, caseType, location.getBlock());
-                Bukkit.getServer().getPluginManager().callEvent(openEvent);
-
-                if (!openEvent.isCancelled())
-                    Case.getInstance().api.getAnimationManager().startAnimation(p, location, caseType);
-            } else {
-                Case.executeActions(p, caseData.getNoKeyActions());
-            }
-        }
+        if (!event.isCancelled()) executeOpen(caseData, p, location);
 
         p.closeInventory();
+    }
+
+    public static void executeOpen(CaseData caseData, Player player, Location location) {
+        if (Case.getKeys(caseData.getCaseType(), player.getName()) >= 1) {
+            Case.removeKeys(caseData.getCaseType(), player.getName(), 1);
+
+            OpenCaseEvent openEvent = new OpenCaseEvent(player, caseData.getCaseType(), location.getBlock());
+            Bukkit.getServer().getPluginManager().callEvent(openEvent);
+
+            if (!openEvent.isCancelled())
+                Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData.getCaseType());
+        } else {
+            Case.executeActions(player, caseData.getNoKeyActions());
+        }
     }
 }

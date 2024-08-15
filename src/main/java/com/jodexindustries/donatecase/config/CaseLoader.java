@@ -62,6 +62,7 @@ public class CaseLoader {
     }
 
     private CaseData loadCaseData(String caseType, ConfigurationSection caseSection) {
+        CaseData.OpenType openType = CaseData.OpenType.getOpenType(caseSection.getString("OpenType", "GUI"));
         String caseTitle = Tools.rc(caseSection.getString("Title", ""));
         String caseDisplayName = Tools.rc(caseSection.getString("DisplayName", ""));
         String animationName = caseSection.getString("Animation");
@@ -82,7 +83,7 @@ public class CaseLoader {
         List<String> noKeyActions = caseSection.getStringList("NoKeyActions");
 
         return new CaseData(caseType, caseDisplayName, caseTitle, animationName, items, historyData,
-                hologram, levelGroups, gui, noKeyActions);
+                hologram, levelGroups, gui, noKeyActions, openType);
     }
 
     private CaseData.Hologram loadHologram(ConfigurationSection caseSection) {

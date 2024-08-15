@@ -7,6 +7,7 @@ import com.jodexindustries.donatecase.api.data.PlayerOpenCase;
 import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.gui.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.events.*;
+import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
 import org.bukkit.Bukkit;
@@ -110,6 +111,14 @@ public class EventsListener implements Listener {
                         if (Case.hasCaseByType(caseType)) {
                             CaseData caseData = Case.getCase(caseType);
                             if (caseData == null) return;
+                            switch (caseData.getOpenType()) {
+                                case GUI:
+                                    Case.openGui(p, caseData, blockLocation);
+                                    break;
+                                case BLOCK:
+                                    OPENItemClickHandlerImpl.executeOpen(caseData, p, blockLocation);
+                                    break;
+                            }
                             Case.openGui(p, caseData, blockLocation);
                         } else {
                             Tools.msg(p, "&cSomething wrong! Contact with server administrator!");

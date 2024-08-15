@@ -11,6 +11,9 @@ case:
     # The message that will be displayed.
     Message:
       - '&6DonateCase'
+      -
+
+  OpenType: GUI # or BLOCK
 
   NoKeyActions:
     - "[message] &cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.com"
