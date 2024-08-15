@@ -389,6 +389,9 @@ public class AddonManager {
         return null;
     }
 
+    /**
+     * Enum with power reasons
+     */
     public enum PowerReason {
         /**
          * by DonateCase

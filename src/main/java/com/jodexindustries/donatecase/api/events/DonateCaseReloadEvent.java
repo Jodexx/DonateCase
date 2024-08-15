@@ -16,6 +16,7 @@ public class DonateCaseReloadEvent extends PluginEvent {
     /**
      * Default constructor
      * @param plugin DonateCase instance
+     * @param type Reload type
      */
     public DonateCaseReloadEvent(@NotNull Plugin plugin, Type type) {
         super(plugin);
@@ -44,8 +45,17 @@ public class DonateCaseReloadEvent extends PluginEvent {
         return type;
     }
 
+    /**
+     * Enum for reload type
+     */
     public enum Type {
+        /**
+         * Config reloaded
+         */
         CONFIG,
+        /**
+         * Cases reloaded
+         */
         CASES
     }
 }

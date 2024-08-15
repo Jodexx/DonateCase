@@ -292,6 +292,10 @@ public class Config {
         return data;
     }
 
+    /**
+     * Gets DonateCase instance
+     * @return DonateCase instance
+     */
     public DonateCase getPlugin() {
         return plugin;
     }

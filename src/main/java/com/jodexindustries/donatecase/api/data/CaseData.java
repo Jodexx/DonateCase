@@ -318,6 +318,18 @@ public class CaseData implements Cloneable {
         private List<String> alternativeActions;
         private Map<String,RandomAction> randomActions;
 
+        /**
+         * Default constructor
+         * @param itemName Item name
+         * @param group Item group
+         * @param chance Item chance
+         * @param index Item index
+         * @param material Item material
+         * @param giveType Item give type
+         * @param actions Item actions
+         * @param randomActions Item random actions
+         * @param alternativeActions Item alternative actions
+         */
         public Item(String itemName, String group, int chance, int index, Material material,
                     String giveType, List<String> actions, Map<String, RandomAction> randomActions, List<String> alternativeActions) {
             this.itemName = itemName;
@@ -502,6 +514,12 @@ public class CaseData implements Cloneable {
             private List<String> actions;
             private String displayName;
 
+            /**
+             * Default constructor
+             * @param chance action chance
+             * @param actions list of actions
+             * @param displayName action display name
+             */
             public RandomAction(int chance, List<String> actions, String displayName) {
                 this.chance = chance;
                 this.actions = actions;
@@ -588,7 +606,17 @@ public class CaseData implements Cloneable {
             private int modelData;
             private String[] rgb;
 
-            public Material(String id, ItemStack itemStack, String displayName, boolean enchanted,
+            /**
+             * Default constructor
+             * @param id Material id
+             * @param itemStack Material ItemStack
+             * @param displayName Material display name
+             * @param enchanted Is material enchanted
+             * @param lore Material lore
+             * @param modelData Material custom model data
+             * @param rgb Material rgb
+             */
+            public Material(String id, @Nullable ItemStack itemStack, String displayName, boolean enchanted,
                             List<String> lore, int modelData, String[] rgb) {
                 this.itemStack = itemStack;
                 this.displayName = displayName;
@@ -615,8 +643,6 @@ public class CaseData implements Cloneable {
             public void setItemStack(ItemStack itemStack) {
                 this.itemStack = itemStack;
             }
-
-
 
             /**
              * Get item display name
@@ -667,11 +693,19 @@ public class CaseData implements Cloneable {
                 this.id = id;
             }
 
+            /**
+             * Gets material lore
+             * @return material lore
+             */
             @NotNull
             public List<String> getLore() {
                 return lore;
             }
 
+            /**
+             * Set material lore
+             * @param lore material lore
+             */
             public void setLore(List<String> lore) {
                 this.lore = lore == null ? new ArrayList<>() : lore;
             }
@@ -765,31 +799,6 @@ public class CaseData implements Cloneable {
     public static class HistoryData implements Cloneable {
         @DatabaseField(columnName = "id")
         private int id;
-
-        public void setItem(String item) {
-            this.item = item;
-        }
-
-        public void setPlayerName(String playerName) {
-            this.playerName = playerName;
-        }
-
-        public void setTime(long time) {
-            this.time = time;
-        }
-
-        public void setGroup(String group) {
-            this.group = group;
-        }
-
-        public void setCaseType(String caseType) {
-            this.caseType = caseType;
-        }
-
-        public void setAction(String action) {
-            this.action = action;
-        }
-
         @DatabaseField(columnName = "item")
         private String item;
         @DatabaseField(columnName = "player_name")
@@ -839,6 +848,54 @@ public class CaseData implements Cloneable {
             } catch (CloneNotSupportedException e) {
                 throw new AssertionError(e);
             }
+        }
+
+        /**
+         * Set history item name
+         * @param item item name
+         */
+        public void setItem(String item) {
+            this.item = item;
+        }
+
+        /**
+         * Set history player name
+         * @param playerName player name
+         */
+        public void setPlayerName(String playerName) {
+            this.playerName = playerName;
+        }
+
+        /**
+         * Set history timestamp
+         * @param time timestamp
+         */
+        public void setTime(long time) {
+            this.time = time;
+        }
+
+        /**
+         * Set history group name
+         * @param group group name
+         */
+        public void setGroup(String group) {
+            this.group = group;
+        }
+
+        /**
+         * Set history case type
+         * @param caseType case type
+         */
+        public void setCaseType(String caseType) {
+            this.caseType = caseType;
+        }
+
+        /**
+         * Set history action name
+         * @param action action name
+         */
+        public void setAction(String action) {
+            this.action = action;
         }
 
         /**

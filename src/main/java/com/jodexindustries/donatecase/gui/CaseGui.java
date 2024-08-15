@@ -25,6 +25,11 @@ public class CaseGui {
     private final CaseData caseData;
     private List<CaseData.HistoryData> globalHistoryData;
 
+    /**
+     * Default constructor
+     * @param p Player object
+     * @param caseData CaseData object
+     */
     public CaseGui(Player p, CaseData caseData) {
         this.caseData = caseData;
 
@@ -46,10 +51,18 @@ public class CaseGui {
         p.openInventory(inventory);
     }
 
+    /**
+     * Gets GUI CaseData
+     * @return data
+     */
     public CaseData getCaseData() {
         return caseData;
     }
 
+    /**
+     * Gets GUI global history data
+     * @return global history data
+     */
     public List<CaseData.HistoryData> getGlobalHistoryData() {
         return globalHistoryData;
     }
@@ -106,6 +119,10 @@ public class CaseGui {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets GUI Inventory
+     * @return inventory
+     */
     public Inventory getInventory() {
         return inventory;
     }
