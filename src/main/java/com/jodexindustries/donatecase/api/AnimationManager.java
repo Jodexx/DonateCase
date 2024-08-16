@@ -9,7 +9,6 @@ import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationUnregisteredEvent;
 import com.jodexindustries.donatecase.tools.Pair;
 import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -146,7 +145,7 @@ public class AnimationManager {
         }
 
         CaseData.Item winItem = caseData.getRandomItem();
-        winItem.getMaterial().setDisplayName(PAPISupport.setPlaceholders(player, winItem.getMaterial().getDisplayName()));
+        winItem.getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(player, winItem.getMaterial().getDisplayName()));
         AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, animation, caseData, location, winItem);
         Bukkit.getPluginManager().callEvent(preStartEvent);
 

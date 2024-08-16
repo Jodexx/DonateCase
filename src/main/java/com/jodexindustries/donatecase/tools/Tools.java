@@ -9,7 +9,6 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.BukkitArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.PacketArmorStandCreator;
-import com.jodexindustries.donatecase.DonateCase;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -60,7 +59,7 @@ public class Tools {
         Color[] color = new Color[]{Color.RED, Color.AQUA, Color.GREEN, Color.ORANGE, Color.LIME, Color.BLUE, Color.MAROON, Color.WHITE};
         meta.addEffect(FireworkEffect.builder().flicker(false).with(Type.BALL).trail(false).withColor(color[r.nextInt(color.length)], color[r.nextInt(color.length)], color[r.nextInt(color.length)]).build());
         firework.setFireworkMeta(meta);
-        firework.setMetadata("case", new FixedMetadataValue(DonateCase.instance, "case"));
+        firework.setMetadata("case", new FixedMetadataValue(Case.getInstance(), "case"));
         firework.detonate();
     }
 

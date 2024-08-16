@@ -7,7 +7,6 @@ import com.jodexindustries.donatecase.api.data.GUI;
 import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.gui.TypedItemHandler;
 import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -82,7 +81,7 @@ public class CaseGui {
         CaseData.Item.Material material = item.getMaterial();
 
         // update item placeholders
-        material.setDisplayName(PAPISupport.setPlaceholders(p, material.getDisplayName()));
+        material.setDisplayName(Case.getInstance().papi.setPlaceholders(p, material.getDisplayName()));
         material.setLore(setPlaceholders(p, caseData.getCaseType(), material.getLore()));
 
         ItemStack itemStack = Tools.getCaseItem(material);
@@ -114,7 +113,7 @@ public class CaseGui {
         }
 
         return newLore.stream()
-                .map(line -> PAPISupport.setPlaceholders(p, line))
+                .map(line -> Case.getInstance().papi.setPlaceholders(p, line))
                 .map(Tools::rc)
                 .collect(Collectors.toList());
     }

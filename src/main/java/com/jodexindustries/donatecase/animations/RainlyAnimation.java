@@ -4,10 +4,8 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -25,7 +23,7 @@ public class RainlyAnimation extends JavaAnimation {
     public void start() {
         final Location loc = getLocation().clone();
         final String FallingParticle = Case.getConfig().getAnimations().getString("Rainly.FallingParticle");
-        String winGroupDisplayName = PAPISupport.setPlaceholders(getPlayer(),getWinItem().getMaterial().getDisplayName());
+        String winGroupDisplayName = Case.getInstance().papi.setPlaceholders(getPlayer(),getWinItem().getMaterial().getDisplayName());
         getWinItem().getMaterial().setDisplayName(winGroupDisplayName);
         getLocation().add(0.5, 1, 0.5);
         Location rain1 = loc.clone().add(-1.5, 3, -1.5);
@@ -88,7 +86,7 @@ public class RainlyAnimation extends JavaAnimation {
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0 )) {
                     CaseData.Item winItem = getCaseData().getRandomItem();
-                    String winGroupDisplayName = PAPISupport.setPlaceholders(getPlayer(), winItem.getMaterial().getDisplayName());
+                    String winGroupDisplayName = Case.getInstance().papi.setPlaceholders(getPlayer(), winItem.getMaterial().getDisplayName());
                     winItem.getMaterial().setDisplayName(winGroupDisplayName);
                     if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                         as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
@@ -124,6 +122,6 @@ public class RainlyAnimation extends JavaAnimation {
 
                 ++this.i;
             }
-        }).runTaskTimer(DonateCase.instance, 0L, 2L);
+        }).runTaskTimer(Case.getInstance(), 0L, 2L);
     }
 }

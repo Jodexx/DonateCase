@@ -3,10 +3,8 @@ package com.jodexindustries.donatecase.animations;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.EquipmentSlot;
@@ -27,7 +25,7 @@ public class FireworkAnimation extends JavaAnimation {
     @Override
     public void start() {
         String displayName = getWinItem().getMaterial().getDisplayName();
-        getWinItem().getMaterial().setDisplayName(PAPISupport.setPlaceholders(getPlayer(), displayName));
+        getWinItem().getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(getPlayer(), displayName));
         getLocation().add(0.5, -0.1, 0.5);
         getLocation().setYaw(-70.0F);
         ArmorStandCreator as = Tools.createArmorStand(getLocation());
@@ -84,6 +82,6 @@ public class FireworkAnimation extends JavaAnimation {
 
                 ++this.i;
             }
-        }).runTaskTimer(DonateCase.instance, 0L, 2L);
+        }).runTaskTimer(Case.getInstance(), 0L, 2L);
     }
 }

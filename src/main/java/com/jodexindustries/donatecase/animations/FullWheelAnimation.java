@@ -6,7 +6,6 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
@@ -33,7 +32,7 @@ public class FullWheelAnimation extends JavaAnimation {
         // register items
         int itemsCount = getCaseData().getItems().size();
         int i = 1;
-        String winGroupDisplayName = PAPISupport.setPlaceholders(getPlayer(), getWinItem().getMaterial().getDisplayName());
+        String winGroupDisplayName = Case.getInstance().papi.setPlaceholders(getPlayer(), getWinItem().getMaterial().getDisplayName());
         getWinItem().getMaterial().setDisplayName(winGroupDisplayName);
 
 
@@ -66,7 +65,7 @@ public class FullWheelAnimation extends JavaAnimation {
             if(itemName.equalsIgnoreCase(getWinItem().getItemName())) continue;
             CaseData.Item item = getCaseData().getItem(itemName);
             String displayName = item.getMaterial().getDisplayName();
-            item.getMaterial().setDisplayName(PAPISupport.setPlaceholders(getPlayer(), displayName));
+            item.getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(getPlayer(), displayName));
             items.add(itemName);
             armorStands.add(spawnArmorStand(getCaseData(), getLocation(), i, small));
             i++;

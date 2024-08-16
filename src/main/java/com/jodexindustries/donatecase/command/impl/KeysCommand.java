@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.command.impl;
 
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -8,7 +7,6 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -35,7 +33,7 @@ public class KeysCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        Bukkit.getScheduler().runTaskAsynchronously(DonateCase.instance, () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () -> {
             if (args.length < 1) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
@@ -71,7 +69,7 @@ public class KeysCommand implements SubCommandExecutor, SubCommandTabCompleter {
     }
 
     private String formatMessage(String name, Player player, String message) {
-        if (player != null) message = PAPISupport.setPlaceholders(player, message);
+        if (player != null) message = Case.getInstance().papi.setPlaceholders(player, message);
 
         String placeholder = Tools.getLocalPlaceholder(message);
         String result = "0";

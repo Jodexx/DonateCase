@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.armorstand;
 
-import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.api.Case;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
@@ -27,7 +27,7 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
             return;
         }
         entity = (ArmorStand) world.spawnEntity(location, EntityType.ARMOR_STAND);
-        entity.setMetadata("case", new FixedMetadataValue(DonateCase.instance, "case"));
+        entity.setMetadata("case", new FixedMetadataValue(Case.getInstance(), "case"));
     }
 
     @Override

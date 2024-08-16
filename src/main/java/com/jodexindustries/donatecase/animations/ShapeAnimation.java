@@ -7,7 +7,6 @@ import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.support.PAPISupport;
 import org.bukkit.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -71,7 +70,7 @@ public class ShapeAnimation extends JavaAnimation {
                             as.setAngle(armorStandEulerAngle);
                             as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                         }
-                        String winGroupDisplayName = PAPISupport.setPlaceholders(getPlayer(), winItem.getMaterial().getDisplayName());
+                        String winGroupDisplayName = Case.getInstance().papi.setPlaceholders(getPlayer(), winItem.getMaterial().getDisplayName());
                         winItem.getMaterial().setDisplayName(winGroupDisplayName);
                         as.setCustomName(Tools.rc(winGroupDisplayName));
                         as.setCustomNameVisible(true);
@@ -121,6 +120,6 @@ public class ShapeAnimation extends JavaAnimation {
 
                     ++this.i;
                 }
-            }).runTaskTimer(DonateCase.instance, 0L, 2L);
+            }).runTaskTimer(Case.getInstance(), 0L, 2L);
         }
     }

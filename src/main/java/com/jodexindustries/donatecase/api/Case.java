@@ -589,7 +589,7 @@ public class Case {
     public static void executeActions(OfflinePlayer player, List<String> actions) {
         for (String action : actions) {
 
-            action = Tools.rc(PAPISupport.setPlaceholders(player, action));
+            action = Tools.rc(Case.getInstance().papi.setPlaceholders(player, action));
             int cooldown = Tools.extractCooldown(action);
             action = action.replaceFirst("\\[cooldown:(.*?)]", "");
 
