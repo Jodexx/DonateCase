@@ -147,14 +147,12 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadPlaceholderAPI() {
-        if(getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             try {
                 papi = new PAPISupport();
                 papi.register();
             } catch (Throwable e) {
                 Logger.log("&cError hooking to &bPlaceholderAPI&c: " + e.getMessage());
             }
-        }
     }
 
     private void loadPacketEventsAPI() {
