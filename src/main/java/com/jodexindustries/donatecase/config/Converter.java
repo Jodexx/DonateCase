@@ -25,21 +25,21 @@ public class Converter {
 
     public void convertConfig() {
         ConfigurationSection configSection = config.getConfig().getConfigurationSection("DonatCase");
-        if(configSection != null) {
+        if (configSection != null) {
             config.getConfig().set("DonateCase", configSection);
             config.getConfig().set("DonatCase", null);
             config.saveConfig();
         }
 
         ConfigurationSection keysSection = config.getKeys().getConfigurationSection("DonatCase");
-        if(keysSection != null) {
+        if (keysSection != null) {
             config.getKeys().set("DonateCase", keysSection);
             config.getKeys().set("DonatCase", null);
             config.saveKeys();
         }
 
         ConfigurationSection casesSection = config.getCases().getConfigurationSection("DonatCase");
-        if(casesSection != null) {
+        if (casesSection != null) {
             config.getCases().set("DonateCase", casesSection);
             config.getCases().set("DonatCase", null);
             config.saveCases();
@@ -132,7 +132,7 @@ public class Converter {
     /**
      * Converts materials in the specified section by replacing BASE64 materials with MCURL.
      *
-     * @param section the configuration section to process
+     * @param section     the configuration section to process
      * @param materialKey the key used to identify material strings within the section
      */
     private void convertMaterialsInSection(ConfigurationSection section, String materialKey) {
@@ -156,13 +156,13 @@ public class Converter {
 
 
     public void convertCasesLocation() {
-        ConfigurationSection cases_ = config.getCases().getConfigurationSection("DonateCase.Cases");
-        if(cases_ != null) {
-            for (String name : cases_.getValues(false).keySet()) {
-                if (cases_.getString(name + ".location") == null) {
+        ConfigurationSection cases = config.getCases().getConfigurationSection("DonateCase.Cases");
+        if (cases != null) {
+            for (String name : cases.getValues(false).keySet()) {
+                if (cases.getString(name + ".location") == null) {
                     return;
                 } else {
-                    String locationString = cases_.getString( name + ".location");
+                    String locationString = cases.getString(name + ".location");
                     Location lv = fromString(locationString);
                     String world = "Undefined";
                     if (lv != null) {
@@ -328,7 +328,7 @@ public class Converter {
         String helpAddonsFormatAddonName = lang.getString("HelpAddons.Format.AddonName");
         lang.set("help-addons.format.name", helpAddonsFormatAddonName);
 
-        String helpAddonsFormatAddonDescription =lang.getString("HelpAddons.Format.AddonDescription");
+        String helpAddonsFormatAddonDescription = lang.getString("HelpAddons.Format.AddonDescription");
         lang.set("help-addons.format.description", helpAddonsFormatAddonDescription);
 
         String helpAddonsFormatAddonCommand = lang.getString("HelpAddons.Format.AddonCommand");
