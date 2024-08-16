@@ -103,6 +103,7 @@ public class Config {
 
         // Convert after language file loaded
         converter.convertNoKeyActions();
+        converter.convertOpenType();
 
         long caching = getConfig().getLong("DonateCase.Caching");
         if(caching > 0) {
@@ -169,9 +170,7 @@ public class Config {
     }
 
     private void checkAndCreateFile(String fileName) {
-        if (!(new File(plugin.getDataFolder(), fileName)).exists()) {
-            plugin.saveResource(fileName, false);
-        }
+        if (!(new File(plugin.getDataFolder(), fileName)).exists()) plugin.saveResource(fileName, false);
     }
 
     private void checkAndUpdateConfig(YamlConfiguration config, String fileName, String expectedValue) {

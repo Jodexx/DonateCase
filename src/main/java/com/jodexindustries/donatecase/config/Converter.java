@@ -55,9 +55,7 @@ public class Converter {
             if (version != null && version.equalsIgnoreCase("1.1")) continue;
 
             ConfigurationSection caseSection = caseConfig.getConfigurationSection("case");
-            if (caseSection == null) {
-                continue;
-            }
+            if (caseSection == null) continue;
 
             List<String> noKeyActions = caseSection.getStringList("NoKeyActions");
             noKeyActions.add("[sound] " + config.getConfig().getString("DonateCase.NoKeyWarningSound"));
@@ -78,20 +76,40 @@ public class Converter {
         }
     }
 
+    public void convertOpenType() {
+        for (String caseType : config.getCasesConfig().getCases().keySet()) {
+            Pair<File, YamlConfiguration> pair = config.getCasesConfig().getCases().get(caseType);
+            YamlConfiguration caseConfig = pair.getSecond();
+            String version = caseConfig.getString("config");
+
+            if (version != null && version.equalsIgnoreCase("1.2")) continue;
+
+            ConfigurationSection caseSection = caseConfig.getConfigurationSection("case");
+            if (caseSection == null) continue;
+
+            caseSection.set("OpenType", "GUI");
+
+            caseConfig.set("config", "1.2");
+
+            try {
+                caseConfig.save(pair.getFirst());
+                config.getPlugin().getLogger().info("OpenType converted successfully for case type: " + caseType);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to save config for case type: " + caseType, e);
+            }
+        }
+    }
+
     public void convertBASE64() {
         for (String caseType : config.getCasesConfig().getCases().keySet()) {
             Pair<File, YamlConfiguration> pair = config.getCasesConfig().getCases().get(caseType);
             YamlConfiguration caseConfig = pair.getSecond();
             String version = caseConfig.getString("config");
 
-            if (version != null) {
-                continue;
-            }
+            if (version != null) continue;
 
             ConfigurationSection caseSection = caseConfig.getConfigurationSection("case");
-            if (caseSection == null) {
-                continue;
-            }
+            if (caseSection == null) continue;
 
             // Convert materials in the GUI section
             convertMaterialsInSection(caseSection.getConfigurationSection("Gui.Items"), "Material");
@@ -118,26 +136,18 @@ public class Converter {
      * @param materialKey the key used to identify material strings within the section
      */
     private void convertMaterialsInSection(ConfigurationSection section, String materialKey) {
-        if (section == null) {
-            return;
-        }
+        if (section == null) return;
 
         for (String key : section.getKeys(false)) {
             ConfigurationSection itemSection = section.getConfigurationSection(key);
-            if (itemSection == null) {
-                continue;
-            }
+            if (itemSection == null) continue;
 
             String material = itemSection.getString(materialKey);
-            if (material == null) {
-                continue;
-            }
+            if (material == null) continue;
 
             String[] materialParts = material.split(":");
             MaterialType materialType = MaterialType.fromString(materialParts[0]);
-            if (materialType != MaterialType.BASE64) {
-                continue;
-            }
+            if (materialType != MaterialType.BASE64) continue;
 
             material = material.replace(materialParts[0], MaterialType.MCURL.name());
             itemSection.set(materialKey, material);
@@ -220,7 +230,7 @@ public class Converter {
             }
         }
         config.getConfig().set("DonateCase.Cases", null);
-       config.saveConfig();
+        config.saveConfig();
     }
 
     public void convertLanguage() {

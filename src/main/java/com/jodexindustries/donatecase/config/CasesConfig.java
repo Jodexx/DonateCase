@@ -9,6 +9,7 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class for loading cases configurations
@@ -61,9 +62,7 @@ public class CasesConfig {
 
     private boolean processItems(YamlConfiguration caseConfig, String caseName, File file) {
         ConfigurationSection itemsSection = caseConfig.getConfigurationSection("case.Items");
-        if (itemsSection == null) {
-            return false;
-        }
+        if (itemsSection == null) return false;
 
         boolean isOld = false;
         for (String item : itemsSection.getKeys(false)) {
@@ -90,19 +89,13 @@ public class CasesConfig {
 
     private static List<String> collectActions(YamlConfiguration caseConfig, String item, String giveCommand, List<String> giveCommands) {
         List<String> actions = new ArrayList<>();
-        if (giveCommand != null) {
-            actions.add("[command] " + giveCommand);
-        }
-        for (String command : giveCommands) {
-            actions.add("[command] " + command);
-        }
+        if (giveCommand != null) actions.add("[command] " + giveCommand);
+        giveCommands.stream().map(command -> "[command] " + command).forEach(actions::add);
         String title = caseConfig.getString("case.Items." + item + ".Title");
         String subTitle = caseConfig.getString("case.Items." + item + ".SubTitle");
         List<String> broadcast = caseConfig.getStringList("case.Items." + item + ".Broadcast");
         actions.add("[title] " + title + ";" + subTitle);
-        for (String line : broadcast) {
-            actions.add("[broadcast] " + line);
-        }
+        broadcast.stream().map(line -> "[broadcast] " + line).forEach(actions::add);
         return actions;
     }
 
@@ -111,15 +104,11 @@ public class CasesConfig {
         if (giveSection != null) {
             for (String choice : giveSection.getKeys(false)) {
                 int chance = caseConfig.getInt("case.Items." + item + ".GiveCommands." + choice + ".Chance");
-                List<String> choiceActions = new ArrayList<>();
+                List<String> choiceActions;
                 List<String> choiceCommands = caseConfig.getStringList("case.Items." + item + ".GiveCommands." + choice + ".Commands");
-                for (String choiceCommand : choiceCommands) {
-                    choiceActions.add("[command] " + choiceCommand);
-                }
+                choiceActions = choiceCommands.stream().map(choiceCommand -> "[command] " + choiceCommand).collect(Collectors.toList());
                 List<String> choiceBroadcasts = caseConfig.getStringList("case.Items." + item + ".GiveCommands." + choice + ".Broadcast");
-                for (String choiceBroadcast : choiceBroadcasts) {
-                    choiceActions.add("[broadcast] " + choiceBroadcast);
-                }
+                choiceBroadcasts.stream().map(choiceBroadcast -> "[broadcast] " + choiceBroadcast).forEach(choiceActions::add);
                 caseConfig.set("case.Items." + item + ".RandomActions." + choice + ".Chance", chance);
                 caseConfig.set("case.Items." + item + ".RandomActions." + choice + ".Actions", choiceActions);
             }

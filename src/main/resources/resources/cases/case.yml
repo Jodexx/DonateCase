@@ -1,4 +1,4 @@
-config: 1.1
+config: 1.2
 case:
   Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL, FULLWHEEL see: https://wiki.jodexindustries.xyz/docs/DonateCase/animations
   Hologram: # Thanks CrazyCrates for realisation
