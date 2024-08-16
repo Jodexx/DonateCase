@@ -52,7 +52,7 @@ public class Converter {
             YamlConfiguration caseConfig = pair.getSecond();
             String version = caseConfig.getString("config");
 
-            if (version != null && version.equalsIgnoreCase("1.1")) continue;
+            if (version != null && version.equalsIgnoreCase("1.2")) continue;
 
             ConfigurationSection caseSection = caseConfig.getConfigurationSection("case");
             if (caseSection == null) continue;
