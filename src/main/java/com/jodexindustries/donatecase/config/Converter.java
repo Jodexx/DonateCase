@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.config;
 
-import com.jodexindustries.donatecase.api.data.MaterialType;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.Pair;
 import org.bukkit.Bukkit;
@@ -146,10 +145,9 @@ public class Converter {
             if (material == null) continue;
 
             String[] materialParts = material.split(":");
-            MaterialType materialType = MaterialType.fromString(materialParts[0]);
-            if (materialType != MaterialType.BASE64) continue;
+            if (!materialParts[0].equalsIgnoreCase("BASE64")) continue;
 
-            material = material.replace(materialParts[0], MaterialType.MCURL.name());
+            material = material.replace(materialParts[0], "MCURL");
             itemSection.set(materialKey, material);
         }
     }
