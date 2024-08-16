@@ -119,7 +119,6 @@ public class EventsListener implements Listener {
                                     OPENItemClickHandlerImpl.executeOpen(caseData, p, blockLocation);
                                     break;
                             }
-                            Case.openGui(p, caseData, blockLocation);
                         } else {
                             Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
                             Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
