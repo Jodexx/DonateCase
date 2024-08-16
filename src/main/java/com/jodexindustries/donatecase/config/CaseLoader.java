@@ -21,10 +21,11 @@ import java.util.stream.IntStream;
  * Class for loading CaseData's from cases folder
  */
 public class CaseLoader {
-   private final DonateCase plugin;
+    private final DonateCase plugin;
 
     /**
      * Default constructor
+     *
      * @param plugin DonateCase plugin object
      */
     public CaseLoader(DonateCase plugin) {
@@ -49,7 +50,7 @@ public class CaseLoader {
 
             CaseData caseData = loadCaseData(caseType, caseSection);
 
-            if(caseData != null) {
+            if (caseData != null) {
                 Case.caseData.put(caseType, caseData);
                 count++;
             }
@@ -67,7 +68,7 @@ public class CaseLoader {
         String caseDisplayName = Tools.rc(caseSection.getString("DisplayName", ""));
         String animationName = caseSection.getString("Animation");
 
-        if(animationName == null) {
+        if (animationName == null) {
             logWarning("Case " + caseType + " has no animation, skipped.");
             return null;
         }
@@ -197,15 +198,15 @@ public class CaseLoader {
     private GUI loadGUI(ConfigurationSection caseSection) {
         ConfigurationSection guiSection = caseSection.getConfigurationSection("Gui");
 
-        if(guiSection != null) {
+        if (guiSection != null) {
             int size = guiSection.getInt("Size", 45);
-            if(!isValidGuiSize(size)) {
+            if (!isValidGuiSize(size)) {
                 size = 54;
                 logWarning("Wrong GUI size: " + size + ".Using 54");
             }
             ConfigurationSection items = guiSection.getConfigurationSection("Items");
 
-            if(items != null) {
+            if (items != null) {
                 Map<String, GUI.Item> itemMap = loadGUIItems(items);
                 return new GUI(size, itemMap);
             }
@@ -221,7 +222,7 @@ public class CaseLoader {
 
         for (String i : itemsSection.getKeys(false)) {
             ConfigurationSection itemSection = itemsSection.getConfigurationSection(i);
-            if(itemSection != null) {
+            if (itemSection != null) {
                 GUI.Item item = loadGUIItem(i, itemSection, currentSlots);
                 itemMap.put(i, item);
             }
@@ -240,7 +241,7 @@ public class CaseLoader {
         String[] rgb = Tools.parseRGB(itemSection.getString("Rgb"));
         List<Integer> slots = getItemSlots(itemSection);
 
-        if(slots.removeIf(currentSlots::contains))
+        if (slots.removeIf(currentSlots::contains))
             plugin.getLogger().warning("Item " + i + " contains duplicated slots, removing..");
 
         currentSlots.addAll(slots);
@@ -284,7 +285,6 @@ public class CaseLoader {
     }
 
 
-
     private void logWarning(String message) {
         plugin.getLogger().warning(message);
     }
@@ -292,5 +292,4 @@ public class CaseLoader {
     private static boolean isValidGuiSize(int size) {
         return size >= 9 && size <= 54 && size % 9 == 0;
     }
-
 }

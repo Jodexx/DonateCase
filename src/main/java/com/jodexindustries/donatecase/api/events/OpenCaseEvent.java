@@ -23,9 +23,10 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Default constructor
-     * @param who Player who opened
+     *
+     * @param who      Player who opened
      * @param caseType Case type
-     * @param block Case block
+     * @param block    Case block
      */
     public OpenCaseEvent(@NotNull final Player who, @NotNull final String caseType, final Block block) {
         super(who);
@@ -36,6 +37,7 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get case type
+     *
      * @return case type
      */
     public String getCaseType() {
@@ -44,6 +46,7 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get case block
+     *
      * @return case block
      */
     public Block getBlock() {
@@ -58,6 +61,7 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {

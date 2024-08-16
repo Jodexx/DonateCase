@@ -46,6 +46,7 @@ public class ActionManager {
 
     /**
      * Default constructor
+     *
      * @param addon An addon that will manage actions
      */
     public ActionManager(Addon addon) {
@@ -53,14 +54,14 @@ public class ActionManager {
     }
 
     /**
-     *
      * Register action
-     * @param name Action name, like: "[command]"
+     *
+     * @param name           Action name, like: "[command]"
      * @param actionExecutor Action executor
-     * @param description Action description
+     * @param description    Action description
      */
     public void registerAction(String name, ActionExecutor actionExecutor, String description) {
-        if(!isRegistered(name)) {
+        if (!isRegistered(name)) {
             CaseAction caseAction = new CaseAction(actionExecutor, addon, name, description);
             registeredActions.put(name, caseAction);
             String actionAddonName = addon.getName();
@@ -74,7 +75,8 @@ public class ActionManager {
 
     /**
      * Register action
-     * @param name Action name, like: "[command]"
+     *
+     * @param name           Action name, like: "[command]"
      * @param actionExecutor Action executor
      */
     @Deprecated
@@ -84,10 +86,11 @@ public class ActionManager {
 
     /**
      * Unregister action
+     *
      * @param name Action name
      */
     public void unregisterAction(String name) {
-        if(isRegistered(name)) {
+        if (isRegistered(name)) {
             registeredActions.remove(name);
             CaseActionUnregisteredEvent event = new CaseActionUnregisteredEvent(name);
             Bukkit.getServer().getPluginManager().callEvent(event);
@@ -106,6 +109,7 @@ public class ActionManager {
 
     /**
      * Check for action registration
+     *
      * @param name action name
      * @return boolean
      */
@@ -115,6 +119,7 @@ public class ActionManager {
 
     /**
      * Get all registered animations
+     *
      * @return map with registered animations
      */
     public static Map<String, CaseAction> getRegisteredActions() {
@@ -123,6 +128,7 @@ public class ActionManager {
 
     /**
      * Get registered action
+     *
      * @param action CaseAction name
      * @return CaseAction class instance
      */
@@ -133,10 +139,12 @@ public class ActionManager {
 
     /**
      * Get registered action by string start
+     *
      * @param string String to be parsed
      * @return Case action name
      */
     public static @Nullable String getByStart(@NotNull final String string) {
         return registeredActions.keySet().stream().filter(string::startsWith).findFirst().orElse(null);
     }
+
 }

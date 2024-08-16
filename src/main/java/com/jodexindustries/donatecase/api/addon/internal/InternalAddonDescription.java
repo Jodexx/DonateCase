@@ -20,35 +20,35 @@ public class InternalAddonDescription {
 
     public InternalAddonDescription(File file) throws IOException, InvalidAddonException {
         JarFile jarFile = new JarFile(file);
-            JarEntry entry = jarFile.getJarEntry("addon.yml");
-            if (entry != null) {
-                InputStream input = jarFile.getInputStream(entry);
-                Yaml yaml = new Yaml();
-                Map<String, Object> data = yaml.load(input);
-                name = (String) data.get("name");
-                mainClass = (String) data.get("main");
-                version = String.valueOf(data.get("version"));
+        JarEntry entry = jarFile.getJarEntry("addon.yml");
+        if (entry != null) {
+            InputStream input = jarFile.getInputStream(entry);
+            Yaml yaml = new Yaml();
+            Map<String, Object> data = yaml.load(input);
+            name = (String) data.get("name");
+            mainClass = (String) data.get("main");
+            version = String.valueOf(data.get("version"));
 
-                authors = new ArrayList<>();
+            authors = new ArrayList<>();
 
-                if(data.get("author") != null) authors.add(data.get("author").toString());
-                if(data.get("authors") != null) {
-                    for (Object o : (Iterable<?>) data.get("authors")) {
-                        authors.add(o.toString());
-                    }
+            if (data.get("author") != null) authors.add(data.get("author").toString());
+            if (data.get("authors") != null) {
+                for (Object o : (Iterable<?>) data.get("authors")) {
+                    authors.add(o.toString());
                 }
-
-                libraries = new ArrayList<>();
-
-                if (data.get("libraries") != null) {
-                    for (Object o : (Iterable<?>) data.get("libraries")) {
-                        libraries.add(o.toString());
-                    }
-                }
-            } else {
-                throw new InvalidAddonException("Addon " + file.getName() + " trying to load without addon.yml! Abort.");
             }
-            jarFile.close();
+
+            libraries = new ArrayList<>();
+
+            if (data.get("libraries") != null) {
+                for (Object o : (Iterable<?>) data.get("libraries")) {
+                    libraries.add(o.toString());
+                }
+            }
+        } else {
+            throw new InvalidAddonException("Addon " + file.getName() + " trying to load without addon.yml! Abort.");
+        }
+        jarFile.close();
     }
 
     public String getVersion() {

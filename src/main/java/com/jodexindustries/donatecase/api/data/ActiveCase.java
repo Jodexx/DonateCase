@@ -12,12 +12,13 @@ public class ActiveCase {
     private final Location location;
 
     /**
-     *  Case type
+     * Case type
      */
     private final String caseType;
 
     /**
      * Default constructor
+     *
      * @param location Case location
      * @param caseType Case type
      */
@@ -28,11 +29,10 @@ public class ActiveCase {
 
     /**
      * Get case type
-     * @deprecated
-     * This method does not match the field name
-     * <p> Use {@link ActiveCase#getCaseType()} instead</p>
-     * @return case type
      *
+     * @return case type
+     * @deprecated This method does not match the field name
+     * <p> Use {@link ActiveCase#getCaseType()} instead</p>
      */
     @Deprecated
     public String getName() {
@@ -41,6 +41,7 @@ public class ActiveCase {
 
     /**
      * Get case type
+     *
      * @return case type
      */
     public String getCaseType() {
@@ -49,6 +50,7 @@ public class ActiveCase {
 
     /**
      * Get case location
+     *
      * @return case location
      */
 

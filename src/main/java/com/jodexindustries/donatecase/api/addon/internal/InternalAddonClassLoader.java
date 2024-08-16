@@ -29,7 +29,7 @@ public class InternalAddonClassLoader extends URLClassLoader {
             try {
                 jarClass = Class.forName(description.getMainClass(), true, this);
             } catch (ClassNotFoundException ex) {
-                throw new ClassNotFoundException("Cannot find main class `" + description.getMainClass()  + "'", ex);
+                throw new ClassNotFoundException("Cannot find main class `" + description.getMainClass() + "'", ex);
             }
 
             Class<? extends InternalJavaAddon> pluginClass;
@@ -68,9 +68,10 @@ public class InternalAddonClassLoader extends URLClassLoader {
     public Class<?> loadClass0(@NotNull String name, boolean resolve, boolean global) throws ClassNotFoundException {
         try {
             return super.loadClass(name, resolve);
-        } catch (ClassNotFoundException ignored) {}
+        } catch (ClassNotFoundException ignored) {
+        }
 
-        if (global){
+        if (global) {
             Class<?> result = manager.getClassByName(name, resolve);
 
             if (result != null && result.getClassLoader() instanceof InternalAddonClassLoader) {

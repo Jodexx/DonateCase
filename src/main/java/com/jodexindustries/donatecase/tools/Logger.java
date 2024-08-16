@@ -14,4 +14,5 @@ public class Logger {
         msg = Tools.rc("&3[&d" + Case.getInstance().getName() + "&3]&r " + msg);
         Bukkit.getConsoleSender().sendMessage("&7[&eDEBUG&7]&r" + msg);
     }
+
 }

@@ -19,11 +19,12 @@ public class AnimationPreStartEvent extends PlayerEvent {
 
     /**
      * Default constructor
-     * @param who Player who opened
+     *
+     * @param who       Player who opened
      * @param animation Case animations
-     * @param caseData Case data
-     * @param location Location where opened
-     * @param winItem Win item
+     * @param caseData  Case data
+     * @param location  Location where opened
+     * @param winItem   Win item
      */
     public AnimationPreStartEvent(@NotNull Player who, String animation, final CaseData caseData, Location location, CaseData.Item winItem) {
         super(who);
@@ -35,6 +36,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
 
     /**
      * Get case location
+     *
      * @return case location
      */
 
@@ -42,8 +44,10 @@ public class AnimationPreStartEvent extends PlayerEvent {
     public Location getLocation() {
         return location;
     }
+
     /**
      * Get case data
+     *
      * @return case data
      */
     @NotNull
@@ -53,6 +57,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
 
     /**
      * Get case animation
+     *
      * @return case animation
      */
     @NotNull
@@ -62,6 +67,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
 
     /**
      * Get the win item
+     *
      * @return win item
      */
     @NotNull
@@ -71,6 +77,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
 
     /**
      * Set the prize before starting the animation (usually a random one is taken from the case configuration)
+     *
      * @param winItem Win group data
      */
     public void setWinItem(CaseData.Item winItem) {
@@ -85,6 +92,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {

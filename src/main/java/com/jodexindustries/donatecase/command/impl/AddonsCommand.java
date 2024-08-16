@@ -43,7 +43,7 @@ public class AddonsCommand implements SubCommandExecutor, SubCommandTabCompleter
 
     private @NotNull StringBuilder compileAddons(List<InternalJavaAddon> addons) {
         StringBuilder builder = new StringBuilder();
-        if(addons != null && !addons.isEmpty()) {
+        if (addons != null && !addons.isEmpty()) {
             for (int i = 0; i < addons.size(); i++) {
                 InternalJavaAddon addon = addons.get(i);
                 String name = addon.isEnabled() ? "&a" + addon.getName() : "&c" + addon.getName();
@@ -55,4 +55,5 @@ public class AddonsCommand implements SubCommandExecutor, SubCommandTabCompleter
         }
         return builder;
     }
+
 }

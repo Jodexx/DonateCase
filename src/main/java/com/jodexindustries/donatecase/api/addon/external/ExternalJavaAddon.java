@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 public class ExternalJavaAddon implements ExternalAddon {
     private final Plugin plugin;
+
     public ExternalJavaAddon(Plugin plugin) {
         this.plugin = plugin;
     }

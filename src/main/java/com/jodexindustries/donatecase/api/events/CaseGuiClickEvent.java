@@ -22,11 +22,12 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
 
     /**
      * Default constructor
-     * @param view Inventory view
-     * @param type Slot type
-     * @param slot Slot index
-     * @param click Click type
-     * @param action Action type
+     *
+     * @param view     Inventory view
+     * @param type     Slot type
+     * @param slot     Slot index
+     * @param click    Click type
+     * @param action   Action type
      * @param location Location where opened case
      * @param caseData Case data
      * @param itemType GUI item type
@@ -39,6 +40,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
         this.caseData = caseData;
         this.itemType = itemType;
     }
+
     @NotNull
     @Override
     public HandlerList getHandlers() {
@@ -47,6 +49,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static @NotNull HandlerList getHandlerList() {
@@ -55,6 +58,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
 
     /**
      * Get case location
+     *
      * @return Case location
      */
     public Location getLocation() {
@@ -63,6 +67,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
 
     /**
      * Get case data
+     *
      * @return case data
      */
     public CaseData getCaseData() {
@@ -71,6 +76,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
 
     /**
      * Get case type
+     *
      * @return case type
      */
     @Deprecated
@@ -80,6 +86,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
 
     /**
      * Get GUI item type
+     *
      * @return item type
      */
     public String getItemType() {
@@ -88,6 +95,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
 
     /**
      * Check for "OPEN" item
+     *
      * @return result
      */
     @Deprecated
@@ -102,6 +110,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
 
     /**
      * Cancel click. If you cancel this event, then GUI will not activate an animation from OPEN item.
+     *
      * @param toCancel true or false
      */
     @Override

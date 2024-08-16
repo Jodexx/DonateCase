@@ -26,7 +26,8 @@ public class CaseGui {
 
     /**
      * Default constructor
-     * @param p Player object
+     *
+     * @param p        Player object
      * @param caseData CaseData object
      */
     public CaseGui(Player p, CaseData caseData) {
@@ -52,6 +53,7 @@ public class CaseGui {
 
     /**
      * Gets GUI CaseData
+     *
      * @return data
      */
     public CaseData getCaseData() {
@@ -60,6 +62,7 @@ public class CaseGui {
 
     /**
      * Gets GUI global history data
+     *
      * @return global history data
      */
     public List<CaseData.HistoryData> getGlobalHistoryData() {
@@ -120,9 +123,11 @@ public class CaseGui {
 
     /**
      * Gets GUI Inventory
+     *
      * @return inventory
      */
     public Inventory getInventory() {
         return inventory;
     }
+
 }

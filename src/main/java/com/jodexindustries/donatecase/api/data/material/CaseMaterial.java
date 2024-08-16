@@ -16,10 +16,11 @@ public class CaseMaterial implements MaterialHandler {
 
     /**
      * Default constructor
+     *
      * @param materialHandler Handler for creating item
-     * @param addon Material addon
-     * @param id Material id
-     * @param description Material description
+     * @param addon           Material addon
+     * @param id              Material id
+     * @param description     Material description
      */
     public CaseMaterial(MaterialHandler materialHandler, Addon addon, String id, String description) {
         this.materialHandler = materialHandler;
@@ -30,6 +31,7 @@ public class CaseMaterial implements MaterialHandler {
 
     /**
      * Gets addon which registered this material
+     *
      * @return addon material
      */
     public Addon getAddon() {
@@ -38,6 +40,7 @@ public class CaseMaterial implements MaterialHandler {
 
     /**
      * Gets material id, like: <code>BASE64</code>, <code>MCURL</code>
+     *
      * @return material id
      */
     public String getId() {
@@ -46,6 +49,7 @@ public class CaseMaterial implements MaterialHandler {
 
     /**
      * Gets material description
+     *
      * @return material description
      */
     public String getDescription() {

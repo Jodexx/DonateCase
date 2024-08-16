@@ -122,4 +122,5 @@ public class SubCommandManager {
         SubCommand subCommand = registeredSubCommands.get(subCommandName.toLowerCase());
         return subCommand != null ? subCommand.getTabCompletions(sender, label, args) : null;
     }
+
 }

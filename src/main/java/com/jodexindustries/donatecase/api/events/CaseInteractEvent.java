@@ -23,10 +23,11 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Default constructor
-     * @param who Player who interact
-     * @param block Block to interact
+     *
+     * @param who      Player who interact
+     * @param block    Block to interact
      * @param caseType Case type
-     * @param action Interact action
+     * @param action   Interact action
      */
     public CaseInteractEvent(@NotNull final Player who, @NotNull final Block block, @NotNull final String caseType, @NotNull final Action action) {
         super(who);
@@ -38,6 +39,7 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Can be only LEFT_CLICK_BLOCK and RIGHT_CLICK_BLOCK
+     *
      * @return click block action
      */
     @NotNull
@@ -47,6 +49,7 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get clicked block
+     *
      * @return block
      */
     @NotNull
@@ -56,6 +59,7 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get case type
+     *
      * @return case type
      */
     @NotNull
@@ -71,6 +75,7 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {

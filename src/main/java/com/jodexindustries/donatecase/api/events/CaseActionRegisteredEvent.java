@@ -17,10 +17,11 @@ public class CaseActionRegisteredEvent extends Event {
 
     /**
      * Default constructor
-     * @param caseActionName Case action name
-     * @param actionExecutor Case action class
+     *
+     * @param caseActionName      Case action name
+     * @param actionExecutor      Case action class
      * @param caseActionAddonName Case action addon name
-     * @param isDefault Is default?
+     * @param isDefault           Is default?
      */
     public CaseActionRegisteredEvent(String caseActionName, ActionExecutor actionExecutor, String caseActionAddonName, boolean isDefault) {
         this.caseActionName = caseActionName;
@@ -31,6 +32,7 @@ public class CaseActionRegisteredEvent extends Event {
 
     /**
      * Get CaseAction name
+     *
      * @return name
      */
     public String getCaseActionName() {
@@ -39,6 +41,7 @@ public class CaseActionRegisteredEvent extends Event {
 
     /**
      * Get CaseAction addon name
+     *
      * @return addon name
      */
     public String getCaseActionAddonName() {
@@ -47,6 +50,7 @@ public class CaseActionRegisteredEvent extends Event {
 
     /**
      * Get CaseAction class
+     *
      * @return CaseAction
      */
     public ActionExecutor getCaseAction() {
@@ -55,6 +59,7 @@ public class CaseActionRegisteredEvent extends Event {
 
     /**
      * Get if this CaseAction is default
+     *
      * @return boolean
      */
     public boolean isDefault() {
@@ -69,6 +74,7 @@ public class CaseActionRegisteredEvent extends Event {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {

@@ -32,12 +32,12 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        if(executor != null) executor.execute(sender, label, args);
+        if (executor != null) executor.execute(sender, label, args);
     }
 
     @Override
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        if(tabCompleter == null) return new ArrayList<>();
+        if (tabCompleter == null) return new ArrayList<>();
         return tabCompleter.getTabCompletions(sender, label, args);
     }
 

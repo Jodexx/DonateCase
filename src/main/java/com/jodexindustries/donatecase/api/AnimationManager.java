@@ -29,6 +29,7 @@ public class AnimationManager {
 
     /**
      * Default constructor
+     *
      * @param addon An addon that will manage animations
      */
     public AnimationManager(Addon addon) {
@@ -37,12 +38,13 @@ public class AnimationManager {
 
     /**
      * Register custom animation
-     * @param name Animation name
-     * @param animation Animation class
+     *
+     * @param name        Animation name
+     * @param animation   Animation class
      * @param description Animation description
      */
     public void registerAnimation(String name, Class<? extends JavaAnimation> animation, String description) {
-        if(!isRegistered(name)) {
+        if (!isRegistered(name)) {
             CaseAnimation caseAnimation = new CaseAnimation(animation, addon, name, description);
             registeredAnimations.put(name, caseAnimation);
             String animationPluginName = addon.getName();
@@ -56,7 +58,8 @@ public class AnimationManager {
 
     /**
      * Register custom animation
-     * @param name Animation name
+     *
+     * @param name      Animation name
      * @param animation Animation class
      * @deprecated Use {@link #registerAnimation(String, Class, String)} instead
      */
@@ -67,12 +70,13 @@ public class AnimationManager {
 
     /**
      * Register custom animation
-     * @param name Animation name
+     *
+     * @param name      Animation name
      * @param animation Animation object
      */
     @Deprecated
     public void registerAnimation(String name, Animation animation) {
-        if(!isRegistered(name, true)) {
+        if (!isRegistered(name, true)) {
             oldAnimations.put(name, new Pair<>(animation, addon));
             String animationPluginName = addon.getName();
             boolean isDefault = animationPluginName.equalsIgnoreCase("DonateCase");
@@ -83,14 +87,15 @@ public class AnimationManager {
             addon.getLogger().warning("Animation with name " + name + " already registered!");
         }
     }
-    
+
 
     /**
      * Unregister custom animation
+     *
      * @param name Animation name
      */
     public void unregisterAnimation(String name) {
-        if(isRegistered(name)) {
+        if (isRegistered(name)) {
             registeredAnimations.remove(name);
             AnimationUnregisteredEvent animationUnRegisteredEvent = new AnimationUnregisteredEvent(name);
             Bukkit.getServer().getPluginManager().callEvent(animationUnRegisteredEvent);
@@ -101,11 +106,12 @@ public class AnimationManager {
 
     /**
      * Unregister old custom animation
+     *
      * @param name Animation name
-     * @param old is old animation
+     * @param old  is old animation
      */
     public void unregisterAnimation(String name, boolean old) {
-        if(isRegistered(name, old)) {
+        if (isRegistered(name, old)) {
             oldAnimations.remove(name);
             AnimationUnregisteredEvent animationUnRegisteredEvent = new AnimationUnregisteredEvent(name);
             Bukkit.getServer().getPluginManager().callEvent(animationUnRegisteredEvent);
@@ -127,7 +133,8 @@ public class AnimationManager {
 
     /**
      * Start animation at a specific location
-     * @param player The player who opened the case
+     *
+     * @param player   The player who opened the case
      * @param location Location where to start the animation
      * @param caseType Case type
      */
@@ -199,6 +206,7 @@ public class AnimationManager {
 
     /**
      * Check for animation registration
+     *
      * @param name animation name
      * @return boolean
      */
@@ -207,10 +215,11 @@ public class AnimationManager {
     }
 
     /**
-     /**
+     * /**
      * Check for animation registration
+     *
      * @param name animation name
-     * @param old if true - search by old registered animations
+     * @param old  if true - search by old registered animations
      * @return boolean
      */
     public static boolean isRegistered(String name, boolean old) {
@@ -219,6 +228,7 @@ public class AnimationManager {
 
     /**
      * Get all registered animations
+     *
      * @return map with registered animations
      */
     @NotNull
@@ -228,6 +238,7 @@ public class AnimationManager {
 
     /**
      * Get all old registered animations
+     *
      * @return map with old animations
      */
     @Deprecated
@@ -248,6 +259,7 @@ public class AnimationManager {
 
     /**
      * Get old registered animations
+     *
      * @param animation Animation name
      * @return Animation object
      */

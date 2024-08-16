@@ -18,9 +18,10 @@ public class SubCommandRegisteredEvent extends Event {
 
     /**
      * Default constructor
+     *
      * @param subCommand Sub command class
-     * @param addon Sub command addon
-     * @param isDefault Is default?
+     * @param addon      Sub command addon
+     * @param isDefault  Is default?
      */
     public SubCommandRegisteredEvent(SubCommand subCommand,
                                      Addon addon, boolean isDefault) {
@@ -37,6 +38,7 @@ public class SubCommandRegisteredEvent extends Event {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {
@@ -45,6 +47,7 @@ public class SubCommandRegisteredEvent extends Event {
 
     /**
      * Get subcommand name
+     *
      * @return subcommand name
      */
     @Deprecated
@@ -54,6 +57,7 @@ public class SubCommandRegisteredEvent extends Event {
 
     /**
      * Get SubCommand class
+     *
      * @return SubCommand
      */
     public SubCommand getSubCommand() {
@@ -62,6 +66,7 @@ public class SubCommandRegisteredEvent extends Event {
 
     /**
      * Get if this SubCommand is default
+     *
      * @return boolean
      */
     public boolean isDefault() {
@@ -70,6 +75,7 @@ public class SubCommandRegisteredEvent extends Event {
 
     /**
      * Get subcommand addon
+     *
      * @return Addon object
      */
     public Addon getAddon() {

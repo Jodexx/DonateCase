@@ -23,7 +23,7 @@ public class RainlyAnimation extends JavaAnimation {
     public void start() {
         final Location loc = getLocation().clone();
         final String FallingParticle = Case.getConfig().getAnimations().getString("Rainly.FallingParticle");
-        String winGroupDisplayName = Case.getInstance().papi.setPlaceholders(getPlayer(),getWinItem().getMaterial().getDisplayName());
+        String winGroupDisplayName = Case.getInstance().papi.setPlaceholders(getPlayer(), getWinItem().getMaterial().getDisplayName());
         getWinItem().getMaterial().setDisplayName(winGroupDisplayName);
         getLocation().add(0.5, 1, 0.5);
         Location rain1 = loc.clone().add(-1.5, 3, -1.5);
@@ -70,7 +70,7 @@ public class RainlyAnimation extends JavaAnimation {
                     this.l.setYaw(las.getYaw());
                     if (this.i == 32) {
                         // win item and title
-                        if(getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
+                        if (getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
                             as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
                         }
                         as.setAngle(armorStandEulerAngle);
@@ -84,11 +84,11 @@ public class RainlyAnimation extends JavaAnimation {
                 }
 
                 // change random item
-                if (this.i <= 30 && (this.i % 2 == 0 )) {
+                if (this.i <= 30 && (this.i % 2 == 0)) {
                     CaseData.Item winItem = getCaseData().getRandomItem();
                     String winGroupDisplayName = Case.getInstance().papi.setPlaceholders(getPlayer(), winItem.getMaterial().getDisplayName());
                     winItem.getMaterial().setDisplayName(winGroupDisplayName);
-                    if(winItem.getMaterial().getItemStack().getType() != Material.AIR) {
+                    if (winItem.getMaterial().getItemStack().getType() != Material.AIR) {
                         as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
                     }
                     as.setAngle(armorStandEulerAngle);
@@ -101,7 +101,7 @@ public class RainlyAnimation extends JavaAnimation {
                     Location loc = this.l.clone();
                     loc = loc.add(0.0, 0.6, 0.0);
 
-                    for(double phi = 0.0; phi <= 9; ++phi) {
+                    for (double phi = 0.0; phi <= 9; ++phi) {
                         double x = 0.09 * (9 - this.t * 2.5) * Math.cos(this.t + phi);
                         double z = 0.09 * (9 - this.t * 2.5) * Math.sin(this.t + phi);
                         loc.add(x, 0.0, z);
@@ -124,4 +124,5 @@ public class RainlyAnimation extends JavaAnimation {
             }
         }).runTaskTimer(Case.getInstance(), 0L, 2L);
     }
+
 }

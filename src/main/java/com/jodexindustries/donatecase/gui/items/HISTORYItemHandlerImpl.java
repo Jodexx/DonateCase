@@ -43,7 +43,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
             YamlConfiguration config = Case.getConfig().getCasesConfig().getCase(caseData.getCaseType()).getSecond();
             String path = "case.Gui.Items." + item.getItemName() + ".HistoryNotFound";
             ConfigurationSection section = config.getConfigurationSection(path);
-            if(section != null) {
+            if (section != null) {
                 material.setId(section.getString("Material"));
                 material.setDisplayName(section.getString("DisplayName"));
                 material.setLore(section.getStringList("Lore"));
@@ -85,7 +85,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         CaseData.Item historyItem = historyCaseData.getItem(data.getItem());
         if (historyItem == null) return trio;
         String material = item.getMaterial().getId();
-        if(material == null) material = "HEAD:" + data.getPlayerName();
+        if (material == null) material = "HEAD:" + data.getPlayerName();
 
         if (material.equalsIgnoreCase("DEFAULT")) material = historyItem.getMaterial().getId();
 
@@ -110,9 +110,9 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         String action = data.getAction() != null ? data.getAction() : group;
 
         String randomActionDisplayName = "random_action_not_found";
-        if(data.getAction() != null && !data.getAction().isEmpty()) {
+        if (data.getAction() != null && !data.getAction().isEmpty()) {
             CaseData.Item.RandomAction randomAction = historyItem.getRandomAction(data.getAction());
-            if(randomAction != null) {
+            if (randomAction != null) {
                 randomActionDisplayName = randomAction.getDisplayName();
             }
         } else {
@@ -149,4 +149,5 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         }
         return data;
     }
+
 }

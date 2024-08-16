@@ -13,8 +13,9 @@ public interface TypedItemHandler {
     /**
      * Called when tried to handle item in GUI <br/>
      * Actually you can manipulate all items in GUI
+     *
      * @param caseGui Opened GUI
-     * @param item Current item
+     * @param item    Current item
      * @return Completed GUI.Item
      */
     @NotNull

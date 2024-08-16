@@ -19,11 +19,12 @@ public class AnimationStartEvent extends PlayerEvent {
 
     /**
      * Default constructor
-     * @param who Player who opened case
+     *
+     * @param who       Player who opened case
      * @param animation Animation name
-     * @param caseData Case data
-     * @param location Location where opened
-     * @param winItem Win item
+     * @param caseData  Case data
+     * @param location  Location where opened
+     * @param winItem   Win item
      */
     public AnimationStartEvent(@NotNull Player who, @NotNull String animation, @NotNull CaseData caseData,
                                @NotNull Location location, @NotNull CaseData.Item winItem) {
@@ -36,14 +37,17 @@ public class AnimationStartEvent extends PlayerEvent {
 
     /**
      * Get case location
+     *
      * @return case location
      */
     @NotNull
     public Location getLocation() {
         return location;
     }
+
     /**
      * Get case data
+     *
      * @return case data
      */
     @NotNull
@@ -53,6 +57,7 @@ public class AnimationStartEvent extends PlayerEvent {
 
     /**
      * Get case animation
+     *
      * @return case animation
      */
     @NotNull
@@ -62,6 +67,7 @@ public class AnimationStartEvent extends PlayerEvent {
 
     /**
      * Get the win item
+     *
      * @return win item
      */
     @NotNull
@@ -77,6 +83,7 @@ public class AnimationStartEvent extends PlayerEvent {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {

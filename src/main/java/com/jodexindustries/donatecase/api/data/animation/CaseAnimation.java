@@ -14,9 +14,10 @@ public class CaseAnimation {
 
     /**
      * Default constructor
-     * @param animation Animation class
-     * @param addon Animation addon
-     * @param name Animation name
+     *
+     * @param animation   Animation class
+     * @param addon       Animation addon
+     * @param name        Animation name
      * @param description Animation description
      */
     public CaseAnimation(Class<? extends JavaAnimation> animation, Addon addon, String name, String description) {
@@ -28,6 +29,7 @@ public class CaseAnimation {
 
     /**
      * Gets animation class
+     *
      * @return animation class
      */
     public Class<? extends JavaAnimation> getAnimation() {
@@ -36,6 +38,7 @@ public class CaseAnimation {
 
     /**
      * Gets addon which registered this animation
+     *
      * @return addon animation
      */
     public Addon getAddon() {
@@ -44,6 +47,7 @@ public class CaseAnimation {
 
     /**
      * Gets animation name
+     *
      * @return animation name
      */
     public String getName() {
@@ -52,6 +56,7 @@ public class CaseAnimation {
 
     /**
      * Gets animation description
+     *
      * @return animation description
      */
     public String getDescription() {

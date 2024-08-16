@@ -64,7 +64,7 @@ public class FireworkAnimation extends JavaAnimation {
                 }
                 if (this.i >= 7) {
                     if (this.i == 10) {
-                        if(getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
+                        if (getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
                             as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
                         }
                         as.setAngle(armorStandEulerAngle);
@@ -84,4 +84,5 @@ public class FireworkAnimation extends JavaAnimation {
             }
         }).runTaskTimer(Case.getInstance(), 0L, 2L);
     }
+
 }

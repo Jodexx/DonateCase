@@ -11,7 +11,8 @@ public enum HologramDriver {
         HologramDriver result = null;
         try {
             result = HologramDriver.valueOf(name.toLowerCase());
-        } catch (IllegalArgumentException ignored) {}
+        } catch (IllegalArgumentException ignored) {
+        }
         return result;
     }
 }

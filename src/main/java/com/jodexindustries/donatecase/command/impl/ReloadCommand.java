@@ -29,14 +29,14 @@ public class ReloadCommand implements SubCommandExecutor, SubCommandTabCompleter
 
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        if(args.length == 0) {
+        if (args.length == 0) {
             Case.getInstance().loadConfig();
             Case.getInstance().loadCases();
-            if(Case.getInstance().hologramManager != null) Case.getInstance().hologramManager.removeAllHolograms();
+            if (Case.getInstance().hologramManager != null) Case.getInstance().hologramManager.removeAllHolograms();
             Case.getInstance().loadHolograms();
             Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("config-reloaded")));
         } else {
-            if(args[0].equalsIgnoreCase("cache")) {
+            if (args[0].equalsIgnoreCase("cache")) {
                 Case.cleanCache();
                 Case.getInstance().loadConfig();
                 Case.getInstance().loadCases();
@@ -48,7 +48,7 @@ public class ReloadCommand implements SubCommandExecutor, SubCommandTabCompleter
     @Override
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         List<String> list = new ArrayList<>();
-        if(args.length == 1) {
+        if (args.length == 1) {
             list.add("cache");
         }
         return list;

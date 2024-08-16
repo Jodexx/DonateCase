@@ -30,6 +30,7 @@ public class AddonManager {
 
     /**
      * Default constructor
+     *
      * @param addon An addon that will manage other addons
      */
     public AddonManager(Addon addon) {
@@ -54,6 +55,7 @@ public class AddonManager {
 
     /**
      * Load specific addon
+     *
      * @param file addon jar file
      * @return true, if successful
      */
@@ -116,6 +118,7 @@ public class AddonManager {
 
     /**
      * Enable all loaded addons
+     *
      * @since 2.2.4.3
      */
     @Deprecated
@@ -125,6 +128,7 @@ public class AddonManager {
 
     /**
      * Enable all loaded addons with reason
+     *
      * @param reason Loading reason
      * @since 2.2.4.3
      */
@@ -135,6 +139,7 @@ public class AddonManager {
 
     /**
      * Enable addon by name
+     *
      * @param addon addon name
      * @return true if successful
      */
@@ -145,18 +150,20 @@ public class AddonManager {
 
     /**
      * Enable addon by name with reason
-     * @param addon addon name
+     *
+     * @param addon  addon name
      * @param reason Enable reason
      * @return true if successful
      */
     public boolean enableAddon(@NotNull String addon, PowerReason reason) {
         InternalJavaAddon javaInternalAddon = addons.get(addon);
-        if(javaInternalAddon == null) return false;
+        if (javaInternalAddon == null) return false;
         return enableAddon(javaInternalAddon, reason);
     }
 
     /**
      * Enable addon by instance
+     *
      * @param addon addon name
      * @return true if successful
      */
@@ -167,7 +174,8 @@ public class AddonManager {
 
     /**
      * Enable addon by instance with reason
-     * @param addon addon instance
+     *
+     * @param addon  addon instance
      * @param reason Enable reason
      * @return true if successful
      */
@@ -190,6 +198,7 @@ public class AddonManager {
 
     /**
      * Disable addon by name
+     *
      * @param addon addon name
      * @return true if successful
      */
@@ -200,7 +209,8 @@ public class AddonManager {
 
     /**
      * Disable addon by name with reason
-     * @param addon addon name
+     *
+     * @param addon  addon name
      * @param reason Disable reason
      * @return true if successful
      */
@@ -212,6 +222,7 @@ public class AddonManager {
 
     /**
      * Disable addon by instance
+     *
      * @param addon addon instance
      * @return true if successful
      */
@@ -222,7 +233,8 @@ public class AddonManager {
 
     /**
      * Disable addon by instance with reason
-     * @param addon addon instance
+     *
+     * @param addon  addon instance
      * @param reason Disable reason
      * @return true if successful
      */
@@ -244,6 +256,7 @@ public class AddonManager {
 
     /**
      * Unload all loaded addons with reason
+     *
      * @param reason Unload reason
      * @since 2.2.4.3
      */
@@ -263,6 +276,7 @@ public class AddonManager {
 
     /**
      * Unload addon by name
+     *
      * @param addon addon name
      * @return true, if successful
      */
@@ -273,18 +287,20 @@ public class AddonManager {
 
     /**
      * Unload addon by name with reason
-     * @param addon addon name
+     *
+     * @param addon  addon name
      * @param reason Unload reason
      * @return true, if successful
      */
     public boolean unloadAddon(@NotNull String addon, PowerReason reason) {
         InternalJavaAddon javaInternalAddon = addons.get(addon);
-        if(javaInternalAddon == null) return false;
+        if (javaInternalAddon == null) return false;
         return unloadAddon(javaInternalAddon, reason);
     }
 
     /**
      * Unload addon by instance
+     *
      * @param addon addon instance
      * @return true, if successful
      */
@@ -295,7 +311,8 @@ public class AddonManager {
 
     /**
      * Unload addon by instance
-     * @param addon addon instance
+     *
+     * @param addon  addon instance
      * @param reason unloading reason
      * @return true, if successful
      */
@@ -314,6 +331,7 @@ public class AddonManager {
 
     /**
      * Get addon by name
+     *
      * @param addon addon name
      * @return addon
      */
@@ -324,6 +342,7 @@ public class AddonManager {
 
     /**
      * Gets "addons" folder
+     *
      * @return The folder
      * @since 2.2.4.3
      */
@@ -333,6 +352,7 @@ public class AddonManager {
 
     /**
      * Gets InternalAddonClassLoader
+     *
      * @param file Addon jar file
      * @return InternalAddon ClassLoader
      * @since 2.2.4.3
@@ -344,6 +364,7 @@ public class AddonManager {
 
     /**
      * Mirror method for {@link #addons} field
+     *
      * @return {@link #addons}
      */
     public static Collection<InternalJavaAddon> getAddons() {
@@ -354,7 +375,7 @@ public class AddonManager {
         LibraryManager manager = Case.getInstance().libraryManager;
         for (String lib : libraries) {
             String[] params = lib.split(":");
-            if(params.length == 3) {
+            if (params.length == 3) {
                 String groupId = params[0];
                 String artifactId = params[1];
                 String version = params[2];
@@ -375,7 +396,8 @@ public class AddonManager {
 
     /**
      * Gets main addon class loader
-     * @param name The binary name of the class
+     *
+     * @param name    The binary name of the class
      * @param resolve If {@code true} then resolve the class
      * @return The resulting {@code Class} object
      */
@@ -384,7 +406,8 @@ public class AddonManager {
         for (InternalAddonClassLoader loader : loaders) {
             try {
                 return loader.loadClass0(name, resolve, false);
-            } catch (ClassNotFoundException ignore) {}
+            } catch (ClassNotFoundException ignore) {
+            }
         }
         return null;
     }
@@ -402,4 +425,5 @@ public class AddonManager {
          */
         ADDON
     }
+
 }

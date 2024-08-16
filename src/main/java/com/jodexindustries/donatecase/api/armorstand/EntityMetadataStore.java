@@ -14,7 +14,7 @@ public class EntityMetadataStore extends MetadataStoreBase<UUID> implements Meta
     /**
      * Generates a unique metadata key for an {@link Entity} UUID.
      *
-     * @param uuid the entity uuid
+     * @param uuid        the entity uuid
      * @param metadataKey The name identifying the metadata value
      * @return a unique metadata key
      * @see MetadataStoreBase#disambiguate(Object, String)
@@ -23,5 +23,4 @@ public class EntityMetadataStore extends MetadataStoreBase<UUID> implements Meta
     protected @NotNull String disambiguate(@NotNull UUID uuid, @NotNull String metadataKey) {
         return uuid + ":" + metadataKey;
     }
-
 }

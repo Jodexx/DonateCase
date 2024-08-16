@@ -11,27 +11,31 @@ import java.util.List;
 public interface SubCommand {
     /**
      * Executes the given sub command
+     *
      * @param sender Source of the command
-     * @param args Passed command arguments
+     * @param args   Passed command arguments
      */
     void execute(CommandSender sender, String[] args);
 
     /**
      * Get command tab completions
+     *
      * @param sender Command sender
-     * @param args Command args
+     * @param args   Command args
      * @return tab completions
      */
     List<String> getTabCompletions(CommandSender sender, String[] args);
 
     /**
      * Get command type
+     *
      * @return command type
      */
     SubCommandType getType();
 
     /**
      * Get command arguments     *  to appear in the Command Description in /dc help
+     *
      * @return Command arguments
      */
     default String[] getArgs() {
@@ -41,6 +45,7 @@ public interface SubCommand {
     /**
      * Get command description
      * A description that should act as a description of the command in the /dc help
+     *
      * @return Command description
      */
     default String getDescription() {

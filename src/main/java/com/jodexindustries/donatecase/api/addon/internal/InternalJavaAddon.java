@@ -67,13 +67,16 @@ public abstract class InternalJavaAddon implements InternalAddon {
     }
 
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+    }
 
     @Override
-    public void onEnable() {}
+    public void onEnable() {
+    }
 
     @Override
-    public void onLoad() {}
+    public void onLoad() {
+    }
 
     @Override
     public @NotNull CaseManager getCaseAPI() {
@@ -88,7 +91,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
     @Override
     public @NotNull File getDataFolder() {
         File data = new File(getDonateCase().getDataFolder(), "addons/" + getDescription().getName());
-        if(!data.exists()) {
+        if (!data.exists()) {
             data.mkdir();
         }
         return data;

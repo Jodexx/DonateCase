@@ -9,20 +9,21 @@ public class PAPISupport {
     private Placeholder placeholder = null;
 
     public PAPISupport() {
-        if(Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) placeholder = new Placeholder();
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) placeholder = new Placeholder();
         Logger.log("&aHooked to &bPlaceholderAPI");
     }
 
     public void register() {
-        if(placeholder != null) placeholder.register();
+        if (placeholder != null) placeholder.register();
     }
 
     public void unregister() {
-        if(placeholder != null) placeholder.unregister();
+        if (placeholder != null) placeholder.unregister();
     }
 
     public String setPlaceholders(OfflinePlayer player, String text) {
-        if(placeholder != null) text = PlaceholderAPI.setPlaceholders(player, text);
+        if (placeholder != null) text = PlaceholderAPI.setPlaceholders(player, text);
         return text;
     }
+
 }

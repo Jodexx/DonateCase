@@ -13,6 +13,7 @@ public class DonateCaseEnableEvent extends PluginEvent {
 
     /**
      * Default constructor
+     *
      * @param plugin DonateCase instance
      */
     public DonateCaseEnableEvent(@NotNull Plugin plugin) {
@@ -27,6 +28,7 @@ public class DonateCaseEnableEvent extends PluginEvent {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {

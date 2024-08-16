@@ -38,7 +38,7 @@ public class EventsListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onAdminJoined(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         if (Case.getConfig().getConfig().getBoolean("DonateCase.UpdateChecker")) {
@@ -52,7 +52,7 @@ public class EventsListener implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void InventoryClick(InventoryClickEvent e) {
         UUID uuid = e.getWhoClicked().getUniqueId();
         if (Case.playersGui.containsKey(uuid)) {
@@ -87,14 +87,14 @@ public class EventsListener implements Listener {
     @EventHandler
     public void PlayerInteractEntity(PlayerInteractAtEntityEvent e) {
         Entity entity = e.getRightClicked();
-        if(entity instanceof ArmorStand) {
+        if (entity instanceof ArmorStand) {
             if (entity.hasMetadata("case")) {
                 e.setCancelled(true);
             }
         }
     }
 
-    @EventHandler (priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void PlayerInteract(PlayerInteractEvent e) {
         if (e.getHand() == EquipmentSlot.OFF_HAND) return;
         Player p = e.getPlayer();

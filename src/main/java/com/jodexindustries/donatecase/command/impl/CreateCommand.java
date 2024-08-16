@@ -32,7 +32,7 @@ public class CreateCommand implements SubCommandExecutor, SubCommandTabCompleter
 
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        if(sender instanceof Player) {
+        if (sender instanceof Player) {
             Player player = (Player) sender;
             Location l = player.getTargetBlock(null, 5).getLocation().setDirection(player.getLocation().getDirection());
             if (args.length >= 2) {
@@ -64,7 +64,7 @@ public class CreateCommand implements SubCommandExecutor, SubCommandTabCompleter
     @Override
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         List<String> list = new ArrayList<>(Case.getConfig().getCasesConfig().getCases().keySet());
-        if(args.length >= 2) {
+        if (args.length >= 2) {
             return new ArrayList<>();
         }
         return list;

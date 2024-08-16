@@ -13,6 +13,7 @@ public class AnimationUnregisteredEvent extends Event {
 
     /**
      * Default constructor
+     *
      * @param animationName Unregistered animation name
      */
     public AnimationUnregisteredEvent(String animationName) {
@@ -21,6 +22,7 @@ public class AnimationUnregisteredEvent extends Event {
 
     /**
      * Get animation name
+     *
      * @return animation name
      */
     public String getAnimationName() {
@@ -35,6 +37,7 @@ public class AnimationUnregisteredEvent extends Event {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {

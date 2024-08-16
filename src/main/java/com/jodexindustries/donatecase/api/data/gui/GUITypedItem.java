@@ -25,6 +25,7 @@ public class GUITypedItem {
 
     /**
      * Gets item id, like: HISTORY, OPEN
+     *
      * @return item id
      */
     @NotNull
@@ -34,6 +35,7 @@ public class GUITypedItem {
 
     /**
      * Gets item description
+     *
      * @return item description
      */
     @Nullable
@@ -43,6 +45,7 @@ public class GUITypedItem {
 
     /**
      * Gets addon which registered this item
+     *
      * @return item addon
      */
     @NotNull
@@ -52,6 +55,7 @@ public class GUITypedItem {
 
     /**
      * Gets item handler
+     *
      * @return item handler
      */
     @Nullable
@@ -61,6 +65,7 @@ public class GUITypedItem {
 
     /**
      * Gets item click handler
+     *
      * @return item click handler
      */
     @Nullable
@@ -70,6 +75,7 @@ public class GUITypedItem {
 
     /**
      * Set item description
+     *
      * @param description information about this item
      */
     public void setDescription(String description) {
@@ -78,6 +84,7 @@ public class GUITypedItem {
 
     /**
      * Set item handler
+     *
      * @param itemHandler handling item creating
      */
     public void setItemHandler(TypedItemHandler itemHandler) {
@@ -86,6 +93,7 @@ public class GUITypedItem {
 
     /**
      * Set item click handler
+     *
      * @param itemClickHandler handling click on item
      */
     public void setItemClickHandler(TypedItemClickHandler itemClickHandler) {
@@ -102,7 +110,8 @@ public class GUITypedItem {
 
         /**
          * Default constructor of this builder
-         * @param id Item id, like: HISTORY, OPEN
+         *
+         * @param id    Item id, like: HISTORY, OPEN
          * @param addon An addon that will register this item
          */
         public Builder(String id, Addon addon) {
@@ -112,6 +121,7 @@ public class GUITypedItem {
 
         /**
          * Set item handler
+         *
          * @param handler handling item creating
          * @return this builder
          */
@@ -122,6 +132,7 @@ public class GUITypedItem {
 
         /**
          * Set item click handler
+         *
          * @param clickHandler handling click on item
          * @return this builder
          */
@@ -132,6 +143,7 @@ public class GUITypedItem {
 
         /**
          * Set item description
+         *
          * @param description information about this item
          * @return this builder
          */
@@ -142,6 +154,7 @@ public class GUITypedItem {
 
         /**
          * Complete this builder
+         *
          * @return completed typed item object
          */
         public GUITypedItem build() {

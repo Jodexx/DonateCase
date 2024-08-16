@@ -19,10 +19,11 @@ public class CasesConfig {
 
     /**
      * Default initialization constructor
+     *
      * @param plugin Plugin object
      */
     public CasesConfig(Plugin plugin) {
-        if(getCasesInFolder().isEmpty())
+        if (getCasesInFolder().isEmpty())
             plugin.saveResource("cases/case.yml", false);
 
         for (File file : getCasesInFolder()) {
@@ -43,6 +44,7 @@ public class CasesConfig {
 
     /**
      * Check is file with .yml format
+     *
      * @param file File for checking
      * @return result
      */
@@ -52,6 +54,7 @@ public class CasesConfig {
 
     /**
      * Get file name without file format
+     *
      * @param file File for checking
      * @return File name without format
      */
@@ -135,13 +138,14 @@ public class CasesConfig {
 
     /**
      * Get list of files in cases folder
+     *
      * @return list of files
      */
     public static List<File> getCasesInFolder() {
         List<File> files = new ArrayList<>();
         File directory = new File(Case.getInstance().getDataFolder(), "cases");
         File[] array = directory.listFiles();
-        if(array != null) Collections.addAll(files, array);
+        if (array != null) Collections.addAll(files, array);
         return files;
     }
 
@@ -160,7 +164,7 @@ public class CasesConfig {
      * @param name Case type (file name without .yml)
      * @return case configuration
      */
-     public Pair<File, YamlConfiguration> getCase(String name) {
+    public Pair<File, YamlConfiguration> getCase(String name) {
         return cases.get(name);
-     }
+    }
 }

@@ -13,6 +13,7 @@ public class CaseActionUnregisteredEvent extends Event {
 
     /**
      * Default constructor
+     *
      * @param caseActionName Case action name
      */
     public CaseActionUnregisteredEvent(String caseActionName) {
@@ -21,6 +22,7 @@ public class CaseActionUnregisteredEvent extends Event {
 
     /**
      * Get CaseAction name
+     *
      * @return name
      */
     public String getCaseActionName() {
@@ -36,6 +38,7 @@ public class CaseActionUnregisteredEvent extends Event {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {

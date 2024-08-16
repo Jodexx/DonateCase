@@ -18,9 +18,10 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Default constructor
-     * @param who Player who opened
+     *
+     * @param who      Player who opened
      * @param caseType Case type
-     * @param block Case block
+     * @param block    Case block
      */
     public PreOpenCaseEvent(@NotNull final Player who, @NotNull final String caseType, Block block) {
         super(who);
@@ -28,8 +29,10 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
         this.block = block;
         cancel = false;
     }
+
     /**
      * Get case type (type from config)
+     *
      * @return case type
      */
     public String getCaseType() {
@@ -38,6 +41,7 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get case block
+     *
      * @return Case block
      */
     public Block getBlock() {
@@ -52,6 +56,7 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {

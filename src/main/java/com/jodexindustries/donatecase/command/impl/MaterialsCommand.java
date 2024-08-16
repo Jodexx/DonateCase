@@ -64,4 +64,5 @@ public class MaterialsCommand implements SubCommandExecutor, SubCommandTabComple
 
         return materialsMap;
     }
+
 }

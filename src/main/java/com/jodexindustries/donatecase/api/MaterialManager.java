@@ -21,6 +21,7 @@ public class MaterialManager {
 
     /**
      * Default constructor
+     *
      * @param addon An addon that will manage materials
      * @since 2.2.4.8
      */
@@ -30,13 +31,14 @@ public class MaterialManager {
 
     /**
      * Register case material
-     * @param id Material id, like: "BASE64"
+     *
+     * @param id              Material id, like: "BASE64"
      * @param materialHandler Material handler
-     * @param description Material description
+     * @param description     Material description
      * @since 2.2.4.8
      */
     public void registerMaterial(String id, MaterialHandler materialHandler, String description) {
-        if(!isRegistered(id)) {
+        if (!isRegistered(id)) {
             CaseMaterial caseMaterial = new CaseMaterial(materialHandler, addon, id, description);
             registeredMaterials.put(id, caseMaterial);
         } else {
@@ -46,11 +48,12 @@ public class MaterialManager {
 
     /**
      * Unregister case material
+     *
      * @param id Material id
      * @since 2.2.4.8
      */
     public void unregisterMaterial(String id) {
-        if(isRegistered(id)) {
+        if (isRegistered(id)) {
             registeredMaterials.remove(id);
         } else {
             addon.getLogger().warning("CaseMaterial with id " + id + " already unregistered!");
@@ -59,6 +62,7 @@ public class MaterialManager {
 
     /**
      * Unregister all case materials
+     *
      * @since 2.2.4.8
      */
     public void unregisterMaterials() {
@@ -68,6 +72,7 @@ public class MaterialManager {
 
     /**
      * Check for material registration
+     *
      * @param id material id
      * @return boolean
      * @since 2.2.4.8
@@ -78,6 +83,7 @@ public class MaterialManager {
 
     /**
      * Get all registered materials
+     *
      * @return map with registered materials
      * @since 2.2.4.8
      */
@@ -87,6 +93,7 @@ public class MaterialManager {
 
     /**
      * Get registered material
+     *
      * @param id CaseMaterial id
      * @return CaseMaterial object
      * @since 2.2.4.8
@@ -98,6 +105,7 @@ public class MaterialManager {
 
     /**
      * Get registered materials by string start
+     *
      * @param string String to be parsed
      * @return Case material id
      * @since 2.2.4.8
@@ -105,4 +113,5 @@ public class MaterialManager {
     public static @Nullable String getByStart(@NotNull final String string) {
         return registeredMaterials.keySet().stream().filter(string::startsWith).findFirst().orElse(null);
     }
+
 }

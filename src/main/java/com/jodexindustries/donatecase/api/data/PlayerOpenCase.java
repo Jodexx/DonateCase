@@ -10,7 +10,7 @@ public class PlayerOpenCase {
      */
     private final Location location;
     /**
-     *  Case data
+     * Case data
      */
     private final CaseData caseData;
     /**
@@ -20,9 +20,10 @@ public class PlayerOpenCase {
 
     /**
      * Default constructor
+     *
      * @param location Location of opened case
      * @param caseData Case data
-     * @param uuid Player UUID
+     * @param uuid     Player UUID
      */
     public PlayerOpenCase(Location location, CaseData caseData, UUID uuid) {
         this.location = location;
@@ -32,6 +33,7 @@ public class PlayerOpenCase {
 
     /**
      * Player UUID
+     *
      * @return UUID
      */
     public UUID getPlayerUUID() {
@@ -40,6 +42,7 @@ public class PlayerOpenCase {
 
     /**
      * Get case data
+     *
      * @return case data
      */
     public CaseData getCaseData() {
@@ -48,6 +51,7 @@ public class PlayerOpenCase {
 
     /**
      * Get case type
+     *
      * @return case type
      */
     @Deprecated
@@ -57,6 +61,7 @@ public class PlayerOpenCase {
 
     /**
      * Get location
+     *
      * @return location
      */
     public Location getLocation() {

@@ -14,6 +14,7 @@ public class SubCommandUnregisteredEvent extends Event {
 
     /**
      * Default constructor
+     *
      * @param subCommandName Sub command name
      */
     public SubCommandUnregisteredEvent(String subCommandName) {
@@ -28,6 +29,7 @@ public class SubCommandUnregisteredEvent extends Event {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {
@@ -36,6 +38,7 @@ public class SubCommandUnregisteredEvent extends Event {
 
     /**
      * Get subcommand name
+     *
      * @return subcommand name
      */
     public String getSubCommandName() {

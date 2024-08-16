@@ -11,7 +11,8 @@ public class Trio<A, B, C> {
         this.third = third;
     }
 
-    public Trio() {}
+    public Trio() {
+    }
 
     public A getFirst() {
         return first;
@@ -36,4 +37,5 @@ public class Trio<A, B, C> {
     public void setThird(C third) {
         this.third = third;
     }
+
 }

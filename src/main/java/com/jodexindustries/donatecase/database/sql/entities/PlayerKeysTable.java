@@ -11,6 +11,7 @@ public class PlayerKeysTable {
     private String caseType;
     @DatabaseField(canBeNull = false, defaultValue = "0")
     private int keys;
+
     public String getPlayer() {
         return player;
     }
@@ -34,4 +35,5 @@ public class PlayerKeysTable {
     public void setKeys(int keys) {
         this.keys = keys;
     }
+
 }

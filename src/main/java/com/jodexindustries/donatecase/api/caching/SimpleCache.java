@@ -15,6 +15,7 @@ public class SimpleCache<K, V> {
 
     /**
      * Default constructor
+     *
      * @param maxAge in ticks
      */
     public SimpleCache(long maxAge) {
@@ -24,6 +25,7 @@ public class SimpleCache<K, V> {
 
     /**
      * Get value from cache if not expired
+     *
      * @param key Key for getting
      * @return Cache value
      */
@@ -38,19 +40,21 @@ public class SimpleCache<K, V> {
 
     /**
      * Get previous value from cache map, if present
+     *
      * @param key Key for getting
      * @return Previous value
      */
     @Nullable
     public V getPrevious(K key) {
         CacheEntry<V> entry = cache.get(key);
-        if(entry == null) return null;
+        if (entry == null) return null;
         return entry.getValue();
     }
 
     /**
      * Put new value for key
-     * @param key Key for putting
+     *
+     * @param key   Key for putting
      * @param value Value for putting
      */
     public void put(K key, V value) {
@@ -59,6 +63,7 @@ public class SimpleCache<K, V> {
 
     /**
      * Setting max age of cache
+     *
      * @param maxAge in ticks
      */
     public void setMaxAge(long maxAge) {

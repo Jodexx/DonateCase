@@ -138,25 +138,25 @@ public class DonateCase extends JavaPlugin {
         api.getMaterialManager().unregisterMaterials();
         api.getGuiTypedItemManager().unregisterItems();
 
-        if(papi != null) papi.unregister();
-        if(mysql != null) mysql.close();
-        if(hologramManager != null) hologramManager.removeAllHolograms();
-        if(packetEventsSupport != null) packetEventsSupport.unload();
+        if (papi != null) papi.unregister();
+        if (mysql != null) mysql.close();
+        if (hologramManager != null) hologramManager.removeAllHolograms();
+        if (packetEventsSupport != null) packetEventsSupport.unload();
 
         Case.cleanCache();
     }
 
     private void loadPlaceholderAPI() {
-            try {
-                papi = new PAPISupport();
-                papi.register();
-            } catch (Throwable e) {
-                Logger.log("&cError hooking to &bPlaceholderAPI&c: " + e.getMessage());
-            }
+        try {
+            papi = new PAPISupport();
+            papi.register();
+        } catch (Throwable e) {
+            Logger.log("&cError hooking to &bPlaceholderAPI&c: " + e.getMessage());
+        }
     }
 
     private void loadPacketEventsAPI() {
-        if(getServer().getPluginManager().isPluginEnabled("packetevents")) {
+        if (getServer().getPluginManager().isPluginEnabled("packetevents")) {
             try {
                 packetEventsSupport = new PacketEventsSupport(this);
             } catch (Throwable e) {
@@ -176,7 +176,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadOraxenAPI() {
-        if(getServer().getPluginManager().isPluginEnabled("Oraxen")) {
+        if (getServer().getPluginManager().isPluginEnabled("Oraxen")) {
             try {
                 oraxenSupport = new OraxenSupport(this);
             } catch (Throwable e) {
@@ -196,7 +196,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadCustomHeadsAPI() {
-        if(getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
+        if (getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
             try {
                 customHeadsSupport = new CustomHeadsSupport();
             } catch (Throwable e) {
@@ -209,7 +209,7 @@ public class DonateCase extends JavaPlugin {
         if (config.getConfig().getBoolean("DonateCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
                 if (Tools.getPluginVersion(getDescription().getVersion()) < Tools.getPluginVersion(version)) {
-                    Logger.log(ChatColor.GREEN + "There is a new update " + version +  " available.");
+                    Logger.log(ChatColor.GREEN + "There is a new update " + version + " available.");
                     Logger.log(ChatColor.GREEN + "Download - https://www.spigotmc.org/resources/donatecase.106701/");
                 }
             });
@@ -234,7 +234,7 @@ public class DonateCase extends JavaPlugin {
 
     private void registerDefaultCommand() {
         PluginCommand command = getCommand("donatecase");
-        if(command != null) {
+        if (command != null) {
             command.setExecutor(new GlobalCommand());
             command.setTabCompleter(new GlobalCommand());
         }
@@ -330,11 +330,11 @@ public class DonateCase extends JavaPlugin {
         if (temp == PermissionDriver.luckperms && luckPerms != null) {
             permissionDriver = temp;
         }
-        if(permissionDriver != null) Logger.log("&aUsing &b" + permissionDriver + " &aas permission driver");
+        if (permissionDriver != null) Logger.log("&aUsing &b" + permissionDriver + " &aas permission driver");
     }
 
     private void loadVault() {
-        if(getServer().getPluginManager().isPluginEnabled("Vault")) {
+        if (getServer().getPluginManager().isPluginEnabled("Vault")) {
             RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
             if (permissionProvider != null) {
                 permission = permissionProvider.getProvider();
@@ -343,7 +343,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadLuckPerms() {
-        if(getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
+        if (getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
             RegisteredServiceProvider<LuckPerms> provider = getServer().getServicesManager().getRegistration(LuckPerms.class);
             if (provider != null) {
                 luckPerms = provider.getProvider();
@@ -357,7 +357,7 @@ public class DonateCase extends JavaPlugin {
 
         tryInitializeHologramManager(hologramDriver);
 
-        if(hologramManager == null) {
+        if (hologramManager == null) {
             for (HologramDriver fallbackDriver : HologramDriver.values()) {
                 if (tryInitializeHologramManager(fallbackDriver)) {
                     break;
@@ -365,7 +365,7 @@ public class DonateCase extends JavaPlugin {
             }
         }
 
-        if(hologramManager != null) Logger.log("&aUsing &b" + hologramDriver + " &aas hologram driver");
+        if (hologramManager != null) Logger.log("&aUsing &b" + hologramDriver + " &aas hologram driver");
     }
 
     private boolean tryInitializeHologramManager(HologramDriver driver) {
@@ -442,8 +442,8 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void disableSpawnProtection() {
-        if(config.getConfig().getBoolean("DonateCase.DisableSpawnProtection", false)) {
-            if(getServer().getSpawnRadius() > 0 && !spawnProtectionDisabled) {
+        if (config.getConfig().getBoolean("DonateCase.DisableSpawnProtection", false)) {
+            if (getServer().getSpawnRadius() > 0 && !spawnProtectionDisabled) {
                 getServer().setSpawnRadius(0);
                 spawnProtectionDisabled = true;
                 Logger.log("&aSpawn protection disabled!");
@@ -496,7 +496,7 @@ public class DonateCase extends JavaPlugin {
     public InputStream getResource(@NotNull String filename) {
 
         try {
-            URL url = getClassLoader().getResource("resources/" +  filename);
+            URL url = getClassLoader().getResource("resources/" + filename);
 
             if (url == null) {
                 return null;
@@ -509,4 +509,5 @@ public class DonateCase extends JavaPlugin {
             return null;
         }
     }
+
 }

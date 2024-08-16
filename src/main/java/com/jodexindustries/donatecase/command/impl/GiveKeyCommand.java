@@ -47,7 +47,7 @@ public class GiveKeyCommand implements SubCommandExecutor, SubCommandTabComplete
             }
             if (Case.hasCaseByType(caseName)) {
                 CaseData data = Case.getCase(caseName);
-                if(data == null) return;
+                if (data == null) return;
                 String caseTitle = data.getCaseTitle();
                 String caseDisplayName = data.getCaseDisplayName();
                 Case.addKeys(caseName, player, keys);

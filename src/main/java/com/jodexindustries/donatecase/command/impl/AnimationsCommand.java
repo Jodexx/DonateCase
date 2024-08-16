@@ -65,4 +65,5 @@ public class AnimationsCommand implements SubCommandExecutor, SubCommandTabCompl
         });
         return animationsMap;
     }
+
 }

@@ -11,6 +11,7 @@ public interface TypedItemClickHandler {
 
     /**
      * Called when the player clicks on an item in the case's GUI.
+     *
      * @param event called event
      */
     void onClick(@NotNull CaseGuiClickEvent event);

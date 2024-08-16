@@ -21,7 +21,9 @@ public class HistoryDataTable {
     private String group;
     @DatabaseField(columnName = "action")
     private String action;
-    public HistoryDataTable() {}
+
+    public HistoryDataTable() {
+    }
 
     public int getId() {
         return id;
@@ -78,4 +80,5 @@ public class HistoryDataTable {
     public void setAction(String action) {
         this.action = action;
     }
+
 }

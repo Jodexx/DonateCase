@@ -36,7 +36,6 @@ public class FullWheelAnimation extends JavaAnimation {
         getWinItem().getMaterial().setDisplayName(winGroupDisplayName);
 
 
-
         armorStandEulerAngle = Tools.getArmorStandEulerAngle("FullWheel.Pose");
 
         boolean needSound = Case.getConfig().getAnimations().getString("FullWheel.Scroll.Sound") != null;
@@ -62,7 +61,7 @@ public class FullWheelAnimation extends JavaAnimation {
 
         // another groups
         for (String itemName : getCaseData().getItems().keySet()) {
-            if(itemName.equalsIgnoreCase(getWinItem().getItemName())) continue;
+            if (itemName.equalsIgnoreCase(getWinItem().getItemName())) continue;
             CaseData.Item item = getCaseData().getItem(itemName);
             String displayName = item.getMaterial().getDisplayName();
             item.getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(getPlayer(), displayName));
@@ -136,9 +135,10 @@ public class FullWheelAnimation extends JavaAnimation {
                 items.clear();
                 armorStands.clear();
             }
-                speedAx[0] *= 1 - speed / (animationTime - 2);
+            speedAx[0] *= 1 - speed / (animationTime - 2);
         }, 0L, 0L);
     }
+
     private ArmorStandCreator spawnArmorStand(CaseData c, Location location, int index, boolean small) {
         CaseData.Item item = c.getItem(items.get(index));
         ArmorStandCreator as = Tools.createArmorStand(location);
@@ -149,9 +149,10 @@ public class FullWheelAnimation extends JavaAnimation {
         as.setCustomName(item.getMaterial().getDisplayName());
         as.setCustomNameVisible(true);
         as.spawn();
-        if(item.getMaterial().getItemStack().getType() != Material.AIR) {
+        if (item.getMaterial().getItemStack().getType() != Material.AIR) {
             as.setEquipment(itemSlot, item.getMaterial().getItemStack());
         }
         return as;
     }
+
 }

@@ -15,8 +15,9 @@ public class DonateCaseReloadEvent extends PluginEvent {
 
     /**
      * Default constructor
+     *
      * @param plugin DonateCase instance
-     * @param type Reload type
+     * @param type   Reload type
      */
     public DonateCaseReloadEvent(@NotNull Plugin plugin, Type type) {
         super(plugin);
@@ -28,8 +29,10 @@ public class DonateCaseReloadEvent extends PluginEvent {
     public HandlerList getHandlers() {
         return handlers;
     }
+
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {
@@ -38,6 +41,7 @@ public class DonateCaseReloadEvent extends PluginEvent {
 
     /**
      * Get reload Type
+     *
      * @return CONFIG or CASES
      * @since 2.2.4.4
      */

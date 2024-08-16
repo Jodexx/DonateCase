@@ -1151,6 +1151,7 @@ public class CaseData implements Cloneable {
 
         /**
          * Get open type
+         *
          * @param type string
          * @return open type, if null, return GUI
          */
@@ -1158,7 +1159,8 @@ public class CaseData implements Cloneable {
         public static OpenType getOpenType(@NotNull String type) {
             try {
                 return valueOf(type.toUpperCase());
-            } catch (IllegalArgumentException ignored) {}
+            } catch (IllegalArgumentException ignored) {
+            }
             return GUI;
         }
     }

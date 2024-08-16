@@ -20,11 +20,12 @@ public class AnimationEndEvent extends Event {
 
     /**
      * Default constructor
-     * @param who Player, who opened case
+     *
+     * @param who       Player, who opened case
      * @param animation Case animation
-     * @param caseData Case data
-     * @param location Case location (or another, where animation was ended)
-     * @param winItem Player prize
+     * @param caseData  Case data
+     * @param location  Case location (or another, where animation was ended)
+     * @param winItem   Player prize
      */
     public AnimationEndEvent(@NotNull OfflinePlayer who, String animation, CaseData caseData, Location location, CaseData.Item winItem) {
         this.player = who;
@@ -36,6 +37,7 @@ public class AnimationEndEvent extends Event {
 
     /**
      * Get case location
+     *
      * @return case location
      */
     @NotNull
@@ -45,22 +47,27 @@ public class AnimationEndEvent extends Event {
 
     /**
      * Get case data
+     *
      * @return case data
      */
     @NotNull
     public CaseData getCaseData() {
         return caseData;
     }
+
     /**
      * Get case animation
+     *
      * @return case animation
      */
     @NotNull
     public String getAnimation() {
         return animation;
     }
+
     /**
      * Get the win item
+     *
      * @return win item
      */
     @NotNull
@@ -76,6 +83,7 @@ public class AnimationEndEvent extends Event {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {
@@ -84,6 +92,7 @@ public class AnimationEndEvent extends Event {
 
     /**
      * Get who opened
+     *
      * @return player
      */
     public OfflinePlayer getPlayer() {

@@ -31,9 +31,9 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
         CaseData caseData = e.getCaseData();
         String caseType = caseData.getCaseType();
 
-        if(itemType.contains("_")) {
+        if (itemType.contains("_")) {
             String[] parts = itemType.split("_");
-            if(parts.length >= 2) caseType = parts[1];
+            if (parts.length >= 2) caseType = parts[1];
         }
 
         PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, location.getBlock());
@@ -56,4 +56,5 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
             Case.executeActions(player, caseData.getNoKeyActions());
         }
     }
+
 }

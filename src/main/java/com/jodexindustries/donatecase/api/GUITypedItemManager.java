@@ -20,8 +20,9 @@ public class GUITypedItemManager {
 
     /**
      * Default constructor
-     * @since 2.2.4.9
+     *
      * @param addon An addon that will manage items
+     * @since 2.2.4.9
      */
     public GUITypedItemManager(Addon addon) {
         this.addon = addon;
@@ -29,9 +30,10 @@ public class GUITypedItemManager {
 
     /**
      * Gets Builder for creating GUI typed item
+     *
      * @param id Typed item id to create
-     * @see #registerItem(GUITypedItem)
      * @return GUITypedItem Builder
+     * @see #registerItem(GUITypedItem)
      * @since 2.2.4.9
      */
     @NotNull
@@ -41,14 +43,15 @@ public class GUITypedItemManager {
 
     /**
      * Register GUI typed item
-     * @see #builder(String)
-     * @since 2.2.4.9
+     *
      * @param item GUITypedItem object
      * @return true, if successful
+     * @see #builder(String)
+     * @since 2.2.4.9
      */
     public boolean registerItem(GUITypedItem item) {
         String id = item.getId().toLowerCase();
-        if(registeredItems.get(id) == null) {
+        if (registeredItems.get(id) == null) {
             registeredItems.put(id, item);
             return true;
         } else {
@@ -60,11 +63,12 @@ public class GUITypedItemManager {
 
     /**
      * Unregister GUI typed item
+     *
      * @param id Item id
      * @since 2.2.4.9
      */
     public void unregisterItem(String id) {
-        if(registeredItems.get(id) != null) {
+        if (registeredItems.get(id) != null) {
             registeredItems.remove(id);
         } else {
             addon.getLogger().warning("Typed item " + id + " not registered!");
@@ -73,6 +77,7 @@ public class GUITypedItemManager {
 
     /**
      * Unregister all typed items
+     *
      * @since 2.2.4.9
      */
     public void unregisterItems() {
@@ -82,6 +87,7 @@ public class GUITypedItemManager {
 
     /**
      * Get all registered items
+     *
      * @return Map of typed items
      * @since 2.2.4.9
      */
@@ -91,6 +97,7 @@ public class GUITypedItemManager {
 
     /**
      * Get registered item
+     *
      * @param id GUITypedItem id
      * @return GUITypedItem object
      * @since 2.2.4.9
@@ -102,6 +109,7 @@ public class GUITypedItemManager {
 
     /**
      * Get registered item by string start
+     *
      * @param string String to be parsed
      * @return GUITypedItem id
      * @since 2.2.4.9
@@ -109,4 +117,5 @@ public class GUITypedItemManager {
     public static @Nullable String getByStart(@NotNull final String string) {
         return registeredItems.keySet().stream().filter(string.toLowerCase()::startsWith).findFirst().orElse(null);
     }
+
 }

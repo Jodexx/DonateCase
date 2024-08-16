@@ -242,4 +242,5 @@ public final class ProbabilityCollection<E> {
             return this.index;
         }
     }
+
 }

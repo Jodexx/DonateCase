@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GUI implements Cloneable{
+public class GUI implements Cloneable {
     private int size;
     private Map<String, Item> items;
 
@@ -35,7 +35,7 @@ public class GUI implements Cloneable{
     @Nullable
     public String getItemTypeBySlot(int slot) {
         for (GUI.Item item : items.values()) {
-            if(item.getSlots().contains(slot)) return item.getType();
+            if (item.getSlots().contains(slot)) return item.getType();
         }
         return null;
     }
@@ -112,8 +112,8 @@ public class GUI implements Cloneable{
         }
 
         /**
-         * @deprecated Use {@link CaseData.Item.Material#getModelData()}
          * @return item model data
+         * @deprecated Use {@link CaseData.Item.Material#getModelData()}
          */
         @Deprecated
         public int getModelData() {

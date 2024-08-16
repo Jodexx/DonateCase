@@ -24,22 +24,23 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String @NotNull [] args) {
-            if (args.length == 0) {
+        if (args.length == 0) {
+            sendHelp(sender, label);
+        } else {
+            String subCommandName = args[0];
+            SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
+
+            if (subCommand == null) {
                 sendHelp(sender, label);
-            } else {
-                String subCommandName = args[0];
-                SubCommand subCommand = SubCommandManager.getSubCommands().get(subCommandName);
-
-                if (subCommand == null) {
-                    sendHelp(sender, label);
-                    return false;
-                }
-
-                SubCommandType type = subCommand.getType();
-
-                if(type == null || type.hasPermission(sender)) subCommand.execute(sender, label, Arrays.copyOfRange(args, 1, args.length));
-                else Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
+                return false;
             }
+
+            SubCommandType type = subCommand.getType();
+
+            if (type == null || type.hasPermission(sender))
+                subCommand.execute(sender, label, Arrays.copyOfRange(args, 1, args.length));
+            else Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
+        }
 
         return true;
     }
@@ -157,6 +158,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
     /**
      * This method used in SetKeyCommand, DelKeyCommand and GiveKeyCommand classes
      * Not for API usable
+     *
      * @param args tab completion args
      * @return list of completions
      */
@@ -177,6 +179,4 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         }
         return list;
     }
-
-
 }

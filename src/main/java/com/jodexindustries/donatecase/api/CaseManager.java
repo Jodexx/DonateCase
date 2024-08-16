@@ -23,6 +23,7 @@ public class CaseManager {
 
     /**
      * Constructor for initializing addon's CaseManager
+     *
      * @param addon Internal addon
      */
     public CaseManager(@NotNull Addon addon) {
@@ -37,6 +38,7 @@ public class CaseManager {
 
     /**
      * Constructor for initializing addon's CaseManager
+     *
      * @param plugin External addon
      */
     public CaseManager(@NotNull Plugin plugin) {
@@ -51,6 +53,7 @@ public class CaseManager {
 
     /**
      * Get plugin instance
+     *
      * @return DonateCase instance
      */
     @NotNull
@@ -60,6 +63,7 @@ public class CaseManager {
 
     /**
      * Get addon manager for addons manipulate
+     *
      * @return AddonManager instance
      */
     @NotNull
@@ -69,6 +73,7 @@ public class CaseManager {
 
     /**
      * Get animation manager for animations manipulate
+     *
      * @return AnimationManager instance
      */
     @NotNull
@@ -78,6 +83,7 @@ public class CaseManager {
 
     /**
      * Get sub command manager
+     *
      * @return SubCommandManager instance
      */
     @NotNull
@@ -87,6 +93,7 @@ public class CaseManager {
 
     /**
      * Get hologram manager
+     *
      * @return HologramManager instance
      */
     @Nullable
@@ -96,6 +103,7 @@ public class CaseManager {
 
     /**
      * Get case action manager
+     *
      * @return ActionManager instance
      */
     @NotNull
@@ -105,6 +113,7 @@ public class CaseManager {
 
     /**
      * Get case material manager
+     *
      * @return MaterialManager instance
      * @since 2.2.4.8
      */
@@ -115,6 +124,7 @@ public class CaseManager {
 
     /**
      * Get GUI typed item manager
+     *
      * @return GUITypedItemManager instance
      * @since 2.2.4.9
      */
@@ -126,10 +136,12 @@ public class CaseManager {
     /**
      * Get addon object
      * Can be cast to Addon from DonateCase if it's really loaded addon by DonateCase
+     *
      * @return Addon object
      */
     @NotNull
     public Addon getAddon() {
         return addon;
     }
+
 }

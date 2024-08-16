@@ -39,7 +39,7 @@ public class DeleteCommand implements SubCommandExecutor, SubCommandTabCompleter
                 Location l = player.getTargetBlock(null, 5).getLocation();
                 String customName = Case.getCaseCustomNameByLocation(l);
                 if (customName != null) {
-                    if(!Case.activeCasesByLocation.containsKey(l)) {
+                    if (!Case.activeCasesByLocation.containsKey(l)) {
                         Case.deleteCaseByName(customName);
                         if (CaseManager.getHologramManager() != null)
                             CaseManager.getHologramManager().removeHologram(l.getBlock());
@@ -55,7 +55,7 @@ public class DeleteCommand implements SubCommandExecutor, SubCommandTabCompleter
             String name = args[0];
             Location location = Case.getCaseLocationByCustomName(name);
             if (location != null) {
-                if(!Case.activeCasesByLocation.containsKey(location)) {
+                if (!Case.activeCasesByLocation.containsKey(location)) {
                     if (CaseManager.getHologramManager() != null)
                         CaseManager.getHologramManager().removeHologram(location.getBlock());
 

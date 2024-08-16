@@ -17,10 +17,11 @@ public class AnimationRegisteredEvent extends Event {
 
     /**
      * Default constructor
-     * @param animationName Animation name
-     * @param animationClass Animation class
+     *
+     * @param animationName      Animation name
+     * @param animationClass     Animation class
      * @param animationAddonName Animation addon name
-     * @param isDefault Is default?
+     * @param isDefault          Is default?
      */
     public AnimationRegisteredEvent(String animationName, Class<? extends IAnimation> animationClass, String animationAddonName, boolean isDefault) {
         this.animationName = animationName;
@@ -31,6 +32,7 @@ public class AnimationRegisteredEvent extends Event {
 
     /**
      * Get animation name
+     *
      * @return animation name
      */
     public String getAnimationName() {
@@ -39,6 +41,7 @@ public class AnimationRegisteredEvent extends Event {
 
     /**
      * Get animation addon name
+     *
      * @return animation addon name
      */
     public String getAnimationAddonName() {
@@ -47,6 +50,7 @@ public class AnimationRegisteredEvent extends Event {
 
     /**
      * Get if this animation is default
+     *
      * @return boolean
      */
     public boolean isDefault() {
@@ -70,6 +74,7 @@ public class AnimationRegisteredEvent extends Event {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {

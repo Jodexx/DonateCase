@@ -12,32 +12,49 @@ import java.util.UUID;
 
 public interface ArmorStandCreator extends Metadatable {
     void setVisible(boolean isVisible);
+
     void setCustomName(String displayName);
+
     void teleport(Location location);
+
     @Deprecated
     void setHelmet(ItemStack item);
+
     void setEquipment(EquipmentSlot equipmentSlot, ItemStack item);
+
     void setAngle(ArmorStandEulerAngle angle);
+
     void setRotation(float yaw, float pitch);
+
     void setHeadPose(EulerAngle eulerAngle);
+
     void setGravity(boolean hasGravity);
+
     void setSmall(boolean small);
+
     void setMarker(boolean marker);
+
     void setGlowing(boolean glowing);
 
     /**
      * Only with LivingEntity (not packet)
+     *
      * @param collidable Set collidable
      */
     void setCollidable(boolean collidable);
+
     void setCustomNameVisible(boolean flag);
+
     Location getLocation();
+
     @NotNull
     UUID getUniqueId();
+
     boolean isPacket();
 
     /**
      * Only for LivingEntity (not packet)
+     *
      * @return ArmorStand object
      */
     ArmorStand getArmorStand();
@@ -45,8 +62,11 @@ public interface ArmorStandCreator extends Metadatable {
     /**
      * Used for PacketArmorStandCreator
      */
-    default void spawn() {}
-    default void updateMeta() {}
+    default void spawn() {
+    }
+
+    default void updateMeta() {
+    }
 
     void remove();
 }

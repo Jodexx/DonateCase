@@ -27,6 +27,7 @@ public class YamlData {
 
     /**
      * Get HistoryData array from Data.yml
+     *
      * @param caseType Case type for history retrieve
      * @return Array of HistoryData
      */
@@ -61,8 +62,9 @@ public class YamlData {
 
     /**
      * Set HistoryData for specific case with index
-     * @param caseType Case type
-     * @param index History index (0-9)
+     *
+     * @param caseType    Case type
+     * @param index       History index (0-9)
      * @param historyData Case History
      */
     public void setHistoryData(String caseType, int index, CaseData.HistoryData historyData) {
@@ -76,7 +78,8 @@ public class YamlData {
 
     /**
      * Get count of opened cases by player
-     * @param player Player who opened
+     *
+     * @param player   Player who opened
      * @param caseType Case type
      * @return opened count
      */
@@ -86,8 +89,9 @@ public class YamlData {
 
     /**
      * Set count of case opens by player
-     * @param player Player who opened
-     * @param caseType Case type
+     *
+     * @param player    Player who opened
+     * @param caseType  Case type
      * @param openCount Open count
      */
     public void setOpenCount(String player, String caseType, int openCount) {
@@ -97,6 +101,7 @@ public class YamlData {
 
     /**
      * Get Configuration
+     *
      * @return Bukkit YamlConfiguration class
      */
     public YamlConfiguration get() {
@@ -114,4 +119,5 @@ public class YamlData {
         }
 
     }
+
 }

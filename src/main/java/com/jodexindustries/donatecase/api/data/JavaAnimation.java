@@ -14,7 +14,7 @@ public abstract class JavaAnimation implements IAnimation {
 
     /**
      * @param player   Player who opened case
-     * @param uuid Active case uuid
+     * @param uuid     Active case uuid
      * @param location Case location
      * @param caseData Case data
      * @param winItem  winItem

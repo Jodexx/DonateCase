@@ -142,7 +142,8 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
     }
 
     @Override
-    public void setCollidable(boolean collidable) {}
+    public void setCollidable(boolean collidable) {
+    }
 
     @Override
     public void setCustomNameVisible(boolean flag) {

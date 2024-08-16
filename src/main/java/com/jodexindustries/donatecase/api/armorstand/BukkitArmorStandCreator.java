@@ -90,16 +90,17 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
     public void teleport(Location location) {
         entity.teleport(location);
     }
+
     @Override
     public void setHelmet(ItemStack item) {
         EntityEquipment equipment = entity.getEquipment();
-        if(equipment != null) equipment.setHelmet(item);
+        if (equipment != null) equipment.setHelmet(item);
     }
 
     @Override
     public void setEquipment(EquipmentSlot equipmentSlot, ItemStack item) {
         EntityEquipment equipment = entity.getEquipment();
-        if(equipment != null) {
+        if (equipment != null) {
             switch (equipmentSlot) {
                 case HAND:
                     equipment.setItemInMainHand(item);

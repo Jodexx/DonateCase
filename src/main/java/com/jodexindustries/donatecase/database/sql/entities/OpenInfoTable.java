@@ -44,4 +44,5 @@ public class OpenInfoTable {
                 ", count=" + count +
                 '}';
     }
+
 }

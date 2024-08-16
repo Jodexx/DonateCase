@@ -15,9 +15,10 @@ public class CaseAction implements ActionExecutor {
 
     /**
      * Default constructor
-     * @param executor Action executor
-     * @param addon Action addon
-     * @param name Action name
+     *
+     * @param executor    Action executor
+     * @param addon       Action addon
+     * @param name        Action name
      * @param description Action description
      */
     public CaseAction(ActionExecutor executor, Addon addon, String name, String description) {
@@ -35,6 +36,7 @@ public class CaseAction implements ActionExecutor {
 
     /**
      * Gets addon which registered this action
+     *
      * @return addon action
      */
     public Addon getAddon() {
@@ -43,6 +45,7 @@ public class CaseAction implements ActionExecutor {
 
     /**
      * Gets action description
+     *
      * @return action description
      */
     public String getDescription() {
@@ -51,6 +54,7 @@ public class CaseAction implements ActionExecutor {
 
     /**
      * Gets action name
+     *
      * @return action name
      */
     public String getName() {

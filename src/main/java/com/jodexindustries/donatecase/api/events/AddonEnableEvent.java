@@ -18,7 +18,8 @@ public class AddonEnableEvent extends Event {
 
     /**
      * Default constructor
-     * @param addon Internal DonateCase addon
+     *
+     * @param addon  Internal DonateCase addon
      * @param caused Which addon caused the enabling
      */
     public AddonEnableEvent(InternalAddon addon, Addon caused) {
@@ -29,7 +30,8 @@ public class AddonEnableEvent extends Event {
 
     /**
      * Constructor with power reason
-     * @param addon Internal DonateCase addon
+     *
+     * @param addon  Internal DonateCase addon
      * @param caused Which addon caused the enabling
      * @param reason Power reason
      */
@@ -47,6 +49,7 @@ public class AddonEnableEvent extends Event {
 
     /**
      * Get handlers
+     *
      * @return handlers list
      */
     public static HandlerList getHandlerList() {
@@ -55,6 +58,7 @@ public class AddonEnableEvent extends Event {
 
     /**
      * Get addon object
+     *
      * @return Addon object
      */
     public InternalAddon getAddon() {
@@ -63,6 +67,7 @@ public class AddonEnableEvent extends Event {
 
     /**
      * Get addon power reason
+     *
      * @return Power reason
      */
     public AddonManager.PowerReason getReason() {
@@ -71,6 +76,7 @@ public class AddonEnableEvent extends Event {
 
     /**
      * Get the addon that caused the enabling
+     *
      * @return Caused addon
      */
     public Addon getCaused() {

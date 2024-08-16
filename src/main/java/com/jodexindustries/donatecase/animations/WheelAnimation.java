@@ -63,7 +63,7 @@ public class WheelAnimation extends JavaAnimation {
 
         Bukkit.getScheduler().runTaskTimer(Case.getInstance(), (task) -> {
             ticks.getAndIncrement();
-            double angle = ticks.get() / (20.0 * (animationTime / 100D) ) * speedAx[0] * 2 * Math.PI;
+            double angle = ticks.get() / (20.0 * (animationTime / 100D)) * speedAx[0] * 2 * Math.PI;
 
             if (ticks.get() < animationTime + 1) {
                 // flame
@@ -117,10 +117,11 @@ public class WheelAnimation extends JavaAnimation {
                 armorStands.clear();
             }
             if (ticks.get() < animationTime + 1) {
-                speedAx[0] *= 1 - (speed / (animationTime - 2) );
+                speedAx[0] *= 1 - (speed / (animationTime - 2));
             }
-            }, 0L, 0L);
-        }
+        }, 0L, 0L);
+    }
+
     private ArmorStandCreator spawnArmorStand(Location location, int index, boolean small) {
         CaseData.Item item = items.get(index);
         ArmorStandCreator as = Tools.createArmorStand(location);
@@ -131,9 +132,10 @@ public class WheelAnimation extends JavaAnimation {
         as.setCustomName(item.getMaterial().getDisplayName());
         as.setCustomNameVisible(true);
         as.spawn();
-        if(item.getMaterial().getItemStack().getType() != Material.AIR) {
+        if (item.getMaterial().getItemStack().getType() != Material.AIR) {
             as.setEquipment(itemSlot, items.get(index).getMaterial().getItemStack());
         }
         return as;
     }
+
 }
