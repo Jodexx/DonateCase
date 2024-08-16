@@ -11,7 +11,8 @@ DonateCase:
     DataBase: 'nameDataBase'
     User: 'root'
     Password: 'password'
-  Languages: en #ru/en/ua
+  # en_US, es_ES, ru_RU, ua_UA
+  Languages: en_US
   HologramDriver: DecentHolograms # CMI, DecentHolograms or HolographicDisplays
   PermissionDriver: luckperms # luckperms or vault
   # Only if Vault enabled

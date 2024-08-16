@@ -5,9 +5,12 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.database.yaml.YamlData;
 import com.jodexindustries.donatecase.tools.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -17,24 +20,19 @@ public class Config {
 
     private final DonateCase plugin;
 
-    private final File fileCases;
-    private final File fileKeys;
-    private final File fileConfig;
-    private final File fileAnimations;
     private File fileLang;
     private final YamlConfiguration lang;
-    private final YamlConfiguration cases;
-    private final YamlConfiguration keys;
-    private final YamlConfiguration config;
-    private final YamlConfiguration animations;
 
     private final CasesConfig casesConfig;
     private final YamlData data;
+
+    private final Map<File, YamlConfiguration> configs = new HashMap<>();
 
     private final Converter converter;
 
     /**
      * Default initialization constructor
+     *
      * @param plugin Plugin object
      */
     public Config(DonateCase plugin) {
@@ -47,23 +45,28 @@ public class Config {
                 "Keys.yml",
                 "Animations.yml",
                 "Data.yml",
-                "lang/ru_RU.yml",
-                "lang/en_US.yml",
-                "lang/ua_UA.yml"
         };
+
 
         for (String file : files) {
             checkAndCreateFile(file);
         }
 
-        fileAnimations = new File(Case.getInstance().getDataFolder(), "Animations.yml");
-        animations = YamlConfiguration.loadConfiguration(fileAnimations);
-        fileCases = new File(Case.getInstance().getDataFolder(), "Cases.yml");
-        cases = YamlConfiguration.loadConfiguration(fileCases);
-        fileKeys = new File(Case.getInstance().getDataFolder(), "Keys.yml");
-        keys = YamlConfiguration.loadConfiguration(fileKeys);
-        fileConfig = new File(Case.getInstance().getDataFolder(), "Config.yml");
-        config = YamlConfiguration.loadConfiguration(fileConfig);
+        File fileAnimations = new File(plugin.getDataFolder(), "Animations.yml");
+        YamlConfiguration animations = YamlConfiguration.loadConfiguration(fileAnimations);
+        configs.put(fileAnimations, animations);
+
+        File fileCases = new File(plugin.getDataFolder(), "Cases.yml");
+        YamlConfiguration cases = YamlConfiguration.loadConfiguration(fileCases);
+        configs.put(fileCases, cases);
+
+        File fileKeys = new File(plugin.getDataFolder(), "Keys.yml");
+        YamlConfiguration keys = YamlConfiguration.loadConfiguration(fileKeys);
+        configs.put(fileKeys, keys);
+
+        File fileConfig = new File(plugin.getDataFolder(), "Config.yml");
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(fileConfig);
+        configs.put(fileConfig, config);
 
         checkAndUpdateConfig(config, "Config.yml", "2.5");
         checkAndUpdateConfig(animations, "Animations.yml", "1.3");
@@ -78,27 +81,41 @@ public class Config {
 
         data = new YamlData();
 
-        File path = new File(Case.getInstance().getDataFolder(), "lang");
-        File[] listFiles = path.listFiles();
+        File langFolder = new File(plugin.getDataFolder(), "lang");
+        File[] listFiles = langFolder.listFiles();
+        File defaultLangFile = new File(langFolder, "en_US.yml");
+        checkAndCreateFile("lang/en_US.yml");
 
-        File defaultLang = new File(path, "en_US.yml");
+        String configLang = getConfig().getString("DonateCase.Languages", "en_US");
 
-        if(listFiles == null) {
-            fileLang = defaultLang;
-            lang = YamlConfiguration.loadConfiguration(defaultLang);
-            return;
-        }
+        if (listFiles == null || listFiles.length == 0) {
+            fileLang = defaultLangFile;
+            plugin.getLogger().info("Lang folder is empty! Using default en_US language");
+        } else {
+            for (File file : listFiles) {
+                String fileName = file.getName().toLowerCase();
 
-        String lang = getConfig().getString("DonateCase.Languages");
+                if (fileName.equalsIgnoreCase(configLang + ".yml") ||
+                        fileName.split("_")[0].equalsIgnoreCase(configLang)) {
+                    fileLang = file;
+                    break;
+                }
+            }
 
-        for (File file : listFiles) {
-            if (file.getName().toLowerCase().split("_")[0].equalsIgnoreCase(lang)) {
-                this.fileLang = file;
-                break;
+            if (fileLang == null) {
+                String langFilePath = "lang/" + configLang + ".yml";
+                if (plugin.getResource(langFilePath) != null) plugin.saveResource(langFilePath, false);
+                fileLang = new File(plugin.getDataFolder(), langFilePath);
+
+                if (!fileLang.exists()) {
+                    fileLang = defaultLangFile;
+                    plugin.getLogger().warning("Lang file: " + configLang + " not found! Using default en_US language");
+                }
             }
         }
 
         this.lang = YamlConfiguration.loadConfiguration(fileLang);
+
         checkLanguageVersion();
 
         // Convert after language file loaded
@@ -106,56 +123,66 @@ public class Config {
         converter.convertOpenType();
 
         long caching = getConfig().getLong("DonateCase.Caching");
-        if(caching > 0) {
+        if (caching > 0) {
             Case.keysCache.setMaxAge(caching);
             Case.openCache.setMaxAge(caching);
         }
+    }
+
+    @Nullable
+    public YamlConfiguration get(@NotNull File file) {
+        return configs.get(file);
+    }
+
+    @Nullable
+    public YamlConfiguration get(@NotNull String name) {
+        return configs.get(new File(plugin.getDataFolder(), name));
+    }
+
+    public boolean save(String name) {
+        return save(new File(plugin.getDataFolder(), name));
+    }
+
+    public boolean save(File file) {
+        String name = file.getName();
+        YamlConfiguration configuration = configs.get(file);
+        if (configuration == null) return false;
+
+        try {
+            configuration.save(file);
+            return true;
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.WARNING, "Couldn't save " + name);
+        }
+        return false;
     }
 
     /**
      * Save Cases.yml configuration
      */
     public void saveCases() {
-        try {
-            cases.save(fileCases);
-        } catch (IOException var1) {
-            Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Cases.yml");
-        }
-
+        save("Cases.yml");
     }
 
     /**
      * Save Config.yml configuration
      */
     public void saveConfig() {
-        try {
-            config.save(fileConfig);
-        } catch (IOException var1) {
-            Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Config.yml");
-        }
+        save("Config.yml");
     }
 
     /**
      * Save Keys.yml configuration
      */
     public void saveKeys() {
-        try {
-            keys.save(fileKeys);
-        } catch (IOException var1) {
-            Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Keys.yml");
-        }
+        save("Keys.yml");
     }
 
     /**
      * Save Animations.yml configuration
      */
     public void saveAnimations() {
-        try {
-            animations.save(fileAnimations);
-        } catch (IOException var1) {
-            Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save Animations.yml");
-        }
-
+        save("Animations.yml");
     }
 
     /**
@@ -165,7 +192,7 @@ public class Config {
         try {
             lang.save(fileLang);
         } catch (IOException ignored) {
-            Case.getInstance().getLogger().log(Level.WARNING, "Couldn't save " + fileLang.getName());
+            plugin.getLogger().log(Level.WARNING, "Couldn't save " + fileLang.getName());
         }
     }
 
@@ -183,19 +210,22 @@ public class Config {
     }
 
     private void checkConvertCases() {
-        if(config.getConfigurationSection("DonateCase.Cases") != null) {
+        YamlConfiguration configuration = getConfig();
+        if (configuration.getConfigurationSection("DonateCase.Cases") != null) {
             new File(plugin.getDataFolder(), "cases").mkdir();
             Logger.log("&cOutdated cases format!");
             converter.convertCases();
         } else {
-            if(!new File(plugin.getDataFolder(), "cases").exists()) {
+            if (!new File(plugin.getDataFolder(), "cases").exists()) {
                 new File(plugin.getDataFolder(), "cases").mkdir();
             }
         }
     }
 
     private void checkConvertLocations() {
-        if(cases.getString("config") == null || !cases.getString("config", "").equalsIgnoreCase("1.0")) {
+        YamlConfiguration configuration = getCases();
+        if (configuration.getString("config") == null ||
+                !configuration.getString("config", "").equalsIgnoreCase("1.0")) {
             Logger.log("Conversion of case locations to a new method of storage...");
             converter.convertCasesLocation();
         }
@@ -205,7 +235,7 @@ public class Config {
         String version = lang.getString("config");
         if (version == null || !version.equalsIgnoreCase("2.6")) {
             Logger.log("&cOutdated language config! Creating a new!");
-            if(version != null && version.equalsIgnoreCase("2.5")) {
+            if (version != null && version.equalsIgnoreCase("2.5")) {
                 converter.convertLanguage();
             } else {
                 File langRu = new File(plugin.getDataFolder(), "lang/ru_RU.yml");
@@ -224,50 +254,43 @@ public class Config {
 
     /**
      * Get Cases.yml configuration
+     *
      * @return Configuration
      */
     public YamlConfiguration getCases() {
-        if(cases == null) {
-            Case.getInstance().loadConfig();
-        }
-        return cases;
+        return get("Cases.yml");
     }
 
     /**
      * Get Keys.yml configuration
+     *
      * @return Configuration
      */
     public YamlConfiguration getKeys() {
-        if(keys == null) {
-            Case.getInstance().loadConfig();
-        }
-        return keys;
+        return get("Keys.yml");
     }
 
     /**
      * Get Config.yml configuration
+     *
      * @return Configuration
      */
     public YamlConfiguration getConfig() {
-        if(config == null) {
-            Case.getInstance().loadConfig();
-        }
-        return config;
+        return get("Config.yml");
     }
 
     /**
      * Get Animations.yml configuration
+     *
      * @return Configuration
      */
     public YamlConfiguration getAnimations() {
-        if(animations == null) {
-            Case.getInstance().loadConfig();
-        }
-        return animations;
+        return get("Animations.yml");
     }
 
     /**
      * Get language configuration
+     *
      * @return Lang configuration
      */
     public YamlConfiguration getLang() {
@@ -277,6 +300,7 @@ public class Config {
     /**
      * Get cases config instance
      * Used for loading cases folder
+     *
      * @return CasesConfig class
      */
     public CasesConfig getCasesConfig() {
@@ -285,6 +309,7 @@ public class Config {
 
     /**
      * Used for data storing
+     *
      * @return Data.yml config instance
      */
     public YamlData getData() {
@@ -293,6 +318,7 @@ public class Config {
 
     /**
      * Gets DonateCase instance
+     *
      * @return DonateCase instance
      */
     public DonateCase getPlugin() {
