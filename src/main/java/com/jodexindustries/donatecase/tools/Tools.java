@@ -19,14 +19,10 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -159,39 +155,8 @@ public class Tools {
         return null;
     }
 
-    private static void setMeta(ItemStack item, CaseData.Item.Material material) {
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            String displayName = material.getDisplayName();
-            meta.setDisplayName(rc(displayName));
-
-            List<String> lore = material.getLore();
-            meta.setLore(rc(lore));
-            int modelData = material.getModelData();
-            if (modelData != -1) meta.setCustomModelData(modelData);
-
-            if (!item.getType().isAir()) {
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-                meta.addItemFlags(ItemFlag.HIDE_DYE);
-                meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-                if (material.isEnchanted()) item.addUnsafeEnchantment(Enchantment.LURE, 1);
-            }
-
-            item.setItemMeta(meta);
-
-            String[] rgb = material.getRgb();
-            if (rgb != null && meta instanceof LeatherArmorMeta) {
-                LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) meta;
-                leatherArmorMeta.setColor(fromRGBString(rgb, Color.WHITE));
-                item.setItemMeta(leatherArmorMeta);
-            }
-        }
-    }
-
-    @NotNull
-    public static ItemStack getCaseItem(CaseData.Item.Material material) {
-        ItemStack winItem = null;
+    public static void loadCaseItem(CaseData.Item.Material material) {
+        ItemStack itemStack = null;
         String id = material.getId();
         String temp = id != null ? MaterialManager.getByStart(id) : null;
 
@@ -199,15 +164,15 @@ public class Tools {
             CaseMaterial caseMaterial = MaterialManager.getRegisteredMaterial(temp);
             if(caseMaterial != null) {
                 String context = id.replace(temp, "").replaceFirst(":", "").trim();
-                winItem = caseMaterial.handle(context);
+                itemStack = caseMaterial.handle(context);
             }
         }
 
-        if(winItem == null) winItem = createItem(material);
+        if(itemStack == null) itemStack = createItem(material);
 
-        setMeta(winItem, material);
+        material.setItemStack(itemStack);
+        material.updateMeta();
 
-        return winItem;
     }
 
     @NotNull
