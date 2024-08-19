@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.events;
 
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.gui.CaseGui;
 import org.bukkit.Location;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.ClickType;
@@ -15,8 +16,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CaseGuiClickEvent extends InventoryClickEvent {
     private static final HandlerList handlers = new HandlerList();
-    private final Location location;
-    private final CaseData caseData;
+    private final CaseGui gui;
     private final String itemType;
     private boolean cancel;
 
@@ -28,16 +28,14 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
      * @param slot     Slot index
      * @param click    Click type
      * @param action   Action type
-     * @param location Location where opened case
-     * @param caseData Case data
+     * @param gui      Opened GUI
      * @param itemType GUI item type
      */
     public CaseGuiClickEvent(@NotNull InventoryView view, @NotNull InventoryType.SlotType type,
                              int slot, @NotNull ClickType click, @NotNull InventoryAction action,
-                             @NotNull Location location, CaseData caseData, String itemType) {
+                             @NotNull CaseGui gui, String itemType) {
         super(view, type, slot, click, action);
-        this.location = location;
-        this.caseData = caseData;
+        this.gui = gui;
         this.itemType = itemType;
     }
 
@@ -57,12 +55,22 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
     }
 
     /**
+     * Get opened gui
+     *
+     * @return gui
+     */
+    public CaseGui getGui() {
+        return gui;
+    }
+
+    /**
      * Get case location
      *
      * @return Case location
      */
+    @Deprecated
     public Location getLocation() {
-        return location;
+        return gui.getLocation();
     }
 
     /**
@@ -70,18 +78,9 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
      *
      * @return case data
      */
-    public CaseData getCaseData() {
-        return caseData;
-    }
-
-    /**
-     * Get case type
-     *
-     * @return case type
-     */
     @Deprecated
-    public String getCaseType() {
-        return caseData.getCaseType();
+    public CaseData getCaseData() {
+        return gui.getCaseData();
     }
 
     /**
@@ -91,16 +90,6 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
      */
     public String getItemType() {
         return itemType;
-    }
-
-    /**
-     * Check for "OPEN" item
-     *
-     * @return result
-     */
-    @Deprecated
-    public boolean isOpenItem() {
-        return itemType.equalsIgnoreCase("OPEN");
     }
 
     @Override
