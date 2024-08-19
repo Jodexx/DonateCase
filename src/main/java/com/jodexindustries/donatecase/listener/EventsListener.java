@@ -3,10 +3,10 @@ package com.jodexindustries.donatecase.listener;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.GUITypedItemManager;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.PlayerOpenCase;
 import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.gui.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.events.*;
+import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
@@ -56,14 +56,13 @@ public class EventsListener implements Listener {
     public void InventoryClick(InventoryClickEvent e) {
         UUID uuid = e.getWhoClicked().getUniqueId();
         if (Case.playersGui.containsKey(uuid)) {
-            PlayerOpenCase playerOpenCase = Case.playersGui.get(uuid);
-            CaseData caseData = playerOpenCase.getCaseData();
             e.setCancelled(true);
-            Location location = playerOpenCase.getLocation();
 
+            CaseGui gui = Case.playersGui.get(uuid);
+            CaseData caseData = gui.getCaseData();
             String itemType = caseData.getGui().getItemTypeBySlot(e.getRawSlot());
             CaseGuiClickEvent caseGuiClickEvent = new CaseGuiClickEvent(e.getView(), e.getSlotType(),
-                    e.getSlot(), e.getClick(), e.getAction(), location, caseData, itemType);
+                    e.getSlot(), e.getClick(), e.getAction(), gui, itemType);
             Bukkit.getServer().getPluginManager().callEvent(caseGuiClickEvent);
 
             if (itemType == null) return;
