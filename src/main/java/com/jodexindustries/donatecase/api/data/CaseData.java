@@ -3,7 +3,13 @@ package com.jodexindustries.donatecase.api.data;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jodexindustries.donatecase.tools.ProbabilityCollection;
+import com.jodexindustries.donatecase.tools.Tools;
+import org.bukkit.Color;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -848,6 +854,35 @@ public class CaseData implements Cloneable {
             public void setRgb(String[] rgb) {
                 this.rgb = rgb;
             }
+
+            public void updateMeta() {
+                updateMeta(displayName, lore, modelData, enchanted, rgb);
+            }
+
+            public void updateMeta(String displayName, List<String> lore, int modelData,
+                                   boolean enchanted, String[] rgb) {
+                if(this.itemStack != null) {
+                    ItemMeta meta = this.itemStack.getItemMeta();
+                    if(meta != null) {
+                        meta.setDisplayName(displayName);
+                        meta.setLore(lore);
+                        meta.setCustomModelData(modelData);
+                        if(enchanted) this.itemStack.addUnsafeEnchantment(Enchantment.LURE, 1);
+
+                        if (rgb != null && meta instanceof LeatherArmorMeta) {
+                            LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) meta;
+                            leatherArmorMeta.setColor(Tools.fromRGBString(rgb, Color.WHITE));
+                        }
+
+                        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+                        meta.addItemFlags(ItemFlag.HIDE_DYE);
+                        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+
+                        itemStack.setItemMeta(meta);
+                    }
+                }
+            }
         }
 
         @Override
@@ -896,6 +931,11 @@ public class CaseData implements Cloneable {
         private String caseType;
         @DatabaseField(columnName = "action")
         private String action;
+
+        /**
+         * No-arg constructor for ORM lite
+         */
+        public HistoryData() {}
 
         /**
          * Default constructor
