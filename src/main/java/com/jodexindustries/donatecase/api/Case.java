@@ -505,12 +505,21 @@ public class Case {
     private static void saveOpenInfo(CaseData caseData, OfflinePlayer player, CaseData.Item item, String choice) {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             CaseData.HistoryData data = new CaseData.HistoryData(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
-            CaseData.HistoryData[] list = !instance.sql ? caseData.getHistoryData() :
-                    instance.mysql.getHistoryDataByCaseType(caseData.getCaseType()).join().toArray(new CaseData.HistoryData[0]);
+            CaseData.HistoryData[] list;
+            if(!instance.sql ) {
+                list = caseData.getHistoryData();
+            } else {
+                List<CaseData.HistoryData> temp = instance.mysql.getHistoryDataByCaseType(caseData.getCaseType()).join();
+                if(!temp.isEmpty()) {
+                    list = temp.toArray(new CaseData.HistoryData[10]);
+                } else {
+                    list = new CaseData.HistoryData[10];
+                }
+            }
             System.arraycopy(list, 0, list, 1, list.length - 1);
             list[0] = data;
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < list.length; i++) {
                 CaseData.HistoryData tempData = list[i];
                 if (tempData != null) {
                     if (!instance.sql) {
