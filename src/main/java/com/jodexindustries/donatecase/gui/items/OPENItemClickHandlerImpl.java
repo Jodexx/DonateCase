@@ -18,6 +18,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
     public OPENItemClickHandlerImpl(GUITypedItemManager manager) {
         GUITypedItem item = manager.builder("OPEN")
                 .click(this)
+                .setUpdateMeta(true)
                 .build();
 
         manager.registerItem(item);
@@ -51,7 +52,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
             Bukkit.getServer().getPluginManager().callEvent(openEvent);
 
             if (!openEvent.isCancelled())
-                Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData.getCaseType());
+                Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData);
         } else {
             Case.executeActions(player, caseData.getNoKeyActions());
         }
