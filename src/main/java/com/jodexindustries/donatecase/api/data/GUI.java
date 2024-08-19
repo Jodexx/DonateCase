@@ -10,10 +10,12 @@ import java.util.Map;
 public class GUI implements Cloneable {
     private int size;
     private Map<String, Item> items;
+    private int updateRate;
 
-    public GUI(int size, Map<String, Item> items) {
+    public GUI(int size, Map<String, Item> items, int updateRate) {
         this.size = size;
         this.items = items;
+        this.updateRate = updateRate;
     }
 
     public int getSize() {
@@ -61,6 +63,14 @@ public class GUI implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    public int getUpdateRate() {
+        return updateRate;
+    }
+
+    public void setUpdateRate(int updateRate) {
+        this.updateRate = updateRate;
     }
 
 
