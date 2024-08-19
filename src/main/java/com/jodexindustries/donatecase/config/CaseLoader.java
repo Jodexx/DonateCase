@@ -10,7 +10,6 @@ import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -165,18 +164,16 @@ public class CaseLoader {
 
         CaseData.Item.Material material = new CaseData.Item.Material(id, null, itemDisplayName, enchanted, null, modelData, rgb);
 
-        ItemStack itemStack = Tools.getCaseItem(material);
-        material.setItemStack(itemStack);
+        Tools.loadCaseItem(material);
 
         return material;
     }
 
     private CaseData.HistoryData[] loadHistoryData(String caseType) {
         CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
-
-        if (!plugin.sql) {
-            return plugin.config.getData().getHistoryData(caseType);
-        }
+            if (!plugin.sql) {
+                historyData = plugin.config.getData().getHistoryData(caseType);
+            }
 
         return historyData;
     }
@@ -200,6 +197,7 @@ public class CaseLoader {
 
         if (guiSection != null) {
             int size = guiSection.getInt("Size", 45);
+            int updateRate = guiSection.getInt("UpdateRate", -1);
             if (!isValidGuiSize(size)) {
                 size = 54;
                 logWarning("Wrong GUI size: " + size + ".Using 54");
@@ -208,7 +206,7 @@ public class CaseLoader {
 
             if (items != null) {
                 Map<String, GUI.Item> itemMap = loadGUIItems(items);
-                return new GUI(size, itemMap);
+                return new GUI(size, itemMap, updateRate);
             }
         }
 
@@ -233,10 +231,10 @@ public class CaseLoader {
 
     private GUI.Item loadGUIItem(String i, @NotNull ConfigurationSection itemSection, Set<Integer> currentSlots) {
         String id = itemSection.getString("Material");
-        String displayName = itemSection.getString("DisplayName", "");
+        String displayName = Tools.rc(itemSection.getString("DisplayName", ""));
         boolean enchanted = itemSection.getBoolean("Enchanted");
         String itemType = itemSection.getString("Type", "DEFAULT");
-        List<String> lore = itemSection.getStringList("Lore");
+        List<String> lore = Tools.rc(itemSection.getStringList("Lore"));
         int modelData = itemSection.getInt("ModelData", -1);
         String[] rgb = Tools.parseRGB(itemSection.getString("Rgb"));
         List<Integer> slots = getItemSlots(itemSection);
@@ -248,6 +246,8 @@ public class CaseLoader {
 
         CaseData.Item.Material material = new CaseData.Item.Material(id, null, displayName, enchanted,
                 lore, modelData, rgb);
+
+        if(itemType.equalsIgnoreCase("DEFAULT")) Tools.loadCaseItem(material);
 
         return new GUI.Item(i, itemType, material, slots);
     }
