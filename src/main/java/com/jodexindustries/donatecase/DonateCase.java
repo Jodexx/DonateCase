@@ -42,7 +42,6 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
-import java.util.logging.Level;
 
 /**
  * Main DonateCase class for loading
@@ -409,31 +408,18 @@ public class DonateCase extends JavaPlugin {
 
     private void loadLibraries() {
         getLogger().info("Loading libraries...");
-        Library orm = Library.builder()
-                .groupId("com{}j256{}ormlite")
-                .artifactId("ormlite-jdbc")
-                .version("6.1")
-                .build();
         Library entityLibSpigot = Library.builder()
                 .groupId("me{}tofaa{}entitylib")
                 .artifactId("spigot")
-                .version("2.4.7-SNAPSHOT")
+                .version("2.4.9-SNAPSHOT")
                 .resolveTransitiveDependencies(true)
                 .build();
         libraryManager = new BukkitLibraryManager(this);
         libraryManager.setLogLevel(LogLevel.WARN);
         libraryManager.addRepository("https://maven.evokegames.gg/snapshots");
         libraryManager.addMavenCentral();
-        loadLibrary(orm, entityLibSpigot);
+        libraryManager.loadLibrary(entityLibSpigot);
         getLogger().info("Libraries loaded!");
-    }
-
-    private void loadLibrary(Library... libraries) {
-        try {
-            libraryManager.loadLibraries(libraries);
-        } catch (RuntimeException e) {
-            getLogger().log(Level.WARNING, e.getMessage());
-        }
     }
 
     private void loadMetrics() {

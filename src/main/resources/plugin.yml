@@ -3,6 +3,8 @@ main: com.jodexindustries.donatecase.DonateCase
 author: _Jodex__
 version: '${version}'
 website: "https://jodexindustries.xyz/"
+libraries:
+  - com.j256.ormlite:ormlite-jdbc:6.1
 softdepend:
   - Vault
   - LuckPerms
