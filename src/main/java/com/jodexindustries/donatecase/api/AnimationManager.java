@@ -7,6 +7,7 @@ import com.jodexindustries.donatecase.api.events.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationUnregisteredEvent;
+import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.Pair;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
@@ -136,11 +137,9 @@ public class AnimationManager {
      *
      * @param player   The player who opened the case
      * @param location Location where to start the animation
-     * @param caseType Case type
+     * @param caseData Case data
      */
-    public void startAnimation(@NotNull Player player, @NotNull Location location, @NotNull String caseType) {
-        CaseData caseData = Case.getCase(caseType);
-        if (caseData == null) return;
+    public void startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseData caseData) {
         caseData = caseData.clone();
         caseData.setItems(Tools.sortItemsByIndex(caseData.getItems()));
         String animation = caseData.getAnimation();
@@ -194,11 +193,12 @@ public class AnimationManager {
                 anim.start(player, caseLocation, uuid, caseData, preStartEvent.getWinItem());
             }
         }
-        for (Player pl : Bukkit.getOnlinePlayers()) {
-            if (Case.playersGui.containsKey(pl.getUniqueId())) {
-                pl.closeInventory();
+        for (CaseGui gui : Case.playersGui.values()) {
+            if(gui.getLocation().equals(location)) {
+                gui.getPlayer().closeInventory();
             }
         }
+
         // AnimationStart event
         AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, location, preStartEvent.getWinItem());
         Bukkit.getPluginManager().callEvent(startEvent);
