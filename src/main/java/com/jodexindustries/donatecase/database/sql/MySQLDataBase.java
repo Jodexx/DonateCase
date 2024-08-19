@@ -44,6 +44,8 @@ public class MySQLDataBase {
         String user = mysqlSection.getString("User");
         String password = mysqlSection.getString("Password");
 
+        com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
+
         try {
             String url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true";
             connectionSource = new JdbcConnectionSource(url, user, password);
@@ -56,7 +58,6 @@ public class MySQLDataBase {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
     }
 
     public CompletableFuture<Integer> getKeys(String name, String player) {
@@ -175,20 +176,19 @@ public class MySQLDataBase {
     public void setHistoryData(String caseType, int index, CaseData.HistoryData data) {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             try {
-                CaseData.HistoryData historyDataTable = null;
                 List<CaseData.HistoryData> results = historyDataTables.queryBuilder()
                         .where()
                         .eq("id", index)
                         .and()
                         .eq("case_type", caseType)
                         .query();
-                if (!results.isEmpty()) historyDataTable = results.get(0);
-                if (historyDataTable == null) {
-                    historyDataTable = data;
-                    historyDataTable.setId(index);
-                    historyDataTables.create(historyDataTable);
-                } else {
 
+                CaseData.HistoryData historyDataTable = results.isEmpty() ? null : results.get(0);
+
+                if (historyDataTable == null) {
+                    data.setId(index);
+                    historyDataTables.create(data);
+                } else {
                     UpdateBuilder<CaseData.HistoryData, String> updateBuilder = historyDataTables.updateBuilder();
                     updateBuilder.updateColumnValue("item", data.getItem());
                     updateBuilder.updateColumnValue("player_name", data.getPlayerName());
@@ -203,7 +203,9 @@ public class MySQLDataBase {
                 instance.getLogger().warning(e.getMessage());
             }
         });
+
     }
+
 
 
     public CompletableFuture<List<CaseData.HistoryData>> getHistoryData() {
