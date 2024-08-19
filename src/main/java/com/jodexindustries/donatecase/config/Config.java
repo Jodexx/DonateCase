@@ -126,6 +126,7 @@ public class Config {
         if (caching > 0) {
             Case.keysCache.setMaxAge(caching);
             Case.openCache.setMaxAge(caching);
+            Case.historyCache.setMaxAge(caching);
         }
     }
 

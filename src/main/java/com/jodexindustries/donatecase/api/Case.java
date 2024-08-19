@@ -48,7 +48,7 @@ public class Case {
     /**
      * Players, who opened cases (open gui)
      */
-    public final static HashMap<UUID, PlayerOpenCase> playersGui = new HashMap<>();
+    public final static HashMap<UUID, CaseGui> playersGui = new HashMap<>();
 
     /**
      * Loaded cases in runtime
@@ -64,6 +64,8 @@ public class Case {
      * Cache map for storing number of player's cases opens
      */
     public final static SimpleCache<InfoEntry, Integer> openCache = new SimpleCache<>(20);
+
+    public final static SimpleCache<Integer, List<CaseData.HistoryData>> historyCache = new SimpleCache<>(20);
 
     /**
      * Default constructor, but actually not used. All methods are static.
@@ -501,28 +503,31 @@ public class Case {
      * @param choice In fact, these are actions that were selected from the RandomActions section
      */
     private static void saveOpenInfo(CaseData caseData, OfflinePlayer player, CaseData.Item item, String choice) {
-        CaseData.HistoryData data = new CaseData.HistoryData(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
-        CaseData.HistoryData[] list = caseData.getHistoryData();
-        System.arraycopy(list, 0, list, 1, list.length - 1);
-        list[0] = data;
+        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+            CaseData.HistoryData data = new CaseData.HistoryData(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
+            CaseData.HistoryData[] list = !instance.sql ? caseData.getHistoryData() :
+                    instance.mysql.getHistoryDataByCaseType(caseData.getCaseType()).join().toArray(new CaseData.HistoryData[0]);
+            System.arraycopy(list, 0, list, 1, list.length - 1);
+            list[0] = data;
 
-        for (int i = 0; i < list.length; i++) {
-            CaseData.HistoryData tempData = list[i];
-            if(tempData != null) {
-                if(!instance.sql) {
-                    getConfig().getData().setHistoryData(caseData.getCaseType(), i, tempData);
-                } else {
-                    if(instance.mysql != null) instance.mysql.setHistoryData(caseData.getCaseType(), i, tempData);
+            for (int i = 0; i < 10; i++) {
+                CaseData.HistoryData tempData = list[i];
+                if (tempData != null) {
+                    if (!instance.sql) {
+                        getConfig().getData().setHistoryData(caseData.getCaseType(), i, tempData);
+                    } else {
+                        if (instance.mysql != null) instance.mysql.setHistoryData(caseData.getCaseType(), i, tempData);
+                    }
                 }
             }
-        }
 
-        // Set history data in memory
-        CaseData finalCase = getCase(caseData.getCaseType());
-        if(finalCase != null) finalCase.setHistoryData(list);
+            // Set history data in memory
+            Objects.requireNonNull(getCase(caseData.getCaseType())).setHistoryData(list);
 
-        addOpenCount(player.getName(), caseData.getCaseType(), 1);
+            addOpenCount(player.getName(), caseData.getCaseType(), 1);
+        });
     }
+
 
     /**
      * Get random choice from item random action list
@@ -637,16 +642,15 @@ public class Case {
      * <br/>
      * May be nullable, if player already opened gui
      *
-     * @param p             Player
+     * @param player             Player
      * @param caseData      Case type
      * @param blockLocation Block location
      */
-    public static void openGui(Player p, CaseData caseData, Location blockLocation) {
-        if (!playersGui.containsKey(p.getUniqueId())) {
-            playersGui.put(p.getUniqueId(), new PlayerOpenCase(blockLocation, caseData, p.getUniqueId()));
-            new CaseGui(p, caseData.clone());
+    public static void openGui(Player player, CaseData caseData, Location blockLocation) {
+        if (!playersGui.containsKey(player.getUniqueId())) {
+            playersGui.put(player.getUniqueId(), new CaseGui(player, caseData.clone(), blockLocation));
         } else {
-            instance.getLogger().warning("Player " + p.getName() + " already opened case: " + caseData.getCaseType());
+            instance.getLogger().warning("Player " + player.getName() + " already opened case: " + caseData.getCaseType());
         }
     }
 
@@ -695,6 +699,44 @@ public class Case {
                 .collect(Collectors.toList()) : instance.mysql.getHistoryData().join().stream().filter(Objects::nonNull)
                 .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
                 .collect(Collectors.toList()));
+    }
+
+    public static CompletableFuture<List<CaseData.HistoryData>> getAsyncSortedHistoryDataByType(String caseType) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (!instance.sql) {
+                CaseData caseData = getCase(caseType);
+                if (caseData == null) return new ArrayList<>();
+
+                CaseData.HistoryData[] temp = caseData.getHistoryData();
+                Stream<CaseData.HistoryData> stream = temp != null ? Arrays.stream(temp) : Stream.empty();
+                stream
+                        .filter(Objects::nonNull)
+                        .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                        .collect(Collectors.toList());
+            }
+            List<CaseData.HistoryData> list = new ArrayList<>();
+            for (CaseData.HistoryData data : instance.mysql.getHistoryDataByCaseType(caseType).join()) {
+                if (data != null) {
+                    list.add(data);
+                }
+            }
+            list.sort(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed());
+            return list;
+        });
+    }
+
+    public static List<CaseData.HistoryData> getSortedHistoryDataCache() {
+        List<CaseData.HistoryData> list;
+        List<CaseData.HistoryData> cachedList = historyCache.get(1);
+        if(cachedList == null) {
+            getAsyncSortedHistoryData().thenAcceptAsync(historyData -> historyCache.put(1, historyData));
+            // Get previous, if current is null
+            List<CaseData.HistoryData> previous = historyCache.getPrevious(1);
+            list = previous != null ? previous : getAsyncSortedHistoryData().join();
+        } else {
+            list = cachedList;
+        }
+        return list;
     }
 
     /**
@@ -791,6 +833,7 @@ public class Case {
      * @since 2.2.3.8
      */
     public static void cleanCache() {
+        Case.playersGui.values().forEach(gui -> gui.getPlayer().closeInventory());
         Bukkit.getWorlds().forEach(world -> world.getEntitiesByClass(ArmorStand.class).stream().filter(stand -> stand.hasMetadata("case")).forEachOrdered(Entity::remove));
         Case.playersGui.clear();
         Case.caseData.clear();
@@ -798,6 +841,7 @@ public class Case {
         Case.activeCasesByLocation.clear();
         keysCache.clear();
         openCache.clear();
+        historyCache.clear();
     }
 
 }
