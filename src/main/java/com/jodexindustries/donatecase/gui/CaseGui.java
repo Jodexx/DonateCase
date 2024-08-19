@@ -8,11 +8,12 @@ import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.gui.TypedItemHandler;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -22,33 +23,153 @@ import java.util.stream.Collectors;
 public class CaseGui {
     private final Inventory inventory;
     private final CaseData caseData;
+    private final GUI tempGUI;
+    private final Location location;
+    private final Player player;
     private List<CaseData.HistoryData> globalHistoryData;
 
     /**
      * Default constructor
      *
-     * @param p        Player object
+     * @param player   Player object
      * @param caseData CaseData object
      */
-    public CaseGui(Player p, CaseData caseData) {
+    public CaseGui(Player player, CaseData caseData, Location location) {
+        this.player = player;
         this.caseData = caseData;
+        this.tempGUI = caseData.getGui().clone();
+        this.location = location;
 
         String title = caseData.getCaseTitle();
-        GUI gui = caseData.getGui();
-        inventory = Bukkit.createInventory(null, gui.getSize(), Tools.rc(title));
-        Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () ->
-                Case.getAsyncSortedHistoryData().thenAcceptAsync((historyData) -> {
-                    globalHistoryData = historyData;
-                    for (GUI.Item item : gui.getItems().values()) {
-                        try {
-                            processItem(p, item);
-                        } catch (Throwable e) {
-                            Case.getInstance().getLogger().log(Level.WARNING,
-                                    "Error occurred while loading item " + item.getItemName() + ":", e);
-                        }
-                    }
-                }));
-        p.openInventory(inventory);
+        inventory = Bukkit.createInventory(null, tempGUI.getSize(), Tools.rc(title));
+        load();
+        player.openInventory(inventory);
+        startUpdateTask();
+    }
+
+    /**
+     * Loads all items asynchronously
+     *
+     * @return Void future
+     */
+    public CompletableFuture<Void> load() {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () -> {
+            globalHistoryData = Case.getSortedHistoryDataCache();
+            for (GUI.Item item : tempGUI.getItems().values()) {
+                try {
+                    processItem(item);
+                } catch (Throwable e) {
+                    Case.getInstance().getLogger().log(Level.WARNING,
+                            "Error occurred while loading item " + item.getItemName() + ":", e);
+                }
+            }
+            future.complete(null);
+        });
+        return future;
+    }
+
+    private void updateMeta(GUI.Item temp) {
+        CaseData.Item.Material original = getOriginal(temp.getItemName());
+        CaseData.Item.Material material = temp.getMaterial();
+        material.setDisplayName(setPlaceholders(original.getDisplayName()));
+        material.setLore(setPlaceholders(original.getLore()));
+        material.updateMeta();
+    }
+
+    private void colorize(CaseData.Item.Material material) {
+        material.setDisplayName(Tools.rc(material.getDisplayName()));
+        material.setLore(Tools.rc(material.getLore()));
+        material.updateMeta();
+    }
+
+    private void startUpdateTask() {
+        int updateRate = tempGUI.getUpdateRate();
+        if (caseData.getGui().getUpdateRate() >= 0) {
+            Bukkit.getScheduler().runTaskTimerAsynchronously(Case.getInstance(),
+                    (task) -> {
+                        if (Case.playersGui.containsKey(player.getUniqueId())) task.cancel();
+                        load();
+                    }, updateRate, updateRate);
+        }
+    }
+
+    private CaseData.Item.Material getOriginal(String itemName) {
+        return caseData.getGui().getItems().get(itemName).getMaterial();
+    }
+
+    private void processItem(GUI.Item item) {
+        String itemType = item.getType();
+        if (!itemType.equalsIgnoreCase("DEFAULT")) {
+            String temp = GUITypedItemManager.getByStart(itemType);
+            if (temp != null) {
+                GUITypedItem typedItem = GUITypedItemManager.getRegisteredItem(temp);
+                if (typedItem != null) {
+                    TypedItemHandler handler = typedItem.getItemHandler();
+                    if (handler != null) item = handler.handle(this, item);
+                    if (typedItem.isUpdateMeta()) updateMeta(item);
+                }
+            }
+        } else {
+            updateMeta(item);
+        }
+
+        CaseData.Item.Material material = item.getMaterial();
+
+        if (material.getItemStack() == null) Tools.loadCaseItem(material);
+
+        colorize(material);
+
+        for (Integer slot : item.getSlots()) {
+            inventory.setItem(slot, item.getMaterial().getItemStack());
+        }
+    }
+
+    private String setPlaceholders(String text) {
+        String caseType = caseData.getCaseType();
+        return Case.getInstance().papi.setPlaceholders(player,
+                processPlaceholders(text.replace("%case%", caseType), caseType, player));
+    }
+
+    private List<String> setPlaceholders(List<String> lore) {
+        return lore.stream().map(this::setPlaceholders).collect(Collectors.toList());
+    }
+
+    private String processPlaceholders(String line, String caseType, Player p) {
+        String placeholder = Tools.getLocalPlaceholder(line);
+
+        if (p != null && placeholder.startsWith("keys")) {
+            if (placeholder.startsWith("keys_")) {
+                String[] parts = placeholder.split("_", 2);
+                if (parts.length == 2) {
+                    caseType = parts[1];
+                }
+            }
+
+            line = line.replace("%" + placeholder + "%",
+                    String.valueOf(Case.getKeysCache(caseType, p.getName())));
+        }
+
+        return line;
+    }
+
+
+    /**
+     * Gets GUI Inventory
+     *
+     * @return inventory
+     */
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     /**
@@ -68,66 +189,4 @@ public class CaseGui {
     public List<CaseData.HistoryData> getGlobalHistoryData() {
         return globalHistoryData;
     }
-
-    private void processItem(Player p, GUI.Item item) {
-        String itemType = item.getType();
-        if (!itemType.equalsIgnoreCase("DEFAULT")) {
-            String temp = GUITypedItemManager.getByStart(itemType);
-            if (temp != null) {
-                GUITypedItem typedItem = GUITypedItemManager.getRegisteredItem(temp);
-                if (typedItem != null) {
-                    TypedItemHandler handler = typedItem.getItemHandler();
-                    if (handler != null) item = handler.handle(this, item);
-                }
-            }
-        }
-        CaseData.Item.Material material = item.getMaterial();
-
-        // update item placeholders
-        material.setDisplayName(Case.getInstance().papi.setPlaceholders(p, material.getDisplayName()));
-        material.setLore(setPlaceholders(p, caseData.getCaseType(), material.getLore()));
-
-        ItemStack itemStack = Tools.getCaseItem(material);
-        item.getSlots().forEach(slot -> inventory.setItem(slot, itemStack));
-    }
-
-
-    private List<String> setPlaceholders(Player p, String caseType, List<String> lore) {
-        lore = Tools.rt(lore, "%case%:" + caseType);
-        List<String> newLore = new ArrayList<>(lore.size());
-
-        for (String string : lore) {
-            String placeholder = Tools.getLocalPlaceholder(string);
-
-            if (placeholder.startsWith("keys") && p != null) {
-
-                if (placeholder.startsWith("keys_")) {
-                    String[] parts = placeholder.split("_", 2);
-                    if (parts.length == 2) {
-                        caseType = parts[1];
-                    }
-                }
-
-                string = string.replace("%" + placeholder + "%",
-                        String.valueOf(Case.getKeysCache(caseType, p.getName())));
-            }
-
-            newLore.add(string);
-        }
-
-        return newLore.stream()
-                .map(line -> Case.getInstance().papi.setPlaceholders(p, line))
-                .map(Tools::rc)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Gets GUI Inventory
-     *
-     * @return inventory
-     */
-    public Inventory getInventory() {
-        return inventory;
-    }
-
 }
