@@ -13,14 +13,16 @@ import org.jetbrains.annotations.Nullable;
 public class GUITypedItem {
     private final String id;
     private final Addon addon;
+    private final boolean updateMeta;
 
     private String description;
     private TypedItemHandler itemHandler;
     private TypedItemClickHandler itemClickHandler;
 
-    public GUITypedItem(String id, Addon addon) {
+    public GUITypedItem(String id, Addon addon, boolean updateMeta) {
         this.id = id;
         this.addon = addon;
+        this.updateMeta = updateMeta;
     }
 
     /**
@@ -100,6 +102,10 @@ public class GUITypedItem {
         this.itemClickHandler = itemClickHandler;
     }
 
+    public boolean isUpdateMeta() {
+        return updateMeta;
+    }
+
     public static class Builder {
         private final Addon addon;
         private final String id;
@@ -107,6 +113,7 @@ public class GUITypedItem {
         private TypedItemHandler itemHandler;
         private TypedItemClickHandler itemClickHandler;
         private String description;
+        private boolean updateMeta = false;
 
         /**
          * Default constructor of this builder
@@ -152,13 +159,18 @@ public class GUITypedItem {
             return this;
         }
 
+        public GUITypedItem.Builder setUpdateMeta(boolean updateMeta) {
+            this.updateMeta = updateMeta;
+            return this;
+        }
+
         /**
          * Complete this builder
          *
          * @return completed typed item object
          */
         public GUITypedItem build() {
-            GUITypedItem guiTypedItem = new GUITypedItem(id, addon);
+            GUITypedItem guiTypedItem = new GUITypedItem(id, addon, updateMeta);
             guiTypedItem.setDescription(description);
             guiTypedItem.setItemHandler(itemHandler);
             guiTypedItem.setItemClickHandler(itemClickHandler);
