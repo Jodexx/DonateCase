@@ -87,10 +87,10 @@ public class CaseGui {
 
     private void startUpdateTask() {
         int updateRate = tempGUI.getUpdateRate();
-        if (caseData.getGui().getUpdateRate() >= 0) {
+        if (updateRate >= 0) {
             Bukkit.getScheduler().runTaskTimerAsynchronously(Case.getInstance(),
                     (task) -> {
-                        if (Case.playersGui.containsKey(player.getUniqueId())) task.cancel();
+                        if (!Case.playersGui.containsKey(player.getUniqueId())) task.cancel();
                         load();
                     }, updateRate, updateRate);
         }
@@ -118,7 +118,7 @@ public class CaseGui {
 
         CaseData.Item.Material material = item.getMaterial();
 
-        if(material.getItemStack() == null) material.setItemStack(Tools.loadCaseItem(material.getId()));
+        if (material.getItemStack() == null) material.setItemStack(Tools.loadCaseItem(material.getId()));
 
         colorize(material);
 
@@ -128,7 +128,7 @@ public class CaseGui {
     }
 
     private String setPlaceholders(@Nullable String text) {
-        if(text == null) return null;
+        if (text == null) return null;
         String caseType = caseData.getCaseType();
         return Case.getInstance().papi.setPlaceholders(player,
                 processPlaceholders(text.replace("%case%", caseType), caseType, player));
@@ -166,21 +166,38 @@ public class CaseGui {
         return inventory;
     }
 
+    /**
+     * Gets location where GUI opened
+     * @return GUI location
+     */
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Gets player who opened GUI
+     * @return player who opened
+     */
     public Player getPlayer() {
         return player;
     }
 
     /**
-     * Gets GUI CaseData
+     * Gets GUI CaseData. Can be modified, cause this is clone of original {@link Case#getCase(String)}
      *
      * @return data
      */
     public CaseData getCaseData() {
         return caseData;
+    }
+
+    /**
+     * Gets temporary GUI. Used for updating placeholders, if UpdateRate enabled
+     *
+     * @return GUI
+     */
+    public GUI getTempGUI() {
+        return tempGUI;
     }
 
     /**
