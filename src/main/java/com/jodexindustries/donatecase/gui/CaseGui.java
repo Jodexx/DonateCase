@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -117,7 +118,7 @@ public class CaseGui {
 
         CaseData.Item.Material material = item.getMaterial();
 
-        if (material.getItemStack() == null) Tools.loadCaseItem(material);
+        if(material.getItemStack() == null) material.setItemStack(Tools.loadCaseItem(material.getId()));
 
         colorize(material);
 
@@ -126,7 +127,8 @@ public class CaseGui {
         }
     }
 
-    private String setPlaceholders(String text) {
+    private String setPlaceholders(@Nullable String text) {
+        if(text == null) return null;
         String caseType = caseData.getCaseType();
         return Case.getInstance().papi.setPlaceholders(player,
                 processPlaceholders(text.replace("%case%", caseType), caseType, player));

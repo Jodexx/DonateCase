@@ -10,6 +10,7 @@ import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -156,17 +157,15 @@ public class CaseLoader {
     }
 
     private CaseData.Item.Material loadMaterial(ConfigurationSection itemSection) {
-        String id = itemSection.getString("Item.ID", "STONE");
+        String id = itemSection.getString("Item.ID", "AIR");
         String itemDisplayName = Tools.rc(itemSection.getString("Item.DisplayName"));
         boolean enchanted = itemSection.getBoolean("Item.Enchanted");
         int modelData = itemSection.getInt("Item.ModelData", -1);
         String[] rgb = Tools.parseRGB(itemSection.getString("Item.Rgb"));
 
-        CaseData.Item.Material material = new CaseData.Item.Material(id, null, itemDisplayName, enchanted, null, modelData, rgb);
+        ItemStack itemStack = Tools.loadCaseItem(id);
 
-        Tools.loadCaseItem(material);
-
-        return material;
+        return new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted, null, modelData, rgb);
     }
 
     private CaseData.HistoryData[] loadHistoryData(String caseType) {
@@ -231,7 +230,7 @@ public class CaseLoader {
 
     private GUI.Item loadGUIItem(String i, @NotNull ConfigurationSection itemSection, Set<Integer> currentSlots) {
         String id = itemSection.getString("Material");
-        String displayName = Tools.rc(itemSection.getString("DisplayName", ""));
+        String displayName = Tools.rc(itemSection.getString("DisplayName"));
         boolean enchanted = itemSection.getBoolean("Enchanted");
         String itemType = itemSection.getString("Type", "DEFAULT");
         List<String> lore = Tools.rc(itemSection.getStringList("Lore"));
@@ -247,7 +246,7 @@ public class CaseLoader {
         CaseData.Item.Material material = new CaseData.Item.Material(id, null, displayName, enchanted,
                 lore, modelData, rgb);
 
-        if(itemType.equalsIgnoreCase("DEFAULT")) Tools.loadCaseItem(material);
+        if(itemType.equalsIgnoreCase("DEFAULT")) material.setItemStack(Tools.loadCaseItem(id));
 
         return new GUI.Item(i, itemType, material, slots);
     }
