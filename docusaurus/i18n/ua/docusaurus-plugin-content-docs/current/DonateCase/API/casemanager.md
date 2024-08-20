@@ -10,7 +10,7 @@ sidebar_position: 5
 
 Доступні менеджери:
 - [ActionManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.3/raw/com/jodexindustries/donatecase/api/ActionManager.html)
-використовується для управління виконуваними діями
+використовується для керування виконуваними діями
 - [AddonManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.3/raw/com/jodexindustries/donatecase/api/AddonManager.html)
 використовується для керування аддонами
 - [AnimationManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.3/raw/com/jodexindustries/donatecase/api/AnimationManager.html)
@@ -20,7 +20,7 @@ sidebar_position: 5
 - [MaterialManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.3/raw/com/jodexindustries/donatecase/api/MaterialManager.html)
 використовується для керування матеріалами
 - [SubCommandManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.3/raw/com/jodexindustries/donatecase/api/SubCommandManager.html)
-використовується для управління субкомандами
+використовується для керування субкомандами
 
 ### Отримання CaseManager
 
