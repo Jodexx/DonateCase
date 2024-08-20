@@ -709,7 +709,6 @@ public class CaseData implements Cloneable {
              *
              * @return itemStack
              */
-            @Nullable
             public ItemStack getItemStack() {
                 return itemStack;
             }
@@ -719,8 +718,9 @@ public class CaseData implements Cloneable {
              *
              * @param itemStack itemStack
              */
-            public void setItemStack(ItemStack itemStack) {
+            public void setItemStack(@NotNull ItemStack itemStack) {
                 this.itemStack = itemStack;
+                updateMeta();
             }
 
             /**
@@ -728,6 +728,7 @@ public class CaseData implements Cloneable {
              *
              * @return display name
              */
+            @Nullable
             public String getDisplayName() {
                 return displayName;
             }
