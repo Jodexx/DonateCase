@@ -27,6 +27,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -72,13 +73,9 @@ public class Tools {
         }
     }
 
-    @NotNull
-    public static String rc(String t) {
-        if(t != null) {
-            return hex(t);
-        } else {
-            return rc("&cMessage not found!");
-        }
+    public static String rc(@Nullable String string) {
+        if(string != null) string = hex(string);
+        return string;
     }
 
     @NotNull
@@ -155,9 +152,8 @@ public class Tools {
         return null;
     }
 
-    public static void loadCaseItem(CaseData.Item.Material material) {
+    public static ItemStack loadCaseItem(String id) {
         ItemStack itemStack = null;
-        String id = material.getId();
         String temp = id != null ? MaterialManager.getByStart(id) : null;
 
         if(temp != null) {
@@ -168,17 +164,14 @@ public class Tools {
             }
         }
 
-        if(itemStack == null) itemStack = createItem(material);
+        if(itemStack == null) itemStack = createItem(id);
 
-        material.setItemStack(itemStack);
-        material.updateMeta();
-
+       return itemStack;
     }
 
     @NotNull
-    public static ItemStack createItem(CaseData.Item.Material material) {
+    public static ItemStack createItem(String id) {
         ItemStack item = new ItemStack(Material.STONE);
-        String id = material.getId();
         if (id == null) return item;
 
         String[] materialParts = id.split(":");
