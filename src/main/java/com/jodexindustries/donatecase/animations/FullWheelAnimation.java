@@ -6,7 +6,11 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.Vector;
 
@@ -146,8 +150,9 @@ public class FullWheelAnimation extends JavaAnimation {
         as.setVisible(false);
         as.setGravity(false);
         as.setAngle(armorStandEulerAngle);
+        if(item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty())
+            as.setCustomNameVisible(true);
         as.setCustomName(item.getMaterial().getDisplayName());
-        as.setCustomNameVisible(true);
         as.spawn();
         if (item.getMaterial().getItemStack().getType() != Material.AIR) {
             as.setEquipment(itemSlot, item.getMaterial().getItemStack());

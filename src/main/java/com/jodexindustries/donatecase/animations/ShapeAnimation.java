@@ -4,10 +4,13 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -64,15 +67,16 @@ public class ShapeAnimation extends JavaAnimation {
                 }
 
                 if (i <= 15) {
-                    CaseData.Item winItem = getCaseData().getRandomItem();
-                    if (winItem.getMaterial().getItemStack().getType() != Material.AIR) {
+                    CaseData.Item item = getCaseData().getRandomItem();
+                    if (item.getMaterial().getItemStack().getType() != Material.AIR) {
                         as.setAngle(armorStandEulerAngle);
-                        as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
+                        as.setEquipment(itemSlot, item.getMaterial().getItemStack());
                     }
-                    String winGroupDisplayName = Case.getInstance().papi.setPlaceholders(getPlayer(), winItem.getMaterial().getDisplayName());
-                    winItem.getMaterial().setDisplayName(winGroupDisplayName);
-                    as.setCustomName(Tools.rc(winGroupDisplayName));
-                    as.setCustomNameVisible(true);
+                    String winGroupDisplayName = Tools.rc(Case.getInstance().papi.setPlaceholders(getPlayer(),
+                            item.getMaterial().getDisplayName()));
+                    if(item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty())
+                        as.setCustomNameVisible(true);
+                    as.setCustomName(winGroupDisplayName);
                     as.updateMeta();
                     if (this.i <= 8) {
                         Particle.DustOptions dustOptions = new Particle.DustOptions(orangeColor, orangeSize);

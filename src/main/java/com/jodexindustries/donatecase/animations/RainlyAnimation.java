@@ -74,8 +74,8 @@ public class RainlyAnimation extends JavaAnimation {
                             as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
                         }
                         as.setAngle(armorStandEulerAngle);
-                        as.setCustomName(winGroupDisplayName);
                         as.setCustomNameVisible(true);
+                        as.setCustomName(winGroupDisplayName);
                         as.updateMeta();
                         Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
                         loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 0);
@@ -85,15 +85,16 @@ public class RainlyAnimation extends JavaAnimation {
 
                 // change random item
                 if (this.i <= 30 && (this.i % 2 == 0)) {
-                    CaseData.Item winItem = getCaseData().getRandomItem();
-                    String winGroupDisplayName = Case.getInstance().papi.setPlaceholders(getPlayer(), winItem.getMaterial().getDisplayName());
-                    winItem.getMaterial().setDisplayName(winGroupDisplayName);
-                    if (winItem.getMaterial().getItemStack().getType() != Material.AIR) {
-                        as.setEquipment(itemSlot, winItem.getMaterial().getItemStack());
+                    CaseData.Item item = getCaseData().getRandomItem();
+                    String winGroupDisplayName = Case.getInstance().papi.setPlaceholders(getPlayer(), item.getMaterial().getDisplayName());
+                    item.getMaterial().setDisplayName(winGroupDisplayName);
+                    if (item.getMaterial().getItemStack().getType() != Material.AIR) {
+                        as.setEquipment(itemSlot, item.getMaterial().getItemStack());
                     }
                     as.setAngle(armorStandEulerAngle);
-                    as.setCustomName(winItem.getMaterial().getDisplayName());
-                    as.setCustomNameVisible(true);
+                    if(item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty())
+                        as.setCustomNameVisible(true);
+                    as.setCustomName(item.getMaterial().getDisplayName());
                     as.updateMeta();
                     loc.getWorld().playSound(loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 5.0F);
                     // firework particles

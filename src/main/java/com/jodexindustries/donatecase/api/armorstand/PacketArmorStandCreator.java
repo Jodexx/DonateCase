@@ -118,7 +118,7 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void setCustomName(String displayName) {
-        meta.setCustomName(LegacyComponentSerializer.legacyAmpersand().deserialize(displayName));
+        if(displayName != null) meta.setCustomName(LegacyComponentSerializer.legacyAmpersand().deserialize(displayName));
     }
 
     @Override

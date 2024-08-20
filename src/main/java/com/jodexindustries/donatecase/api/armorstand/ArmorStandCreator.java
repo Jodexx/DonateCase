@@ -7,13 +7,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.Metadatable;
 import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 public interface ArmorStandCreator extends Metadatable {
     void setVisible(boolean isVisible);
 
-    void setCustomName(String displayName);
+    void setCustomName(@Nullable String displayName);
 
     void teleport(Location location);
 

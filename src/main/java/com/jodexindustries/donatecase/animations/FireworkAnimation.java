@@ -5,7 +5,10 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -68,8 +71,8 @@ public class FireworkAnimation extends JavaAnimation {
                             as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
                         }
                         as.setAngle(armorStandEulerAngle);
-                        as.setCustomName(displayName);
-                        as.setCustomNameVisible(true);
+                        if(getWinItem().getMaterial().getDisplayName() != null && !getWinItem().getMaterial().getDisplayName().isEmpty())
+                            as.setCustomNameVisible(true);
                         as.updateMeta();
                         Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
                     }
