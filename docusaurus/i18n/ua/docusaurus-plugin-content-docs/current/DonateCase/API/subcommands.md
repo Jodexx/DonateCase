@@ -1,7 +1,7 @@
 ---
 id: register-subcommands
 title: Реєстрація субкоманд
-sidebar_position: 6
+sidebar_position: 7
 ---
 # Реєстрація субкоманд
 

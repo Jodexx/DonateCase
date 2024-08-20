@@ -40,7 +40,8 @@ DonateCase:
     DataBase: 'nameDataBase'
     User: 'root'
     Password: 'password'
-  Languages: en #ru/en/ua
+  # en_US, es_ES, ru_RU, ua_UA
+  Languages: en_US
   HologramDriver: DecentHolograms # CMI, DecentHolograms or HolographicDisplays
   PermissionDriver: luckperms # luckperms or vault
   # Only if Vault enabled
@@ -54,9 +55,12 @@ DonateCase:
   DateFormat: "dd.MM HH:mm:ss"
   AddonsHelp: true # Show help list for addons commands?
   UsePackets: false # 1.18+ for using packets, you need to install packetevents plugin
-  # Caching for getting number of keys and case opens
+  # Caching for getting number of keys, case opens and history data
+  # Used only if MySQL enabled
   # Actually used in placeholders (GUI and PlaceholderAPI)
   Caching: 20 # in ticks
+  # Set spawn-protection to 0 in server.properties
+  DisableSpawnProtection: true
 ```
 </details>
 
@@ -65,7 +69,7 @@ DonateCase:
 <summary>case.yml</summary>
 
 ```yml
-config: 1.1
+config: 1.2
 case:
   Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL, FULLWHEEL see: https://wiki.jodexindustries.xyz/docs/DonateCase/animations
   Hologram: # Thanks CrazyCrates for realisation
@@ -78,14 +82,19 @@ case:
     # The message that will be displayed.
     Message:
       - '&6DonateCase'
+      -
+
+  OpenType: GUI # or BLOCK
 
   NoKeyActions:
     - "[message] &cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.com"
     - "[sound] ENTITY_ENDERMAN_TELEPORT"
 
   LevelGroups: # delete all of this section, if you want to use default LevelGroups from Config.yml
-    legend: 4
-    deluxe: 3
+    ultra: 6
+    legend: 5
+    deluxe: 4
+    premium: 3
     vipplus: 2
     vip: 1
     default: 0
@@ -94,6 +103,7 @@ case:
   DisplayName: "&c&lDonate-&a&lCase" # Name for placeholders
   Gui: # see more about items configuring -> https://wiki.jodexindustries.xyz/docs/DonateCase/items-settings
     Size: 45
+    UpdateRate: 20 # in ticks, set -1 to disable updating
     Items:
       "1":
         DisplayName: "&cJodexIndustries.xyz"
@@ -111,25 +121,27 @@ case:
         Lore:
           - '&6The case can be bought on the website: &cJodexIndustries.xyz'
           - ''
-          - '&7Keys: %keys%'
+          - '&7Keys: &e%keys%'
           - ''
           - '&6Drops:'
-          - '&7&l[&aVIP&7&l] - &b&n50%'
-          - '&7&l[&bVIP&6+&7&l] - &b&n25%'
-          - '&7&l[&5Deluxe&7&l] - &b&n15%'
-          - '&7&l[&dLegend&7&l] - &b&n10%'
+          - '&7[&eVIP&7] - &b&n30%'
+          - '&7[&bVIP&6+&7] - &b&n25%'
+          - '&7[&3Premium&7] - &b&n20%'
+          - '&7[&5Deluxe&7] - &b&n15%'
+          - '&7[&dLegend&7] - &b&n10%'
+          - '&7[&cUltra&7] - &b&n5%'
           - ''
         Slots: # or Slots: 0-10 (range)
           - 22
         Material: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
         Type: OPEN # or you can use OPEN_<anotherCaseName> for opening another case 
   Items:
-    VIP:
+    Vip:
       Group: vip
-      Chance: 50
+      Chance: 30
       Item:
-        ID: IRON_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
-        DisplayName: '&7&l[&aVIP&7&l]'
+        ID: YELLOW_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
+        DisplayName: '&7[&eVIP&7]'
         Enchanted: false
       Index: 0
       GiveType: ONE # or RANDOM
@@ -151,12 +163,12 @@ case:
           Actions:
             - '[command] say something'
             - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
-    VIPPLUS:
+    VipPlus:
       Group: vipplus
       Chance: 25
       Item:
-        ID: GOLDEN_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
-        DisplayName: '&7&l[&bVIP&6+&7&l]'
+        ID: LIGHT_BLUE_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
+        DisplayName: '&7[&bVIP&6+&7]'
         Enchanted: false
       Index: 1
       GiveType: ONE # or RANDOM
@@ -164,6 +176,35 @@ case:
         - '[command] lp user %player% parent set %group%'
         - '[title] &aCongratulations!;&5you won %groupdisplayname%'
         - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+      AlternativeActions: # GiveType: any, it doesn't matter; is performed if the group is lower in rank than the player's group in LevelGroups
+        - "[message] &cI'm sorry %player%, but you have group a stronger group than you won:("
+      RandomActions: # GiveType: RANDOM
+        first:
+          Chance: 50
+          DisplayName: "something" # displayname for historydata displaying
+          Actions:
+            - '[command] say something'
+            - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+        second:
+          Chance: 50
+          Actions:
+            - '[command] say something'
+            - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+    Premium:
+      Group: premium
+      Chance: 20
+      Item:
+        ID: CYAN_WOOL
+        DisplayName: '&7[&3Premium&7]'
+      Index: 2
+      GiveType: ONE
+      Actions:
+        - '[command] lp user %player% parent set %group%'
+        - '[title] &aCongratulations!;&5you won %groupdisplayname%'
+        - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from
+        &5Ultra-Case.'
+      AlternativeActions: # GiveType: any, it doesn't matter; is performed if the group is lower in rank than the player's group in LevelGroups
+        - "[message] &cI'm sorry %player%, but you have group a stronger group than you won:("
       RandomActions: # GiveType: RANDOM
         first:
           Chance: 50
@@ -180,15 +221,17 @@ case:
       Group: deluxe
       Chance: 15
       Item:
-        ID: DIAMOND_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
-        DisplayName: '&7&l[&5Deluxe&7&l]'
+        ID: PURPLE_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
+        DisplayName: '&7[&5Deluxe&7]'
         Enchanted: false
-      Index: 2
+      Index: 3
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
         - '[command] lp user %player% parent set %group%'
         - '[title] &aCongratulations!;&5you won %groupdisplayname%'
         - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+      AlternativeActions: # GiveType: any, it doesn't matter; is performed if the group is lower in rank than the player's group in LevelGroups
+        - "[message] &cI'm sorry %player%, but you have group a stronger group than you won:("
       RandomActions: # GiveType: RANDOM
         first:
           Chance: 50
@@ -204,15 +247,17 @@ case:
       Group: legend
       Chance: 10
       Item:
-        ID: NETHERITE_SWORD # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
-        DisplayName: '&7&l[&dLegend&7&l]'
+        ID: PINK_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
+        DisplayName: '&7[&dLegend&7]'
         Enchanted: false
-      Index: 3
+      Index: 4
       GiveType: ONE # or RANDOM
       Actions: # GiveType: ONE
         - '[command] lp user %player% parent set %group%'
         - '[title] &aCongratulations!;&5you won %groupdisplayname%'
         - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+      AlternativeActions: # GiveType: any, it doesn't matter; is performed if the group is lower in rank than the player's group in LevelGroups
+        - "[message] &cI'm sorry %player%, but you have group a stronger group than you won:("
       RandomActions: # GiveType: RANDOM
         first:
           Chance: 50
@@ -224,7 +269,34 @@ case:
           Actions:
             - '[command] say something'
             - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
-
+    Ultra:
+      Group: ultra
+      Chance: 5
+      Item:
+        ID: RED_WOOL
+        DisplayName: '&7[&cUltra&7]'
+        Enchanted: true
+      Index: 5
+      GiveType: ONE
+      Actions:
+        - '[command] lp user %player% parent set %group%'
+        - '[command] say lp user %player% parent set %group%'
+        - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from
+        &5Ultra-Case.'
+      AlternativeActions: # GiveType: any, it doesn't matter; is performed if the group is lower in rank than the player's group in LevelGroups
+        - "[message] &cI'm sorry %player%, but you have group a stronger group than you won:("
+      RandomActions: # GiveType: RANDOM
+        first:
+          Chance: 50
+          DisplayName: "something" # displayname for historydata displaying
+          Actions:
+            - '[command] say something'
+            - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+        second:
+          Chance: 50
+          Actions:
+            - '[command] say something'
+            - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
 ```
 </details>
 

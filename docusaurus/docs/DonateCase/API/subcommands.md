@@ -1,7 +1,7 @@
 ---
 id: register-subcommands
 title: Register Sub Commands
-sidebar_position: 6
+sidebar_position: 7
 ---
 # Register sub commands
 
