@@ -149,13 +149,16 @@ public class Case {
     }
 
     /**
-     * Get the keys to a certain player's case from cache
+     * Get the keys to a certain player's case from cache <br/>
+     * Returns no-cached, if mysql disabled
      * @param caseType Case type
      * @param player Player name
      * @return Number of keys
      * @since 2.2.3.8
      */
     public static int getKeysCache(String caseType, String player) {
+        if(!instance.sql) return getKeys(caseType, player);
+
         int keys;
         InfoEntry entry = new InfoEntry(player, caseType);
         Integer cachedKeys = keysCache.get(entry);
@@ -194,13 +197,16 @@ public class Case {
     }
 
     /**
-     * Get count of opened cases by player from cache
+     * Get count of opened cases by player from cache <br/>
+     * Returns no-cached, if mysql disabled
      * @param caseType Case type
      * @param player Player, who opened
      * @return opened count
      * @since 2.2.3.8
      */
     public static int getOpenCountCache(String caseType, String player) {
+        if(!instance.sql) return getOpenCount(caseType, player);
+
         int openCount;
         InfoEntry entry = new InfoEntry(player, caseType);
         Integer cachedKeys = openCache.get(entry);
@@ -734,7 +740,12 @@ public class Case {
         });
     }
 
+    /**
+     * Returns no-cached, if mysql disabled
+     * @return list of history data
+     */
     public static List<CaseData.HistoryData> getSortedHistoryDataCache() {
+        if(!instance.sql) return getAsyncSortedHistoryData().join();
         List<CaseData.HistoryData> list;
         List<CaseData.HistoryData> cachedList = historyCache.get(1);
         if(cachedList == null) {
