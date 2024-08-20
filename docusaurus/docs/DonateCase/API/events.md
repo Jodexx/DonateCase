@@ -6,8 +6,8 @@ sidebar_position: 4
 
 # Register events
 DonateCase events are registered in the same way as regular Bukkit events
+> EventListener class
 ```java
-// EventListener class
 public class EventListener implements Listener {
     @EventHandler
     public void onCaseInteract(CaseInteractEvent e) {
@@ -16,8 +16,8 @@ public class EventListener implements Listener {
     }
 }
 ```
+> Main class
 ```java
-//Main class
 public class Main extends JavaPlugin {
     @Override
     public void onEnable() {

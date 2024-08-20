@@ -9,25 +9,25 @@ toc_max_heading_level: 5
 # DCEventManager Wiki
 Этот аддон позволяет вам управлять ивентами DonateCase<br></br>
 С его помощью вы можете выполнять определенные действия, такие как отправка сообщений и выполнение команд от имени консоли. <br></br>
-**How does it work?**<br></br>
+**Как это работает?**<br></br>
 Аддон прослушивает все события, зарегистрированные в DonateCase.
 Получение событий происходит с помощью рефлексии, а это значит, что при обновлении DonateCase новые события будут автоматически загружаться в DCEventManager, без необходимости обновлять аддон! <br></br>
 
 ## Пример config.yml
 ```yml
 Debug: false
-Package: "com.jodexindustries.donatecase.api.events" # dont change this
+Package: "com.jodexindustries.donatecase.api.events" # не изменяйте это
 
 Events:
   MyEvent:
     Event: AnimationStartEvent
     Actions:
-      - "[command] say Animation started!"
+      - "[command] say Анимация запущена!"
 
   MyAnotherEvent:
     Event: AnimationEndEvent
     Actions:
-      - "[broadcast] &dAnimation ended!"
+      - "[broadcast] &dАнимация закончилась!"
 ```
 
 ## Ивенты
@@ -48,7 +48,7 @@ Events:
     Event: AnimationStartEvent # ваш ивент
     Case: case # здесь конкретный кейс
     Actions:
-      - "[command] say Case opened!"
+      - "[command] say Анимация запустилась!"
 ```
 
 ## Поддержка конкретного слота кейса
@@ -60,7 +60,7 @@ Events:
     Case: case # здесь конкретный кейс
     Slot: 1 # здесь конкретный слот
     Actions:
-      - "[command] say Gui clicked!"
+      - "[command] say Клик по гюи!"
 ```
 
 ## Заполнители
@@ -93,7 +93,7 @@ Events:
 Думаю, вы уже догадались, что эти методы используются для получения значений placeholder, но что такое `#`? <br></br>
 Это символ для разделения методов. Например, мы вызываем метод getAddon, который представляет собой объект [InternalAddon](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/latest/.cache/unpack/com/jodexindustries/donatecase/api/addon/internal/InternalAddon.html#method-summary), имеющий следующие методы:
 ![addon.png](../../assets/addon.png)
-Конечно, будет немного странно просто отображать информацию о некоторых [InternalJavaAddon](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/latest/.cache/unpack/com/jodexindustries/donatecase/api/addon/internal/InternalAddon.html#method-summary) без дополнительных инструкций, но стоит посмотреть, что это за класс, похоже, он представляет собой интерфейс внутреннего аддона, и мы можем извлечь из него некоторую полезную информацию! Давайте узнаем имя этого аддона, похоже, что метод [getName](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/latest/.cache/unpack/com/jodexindustries/donatecase/api/addon/Addon.html#getName()) как раз подходит нам! <br></br>
+Конечно, будет немного странно просто отображать информацию о некотором [InternalJavaAddon](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/latest/.cache/unpack/com/jodexindustries/donatecase/api/addon/internal/InternalAddon.html#method-summary) без дополнительных инструкций, но стоит посмотреть, что это за класс, похоже, он представляет собой интерфейс внутреннего аддона, и мы можем извлечь из него некоторую полезную информацию! Давайте узнаем имя этого аддона, похоже, что метод [getName](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/latest/.cache/unpack/com/jodexindustries/donatecase/api/addon/Addon.html#getName()) как раз подходит нам! <br></br>
 Теперь наш метод выглядит следующим образом: `getAddon#getName`<br></br>
 
 Если у вас есть дополнительные вопросы, пожалуйста, свяжитесь с нами в [Discord сервере](https://discord.gg/2syNtcKcgR)!

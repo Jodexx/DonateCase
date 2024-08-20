@@ -5,7 +5,7 @@ sidebar_position: 3
 ---
 # Implementing
 ## Example with an external Plugin
-TestDonateCaseAPI.java
+> TestDonateCaseAPI.java
 ```java
 import com.jodexindustries.donatecase.api.Case;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,7 +28,7 @@ depend:
 ```
 
 ## Example without an external plugin
-TestAddon.java
+> TestAddon.java
 ```java
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 

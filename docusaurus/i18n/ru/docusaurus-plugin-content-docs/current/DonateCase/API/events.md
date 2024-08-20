@@ -6,8 +6,8 @@ sidebar_position: 4
 
 # Регистрация ивентов
 Ивенты DonateCase регистрируются так же, как и обычные ивенты Bukkit
+> EventListener класс
 ```java
-// EventListener класс
 public class EventListener implements Listener {
     @EventHandler
     public void onCaseInteract(CaseInteractEvent e) {
@@ -16,8 +16,8 @@ public class EventListener implements Listener {
     }
 }
 ```
+> Main класс
 ```java
-//Main класс
 public class Main extends JavaPlugin {
     @Override
     public void onEnable() {

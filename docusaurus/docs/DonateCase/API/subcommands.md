@@ -5,10 +5,8 @@ sidebar_position: 7
 ---
 # Register sub commands
 
-## New methods
-
-### 1#
-TestCommand class
+## First method
+> TestCommand class
 ```java
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -46,13 +44,13 @@ public class TestCommand implements SubCommandExecutor, SubCommandTabCompleter {
 }
 ```
 
-Main class
+> Main class
 ```java
     @Override
     public void onEnable() {
         // getting CaseManager
         CaseManager api = new CaseManager(this);
-        // register subcommand
+        // subcommand registration
         SubCommandManager subCommandManager = api.getSubCommandManager();
     
         TestCommand executor = new TestCommand();
@@ -69,8 +67,8 @@ Main class
 }
 ```
 
-### 2#
-SecondCommand class
+## Second method
+> SecondCommand class
 ```java
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -102,13 +100,13 @@ public class SecondCommand extends SubCommand {
 }
 ```
 
-Main class
+> Main class
 ```java
     @Override
     public void onEnable() {
         // getting CaseManager
         CaseManager api = new CaseManager(this);
-        // register subcommand
+        // subcommand registration
         SubCommandManager subCommandManager = api.getSubCommandManager();
         
         SecondCommand second = new SecondCommand("test2", api.getAddon());
@@ -120,7 +118,7 @@ Main class
 ## ~~Old method~~
 To create a subcommand class, we will use the [SubCommand](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/latest/.cache/unpack/com/jodexindustries/donatecase/api/data/SubCommand.html) interface
 
-TestSubCommand class
+> TestSubCommand class
 ```java
 import com.jodexindustries.donatecase.api.SubCommand;
 import com.jodexindustries.donatecase.api.SubCommandType;

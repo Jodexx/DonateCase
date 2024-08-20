@@ -5,10 +5,8 @@ sidebar_position: 7
 ---
 # Регистрация субкоманд
 
-## Новые методы
-
-### 1#
-TestCommand class
+## Первый способ
+TestCommand класс
 ```java
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -50,9 +48,9 @@ Main class
 ```java
     @Override
     public void onEnable() {
-        // getting CaseManager
+        // получение CaseManager
         CaseManager api = new CaseManager(this);
-        // register subcommand
+        // регистрация команды
         SubCommandManager subCommandManager = api.getSubCommandManager();
     
         TestCommand executor = new TestCommand();
@@ -69,8 +67,8 @@ Main class
 }
 ```
 
-### 2#
-SecondCommand class
+## Второй способ
+SecondCommand класс
 ```java
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -106,9 +104,9 @@ Main class
 ```java
     @Override
     public void onEnable() {
-        // getting CaseManager
+        // получение CaseManager
         CaseManager api = new CaseManager(this);
-        // register subcommand
+        // регистрация субкоманды
         SubCommandManager subCommandManager = api.getSubCommandManager();
         
         SecondCommand second = new SecondCommand("test2", api.getAddon());
@@ -192,6 +190,6 @@ Main class
         CaseManager api = new CaseManager(this);
         // регистрация суб команды
         SubCommandManager subCommandManager = api.getSubCommandManager();
-        subCommandManager.registerSubCommand("test", new TestCommand());
+        subCommandManager.registerSubCommand("test", new TestSubCommand());
     }
 ```

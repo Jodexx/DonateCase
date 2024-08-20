@@ -5,7 +5,8 @@ sidebar_position: 5
 ---
 
 # CaseManager
-CaseManager - клас, який містить усі менеджери для взаємодії з динамічними об'єктами в DonateCase.
+[CaseManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.3/raw/com/jodexindustries/donatecase/api/CaseManager.html) -
+клас, який містить усі менеджери для взаємодії з динамічними об'єктами в DonateCase.
 
 Доступні менеджери:
 - [ActionManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.3/raw/com/jodexindustries/donatecase/api/ActionManager.html)

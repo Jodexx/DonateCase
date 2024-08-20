@@ -1,26 +1,25 @@
 ---
 id: item-id
-title: ID Предметів
+title: Матеріали
 sidebar_position: 6
 ---
 
-# DonateCase Items ID
+# DonateCase Materials
 
-## Minecraft items
-DonateCase підтримує декілька ID предметів від Minecraft
+## Матеріали Minecraft
+
 ### Назва матеріалів
 ```yml
 Item:
   ID: GOLDEN_SWORD
 ```
-### ID матеріалів (1.12.2 і нижче)
+### Назви матеріалів (1.12.2 і нижче)
 ```yml
 Item:
   ID: WOOL:14 // (RED_WOOL в 1.13+)
 ```
-## CustomHeads
-DonateCase підтримує декілька ID предметів для голів
-### Голова игрока
+## Користувацькі матеріали
+### Голова гравця
 ```yml
 Item:
   ID: HEAD:_Jodex__ # HEAD:<ім'я гравця>

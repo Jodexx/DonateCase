@@ -5,7 +5,7 @@ sidebar_position: 3
 ---
 # Внедрение
 ## Пример с внешним плагином
-TestDonateCaseAPI.java
+> TestDonateCaseAPI класс
 ```java
 import com.jodexindustries.donatecase.api.Case;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,7 +29,7 @@ depend:
 ```
 
 ## Пример без внешнего плагина
-TestAddon.java
+> TestAddon класс
 ```java
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 

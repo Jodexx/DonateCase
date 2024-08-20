@@ -5,10 +5,8 @@ sidebar_position: 7
 ---
 # Реєстрація субкоманд
 
-## Нові методи
-
-### 1#
-TestCommand class
+## Перший спосіб
+> TestCommand клас
 ```java
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -21,22 +19,23 @@ import java.util.List;
 public class TestCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
     /**
-     * Executes the given sub command
-     * @param sender Source of the command
-     * @param label Command label
-     * @param args Passed command arguments
+     * Виконує задану субкоманду
+     * @param sender Джерело команди
+     * @param label Ярлик команди
+     * @param args Передаваємі аргументи команди
      */
     @Override
     public void execute(CommandSender sender, @NotNull String label, String[] args) {
+        // звичайний код, як для Bukkit команди
         sender.sendMessage("Bukkit command");
     }
 
     /**
-     * Get command tab completions
-     * @param sender Command sender
-     * @param label Command label
-     * @param args Command args
-     * @return tab completions
+     * Наповнення табуляції
+     * @param sender Джерело команди
+     * @param label Ярлик команди
+     * @param args Передаваємі аргументи команди
+     * @return наповнення
      */
     @Override
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
@@ -46,13 +45,13 @@ public class TestCommand implements SubCommandExecutor, SubCommandTabCompleter {
 }
 ```
 
-Main class
+> Main клас
 ```java
     @Override
     public void onEnable() {
-        // getting CaseManager
+        // отримання CaseManager
         CaseManager api = new CaseManager(this);
-        // register subcommand
+        // реєстрація субкоманди
         SubCommandManager subCommandManager = api.getSubCommandManager();
     
         TestCommand executor = new TestCommand();
@@ -69,8 +68,8 @@ Main class
 }
 ```
 
-### 2#
-SecondCommand class
+## Другий спосіб
+> SecondCommand клас
 ```java
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
@@ -102,13 +101,13 @@ public class SecondCommand extends SubCommand {
 }
 ```
 
-Main class
+> Main class
 ```java
     @Override
     public void onEnable() {
-        // getting CaseManager
+        // отримання CaseManager
         CaseManager api = new CaseManager(this);
-        // register subcommand
+        // реєстрація субкоманди
         SubCommandManager subCommandManager = api.getSubCommandManager();
         
         SecondCommand second = new SecondCommand("test2", api.getAddon());
@@ -120,7 +119,7 @@ Main class
 ## ~~Старий метод~~
 Щоб створити клас підкоманди, ми будемо використовувати [SubCommand](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/latest/.cache/unpack/com/jodexindustries/donatecase/api/data/SubCommand.html) інтерфейс
 
-TestSubCommand клас
+> TestSubCommand клас
 ```java
 import com.jodexindustries.donatecase.api.SubCommand;
 import com.jodexindustries.donatecase.api.SubCommandType;
@@ -184,7 +183,7 @@ public class TestSubCommand implements SubCommand {
 
 ```
 
-Main class
+> Main class
 ```java
     @Override
     public void onEnable() {

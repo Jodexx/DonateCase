@@ -1,25 +1,22 @@
 ---
 id: item-id
-title: Items ID
+title: Materials
 sidebar_position: 6
 ---
 
-# DonateCase Items ID
-
-## Minecraft items
-DonateCase support several options for Minecraft items
+# DonateCase Materials
+## Minecraft materials
 ### Material names
 ```yml
 Item:
   ID: GOLDEN_SWORD
 ```
-### Material ids (1.12.2 and below)
+### Material names (1.12.2 and below)
 ```yml
 Item:
   ID: WOOL:14 // (RED_WOOL in 1.13+)
 ```
-## CustomHeads
-DonateCase supports several options for custom heads
+## Custom materials
 ### Player head
 ```yml
 Item:
