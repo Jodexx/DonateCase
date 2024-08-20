@@ -842,8 +842,12 @@ public class Case {
      * @since 2.2.3.8
      */
     public static void cleanCache() {
-        Case.playersGui.values().forEach(gui -> gui.getPlayer().closeInventory());
-        Bukkit.getWorlds().forEach(world -> world.getEntitiesByClass(ArmorStand.class).stream().filter(stand -> stand.hasMetadata("case")).forEachOrdered(Entity::remove));
+        for (CaseGui gui : Case.playersGui.values()) {
+            gui.getPlayer().closeInventory();
+        }
+        for (World world : Bukkit.getWorlds()) {
+            world.getEntitiesByClass(ArmorStand.class).stream().filter(stand -> stand.hasMetadata("case")).forEachOrdered(Entity::remove);
+        }
         Case.playersGui.clear();
         Case.caseData.clear();
         Case.activeCases.clear();
