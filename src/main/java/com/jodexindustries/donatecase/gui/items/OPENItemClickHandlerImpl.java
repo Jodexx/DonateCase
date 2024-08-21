@@ -34,17 +34,26 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
 
         if (itemType.contains("_")) {
             String[] parts = itemType.split("_");
-            if (parts.length >= 2) caseType = parts[1];
+            if (parts.length >= 2) {
+                caseType = parts[1];
+                caseData = Case.getCase(caseType);
+            }
         }
 
         PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, location.getBlock());
         Bukkit.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled()) executeOpen(caseData, p, location);
+        if (!event.isCancelled()) {
+            if (caseData != null) {
+                executeOpen(caseData, p, location);
+            } else {
+                Case.getInstance().getLogger().warning("CaseData " + caseType + " not found. ");
+            }
+        }
 
         p.closeInventory();
     }
 
-    public static void executeOpen(CaseData caseData, Player player, Location location) {
+    public static void executeOpen(@NotNull CaseData caseData, Player player, Location location) {
         if (Case.getKeys(caseData.getCaseType(), player.getName()) >= 1) {
             Case.removeKeys(caseData.getCaseType(), player.getName(), 1);
 
