@@ -856,10 +856,21 @@ public class CaseData implements Cloneable {
                 this.rgb = rgb;
             }
 
+            /**
+             * Update {@link #itemStack} metadata
+             */
             public void updateMeta() {
                 updateMeta(displayName, lore, modelData, enchanted, rgb);
             }
 
+            /**
+             * Update {@link #itemStack} metadata
+             * @param displayName Item display name
+             * @param lore Item lore
+             * @param modelData Item custom model data
+             * @param enchanted Item enchantment
+             * @param rgb Item rgb
+             */
             public void updateMeta(String displayName, List<String> lore, int modelData,
                                    boolean enchanted, String[] rgb) {
                 if(this.itemStack != null) {
