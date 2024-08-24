@@ -50,7 +50,7 @@ public class ActionsCommand implements SubCommandExecutor, SubCommandTabComplete
      */
     private static Map<String, List<CaseAction>> buildActionsMap() {
         Map<String, List<CaseAction>> actionsMap = new HashMap<>();
-        ActionManager.getRegisteredActions().forEach((name, caseAction) -> {
+        ActionManager.registeredActions.forEach((name, caseAction) -> {
             String addon = caseAction.getAddon().getName();
 
             List<CaseAction> actions = actionsMap.getOrDefault(addon, new ArrayList<>());

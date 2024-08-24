@@ -41,7 +41,10 @@ import java.util.Map;
  * Default actions like: {@code [command], [broadcast], [message], [title], etc.} loading here.
  */
 public class ActionManager {
-    private static final Map<String, CaseAction> registeredActions = new HashMap<>();
+    /**
+     * Map of all registered actions
+     */
+    public static final Map<String, CaseAction> registeredActions = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -103,7 +106,7 @@ public class ActionManager {
      * Unregister all actions
      */
     public void unregisterActions() {
-        List<String> list = new ArrayList<>(getRegisteredActions().keySet());
+        List<String> list = new ArrayList<>(registeredActions.keySet());
         list.forEach(this::unregisterAction);
     }
 
@@ -115,15 +118,6 @@ public class ActionManager {
      */
     public static boolean isRegistered(String name) {
         return registeredActions.containsKey(name);
-    }
-
-    /**
-     * Get all registered animations
-     *
-     * @return map with registered animations
-     */
-    public static Map<String, CaseAction> getRegisteredActions() {
-        return registeredActions;
     }
 
     /**
@@ -146,5 +140,4 @@ public class ActionManager {
     public static @Nullable String getByStart(@NotNull final String string) {
         return registeredActions.keySet().stream().filter(string::startsWith).findFirst().orElse(null);
     }
-
 }

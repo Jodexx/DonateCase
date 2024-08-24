@@ -45,7 +45,7 @@ public class AnimationsCommand implements SubCommandExecutor, SubCommandTabCompl
 
     private static Map<String, List<CaseAnimation>> buildAnimationsMap() {
         Map<String, List<CaseAnimation>> animationsMap = new HashMap<>();
-        AnimationManager.getRegisteredAnimations().forEach((animationName, caseAnimation) -> {
+        AnimationManager.registeredAnimations.forEach((animationName, caseAnimation) -> {
             String addon = caseAnimation.getAddon().getName();
 
             List<CaseAnimation> animations = animationsMap.getOrDefault(addon, new ArrayList<>());
@@ -54,7 +54,7 @@ public class AnimationsCommand implements SubCommandExecutor, SubCommandTabCompl
             animationsMap.put(addon, animations);
         });
 
-        AnimationManager.getOldAnimations().forEach((animationName, oldPair) -> {
+        AnimationManager.oldAnimations.forEach((animationName, oldPair) -> {
             Addon addon = oldPair.getSecond();
             List<CaseAnimation> animations = animationsMap.getOrDefault(addon.getName(), new ArrayList<>());
 

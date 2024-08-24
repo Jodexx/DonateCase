@@ -24,8 +24,14 @@ import java.util.logging.Level;
  */
 public class AddonManager {
 
-    private static final Map<String, InternalJavaAddon> addons = new HashMap<>();
-    private static final List<InternalAddonClassLoader> loaders = new CopyOnWriteArrayList<>();
+    /**
+     * Map of all loaded addons
+     */
+    public static final Map<String, InternalJavaAddon> addons = new HashMap<>();
+    /**
+     * List of all addons loaders
+     */
+    public static final List<InternalAddonClassLoader> loaders = new CopyOnWriteArrayList<>();
     private final Addon addon;
 
     /**
@@ -362,15 +368,6 @@ public class AddonManager {
         return loaders.stream().filter(loader -> loader.getFile().equals(file)).findFirst().orElse(null);
     }
 
-    /**
-     * Mirror method for {@link #addons} field
-     *
-     * @return {@link #addons}
-     */
-    public static Collection<InternalJavaAddon> getAddons() {
-        return addons.values();
-    }
-
     private void loadLibraries(List<String> libraries) {
         LibraryManager manager = Case.getInstance().libraryManager;
         for (String lib : libraries) {
@@ -425,5 +422,4 @@ public class AddonManager {
          */
         ADDON
     }
-
 }

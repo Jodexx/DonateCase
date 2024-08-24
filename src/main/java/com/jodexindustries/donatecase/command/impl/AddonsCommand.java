@@ -31,7 +31,7 @@ public class AddonsCommand implements SubCommandExecutor, SubCommandTabCompleter
 
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        List<InternalJavaAddon> addons = new ArrayList<>(AddonManager.getAddons());
+        List<InternalJavaAddon> addons = new ArrayList<>(AddonManager.addons.values());
         addons.sort(Comparator.comparing(InternalJavaAddon::getName));
         Tools.msgRaw(sender, "&7Currently loaded addons in DonateCase (&a" + addons.size() + "&7): " + compileAddons(addons));
     }

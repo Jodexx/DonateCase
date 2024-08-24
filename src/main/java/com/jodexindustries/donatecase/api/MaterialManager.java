@@ -16,7 +16,10 @@ import java.util.Map;
  * @since 2.2.4.8
  */
 public class MaterialManager {
-    private static final Map<String, CaseMaterial> registeredMaterials = new HashMap<>();
+    /**
+     * Map of all registered materials
+     */
+    public static final Map<String, CaseMaterial> registeredMaterials = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -82,16 +85,6 @@ public class MaterialManager {
     }
 
     /**
-     * Get all registered materials
-     *
-     * @return map with registered materials
-     * @since 2.2.4.8
-     */
-    public static Map<String, CaseMaterial> getRegisteredMaterials() {
-        return registeredMaterials;
-    }
-
-    /**
      * Get registered material
      *
      * @param id CaseMaterial id
@@ -113,5 +106,4 @@ public class MaterialManager {
     public static @Nullable String getByStart(@NotNull final String string) {
         return registeredMaterials.keySet().stream().filter(string::startsWith).findFirst().orElse(null);
     }
-
 }

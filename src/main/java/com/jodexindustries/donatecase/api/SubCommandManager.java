@@ -17,6 +17,9 @@ import java.util.Map;
  * Class for managing subcommands, registering commands.
  */
 public class SubCommandManager {
+    /**
+     * Map of all registered subcommands
+     */
     public static final Map<String, SubCommand> registeredSubCommands = new HashMap<>();
     private final Addon addon;
 
@@ -99,16 +102,8 @@ public class SubCommandManager {
      * Unregister all subcommands
      */
     public void unregisterSubCommands() {
-        List<String> list = new ArrayList<>(getSubCommands().keySet());
+        List<String> list = new ArrayList<>(registeredSubCommands.keySet());
         list.forEach(this::unregisterSubCommand);
-    }
-
-    /**
-     * Get all subcommands
-     * @return String - sub command name <br> SubCommand - Class that implements the SubCommand interface
-     */
-    public static Map<String, SubCommand> getSubCommands() {
-        return registeredSubCommands;
     }
 
     /**

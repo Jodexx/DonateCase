@@ -165,15 +165,15 @@ public class AddonCommand implements SubCommandExecutor, SubCommandTabCompleter 
     }
 
     private List<String> getAddons() {
-        return AddonManager.getAddons().stream().map(InternalJavaAddon::getName).collect(Collectors.toList());
+        return AddonManager.addons.values().stream().map(InternalJavaAddon::getName).collect(Collectors.toList());
     }
 
     private List<String> getDisabledAddons() {
-        return AddonManager.getAddons().stream().filter(internalJavaAddon -> !internalJavaAddon.isEnabled()).map(InternalJavaAddon::getName).collect(Collectors.toList());
+        return AddonManager.addons.values().stream().filter(internalJavaAddon -> !internalJavaAddon.isEnabled()).map(InternalJavaAddon::getName).collect(Collectors.toList());
     }
 
     private List<String> getEnabledAddons() {
-        return AddonManager.getAddons().stream().filter(InternalJavaAddon::isEnabled).map(InternalJavaAddon::getName).collect(Collectors.toList());
+        return AddonManager.addons.values().stream().filter(InternalJavaAddon::isEnabled).map(InternalJavaAddon::getName).collect(Collectors.toList());
     }
 
     private List<String> getAddonsFiles() {

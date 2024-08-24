@@ -15,7 +15,10 @@ import java.util.Map;
  * @since 2.2.4.9
  */
 public class GUITypedItemManager {
-    private final static Map<String, GUITypedItem> registeredItems = new HashMap<>();
+    /**
+     * Map of all registered items
+     */
+    public final static Map<String, GUITypedItem> registeredItems = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -86,16 +89,6 @@ public class GUITypedItemManager {
     }
 
     /**
-     * Get all registered items
-     *
-     * @return Map of typed items
-     * @since 2.2.4.9
-     */
-    public static Map<String, GUITypedItem> getRegisteredItems() {
-        return registeredItems;
-    }
-
-    /**
      * Get registered item
      *
      * @param id GUITypedItem id
@@ -120,6 +113,7 @@ public class GUITypedItemManager {
 
     /**
      * Get registered GUITypedItem by string
+     *
      * @param string String to be parsed
      * @return GUITypedItem object
      * @since 2.2.5.5
@@ -128,5 +122,4 @@ public class GUITypedItemManager {
         String temp = GUITypedItemManager.getByStart(string);
         return temp != null ? GUITypedItemManager.getRegisteredItem(temp) : null;
     }
-
 }

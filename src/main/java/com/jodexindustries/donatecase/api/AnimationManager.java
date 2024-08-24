@@ -24,8 +24,16 @@ import java.util.logging.Level;
  * Animation control class, registration, playing
  */
 public class AnimationManager {
-    private static final Map<String, CaseAnimation> registeredAnimations = new HashMap<>();
-    private static final Map<String, Pair<Animation, Addon>> oldAnimations = new HashMap<>();
+    /**
+     * Map of registered animations
+     */
+    public static final Map<String, CaseAnimation> registeredAnimations = new HashMap<>();
+
+    /**
+     * Map of old registered animations
+     */
+    @Deprecated
+    public static final Map<String, Pair<Animation, Addon>> oldAnimations = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -125,7 +133,7 @@ public class AnimationManager {
      * Unregister all animations
      */
     public void unregisterAnimations() {
-        List<String> list = new ArrayList<>(getRegisteredAnimations().keySet());
+        List<String> list = new ArrayList<>(registeredAnimations.keySet());
         list.forEach(this::unregisterAnimation);
 
         List<String> old = new ArrayList<>(oldAnimations.keySet());
@@ -194,7 +202,7 @@ public class AnimationManager {
             }
         }
         for (CaseGui gui : Case.playersGui.values()) {
-            if(gui.getLocation().equals(location)) {
+            if (gui.getLocation().equals(location)) {
                 gui.getPlayer().closeInventory();
             }
         }
@@ -227,26 +235,6 @@ public class AnimationManager {
     }
 
     /**
-     * Get all registered animations
-     *
-     * @return map with registered animations
-     */
-    @NotNull
-    public static Map<String, CaseAnimation> getRegisteredAnimations() {
-        return registeredAnimations;
-    }
-
-    /**
-     * Get all old registered animations
-     *
-     * @return map with old animations
-     */
-    @Deprecated
-    public static Map<String, Pair<Animation, Addon>> getOldAnimations() {
-        return oldAnimations;
-    }
-
-    /**
      * Get registered animation
      *
      * @param animation Animation name
@@ -264,9 +252,7 @@ public class AnimationManager {
      * @return Animation object
      */
     @Nullable
-    @Deprecated
     public static Animation getRegisteredOldAnimation(String animation) {
         return isRegistered(animation, true) ? oldAnimations.get(animation).getFirst() : null;
     }
-
 }

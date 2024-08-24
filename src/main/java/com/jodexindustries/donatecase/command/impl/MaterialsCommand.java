@@ -53,7 +53,7 @@ public class MaterialsCommand implements SubCommandExecutor, SubCommandTabComple
      */
     private static Map<String, List<CaseMaterial>> buildMaterialsMap() {
         Map<String, List<CaseMaterial>> materialsMap = new HashMap<>();
-        MaterialManager.getRegisteredMaterials().forEach((name, caseMaterial) -> {
+        MaterialManager.registeredMaterials.forEach((name, caseMaterial) -> {
             String addon = caseMaterial.getAddon().getName();
 
             List<CaseMaterial> materials = materialsMap.getOrDefault(addon, new ArrayList<>());
