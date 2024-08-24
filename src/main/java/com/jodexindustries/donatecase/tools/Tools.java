@@ -154,13 +154,17 @@ public class Tools {
 
     public static ItemStack loadCaseItem(String id) {
         ItemStack itemStack = null;
-        String temp = id != null ? MaterialManager.getByStart(id) : null;
 
-        if(temp != null) {
-            CaseMaterial caseMaterial = MaterialManager.getRegisteredMaterial(temp);
-            if(caseMaterial != null) {
-                String context = id.replace(temp, "").replaceFirst(":", "").trim();
-                itemStack = caseMaterial.handle(context);
+        if(id != null && Material.getMaterial(id) == null) {
+            String temp = MaterialManager.getByStart(id);
+
+
+            if (temp != null) {
+                CaseMaterial caseMaterial = MaterialManager.getRegisteredMaterial(temp);
+                if (caseMaterial != null) {
+                    String context = id.replace(temp, "").replaceFirst(":", "").trim();
+                    itemStack = caseMaterial.handle(context);
+                }
             }
         }
 
