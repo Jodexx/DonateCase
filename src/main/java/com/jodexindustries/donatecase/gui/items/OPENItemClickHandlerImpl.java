@@ -19,6 +19,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
         GUITypedItem item = manager.builder("OPEN")
                 .click(this)
                 .setUpdateMeta(true)
+                .setLoadOnCase(true)
                 .build();
 
         manager.registerItem(item);

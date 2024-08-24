@@ -2,8 +2,10 @@ package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.GUITypedItemManager;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.GUI;
+import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.Tools;
@@ -243,10 +245,17 @@ public class CaseLoader {
 
         currentSlots.addAll(slots);
 
-        CaseData.Item.Material material = new CaseData.Item.Material(id, null, displayName, enchanted,
-                lore, modelData, rgb);
+        ItemStack itemStack = null;
 
-        if(itemType.equalsIgnoreCase("DEFAULT")) material.setItemStack(Tools.loadCaseItem(id));
+        if(itemType.equalsIgnoreCase("DEFAULT")) {
+            itemStack = Tools.loadCaseItem(id);
+        } else {
+            GUITypedItem typedItem = GUITypedItemManager.getFromString(itemType);
+            if (typedItem != null && typedItem.isLoadOnCase()) itemStack = Tools.loadCaseItem(id);
+        }
+
+        CaseData.Item.Material material = new CaseData.Item.Material(id, itemStack, displayName, enchanted,
+                lore, modelData, rgb);
 
         return new GUI.Item(i, itemType, material, slots);
     }

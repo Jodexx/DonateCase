@@ -14,15 +14,21 @@ public class GUITypedItem {
     private final String id;
     private final Addon addon;
     private final boolean updateMeta;
+    private final boolean loadOnCase;
+    private final String description;
+    private final TypedItemHandler itemHandler;
+    private final TypedItemClickHandler itemClickHandler;
 
-    private String description;
-    private TypedItemHandler itemHandler;
-    private TypedItemClickHandler itemClickHandler;
-
-    public GUITypedItem(String id, Addon addon, boolean updateMeta) {
+    public GUITypedItem(String id, Addon addon, boolean updateMeta, boolean loadOnCase,
+                        String description, TypedItemHandler itemHandler,
+                        TypedItemClickHandler itemClickHandler) {
         this.id = id;
         this.addon = addon;
         this.updateMeta = updateMeta;
+        this.loadOnCase = loadOnCase;
+        this.description = description;
+        this.itemHandler = itemHandler;
+        this.itemClickHandler = itemClickHandler;
     }
 
     /**
@@ -75,35 +81,21 @@ public class GUITypedItem {
         return itemClickHandler;
     }
 
-    /**
-     * Set item description
-     *
-     * @param description information about this item
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
-     * Set item handler
-     *
-     * @param itemHandler handling item creating
-     */
-    public void setItemHandler(TypedItemHandler itemHandler) {
-        this.itemHandler = itemHandler;
-    }
-
-    /**
-     * Set item click handler
-     *
-     * @param itemClickHandler handling click on item
-     */
-    public void setItemClickHandler(TypedItemClickHandler itemClickHandler) {
-        this.itemClickHandler = itemClickHandler;
-    }
-
     public boolean isUpdateMeta() {
         return updateMeta;
+    }
+
+    public boolean isLoadOnCase() {
+        return loadOnCase;
+    }
+
+    public Builder toBuilder() {
+        Builder builder = new Builder(id, addon);
+        builder.updateMeta = updateMeta;
+        builder.description = description;
+        builder.itemHandler = itemHandler;
+        builder.itemClickHandler = itemClickHandler;
+        return builder;
     }
 
     public static class Builder {
@@ -114,6 +106,7 @@ public class GUITypedItem {
         private TypedItemClickHandler itemClickHandler;
         private String description;
         private boolean updateMeta = false;
+        private boolean loadOnCase = false;
 
         /**
          * Default constructor of this builder
@@ -164,17 +157,19 @@ public class GUITypedItem {
             return this;
         }
 
+        public GUITypedItem.Builder setLoadOnCase(boolean loadOnCase) {
+            this.loadOnCase = loadOnCase;
+            return this;
+        }
+
         /**
          * Complete this builder
          *
          * @return completed typed item object
          */
         public GUITypedItem build() {
-            GUITypedItem guiTypedItem = new GUITypedItem(id, addon, updateMeta);
-            guiTypedItem.setDescription(description);
-            guiTypedItem.setItemHandler(itemHandler);
-            guiTypedItem.setItemClickHandler(itemClickHandler);
-            return guiTypedItem;
+            return new GUITypedItem(id, addon, updateMeta, loadOnCase, description,
+                    itemHandler, itemClickHandler);
         }
     }
 }
