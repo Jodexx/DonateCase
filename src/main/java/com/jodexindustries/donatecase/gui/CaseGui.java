@@ -103,14 +103,11 @@ public class CaseGui {
     private void processItem(GUI.Item item) {
         String itemType = item.getType();
         if (!itemType.equalsIgnoreCase("DEFAULT")) {
-            String temp = GUITypedItemManager.getByStart(itemType);
-            if (temp != null) {
-                GUITypedItem typedItem = GUITypedItemManager.getRegisteredItem(temp);
-                if (typedItem != null) {
-                    TypedItemHandler handler = typedItem.getItemHandler();
-                    if (handler != null) item = handler.handle(this, item);
-                    if (typedItem.isUpdateMeta()) updateMeta(item);
-                }
+            GUITypedItem typedItem = GUITypedItemManager.getFromString(itemType);
+            if (typedItem != null) {
+                TypedItemHandler handler = typedItem.getItemHandler();
+                if (handler != null) item = handler.handle(this, item);
+                if (typedItem.isUpdateMeta()) updateMeta(item);
             }
         } else {
             updateMeta(item);

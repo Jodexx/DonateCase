@@ -118,4 +118,15 @@ public class GUITypedItemManager {
         return registeredItems.keySet().stream().filter(string.toLowerCase()::startsWith).findFirst().orElse(null);
     }
 
+    /**
+     * Get registered GUITypedItem by string
+     * @param string String to be parsed
+     * @return GUITypedItem object
+     * @since 2.2.5.5
+     */
+    public static @Nullable GUITypedItem getFromString(@NotNull final String string) {
+        String temp = GUITypedItemManager.getByStart(string);
+        return temp != null ? GUITypedItemManager.getRegisteredItem(temp) : null;
+    }
+
 }

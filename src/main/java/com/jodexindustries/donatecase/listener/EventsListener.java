@@ -69,10 +69,7 @@ public class EventsListener implements Listener {
 
             if (!caseGuiClickEvent.isCancelled()) {
 
-                String temp = GUITypedItemManager.getByStart(itemType);
-                if (temp == null) return;
-
-                GUITypedItem typedItem = GUITypedItemManager.getRegisteredItem(temp);
+                GUITypedItem typedItem = GUITypedItemManager.getFromString(itemType);
                 if (typedItem == null) return;
 
                 TypedItemClickHandler handler = typedItem.getItemClickHandler();
