@@ -65,6 +65,9 @@ public class Case {
      */
     public final static SimpleCache<InfoEntry, Integer> openCache = new SimpleCache<>(20);
 
+    /**
+     * Cache map for storing cases histories
+     */
     public final static SimpleCache<Integer, List<CaseData.HistoryData>> historyCache = new SimpleCache<>(20);
 
     /**
@@ -714,30 +717,6 @@ public class Case {
                 .collect(Collectors.toList()) : instance.mysql.getHistoryData().join().stream().filter(Objects::nonNull)
                 .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
                 .collect(Collectors.toList()));
-    }
-
-    public static CompletableFuture<List<CaseData.HistoryData>> getAsyncSortedHistoryDataByType(String caseType) {
-        return CompletableFuture.supplyAsync(() -> {
-            if (!instance.sql) {
-                CaseData caseData = getCase(caseType);
-                if (caseData == null) return new ArrayList<>();
-
-                CaseData.HistoryData[] temp = caseData.getHistoryData();
-                Stream<CaseData.HistoryData> stream = temp != null ? Arrays.stream(temp) : Stream.empty();
-                stream
-                        .filter(Objects::nonNull)
-                        .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
-                        .collect(Collectors.toList());
-            }
-            List<CaseData.HistoryData> list = new ArrayList<>();
-            for (CaseData.HistoryData data : instance.mysql.getHistoryDataByCaseType(caseType).join()) {
-                if (data != null) {
-                    list.add(data);
-                }
-            }
-            list.sort(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed());
-            return list;
-        });
     }
 
     /**
