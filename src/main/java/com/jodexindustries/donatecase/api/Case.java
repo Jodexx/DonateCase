@@ -724,19 +724,23 @@ public class Case {
      * @return list of history data
      */
     public static List<CaseData.HistoryData> getSortedHistoryDataCache() {
-        if(!instance.sql) return getAsyncSortedHistoryData().join();
-        List<CaseData.HistoryData> list;
-        List<CaseData.HistoryData> cachedList = historyCache.get(1);
-        if(cachedList == null) {
-            getAsyncSortedHistoryData().thenAcceptAsync(historyData -> historyCache.put(1, historyData));
-            // Get previous, if current is null
-            List<CaseData.HistoryData> previous = historyCache.getPrevious(1);
-            list = previous != null ? previous : getAsyncSortedHistoryData().join();
-        } else {
-            list = cachedList;
+        if (!instance.sql) {
+            return getAsyncSortedHistoryData().join();
         }
-        return list;
+
+        List<CaseData.HistoryData> cachedList = historyCache.get(1);
+
+        if (cachedList != null) {
+            return cachedList;
+        }
+
+        List<CaseData.HistoryData> previousList = historyCache.getPrevious(1);
+
+        getAsyncSortedHistoryData().thenAcceptAsync(historyData -> historyCache.put(1, historyData));
+
+        return (previousList != null) ? previousList : getAsyncSortedHistoryData().join();
     }
+
 
     /**
      * Get sorted history data by case
@@ -763,15 +767,6 @@ public class Case {
         String[] worldLocation = location.split(";");
         World world = Bukkit.getWorld(worldLocation[0]);
         return new Location(world, Double.parseDouble(worldLocation[1]), Double.parseDouble(worldLocation[2]), Double.parseDouble(worldLocation[3]));
-    }
-
-    /**
-     * Get case type by custom name
-     * @param name Case custom name
-     * @return case type
-     */
-    public static String getCaseTypeByCustomName(String name) {
-        return getConfig().getCases().getString("DonateCase.Cases." + name + ".type");
     }
 
     /**
@@ -832,12 +827,13 @@ public class Case {
      * @since 2.2.3.8
      */
     public static void cleanCache() {
-        for (CaseGui gui : Case.playersGui.values()) {
-            gui.getPlayer().closeInventory();
-        }
-        for (World world : Bukkit.getWorlds()) {
-            world.getEntitiesByClass(ArmorStand.class).stream().filter(stand -> stand.hasMetadata("case")).forEachOrdered(Entity::remove);
-        }
+        Case.playersGui.values().parallelStream().forEach(gui -> gui.getPlayer().closeInventory());
+
+        Bukkit.getWorlds().parallelStream()
+                .flatMap(world -> world.getEntitiesByClass(ArmorStand.class).parallelStream())
+                .filter(stand -> stand.hasMetadata("case"))
+                .forEach(Entity::remove);
+
         Case.playersGui.clear();
         Case.caseData.clear();
         Case.activeCases.clear();
