@@ -42,6 +42,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
+import java.util.logging.Level;
 
 /**
  * Main DonateCase class for loading
@@ -418,8 +419,12 @@ public class DonateCase extends JavaPlugin {
         libraryManager.setLogLevel(LogLevel.WARN);
         libraryManager.addRepository("https://maven.evokegames.gg/snapshots");
         libraryManager.addMavenCentral();
-        libraryManager.loadLibrary(entityLibSpigot);
-        getLogger().info("Libraries loaded!");
+        try {
+            libraryManager.loadLibrary(entityLibSpigot);
+            getLogger().info("Libraries loaded!");
+        } catch (RuntimeException e) {
+            getLogger().log(Level.SEVERE, "Error with loading libraries", e);
+        }
     }
 
     private void loadMetrics() {
