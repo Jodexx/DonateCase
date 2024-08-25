@@ -30,7 +30,7 @@ public class AddonCommand implements SubCommandExecutor, SubCommandTabCompleter 
         SubCommand subCommand = manager.builder("addon")
                 .executor(this)
                 .tabCompleter(this)
-                .type(SubCommandType.ADMIN)
+                .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);
     }

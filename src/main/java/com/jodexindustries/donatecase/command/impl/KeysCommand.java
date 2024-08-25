@@ -26,7 +26,7 @@ public class KeysCommand implements SubCommandExecutor, SubCommandTabCompleter {
         SubCommand subCommand = manager.builder("keys")
                 .executor(this)
                 .tabCompleter(this)
-                .type(SubCommandType.PLAYER)
+                .permission(SubCommandType.PLAYER.permission)
                 .build();
         manager.registerSubCommand(subCommand);
     }

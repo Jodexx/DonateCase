@@ -27,7 +27,7 @@ public class GiveKeyCommand implements SubCommandExecutor, SubCommandTabComplete
         SubCommand subCommand = manager.builder("givekey")
                 .executor(this)
                 .tabCompleter(this)
-                .type(SubCommandType.MODER)
+                .permission(SubCommandType.MODER.permission)
                 .build();
         manager.registerSubCommand(subCommand);
     }

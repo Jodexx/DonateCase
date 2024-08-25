@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.events.SubCommandRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.SubCommandUnregisteredEvent;
@@ -42,9 +43,12 @@ public class SubCommandManager {
         SubCommand subCommand = new SubCommand(commandName, addon);
         subCommand.setExecutor((sender, label, args) -> executor.execute(sender, args));
         subCommand.setTabCompleter((sender, label, args) -> executor.getTabCompletions(sender, args));
-        subCommand.setType(executor.getType());
         subCommand.setArgs(executor.getArgs());
         subCommand.setDescription(executor.getDescription());
+
+        SubCommandType type = executor.getType();
+        if(type != null) subCommand.setPermission(type.permission);
+
         return registerSubCommand(subCommand);
     }
 

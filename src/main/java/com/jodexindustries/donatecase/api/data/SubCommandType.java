@@ -1,7 +1,5 @@
 package com.jodexindustries.donatecase.api.data;
 
-import org.bukkit.command.CommandSender;
-
 /**
  * Class to define command type
  */
@@ -20,14 +18,10 @@ public enum SubCommandType {
      */
     ADMIN("donatecase.admin");
 
-    private final String permission;
+    public final String permission;
 
     SubCommandType(String permission) {
         this.permission = permission;
-    }
-
-    public boolean hasPermission(CommandSender sender) {
-        return sender.hasPermission(permission);
     }
 
 }

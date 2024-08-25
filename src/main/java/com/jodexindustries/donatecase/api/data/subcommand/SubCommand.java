@@ -22,6 +22,7 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
     private String description;
     private SubCommandType type;
+    private String permission;
     private String[] args;
 
     public SubCommand(String name, Addon addon) {
@@ -69,12 +70,21 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
         this.description = description;
     }
 
+    /**
+     * @deprecated Use {@link #getPermission()} instead
+     */
+    @Deprecated
     public SubCommandType getType() {
         return type;
     }
 
+    /**
+     * @deprecated Use {@link #setPermission(String)} instead
+     */
+    @Deprecated
     public void setType(SubCommandType type) {
         this.type = type;
+        if(type != null) this.permission = type.permission;
     }
 
     public String[] getArgs() {
@@ -83,6 +93,21 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
     public void setArgs(String[] args) {
         this.args = args;
+    }
+
+    /**
+     * @return Value of the permission
+     * @since 2.2.5.6
+     */
+    public String getPermission() {
+        return permission;
+    }
+
+    /**
+     * @since 2.2.5.6
+     */
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 
     public Addon getAddon() {
@@ -98,6 +123,7 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
                 ", tabCompleter=" + tabCompleter +
                 ", description='" + description + '\'' +
                 ", type=" + type +
+                ", permission='" + permission + '\'' +
                 ", args=" + Arrays.toString(args) +
                 '}';
     }
@@ -111,6 +137,7 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
         private String description;
         private SubCommandType type;
         private String[] args;
+        private String permission;
 
         public Builder(String name, Addon addon) {
             this.addon = addon;
@@ -132,6 +159,7 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
             return this;
         }
 
+        @Deprecated
         public Builder type(SubCommandType type) {
             this.type = type;
             return this;
@@ -142,13 +170,18 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
             return this;
         }
 
+        public Builder permission(String permission) {
+            this.permission = permission;
+            return this;
+        }
+
         public SubCommand build() {
             SubCommand subCommand = new SubCommand(name, addon);
             subCommand.setExecutor(executor);
             subCommand.setTabCompleter(tabCompleter);
             subCommand.setDescription(description);
-            subCommand.setType(type);
             subCommand.setArgs(args);
+            subCommand.setPermission(permission == null && type != null ? type.permission : permission);
             return subCommand;
         }
     }

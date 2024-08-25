@@ -23,7 +23,7 @@ public class CasesCommand implements SubCommandExecutor, SubCommandTabCompleter 
         SubCommand subCommand = manager.builder("cases")
                 .executor(this)
                 .tabCompleter(this)
-                .type(SubCommandType.MODER)
+                .permission(SubCommandType.MODER.permission)
                 .build();
         manager.registerSubCommand(subCommand);
     }

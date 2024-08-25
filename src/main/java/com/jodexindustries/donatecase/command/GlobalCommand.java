@@ -35,9 +35,9 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                 return false;
             }
 
-            SubCommandType type = subCommand.getType();
+            String permission = subCommand.getPermission();
 
-            if (type == null || type.hasPermission(sender))
+            if (permission == null || sender.hasPermission(permission))
                 subCommand.execute(sender, label, Arrays.copyOfRange(args, 1, args.length));
             else Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
         }
@@ -96,9 +96,9 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     description = (description != null) ? Tools.rt(Case.getConfig().getLang().getString("help-addons.format.description"), "%description:" + description) : "";
 
                     StringBuilder argsBuilder = compileSubCommandArgs(subCommand.getArgs());
-                    SubCommandType type = subCommand.getType();
+                    String permission = subCommand.getPermission();
 
-                    if (type == null || type.hasPermission(sender)) {
+                    if (permission == null || sender.hasPermission(permission)) {
                         Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("help-addons.format.command"),
                                 "%cmd:" + commandName,
                                 "%args:" + argsBuilder,
@@ -132,9 +132,9 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             for (Map.Entry<String, SubCommand> entry : subCommands.entrySet()) {
                 String subCommandName = entry.getKey();
                 SubCommand subCommand = entry.getValue();
-                SubCommandType type = subCommand.getType();
+                String permission = subCommand.getPermission();
 
-                if (type == null || type.hasPermission(sender)) {
+                if (permission == null || sender.hasPermission(permission)) {
                     value.add(subCommandName);
                 }
             }

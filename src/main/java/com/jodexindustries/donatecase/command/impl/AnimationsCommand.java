@@ -22,7 +22,7 @@ public class AnimationsCommand implements SubCommandExecutor, SubCommandTabCompl
         com.jodexindustries.donatecase.api.data.subcommand.SubCommand subCommand = manager.builder("animations")
                 .executor(this)
                 .tabCompleter(this)
-                .type(SubCommandType.ADMIN)
+                .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);
     }

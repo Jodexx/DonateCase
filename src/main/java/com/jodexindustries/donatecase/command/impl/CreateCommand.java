@@ -25,7 +25,7 @@ public class CreateCommand implements SubCommandExecutor, SubCommandTabCompleter
         SubCommand subCommand = manager.builder("create")
                 .executor(this)
                 .tabCompleter(this)
-                .type(SubCommandType.ADMIN)
+                .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);
     }

@@ -26,7 +26,7 @@ public class DeleteCommand implements SubCommandExecutor, SubCommandTabCompleter
         SubCommand subCommand = manager.builder("delete")
                 .executor(this)
                 .tabCompleter(this)
-                .type(SubCommandType.ADMIN)
+                .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);
     }

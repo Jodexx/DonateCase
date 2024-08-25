@@ -22,7 +22,7 @@ public class ActionsCommand implements SubCommandExecutor, SubCommandTabComplete
         SubCommand subCommand = manager.builder("actions")
                 .executor(this)
                 .tabCompleter(this)
-                .type(SubCommandType.ADMIN)
+                .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);
     }

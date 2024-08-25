@@ -26,7 +26,7 @@ public class OpenCaseCommand implements SubCommandExecutor, SubCommandTabComplet
         SubCommand subCommand = manager.builder("opencase")
                 .executor(this)
                 .tabCompleter(this)
-                .type(SubCommandType.PLAYER)
+                .permission(SubCommandType.PLAYER.permission)
                 .build();
         manager.registerSubCommand(subCommand);
     }

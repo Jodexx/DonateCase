@@ -26,7 +26,7 @@ public class DelKeyCommand implements SubCommandExecutor, SubCommandTabCompleter
         SubCommand subCommand = manager.builder("delkey")
                 .executor(this)
                 .tabCompleter(this)
-                .type(SubCommandType.ADMIN)
+                .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);
     }

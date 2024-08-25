@@ -22,7 +22,7 @@ public class ReloadCommand implements SubCommandExecutor, SubCommandTabCompleter
         SubCommand subCommand = manager.builder("reload")
                 .executor(this)
                 .tabCompleter(this)
-                .type(SubCommandType.ADMIN)
+                .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);
     }

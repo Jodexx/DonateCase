@@ -25,7 +25,7 @@ public class MaterialsCommand implements SubCommandExecutor, SubCommandTabComple
         SubCommand subCommand = manager.builder("materials")
                 .executor(this)
                 .tabCompleter(this)
-                .type(SubCommandType.ADMIN)
+                .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);
     }
