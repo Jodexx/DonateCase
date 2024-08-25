@@ -9,6 +9,7 @@ import com.jodexindustries.donatecase.api.events.AddonDisableEvent;
 import com.jodexindustries.donatecase.api.events.AddonEnableEvent;
 import com.alessiodp.libby.Library;
 import com.alessiodp.libby.LibraryManager;
+import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,6 +83,17 @@ public class AddonManager {
                 }
                 Case.getInstance().getLogger().warning("Addon with name " + description.getName() + " already loaded!");
                 return false;
+            }
+
+            if(description.getApiVersion() != null) {
+                int addonVersion = Tools.getPluginVersion(description.getApiVersion());
+                int pluginVersion = Tools.getPluginVersion(Case.getInstance().getDescription().getVersion());
+
+                if(pluginVersion < addonVersion) {
+                    Case.getInstance().getLogger().warning("Addon API version (" + addonVersion
+                            + ") incompatible with current DonateCase version (" + pluginVersion + ")! Abort.");
+                    return false;
+                }
             }
 
             loadLibraries(description.getLibraries());
