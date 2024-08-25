@@ -664,11 +664,15 @@ public class Case {
      * @param caseData      Case type
      * @param blockLocation Block location
      */
-    public static void openGui(Player player, CaseData caseData, Location blockLocation) {
-        if (!playersGui.containsKey(player.getUniqueId())) {
-            playersGui.put(player.getUniqueId(), new CaseGui(player, caseData.clone(), blockLocation));
+    public static void openGui(@NotNull Player player, @NotNull CaseData caseData, @NotNull Location blockLocation) {
+        if (caseData.getGui() != null) {
+            if (!playersGui.containsKey(player.getUniqueId())) {
+                playersGui.put(player.getUniqueId(), new CaseGui(player, caseData.clone(), blockLocation));
+            } else {
+                instance.getLogger().warning("Player " + player.getName() + " already opened case: " + caseData.getCaseType());
+            }
         } else {
-            instance.getLogger().warning("Player " + player.getName() + " already opened case: " + caseData.getCaseType());
+            instance.getLogger().warning("Player " + player.getName() + " trying to open case: " + caseData.getCaseType() + " without GUI!");
         }
     }
 
