@@ -75,22 +75,22 @@ public class AddonManager {
                 throw new RuntimeException(e);
             }
 
-            Case.getInstance().getLogger().info("Loading " + description.getName() + " addon v" + description.getVersion());
+            addon.getLogger().info("Loading " + description.getName() + " addon v" + description.getVersion());
             if (addons.get(description.getName()) != null) {
                 if (description.getName().equalsIgnoreCase("DonateCase")) {
-                    Case.getInstance().getLogger().warning("Addon " + file.getName() + " trying to load with DonateCase name! Abort.");
+                    addon.getLogger().warning("Addon " + file.getName() + " trying to load with DonateCase name! Abort.");
                     return false;
                 }
-                Case.getInstance().getLogger().warning("Addon with name " + description.getName() + " already loaded!");
+                addon.getLogger().warning("Addon with name " + description.getName() + " already loaded!");
                 return false;
             }
 
-            if(description.getApiVersion() != null) {
+            if (description.getApiVersion() != null) {
                 int addonVersion = Tools.getPluginVersion(description.getApiVersion());
                 int pluginVersion = Tools.getPluginVersion(Case.getInstance().getDescription().getVersion());
 
-                if(pluginVersion < addonVersion) {
-                    Case.getInstance().getLogger().warning("Addon API version (" + addonVersion
+                if (pluginVersion < addonVersion) {
+                    addon.getLogger().warning("Addon API version (" + addonVersion
                             + ") incompatible with current DonateCase version (" + pluginVersion + ")! Abort.");
                     return false;
                 }
@@ -99,9 +99,9 @@ public class AddonManager {
             loadLibraries(description.getLibraries());
             InternalAddonClassLoader loader;
             try {
-                loader = new InternalAddonClassLoader(Case.getInstance().getClass().getClassLoader(), description, file, this);
+                loader = new InternalAddonClassLoader(addon.getClass().getClassLoader(), description, file, this);
             } catch (Throwable t) {
-                Case.getInstance().getLogger().log(Level.SEVERE,
+                addon.getLogger().log(Level.SEVERE,
                         "Error occurred while loading addon " + description.getName() + " v" + description.getVersion(), t);
                 return false;
             }
@@ -116,18 +116,18 @@ public class AddonManager {
                 try {
                     loader.close();
                 } catch (IOException ex) {
-                    Case.getInstance().getLogger().log(Level.SEVERE, e.getLocalizedMessage(), e.getCause());
+                    addon.getLogger().log(Level.SEVERE, e.getLocalizedMessage(), e.getCause());
                 }
                 if (e.getCause() instanceof ClassNotFoundException) {
                     ClassNotFoundException error = (ClassNotFoundException) e.getCause();
                     if (error.getLocalizedMessage().contains("JavaAddon")) {
-                        Case.getInstance().getLogger().log(Level.SEVERE,
+                        addon.getLogger().log(Level.SEVERE,
                                 "Error occurred while enabling addon " + description.getName() + " v" + description.getVersion() +
                                         "\nIncompatible DonateCaseAPI! Contact with developer or update addon!", e);
                         return false;
                     }
                 }
-                Case.getInstance().getLogger().log(Level.SEVERE,
+                addon.getLogger().log(Level.SEVERE,
                         "Error occurred while enabling addon " + description.getName() + " v" + description.getVersion(), e);
             }
         }
@@ -200,7 +200,7 @@ public class AddonManager {
     public boolean enableAddon(@NotNull InternalJavaAddon addon, PowerReason reason) {
         try {
             if (!addon.isEnabled()) {
-                Case.getInstance().getLogger().info("Enabling " + addon.getName() + " addon v" + addon.getVersion());
+                addon.getLogger().info("Enabling " + addon.getName() + " addon v" + addon.getVersion());
                 addon.setEnabled(true);
 
                 AddonEnableEvent addonEnableEvent = new AddonEnableEvent(addon, this.addon, reason);
@@ -208,7 +208,7 @@ public class AddonManager {
                 return true;
             }
         } catch (Throwable t) {
-            Case.getInstance().getLogger().log(Level.SEVERE,
+            addon.getLogger().log(Level.SEVERE,
                     "Error occurred while enabling addon " + addon.getName() + " v" + addon.getVersion(), t);
         }
         return false;
@@ -259,14 +259,14 @@ public class AddonManager {
     public boolean disableAddon(@NotNull InternalJavaAddon addon, PowerReason reason) {
         try {
             if (addon.isEnabled()) {
-                Case.getInstance().getLogger().info("Disabling " + addon.getName() + " addon v" + addon.getVersion());
+                addon.getLogger().info("Disabling " + addon.getName() + " addon v" + addon.getVersion());
                 addon.setEnabled(false);
                 AddonDisableEvent addonDisableEvent = new AddonDisableEvent(addon, this.addon, reason);
                 Bukkit.getPluginManager().callEvent(addonDisableEvent);
                 return true;
             }
         } catch (Throwable t) {
-            Case.getInstance().getLogger().log(Level.SEVERE,
+            addon.getLogger().log(Level.SEVERE,
                     "Error occurred while disabling addon " + addon.getName() + " v" + addon.getVersion(), t);
         }
         return false;
@@ -342,7 +342,7 @@ public class AddonManager {
             addon.getUrlClassLoader().close();
             return true;
         } catch (Throwable e) {
-            Case.getInstance().getLogger().log(Level.SEVERE, e.getLocalizedMessage(), e.getCause());
+            addon.getLogger().log(Level.SEVERE, e.getLocalizedMessage(), e.getCause());
         }
         return false;
     }
@@ -396,7 +396,7 @@ public class AddonManager {
                 try {
                     manager.loadLibrary(library);
                 } catch (RuntimeException e) {
-                    Case.getInstance().getLogger().log(Level.WARNING, "Error with loading library " + lib, e);
+                    addon.getLogger().log(Level.WARNING, "Error with loading library " + lib, e);
                 }
             }
         }
