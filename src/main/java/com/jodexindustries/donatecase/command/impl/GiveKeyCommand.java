@@ -48,11 +48,13 @@ public class GiveKeyCommand implements SubCommandExecutor, SubCommandTabComplete
             if (Case.hasCaseByType(caseName)) {
                 CaseData data = Case.getCase(caseName);
                 if (data == null) return;
-                String caseTitle = data.getCaseTitle();
-                String caseDisplayName = data.getCaseDisplayName();
                 Case.addKeys(caseName, player, keys);
-                Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-given"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
-                Tools.msg(target, Tools.rt(Case.getConfig().getLang().getString("keys-given-target"), "%player:" + player, "%key:" + keys, "%casetitle:" + caseTitle, "%casedisplayname:" + caseDisplayName, "%case:" + caseName));
+                Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-given"),
+                        "%player:" + player, "%key:" + keys, "%casetitle:" + data.getCaseTitle(),
+                        "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
+                Tools.msg(target, Tools.rt(Case.getConfig().getLang().getString("keys-given-target"),
+                        "%player:" + player, "%key:" + keys, "%casetitle:" + data.getCaseTitle(),
+                        "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
             } else {
                 Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
             }

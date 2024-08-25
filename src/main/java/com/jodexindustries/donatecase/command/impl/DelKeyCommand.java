@@ -52,8 +52,6 @@ public class DelKeyCommand implements SubCommandExecutor, SubCommandTabCompleter
                 if (Case.hasCaseByType(caseType)) {
                     CaseData data = Case.getCase(caseType);
                     if (data == null) return;
-                    String caseTitle = data.getCaseTitle();
-                    String caseDisplayName = data.getCaseDisplayName();
                     int keys;
                     if (args.length == 2) {
                         keys = Case.getKeys(caseType, player);
@@ -69,8 +67,8 @@ public class DelKeyCommand implements SubCommandExecutor, SubCommandTabCompleter
                         Case.removeKeys(caseType, player, keys);
                     }
                     Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-cleared"),
-                            "%player:" + player, "%casetitle:" + caseTitle,
-                            "%casedisplayname:" + caseDisplayName, "%case:" + caseType, "%key:" + keys));
+                            "%player:" + player, "%casetitle:" + data.getCaseTitle(),
+                            "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseType, "%key:" + keys));
                 } else {
                     Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseType));
                 }

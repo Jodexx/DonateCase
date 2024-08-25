@@ -15,7 +15,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -46,7 +51,7 @@ public class CaseLoader {
             ConfigurationSection caseSection = config.getConfigurationSection("case");
 
             if (caseSection == null) {
-                logWarning("Case " + caseType + " has a broken case section, skipped.");
+                plugin.getLogger().warning("Case " + caseType + " has a broken case section, skipped.");
                 continue;
             }
 
@@ -71,7 +76,7 @@ public class CaseLoader {
         String animationName = caseSection.getString("Animation");
 
         if (animationName == null) {
-            logWarning("Case " + caseType + " has no animation, skipped.");
+            plugin.getLogger().warning("Case " + caseType + " has no animation, skipped.");
             return null;
         }
 
@@ -109,7 +114,7 @@ public class CaseLoader {
                 ConfigurationSection itemSection = itemsSection.getConfigurationSection(item);
 
                 if (itemSection == null) {
-                    logWarning("Case " + caseType + " has a broken item " + item + " section, skipped.");
+                    plugin.getLogger().warning("Case " + caseType + " has a broken item " + item + " section, skipped.");
                     continue;
                 }
 
@@ -117,7 +122,7 @@ public class CaseLoader {
                 items.put(item, caseItem);
             }
         } else {
-            logWarning("Case " + caseType + " has a broken case.Items section");
+            plugin.getLogger().warning("Case " + caseType + " has a broken case.Items section");
         }
 
         return items;
@@ -201,7 +206,7 @@ public class CaseLoader {
             int updateRate = guiSection.getInt("UpdateRate", -1);
             if (!isValidGuiSize(size)) {
                 size = 54;
-                logWarning("Wrong GUI size: " + size + ".Using 54");
+                plugin.getLogger().warning("Wrong GUI size: " + size + ".Using 54");
             }
             ConfigurationSection items = guiSection.getConfigurationSection("Items");
 
@@ -290,11 +295,6 @@ public class CaseLoader {
         int range1 = Integer.parseInt(slotArgs[0]);
         int range2 = slotArgs.length >= 2 ? Integer.parseInt(slotArgs[1]) : range1;
         return IntStream.rangeClosed(range1, range2).boxed().collect(Collectors.toList());
-    }
-
-
-    private void logWarning(String message) {
-        plugin.getLogger().warning(message);
     }
 
     private static boolean isValidGuiSize(int size) {

@@ -31,14 +31,12 @@ public class CasesCommand implements SubCommandExecutor, SubCommandTabCompleter 
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         int num = 0;
-        for (String caseName : Case.getConfig().getCasesConfig().getCases().keySet()) {
+        for (CaseData data : Case.caseData.values()) {
             num++;
-            CaseData data = Case.getCase(caseName);
-            if (data == null) return;
-            String caseTitle = data.getCaseTitle();
-            String caseDisplayName = data.getCaseDisplayName();
-
-            Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("list-of-cases"), "%casename:" + caseName, "%num:" + num, "%casedisplayname:" + caseDisplayName, "%casetitle:" + caseTitle));
+            Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("list-of-cases"),
+                    "%casename:" + data.getCaseType(), "%num:" + num,
+                    "%casedisplayname:" + data.getCaseDisplayName(),
+                    "%casetitle:" + data.getCaseTitle()));
         }
     }
 

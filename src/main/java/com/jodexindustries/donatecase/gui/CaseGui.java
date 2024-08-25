@@ -165,6 +165,7 @@ public class CaseGui {
 
     /**
      * Gets location where GUI opened
+     *
      * @return GUI location
      */
     public Location getLocation() {
@@ -173,6 +174,7 @@ public class CaseGui {
 
     /**
      * Gets player who opened GUI
+     *
      * @return player who opened
      */
     public Player getPlayer() {
