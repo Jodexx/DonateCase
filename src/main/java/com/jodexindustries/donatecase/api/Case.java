@@ -831,17 +831,17 @@ public class Case {
      * @since 2.2.3.8
      */
     public static void cleanCache() {
-        Case.playersGui.values().parallelStream().forEach(gui -> gui.getPlayer().closeInventory());
+        playersGui.values().parallelStream().forEach(gui -> gui.getPlayer().closeInventory());
 
-        Bukkit.getWorlds().parallelStream()
-                .flatMap(world -> world.getEntitiesByClass(ArmorStand.class).parallelStream())
+        Bukkit.getWorlds().stream()
+                .flatMap(world -> world.getEntitiesByClass(ArmorStand.class).stream())
                 .filter(stand -> stand.hasMetadata("case"))
                 .forEach(Entity::remove);
 
-        Case.playersGui.clear();
-        Case.caseData.clear();
-        Case.activeCases.clear();
-        Case.activeCasesByLocation.clear();
+        playersGui.clear();
+        caseData.clear();
+        activeCases.clear();
+        activeCasesByLocation.clear();
         keysCache.clear();
         openCache.clear();
         historyCache.clear();
