@@ -62,10 +62,18 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
         return name;
     }
 
+    /**
+     * Gets the subcommand description
+     * @return subcommand description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Sets the subcommand description that will be displayed in help list
+     * @param description subcommand description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
@@ -96,6 +104,7 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
     }
 
     /**
+     * Gets permission for command executing
      * @return Value of the permission
      * @since 2.2.5.6
      */
@@ -104,10 +113,26 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
     }
 
     /**
+     * Sets permission for command executing
+     * @param permission Value of the permission
      * @since 2.2.5.6
      */
     public void setPermission(String permission) {
         this.permission = permission;
+    }
+
+    /**
+     * @since 2.2.5.6
+     */
+    public Builder toBuilder() {
+        Builder builder = new Builder(name, addon);
+        builder.permission = permission;
+        builder.description = description;
+        builder.type = type;
+        builder.args = args;
+        builder.tabCompleter = tabCompleter;
+        builder.executor = executor;
+        return builder;
     }
 
     public Addon getAddon() {
