@@ -14,11 +14,15 @@ repositories {
             includeGroup 'org.spigotmc'
         }
     }
+    maven {
+        name = "JodexIndustries"
+        url = "https://repo.jodexindustries.xyz/releases"
+    }
 }
 
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
-    compileOnly fileTree("libs").include("*.jar")
+    compileOnly 'com.jodexindustries.donatecase:DonateCaseAPI:2.2.5.5'
     compileOnly("org.jetbrains:annotations:24.0.0")
 
 }
