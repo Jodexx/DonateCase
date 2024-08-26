@@ -75,6 +75,6 @@ public class Loader implements Listener {
 
     @EventHandler
     public void onInventory(CaseGuiClickEvent e) {
-        Bukkit.getServer().broadcastMessage(e.getCaseType());
+        Bukkit.getServer().broadcastMessage(e.getGui().getCaseData().getCaseType());
     }
 }
