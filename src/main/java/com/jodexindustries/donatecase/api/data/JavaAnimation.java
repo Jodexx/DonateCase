@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api.data;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -19,7 +20,7 @@ public abstract class JavaAnimation implements IAnimation {
      * @param caseData Case data
      * @param winItem  winItem
      */
-    public void init(Player player, Location location, UUID uuid, CaseData caseData,
+    public final void init(Player player, Location location, UUID uuid, CaseData caseData,
                      CaseData.Item winItem) {
         this.player = player;
         this.location = location;
@@ -28,23 +29,28 @@ public abstract class JavaAnimation implements IAnimation {
         this.winItem = winItem;
     }
 
-    public Player getPlayer() {
+    @NotNull
+    public final Player getPlayer() {
         return player;
     }
 
-    public Location getLocation() {
+    @NotNull
+    public final Location getLocation() {
         return location;
     }
 
-    public UUID getUuid() {
+    @NotNull
+    public final UUID getUuid() {
         return uuid;
     }
 
-    public CaseData getCaseData() {
+    @NotNull
+    public final CaseData getCaseData() {
         return caseData;
     }
 
-    public CaseData.Item getWinItem() {
+    @NotNull
+    public final CaseData.Item getWinItem() {
         return winItem;
     }
 }
