@@ -26,7 +26,9 @@ public class AnimationPreStartEvent extends PlayerEvent {
      * @param location  Location where opened
      * @param winItem   Win item
      */
-    public AnimationPreStartEvent(@NotNull Player who, String animation, final CaseData caseData, Location location, CaseData.Item winItem) {
+    public AnimationPreStartEvent(@NotNull final Player who, @NotNull final String animation,
+                                  @NotNull final CaseData caseData, @NotNull final Location location,
+                                  @NotNull final CaseData.Item winItem) {
         super(who);
         this.caseData = caseData;
         this.location = location;
@@ -80,7 +82,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
      *
      * @param winItem Win group data
      */
-    public void setWinItem(CaseData.Item winItem) {
+    public void setWinItem(@NotNull CaseData.Item winItem) {
         this.winItem = winItem;
     }
 
