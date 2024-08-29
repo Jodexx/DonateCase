@@ -879,7 +879,7 @@ public class CaseData implements Cloneable {
                         meta.setDisplayName(displayName);
                         meta.setLore(lore);
                         meta.setCustomModelData(modelData);
-                        if(enchanted) this.itemStack.addUnsafeEnchantment(Enchantment.LURE, 1);
+                        if(enchanted) meta.addEnchant(Enchantment.LURE, 1, true);
 
                         if (rgb != null && meta instanceof LeatherArmorMeta) {
                             LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) meta;
