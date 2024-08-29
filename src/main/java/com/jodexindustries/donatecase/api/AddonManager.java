@@ -152,7 +152,9 @@ public class AddonManager {
      */
     public void enableAddons(PowerReason reason) {
         Collection<InternalJavaAddon> list = addons.values();
-        list.forEach(internalJavaAddon -> enableAddon(internalJavaAddon, reason));
+        for (InternalJavaAddon internalJavaAddon : list) {
+            enableAddon(internalJavaAddon, reason);
+        }
     }
 
     /**
@@ -280,7 +282,9 @@ public class AddonManager {
      */
     public void unloadAddons(PowerReason reason) {
         List<InternalJavaAddon> list = new ArrayList<>(addons.values());
-        list.forEach(addon -> unloadAddon(addon, reason));
+        for (InternalJavaAddon internalJavaAddon : list) {
+            unloadAddon(internalJavaAddon, reason);
+        }
         addons.clear();
     }
 
