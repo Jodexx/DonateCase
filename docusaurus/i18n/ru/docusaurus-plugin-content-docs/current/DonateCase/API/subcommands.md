@@ -116,7 +116,7 @@ Main class
 
 
 ## ~~Старый метод~~
-Чтобы создать класс подкоманды, мы будем использовать [SubCommand](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.6/raw/com/jodexindustries/donatecase/api/data/SubCommand.html) интерфейс
+Чтобы создать класс подкоманды, мы будем использовать [SubCommand](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.7/raw/com/jodexindustries/donatecase/api/data/SubCommand.html) интерфейс
 
 TestSubCommand класс
 ```java
