@@ -255,11 +255,9 @@ public class DonateCase extends JavaPlugin {
         new DeleteCommand(manager);
         new AddonsCommand(manager);
         new AddonCommand(manager);
-        new AnimationsCommand(manager);
-        new ActionsCommand(manager);
-        new MaterialsCommand(manager);
+        new RegistryCommand(manager);
 
-        Logger.log("&aRegistered &cdefault &acommands");
+        Logger.log("&aRegistered &c" + SubCommandManager.registeredSubCommands.size() + " &acommands");
     }
 
     private void registerDefaultAnimations() {
@@ -274,7 +272,7 @@ public class DonateCase extends JavaPlugin {
                 "Fireworks fly to the skies and a prize appears");
         manager.registerAnimation("FULLWHEEL", FullWheelAnimation.class,
                 "All items from the case revolve around it");
-        Logger.log("&aRegistered &cdefault &aanimations");
+        Logger.log("&aRegistered &c" + AnimationManager.registeredAnimations.size() + " &aanimations");
     }
 
     private void registerDefaultActions() {
@@ -289,7 +287,7 @@ public class DonateCase extends JavaPlugin {
                 "Sends a broadcast to the players");
         manager.registerAction("[sound]", new SoundActionExecutorImpl(),
                 "Sends a sound to the player");
-        Logger.log("&aRegistered &cdefault &aactions");
+        Logger.log("&aRegistered &c" + ActionManager.registeredActions.size() + " &aactions");
     }
 
     private void registerDefaultMaterials() {
@@ -308,7 +306,7 @@ public class DonateCase extends JavaPlugin {
                 "Heads from CustomHeads plugin");
         manager.registerMaterial("HDB", new HDBMaterialHandlerImpl(),
                 "Heads from HeadDatabase plugin");
-        Logger.log("&aRegistered &cdefault &amaterials");
+        Logger.log("&aRegistered &c" + MaterialManager.registeredMaterials.size() + " &amaterials");
     }
 
     private void registerDefaultGUITypedItems() {
@@ -317,7 +315,7 @@ public class DonateCase extends JavaPlugin {
         new OPENItemClickHandlerImpl(manager);
         new HISTORYItemHandlerImpl(manager);
 
-        Logger.log("&aRegistered &cdefault &agui typed items");
+        Logger.log("&aRegistered &c" + GUITypedItemManager.registeredItems.size() + " &agui typed items");
     }
 
     private void loadPermissionDriver() {
