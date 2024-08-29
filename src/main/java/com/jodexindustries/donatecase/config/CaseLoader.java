@@ -228,7 +228,7 @@ public class CaseLoader {
             ConfigurationSection itemSection = itemsSection.getConfigurationSection(i);
             if (itemSection != null) {
                 GUI.Item item = loadGUIItem(i, itemSection, currentSlots);
-                itemMap.put(i, item);
+                if(item != null) itemMap.put(i, item);
             }
         }
         return itemMap;
@@ -244,6 +244,11 @@ public class CaseLoader {
         int modelData = itemSection.getInt("ModelData", -1);
         String[] rgb = Tools.parseRGB(itemSection.getString("Rgb"));
         List<Integer> slots = getItemSlots(itemSection);
+
+        if(slots.isEmpty()) {
+            plugin.getLogger().warning("Item " + i + " has no specified slots");
+            return null;
+        }
 
         if (slots.removeIf(currentSlots::contains))
             plugin.getLogger().warning("Item " + i + " contains duplicated slots, removing..");
@@ -291,7 +296,11 @@ public class CaseLoader {
     }
 
     private List<Integer> getItemSlotsRanged(ConfigurationSection itemSection) {
-        String[] slotArgs = itemSection.getString("Slots", "0-0").split("-");
+        String slots = itemSection.getString("Slots");
+
+        if(slots == null || slots.isEmpty()) return new ArrayList<>();
+
+        String[] slotArgs = slots.split("-");
         int range1 = Integer.parseInt(slotArgs[0]);
         int range2 = slotArgs.length >= 2 ? Integer.parseInt(slotArgs[1]) : range1;
         return IntStream.rangeClosed(range1, range2).boxed().collect(Collectors.toList());
