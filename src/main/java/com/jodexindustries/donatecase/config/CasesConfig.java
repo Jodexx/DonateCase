@@ -2,14 +2,15 @@ package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.tools.Pair;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class for loading cases configurations
@@ -31,9 +32,6 @@ public class CasesConfig {
                 String name = getFileNameWithoutExtension(file);
                 YamlConfiguration caseConfig = YamlConfiguration.loadConfiguration(file);
                 if (caseConfig.getConfigurationSection("case") != null) {
-                    if (!processItems(caseConfig, name, file)) {
-                        Case.getInstance().getLogger().warning("Case " + name + " has a broken case.Items section, skipped.");
-                    }
                     cases.put(name, new Pair<>(file, caseConfig));
                 } else {
                     Case.getInstance().getLogger().warning("Case " + name + " has a broken case section, skipped.");
@@ -61,79 +59,6 @@ public class CasesConfig {
     private static String getFileNameWithoutExtension(File file) {
         String fileName = file.getName();
         return fileName.lastIndexOf(".") == -1 ? fileName : fileName.substring(0, fileName.lastIndexOf("."));
-    }
-
-    private boolean processItems(YamlConfiguration caseConfig, String caseName, File file) {
-        ConfigurationSection itemsSection = caseConfig.getConfigurationSection("case.Items");
-        if (itemsSection == null) return false;
-
-        boolean isOld = false;
-        for (String item : itemsSection.getKeys(false)) {
-            List<String> actions = new ArrayList<>();
-            String giveCommand = caseConfig.getString("case.Items." + item + ".GiveCommand");
-            List<String> giveCommands = caseConfig.getStringList("case.Items." + item + ".Commands");
-            ConfigurationSection giveSection = caseConfig.getConfigurationSection("case.Items." + item + ".GiveCommands");
-
-            if (giveCommand != null || !giveCommands.isEmpty() || giveSection != null) {
-                if (!isOld) {
-                    isOld = true;
-                    Case.getInstance().getLogger().warning("Case " + caseName + " outdated! Converting...");
-                }
-                actions.addAll(collectActions(caseConfig, item, giveCommand, giveCommands));
-                actions.addAll(collectRandomActions(caseConfig, item, giveSection));
-
-                caseConfig.set("case.Items." + item + ".Actions", actions);
-                clearOldConfig(caseConfig, item);
-                saveConfig(caseConfig, file);
-            }
-        }
-        return true;
-    }
-
-    private static List<String> collectActions(YamlConfiguration caseConfig, String item, String giveCommand, List<String> giveCommands) {
-        List<String> actions = new ArrayList<>();
-        if (giveCommand != null) actions.add("[command] " + giveCommand);
-        giveCommands.stream().map(command -> "[command] " + command).forEach(actions::add);
-        String title = caseConfig.getString("case.Items." + item + ".Title");
-        String subTitle = caseConfig.getString("case.Items." + item + ".SubTitle");
-        List<String> broadcast = caseConfig.getStringList("case.Items." + item + ".Broadcast");
-        actions.add("[title] " + title + ";" + subTitle);
-        broadcast.stream().map(line -> "[broadcast] " + line).forEach(actions::add);
-        return actions;
-    }
-
-    private static List<String> collectRandomActions(YamlConfiguration caseConfig, String item, ConfigurationSection giveSection) {
-        List<String> randomActions = new ArrayList<>();
-        if (giveSection != null) {
-            for (String choice : giveSection.getKeys(false)) {
-                int chance = caseConfig.getInt("case.Items." + item + ".GiveCommands." + choice + ".Chance");
-                List<String> choiceActions;
-                List<String> choiceCommands = caseConfig.getStringList("case.Items." + item + ".GiveCommands." + choice + ".Commands");
-                choiceActions = choiceCommands.stream().map(choiceCommand -> "[command] " + choiceCommand).collect(Collectors.toList());
-                List<String> choiceBroadcasts = caseConfig.getStringList("case.Items." + item + ".GiveCommands." + choice + ".Broadcast");
-                choiceBroadcasts.stream().map(choiceBroadcast -> "[broadcast] " + choiceBroadcast).forEach(choiceActions::add);
-                caseConfig.set("case.Items." + item + ".RandomActions." + choice + ".Chance", chance);
-                caseConfig.set("case.Items." + item + ".RandomActions." + choice + ".Actions", choiceActions);
-            }
-        }
-        return randomActions;
-    }
-
-    private static void clearOldConfig(YamlConfiguration caseConfig, String item) {
-        caseConfig.set("case.Items." + item + ".Title", null);
-        caseConfig.set("case.Items." + item + ".SubTitle", null);
-        caseConfig.set("case.Items." + item + ".Commands", null);
-        caseConfig.set("case.Items." + item + ".GiveCommand", null);
-        caseConfig.set("case.Items." + item + ".Broadcast", null);
-        caseConfig.set("case.Items." + item + ".GiveCommands", null);
-    }
-
-    private static void saveConfig(YamlConfiguration caseConfig, File file) {
-        try {
-            caseConfig.save(file);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**

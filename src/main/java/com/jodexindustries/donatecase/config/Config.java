@@ -74,6 +74,7 @@ public class Config {
         converter.convertConfig();
 
         checkConvertCases();
+
         casesConfig = new CasesConfig(plugin);
 
         checkConvertLocations();
@@ -118,7 +119,7 @@ public class Config {
         checkLanguageVersion();
 
         // Convert after language file loaded
-        converter.convertNoKeyActions();
+        converter.convertOverall();
 
         long caching = getConfig().getLong("DonateCase.Caching");
         if (caching >= 0) {
@@ -213,7 +214,7 @@ public class Config {
         if (configuration.getConfigurationSection("DonateCase.Cases") != null) {
             new File(plugin.getDataFolder(), "cases").mkdir();
             Logger.log("&cOutdated cases format!");
-            converter.convertCases();
+            converter.convertOldCasesFormat();
         } else {
             if (!new File(plugin.getDataFolder(), "cases").exists()) {
                 new File(plugin.getDataFolder(), "cases").mkdir();
