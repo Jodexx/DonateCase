@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.impl.materials;
 
 import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
-import day.dean.skullcreator.SkullCreator;
+import com.jodexindustries.donatecase.tools.SkullCreator;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

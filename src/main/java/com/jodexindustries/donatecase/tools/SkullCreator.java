@@ -1,4 +1,4 @@
-package day.dean.skullcreator;
+package com.jodexindustries.donatecase.tools;
 
 
 import com.mojang.authlib.GameProfile;
