@@ -14,6 +14,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -210,18 +211,19 @@ public class CaseLoader {
             }
             ConfigurationSection items = guiSection.getConfigurationSection("Items");
 
-            if (items != null) {
-                Map<String, GUI.Item> itemMap = loadGUIItems(items);
-                return new GUI(size, itemMap, updateRate);
-            }
+            Map<String, GUI.Item> itemMap = loadGUIItems(items);
+            return new GUI(size, itemMap, updateRate);
         }
 
         return null;
     }
 
     @NotNull
-    private Map<String, GUI.Item> loadGUIItems(@NotNull ConfigurationSection itemsSection) {
+    private Map<String, GUI.Item> loadGUIItems(@Nullable ConfigurationSection itemsSection) {
         HashMap<String, GUI.Item> itemMap = new HashMap<>();
+
+        if(itemsSection == null) return itemMap;
+
         Set<Integer> currentSlots = new HashSet<>();
 
         for (String i : itemsSection.getKeys(false)) {
