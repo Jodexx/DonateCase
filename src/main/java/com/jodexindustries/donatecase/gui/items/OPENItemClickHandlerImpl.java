@@ -19,6 +19,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
         OPENItemClickHandlerImpl handler = new OPENItemClickHandlerImpl();
 
         GUITypedItem item = manager.builder("OPEN")
+                .description("Type to open the case")
                 .click(handler)
                 .setUpdateMeta(true)
                 .setLoadOnCase(true)

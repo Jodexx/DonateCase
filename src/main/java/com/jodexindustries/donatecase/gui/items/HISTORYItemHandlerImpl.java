@@ -24,6 +24,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         HISTORYItemHandlerImpl handler = new HISTORYItemHandlerImpl();
 
         GUITypedItem item = manager.builder("HISTORY")
+                .description("Type for displaying the history of case openings")
                 .handler(handler)
                 .build();
 
