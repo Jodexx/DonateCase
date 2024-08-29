@@ -20,10 +20,12 @@ import java.util.List;
  */
 public class AddonsCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public AddonsCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        AddonsCommand command = new AddonsCommand();
+
         SubCommand subCommand = manager.builder("addons")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);

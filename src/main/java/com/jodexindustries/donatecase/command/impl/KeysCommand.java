@@ -22,10 +22,12 @@ import java.util.stream.Collectors;
  */
 public class KeysCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public KeysCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        KeysCommand command = new KeysCommand();
+
         SubCommand subCommand = manager.builder("keys")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.PLAYER.permission)
                 .build();
         manager.registerSubCommand(subCommand);

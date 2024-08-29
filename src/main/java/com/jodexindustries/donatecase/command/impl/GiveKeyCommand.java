@@ -23,10 +23,12 @@ import static com.jodexindustries.donatecase.command.GlobalCommand.resolveSDGCom
  */
 public class GiveKeyCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public GiveKeyCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        GiveKeyCommand command = new GiveKeyCommand();
+
         SubCommand subCommand = manager.builder("givekey")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.MODER.permission)
                 .build();
         manager.registerSubCommand(subCommand);

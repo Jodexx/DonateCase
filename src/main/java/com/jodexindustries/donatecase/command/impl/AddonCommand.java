@@ -26,10 +26,12 @@ import java.util.stream.Collectors;
 public class AddonCommand implements SubCommandExecutor, SubCommandTabCompleter {
     private final AddonManager manager = Case.getInstance().api.getAddonManager();
 
-    public AddonCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        AddonCommand command = new AddonCommand();
+
         SubCommand subCommand = manager.builder("addon")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);

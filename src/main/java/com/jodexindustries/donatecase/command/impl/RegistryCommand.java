@@ -20,10 +20,12 @@ import java.util.stream.Collectors;
 
 public class RegistryCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public RegistryCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        RegistryCommand command = new RegistryCommand();
+
         SubCommand subCommand = manager.builder("registry")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);

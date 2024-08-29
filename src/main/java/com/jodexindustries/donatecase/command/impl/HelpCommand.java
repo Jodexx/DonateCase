@@ -17,10 +17,12 @@ import java.util.List;
  */
 public class HelpCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public HelpCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        HelpCommand command = new HelpCommand();
+
         SubCommand subCommand = manager.builder("help")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.PLAYER.permission)
                 .build();
         manager.registerSubCommand(subCommand);

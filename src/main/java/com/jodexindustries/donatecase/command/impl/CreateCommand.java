@@ -21,10 +21,12 @@ import java.util.List;
  */
 public class CreateCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public CreateCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        CreateCommand command = new CreateCommand();
+
         SubCommand subCommand = manager.builder("create")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);

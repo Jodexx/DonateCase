@@ -243,19 +243,19 @@ public class DonateCase extends JavaPlugin {
     private void registerDefaultSubCommands() {
         SubCommandManager manager = api.getSubCommandManager();
 
-        new ReloadCommand(manager);
-        new GiveKeyCommand(manager);
-        new DelKeyCommand(manager);
-        new SetKeyCommand(manager);
-        new KeysCommand(manager);
-        new CasesCommand(manager);
-        new OpenCaseCommand(manager);
-        new HelpCommand(manager);
-        new CreateCommand(manager);
-        new DeleteCommand(manager);
-        new AddonsCommand(manager);
-        new AddonCommand(manager);
-        new RegistryCommand(manager);
+        ReloadCommand.register(manager);
+        GiveKeyCommand.register(manager);
+        DelKeyCommand.register(manager);
+        SetKeyCommand.register(manager);
+        KeysCommand.register(manager);
+        CasesCommand.register(manager);
+        OpenCaseCommand.register(manager);
+        HelpCommand.register(manager);
+        CreateCommand.register(manager);
+        DeleteCommand.register(manager);
+        AddonsCommand.register(manager);
+        AddonCommand.register(manager);
+        RegistryCommand.register(manager);
 
         Logger.log("&aRegistered &c" + SubCommandManager.registeredSubCommands.size() + " &acommands");
     }
@@ -312,8 +312,8 @@ public class DonateCase extends JavaPlugin {
     private void registerDefaultGUITypedItems() {
         GUITypedItemManager manager = api.getGuiTypedItemManager();
 
-        new OPENItemClickHandlerImpl(manager);
-        new HISTORYItemHandlerImpl(manager);
+        OPENItemClickHandlerImpl.register(manager);
+        HISTORYItemHandlerImpl.register(manager);
 
         Logger.log("&aRegistered &c" + GUITypedItemManager.registeredItems.size() + " &agui typed items");
     }

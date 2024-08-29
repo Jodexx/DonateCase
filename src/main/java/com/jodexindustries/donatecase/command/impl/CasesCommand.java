@@ -19,10 +19,12 @@ import java.util.List;
  */
 public class CasesCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public CasesCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        CasesCommand command = new CasesCommand();
+
         SubCommand subCommand = manager.builder("cases")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.MODER.permission)
                 .build();
         manager.registerSubCommand(subCommand);

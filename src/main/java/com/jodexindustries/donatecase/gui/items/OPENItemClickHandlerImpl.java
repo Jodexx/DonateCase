@@ -15,9 +15,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
 
-    public OPENItemClickHandlerImpl(GUITypedItemManager manager) {
+    public static void register(GUITypedItemManager manager) {
+        OPENItemClickHandlerImpl handler = new OPENItemClickHandlerImpl();
+
         GUITypedItem item = manager.builder("OPEN")
-                .click(this)
+                .click(handler)
                 .setUpdateMeta(true)
                 .setLoadOnCase(true)
                 .build();

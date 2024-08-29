@@ -23,10 +23,12 @@ import static com.jodexindustries.donatecase.command.GlobalCommand.resolveSDGCom
  */
 public class SetKeyCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public SetKeyCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        SetKeyCommand command = new SetKeyCommand();
+
         SubCommand subCommand = manager.builder("setkey")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.MODER.permission)
                 .build();
         manager.registerSubCommand(subCommand);

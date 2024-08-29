@@ -20,9 +20,11 @@ import java.util.List;
 
 public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
-    public HISTORYItemHandlerImpl(GUITypedItemManager manager) {
+    public static void register(GUITypedItemManager manager) {
+        HISTORYItemHandlerImpl handler = new HISTORYItemHandlerImpl();
+
         GUITypedItem item = manager.builder("HISTORY")
-                .handler(this)
+                .handler(handler)
                 .build();
 
         manager.registerItem(item);

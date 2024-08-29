@@ -18,10 +18,12 @@ import java.util.List;
  */
 public class ReloadCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public ReloadCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        ReloadCommand command = new ReloadCommand();
+
         SubCommand subCommand = manager.builder("reload")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);

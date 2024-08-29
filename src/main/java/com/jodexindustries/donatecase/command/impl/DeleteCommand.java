@@ -22,10 +22,12 @@ import java.util.List;
  */
 public class DeleteCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public DeleteCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        DeleteCommand command = new DeleteCommand();
+
         SubCommand subCommand = manager.builder("delete")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);

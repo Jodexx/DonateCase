@@ -22,10 +22,12 @@ import java.util.List;
  */
 public class OpenCaseCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public OpenCaseCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        OpenCaseCommand command = new OpenCaseCommand();
+
         SubCommand subCommand = manager.builder("opencase")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.PLAYER.permission)
                 .build();
         manager.registerSubCommand(subCommand);

@@ -22,10 +22,12 @@ import static com.jodexindustries.donatecase.command.GlobalCommand.resolveSDGCom
  */
 public class DelKeyCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public DelKeyCommand(SubCommandManager manager) {
+    public static void register(SubCommandManager manager) {
+        DelKeyCommand command = new DelKeyCommand();
+
         SubCommand subCommand = manager.builder("delkey")
-                .executor(this)
-                .tabCompleter(this)
+                .executor(command)
+                .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)
                 .build();
         manager.registerSubCommand(subCommand);
