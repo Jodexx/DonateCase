@@ -75,7 +75,6 @@ public class Config {
 
         checkConvertCases();
         casesConfig = new CasesConfig(plugin);
-        converter.convertBASE64();
 
         checkConvertLocations();
 
@@ -120,10 +119,9 @@ public class Config {
 
         // Convert after language file loaded
         converter.convertNoKeyActions();
-        converter.convertOpenType();
 
         long caching = getConfig().getLong("DonateCase.Caching");
-        if (caching > 0) {
+        if (caching >= 0) {
             Case.keysCache.setMaxAge(caching);
             Case.openCache.setMaxAge(caching);
             Case.historyCache.setMaxAge(caching);

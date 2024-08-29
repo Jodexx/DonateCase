@@ -2,9 +2,7 @@ package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.Pair;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -12,8 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Converter {
     private final Config config;
@@ -51,40 +47,33 @@ public class Converter {
             YamlConfiguration caseConfig = pair.getSecond();
             String version = caseConfig.getString("config");
 
-            if (version != null && version.equalsIgnoreCase("1.2")) continue;
-
             ConfigurationSection caseSection = caseConfig.getConfigurationSection("case");
             if (caseSection == null) continue;
+
+            if (version != null) {
+                if(version.equals("1.2")) continue;
+
+                // Convert materials in the GUI section
+                convertMaterialsInSection(caseSection.getConfigurationSection("Gui.Items"), "Material");
+
+                // Convert materials in the win items section
+                convertMaterialsInSection(caseSection.getConfigurationSection("Items"), "Item.ID");
+
+                config.getPlugin().getLogger().info("BASE64 converted successfully for case type: " + caseType);
+
+            }
 
             List<String> noKeyActions = caseSection.getStringList("NoKeyActions");
-            noKeyActions.add("[sound] " + config.getConfig().getString("DonateCase.NoKeyWarningSound"));
-            noKeyActions.add("[message] " + config.getLang().getString("no-keys"));
+            String sound = config.getConfig().getString("DonateCase.NoKeyWarningSound");
+            String noKeys = config.getLang().getString("no-keys");
 
-            config.getConfig().set("DonateCase.NoKeyWarningSound", null);
+            if(sound != null) {
+                noKeyActions.add("[sound] " + sound);
+                config.getConfig().set("DonateCase.NoKeyWarningSound", null);
+            }
+            if(noKeys != null) noKeyActions.add("[message] " + noKeys);
 
             caseSection.set("NoKeyActions", noKeyActions);
-
-            caseConfig.set("config", "1.1");
-
-            try {
-                caseConfig.save(pair.getFirst());
-                config.getPlugin().getLogger().info("NoKeyActions converted successfully for case type: " + caseType);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to save config for case type: " + caseType, e);
-            }
-        }
-    }
-
-    public void convertOpenType() {
-        for (String caseType : config.getCasesConfig().getCases().keySet()) {
-            Pair<File, YamlConfiguration> pair = config.getCasesConfig().getCases().get(caseType);
-            YamlConfiguration caseConfig = pair.getSecond();
-            String version = caseConfig.getString("config");
-
-            if (version != null && version.equalsIgnoreCase("1.2")) continue;
-
-            ConfigurationSection caseSection = caseConfig.getConfigurationSection("case");
-            if (caseSection == null) continue;
 
             caseSection.set("OpenType", "GUI");
 
@@ -92,36 +81,7 @@ public class Converter {
 
             try {
                 caseConfig.save(pair.getFirst());
-                config.getPlugin().getLogger().info("OpenType converted successfully for case type: " + caseType);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to save config for case type: " + caseType, e);
-            }
-        }
-    }
-
-    public void convertBASE64() {
-        for (String caseType : config.getCasesConfig().getCases().keySet()) {
-            Pair<File, YamlConfiguration> pair = config.getCasesConfig().getCases().get(caseType);
-            YamlConfiguration caseConfig = pair.getSecond();
-            String version = caseConfig.getString("config");
-
-            if (version != null) continue;
-
-            ConfigurationSection caseSection = caseConfig.getConfigurationSection("case");
-            if (caseSection == null) continue;
-
-            // Convert materials in the GUI section
-            convertMaterialsInSection(caseSection.getConfigurationSection("Gui.Items"), "Material");
-
-            // Convert materials in the win items section
-            convertMaterialsInSection(caseSection.getConfigurationSection("Items"), "Item.ID");
-
-            // Set the config version
-            caseConfig.set("config", "1.0");
-
-            try {
-                caseConfig.save(pair.getFirst());
-                config.getPlugin().getLogger().info("BASE64 converted successfully for case type: " + caseType);
+                config.getPlugin().getLogger().info("NoKeyActions | OpenType converted successfully for case type: " + caseType);
             } catch (IOException e) {
                 throw new RuntimeException("Failed to save config for case type: " + caseType, e);
             }
@@ -160,8 +120,7 @@ public class Converter {
                 if (cases.getString(name + ".location") == null) {
                     return;
                 } else {
-                    String locationString = cases.getString(name + ".location");
-                    Location lv = fromString(locationString);
+                    Location lv = cases.getLocation(name + ".location");
                     String world = "Undefined";
                     if (lv != null) {
                         if (lv.getWorld() != null) {
@@ -350,25 +309,4 @@ public class Converter {
         this.config.saveLang();
     }
 
-    public static Location fromString(String str) {
-        String regex = "Location\\{world=CraftWorld\\{name=(.*?)},x=(.*?),y=(.*?),z=(.*?),pitch=(.*?),yaw=(.*?)}";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(str);
-
-        if (matcher.find()) {
-            World world = null;
-            if (!matcher.group(1).equals("null")) {
-                world = Bukkit.getWorld(matcher.group(1));
-            }
-            double x = Double.parseDouble(matcher.group(2));
-            double y = Double.parseDouble(matcher.group(3));
-            double z = Double.parseDouble(matcher.group(4));
-            float pitch = Float.parseFloat(matcher.group(5));
-            float yaw = Float.parseFloat(matcher.group(6));
-
-            return new Location(world, x, y, z, yaw, pitch);
-        }
-
-        return null;
-    }
 }
