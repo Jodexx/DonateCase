@@ -78,19 +78,15 @@ public class Tools {
         return string;
     }
 
-    @NotNull
     public static String rt(String text, String... repl) {
-        for (String s : repl) {
-            if(s != null) {
-                int l = s.split(":")[0].length();
-                if (text != null) {
+        if (text != null) {
+            for (String s : repl) {
+                if (s != null) {
+                    int l = s.split(":")[0].length();
                     text = text.replace(s.substring(0, l), s.substring(l + 1));
-                } else {
-                    text = rc("&cMessage not found! Update lang file!");
                 }
             }
         }
-
         return text;
     }
 
