@@ -51,7 +51,7 @@ help:
   - '&9/%cmd reload &3- &2Перезапустить конфиг'
   - '&9/%cmd addons &3- &2Показать загруженые аддоны'
   - '&9/%cmd addon &7(&aenable&7/&cdisable&7 | &aload&7/&cunload&7) (&aАддон&7) &3- &2Управление аддонами'
-  - '&9/%cmd registry &7(&aanimations&7|&aactions&7|&amaterials&7) &3- &2Показать список зарегистрированных элементов реестра'
+  - '&9/%cmd registry &7(&aanimations&7|&aactions&7|&amaterials&7|&aguitypeditems&7) &3- &2Показать список зарегистрированных элементов реестра'
 
 
 help-addons:

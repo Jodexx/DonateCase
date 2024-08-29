@@ -1,12 +1,10 @@
 package com.jodexindustries.donatecase.command.impl;
 
-import com.jodexindustries.donatecase.api.ActionManager;
-import com.jodexindustries.donatecase.api.AnimationManager;
-import com.jodexindustries.donatecase.api.MaterialManager;
-import com.jodexindustries.donatecase.api.SubCommandManager;
+import com.jodexindustries.donatecase.api.*;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
@@ -34,7 +32,7 @@ public class RegistryCommand implements SubCommandExecutor, SubCommandTabComplet
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
-            Tools.msgRaw(sender, "&c/" + label + " registry (animations|materials|actions)");
+            Tools.msgRaw(sender, "&c/" + label + " registry (animations|materials|actions|guitypeditems)");
             return;
         }
 
@@ -48,8 +46,11 @@ public class RegistryCommand implements SubCommandExecutor, SubCommandTabComplet
             case "actions":
                 executeActions(sender);
                 break;
+            case "guitypeditems":
+                executeGuiTypedItems(sender);
+                break;
             default:
-                Tools.msgRaw(sender, "&c/" + label + " registry (animations|materials|actions)");
+                Tools.msgRaw(sender, "&c/" + label + " registry (animations|materials|actions|guitypeditems)");
                 break;
         }
     }
@@ -61,6 +62,7 @@ public class RegistryCommand implements SubCommandExecutor, SubCommandTabComplet
             value.add("animations");
             value.add("materials");
             value.add("actions");
+            value.add("guitypeditems");
         }
 
         if (args[args.length - 1].isEmpty()) {
@@ -151,5 +153,33 @@ public class RegistryCommand implements SubCommandExecutor, SubCommandTabComplet
         });
 
         return actionsMap;
+    }
+
+    private static void executeGuiTypedItems(CommandSender sender) {
+        Map<String, List<GUITypedItem>> guitypeditemsMap = buildGuiTypedItemsMap();
+        for (Map.Entry<String, List<GUITypedItem>> entry : guitypeditemsMap.entrySet()) {
+            Tools.msgRaw(sender, "&6" + entry.getKey());
+            for (GUITypedItem guiTypedItem : entry.getValue()) {
+                Tools.msgRaw(sender, "&9- &a" + guiTypedItem.getId() + " &3- &2" + guiTypedItem.getDescription());
+            }
+        }
+    }
+
+    /**
+     * Key - Addon name
+     * Value - list of GUITypedItem
+     */
+    private static Map<String, List<GUITypedItem>> buildGuiTypedItemsMap() {
+        Map<String, List<GUITypedItem>> guiTypedItemsMap = new HashMap<>();
+        GUITypedItemManager.registeredItems.forEach((name, guiTypedItem) -> {
+            String addon = guiTypedItem.getAddon().getName();
+
+            List<GUITypedItem> actions = guiTypedItemsMap.getOrDefault(addon, new ArrayList<>());
+            actions.add(guiTypedItem);
+
+            guiTypedItemsMap.put(addon, actions);
+        });
+
+        return guiTypedItemsMap;
     }
 }

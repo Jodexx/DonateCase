@@ -51,7 +51,7 @@ help:
   - '&9/%cmd reload &3- &2Recargar configuración'
   - '&9/%cmd addons &3- &2Mostrar complementos cargados'
   - '&9/%cmd addon &7(&aenable&7/&cdisable&7 | &aload&7/&cunload&7) (&aComplemento&7) &3- &2Gestionar complementos'
-  - '&9/%cmd registry &7(&aanimations&7|&aactions&7|&amaterials&7) &3- &2Mostrar la lista de elementos registrados'
+  - '&9/%cmd registry &7(&aanimations&7|&aactions&7|&amaterials&7|&aguitypeditems&7) &3- &2Mostrar la lista de elementos registrados'
 
 
 help-addons:
