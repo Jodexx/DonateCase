@@ -116,12 +116,25 @@ public class Converter {
 
     private static List<String> collectActions(YamlConfiguration caseConfig, String item, String giveCommand, List<String> giveCommands) {
         List<String> actions = new ArrayList<>();
-        if (giveCommand != null) actions.add("[command] " + giveCommand);
-        giveCommands.stream().map(command -> "[command] " + command).forEach(actions::add);
+        if (giveCommand != null && !giveCommand.isEmpty()) actions.add("[command] " + giveCommand);
+        for (String command : giveCommands) {
+            if(command == null || command.isEmpty()) continue;
+            String s = "[command] " + command;
+            actions.add(s);
+        }
         String title = caseConfig.getString("case.Items." + item + ".Title");
         String subTitle = caseConfig.getString("case.Items." + item + ".SubTitle");
         List<String> broadcast = caseConfig.getStringList("case.Items." + item + ".Broadcast");
-        actions.add("[title] " + title + ";" + subTitle);
+
+        StringBuilder titleBuilder = new StringBuilder();
+        if(title != null || subTitle != null) {
+            titleBuilder.append("[title] ");
+            if(title != null) titleBuilder.append(title);
+            titleBuilder.append(";");
+            if(subTitle != null) titleBuilder.append(subTitle);
+        }
+
+        actions.add(titleBuilder.toString());
         broadcast.stream().map(line -> "[broadcast] " + line).forEach(actions::add);
         return actions;
     }
