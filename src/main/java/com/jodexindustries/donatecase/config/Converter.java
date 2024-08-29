@@ -64,6 +64,9 @@ public class Converter {
                 config.getPlugin().getLogger().info("BASE64 converted successfully for case type: " + caseType);
             }
 
+            convertSound(caseSection);
+
+
             // Convert old actions
             ConfigurationSection itemsSection = caseConfig.getConfigurationSection("case.Items");
             if (itemsSection == null) continue;
@@ -112,6 +115,50 @@ public class Converter {
                 throw new RuntimeException("Failed to save config for case type: " + caseType, e);
             }
         }
+    }
+
+    private static void convertSound(ConfigurationSection section) {
+        String animationSound = section.getString("AnimationSound");
+        double pitch = section.getDouble("Sound.Pitch");
+        double volume = section.getDouble("Sound.Volume");
+
+        if(animationSound != null) {
+            section.set("AnimationSound", null);
+            section.set("Sound", null);
+
+            ConfigurationSection itemsSection = section.getConfigurationSection("Items");
+            if (itemsSection == null) return;
+
+            for (String item : itemsSection.getKeys(false)) {
+                ConfigurationSection itemSection = itemsSection.getConfigurationSection(item);
+                if (itemSection == null) continue;
+
+                // GiveType: ONE
+                List<String> actions = itemSection.getStringList("Actions");
+                if(!actions.isEmpty()) {
+                    actions.add("[sound] " + animationSound + " " + volume + " " + pitch);
+                    itemSection.set("Actions", actions);
+                }
+
+                // GiveType: RANDOM
+
+                ConfigurationSection randomActionsSection = itemSection.getConfigurationSection("RandomActions");
+                if (randomActionsSection == null) continue;
+
+                for (String action : randomActionsSection.getKeys(false)) {
+                    ConfigurationSection randomActionSection = randomActionsSection.getConfigurationSection(action);
+                    if(randomActionSection == null) continue;
+
+                    List<String> randomActions = randomActionSection.getStringList("Actions");
+                    if(!randomActions.isEmpty()) {
+                        randomActions.add("[sound] " + animationSound + " " + volume + " " + pitch);
+                        randomActionSection.set("Actions", randomActions);
+                    }
+
+                }
+            }
+        }
+
     }
 
     private static List<String> collectActions(YamlConfiguration caseConfig, String item, String giveCommand, List<String> giveCommands) {
