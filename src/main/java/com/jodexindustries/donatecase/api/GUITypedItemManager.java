@@ -116,7 +116,7 @@ public class GUITypedItemManager {
      *
      * @param string String to be parsed
      * @return GUITypedItem object
-     * @since 2.2.5.5
+     * @since 2.2.5.6
      */
     public static @Nullable GUITypedItem getFromString(@NotNull final String string) {
         String temp = GUITypedItemManager.getByStart(string);

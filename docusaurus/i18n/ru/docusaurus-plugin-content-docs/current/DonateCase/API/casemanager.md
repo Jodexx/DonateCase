@@ -5,30 +5,30 @@ sidebar_position: 5
 ---
 
 # CaseManager
-[CaseManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.5/raw/com/jodexindustries/donatecase/api/CaseManager.html) -
+[CaseManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.6/raw/com/jodexindustries/donatecase/api/CaseManager.html) -
 класс, который содержит все менеджеры для взаимодействия с динамичными объектами в DonateCase.
 
 ### Доступные менеджеры
-- [ActionManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.5/raw/com/jodexindustries/donatecase/api/ActionManager.html)
+- [ActionManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.6/raw/com/jodexindustries/donatecase/api/ActionManager.html)
 используется для управления исполняемыми действиями
-- [AddonManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.5/raw/com/jodexindustries/donatecase/api/AddonManager.html)
+- [AddonManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.6/raw/com/jodexindustries/donatecase/api/AddonManager.html)
 используется для управления аддонами
-- [AnimationManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.5/raw/com/jodexindustries/donatecase/api/AnimationManager.html)
+- [AnimationManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.6/raw/com/jodexindustries/donatecase/api/AnimationManager.html)
 используется для управления анимациями
-- [GUITypedItemManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.5/raw/com/jodexindustries/donatecase/api/GUITypedItemManager.html)
+- [GUITypedItemManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.6/raw/com/jodexindustries/donatecase/api/GUITypedItemManager.html)
 используется для управления предметов, заданными в гюи
-- [MaterialManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.5/raw/com/jodexindustries/donatecase/api/MaterialManager.html)
+- [MaterialManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.6/raw/com/jodexindustries/donatecase/api/MaterialManager.html)
 используется для управления материалов
-- [SubCommandManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.5/raw/com/jodexindustries/donatecase/api/SubCommandManager.html)
+- [SubCommandManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.6/raw/com/jodexindustries/donatecase/api/SubCommandManager.html)
 используется для управления субкомандами
 
 ### Получение CaseManager
 
-CaseManager имеет 2 конструктора для инициализации: [CaseManager#\<init>(Addon)](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.5/raw/com/jodexindustries/donatecase/api/CaseManager.html#%3Cinit%3E(com.jodexindustries.donatecase.api.addon.Addon)) и [CaseManager#\<init>(Plugin)](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.5/raw/com/jodexindustries/donatecase/api/CaseManager.html#%3Cinit%3E(org.bukkit.plugin.Plugin))
+CaseManager имеет 2 конструктора для инициализации: [CaseManager#\<init>(Addon)](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.6/raw/com/jodexindustries/donatecase/api/CaseManager.html#%3Cinit%3E(com.jodexindustries.donatecase.api.addon.Addon)) и [CaseManager#\<init>(Plugin)](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.6/raw/com/jodexindustries/donatecase/api/CaseManager.html#%3Cinit%3E(org.bukkit.plugin.Plugin))
 
 #### Внутренний аддон
 CaseManager автоматически инициализируется при загрузке аддона, поэтому получение доступно
-с помощью метода [InternalJavaAddon#getCaseAPI()](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.5/raw/com/jodexindustries/donatecase/api/addon/internal/InternalJavaAddon.html#getCaseAPI())
+с помощью метода [InternalJavaAddon#getCaseAPI()](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.6/raw/com/jodexindustries/donatecase/api/addon/internal/InternalJavaAddon.html#getCaseAPI())
 
 Пример:
 ```java

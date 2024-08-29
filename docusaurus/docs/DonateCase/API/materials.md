@@ -5,7 +5,7 @@ sidebar_position: 8
 ---
 # Register materials
 
-Custom materials are processed through the interface [MaterialHandler](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.5/raw/com/jodexindustries/donatecase/api/data/material/MaterialHandler.html)
+Custom materials are processed through the interface [MaterialHandler](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.6/raw/com/jodexindustries/donatecase/api/data/material/MaterialHandler.html)
 
 ## Example implementation of `HEAD` material
 > HEADMaterialHandlerImpl.java
