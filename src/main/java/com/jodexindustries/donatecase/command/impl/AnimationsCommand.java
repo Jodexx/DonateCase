@@ -2,7 +2,6 @@ package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
@@ -52,16 +51,6 @@ public class AnimationsCommand implements SubCommandExecutor, SubCommandTabCompl
             animations.add(caseAnimation);
 
             animationsMap.put(addon, animations);
-        });
-
-        AnimationManager.oldAnimations.forEach((animationName, oldPair) -> {
-            Addon addon = oldPair.getSecond();
-            List<CaseAnimation> animations = animationsMap.getOrDefault(addon.getName(), new ArrayList<>());
-
-            CaseAnimation action = new CaseAnimation(null, addon, animationName, "Old animation");
-            animations.add(action);
-
-            animationsMap.put(addon.getName(), animations);
         });
         return animationsMap;
     }

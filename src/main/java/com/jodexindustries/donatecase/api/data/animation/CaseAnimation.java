@@ -1,13 +1,16 @@
 package com.jodexindustries.donatecase.api.data.animation;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Class for custom animation storage
  */
 public class CaseAnimation {
     private final Class<? extends JavaAnimation> animation;
+    private final Animation oldAnimation;
     private final Addon addon;
     private final String name;
     private final String description;
@@ -22,6 +25,16 @@ public class CaseAnimation {
      */
     public CaseAnimation(Class<? extends JavaAnimation> animation, Addon addon, String name, String description) {
         this.animation = animation;
+        this.oldAnimation = null;
+        this.addon = addon;
+        this.name = name;
+        this.description = description;
+    }
+
+    @Deprecated
+    public CaseAnimation(Animation oldAnimation, Addon addon, String name, String description) {
+        this.animation = null;
+        this.oldAnimation = oldAnimation;
         this.addon = addon;
         this.name = name;
         this.description = description;
@@ -32,6 +45,7 @@ public class CaseAnimation {
      *
      * @return animation class
      */
+    @Nullable
     public Class<? extends JavaAnimation> getAnimation() {
         return animation;
     }
@@ -62,4 +76,10 @@ public class CaseAnimation {
     public String getDescription() {
         return description;
     }
+
+    @Nullable
+    public Animation getOldAnimation() {
+        return oldAnimation;
+    }
+
 }

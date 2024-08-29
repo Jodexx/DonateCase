@@ -8,7 +8,6 @@ import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationUnregisteredEvent;
 import com.jodexindustries.donatecase.gui.CaseGui;
-import com.jodexindustries.donatecase.tools.Pair;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -16,8 +15,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 /**
@@ -29,11 +31,6 @@ public class AnimationManager {
      */
     public static final Map<String, CaseAnimation> registeredAnimations = new HashMap<>();
 
-    /**
-     * Map of old registered animations
-     */
-    @Deprecated
-    public static final Map<String, Pair<Animation, Addon>> oldAnimations = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -41,7 +38,7 @@ public class AnimationManager {
      *
      * @param addon An addon that will manage animations
      */
-    public AnimationManager(Addon addon) {
+    public AnimationManager(@NotNull Addon addon) {
         this.addon = addon;
     }
 
@@ -52,7 +49,7 @@ public class AnimationManager {
      * @param animation   Animation class
      * @param description Animation description
      */
-    public void registerAnimation(String name, Class<? extends JavaAnimation> animation, String description) {
+    public void registerAnimation(@NotNull String name, @NotNull Class<? extends JavaAnimation> animation, String description) {
         if (!isRegistered(name)) {
             CaseAnimation caseAnimation = new CaseAnimation(animation, addon, name, description);
             registeredAnimations.put(name, caseAnimation);
@@ -85,12 +82,12 @@ public class AnimationManager {
      */
     @Deprecated
     public void registerAnimation(String name, Animation animation) {
-        if (!isRegistered(name, true)) {
-            oldAnimations.put(name, new Pair<>(animation, addon));
+        if (!isRegistered(name)) {
+            CaseAnimation caseAnimation = new CaseAnimation(animation, addon, name, "Old animation without description");
+            registeredAnimations.put(name, caseAnimation);
             String animationPluginName = addon.getName();
             boolean isDefault = animationPluginName.equalsIgnoreCase("DonateCase");
-            AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(name, null,
-                    animationPluginName, isDefault);
+            AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(name, null, animationPluginName, isDefault);
             Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
         } else {
             addon.getLogger().warning("Animation with name " + name + " already registered!");
@@ -114,30 +111,11 @@ public class AnimationManager {
     }
 
     /**
-     * Unregister old custom animation
-     *
-     * @param name Animation name
-     * @param old  is old animation
-     */
-    public void unregisterAnimation(String name, boolean old) {
-        if (isRegistered(name, old)) {
-            oldAnimations.remove(name);
-            AnimationUnregisteredEvent animationUnRegisteredEvent = new AnimationUnregisteredEvent(name);
-            Bukkit.getServer().getPluginManager().callEvent(animationUnRegisteredEvent);
-        } else {
-            addon.getLogger().warning("Animation with name " + name + " already unregistered!");
-        }
-    }
-
-    /**
      * Unregister all animations
      */
     public void unregisterAnimations() {
         List<String> list = new ArrayList<>(registeredAnimations.keySet());
         list.forEach(this::unregisterAnimation);
-
-        List<String> old = new ArrayList<>(oldAnimations.keySet());
-        old.forEach(s -> unregisterAnimation(s, true));
     }
 
     /**
@@ -151,7 +129,7 @@ public class AnimationManager {
         caseData = caseData.clone();
         caseData.setItems(Tools.sortItemsByIndex(caseData.getItems()));
         String animation = caseData.getAnimation();
-        if (!isRegistered(animation) && !isRegistered(animation, true)) {
+        if (!isRegistered(animation)) {
             Tools.msg(player, "&cAn error occurred while opening the case!");
             Tools.msg(player, "&cContact the project administration!");
             addon.getLogger().log(Level.WARNING, "Case animation " + animation + " does not exist!");
@@ -166,46 +144,48 @@ public class AnimationManager {
         ActiveCase activeCase = new ActiveCase(location, caseData.getCaseType());
         UUID uuid = UUID.randomUUID();
 
-        Object javaAnimation = null;
-        if (isRegistered(animation, true)) {
-            javaAnimation = getRegisteredOldAnimation(animation);
-        } else {
-            CaseAnimation caseAnimation = getRegisteredAnimation(animation);
-
-            if (caseAnimation != null) {
-                Class<? extends JavaAnimation> animationClass = caseAnimation.getAnimation();
-                try {
-                    javaAnimation = animationClass.getDeclaredConstructor().newInstance();
-                } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
-                         IllegalAccessException ignored) {
-                }
-            }
-        }
-
         if (CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {
             CaseManager.getHologramManager().removeHologram(location.getBlock());
         }
 
-        Case.activeCases.put(uuid, activeCase);
-        Case.activeCasesByLocation.put(location, uuid);
+        CaseAnimation caseAnimation = getRegisteredAnimation(animation);
 
-        Location caseLocation = Case.getCaseLocationByBlockLocation(location);
-        if (javaAnimation instanceof JavaAnimation) {
-            JavaAnimation anim = (JavaAnimation) javaAnimation;
-            anim.init(player, caseLocation,
-                    uuid, caseData, preStartEvent.getWinItem());
-            anim.start();
-        } else {
-            Animation anim = (Animation) javaAnimation;
-            if (anim != null) {
-                anim.start(player, caseLocation, uuid, caseData, preStartEvent.getWinItem());
+        if (caseAnimation != null) {
+            Location caseLocation = Case.getCaseLocationByBlockLocation(location);
+
+            Class<? extends JavaAnimation> animationClass = caseAnimation.getAnimation();
+
+            try {
+
+                if (animationClass != null) {
+                    JavaAnimation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
+
+                    javaAnimation.init(player, caseLocation,
+                            uuid, caseData, preStartEvent.getWinItem());
+                    javaAnimation.start();
+
+                } else {
+                    Animation oldAnimation = caseAnimation.getOldAnimation();
+                    if (oldAnimation == null) return;
+
+                    oldAnimation.start(player, caseLocation, uuid,
+                            caseData, preStartEvent.getWinItem());
+                }
+
+            } catch (Throwable t) {
+                addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
+                return;
             }
         }
+
         for (CaseGui gui : Case.playersGui.values()) {
             if (gui.getLocation().equals(location)) {
                 gui.getPlayer().closeInventory();
             }
         }
+
+        Case.activeCases.put(uuid, activeCase);
+        Case.activeCasesByLocation.put(location, uuid);
 
         // AnimationStart event
         AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, location, preStartEvent.getWinItem());
@@ -223,18 +203,6 @@ public class AnimationManager {
     }
 
     /**
-     * /**
-     * Check for animation registration
-     *
-     * @param name animation name
-     * @param old  if true - search by old registered animations
-     * @return boolean
-     */
-    public static boolean isRegistered(String name, boolean old) {
-        return old ? oldAnimations.containsKey(name) : isRegistered(name);
-    }
-
-    /**
      * Get registered animation
      *
      * @param animation Animation name
@@ -243,16 +211,5 @@ public class AnimationManager {
     @Nullable
     public static CaseAnimation getRegisteredAnimation(String animation) {
         return registeredAnimations.get(animation);
-    }
-
-    /**
-     * Get old registered animations
-     *
-     * @param animation Animation name
-     * @return Animation object
-     */
-    @Nullable
-    public static Animation getRegisteredOldAnimation(String animation) {
-        return isRegistered(animation, true) ? oldAnimations.get(animation).getFirst() : null;
     }
 }
