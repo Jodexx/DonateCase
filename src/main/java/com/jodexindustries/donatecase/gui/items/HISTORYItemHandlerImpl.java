@@ -8,7 +8,6 @@ import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.gui.TypedItemHandler;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.Trio;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -35,14 +34,12 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
     @Override
     public GUI.Item handle(@NotNull CaseGui caseGui, GUI.@NotNull Item item) {
         CaseData caseData = caseGui.getCaseData();
+
+        boolean handled = handleHistoryItem(caseData, item, caseGui.getGlobalHistoryData());
+
         CaseData.Item.Material material = item.getMaterial();
 
-        Trio<String, String, List<String>> trio = handleHistoryItem(caseData, item, caseGui.getGlobalHistoryData());
-        if (trio.getFirst() != null) {
-            material.setId(trio.getFirst());
-            material.setDisplayName(trio.getSecond());
-            material.setLore(trio.getThird());
-        } else {
+        if (!handled) {
             YamlConfiguration config = Case.getConfig().getCasesConfig().getCase(caseData.getCaseType()).getSecond();
             String path = "case.Gui.Items." + item.getItemName() + ".HistoryNotFound";
             ConfigurationSection section = config.getConfigurationSection(path);
@@ -61,8 +58,8 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         return item;
     }
 
-    private Trio<String, String, List<String>> handleHistoryItem(CaseData caseData, GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
-        Trio<String, String, List<String>> trio = new Trio<>();
+    private boolean handleHistoryItem(CaseData caseData, GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
+        CaseData.Item.Material itemMaterial = item.getMaterial();
 
         String caseType = caseData.getCaseType();
 
@@ -74,19 +71,19 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         CaseData historyCaseData = isGlobal ? null : Case.getCase(caseType);
         if (historyCaseData == null && !isGlobal) {
             Case.getInstance().getLogger().warning("Case " + caseType + " HistoryData is null!");
-            return trio;
+            return false;
         }
 
         if (!isGlobal) historyCaseData = historyCaseData.clone();
 
         CaseData.HistoryData data = getHistoryData(caseType, isGlobal, globalHistoryData, index, historyCaseData);
-        if (data == null) return trio;
+        if (data == null) return false;
 
         if (isGlobal) historyCaseData = Case.getCase(data.getCaseType());
-        if (historyCaseData == null) return trio;
+        if (historyCaseData == null) return false;
 
         CaseData.Item historyItem = historyCaseData.getItem(data.getItem());
-        if (historyItem == null) return trio;
+        if (historyItem == null) return false;
         String material = item.getMaterial().getId();
         if (material == null) material = "HEAD:" + data.getPlayerName();
 
@@ -97,11 +94,11 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         String displayName = Tools.rt(item.getMaterial().getDisplayName(), template);
         List<String> lore = Tools.rt(item.getMaterial().getLore(), template);
 
-        trio.setFirst(material);
-        trio.setSecond(displayName);
-        trio.setThird(lore);
+        itemMaterial.setId(material);
+        itemMaterial.setDisplayName(displayName);
+        itemMaterial.setLore(lore);
 
-        return trio;
+        return true;
     }
 
     private String[] getTemplate(CaseData historyCaseData, CaseData.HistoryData data, CaseData.Item historyItem) {
