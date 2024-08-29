@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 public class GUI implements Cloneable {
+    private String title;
     private int size;
     private Map<String, Item> items;
     private int updateRate;
 
-    public GUI(int size, Map<String, Item> items, int updateRate) {
+    public GUI(String title, int size, Map<String, Item> items, int updateRate) {
+        this.title = title;
         this.size = size;
         this.items = items;
         this.updateRate = updateRate;
@@ -71,6 +73,15 @@ public class GUI implements Cloneable {
 
     public void setUpdateRate(int updateRate) {
         this.updateRate = updateRate;
+    }
+
+    @NotNull
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(@NotNull String title) {
+        this.title = title;
     }
 
 

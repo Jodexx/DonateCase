@@ -21,7 +21,6 @@ import java.util.*;
 public class CaseData implements Cloneable {
     private final String caseType;
     private String caseDisplayName;
-    private String caseTitle;
     private String animation;
     private Map<String, Item> items;
     private HistoryData[] historyData;
@@ -36,7 +35,6 @@ public class CaseData implements Cloneable {
      *
      * @param caseType        Case type
      * @param caseDisplayName Case display name
-     * @param caseTitle       Case title (GUI)
      * @param animation       Animation name
      * @param items           Items list
      * @param historyData     History data array
@@ -46,12 +44,11 @@ public class CaseData implements Cloneable {
      * @param noKeyActions    NoKeyActions
      * @param openType        Open type
      */
-    public CaseData(String caseType, String caseDisplayName, String caseTitle, String animation, Map<String,
+    public CaseData(String caseType, String caseDisplayName, String animation, Map<String,
             Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups, GUI gui,
                     List<String> noKeyActions, @NotNull OpenType openType) {
         this.caseType = caseType;
         this.caseDisplayName = caseDisplayName;
-        this.caseTitle = caseTitle;
         this.animation = animation;
         this.items = items;
         this.historyData = historyData;
@@ -67,7 +64,6 @@ public class CaseData implements Cloneable {
         return "CaseData{" +
                 "caseType='" + caseType + '\'' +
                 ", caseDisplayName='" + caseDisplayName + '\'' +
-                ", caseTitle='" + caseTitle + '\'' +
                 ", animation='" + animation + '\'' +
                 ", items=" + items +
                 ", historyData=" + Arrays.toString(historyData) +
@@ -161,8 +157,10 @@ public class CaseData implements Cloneable {
      *
      * @return title
      */
+    @NotNull
     public String getCaseTitle() {
-        return caseTitle;
+        if(gui == null) return "";
+        return gui.getTitle();
     }
 
     /**
@@ -170,8 +168,8 @@ public class CaseData implements Cloneable {
      *
      * @param caseTitle title
      */
-    public void setCaseTitle(String caseTitle) {
-        this.caseTitle = caseTitle;
+    public void setCaseTitle(@NotNull String caseTitle) {
+        if(this.gui != null) this.gui.setTitle(caseTitle);
     }
 
     /**

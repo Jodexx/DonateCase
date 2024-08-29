@@ -89,9 +89,11 @@ public class CaseLoader {
 
         GUI gui = loadGUI(caseSection);
 
+        if(gui != null) gui.setTitle(caseTitle);
+
         List<String> noKeyActions = caseSection.getStringList("NoKeyActions");
 
-        return new CaseData(caseType, caseDisplayName, caseTitle, animationName, items, historyData,
+        return new CaseData(caseType, caseDisplayName, animationName, items, historyData,
                 hologram, levelGroups, gui, noKeyActions, openType);
     }
 
@@ -199,10 +201,12 @@ public class CaseLoader {
         return levelGroups;
     }
 
+    @Nullable
     private GUI loadGUI(ConfigurationSection caseSection) {
         ConfigurationSection guiSection = caseSection.getConfigurationSection("Gui");
 
         if (guiSection != null) {
+            String title = Tools.rc(caseSection.getString("Title", ""));
             int size = guiSection.getInt("Size", 45);
             int updateRate = guiSection.getInt("UpdateRate", -1);
             if (!isValidGuiSize(size)) {
@@ -212,7 +216,7 @@ public class CaseLoader {
             ConfigurationSection items = guiSection.getConfigurationSection("Items");
 
             Map<String, GUI.Item> itemMap = loadGUIItems(items);
-            return new GUI(size, itemMap, updateRate);
+            return new GUI(title, size, itemMap, updateRate);
         }
 
         return null;

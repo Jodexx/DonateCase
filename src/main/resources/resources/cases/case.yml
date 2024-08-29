@@ -28,9 +28,9 @@ case:
     vip: 1
     default: 0
 
-  Title: "&c&lDonate-&a&lCase" # Title in GUI
   DisplayName: "&c&lDonate-&a&lCase" # Name for placeholders
   Gui: # see more about items configuring -> https://wiki.jodexindustries.xyz/docs/DonateCase/items-settings
+    Title: "&c&lDonate-&a&lCase"
     Size: 45
     UpdateRate: 20 # in ticks, set -1 to disable updating
     Items:
