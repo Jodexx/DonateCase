@@ -89,7 +89,7 @@ public class CaseLoader {
 
         GUI gui = loadGUI(caseSection);
 
-        if(gui != null) gui.setTitle(caseTitle);
+        if(gui != null && gui.getTitle().isEmpty()) gui.setTitle(caseTitle);
 
         List<String> noKeyActions = caseSection.getStringList("NoKeyActions");
 
@@ -206,7 +206,7 @@ public class CaseLoader {
         ConfigurationSection guiSection = caseSection.getConfigurationSection("Gui");
 
         if (guiSection != null) {
-            String title = Tools.rc(caseSection.getString("Title", ""));
+            String title = Tools.rc(guiSection.getString("Title", ""));
             int size = guiSection.getInt("Size", 45);
             int updateRate = guiSection.getInt("UpdateRate", -1);
             if (!isValidGuiSize(size)) {
