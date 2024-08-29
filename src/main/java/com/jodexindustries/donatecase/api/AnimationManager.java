@@ -126,6 +126,11 @@ public class AnimationManager {
      * @param caseData Case data
      */
     public void startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseData caseData) {
+        if(caseData.getItems().isEmpty()) {
+            addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation without items in CaseData!");
+            return;
+        }
+
         caseData = caseData.clone();
         caseData.setItems(Tools.sortItemsByIndex(caseData.getItems()));
         String animation = caseData.getAnimation();
