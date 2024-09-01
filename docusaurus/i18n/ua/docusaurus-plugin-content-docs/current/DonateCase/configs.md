@@ -113,7 +113,7 @@ case:
         Slots: # or Slots: 0-10 (range)
           - 0
           - 8
-        Material: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
+        Material: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.xyz/docs/DonateCase/materials
         Type: DEFAULT
       Open:
         DisplayName: "&bOpen Case"
@@ -133,14 +133,14 @@ case:
           - ''
         Slots: # or Slots: 0-10 (range)
           - 22
-        Material: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
+        Material: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.xyz/docs/DonateCase/materials
         Type: OPEN # or you can use OPEN_<anotherCaseName> for opening another case 
   Items:
     Vip:
       Group: vip
       Chance: 30
       Item:
-        ID: YELLOW_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
+        ID: YELLOW_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/materials
         DisplayName: '&7[&eVIP&7]'
         Enchanted: false
       Index: 0
@@ -167,7 +167,7 @@ case:
       Group: vipplus
       Chance: 25
       Item:
-        ID: LIGHT_BLUE_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
+        ID: LIGHT_BLUE_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/materials
         DisplayName: '&7[&bVIP&6+&7]'
         Enchanted: false
       Index: 1
@@ -221,7 +221,7 @@ case:
       Group: deluxe
       Chance: 15
       Item:
-        ID: PURPLE_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
+        ID: PURPLE_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/materials
         DisplayName: '&7[&5Deluxe&7]'
         Enchanted: false
       Index: 3
@@ -247,7 +247,7 @@ case:
       Group: legend
       Chance: 10
       Item:
-        ID: PINK_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/item-id
+        ID: PINK_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/materials
         DisplayName: '&7[&dLegend&7]'
         Enchanted: false
       Index: 4

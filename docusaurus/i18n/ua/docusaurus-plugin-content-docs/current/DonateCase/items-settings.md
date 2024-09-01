@@ -34,7 +34,7 @@ Slots:
   - 8
   - 9-16 # може бути діапазоном
 ```
-`Material` - Матеріал предмета, всі типи предметів описані [тут](https://wiki.jodexindustries.xyz/docs/DonateCase/item-id) <br />
+`Material` - Матеріал предмета, всі типи предметів описані [тут](https://wiki.jodexindustries.xyz/docs/DonateCase/materials) <br />
 `Rgb (необов'язково)` - Можливість міняти колір шкіряних предметів <br />
 
 ### Приклад RGB

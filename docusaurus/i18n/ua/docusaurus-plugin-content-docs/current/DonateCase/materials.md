@@ -1,5 +1,5 @@
 ---
-id: item-id
+id: materials
 title: Матеріали
 sidebar_position: 6
 ---

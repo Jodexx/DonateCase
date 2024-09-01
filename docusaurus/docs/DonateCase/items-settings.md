@@ -34,7 +34,7 @@ Slots:
   - 8
   - 9-16 # can be like range
 ```
-`Material` - Item material, all item types are described [here](https://wiki.jodexindustries.space/docs/DonateCase/item-id) <br />
+`Material` - Item material, all item types are described [here](https://wiki.jodexindustries.space/docs/DonateCase/materials) <br />
 `Rgb (optional)` - Ability to change the color of leather items <br />
 
 ### Example RGB
