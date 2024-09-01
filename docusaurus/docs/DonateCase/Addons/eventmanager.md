@@ -30,7 +30,7 @@ Events:
 ```
 
 ## Events
-> **List of all events available [here](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.7/raw/com/jodexindustries/donatecase/api/events/package-summary.html)**
+> **List of all events available [here](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/events/package-summary.html)**
 
 ## Actions
 ### [All DonateCase actions](../items-settings#actions)
@@ -85,14 +85,14 @@ If you don't understand programming, then it can look a little confusing, becaus
 But don't be disappointed, it's as simple as that! <br></br>
 This parameter is used to determine where the placeholder value will be taken from. <br></br>
 
-Let's take a look at the JavaDocs of the [AddonDisableEvent](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.7/raw/com/jodexindustries/donatecase/api/events/AddonDisableEvent.html#method-summary) class
+Let's take a look at the JavaDocs of the [AddonDisableEvent](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/events/AddonDisableEvent.html#method-summary) class
 ![img.png](../../assets/jd.png)
 
-Here we can see that the [AddonDisableEvent](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.7/raw/com/jodexindustries/donatecase/api/addon/internal/InternalAddon.html#method-summary) class has several interesting methods, such as: `getAddon`, `getCaused`, and `getReason` <br></br>
+Here we can see that the [AddonDisableEvent](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/addon/internal/InternalAddon.html#method-summary) class has several interesting methods, such as: `getAddon`, `getCaused`, and `getReason` <br></br>
 I think you've already guessed that these are the methods used to get placeholder values, but what is `#`? <br></br>
-This is a symbol for separating methods. For example, we call the getAddon method, which is an [InternalAddon](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.7/raw/com/jodexindustries/donatecase/api/addon/internal/InternalAddon.html#method-summary) object that has the following methods:
+This is a symbol for separating methods. For example, we call the getAddon method, which is an [InternalAddon](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/addon/internal/InternalAddon.html#method-summary) object that has the following methods:
 ![img.png](../../assets/addon.png)
-Of course, it will be a little strange to just display information about some [InternalJavaAddon](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.7/raw/com/jodexindustries/donatecase/api/addon/internal/InternalAddon.html#method-summary) without additional instructions, but it is worth looking at what this class is and it looks like it represents the interface of an internal addon and we can take some useful information from it! Let's get the name of this addon, it seems that the [getName](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.7/raw/com/jodexindustries/donatecase/api/addon/Addon.html#getName()) method is just right for us! <br></br>
+Of course, it will be a little strange to just display information about some [InternalJavaAddon](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/addon/internal/InternalAddon.html#method-summary) without additional instructions, but it is worth looking at what this class is and it looks like it represents the interface of an internal addon and we can take some useful information from it! Let's get the name of this addon, it seems that the [getName](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/addon/Addon.html#getName()) method is just right for us! <br></br>
 Well, now our method looks like this: `getAddon#getName`<br></br>
 
 If you have any additional questions, please contact our [Discord server](https://discord.gg/2syNtcKcgR)!
