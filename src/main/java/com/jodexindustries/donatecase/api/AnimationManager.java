@@ -156,7 +156,10 @@ public class AnimationManager {
         CaseAnimation caseAnimation = getRegisteredAnimation(animation);
 
         if (caseAnimation != null) {
-            Location caseLocation = Case.getCaseLocationByBlockLocation(location);
+            Location caseLocation = location;
+
+            Location tempLocation = Case.getCaseLocationByBlockLocation(location);
+            if(tempLocation != null) caseLocation = tempLocation;
 
             Class<? extends JavaAnimation> animationClass = caseAnimation.getAnimation();
 
