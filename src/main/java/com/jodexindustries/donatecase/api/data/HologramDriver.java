@@ -5,7 +5,8 @@ import org.jetbrains.annotations.NotNull;
 public enum HologramDriver {
     decentholograms,
     holographicdisplays,
-    cmi;
+    cmi,
+    fancyholograms;
 
     public static HologramDriver getDriver(@NotNull String name) {
         HologramDriver result = null;

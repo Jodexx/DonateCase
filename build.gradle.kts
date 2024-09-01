@@ -17,6 +17,7 @@ version = "2.2.5.8"
 
 repositories {
     mavenCentral()
+    maven("https://repo.fancyplugins.de/releases")
     maven("https://repo.jodexindustries.xyz/releases/")
 }
 
@@ -32,6 +33,7 @@ dependencies {
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.11")
     compileOnly(fileTree("libs").include("*.jar"))
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
+    compileOnly("de.oliver:FancyHolograms:2.3.3")
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.j256.ormlite:ormlite-jdbc:6.1")
     compileOnly("com.github.retrooper:packetevents-spigot:2.4.0")

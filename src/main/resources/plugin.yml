@@ -15,6 +15,7 @@ softdepend:
   - DecentHolograms
   - CMI
   - HolographicDisplays
+  - FancyHolograms
   - Multiverse-Core
   - MultiWorld
   - packetevents

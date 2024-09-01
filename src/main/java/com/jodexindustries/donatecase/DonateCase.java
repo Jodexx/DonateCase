@@ -15,6 +15,7 @@ import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
+import com.jodexindustries.donatecase.api.holograms.types.FancyHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.command.impl.*;
@@ -386,6 +387,11 @@ public class DonateCase extends JavaPlugin {
                     return true;
                 }
                 break;
+            case fancyholograms:
+                if(getServer().getPluginManager().isPluginEnabled("FancyHolograms")) {
+                    hologramManager = new FancyHologramsSupport();
+                    return true;
+                }
         }
         return false;
     }
