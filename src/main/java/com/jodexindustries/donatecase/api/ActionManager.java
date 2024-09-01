@@ -69,7 +69,7 @@ public class ActionManager {
             registeredActions.put(name, caseAction);
             String actionAddonName = addon.getName();
             boolean isDefault = actionAddonName.equalsIgnoreCase("DonateCase");
-            CaseActionRegisteredEvent event = new CaseActionRegisteredEvent(name, caseAction, actionAddonName, isDefault);
+            CaseActionRegisteredEvent event = new CaseActionRegisteredEvent(caseAction);
             Bukkit.getPluginManager().callEvent(event);
         } else {
             addon.getLogger().warning("CaseAction with name " + name + " already registered!");

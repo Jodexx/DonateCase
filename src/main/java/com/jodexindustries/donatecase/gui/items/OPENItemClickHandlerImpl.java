@@ -44,31 +44,33 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
             }
         }
 
-        PreOpenCaseEvent event = new PreOpenCaseEvent(p, caseType, location.getBlock());
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            if (caseData != null) {
-                executeOpen(caseData, p, location);
-            } else {
-                Case.getInstance().getLogger().warning("CaseData " + caseType + " not found. ");
-            }
+
+        if (caseData != null) {
+            executeOpen(caseData, p, location);
+        } else {
+            Case.getInstance().getLogger().warning("CaseData " + caseType + " not found. ");
         }
 
         p.closeInventory();
     }
 
-    public static void executeOpen(@NotNull CaseData caseData, Player player, Location location) {
-        if (Case.getKeys(caseData.getCaseType(), player.getName()) >= 1) {
-            Case.removeKeys(caseData.getCaseType(), player.getName(), 1);
+    public static void executeOpen(@NotNull CaseData caseData, @NotNull Player player, @NotNull Location location) {
+        PreOpenCaseEvent event = new PreOpenCaseEvent(player, caseData, location.getBlock());
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
 
-            OpenCaseEvent openEvent = new OpenCaseEvent(player, caseData.getCaseType(), location.getBlock());
-            Bukkit.getServer().getPluginManager().callEvent(openEvent);
+            if (Case.getKeys(caseData.getCaseType(), player.getName()) >= 1) {
 
-            if (!openEvent.isCancelled())
-                Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData);
-        } else {
-            Case.executeActions(player, caseData.getNoKeyActions());
+                OpenCaseEvent openEvent = new OpenCaseEvent(player, caseData, location.getBlock());
+                Bukkit.getServer().getPluginManager().callEvent(openEvent);
+
+                if (!openEvent.isCancelled()) {
+                    Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData);
+                    Case.removeKeys(caseData.getCaseType(), player.getName(), 1);
+                }
+            } else {
+                Case.executeActions(player, caseData.getNoKeyActions());
+            }
         }
     }
-
 }

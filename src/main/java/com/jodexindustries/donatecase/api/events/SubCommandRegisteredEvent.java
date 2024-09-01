@@ -13,21 +13,14 @@ import org.jetbrains.annotations.NotNull;
 public class SubCommandRegisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final SubCommand subCommand;
-    private final Addon addon;
-    private final boolean isDefault;
 
     /**
      * Default constructor
      *
      * @param subCommand Sub command class
-     * @param addon      Sub command addon
-     * @param isDefault  Is default?
      */
-    public SubCommandRegisteredEvent(SubCommand subCommand,
-                                     Addon addon, boolean isDefault) {
+    public SubCommandRegisteredEvent(SubCommand subCommand) {
         this.subCommand = subCommand;
-        this.addon = addon;
-        this.isDefault = isDefault;
     }
 
     @NotNull
@@ -49,6 +42,7 @@ public class SubCommandRegisteredEvent extends Event {
      * Get subcommand name
      *
      * @return subcommand name
+     * @deprecated Use {@link SubCommand#getName()}
      */
     @Deprecated
     public String getSubCommandName() {
@@ -60,6 +54,7 @@ public class SubCommandRegisteredEvent extends Event {
      *
      * @return SubCommand
      */
+    @NotNull
     public SubCommand getSubCommand() {
         return subCommand;
     }
@@ -70,15 +65,17 @@ public class SubCommandRegisteredEvent extends Event {
      * @return boolean
      */
     public boolean isDefault() {
-        return isDefault;
+        return subCommand.getAddon().getName().equals("DonateCase");
     }
 
     /**
      * Get subcommand addon
      *
      * @return Addon object
+     * @deprecated Use {@link #getSubCommand()#getAddon()} instead
      */
+    @Deprecated
     public Addon getAddon() {
-        return addon;
+        return subCommand.getAddon();
     }
 }

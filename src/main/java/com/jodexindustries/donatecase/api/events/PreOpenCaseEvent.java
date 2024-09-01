@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.events;
 
+import com.jodexindustries.donatecase.api.data.CaseData;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -9,23 +10,25 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when a player tries to open a case via the open menu
+ * <br>
+ * Key checks has not started yet
  */
 public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     protected boolean cancel;
-    private final String caseType;
+    private final CaseData caseData;
     private final Block block;
 
     /**
      * Default constructor
      *
      * @param who      Player who opened
-     * @param caseType Case type
+     * @param caseData Case data
      * @param block    Case block
      */
-    public PreOpenCaseEvent(@NotNull final Player who, @NotNull final String caseType, Block block) {
+    public PreOpenCaseEvent(@NotNull final Player who, @NotNull final CaseData caseData, Block block) {
         super(who);
-        this.caseType = caseType;
+        this.caseData = caseData;
         this.block = block;
         cancel = false;
     }
@@ -35,8 +38,20 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
      *
      * @return case type
      */
+    @NotNull
     public String getCaseType() {
-        return caseType;
+        return caseData.getCaseType();
+    }
+
+    /**
+     * Get case data
+     *
+     * @return case data
+     * @since 2.2.5.8
+     */
+    @NotNull
+    public CaseData getCaseData() {
+        return caseData;
     }
 
     /**

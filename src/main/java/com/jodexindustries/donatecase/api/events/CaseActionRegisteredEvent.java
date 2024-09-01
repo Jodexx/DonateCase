@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.events;
 
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
+import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -10,51 +11,25 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CaseActionRegisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private final String caseActionName;
-    private final ActionExecutor actionExecutor;
-    private final boolean isDefault;
-    private final String caseActionAddonName;
+    private final CaseAction caseAction;
 
     /**
      * Default constructor
      *
-     * @param caseActionName      Case action name
-     * @param actionExecutor      Case action class
-     * @param caseActionAddonName Case action addon name
-     * @param isDefault           Is default?
+     * @param caseAction Case action
      */
-    public CaseActionRegisteredEvent(String caseActionName, ActionExecutor actionExecutor, String caseActionAddonName, boolean isDefault) {
-        this.caseActionName = caseActionName;
-        this.actionExecutor = actionExecutor;
-        this.isDefault = isDefault;
-        this.caseActionAddonName = caseActionAddonName;
+    public CaseActionRegisteredEvent(CaseAction caseAction) {
+        this.caseAction = caseAction;
     }
 
     /**
-     * Get CaseAction name
+     * Get case action
      *
-     * @return name
+     * @return case action
+     * @since 2.2.5.8
      */
-    public String getCaseActionName() {
-        return caseActionName;
-    }
-
-    /**
-     * Get CaseAction addon name
-     *
-     * @return addon name
-     */
-    public String getCaseActionAddonName() {
-        return caseActionAddonName;
-    }
-
-    /**
-     * Get CaseAction class
-     *
-     * @return CaseAction
-     */
-    public ActionExecutor getCaseAction() {
-        return actionExecutor;
+    public CaseAction getCaseAction() {
+        return caseAction;
     }
 
     /**
@@ -63,7 +38,7 @@ public class CaseActionRegisteredEvent extends Event {
      * @return boolean
      */
     public boolean isDefault() {
-        return isDefault;
+        return caseAction.getName().equals("DonateCase");
     }
 
     @NotNull

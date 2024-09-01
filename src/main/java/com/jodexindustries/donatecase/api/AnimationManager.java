@@ -54,9 +54,7 @@ public class AnimationManager {
         if (!isRegistered(name)) {
             CaseAnimation caseAnimation = new CaseAnimation(animation, addon, name, description);
             registeredAnimations.put(name, caseAnimation);
-            String animationPluginName = addon.getName();
-            boolean isDefault = animationPluginName.equalsIgnoreCase("DonateCase");
-            AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(name, animation, animationPluginName, isDefault);
+            AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(caseAnimation);
             Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
         } else {
             addon.getLogger().warning("Animation with name " + name + " already registered!");
@@ -86,9 +84,7 @@ public class AnimationManager {
         if (!isRegistered(name)) {
             CaseAnimation caseAnimation = new CaseAnimation(animation, addon, name, "Old animation without description");
             registeredAnimations.put(name, caseAnimation);
-            String animationPluginName = addon.getName();
-            boolean isDefault = animationPluginName.equalsIgnoreCase("DonateCase");
-            AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(name, null, animationPluginName, isDefault);
+            AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(caseAnimation);
             Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
         } else {
             addon.getLogger().warning("Animation with name " + name + " already registered!");

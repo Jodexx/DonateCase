@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.IAnimation;
+import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -10,60 +10,29 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AnimationRegisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private final String animationName;
-    private final Class<? extends IAnimation> animationClass;
-    private final boolean isDefault;
-    private final String animationAddonName;
+    private final CaseAnimation caseAnimation;
 
     /**
      * Default constructor
      *
-     * @param animationName      Animation name
-     * @param animationClass     Animation class
-     * @param animationAddonName Animation addon name
-     * @param isDefault          Is default?
+     * @param caseAnimation Case animation
      */
-    public AnimationRegisteredEvent(String animationName, Class<? extends IAnimation> animationClass, String animationAddonName, boolean isDefault) {
-        this.animationName = animationName;
-        this.animationClass = animationClass;
-        this.isDefault = isDefault;
-        this.animationAddonName = animationAddonName;
+    public AnimationRegisteredEvent(CaseAnimation caseAnimation) {
+        this.caseAnimation = caseAnimation;
     }
 
     /**
-     * Get animation name
+     * Get case animation
      *
-     * @return animation name
+     * @return animation
+     * @since 2.2.5.8
      */
-    public String getAnimationName() {
-        return animationName;
+    public CaseAnimation getCaseAnimation() {
+        return caseAnimation;
     }
 
-    /**
-     * Get animation addon name
-     *
-     * @return animation addon name
-     */
-    public String getAnimationAddonName() {
-        return animationAddonName;
-    }
-
-    /**
-     * Get if this animation is default
-     *
-     * @return boolean
-     */
     public boolean isDefault() {
-        return isDefault;
-    }
-
-    /**
-     * Get animation class
-     *
-     * @return animation class
-     */
-    public Class<? extends IAnimation> getAnimation() {
-        return animationClass;
+        return caseAnimation.getAddon().getName().equals("DonateCase");
     }
 
     @NotNull

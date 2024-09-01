@@ -428,7 +428,7 @@ public class Case {
         if (CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {
             CaseManager.getHologramManager().createHologram(block, caseData);
         }
-        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, caseData.getAnimation(), caseData, block, item);
+        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, caseData, block, item);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
     }
 

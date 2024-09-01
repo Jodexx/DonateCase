@@ -50,6 +50,7 @@ public class AnimationStartEvent extends PlayerEvent {
      * Get case block
      *
      * @return case block
+     * @since 2.2.5.8
      */
     @NotNull
     public Block getBlock() {

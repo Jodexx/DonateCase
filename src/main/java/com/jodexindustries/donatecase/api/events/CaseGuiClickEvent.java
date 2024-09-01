@@ -59,6 +59,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
      *
      * @return gui
      */
+    @NotNull
     public CaseGui getGui() {
         return gui;
     }

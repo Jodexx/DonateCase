@@ -75,11 +75,7 @@ public class SubCommandManager {
         String name = subCommand.getName();
         if (registeredSubCommands.get(name.toLowerCase()) == null) {
             registeredSubCommands.put(name.toLowerCase(), subCommand);
-
-            boolean isDefault = addon.getName().equalsIgnoreCase("DonateCase");
-
-            SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(subCommand,
-                    addon, isDefault);
+            SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(subCommand);
             Bukkit.getServer().getPluginManager().callEvent(subCommandRegisteredEvent);
             return true;
         } else {

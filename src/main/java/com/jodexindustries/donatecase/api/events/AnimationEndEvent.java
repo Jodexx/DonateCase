@@ -15,7 +15,6 @@ public class AnimationEndEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final CaseData caseData;
     private final Block block;
-    private final String animation;
     private final CaseData.Item winItem;
     private final OfflinePlayer player;
 
@@ -28,11 +27,10 @@ public class AnimationEndEvent extends Event {
      * @param block     Case block (or another, where animation was ended)
      * @param winItem   Player prize
      */
-    public AnimationEndEvent(@NotNull OfflinePlayer who, String animation, CaseData caseData, Block block, CaseData.Item winItem) {
+    public AnimationEndEvent(@NotNull OfflinePlayer who, CaseData caseData, Block block, CaseData.Item winItem) {
         this.player = who;
         this.caseData = caseData;
         this.block = block;
-        this.animation = animation;
         this.winItem = winItem;
     }
 
@@ -50,6 +48,7 @@ public class AnimationEndEvent extends Event {
      * Get case block
      *
      * @return case block
+     * @since 2.2.5.8
      */
     public Block getBlock() {
         return block;
@@ -72,7 +71,7 @@ public class AnimationEndEvent extends Event {
      */
     @NotNull
     public String getAnimation() {
-        return animation;
+        return caseData.getAnimation();
     }
 
     /**
