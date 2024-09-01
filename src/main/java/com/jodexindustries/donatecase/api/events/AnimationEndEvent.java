@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api.events;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class AnimationEndEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final CaseData caseData;
-    private final Location location;
+    private final Block block;
     private final String animation;
     private final CaseData.Item winItem;
     private final OfflinePlayer player;
@@ -24,13 +25,13 @@ public class AnimationEndEvent extends Event {
      * @param who       Player, who opened case
      * @param animation Case animation
      * @param caseData  Case data
-     * @param location  Case location (or another, where animation was ended)
+     * @param block     Case block (or another, where animation was ended)
      * @param winItem   Player prize
      */
-    public AnimationEndEvent(@NotNull OfflinePlayer who, String animation, CaseData caseData, Location location, CaseData.Item winItem) {
+    public AnimationEndEvent(@NotNull OfflinePlayer who, String animation, CaseData caseData, Block block, CaseData.Item winItem) {
         this.player = who;
         this.caseData = caseData;
-        this.location = location;
+        this.block = block;
         this.animation = animation;
         this.winItem = winItem;
     }
@@ -42,7 +43,16 @@ public class AnimationEndEvent extends Event {
      */
     @NotNull
     public Location getLocation() {
-        return location;
+        return block.getLocation();
+    }
+
+    /**
+     * Get case block
+     *
+     * @return case block
+     */
+    public Block getBlock() {
+        return block;
     }
 
     /**

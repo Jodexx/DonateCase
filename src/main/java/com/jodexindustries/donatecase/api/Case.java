@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -42,7 +43,7 @@ public class Case {
     /**
      * Active cases, but by location
      */
-    public final static HashMap<Location, UUID> activeCasesByLocation = new HashMap<>();
+    public final static HashMap<Block, UUID> activeCasesByBlock = new HashMap<>();
 
 
     /**
@@ -421,13 +422,13 @@ public class Case {
      */
     public static void animationEnd(CaseData caseData, OfflinePlayer player, UUID uuid, CaseData.Item item) {
         ActiveCase activeCase = activeCases.get(uuid);
-        Location location = activeCase.getLocation();
-        activeCasesByLocation.remove(location.getBlock().getLocation());
+        Block block = activeCase.getBlock();
+        activeCasesByBlock.remove(block);
         activeCases.remove(uuid);
         if (CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {
-            CaseManager.getHologramManager().createHologram(location.getBlock(), caseData);
+            CaseManager.getHologramManager().createHologram(block, caseData);
         }
-        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, caseData.getAnimation(), caseData, location, item);
+        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, caseData.getAnimation(), caseData, block, item);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
     }
 
@@ -455,7 +456,7 @@ public class Case {
      */
     @Deprecated
     public static void animationPreEnd(CaseData caseData, OfflinePlayer player, boolean ignoredNeedSound, CaseData.Item item, Location location) {
-        animationPreEnd(caseData, player, activeCasesByLocation.get(location.getBlock().getLocation()), item);
+        animationPreEnd(caseData, player, activeCasesByBlock.get(location.getBlock()), item);
     }
 
     /**
@@ -841,7 +842,7 @@ public class Case {
         playersGui.clear();
         caseData.clear();
         activeCases.clear();
-        activeCasesByLocation.clear();
+        activeCasesByBlock.clear();
         keysCache.clear();
         openCache.clear();
         historyCache.clear();

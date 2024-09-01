@@ -9,6 +9,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -38,13 +39,13 @@ public class DeleteCommand implements SubCommandExecutor, SubCommandTabCompleter
         if (args.length == 0) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                Location l = player.getTargetBlock(null, 5).getLocation();
-                String customName = Case.getCaseCustomNameByLocation(l);
+                Block block = player.getTargetBlock(null, 5);
+                String customName = Case.getCaseCustomNameByLocation(block.getLocation());
                 if (customName != null) {
-                    if (!Case.activeCasesByLocation.containsKey(l)) {
+                    if (!Case.activeCasesByBlock.containsKey(block)) {
                         Case.deleteCaseByName(customName);
                         if (CaseManager.getHologramManager() != null)
-                            CaseManager.getHologramManager().removeHologram(l.getBlock());
+                            CaseManager.getHologramManager().removeHologram(block);
                         Tools.msg(sender, Case.getConfig().getLang().getString("case-removed"));
                     } else {
                         Tools.msg(sender, Case.getConfig().getLang().getString("case-opens"));
@@ -57,7 +58,7 @@ public class DeleteCommand implements SubCommandExecutor, SubCommandTabCompleter
             String name = args[0];
             Location location = Case.getCaseLocationByCustomName(name);
             if (location != null) {
-                if (!Case.activeCasesByLocation.containsKey(location)) {
+                if (!Case.activeCasesByBlock.containsKey(location.getBlock())) {
                     if (CaseManager.getHologramManager() != null)
                         CaseManager.getHologramManager().removeHologram(location.getBlock());
 

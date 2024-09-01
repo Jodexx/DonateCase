@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api.events;
 
 import com.jodexindustries.donatecase.api.data.CaseData;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
@@ -13,26 +14,23 @@ import org.jetbrains.annotations.NotNull;
 public class AnimationPreStartEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     private final CaseData caseData;
-    private final Location location;
-    private final String animation;
+    private final Block block;
     private CaseData.Item winItem;
 
     /**
      * Default constructor
      *
      * @param who       Player who opened
-     * @param animation Case animations
      * @param caseData  Case data
-     * @param location  Location where opened
+     * @param block     Block where opened
      * @param winItem   Win item
      */
-    public AnimationPreStartEvent(@NotNull final Player who, @NotNull final String animation,
-                                  @NotNull final CaseData caseData, @NotNull final Location location,
+    public AnimationPreStartEvent(@NotNull final Player who,
+                                  @NotNull final CaseData caseData, @NotNull final Block block,
                                   @NotNull final CaseData.Item winItem) {
         super(who);
         this.caseData = caseData;
-        this.location = location;
-        this.animation = animation;
+        this.block = block;
         this.winItem = winItem;
     }
 
@@ -44,7 +42,17 @@ public class AnimationPreStartEvent extends PlayerEvent {
 
     @NotNull
     public Location getLocation() {
-        return location;
+        return block.getLocation();
+    }
+
+    /**
+     * Get case block
+     *
+     * @return case block
+     */
+    @NotNull
+    public Block getBlock() {
+        return block;
     }
 
     /**
@@ -64,7 +72,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
      */
     @NotNull
     public String getAnimation() {
-        return animation;
+        return caseData.getAnimation();
     }
 
     /**

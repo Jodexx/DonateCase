@@ -11,6 +11,7 @@ import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -126,7 +127,7 @@ public class AnimationManager {
      * @param caseData Case data
      */
     public void startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseData caseData) {
-        if(caseData.getItems().isEmpty()) {
+        if (caseData.getItems().isEmpty()) {
             addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation without items in CaseData!");
             return;
         }
@@ -141,16 +142,18 @@ public class AnimationManager {
             return;
         }
 
+        Block block = location.getBlock();
+
         CaseData.Item winItem = caseData.getRandomItem();
         winItem.getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(player, winItem.getMaterial().getDisplayName()));
-        AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, animation, caseData, location, winItem);
+        AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, caseData, block, winItem);
         Bukkit.getPluginManager().callEvent(preStartEvent);
 
-        ActiveCase activeCase = new ActiveCase(location, caseData.getCaseType());
+        ActiveCase activeCase = new ActiveCase(block, caseData.getCaseType());
         UUID uuid = UUID.randomUUID();
 
         if (CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {
-            CaseManager.getHologramManager().removeHologram(location.getBlock());
+            CaseManager.getHologramManager().removeHologram(block);
         }
 
         CaseAnimation caseAnimation = getRegisteredAnimation(animation);
@@ -158,8 +161,8 @@ public class AnimationManager {
         if (caseAnimation != null) {
             Location caseLocation = location;
 
-            Location tempLocation = Case.getCaseLocationByBlockLocation(location);
-            if(tempLocation != null) caseLocation = tempLocation;
+            Location tempLocation = Case.getCaseLocationByBlockLocation(block.getLocation());
+            if (tempLocation != null) caseLocation = tempLocation;
 
             Class<? extends JavaAnimation> animationClass = caseAnimation.getAnimation();
 
@@ -187,16 +190,16 @@ public class AnimationManager {
         }
 
         for (CaseGui gui : Case.playersGui.values()) {
-            if (gui.getLocation().equals(location)) {
+            if (gui.getLocation().equals(block.getLocation())) {
                 gui.getPlayer().closeInventory();
             }
         }
 
         Case.activeCases.put(uuid, activeCase);
-        Case.activeCasesByLocation.put(location, uuid);
+        Case.activeCasesByBlock.put(block, uuid);
 
         // AnimationStart event
-        AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, location, preStartEvent.getWinItem());
+        AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, block, preStartEvent.getWinItem());
         Bukkit.getPluginManager().callEvent(startEvent);
     }
 

@@ -1,15 +1,16 @@
 package com.jodexindustries.donatecase.api.data;
 
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 
 /**
  * Class for saving active cases data
  */
 public class ActiveCase {
     /**
-     * Case location
+     * Case block
      */
-    private final Location location;
+    private final Block block;
 
     /**
      * Case type
@@ -19,11 +20,11 @@ public class ActiveCase {
     /**
      * Default constructor
      *
-     * @param location Case location
+     * @param block    Case block
      * @param caseType Case type
      */
-    public ActiveCase(Location location, String caseType) {
-        this.location = location;
+    public ActiveCase(Block block, String caseType) {
+        this.block = block;
         this.caseType = caseType;
     }
 
@@ -53,8 +54,16 @@ public class ActiveCase {
      *
      * @return case location
      */
-
     public Location getLocation() {
-        return location;
+        return block.getLocation();
+    }
+
+    /**
+     * Get case block
+     *
+     * @return case block
+     */
+    public Block getBlock() {
+        return block;
     }
 }

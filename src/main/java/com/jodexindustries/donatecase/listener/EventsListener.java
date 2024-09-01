@@ -12,6 +12,7 @@ import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -94,33 +95,35 @@ public class EventsListener implements Listener {
     public void PlayerInteract(PlayerInteractEvent e) {
         if (e.getHand() == EquipmentSlot.OFF_HAND) return;
         Player p = e.getPlayer();
-        if (e.getClickedBlock() != null) {
-            Location blockLocation = e.getClickedBlock().getLocation();
+        Block block = e.getClickedBlock();
+        if (block != null) {
+            Location blockLocation = block.getLocation();
             String caseType = Case.getCaseTypeByLocation(blockLocation);
             if (caseType == null) return;
             e.setCancelled(true);
-            CaseInteractEvent event = new CaseInteractEvent(p, e.getClickedBlock(), caseType, e.getAction());
+            CaseInteractEvent event = new CaseInteractEvent(p, block, caseType, e.getAction());
             Bukkit.getServer().getPluginManager().callEvent(event);
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (!event.isCancelled()) {
-                    if (!Case.activeCasesByLocation.containsKey(blockLocation)) {
-                        if (Case.hasCaseByType(caseType)) {
-                            CaseData caseData = Case.getCase(caseType);
-                            if (caseData == null) return;
-                            switch (caseData.getOpenType()) {
-                                case GUI:
-                                    Case.openGui(p, caseData, blockLocation);
-                                    break;
-                                case BLOCK:
-                                    OPENItemClickHandlerImpl.executeOpen(caseData, p, blockLocation);
-                                    break;
-                            }
-                        } else {
-                            Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
-                            Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
-                        }
-                    } else {
+                    if (Case.activeCasesByBlock.containsKey(block)) {
                         Tools.msg(p, Case.getConfig().getLang().getString("case-opens"));
+                        return;
+                    }
+
+                    CaseData caseData = Case.getCase(caseType);
+                    if (caseData == null) {
+                        Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
+                        Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
+                        return;
+                    }
+
+                    switch (caseData.getOpenType()) {
+                        case GUI:
+                            Case.openGui(p, caseData, blockLocation);
+                            break;
+                        case BLOCK:
+                            OPENItemClickHandlerImpl.executeOpen(caseData, p, blockLocation);
+                            break;
                     }
                 }
             }
