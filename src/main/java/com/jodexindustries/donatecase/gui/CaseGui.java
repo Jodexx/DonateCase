@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -35,7 +36,7 @@ public class CaseGui {
      * @param player   Player object
      * @param caseData CaseData object
      */
-    public CaseGui(Player player, CaseData caseData, Location location) {
+    public CaseGui(@NotNull Player player, @NotNull CaseData caseData, @NotNull Location location) {
         this.player = player;
         this.caseData = caseData;
         this.tempGUI = caseData.getGui().clone();
@@ -159,6 +160,7 @@ public class CaseGui {
      *
      * @return inventory
      */
+    @NotNull
     public Inventory getInventory() {
         return inventory;
     }
@@ -168,6 +170,7 @@ public class CaseGui {
      *
      * @return GUI location
      */
+    @NotNull
     public Location getLocation() {
         return location;
     }
@@ -177,6 +180,7 @@ public class CaseGui {
      *
      * @return player who opened
      */
+    @NotNull
     public Player getPlayer() {
         return player;
     }
@@ -186,6 +190,7 @@ public class CaseGui {
      *
      * @return data
      */
+    @NotNull
     public CaseData getCaseData() {
         return caseData;
     }
@@ -195,6 +200,7 @@ public class CaseGui {
      *
      * @return GUI
      */
+    @NotNull
     public GUI getTempGUI() {
         return tempGUI;
     }
@@ -204,6 +210,7 @@ public class CaseGui {
      *
      * @return global history data
      */
+    @NotNull
     public List<CaseData.HistoryData> getGlobalHistoryData() {
         return globalHistoryData;
     }
