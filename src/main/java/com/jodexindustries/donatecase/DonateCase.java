@@ -394,14 +394,17 @@ public class DonateCase extends JavaPlugin {
         ConfigurationSection section = config.getCases().getConfigurationSection("DonateCase.Cases");
         if (section == null || section.getKeys(false).isEmpty()) return;
         for (String caseName : section.getKeys(false)) {
-            String caseType = section.getString("type");
+            ConfigurationSection caseSection = section.getConfigurationSection(caseName);
+            if(caseSection == null) continue;
+
+            String caseType = caseSection.getString("type");
             if(caseType == null) continue;
 
             CaseData caseData = Case.getCase(caseType);
             Location location = Case.getCaseLocationByCustomName(caseName);
             if (caseData != null && caseData.getHologram().isEnabled() && location != null
                     && location.getWorld() != null && hologramManager != null
-                    && !Case.activeCasesByLocation.containsKey(location)) {
+                    && !Case.activeCasesByBlock.containsKey(location.getBlock())) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }
