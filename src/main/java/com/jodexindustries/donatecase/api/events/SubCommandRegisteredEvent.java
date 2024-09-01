@@ -72,7 +72,7 @@ public class SubCommandRegisteredEvent extends Event {
      * Get subcommand addon
      *
      * @return Addon object
-     * @deprecated Use {@link #getSubCommand()#getAddon()} instead
+     * @deprecated Use {@link SubCommand#getAddon()} instead
      */
     @Deprecated
     public Addon getAddon() {

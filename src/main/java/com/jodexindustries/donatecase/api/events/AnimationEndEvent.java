@@ -22,7 +22,6 @@ public class AnimationEndEvent extends Event {
      * Default constructor
      *
      * @param who       Player, who opened case
-     * @param animation Case animation
      * @param caseData  Case data
      * @param block     Case block (or another, where animation was ended)
      * @param winItem   Player prize
