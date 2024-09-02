@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.tools.support;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.api.protocol.ServerVersion;
 import com.jodexindustries.donatecase.tools.Logger;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.tofaa.entitylib.APIConfig;
