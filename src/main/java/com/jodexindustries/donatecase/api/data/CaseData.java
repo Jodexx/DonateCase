@@ -176,18 +176,6 @@ public class CaseData implements Cloneable {
      * Get case type
      *
      * @return case type
-     * @deprecated This method does not match the field name
-     * <p> Use {@link CaseData#getCaseType()} instead</p>
-     */
-    @Deprecated
-    public String getCaseName() {
-        return caseType;
-    }
-
-    /**
-     * Get case type
-     *
-     * @return case type
      * @since 2.2.1.8
      */
     @NotNull

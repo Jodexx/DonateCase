@@ -77,17 +77,6 @@ public class ActionManager {
     }
 
     /**
-     * Register action
-     *
-     * @param name           Action name, like: "[command]"
-     * @param actionExecutor Action executor
-     */
-    @Deprecated
-    public void registerAction(String name, ActionExecutor actionExecutor) {
-        registerAction(name, actionExecutor, null);
-    }
-
-    /**
      * Unregister action
      *
      * @param name Action name

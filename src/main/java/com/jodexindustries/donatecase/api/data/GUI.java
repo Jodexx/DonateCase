@@ -132,40 +132,6 @@ public class GUI implements Cloneable {
             this.slots = slots;
         }
 
-        /**
-         * @return item model data
-         * @deprecated Use {@link CaseData.Item.Material#getModelData()}
-         */
-        @Deprecated
-        public int getModelData() {
-            return getMaterial().getModelData();
-        }
-
-        /**
-         * @deprecated Use {@link CaseData.Item.Material#setModelData(int)}
-         */
-        @Deprecated
-        public void setModelData(int modelData) {
-            getMaterial().setModelData(modelData);
-        }
-
-        /**
-         * @deprecated Use {@link CaseData.Item.Material#getRgb()}
-         */
-        @Deprecated
-        public String[] getRgb() {
-            return getMaterial().getRgb();
-        }
-
-        /**
-         * @deprecated Use {@link CaseData.Item.Material#setRgb(String[])}
-         */
-        @Deprecated
-        public void setRgb(String[] rgb) {
-            getMaterial().setRgb(rgb);
-        }
-
-
         @Override
         public Item clone() {
             try {

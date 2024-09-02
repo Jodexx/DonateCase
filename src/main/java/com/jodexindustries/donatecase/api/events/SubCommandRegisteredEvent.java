@@ -39,17 +39,6 @@ public class SubCommandRegisteredEvent extends Event {
     }
 
     /**
-     * Get subcommand name
-     *
-     * @return subcommand name
-     * @deprecated Use {@link SubCommand#getName()}
-     */
-    @Deprecated
-    public String getSubCommandName() {
-        return subCommand.getName();
-    }
-
-    /**
      * Get SubCommand class
      *
      * @return SubCommand
@@ -66,16 +55,5 @@ public class SubCommandRegisteredEvent extends Event {
      */
     public boolean isDefault() {
         return subCommand.getAddon().getName().equals("DonateCase");
-    }
-
-    /**
-     * Get subcommand addon
-     *
-     * @return Addon object
-     * @deprecated Use {@link SubCommand#getAddon()} instead
-     */
-    @Deprecated
-    public Addon getAddon() {
-        return subCommand.getAddon();
     }
 }

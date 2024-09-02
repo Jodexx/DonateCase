@@ -135,16 +135,6 @@ public class AddonManager {
     }
 
     /**
-     * Enable all loaded addons
-     *
-     * @since 2.2.4.3
-     */
-    @Deprecated
-    public void enableAddons() {
-        enableAddons(PowerReason.ADDON);
-    }
-
-    /**
      * Enable all loaded addons with reason
      *
      * @param reason Loading reason
@@ -158,17 +148,6 @@ public class AddonManager {
     }
 
     /**
-     * Enable addon by name
-     *
-     * @param addon addon name
-     * @return true if successful
-     */
-    @Deprecated
-    public boolean enableAddon(@NotNull String addon) {
-        return enableAddon(addon, PowerReason.ADDON);
-    }
-
-    /**
      * Enable addon by name with reason
      *
      * @param addon  addon name
@@ -179,17 +158,6 @@ public class AddonManager {
         InternalJavaAddon javaInternalAddon = addons.get(addon);
         if (javaInternalAddon == null) return false;
         return enableAddon(javaInternalAddon, reason);
-    }
-
-    /**
-     * Enable addon by instance
-     *
-     * @param addon addon name
-     * @return true if successful
-     */
-    @Deprecated
-    public boolean enableAddon(@NotNull InternalJavaAddon addon) {
-        return enableAddon(addon, PowerReason.ADDON);
     }
 
     /**
@@ -217,17 +185,6 @@ public class AddonManager {
     }
 
     /**
-     * Disable addon by name
-     *
-     * @param addon addon name
-     * @return true if successful
-     */
-    @Deprecated
-    public boolean disableAddon(@NotNull String addon) {
-        return disableAddon(addon, PowerReason.ADDON);
-    }
-
-    /**
      * Disable addon by name with reason
      *
      * @param addon  addon name
@@ -238,17 +195,6 @@ public class AddonManager {
         InternalJavaAddon javaInternalAddon = addons.get(addon);
         if (javaInternalAddon == null) return false;
         return disableAddon(javaInternalAddon, reason);
-    }
-
-    /**
-     * Disable addon by instance
-     *
-     * @param addon addon instance
-     * @return true if successful
-     */
-    @Deprecated
-    public boolean disableAddon(@NotNull InternalJavaAddon addon) {
-        return disableAddon(addon, PowerReason.ADDON);
     }
 
     /**
@@ -289,25 +235,6 @@ public class AddonManager {
     }
 
     /**
-     * Unload all loaded addons
-     */
-    @Deprecated
-    public void unloadAddons() {
-        unloadAddons(PowerReason.ADDON);
-    }
-
-    /**
-     * Unload addon by name
-     *
-     * @param addon addon name
-     * @return true, if successful
-     */
-    @Deprecated
-    public boolean unloadAddon(@NotNull String addon) {
-        return unloadAddon(addon, PowerReason.ADDON);
-    }
-
-    /**
      * Unload addon by name with reason
      *
      * @param addon  addon name
@@ -318,17 +245,6 @@ public class AddonManager {
         InternalJavaAddon javaInternalAddon = addons.get(addon);
         if (javaInternalAddon == null) return false;
         return unloadAddon(javaInternalAddon, reason);
-    }
-
-    /**
-     * Unload addon by instance
-     *
-     * @param addon addon instance
-     * @return true, if successful
-     */
-    @Deprecated
-    public boolean unloadAddon(@NotNull InternalJavaAddon addon) {
-        return unloadAddon(addon, PowerReason.ADDON);
     }
 
     /**

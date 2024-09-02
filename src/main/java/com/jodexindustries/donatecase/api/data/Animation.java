@@ -12,16 +12,6 @@ import java.util.UUID;
 @Deprecated
 public interface Animation {
     /**
-     * @return animation name
-     * @deprecated This is not used anymore!!!
-     * Get animation name
-     */
-    @Deprecated
-    default String getName() {
-        return null;
-    }
-
-    /**
      * Method to start animation
      *
      * @param player   Player who opened case

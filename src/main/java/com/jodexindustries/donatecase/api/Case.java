@@ -252,16 +252,6 @@ public class Case {
     }
 
     /**
-     * Delete case by location in Cases.yml
-     * @param loc Case location
-     */
-    @Deprecated
-    public static void deleteCaseByLocation(Location loc) {
-        getConfig().getCases().set("DonateCase.Cases." + getCaseCustomNameByLocation(loc), null);
-        getConfig().saveCases();
-    }
-
-    /**
      * Delete case by name in Cases.yml
      * @param name Case name
      */
@@ -376,25 +366,6 @@ public class Case {
     }
 
     /**
-     * Is there a case with a specific title?
-     * @param title Case title
-     * @return true - if case found in memory
-     */
-    @Deprecated
-    public static boolean hasCaseByTitle(String title) {
-        return caseData.values().stream().anyMatch(data -> data.getCaseTitle().equalsIgnoreCase(title));
-    }
-
-    /**
-     * @deprecated  Use {@link Config#getCasesConfig()} instead
-     * @return CasesConfig object
-     */
-    @Deprecated
-    public static CasesConfig getCasesConfig() {
-        return instance.config.getCasesConfig();
-    }
-
-    /**
      * Get plugin instance
      * @return DonateCase instance
      */
@@ -430,33 +401,6 @@ public class Case {
         }
         AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, caseData, block, item);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
-    }
-
-    /**
-     * Animation pre end method for custom animations is called to grant a group, send a message, and more
-     * @param caseData Case data
-     * @param player Player who opened
-     * @param needSound Boolean sound
-     * @param item Win item data
-     * @deprecated Use {@link #animationPreEnd(CaseData, OfflinePlayer, Location, CaseData.Item)} instead
-     */
-    @Deprecated
-    public static void animationPreEnd(CaseData caseData, Player player, boolean needSound, CaseData.Item item) {
-        animationPreEnd(caseData, player, needSound, item, Bukkit.getWorlds().get(0).getSpawnLocation());
-    }
-
-    /**
-     * Animation pre end method for custom animations is called to grant a group, send a message, and more
-     * @param caseData Case data
-     * @param player Player who opened
-     * @param ignoredNeedSound Boolean sound
-     * @param item Win item data
-     * @param location Location where case was opened
-     * @deprecated Use {@link #animationPreEnd(CaseData, OfflinePlayer, Location, CaseData.Item)} instead
-     */
-    @Deprecated
-    public static void animationPreEnd(CaseData caseData, OfflinePlayer player, boolean ignoredNeedSound, CaseData.Item item, Location location) {
-        animationPreEnd(caseData, player, activeCasesByBlock.get(location.getBlock()), item);
     }
 
     /**
@@ -647,15 +591,6 @@ public class Case {
         return getInstance().config;
     }
 
-    /** Get plugin configuration manager
-     * @deprecated Use {@link #getConfig()} instead
-     * @return configuration manager instance
-     */
-    @Deprecated
-    public static Config getCustomConfig() {
-        return getInstance().config;
-    }
-
     /**
      * Open case gui
      * <br/>
@@ -678,16 +613,6 @@ public class Case {
     }
 
     /**
-     * Is there a case with a name?
-     * @param c Case name
-     * @return Boolean
-     */
-    @Deprecated
-    public static boolean hasCase(@NotNull String c) {
-        return caseData.containsKey(c);
-    }
-
-    /**
      * Get a case with the name
      * @param c Case name
      * @return Case data
@@ -695,15 +620,6 @@ public class Case {
     @Nullable
     public static CaseData getCase(@NotNull String c) {
         return caseData.getOrDefault(c, null);
-    }
-
-    /**
-     * Get sorted history data from all cases
-     * @return list of HistoryData (sorted by time)
-     */
-    @Deprecated
-    public static List<CaseData.HistoryData> getSortedHistoryData() {
-        return getAsyncSortedHistoryData().join();
     }
 
     /**

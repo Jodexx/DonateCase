@@ -32,18 +32,6 @@ public class ActiveCase {
      * Get case type
      *
      * @return case type
-     * @deprecated This method does not match the field name
-     * <p> Use {@link ActiveCase#getCaseType()} instead</p>
-     */
-    @Deprecated
-    public String getName() {
-        return caseType;
-    }
-
-    /**
-     * Get case type
-     *
-     * @return case type
      */
     public String getCaseType() {
         return caseType;
