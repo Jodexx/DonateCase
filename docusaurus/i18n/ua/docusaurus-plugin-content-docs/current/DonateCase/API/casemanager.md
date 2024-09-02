@@ -8,7 +8,7 @@ sidebar_position: 5
 [CaseManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/CaseManager.html) -
 клас, який містить усі менеджери для взаємодії з динамічними об'єктами в DonateCase.
 
-Доступні менеджери:
+## Доступні менеджери
 - [ActionManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/ActionManager.html)
 використовується для керування виконуваними діями
 - [AddonManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/AddonManager.html)
@@ -22,12 +22,12 @@ sidebar_position: 5
 - [SubCommandManager](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/SubCommandManager.html)
 використовується для керування субкомандами
 
-### Отримання CaseManager
+## Отримання CaseManager
 
 CaseManager має 2 конструктори для ініціалізації:
 [CaseManager#\<init>(Addon)](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/CaseManager.html#%3Cinit%3E(com.jodexindustries.donatecase.api.addon.Addon)) та [CaseManager#\<init>(Plugin)](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/CaseManager.html#%3Cinit%3E(org.bukkit.plugin.Plugin))
 
-#### Внутрішній аддон
+### Внутрішній аддон
 CaseManager автоматично ініціалізується під час завантаження аддона, тому отримання доступне
 за допомогою методу [InternalJavaAddon#getCaseAPI()](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/addon/internal/InternalJavaAddon.html#getCaseAPI())
 
@@ -42,7 +42,7 @@ public class TestAddon extends InternalJavaAddon {
     }
 }
 ```
-#### Зовнішній аддон
+### Зовнішній аддон
 
 Приклад:
 ```java
