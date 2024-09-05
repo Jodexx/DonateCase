@@ -43,6 +43,18 @@ public class Converter {
         }
     }
 
+    public void convertAnimations() {
+        if(!config.getAnimations().getString("config", "1.3").equals("1.4")) {
+            for (String animation : config.getAnimations().getKeys(false)) {
+                ConfigurationSection section = config.getAnimations().getConfigurationSection(animation);
+                config.getAnimations().set(animation.toUpperCase(), section);
+                config.getAnimations().set(animation, null);
+            }
+            config.getAnimations().set("config", "1.4");
+            config.saveAnimations();
+        }
+    }
+
     public void convertOverall() {
         for (String caseType : config.getCasesConfig().getCases().keySet()) {
             Pair<File, YamlConfiguration> pair = config.getCasesConfig().getCases().get(caseType);

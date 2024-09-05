@@ -18,8 +18,8 @@ public class FireworkAnimation extends JavaAnimation {
     private final ArmorStandEulerAngle armorStandEulerAngle;
 
     public FireworkAnimation() {
-        itemSlot = EquipmentSlot.valueOf(Case.getConfig().getAnimations().getString("Firework.ItemSlot", "HEAD").toUpperCase());
-        armorStandEulerAngle = Tools.getArmorStandEulerAngle("Firework.Pose");
+        itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD").toUpperCase());
+        armorStandEulerAngle = Tools.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
     }
 
     @Override
@@ -29,7 +29,7 @@ public class FireworkAnimation extends JavaAnimation {
         getLocation().add(0.5, 1, 0.5);
         ArmorStandCreator as = Tools.createArmorStand(getLocation());
 
-        boolean small = Case.getConfig().getAnimations().getBoolean("Firework.SmallArmorStand", true);
+        boolean small = getSettings().getBoolean("SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
@@ -56,10 +56,10 @@ public class FireworkAnimation extends JavaAnimation {
                 Firework firework = world.spawn(l, Firework.class);
                 FireworkMeta data = firework.getFireworkMeta();
                 data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
-                for (String color : Case.getConfig().getAnimations().getStringList("Firework.FireworkColors")) {
+                for (String color : getSettings().getStringList("FireworkColors")) {
                     data.addEffect(FireworkEffect.builder().withColor(Tools.parseColor(color)).build());
                 }
-                data.setPower(Case.getConfig().getAnimations().getInt("Firework.Power"));
+                data.setPower(getSettings().getInt("Power"));
                 firework.setFireworkMeta(data);
             }
             if (this.i >= 7) {

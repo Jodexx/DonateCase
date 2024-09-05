@@ -26,14 +26,14 @@ public class ShapeAnimation extends JavaAnimation {
         getLocation().setYaw(-70.0F);
 
         final ArmorStandCreator as = Tools.createArmorStand(getLocation());
-        boolean small = Case.getConfig().getAnimations().getBoolean("Shape.SmallArmorStand", true);
+        boolean small = getSettings().getBoolean("Shape.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
         as.spawn();
 
-        final String orangeRgbString = Case.getConfig().getAnimations().getString("Shape.Particle.Orange.Rgb");
-        final String whiteRgbString = Case.getConfig().getAnimations().getString("Shape.Particle.White.Rgb");
+        final String orangeRgbString = getSettings().getString("Shape.Particle.Orange.Rgb");
+        final String whiteRgbString = getSettings().getString("Shape.Particle.White.Rgb");
 
         final Color orangeColor = Tools.fromRGBString(orangeRgbString, Color.ORANGE);
         final Color whiteColor = Tools.fromRGBString(whiteRgbString, Color.WHITE);
@@ -63,13 +63,13 @@ public class ShapeAnimation extends JavaAnimation {
         public Task(final ArmorStandCreator as, final Color orangeColor, final Color whiteColor) {
             this.as = as;
             this.l = as.getLocation();
-            this.whiteSize = (float) Case.getConfig().getAnimations().getDouble("Shape.Particle.White.Size");
-            this.orangeSize = (float) Case.getConfig().getAnimations().getDouble("Shape.Particle.Orange.Size");
+            this.whiteSize = (float) getSettings().getDouble("Particle.White.Size");
+            this.orangeSize = (float) getSettings().getDouble("Particle.Orange.Size");
             this.orangeColor = orangeColor;
             this.whiteColor = whiteColor;
-            this.itemSlot = EquipmentSlot.valueOf(Case.getConfig().getAnimations().getString("Shape.ItemSlot", "HEAD")
+            this.itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD")
                     .toUpperCase());
-            this.armorStandEulerAngle = Tools.getArmorStandEulerAngle("Shape.Pose");
+            this.armorStandEulerAngle = Tools.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
             world = l.getWorld() != null ? l.getWorld() : getPlayer().getWorld();
         }
 

@@ -69,9 +69,10 @@ public class Config {
         configs.put(fileConfig, config);
 
         checkAndUpdateConfig(config, "Config.yml", "2.5");
-        checkAndUpdateConfig(animations, "Animations.yml", "1.3");
+        checkAndUpdateConfig(animations, "Animations.yml", "1.4");
 
         converter.convertConfig();
+        converter.convertAnimations();
 
         checkConvertCases();
 

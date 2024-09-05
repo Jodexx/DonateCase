@@ -21,19 +21,19 @@ public class RainlyAnimation extends JavaAnimation {
 
     @Override
     public void start() {
-        Particle particle = Particle.valueOf(Case.getConfig().getAnimations().getString("Rainly.FallingParticle"));
+        Particle particle = Particle.valueOf(getSettings().getString("FallingParticle"));
 
         ArmorStandCreator as = Tools.createArmorStand(getLocation().clone().add(0.5, 1, 0.5));
         as.setVisible(false);
         as.setGravity(false);
 
-        armorStandEulerAngle = Tools.getArmorStandEulerAngle("Rainly.Pose");
+        armorStandEulerAngle = Tools.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
 
         itemSlot = EquipmentSlot.valueOf(
-                Case.getConfig().getAnimations().getString("Rainly.ItemSlot", "HEAD").toUpperCase()
+                getSettings().getString("ItemSlot", "HEAD").toUpperCase()
         );
 
-        boolean small = Case.getConfig().getAnimations().getBoolean("Rainly.SmallArmorStand", true);
+        boolean small = getSettings().getBoolean("SmallArmorStand", true);
         as.setSmall(small);
         as.spawn();
 

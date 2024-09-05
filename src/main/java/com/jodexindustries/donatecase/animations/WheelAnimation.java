@@ -6,7 +6,12 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
@@ -21,13 +26,11 @@ public class WheelAnimation extends JavaAnimation {
     private final List<ArmorStandCreator> armorStands = new ArrayList<>();
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
-
-    private final WheelType wheelType = WheelType.getType(Case.getConfig().getAnimations().getString("Wheel.Type",
-            "RANDOM"));
+    private WheelType wheelType;
 
     private enum WheelType {
         FULL,  // No duplicates, all unique items
-        RANDOM;       // Can have duplicates, random items
+        RANDOM; // Can have duplicates, random items
 
         @NotNull
         public static WheelType getType(String string) {
@@ -41,8 +44,9 @@ public class WheelAnimation extends JavaAnimation {
 
     @Override
     public void start() {
-        armorStandEulerAngle = Tools.getArmorStandEulerAngle("Wheel.Pose");
-        itemSlot = EquipmentSlot.valueOf(Case.getConfig().getAnimations().getString("Wheel.ItemSlot", "HEAD").toUpperCase());
+        wheelType = WheelType.getType(getSettings().getString("Type", "RANDOM"));
+        armorStandEulerAngle = Tools.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
+        itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD").toUpperCase());
         Bukkit.getScheduler().runTaskTimer(Case.getInstance(), new Task(), 0L, 0L);
     }
 
@@ -51,19 +55,19 @@ public class WheelAnimation extends JavaAnimation {
         private final Location loc = getLocation().clone().add(0.5, 0, 0.5);
         private final World world;
 
-        private final int itemsCount = Case.getConfig().getAnimations().getInt("Wheel.ItemsCount");
-        private final int animationTime = Case.getConfig().getAnimations().getInt("Wheel.Scroll.Time", 100);
-        private final Location flocation = loc.clone().add(0 + Case.getConfig().getAnimations().getDouble("Wheel.LiftingAlongX"),
-                -1 + Case.getConfig().getAnimations().getDouble("Wheel.LiftingAlongY"),
-                0 + Case.getConfig().getAnimations().getDouble("Wheel.LiftingAlongZ"));
-        private final boolean needSound = Case.getConfig().getAnimations().getString("Wheel.Scroll.Sound") != null;
-        private final Sound sound = Sound.valueOf(Case.getConfig().getAnimations().getString("Wheel.Scroll.Sound"));
-        private final float volume = (float) Case.getConfig().getAnimations().getDouble("Wheel.Scroll.Volume");
-        private final float vpitch = (float) Case.getConfig().getAnimations().getDouble("Wheel.Scroll.Pitch");
-        private final double speed = Case.getConfig().getAnimations().getDouble("Wheel.CircleSpeed");
-        private final double radius = Case.getConfig().getAnimations().getDouble("Wheel.CircleRadius");
-        private final boolean useFlame = Case.getConfig().getAnimations().getBoolean("Wheel.Flame.Enabled");
-        private final Particle flameParticle = Particle.valueOf(Case.getConfig().getAnimations().getString("Wheel.Flame.Particle", "FLAME"));
+        private final int itemsCount = getSettings().getInt("ItemsCount");
+        private final int animationTime = getSettings().getInt("Scroll.Time", 100);
+        private final Location flocation = loc.clone().add(0 + getSettings().getDouble("LiftingAlongX"),
+                -1 + getSettings().getDouble("LiftingAlongY"),
+                0 + getSettings().getDouble("LiftingAlongZ"));
+        private final boolean needSound = getSettings().getString("Scroll.Sound") != null;
+        private final Sound sound = Sound.valueOf(getSettings().getString("Scroll.Sound"));
+        private final float volume = (float) getSettings().getDouble("Scroll.Volume");
+        private final float vpitch = (float) getSettings().getDouble("Scroll.Pitch");
+        private final double speed = getSettings().getDouble("CircleSpeed");
+        private final double radius = getSettings().getDouble("CircleRadius");
+        private final boolean useFlame = getSettings().getBoolean("Flame.Enabled");
+        private final Particle flameParticle = Particle.valueOf(getSettings().getString("Flame.Particle", "FLAME"));
 
         private final double baseAngle = loc.clone().getDirection().angle(new Vector(0, 0, 1));
         private double lastCompletedRotation = 0.0;
@@ -112,7 +116,7 @@ public class WheelAnimation extends JavaAnimation {
         }
 
         private void initializeItems() {
-            boolean small = Case.getConfig().getAnimations().getBoolean("Wheel.SmallArmorStand", true);
+            boolean small = getSettings().getBoolean("SmallArmorStand", true);
             armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
 
             if (wheelType == WheelType.FULL) {

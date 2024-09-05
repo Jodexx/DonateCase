@@ -75,6 +75,7 @@ public class CaseLoader {
         String caseTitle = Tools.rc(caseSection.getString("Title", ""));
         String caseDisplayName = Tools.rc(caseSection.getString("DisplayName", ""));
         String animationName = caseSection.getString("Animation");
+        ConfigurationSection animationSettings = caseSection.getConfigurationSection("AnimationSettings");
 
         if (animationName == null) {
             plugin.getLogger().warning("Case " + caseType + " has no animation, skipped.");
@@ -94,7 +95,7 @@ public class CaseLoader {
         List<String> noKeyActions = caseSection.getStringList("NoKeyActions");
 
         return new CaseData(caseType, caseDisplayName, animationName, items, historyData,
-                hologram, levelGroups, gui, noKeyActions, openType);
+                hologram, levelGroups, gui, noKeyActions, openType, animationSettings);
     }
 
     private CaseData.Hologram loadHologram(ConfigurationSection caseSection) {

@@ -5,6 +5,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import com.jodexindustries.donatecase.tools.ProbabilityCollection;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Color;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -29,24 +30,26 @@ public class CaseData implements Cloneable {
     private GUI gui;
     private List<String> noKeyActions;
     private OpenType openType;
+    private ConfigurationSection animationSettings;
 
     /**
      * Default constructor
      *
-     * @param caseType        Case type
-     * @param caseDisplayName Case display name
-     * @param animation       Animation name
-     * @param items           Items list
-     * @param historyData     History data array
-     * @param hologram        Hologram object
-     * @param levelGroups     Map with level groups
-     * @param gui             GUI object
-     * @param noKeyActions    NoKeyActions
-     * @param openType        Open type
+     * @param caseType          Case type
+     * @param caseDisplayName   Case display name
+     * @param animation         Animation name
+     * @param items             Items list
+     * @param historyData       History data array
+     * @param hologram          Hologram object
+     * @param levelGroups       Map with level groups
+     * @param gui               GUI object
+     * @param noKeyActions      NoKeyActions
+     * @param openType          Open type
+     * @param animationSettings Animation settings section
      */
     public CaseData(String caseType, String caseDisplayName, String animation, Map<String,
             Item> items, HistoryData[] historyData, Hologram hologram, Map<String, Integer> levelGroups, GUI gui,
-                    List<String> noKeyActions, @NotNull OpenType openType) {
+                    List<String> noKeyActions, @NotNull OpenType openType, ConfigurationSection animationSettings) {
         this.caseType = caseType;
         this.caseDisplayName = caseDisplayName;
         this.animation = animation;
@@ -57,6 +60,7 @@ public class CaseData implements Cloneable {
         this.gui = gui;
         this.noKeyActions = noKeyActions;
         this.openType = openType;
+        this.animationSettings = animationSettings;
     }
 
     @Override
@@ -159,7 +163,7 @@ public class CaseData implements Cloneable {
      */
     @NotNull
     public String getCaseTitle() {
-        if(gui == null) return "";
+        if (gui == null) return "";
         return gui.getTitle();
     }
 
@@ -169,7 +173,7 @@ public class CaseData implements Cloneable {
      * @param caseTitle title
      */
     public void setCaseTitle(@NotNull String caseTitle) {
-        if(this.gui != null) this.gui.setTitle(caseTitle);
+        if (this.gui != null) this.gui.setTitle(caseTitle);
     }
 
     /**
@@ -337,6 +341,27 @@ public class CaseData implements Cloneable {
      */
     public void setOpenType(OpenType openType) {
         this.openType = openType;
+    }
+
+    /**
+     * Gets animation settings section
+     *
+     * @return settings
+     * @since 2.2.5.9
+     */
+    @Nullable
+    public ConfigurationSection getAnimationSettings() {
+        return animationSettings;
+    }
+
+    /**
+     * Sets animation settings section
+     *
+     * @param animationSettings animation settings section
+     * @since 2.2.5.9
+     */
+    public void setAnimationSettings(ConfigurationSection animationSettings) {
+        this.animationSettings = animationSettings;
     }
 
     /**
@@ -851,21 +876,22 @@ public class CaseData implements Cloneable {
 
             /**
              * Update {@link #itemStack} metadata
+             *
              * @param displayName Item display name
-             * @param lore Item lore
-             * @param modelData Item custom model data
-             * @param enchanted Item enchantment
-             * @param rgb Item rgb
+             * @param lore        Item lore
+             * @param modelData   Item custom model data
+             * @param enchanted   Item enchantment
+             * @param rgb         Item rgb
              */
             public void updateMeta(String displayName, List<String> lore, int modelData,
                                    boolean enchanted, String[] rgb) {
-                if(this.itemStack != null) {
+                if (this.itemStack != null) {
                     ItemMeta meta = this.itemStack.getItemMeta();
-                    if(meta != null) {
+                    if (meta != null) {
                         meta.setDisplayName(displayName);
                         meta.setLore(lore);
                         meta.setCustomModelData(modelData);
-                        if(enchanted) meta.addEnchant(Enchantment.LURE, 1, true);
+                        if (enchanted) meta.addEnchant(Enchantment.LURE, 1, true);
 
                         if (rgb != null && meta instanceof LeatherArmorMeta) {
                             LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) meta;
@@ -933,7 +959,8 @@ public class CaseData implements Cloneable {
         /**
          * No-arg constructor for ORM lite
          */
-        public HistoryData() {}
+        public HistoryData() {
+        }
 
         /**
          * Default constructor

@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.data;
 
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +13,7 @@ public abstract class JavaAnimation implements IAnimation {
     private UUID uuid;
     private CaseData caseData;
     private CaseData.Item winItem;
+    private ConfigurationSection settings;
 
     /**
      * @param player   Player who opened case
@@ -21,12 +23,13 @@ public abstract class JavaAnimation implements IAnimation {
      * @param winItem  winItem
      */
     public final void init(Player player, Location location, UUID uuid, CaseData caseData,
-                     CaseData.Item winItem) {
+                           CaseData.Item winItem, ConfigurationSection settings) {
         this.player = player;
         this.location = location;
         this.uuid = uuid;
         this.caseData = caseData;
         this.winItem = winItem;
+        this.settings = settings;
     }
 
     @NotNull
@@ -52,5 +55,16 @@ public abstract class JavaAnimation implements IAnimation {
     @NotNull
     public final CaseData.Item getWinItem() {
         return winItem;
+    }
+
+    /**
+     * Gets animation settings section
+     *
+     * @return Section with settings
+     * @since 2.2.5.9
+     */
+    @NotNull
+    public final ConfigurationSection getSettings() {
+        return settings;
     }
 }

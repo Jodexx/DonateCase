@@ -300,11 +300,10 @@ public class Tools {
 
     /**
      * Get euler angle from Animations.yml
-     * @param path Path, used like animation name
+     * @param section The section where the settings are located
      * @return EulerAngle, that used in animations
      */
-    public static ArmorStandEulerAngle getArmorStandEulerAngle(String path) {
-         ConfigurationSection section = Case.getConfig().getAnimations().getConfigurationSection(path);
+    public static ArmorStandEulerAngle getArmorStandEulerAngle(ConfigurationSection section) {
          if(section == null) {
              EulerAngle angle = new EulerAngle(0,0,0);
              return new ArmorStandEulerAngle(angle, angle, angle, angle, angle, angle);

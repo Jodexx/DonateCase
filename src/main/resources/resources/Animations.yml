@@ -1,5 +1,5 @@
-config: "1.3"
-Shape:
+config: "1.4"
+SHAPE:
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
   Pose:
@@ -17,7 +17,7 @@ Shape:
       Size: 1.0
       Rgb: 255, 255, 255
 
-Rainly:
+RAINLY:
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
   Pose:
@@ -35,7 +35,7 @@ Rainly:
   # FALLING_NECTAR  1.16+
   # FALLING_OBSIDIAN_TEAR
 
-Firework:
+FIREWORK:
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
   Pose:
@@ -52,7 +52,7 @@ Firework:
     - GREEN
     - YELLOW
 
-Wheel:
+WHEEL:
   Type: FULL # or RANDOM
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true

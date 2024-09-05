@@ -12,6 +12,7 @@ import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -167,8 +168,13 @@ public class AnimationManager {
                 if (animationClass != null) {
                     JavaAnimation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
 
+                    ConfigurationSection settings =
+                            caseData.getAnimationSettings() != null ?
+                                    caseData.getAnimationSettings() :
+                                    Case.getConfig().getAnimations().getConfigurationSection(animation);
+
                     javaAnimation.init(player, caseLocation,
-                            uuid, caseData, preStartEvent.getWinItem());
+                            uuid, caseData, preStartEvent.getWinItem(), settings);
                     javaAnimation.start();
 
                 } else {
