@@ -4,7 +4,6 @@ import com.jodexindustries.donatecase.api.Case;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +25,7 @@ public class BukkitArmorStandCreator implements ArmorStandCreator {
             entity = null;
             return;
         }
-        entity = (ArmorStand) world.spawnEntity(location, EntityType.ARMOR_STAND);
+        entity = world.spawn(location, ArmorStand.class);
         entity.setMetadata("case", new FixedMetadataValue(Case.getInstance(), "case"));
     }
 

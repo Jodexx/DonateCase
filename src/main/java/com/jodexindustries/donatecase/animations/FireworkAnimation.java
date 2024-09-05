@@ -5,16 +5,13 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
-import java.util.Objects;
+import java.util.function.Consumer;
 
 public class FireworkAnimation extends JavaAnimation {
     private final EquipmentSlot itemSlot;
@@ -29,8 +26,7 @@ public class FireworkAnimation extends JavaAnimation {
     public void start() {
         String displayName = getWinItem().getMaterial().getDisplayName();
         getWinItem().getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(getPlayer(), displayName));
-        getLocation().add(0.5, -0.1, 0.5);
-        getLocation().setYaw(-70.0F);
+        getLocation().add(0.5, 1, 0.5);
         ArmorStandCreator as = Tools.createArmorStand(getLocation());
 
         boolean small = Case.getConfig().getAnimations().getBoolean("Firework.SmallArmorStand", true);
@@ -38,54 +34,57 @@ public class FireworkAnimation extends JavaAnimation {
         as.setVisible(false);
         as.setGravity(false);
         as.spawn();
-        (new BukkitRunnable() {
-            int i; //ticks count
-            Location l;
-
-            public void run() {
-                if (this.i == 0) {
-                    this.l = as.getLocation();
-                }
-                if (this.i == 1) {
-                    Location loc = this.l.clone().add(0.0, 1.0, 0);
-                    Firework firework = Objects.requireNonNull(loc.getWorld()).spawn(loc, Firework.class);
-                    FireworkMeta data = firework.getFireworkMeta();
-                    data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
-                    for (String color : Case.getConfig().getAnimations().getStringList("Firework.FireworkColors")) {
-                        data.addEffect(FireworkEffect.builder().withColor(Tools.parseColor(color)).build());
-                    }
-                    data.setPower(Case.getConfig().getAnimations().getInt("Firework.Power"));
-                    firework.setFireworkMeta(data);
-                }
-                Location las = as.getLocation().clone();
-                las.setYaw(las.getYaw() + 20.0F);
-                as.teleport(las);
-                this.l = this.l.add(0.0, 0.14, 0.0);
-                if (this.i <= 7) {
-                    this.l.setYaw(las.getYaw());
-                    as.teleport(this.l);
-                }
-                if (this.i >= 7) {
-                    if (this.i == 10) {
-                        if (getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
-                            as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
-                        }
-                        as.setAngle(armorStandEulerAngle);
-                        if(getWinItem().getMaterial().getDisplayName() != null && !getWinItem().getMaterial().getDisplayName().isEmpty())
-                            as.setCustomNameVisible(true);
-                        as.updateMeta();
-                        Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
-                    }
-                    if (this.i >= 30) {
-                        as.remove();
-                        this.cancel();
-                        Case.animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
-                    }
-                }
-
-                ++this.i;
-            }
-        }).runTaskTimer(Case.getInstance(), 0L, 2L);
+        Bukkit.getScheduler().runTaskTimer(Case.getInstance(), new Task(as), 0L, 2L);
     }
 
+    private class Task implements Consumer<BukkitTask> {
+
+        private int i; //ticks count
+        private final Location l;
+        private final ArmorStandCreator as;
+        private final World world;
+
+        public Task(ArmorStandCreator as) {
+            this.as = as;
+            this.l = as.getLocation();
+            world = l.getWorld() != null ? l.getWorld() : getPlayer().getWorld();
+        }
+
+        @Override
+        public void accept(BukkitTask task) {
+            if (this.i == 1) {
+                Firework firework = world.spawn(l, Firework.class);
+                FireworkMeta data = firework.getFireworkMeta();
+                data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
+                for (String color : Case.getConfig().getAnimations().getStringList("Firework.FireworkColors")) {
+                    data.addEffect(FireworkEffect.builder().withColor(Tools.parseColor(color)).build());
+                }
+                data.setPower(Case.getConfig().getAnimations().getInt("Firework.Power"));
+                firework.setFireworkMeta(data);
+            }
+            if (this.i >= 7) {
+                l.setYaw(l.getYaw() + 20F);
+                as.teleport(l);
+
+                if (this.i == 10) {
+                    if (getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
+                        as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
+                    }
+                    as.setAngle(armorStandEulerAngle);
+                    if (getWinItem().getMaterial().getDisplayName() != null && !getWinItem().getMaterial().getDisplayName().isEmpty())
+                        as.setCustomNameVisible(true);
+                    as.setCustomName(getWinItem().getMaterial().getDisplayName());
+                    as.updateMeta();
+                    Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                }
+                if (this.i >= 30) {
+                    as.remove();
+                    task.cancel();
+                    Case.animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                }
+            }
+
+            ++this.i;
+        }
+    }
 }
