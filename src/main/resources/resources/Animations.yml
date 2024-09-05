@@ -53,6 +53,7 @@ Firework:
     - YELLOW
 
 Wheel:
+  Type: FULL # or RANDOM
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
   Pose:
@@ -62,31 +63,7 @@ Wheel:
     LeftArm: 0, 0, 0
     RightLeg: 0, 0, 0
     LeftLeg: 0, 0, 0
-  ItemsCount: 6
-  CircleSpeed: 0.5
-  CircleRadius: 1.5
-  LiftingAlongX: 0
-  LiftingAlongY: 0
-  LiftingAlongZ: 0
-  Flame:
-    Enabled: true
-    Particle: FLAME
-  Scroll:
-    Time: 100
-    Sound: UI_BUTTON_CLICK
-    Volume: 10
-    Pitch: 1
-
-FullWheel:
-  ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
-  SmallArmorStand: true
-  Pose:
-    Head: 0, 0, 0
-    Body: 0, 0, 0
-    RightArm: 0, 0, 0
-    LeftArm: 0, 0, 0
-    RightLeg: 0, 0, 0
-    LeftLeg: 0, 0, 0
+  ItemsCount: 6 # only for RANDOM type
   CircleSpeed: 0.5
   CircleRadius: 1.5
   LiftingAlongX: 0
