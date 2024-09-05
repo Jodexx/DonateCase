@@ -18,12 +18,12 @@ DonateCase поддерживает 5 анимаций по умолчанию
 ### RAINLY
 <ReactPlayer loop="true" controls url='https://jodexindustries.xyz/assets/videos/rainly.mkv' />
 
-### WHEEL
+### WHEEL (RANDOM)
 **(случайные группы, бесконечное количество элементов)** <br></br>
 _если вы хотите установить колесо вертикально, то кейс нужно устанавливать смотря на него вниз_
 <ReactPlayer loop="true" controls url='https://jodexindustries.xyz/assets/videos/wheel.mkv' />
 
-### FULLWHEEL 
+### WHEEL (FULL)
 **(одна группа)** <br></br>
 _если вы хотите установить колесо вертикально, то кейс нужно устанавливать смотря на него вниз_
 <ReactPlayer loop="true" controls url='https://jodexindustries.xyz/assets/videos/fullwheel.mkv' />

@@ -1,6 +1,6 @@
 config: 1.2
 case:
-  Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL, FULLWHEEL see: https://wiki.jodexindustries.xyz/docs/DonateCase/animations
+  Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL see: https://wiki.jodexindustries.xyz/docs/DonateCase/animations
   Hologram: # see: https://wiki.jodexindustries.xyz/docs/DonateCase/holograms
     # Toggle on and off the holograms for the crates.
     Toggle: true
