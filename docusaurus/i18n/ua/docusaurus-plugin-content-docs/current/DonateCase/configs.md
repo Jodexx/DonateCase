@@ -71,8 +71,33 @@ DonateCase:
 ```yml
 config: 1.2
 case:
-  Animation: SHAPE #SHAPE, FIREWORK, RAINLY, WHEEL, FULLWHEEL see: https://wiki.jodexindustries.xyz/docs/DonateCase/animations
-  Hologram: # Thanks CrazyCrates for realisation
+  Animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL see: https://wiki.jodexindustries.xyz/docs/DonateCase/animations
+  #  AnimationSettings:
+  #    Type: FULL # or RANDOM
+  #    ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
+  #    SmallArmorStand: true
+  #    Pose:
+  #      Head: 0, 0, 0
+  #      Body: 0, 0, 0
+  #      RightArm: 0, 0, 0
+  #      LeftArm: 0, 0, 0
+  #      RightLeg: 0, 0, 0
+  #      LeftLeg: 0, 0, 0
+  #    ItemsCount: 6 # only for RANDOM type
+  #    CircleSpeed: 0.5
+  #    CircleRadius: 1.5
+  #    LiftingAlongX: 0
+  #    LiftingAlongY: 0
+  #    LiftingAlongZ: 0
+  #    Flame:
+  #      Enabled: true
+  #      Particle: FLAME
+  #    Scroll:
+  #      Time: 100
+  #      Sound: UI_BUTTON_CLICK
+  #      Volume: 10
+  #      Pitch: 1
+  Hologram: # see: https://wiki.jodexindustries.xyz/docs/DonateCase/holograms
     # Toggle on and off the holograms for the crates.
     Toggle: true
     # The height of the hologram above the crate.
@@ -82,7 +107,6 @@ case:
     # The message that will be displayed.
     Message:
       - '&6DonateCase'
-      -
 
   OpenType: GUI # or BLOCK
 
@@ -305,8 +329,8 @@ case:
 <summary>Animations.yml</summary>
 
 ```yml
-config: "1.3"
-Shape:
+config: "1.4"
+SHAPE:
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
   Pose:
@@ -324,7 +348,7 @@ Shape:
       Size: 1.0
       Rgb: 255, 255, 255
 
-Rainly:
+RAINLY:
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
   Pose:
@@ -342,7 +366,7 @@ Rainly:
   # FALLING_NECTAR  1.16+
   # FALLING_OBSIDIAN_TEAR
 
-Firework:
+FIREWORK:
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
   Pose:
@@ -359,7 +383,8 @@ Firework:
     - GREEN
     - YELLOW
 
-Wheel:
+WHEEL:
+  Type: FULL # or RANDOM
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
   Pose:
@@ -369,31 +394,7 @@ Wheel:
     LeftArm: 0, 0, 0
     RightLeg: 0, 0, 0
     LeftLeg: 0, 0, 0
-  ItemsCount: 6
-  CircleSpeed: 0.5
-  CircleRadius: 1.5
-  LiftingAlongX: 0
-  LiftingAlongY: 0
-  LiftingAlongZ: 0
-  Flame:
-    Enabled: true
-    Particle: FLAME
-  Scroll:
-    Time: 100
-    Sound: UI_BUTTON_CLICK
-    Volume: 10
-    Pitch: 1
-
-FullWheel:
-  ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
-  SmallArmorStand: true
-  Pose:
-    Head: 0, 0, 0
-    Body: 0, 0, 0
-    RightArm: 0, 0, 0
-    LeftArm: 0, 0, 0
-    RightLeg: 0, 0, 0
-    LeftLeg: 0, 0, 0
+  ItemsCount: 6 # only for RANDOM type
   CircleSpeed: 0.5
   CircleRadius: 1.5
   LiftingAlongX: 0
