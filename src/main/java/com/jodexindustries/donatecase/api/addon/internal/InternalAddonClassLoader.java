@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -40,9 +41,9 @@ public class InternalAddonClassLoader extends URLClassLoader {
                 throw new ClassCastException("Main class `" + description.getMainClass() + "' does not extend JavaAddon");
             }
 
-            addon = pluginClass.newInstance();
-        } catch (IllegalAccessException ex) {
-            throw new InvalidAddonException("No public constructor", ex);
+            addon = pluginClass.getDeclaredConstructor().newInstance();
+        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            throw new InvalidAddonException("No public constructor", e);
         } catch (InstantiationException ex) {
             throw new InvalidAddonException("Abnormal addon type", ex);
         }

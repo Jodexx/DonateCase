@@ -67,8 +67,6 @@ public class ActionManager {
         if (!isRegistered(name)) {
             CaseAction caseAction = new CaseAction(actionExecutor, addon, name, description);
             registeredActions.put(name, caseAction);
-            String actionAddonName = addon.getName();
-            boolean isDefault = actionAddonName.equalsIgnoreCase("DonateCase");
             CaseActionRegisteredEvent event = new CaseActionRegisteredEvent(caseAction);
             Bukkit.getPluginManager().callEvent(event);
         } else {

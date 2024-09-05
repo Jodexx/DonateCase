@@ -4,7 +4,6 @@ import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
-import com.jodexindustries.donatecase.config.CasesConfig;
 import com.jodexindustries.donatecase.config.Config;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.*;
