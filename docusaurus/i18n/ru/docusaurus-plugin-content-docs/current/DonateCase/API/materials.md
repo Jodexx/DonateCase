@@ -5,7 +5,7 @@ sidebar_position: 8
 ---
 # Регистрация материалов
 
-Пользовательские материалы обрабатываются с помощью интерфейса [MaterialHandler](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/data/material/MaterialHandler.html)
+Пользовательские материалы обрабатываются с помощью интерфейса [MaterialHandler](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.9/raw/com/jodexindustries/donatecase/api/data/material/MaterialHandler.html)
 
 ## Пример реализации `HEAD` материала
 > HEADMaterialHandlerImpl.java

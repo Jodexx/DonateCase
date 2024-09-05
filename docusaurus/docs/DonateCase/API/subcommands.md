@@ -116,7 +116,7 @@ public class SecondCommand extends SubCommand {
 
 
 ## ~~Old method~~
-To create a subcommand class, we will use the [SubCommand](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.8/raw/com/jodexindustries/donatecase/api/data/SubCommand.html) interface
+To create a subcommand class, we will use the [SubCommand](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/2.2.5.9/raw/com/jodexindustries/donatecase/api/data/SubCommand.html) interface
 
 > TestSubCommand class
 ```java
