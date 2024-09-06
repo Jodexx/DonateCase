@@ -170,13 +170,14 @@ public class CaseLoader {
     private CaseData.Item.Material loadMaterial(ConfigurationSection itemSection) {
         String id = itemSection.getString("Item.ID", "AIR");
         String itemDisplayName = Tools.rc(itemSection.getString("Item.DisplayName"));
+        List<String> lore = Tools.rc(itemSection.getStringList("Item.Lore"));
         boolean enchanted = itemSection.getBoolean("Item.Enchanted");
         int modelData = itemSection.getInt("Item.ModelData", -1);
         String[] rgb = Tools.parseRGB(itemSection.getString("Item.Rgb"));
 
         ItemStack itemStack = Tools.loadCaseItem(id);
 
-        return new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted, null, modelData, rgb);
+        return new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted, lore, modelData, rgb);
     }
 
     private CaseData.HistoryData[] loadHistoryData(String caseType) {
