@@ -170,7 +170,7 @@ public class Tools {
 
     @NotNull
     public static ItemStack createItem(String id) {
-        ItemStack item = new ItemStack(Material.STONE);
+        ItemStack item = new ItemStack(Material.AIR);
         if (id == null) return item;
 
         String[] materialParts = id.split(":");
