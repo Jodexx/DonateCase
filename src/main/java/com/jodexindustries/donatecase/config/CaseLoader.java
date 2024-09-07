@@ -82,7 +82,7 @@ public class CaseLoader {
             return null;
         }
 
-        CaseData.Hologram hologram = loadHologram(caseSection);
+        CaseData.Hologram hologram = loadHologram(caseSection.getConfigurationSection("Hologram"));
         Map<String, CaseData.Item> items = loadItems(caseType, caseSection);
 
         CaseData.HistoryData[] historyData = loadHistoryData(caseType);
@@ -99,10 +99,12 @@ public class CaseLoader {
     }
 
     private CaseData.Hologram loadHologram(ConfigurationSection caseSection) {
-        boolean hologramEnabled = caseSection.getBoolean("Hologram.Toggle");
-        double hologramHeight = caseSection.getDouble("Hologram.Height");
-        int range = caseSection.getInt("Hologram.Range");
-        List<String> hologramMessage = caseSection.getStringList("Hologram.Message");
+        if (caseSection == null) return new CaseData.Hologram();
+
+        boolean hologramEnabled = caseSection.getBoolean("Toggle");
+        double hologramHeight = caseSection.getDouble("Height");
+        int range = caseSection.getInt("Range");
+        List<String> hologramMessage = caseSection.getStringList("Message");
 
         return hologramEnabled
                 ? new CaseData.Hologram(true, hologramHeight, range, hologramMessage)
@@ -123,7 +125,7 @@ public class CaseLoader {
                 }
 
                 CaseData.Item caseItem = loadItem(item, itemSection);
-                items.put(item, caseItem);
+                if(caseItem != null) items.put(item, caseItem);
             }
         } else {
             plugin.getLogger().warning("Case " + caseType + " has a broken case.Items section");
@@ -134,13 +136,17 @@ public class CaseLoader {
 
     private CaseData.Item loadItem(String item, ConfigurationSection itemSection) {
         String group = itemSection.getString("Group", "");
-        int chance = itemSection.getInt("Chance");
+        double chance = itemSection.getDouble("Chance");
         int index = itemSection.getInt("Index");
         String giveType = itemSection.getString("GiveType", "ONE");
         List<String> actions = itemSection.getStringList("Actions");
         List<String> alternativeActions = itemSection.getStringList("AlternativeActions");
         Map<String, CaseData.Item.RandomAction> randomActions = loadRandomActions(itemSection);
-        CaseData.Item.Material material = loadMaterial(itemSection);
+
+        ConfigurationSection materialSection = itemSection.getConfigurationSection("Item");
+        if(materialSection == null) return null;
+
+        CaseData.Item.Material material = loadMaterial(materialSection, true);
 
         return new CaseData.Item(item, group, chance, index, material, giveType, actions, randomActions, alternativeActions);
     }
@@ -154,7 +160,7 @@ public class CaseLoader {
                 ConfigurationSection randomActionSection = randomActionsSection.getConfigurationSection(randomAction);
 
                 if (randomActionSection != null) {
-                    int actionChance = randomActionSection.getInt("Chance");
+                    double actionChance = randomActionSection.getDouble("Chance");
                     List<String> randomActionsList = randomActionSection.getStringList("Actions");
                     String displayName = randomActionSection.getString("DisplayName");
 
@@ -167,15 +173,18 @@ public class CaseLoader {
         return randomActions;
     }
 
-    private CaseData.Item.Material loadMaterial(ConfigurationSection itemSection) {
-        String id = itemSection.getString("Item.ID", "AIR");
-        String itemDisplayName = Tools.rc(itemSection.getString("Item.DisplayName"));
-        List<String> lore = Tools.rc(itemSection.getStringList("Item.Lore"));
-        boolean enchanted = itemSection.getBoolean("Item.Enchanted");
-        int modelData = itemSection.getInt("Item.ModelData", -1);
-        String[] rgb = Tools.parseRGB(itemSection.getString("Item.Rgb"));
+    @NotNull
+    private CaseData.Item.Material loadMaterial(ConfigurationSection itemSection, boolean withItemStack) {
+        String id = itemSection.getString("ID") != null ? itemSection.getString("ID") :
+                itemSection.getString("Material");
+        String itemDisplayName = Tools.rc(itemSection.getString("DisplayName"));
+        List<String> lore = Tools.rc(itemSection.getStringList("Lore"));
+        boolean enchanted = itemSection.getBoolean("Enchanted");
+        int modelData = itemSection.getInt("ModelData", -1);
+        String[] rgb = Tools.parseRGB(itemSection.getString("Rgb"));
 
-        ItemStack itemStack = Tools.loadCaseItem(id);
+        ItemStack itemStack = null;
+        if(withItemStack) itemStack = Tools.loadCaseItem(id);
 
         return new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted, lore, modelData, rgb);
     }
@@ -245,12 +254,7 @@ public class CaseLoader {
 
     private GUI.Item loadGUIItem(String i, @NotNull ConfigurationSection itemSection, Set<Integer> currentSlots) {
         String id = itemSection.getString("Material");
-        String displayName = Tools.rc(itemSection.getString("DisplayName"));
-        boolean enchanted = itemSection.getBoolean("Enchanted");
         String itemType = itemSection.getString("Type", "DEFAULT");
-        List<String> lore = Tools.rc(itemSection.getStringList("Lore"));
-        int modelData = itemSection.getInt("ModelData", -1);
-        String[] rgb = Tools.parseRGB(itemSection.getString("Rgb"));
         List<Integer> slots = getItemSlots(itemSection);
 
         if(slots.isEmpty()) {
@@ -263,17 +267,22 @@ public class CaseLoader {
 
         currentSlots.addAll(slots);
 
+        CaseData.Item.Material material = loadMaterial(itemSection, false);
+
         ItemStack itemStack = null;
 
         if(itemType.equalsIgnoreCase("DEFAULT")) {
             itemStack = Tools.loadCaseItem(id);
         } else {
             GUITypedItem typedItem = GUITypedItemManager.getFromString(itemType);
-            if (typedItem != null && typedItem.isLoadOnCase()) itemStack = Tools.loadCaseItem(id);
+            if (typedItem != null) {
+                if(typedItem.isLoadOnCase()) itemStack = Tools.loadCaseItem(id);
+            } else {
+                itemStack = Tools.loadCaseItem(id);
+            }
         }
 
-        CaseData.Item.Material material = new CaseData.Item.Material(id, itemStack, displayName, enchanted,
-                lore, modelData, rgb);
+        material.setItemStack(itemStack);
 
         return new GUI.Item(i, itemType, material, slots);
     }
