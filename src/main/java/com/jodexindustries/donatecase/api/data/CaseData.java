@@ -370,7 +370,7 @@ public class CaseData implements Cloneable {
     public static class Item implements Cloneable {
         private final String itemName;
         private String group;
-        private int chance;
+        private double chance;
         private int index;
         private Material material;
         private String giveType;
@@ -391,7 +391,7 @@ public class CaseData implements Cloneable {
          * @param randomActions      Item random actions
          * @param alternativeActions Item alternative actions
          */
-        public Item(String itemName, String group, int chance, int index, Material material,
+        public Item(String itemName, String group, double chance, int index, Material material,
                     String giveType, List<String> actions, Map<String, RandomAction> randomActions, List<String> alternativeActions) {
             this.itemName = itemName;
             this.group = group;
@@ -493,7 +493,7 @@ public class CaseData implements Cloneable {
          *
          * @return chance
          */
-        public int getChance() {
+        public double getChance() {
             return chance;
         }
 
@@ -502,7 +502,7 @@ public class CaseData implements Cloneable {
          *
          * @param chance chance
          */
-        public void setChance(int chance) {
+        public void setChance(double chance) {
             this.chance = chance;
         }
 
@@ -589,7 +589,7 @@ public class CaseData implements Cloneable {
          * Class to implement a random action
          */
         public static class RandomAction implements Cloneable {
-            private int chance;
+            private double chance;
             private List<String> actions;
             private String displayName;
 
@@ -600,7 +600,7 @@ public class CaseData implements Cloneable {
              * @param actions     list of actions
              * @param displayName action display name
              */
-            public RandomAction(int chance, List<String> actions, String displayName) {
+            public RandomAction(double chance, List<String> actions, String displayName) {
                 this.chance = chance;
                 this.actions = actions;
                 this.displayName = displayName;
@@ -630,7 +630,7 @@ public class CaseData implements Cloneable {
              *
              * @return chance
              */
-            public int getChance() {
+            public double getChance() {
                 return chance;
             }
 
@@ -639,7 +639,7 @@ public class CaseData implements Cloneable {
              *
              * @param chance chance
              */
-            public void setChance(int chance) {
+            public void setChance(double chance) {
                 this.chance = chance;
             }
 
@@ -704,7 +704,7 @@ public class CaseData implements Cloneable {
              * @param modelData   Material custom model data
              * @param rgb         Material rgb
              */
-            public Material(String id, @Nullable ItemStack itemStack, String displayName, boolean enchanted,
+            public Material(String id, ItemStack itemStack, String displayName, boolean enchanted,
                             List<String> lore, int modelData, String[] rgb) {
                 this.itemStack = itemStack;
                 this.displayName = displayName;
@@ -729,7 +729,7 @@ public class CaseData implements Cloneable {
              *
              * @param itemStack itemStack
              */
-            public void setItemStack(@NotNull ItemStack itemStack) {
+            public void setItemStack(ItemStack itemStack) {
                 this.itemStack = itemStack;
                 updateMeta();
             }

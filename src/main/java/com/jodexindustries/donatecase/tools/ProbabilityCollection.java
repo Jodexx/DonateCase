@@ -55,13 +55,13 @@ public final class ProbabilityCollection<E> {
     private final NavigableSet<ProbabilitySetElement<E>> collection;
     private final SplittableRandom random = new SplittableRandom();
 
-    private int totalProbability;
+    private double totalProbability;
 
     /**
      * Construct a new Probability Collection
      */
     public ProbabilityCollection() {
-        this.collection = new TreeSet<>(Comparator.comparingInt(ProbabilitySetElement::getIndex));
+        this.collection = new TreeSet<>(Comparator.comparingDouble(ProbabilitySetElement::getIndex));
         this.totalProbability = 0;
     }
 
@@ -108,7 +108,7 @@ public final class ProbabilityCollection<E> {
      * @throws IllegalArgumentException if object is null
      * @throws IllegalArgumentException if probability smaller or equals 0
      */
-    public void add(E object, int probability) {
+    public void add(E object, double probability) {
         if (object == null) {
             throw new IllegalArgumentException("Cannot add null object");
         }
@@ -150,7 +150,7 @@ public final class ProbabilityCollection<E> {
 
         // Recalculate remaining elements "block" of space: i.e 1-5, 6-10, 11-14
         if (removed) {
-            int previousIndex = 0;
+            double previousIndex = 0;
             for (ProbabilitySetElement<E> entry : this.collection) {
                 previousIndex = entry.setIndex(previousIndex + 1) + (entry.getProbability() - 1);
             }
@@ -180,7 +180,7 @@ public final class ProbabilityCollection<E> {
         }
 
         ProbabilitySetElement<E> toFind = new ProbabilitySetElement<>(null, 0);
-        toFind.setIndex(this.random.nextInt(1, this.totalProbability + 1));
+        toFind.setIndex(this.random.nextDouble(1, this.totalProbability + 1));
 
         return Objects.requireNonNull(this.collection.floor(toFind).getObject());
     }
@@ -188,7 +188,7 @@ public final class ProbabilityCollection<E> {
     /**
      * @return Sum of all element's probability
      */
-    public int getTotalProbability() {
+    public double getTotalProbability() {
         return this.totalProbability;
     }
 
@@ -205,14 +205,14 @@ public final class ProbabilityCollection<E> {
      */
     public final static class ProbabilitySetElement<T> {
         private final T object;
-        private final int probability;
-        private int index;
+        private final double probability;
+        private double index;
 
         /**
          * @param object object
          * @param probability share within the collection
          */
-        private ProbabilitySetElement(T object, int probability) {
+        private ProbabilitySetElement(T object, double probability) {
             this.object = object;
             this.probability = probability;
         }
@@ -227,17 +227,17 @@ public final class ProbabilityCollection<E> {
         /**
          * @return Probability share in this collection
          */
-        public int getProbability() {
+        public double getProbability() {
             return this.probability;
         }
 
         // Used internally, see this class's documentation
-        private int getIndex() {
+        private double getIndex() {
             return this.index;
         }
 
         // Used Internally, see this class's documentation
-        private int setIndex(int index) {
+        private double setIndex(double index) {
             this.index = index;
             return this.index;
         }
