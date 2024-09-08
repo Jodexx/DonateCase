@@ -111,18 +111,19 @@ public class Case {
      * @param caseType Case type
      * @param player Player name
      * @param keys Number of keys
-     * @param from Number of keys before transaction
+     * @param before Number of keys before transaction
      * @since 2.2.6.1
      */
-    private static void setKeys(String caseType, String player, int keys, int from) {
-        KeysTransactionEvent event = new KeysTransactionEvent(caseType, player, keys, from);
-        if (instance.databaseType == DatabaseType.YAML) {
-            getConfig().getKeys().setKeys(caseType, player, keys);
-        } else {
-            getMySQL().setKeys(caseType, player, keys);
+    private static void setKeys(String caseType, String player, int keys, int before) {
+        KeysTransactionEvent event = new KeysTransactionEvent(caseType, player, keys, before);
+        Bukkit.getPluginManager().callEvent(event);
+        if(!event.isCancelled()) {
+            if (instance.databaseType == DatabaseType.YAML) {
+                getConfig().getKeys().setKeys(caseType, player, event.after());
+            } else {
+                getMySQL().setKeys(caseType, player, event.after());
+            }
         }
-
-        if (event.type() != null) Bukkit.getPluginManager().callEvent(event);
     }
 
     /**
@@ -132,7 +133,7 @@ public class Case {
      * @param keys Number of keys
      */
     public static void addKeys(String caseType, String player, int keys) {
-        getKeysAsync(caseType, player).thenAcceptAsync(from -> setKeys(caseType, player, from + keys, from));
+        getKeysAsync(caseType, player).thenAcceptAsync(before -> setKeys(caseType, player, before + keys, before));
     }
 
     /**
@@ -142,9 +143,13 @@ public class Case {
      * @param keys Number of keys
      */
     public static void removeKeys(String caseType, String player, int keys) {
-        getKeysAsync(caseType, player).thenAcceptAsync(integer -> setKeys(caseType, player, integer - keys));
+        getKeysAsync(caseType, player).thenAcceptAsync(before -> setKeys(caseType, player, before - keys));
     }
 
+    /**
+     * Delete all keys
+     * @since 2.2.6.1
+     */
     public static void removeAllKeys() {
         if (instance.databaseType == DatabaseType.YAML) {
             getConfig().getKeys().delAllKeys();
