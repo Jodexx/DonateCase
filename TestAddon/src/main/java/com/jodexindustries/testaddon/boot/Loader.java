@@ -78,6 +78,8 @@ public class Loader implements Listener {
         api.getSubCommandManager().unregisterSubCommand("test2");
         // unregister animation
         api.getAnimationManager().unregisterAnimation("test");
+        // unregister action
+        api.getActionManager().unregisterAction("[test]");
     }
 
     @EventHandler
@@ -88,10 +90,9 @@ public class Loader implements Listener {
     @EventHandler
     public void onTransaction(KeysTransactionEvent e) {
         Logger logger = addon.getLogger();
-        logger.info("Transaction: " + e.transactionType());
-        logger.info("Type: " + e.type());
-        logger.info("From: " + e.from());
-        logger.info("To: " + e.to());
+        logger.info("Transaction: " + e.type());
+        logger.info("Before: " + e.before());
+        logger.info("After: " + e.after());
         logger.info("Amount: " + e.amount());
         logger.info("Player: " + e.playerName());
         logger.info("Case type: " + e.caseType());
