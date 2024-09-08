@@ -28,11 +28,11 @@ public class Converter {
             config.saveConfig();
         }
 
-        ConfigurationSection keysSection = config.getKeys().getConfigurationSection("DonatCase");
+        ConfigurationSection keysSection = config.getKeys().get().getConfigurationSection("DonatCase");
         if (keysSection != null) {
-            config.getKeys().set("DonateCase", keysSection);
-            config.getKeys().set("DonatCase", null);
-            config.saveKeys();
+            config.getKeys().get().set("DonateCase", keysSection);
+            config.getKeys().get().set("DonatCase", null);
+            config.getKeys().save();
         }
 
         ConfigurationSection casesSection = config.getCases().getConfigurationSection("DonatCase");

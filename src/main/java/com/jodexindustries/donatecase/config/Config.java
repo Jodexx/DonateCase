@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.config;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.database.yaml.YamlData;
+import com.jodexindustries.donatecase.database.yaml.YamlKeys;
 import com.jodexindustries.donatecase.tools.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +26,7 @@ public class Config {
 
     private final CasesConfig casesConfig;
     private final YamlData data;
+    private final YamlKeys keys;
 
     private final Map<File, YamlConfiguration> configs = new HashMap<>();
 
@@ -60,16 +62,15 @@ public class Config {
         YamlConfiguration cases = YamlConfiguration.loadConfiguration(fileCases);
         configs.put(fileCases, cases);
 
-        File fileKeys = new File(plugin.getDataFolder(), "Keys.yml");
-        YamlConfiguration keys = YamlConfiguration.loadConfiguration(fileKeys);
-        configs.put(fileKeys, keys);
-
         File fileConfig = new File(plugin.getDataFolder(), "Config.yml");
         YamlConfiguration config = YamlConfiguration.loadConfiguration(fileConfig);
         configs.put(fileConfig, config);
 
         checkAndUpdateConfig(config, "Config.yml", "2.5");
         checkAndUpdateConfig(animations, "Animations.yml", "1.4");
+
+        data = new YamlData();
+        keys = new YamlKeys();
 
         converter.convertConfig();
         converter.convertAnimations();
@@ -79,8 +80,6 @@ public class Config {
         casesConfig = new CasesConfig(plugin);
 
         checkConvertLocations();
-
-        data = new YamlData();
 
         File langFolder = new File(plugin.getDataFolder(), "lang");
         File[] listFiles = langFolder.listFiles();
@@ -175,8 +174,9 @@ public class Config {
     /**
      * Save Keys.yml configuration
      */
+    @Deprecated
     public void saveKeys() {
-        save("Keys.yml");
+        keys.save();
     }
 
     /**
@@ -263,15 +263,6 @@ public class Config {
     }
 
     /**
-     * Get Keys.yml configuration
-     *
-     * @return Configuration
-     */
-    public YamlConfiguration getKeys() {
-        return get("Keys.yml");
-    }
-
-    /**
      * Get Config.yml configuration
      *
      * @return Configuration
@@ -315,6 +306,15 @@ public class Config {
      */
     public YamlData getData() {
         return data;
+    }
+
+    /**
+     * Used for keys storing
+     *
+     * @return Keys.yml config instance
+     */
+    public YamlKeys getKeys() {
+        return keys;
     }
 
     /**

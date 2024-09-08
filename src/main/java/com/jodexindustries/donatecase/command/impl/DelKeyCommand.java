@@ -40,12 +40,7 @@ public class DelKeyCommand implements SubCommandExecutor, SubCommandTabCompleter
                 GlobalCommand.sendHelp(sender, label);
             } else if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("all")) {
-                    if (!Case.getInstance().sql) {
-                        Case.getConfig().getKeys().set("DonateCase.Cases", null);
-                        Case.getConfig().saveKeys();
-                    } else {
-                        Case.getInstance().mysql.delAllKey();
-                    }
+                    Case.removeAllKeys();
                     Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("all-keys-cleared")));
                 }
             } else {
