@@ -8,6 +8,7 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.TableUtils;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.DatabaseType;
 import com.jodexindustries.donatecase.database.sql.entities.HistoryDataTable;
 import com.jodexindustries.donatecase.database.sql.entities.OpenInfoTable;
 import com.jodexindustries.donatecase.database.sql.entities.PlayerKeysTable;
@@ -35,8 +36,8 @@ public class MySQLDataBase {
         ConfigurationSection mysqlSection = instance.config.getConfig().getConfigurationSection("DonateCase.MySql");
         if (mysqlSection == null) return;
 
-        instance.sql = mysqlSection.getBoolean("Enabled");
-        if (!instance.sql) return;
+        DatabaseType type = mysqlSection.getBoolean("Enabled") ? DatabaseType.SQL : DatabaseType.YAML;
+        if (type != DatabaseType.SQL) return;
 
         String database = mysqlSection.getString("DataBase");
         String port = mysqlSection.getString("Port");
@@ -55,6 +56,7 @@ public class MySQLDataBase {
             historyDataTables = DaoManager.createDao(connectionSource, CaseData.HistoryData.class);
             playerKeysTables = DaoManager.createDao(connectionSource, PlayerKeysTable.class);
             openInfoTables = DaoManager.createDao(connectionSource, OpenInfoTable.class);
+            instance.databaseType = type;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -235,7 +237,7 @@ public class MySQLDataBase {
     }
 
 
-    public void delAllKey() {
+    public void delAllKeys() {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             try {
                 playerKeysTables.deleteBuilder().delete();

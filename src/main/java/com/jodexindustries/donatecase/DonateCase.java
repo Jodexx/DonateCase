@@ -7,6 +7,7 @@ import com.alessiodp.libby.logging.LogLevel;
 import com.jodexindustries.donatecase.animations.*;
 import com.jodexindustries.donatecase.api.*;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.DatabaseType;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
@@ -70,7 +71,7 @@ public class DonateCase extends JavaPlugin {
     public Config config;
 
     public boolean usePackets = false;
-    public boolean sql = false;
+    public DatabaseType databaseType = DatabaseType.YAML;
 
     private boolean spawnProtectionDisabled = false;
 

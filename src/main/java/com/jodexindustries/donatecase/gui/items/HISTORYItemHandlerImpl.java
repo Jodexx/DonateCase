@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.gui.items;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.GUITypedItemManager;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.DatabaseType;
 import com.jodexindustries.donatecase.api.data.GUI;
 import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.gui.TypedItemHandler;
@@ -138,7 +139,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
             if (globalHistoryData.size() <= index) return null;
             data = globalHistoryData.get(index);
         } else {
-            if (!Case.getInstance().sql) {
+            if (Case.getInstance().databaseType == DatabaseType.YAML) {
                 data = historyCaseData.getHistoryData()[index];
             } else {
                 List<CaseData.HistoryData> dbData = Case.sortHistoryDataByCase(globalHistoryData, caseType);

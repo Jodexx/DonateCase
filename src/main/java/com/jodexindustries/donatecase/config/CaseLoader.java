@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.GUITypedItemManager;
 import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.DatabaseType;
 import com.jodexindustries.donatecase.api.data.GUI;
 import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
@@ -191,7 +192,7 @@ public class CaseLoader {
 
     private CaseData.HistoryData[] loadHistoryData(String caseType) {
         CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
-            if (!plugin.sql) {
+            if (plugin.databaseType == DatabaseType.YAML) {
                 historyData = plugin.config.getData().getHistoryData(caseType);
             }
 
