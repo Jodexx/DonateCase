@@ -4,7 +4,9 @@ import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
+import com.jodexindustries.donatecase.api.events.KeysTransactionEvent;
 import com.jodexindustries.donatecase.config.Config;
+import com.jodexindustries.donatecase.database.sql.MySQLDataBase;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
@@ -101,13 +103,26 @@ public class Case {
      * @param keys Number of keys
      */
     public static void setKeys(String caseType, String player, int keys) {
-        if (!instance.sql) {
-            getConfig().getKeys().set("DonateCase.Cases." + caseType + "." + player, keys == 0 ? null : keys);
-            getConfig().saveKeys();
+        getKeysAsync(caseType, player).thenAcceptAsync((from) -> setKeys(caseType, player, keys, from));
+    }
+
+    /**
+     * Set case keys to a specific player
+     * @param caseType Case type
+     * @param player Player name
+     * @param keys Number of keys
+     * @param from Number of keys before transaction
+     * @since 2.2.6.1
+     */
+    private static void setKeys(String caseType, String player, int keys, int from) {
+        KeysTransactionEvent event = new KeysTransactionEvent(caseType, player, keys, from);
+        if (instance.databaseType == DatabaseType.YAML) {
+            getConfig().getKeys().setKeys(caseType, player, keys);
         } else {
-            if(instance.mysql != null) instance.mysql.setKeys(caseType, player, keys);
+            getMySQL().setKeys(caseType, player, keys);
         }
 
+        if (event.type() != null) Bukkit.getPluginManager().callEvent(event);
     }
 
     /**
@@ -117,7 +132,7 @@ public class Case {
      * @param keys Number of keys
      */
     public static void addKeys(String caseType, String player, int keys) {
-        getKeysAsync(caseType, player).thenAcceptAsync(integer -> setKeys(caseType, player, integer + keys));
+        getKeysAsync(caseType, player).thenAcceptAsync(from -> setKeys(caseType, player, from + keys, from));
     }
 
     /**
@@ -126,9 +141,16 @@ public class Case {
      * @param player Player name
      * @param keys Number of keys
      */
-
     public static void removeKeys(String caseType, String player, int keys) {
         getKeysAsync(caseType, player).thenAcceptAsync(integer -> setKeys(caseType, player, integer - keys));
+    }
+
+    public static void removeAllKeys() {
+        if (instance.databaseType == DatabaseType.YAML) {
+            getConfig().getKeys().delAllKeys();
+        } else {
+            getMySQL().delAllKeys();
+        }
     }
 
     /**
@@ -148,7 +170,8 @@ public class Case {
      * @return CompletableFuture of keys
      */
     public static CompletableFuture<Integer> getKeysAsync(String caseType, String player) {
-        return CompletableFuture.supplyAsync(() -> instance.sql ? (instance.mysql == null ? 0 : instance.mysql.getKeys(caseType, player).join()) : getConfig().getKeys().getInt("DonateCase.Cases." + caseType + "." + player));
+        return CompletableFuture.supplyAsync(() -> instance.databaseType == DatabaseType.SQL ?
+                getMySQL().getKeys(caseType, player).join() : getConfig().getKeys().getKeys(caseType, player));
     }
 
     /**
@@ -160,7 +183,7 @@ public class Case {
      * @since 2.2.3.8
      */
     public static int getKeysCache(String caseType, String player) {
-        if(!instance.sql) return getKeys(caseType, player);
+        if(instance.databaseType == DatabaseType.YAML) return getKeys(caseType, player);
 
         int keys;
         InfoEntry entry = new InfoEntry(player, caseType);
@@ -194,8 +217,8 @@ public class Case {
      * @return CompletableFuture of open count
      */
     public static CompletableFuture<Integer>  getOpenCountAsync(String caseType, String player) {
-        return CompletableFuture.supplyAsync(() -> instance.sql ? (instance.mysql == null ? 0 :
-                instance.mysql.getOpenCount(player, caseType).join()) :
+        return CompletableFuture.supplyAsync(() -> instance.databaseType == DatabaseType.SQL ?
+                getMySQL().getOpenCount(player, caseType).join() :
                 getConfig().getData().getOpenCount(player, caseType));
     }
 
@@ -208,7 +231,7 @@ public class Case {
      * @since 2.2.3.8
      */
     public static int getOpenCountCache(String caseType, String player) {
-        if(!instance.sql) return getOpenCount(caseType, player);
+        if(instance.databaseType == DatabaseType.YAML) return getOpenCount(caseType, player);
 
         int openCount;
         InfoEntry entry = new InfoEntry(player, caseType);
@@ -232,10 +255,10 @@ public class Case {
      * @since 2.2.4.4
      */
     public static void setOpenCount(String caseType, String player, int openCount) {
-        if (!instance.sql) {
+        if (instance.databaseType == DatabaseType.YAML) {
             getConfig().getData().setOpenCount(player, caseType, openCount);
         } else {
-            if(instance.mysql != null) instance.mysql.setCount(caseType, player, openCount);
+            getMySQL().setCount(caseType, player, openCount);
         }
     }
 
@@ -459,10 +482,10 @@ public class Case {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             CaseData.HistoryData data = new CaseData.HistoryData(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
             CaseData.HistoryData[] list;
-            if(!instance.sql ) {
+            if(instance.databaseType == DatabaseType.YAML) {
                 list = caseData.getHistoryData();
             } else {
-                List<CaseData.HistoryData> temp = instance.mysql.getHistoryDataByCaseType(caseData.getCaseType()).join();
+                List<CaseData.HistoryData> temp = getMySQL().getHistoryDataByCaseType(caseData.getCaseType()).join();
                 if(!temp.isEmpty()) {
                     list = temp.toArray(new CaseData.HistoryData[10]);
                 } else {
@@ -475,10 +498,10 @@ public class Case {
             for (int i = 0; i < list.length; i++) {
                 CaseData.HistoryData tempData = list[i];
                 if (tempData != null) {
-                    if (!instance.sql) {
+                    if (instance.databaseType == DatabaseType.YAML) {
                         getConfig().getData().setHistoryData(caseData.getCaseType(), i, tempData);
                     } else {
-                        if (instance.mysql != null) instance.mysql.setHistoryData(caseData.getCaseType(), i, tempData);
+                        getMySQL().setHistoryData(caseData.getCaseType(), i, tempData);
                     }
                 }
             }
@@ -591,6 +614,16 @@ public class Case {
     }
 
     /**
+     * Get plugin mysql database manager
+     * @since 2.2.6.1
+     * @return mysql manager
+     */
+    @NotNull
+    public static MySQLDataBase getMySQL() {
+        return getInstance().mysql;
+    }
+
+    /**
      * Open case gui
      * <br/>
      * May be nullable, if player already opened gui
@@ -626,7 +659,8 @@ public class Case {
      * @return list of HistoryData (sorted by time)
      */
     public static CompletableFuture<List<CaseData.HistoryData>> getAsyncSortedHistoryData() {
-        return CompletableFuture.supplyAsync(() -> !instance.sql ? caseData.values().stream()
+        return CompletableFuture.supplyAsync(() -> instance.databaseType == DatabaseType.YAML ?
+                caseData.values().stream()
                 .filter(Objects::nonNull)
                 .flatMap(data -> {
                     CaseData.HistoryData[] temp = data.getHistoryData();
@@ -634,7 +668,7 @@ public class Case {
                 })
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
-                .collect(Collectors.toList()) : instance.mysql.getHistoryData().join().stream().filter(Objects::nonNull)
+                .collect(Collectors.toList()) : getMySQL().getHistoryData().join().stream().filter(Objects::nonNull)
                 .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
                 .collect(Collectors.toList()));
     }
@@ -644,7 +678,7 @@ public class Case {
      * @return list of history data
      */
     public static List<CaseData.HistoryData> getSortedHistoryDataCache() {
-        if (!instance.sql) {
+        if (instance.databaseType == DatabaseType.YAML) {
             return getAsyncSortedHistoryData().join();
         }
 
