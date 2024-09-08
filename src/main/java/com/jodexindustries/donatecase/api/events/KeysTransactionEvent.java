@@ -40,12 +40,6 @@ public class KeysTransactionEvent extends Event {
     }
 
     @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    @NotNull
     public String caseType() {
         return caseType;
     }
@@ -82,6 +76,17 @@ public class KeysTransactionEvent extends Event {
      */
     public int to() {
         return to;
+    }
+
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    @NotNull
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     public enum TransactionType {
