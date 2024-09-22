@@ -76,17 +76,16 @@ public class CaseAnimation {
     public void setAnimation(Class<? extends JavaAnimation> animation) {
         if(this.oldAnimation == null) {
             this.animation = animation;
-        } else {
-            addon.getLogger().warning("CaseAnimation already has oldAnimation (Animation). Can't add JavaAnimation");
+        } else if(animation != null) {
+            addon.getLogger().warning("CaseAnimation already has Animation interface. Can't add JavaAnimation for " + name);
         }
     }
 
     public void setOldAnimation(Animation oldAnimation) {
         if(this.animation == null) {
             this.oldAnimation = oldAnimation;
-            this.requireSettings = false;
-        } else {
-            addon.getLogger().warning("CaseAnimation already has JavaAnimation. Can't add oldAnimation (Animation)");
+        } else if(oldAnimation != null) {
+            addon.getLogger().warning("CaseAnimation already has JavaAnimation. Can't add Animation interface for " + name);
         }
     }
 
