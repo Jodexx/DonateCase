@@ -1,9 +1,11 @@
 package com.jodexindustries.donatecase.animations;
 
+import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
+import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.*;
 import org.bukkit.entity.Firework;
@@ -20,6 +22,16 @@ public class FireworkAnimation extends JavaAnimation {
     public FireworkAnimation() {
         itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD").toUpperCase());
         armorStandEulerAngle = Tools.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
+    }
+
+    public static void register(AnimationManager manager) {
+        CaseAnimation caseAnimation = manager.builder("FIREWORK")
+                .animation(FireworkAnimation.class)
+                .description("Fireworks fly to the skies and a prize appears")
+                .requireSettings(true)
+                .build();
+
+        manager.registerAnimation(caseAnimation);
     }
 
     @Override

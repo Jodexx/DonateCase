@@ -1,10 +1,12 @@
 package com.jodexindustries.donatecase.animations;
 
+import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
+import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -18,6 +20,16 @@ public class RainlyAnimation extends JavaAnimation {
 
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
+
+    public static void register(AnimationManager manager) {
+        CaseAnimation caseAnimation = manager.builder("RAINLY")
+                .animation(RainlyAnimation.class)
+                .description("Rain drips from the clouds")
+                .requireSettings(true)
+                .build();
+
+        manager.registerAnimation(caseAnimation);
+    }
 
     @Override
     public void start() {

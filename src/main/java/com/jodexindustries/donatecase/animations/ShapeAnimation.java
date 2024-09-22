@@ -1,10 +1,12 @@
 package com.jodexindustries.donatecase.animations;
 
+import com.jodexindustries.donatecase.api.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
+import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -19,6 +21,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Consumer;
 
 public class ShapeAnimation extends JavaAnimation {
+
+    public static void register(AnimationManager manager) {
+        CaseAnimation caseAnimation = manager.builder("SHAPE")
+                .animation(ShapeAnimation.class)
+                .description("Items flip through and a shape appears")
+                .requireSettings(true)
+                .build();
+
+        manager.registerAnimation(caseAnimation);
+    }
 
     @Override
     public void start() {

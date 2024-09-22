@@ -9,35 +9,17 @@ import org.jetbrains.annotations.Nullable;
  * Class for custom animation storage
  */
 public class CaseAnimation {
-    private final Class<? extends JavaAnimation> animation;
-    private final Animation oldAnimation;
     private final Addon addon;
     private final String name;
-    private final String description;
 
-    /**
-     * Default constructor
-     *
-     * @param animation   Animation class
-     * @param addon       Animation addon
-     * @param name        Animation name
-     * @param description Animation description
-     */
-    public CaseAnimation(Class<? extends JavaAnimation> animation, Addon addon, String name, String description) {
-        this.animation = animation;
-        this.oldAnimation = null;
+    private Class<? extends JavaAnimation> animation;
+    private Animation oldAnimation;
+    private String description;
+    private boolean requireSettings;
+
+    public CaseAnimation(String name, Addon addon) {
         this.addon = addon;
         this.name = name;
-        this.description = description;
-    }
-
-    @Deprecated
-    public CaseAnimation(Animation oldAnimation, Addon addon, String name, String description) {
-        this.animation = null;
-        this.oldAnimation = oldAnimation;
-        this.addon = addon;
-        this.name = name;
-        this.description = description;
     }
 
     /**
@@ -80,6 +62,88 @@ public class CaseAnimation {
     @Nullable
     public Animation getOldAnimation() {
         return oldAnimation;
+    }
+
+    /**
+     *
+     * @since 2.2.6.2
+     * @return Require settings
+     */
+    public boolean isRequireSettings() {
+        return requireSettings;
+    }
+
+    public void setAnimation(Class<? extends JavaAnimation> animation) {
+        if(this.oldAnimation == null) {
+            this.animation = animation;
+        } else {
+            addon.getLogger().warning("CaseAnimation already has oldAnimation (Animation). Can't add JavaAnimation");
+        }
+    }
+
+    public void setOldAnimation(Animation oldAnimation) {
+        if(this.animation == null) {
+            this.oldAnimation = oldAnimation;
+            this.requireSettings = false;
+        } else {
+            addon.getLogger().warning("CaseAnimation already has JavaAnimation. Can't add oldAnimation (Animation)");
+        }
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setRequireSettings(boolean requireSettings) {
+        this.requireSettings = requireSettings;
+    }
+
+    /**
+     * @since 2.2.6.2
+     */
+    public static class Builder {
+        private final Addon addon;
+        private final String name;
+
+        private String description;
+        private boolean requireSettings;
+        private Class<? extends JavaAnimation> animation;
+        private Animation oldAnimation;
+
+        public Builder(String name, Addon addon) {
+            this.addon = addon;
+            this.name = name;
+        }
+
+        public Builder animation(Class<? extends JavaAnimation> animation) {
+            this.animation = animation;
+            return this;
+        }
+
+        @Deprecated
+        public Builder oldAnimation(Animation oldAnimation) {
+            this.oldAnimation = oldAnimation;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder requireSettings(boolean requireSettings) {
+            this.requireSettings = requireSettings;
+            return this;
+        }
+
+        public CaseAnimation build() {
+            CaseAnimation caseAnimation = new CaseAnimation(name, addon);
+            caseAnimation.setAnimation(animation);
+            caseAnimation.setOldAnimation(oldAnimation);
+            caseAnimation.setDescription(description);
+            caseAnimation.setRequireSettings(requireSettings);
+            return caseAnimation;
+        }
     }
 
 }

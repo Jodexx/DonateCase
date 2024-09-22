@@ -50,16 +50,15 @@ public class AnimationManager {
      * @param name        Animation name
      * @param animation   Animation class
      * @param description Animation description
+     * @deprecated Use {@link #registerAnimation(CaseAnimation)} instead
      */
+    @Deprecated
     public void registerAnimation(@NotNull String name, @NotNull Class<? extends JavaAnimation> animation, String description) {
-        if (!isRegistered(name)) {
-            CaseAnimation caseAnimation = new CaseAnimation(animation, addon, name, description);
-            registeredAnimations.put(name, caseAnimation);
-            AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(caseAnimation);
-            Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
-        } else {
-            addon.getLogger().warning("Animation with name " + name + " already registered!");
-        }
+        CaseAnimation caseAnimation = builder(name)
+                .animation(animation)
+                .description(description)
+                .build();
+        registerAnimation(caseAnimation);
     }
 
     /**
@@ -82,14 +81,42 @@ public class AnimationManager {
      */
     @Deprecated
     public void registerAnimation(String name, Animation animation) {
-        if (!isRegistered(name)) {
-            CaseAnimation caseAnimation = new CaseAnimation(animation, addon, name, "Old animation without description");
+        CaseAnimation caseAnimation = builder(name)
+                .oldAnimation(animation)
+                .description("Old animation without description")
+                .build();
+        registerAnimation(caseAnimation);
+    }
+
+    /**
+     * Gets Builder for creating animation
+     * @param name Animation name to create
+     * @return CaseAnimation Builder
+     * @since 2.2.6.2
+     */
+    @NotNull
+    public CaseAnimation.Builder builder(String name) {
+        return new CaseAnimation.Builder(name, addon);
+    }
+
+    /**
+     * Register animation
+     * @see #builder(String)
+     * @param caseAnimation Case animation object
+     * @return true, if successful
+     * @since 2.2.6.2
+     */
+    public boolean registerAnimation(CaseAnimation caseAnimation) {
+        String name = caseAnimation.getName();
+        if(!isRegistered(name)) {
             registeredAnimations.put(name, caseAnimation);
             AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(caseAnimation);
             Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
+            return true;
         } else {
-            addon.getLogger().warning("Animation with name " + name + " already registered!");
+            addon.getLogger().warning("Animation " + name + " already registered!");
         }
+        return false;
     }
 
 
@@ -123,10 +150,10 @@ public class AnimationManager {
      * @param location Location where to start the animation
      * @param caseData Case data
      */
-    public void startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseData caseData) {
+    public boolean startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseData caseData) {
         if (caseData.getItems().isEmpty()) {
             addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation without items in CaseData!");
-            return;
+            return false;
         }
 
         caseData = caseData.clone();
@@ -136,7 +163,7 @@ public class AnimationManager {
             Tools.msg(player, "&cAn error occurred while opening the case!");
             Tools.msg(player, "&cContact the project administration!");
             addon.getLogger().log(Level.WARNING, "Case animation " + animation + " does not exist!");
-            return;
+            return false;
         }
 
         Block block = location.getBlock();
@@ -173,13 +200,16 @@ public class AnimationManager {
                                     caseData.getAnimationSettings() :
                                     Case.getConfig().getAnimations().getConfigurationSection(animation);
 
+                    if(caseAnimation.isRequireSettings() && settings == null)
+                        throw new IllegalArgumentException("Animation " + animation + " requires settings for starting!");
+
                     javaAnimation.init(player, caseLocation,
                             uuid, caseData, preStartEvent.getWinItem(), settings);
                     javaAnimation.start();
 
                 } else {
                     Animation oldAnimation = caseAnimation.getOldAnimation();
-                    if (oldAnimation == null) return;
+                    if (oldAnimation == null) throw new IllegalArgumentException("Animation executable class does not exist!");
 
                     oldAnimation.start(player, caseLocation, uuid,
                             caseData, preStartEvent.getWinItem());
@@ -187,7 +217,7 @@ public class AnimationManager {
 
             } catch (Throwable t) {
                 addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
-                return;
+                return false;
             }
         }
 
@@ -203,6 +233,7 @@ public class AnimationManager {
         // AnimationStart event
         AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, block, preStartEvent.getWinItem());
         Bukkit.getPluginManager().callEvent(startEvent);
+        return true;
     }
 
     /**
