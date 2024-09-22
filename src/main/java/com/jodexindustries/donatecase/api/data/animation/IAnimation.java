@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api.data;
+package com.jodexindustries.donatecase.api.data.animation;
 
 /**
  * An interface to help create animations, <a href="https://wiki.jodexindustries.xyz/docs/DonateCase/API/register-animations">like this</a>
