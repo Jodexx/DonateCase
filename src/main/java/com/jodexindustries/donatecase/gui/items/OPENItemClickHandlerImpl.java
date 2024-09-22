@@ -8,6 +8,7 @@ import com.jodexindustries.donatecase.api.data.gui.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.events.OpenCaseEvent;
 import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
+import com.jodexindustries.donatecase.gui.CaseGui;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -30,10 +31,11 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
 
     @Override
     public void onClick(@NotNull CaseGuiClickEvent e) {
-        Location location = e.getLocation();
+        CaseGui gui = e.getGui();
+        Location location = gui.getLocation();
         String itemType = e.getItemType();
         Player p = (Player) e.getWhoClicked();
-        CaseData caseData = e.getCaseData();
+        CaseData caseData = gui.getCaseData();
         String caseType = caseData.getCaseType();
 
         if (itemType.contains("_")) {
