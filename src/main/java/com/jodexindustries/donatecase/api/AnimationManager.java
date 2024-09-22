@@ -193,8 +193,6 @@ public class AnimationManager {
             try {
 
                 if (animationClass != null) {
-                    JavaAnimation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
-
                     ConfigurationSection settings =
                             caseData.getAnimationSettings() != null ?
                                     caseData.getAnimationSettings() :
@@ -202,6 +200,8 @@ public class AnimationManager {
 
                     if(caseAnimation.isRequireSettings() && settings == null)
                         throw new IllegalArgumentException("Animation " + animation + " requires settings for starting!");
+
+                    JavaAnimation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
 
                     javaAnimation.init(player, caseLocation,
                             uuid, caseData, preStartEvent.getWinItem(), settings);

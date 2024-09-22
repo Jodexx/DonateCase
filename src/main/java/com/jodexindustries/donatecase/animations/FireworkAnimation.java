@@ -16,13 +16,8 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.function.Consumer;
 
 public class FireworkAnimation extends JavaAnimation {
-    private final EquipmentSlot itemSlot;
-    private final ArmorStandEulerAngle armorStandEulerAngle;
-
-    public FireworkAnimation() {
-        itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD").toUpperCase());
-        armorStandEulerAngle = Tools.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
-    }
+    private EquipmentSlot itemSlot;
+    private ArmorStandEulerAngle armorStandEulerAngle;
 
     public static void register(AnimationManager manager) {
         CaseAnimation caseAnimation = manager.builder("FIREWORK")
@@ -36,6 +31,8 @@ public class FireworkAnimation extends JavaAnimation {
 
     @Override
     public void start() {
+        itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD").toUpperCase());
+        armorStandEulerAngle = Tools.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
         String displayName = getWinItem().getMaterial().getDisplayName();
         getWinItem().getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(getPlayer(), displayName));
         getLocation().add(0.5, 1, 0.5);
