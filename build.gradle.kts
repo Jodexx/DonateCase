@@ -12,8 +12,8 @@ plugins {
 }
 
 group = "com.jodexindustries.donatecase"
-val api = "2.2.6.1"
-version = "2.2.6.1"
+val api = "2.2.6.2"
+version = "2.2.6.2"
 
 repositories {
     mavenCentral()
