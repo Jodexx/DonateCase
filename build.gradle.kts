@@ -37,7 +37,7 @@ dependencies {
     compileOnly("net.luckperms:api:5.4")
     compileOnly("com.j256.ormlite:ormlite-jdbc:6.1")
     compileOnly("com.github.retrooper:packetevents-spigot:2.4.0")
-    compileOnly("me.tofaa.entitylib:spigot:2.4.9-SNAPSHOT")
+    compileOnly("me.tofaa.entitylib:spigot:2.4.10-SNAPSHOT")
 //    compileOnly("io.th0rgal:oraxen:1.180.1")
     implementation("com.alessiodp.libby:libby-bukkit:2.0.0-SNAPSHOT")
 }
