@@ -10,8 +10,8 @@ Welcome to the DonateCaseAPI wiki!
 |-------------------------------------------|-------------------------------------------------------------------------------------------------------------------|
 | [Install](install)                        | [Maven Repo](https://repo.jodexindustries.xyz/#/releases/com/jodexindustries/donatecase/DonateCaseAPI)            |
 | [Implementing DonateCase](implementing)   | [JavaDocs](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/latest) |
-| [Register events](events.md)              | [GitHub](https://github.com/Jodexx/DonateCaseAPI)                                                                 |
+| [Register events](events.md)              | [GitHub](https://github.com/Jodexx/DonateCase)                                                                    |
 | [Register new animation](animations)      | [Help](https://discord.gg/NVE4vWnJ9j)                                                                             |
-| [Register new sub command](subcommands)   | [Example addon](https://github.com/Jodexx/DonateCase/tree/main/TestAddon)                                         |
+| [Register new sub command](subcommands)   | [Example addon](https://github.com/Jodexx/DonateCaseTestAddon)                                                    |
 | [Register materials](materials)           |                                                                                                                   |
 | [Register gui typed items](guitypeditems) |                                                                                                                   |
