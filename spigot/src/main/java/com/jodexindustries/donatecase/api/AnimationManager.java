@@ -45,50 +45,6 @@ public class AnimationManager {
     }
 
     /**
-     * Register custom animation
-     *
-     * @param name        Animation name
-     * @param animation   Animation class
-     * @param description Animation description
-     * @deprecated Use {@link #registerAnimation(CaseAnimation)} instead
-     */
-    @Deprecated
-    public void registerAnimation(@NotNull String name, @NotNull Class<? extends JavaAnimation> animation, String description) {
-        CaseAnimation caseAnimation = builder(name)
-                .animation(animation)
-                .description(description)
-                .build();
-        registerAnimation(caseAnimation);
-    }
-
-    /**
-     * Register custom animation
-     *
-     * @param name      Animation name
-     * @param animation Animation class
-     * @deprecated Use {@link #registerAnimation(String, Class, String)} instead
-     */
-    @Deprecated
-    public void registerAnimation(String name, Class<? extends JavaAnimation> animation) {
-        registerAnimation(name, animation, "Nothing to say");
-    }
-
-    /**
-     * Register custom animation
-     *
-     * @param name      Animation name
-     * @param animation Animation object
-     */
-    @Deprecated
-    public void registerAnimation(String name, Animation animation) {
-        CaseAnimation caseAnimation = builder(name)
-                .oldAnimation(animation)
-                .description("Old animation without description")
-                .build();
-        registerAnimation(caseAnimation);
-    }
-
-    /**
      * Gets Builder for creating animation
      * @param name Animation name to create
      * @return CaseAnimation Builder
@@ -151,6 +107,13 @@ public class AnimationManager {
      * @param caseData Case data
      */
     public boolean startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseData caseData) {
+        Block block = location.getBlock();
+
+        if(Case.activeCasesByBlock.containsKey(block)) {
+            addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation while another animation is running!");
+            return false;
+        }
+
         if (caseData.getItems().isEmpty()) {
             addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation without items in CaseData!");
             return false;
@@ -165,8 +128,6 @@ public class AnimationManager {
             addon.getLogger().log(Level.WARNING, "Case animation " + animation + " does not exist!");
             return false;
         }
-
-        Block block = location.getBlock();
 
         CaseData.Item winItem = caseData.getRandomItem();
         winItem.getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(player, winItem.getMaterial().getDisplayName()));
@@ -191,6 +152,7 @@ public class AnimationManager {
             Class<? extends JavaAnimation> animationClass = caseAnimation.getAnimation();
 
             try {
+                Case.activeCasesByBlock.put(block, uuid);
 
                 if (animationClass != null) {
                     ConfigurationSection settings =
@@ -208,15 +170,12 @@ public class AnimationManager {
                     javaAnimation.start();
 
                 } else {
-                    Animation oldAnimation = caseAnimation.getOldAnimation();
-                    if (oldAnimation == null) throw new IllegalArgumentException("Animation executable class does not exist!");
-
-                    oldAnimation.start(player, caseLocation, uuid,
-                            caseData, preStartEvent.getWinItem());
+                    throw new IllegalArgumentException("Animation executable class does not exist!");
                 }
 
             } catch (Throwable t) {
                 addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
+                Case.activeCasesByBlock.remove(block);
                 return false;
             }
         }
@@ -228,7 +187,6 @@ public class AnimationManager {
         }
 
         Case.activeCases.put(uuid, activeCase);
-        Case.activeCasesByBlock.put(block, uuid);
 
         // AnimationStart event
         AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, block, preStartEvent.getWinItem());
