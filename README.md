@@ -7,8 +7,8 @@
 [![wakatime](https://wakatime.com/badge/user/829f0c0b-33fd-4885-a87a-8ee676d706fd/project/eaecf335-b19a-4642-9d6c-2637e4a392f5.svg)](https://wakatime.com/badge/user/829f0c0b-33fd-4885-a87a-8ee676d706fd/project/eaecf335-b19a-4642-9d6c-2637e4a392f5)
 [![CodeFactor](https://www.codefactor.io/repository/github/jodexx/donatecase/badge)](https://www.codefactor.io/repository/github/jodexx/donatecase)
 
-| [MavenRepo](https://repo.jodexindustries.xyz/#/releases/com/jodexindustries/donatecase/DonateCaseAPI) | [JavaDocs](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/DonateCaseAPI/latest) | [Wiki](https://wiki.jodexindustries.xyz/docs/DonateCase/API/donatecase-api-main) |
-|---------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|------------------------------------------------------|
+| [MavenRepo](https://repo.jodexindustries.xyz/#/releases/com/jodexindustries/donatecase/) | [JavaDocs](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/latest) | [Wiki](https://wiki.jodexindustries.xyz/docs/DonateCase/API/donatecase-api-main) |
+|------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
 
 
 
@@ -24,7 +24,7 @@
 ```xml
 <dependency>
   <groupId>com.jodexindustries.donatecase</groupId>
-  <artifactId>DonateCaseAPI</artifactId>
+  <artifactId>spigot</artifactId>
   <version>2.2.6.3</version>
 </dependency>
 ```
@@ -36,5 +36,5 @@ maven {
 }
 ```
 ```groovy
-compileOnly("com.jodexindustries.donatecase:DonateCaseAPI:2.2.6.3")
+compileOnly("com.jodexindustries.donatecase:spigot:2.2.6.3")
 ```

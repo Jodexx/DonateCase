@@ -31,7 +31,6 @@ dependencies {
     compileOnly("com.j256.ormlite:ormlite-jdbc:6.1")
     compileOnly("com.github.retrooper:packetevents-spigot:2.4.0")
     compileOnly("me.tofaa.entitylib:spigot:2.4.10-SNAPSHOT")
-//    compileOnly("io.th0rgal:oraxen:1.180.1")
     implementation(project(":api"))
     implementation("com.alessiodp.libby:libby-bukkit:2.0.0-SNAPSHOT")
 }
@@ -85,7 +84,7 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "com.jodexindustries.donatecase"
-            artifactId = "DonateCaseAPI"
+            artifactId = "spigot"
             version = api
             from(components["java"])
         }
@@ -106,7 +105,8 @@ tasks.javadoc {
             "https://docs.oracle.com/en/java/javase/22/docs/api/",
             "https://helpch.at/docs/1.16.5/",
             "https://javadoc.io/static/net.luckperms/api/5.4/",
-            "https://milkbowl.github.io/VaultAPI/"
+            "https://milkbowl.github.io/VaultAPI/",
+            "https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/api/$api/raw/"
         )
     }
     source = sourceSets["main"].allJava

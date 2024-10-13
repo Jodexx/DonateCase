@@ -21,7 +21,7 @@ tasks.jar {
     enabled = false
 }
 
-val apiVersion: String = properties["api-version"].toString()
+val apiVersion: String = properties["api"].toString()
 
 tasks.register("replaceVersionInREADME") {
     doLast {
