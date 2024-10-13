@@ -16,7 +16,6 @@ version = properties["version"].toString()
 val api: String = properties["api"].toString()
 
 dependencies {
-    compileOnly(project(":api"))
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("me.clip:placeholderapi:2.11.6")
@@ -33,6 +32,7 @@ dependencies {
     compileOnly("com.github.retrooper:packetevents-spigot:2.4.0")
     compileOnly("me.tofaa.entitylib:spigot:2.4.10-SNAPSHOT")
 //    compileOnly("io.th0rgal:oraxen:1.180.1")
+    implementation(project(":api"))
     implementation("com.alessiodp.libby:libby-bukkit:2.0.0-SNAPSHOT")
 }
 
@@ -42,7 +42,7 @@ tasks.build {
 
 java {
     withSourcesJar()
-//    withJavadocJar()
+    withJavadocJar()
 }
 
 tasks.jar {
@@ -63,7 +63,7 @@ tasks.processResources {
 }
 
 tasks.shadowJar {
-    archiveBaseName.set(project.name)
+    archiveBaseName.set(project.rootProject.name)
     archiveClassifier.set(null as String?)
     archiveVersion.set(project.version.toString())
 }
@@ -90,6 +90,14 @@ publishing {
             from(components["java"])
         }
     }
+}
+
+tasks.named<Jar>("javadocJar") {
+    archiveBaseName.set(project.rootProject.name)
+}
+
+tasks.named<Jar>("sourcesJar") {
+    archiveBaseName.set(project.rootProject.name)
 }
 
 tasks.javadoc {
