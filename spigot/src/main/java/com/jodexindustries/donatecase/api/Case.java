@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,23 +40,23 @@ public class Case {
     /**
      * Active cases
      */
-    public final static HashMap<UUID, ActiveCase> activeCases = new HashMap<>();
+    public final static Map<UUID, ActiveCase> activeCases = new HashMap<>();
 
     /**
      * Active cases, but by location
      */
-    public final static HashMap<Block, UUID> activeCasesByBlock = new HashMap<>();
+    public final static Map<Block, UUID> activeCasesByBlock = new HashMap<>();
 
 
     /**
      * Players, who opened cases (open gui)
      */
-    public final static HashMap<UUID, CaseGui> playersGui = new HashMap<>();
+    public final static Map<UUID, CaseGui> playersGui = new ConcurrentHashMap<>();
 
     /**
      * Loaded cases in runtime
      */
-    public final static HashMap<String, CaseData> caseData = new HashMap<>();
+    public final static Map<String, CaseData> caseData = new HashMap<>();
 
     /**
      * Cache map for storing number of player's keys
@@ -420,6 +421,8 @@ public class Case {
      */
     public static void animationEnd(CaseData caseData, OfflinePlayer player, UUID uuid, CaseData.Item item) {
         ActiveCase activeCase = activeCases.get(uuid);
+        if(activeCase == null) return;
+
         Block block = activeCase.getBlock();
         activeCasesByBlock.remove(block);
         activeCases.remove(uuid);
