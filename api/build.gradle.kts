@@ -9,5 +9,5 @@ version = apiVersion
 
 
 dependencies {
-    api("org.jetbrains:annotations:24.1.0")
+    compileOnly("org.jetbrains:annotations:24.1.0")
 }
