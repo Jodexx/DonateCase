@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.api.data.subcommand;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +20,6 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
     private SubCommandTabCompleter tabCompleter;
 
     private String description;
-    private SubCommandType type;
     private String permission;
     private String[] args;
 
@@ -78,23 +76,6 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
         this.description = description;
     }
 
-    /**
-     * @deprecated Use {@link #getPermission()} instead
-     */
-    @Deprecated
-    public SubCommandType getType() {
-        return type;
-    }
-
-    /**
-     * @deprecated Use {@link #setPermission(String)} instead
-     */
-    @Deprecated
-    public void setType(SubCommandType type) {
-        this.type = type;
-        if(type != null) this.permission = type.permission;
-    }
-
     public String[] getArgs() {
         return args;
     }
@@ -128,7 +109,6 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
         Builder builder = new Builder(name, addon);
         builder.permission = permission;
         builder.description = description;
-        builder.type = type;
         builder.args = args;
         builder.tabCompleter = tabCompleter;
         builder.executor = executor;
@@ -147,7 +127,6 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
                 ", executor=" + executor +
                 ", tabCompleter=" + tabCompleter +
                 ", description='" + description + '\'' +
-                ", type=" + type +
                 ", permission='" + permission + '\'' +
                 ", args=" + Arrays.toString(args) +
                 '}';
@@ -160,7 +139,6 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
         private SubCommandExecutor executor;
         private SubCommandTabCompleter tabCompleter;
         private String description;
-        private SubCommandType type;
         private String[] args;
         private String permission;
 
@@ -184,12 +162,6 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
             return this;
         }
 
-        @Deprecated
-        public Builder type(SubCommandType type) {
-            this.type = type;
-            return this;
-        }
-
         public Builder args(String[] args) {
             this.args = args;
             return this;
@@ -206,7 +178,7 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
             subCommand.setTabCompleter(tabCompleter);
             subCommand.setDescription(description);
             subCommand.setArgs(args);
-            subCommand.setPermission(permission == null && type != null ? type.permission : permission);
+            subCommand.setPermission(permission);
             return subCommand;
         }
     }

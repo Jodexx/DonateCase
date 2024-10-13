@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.api.data.animation;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.Animation;
 import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +12,6 @@ public class CaseAnimation {
     private final String name;
 
     private Class<? extends JavaAnimation> animation;
-    private Animation oldAnimation;
     private String description;
     private boolean requireSettings;
 
@@ -59,11 +57,6 @@ public class CaseAnimation {
         return description;
     }
 
-    @Nullable
-    public Animation getOldAnimation() {
-        return oldAnimation;
-    }
-
     /**
      *
      * @since 2.2.6.2
@@ -74,19 +67,7 @@ public class CaseAnimation {
     }
 
     public void setAnimation(Class<? extends JavaAnimation> animation) {
-        if(this.oldAnimation == null) {
-            this.animation = animation;
-        } else if(animation != null) {
-            addon.getLogger().warning("CaseAnimation already has Animation interface. Can't add JavaAnimation for " + name);
-        }
-    }
-
-    public void setOldAnimation(Animation oldAnimation) {
-        if(this.animation == null) {
-            this.oldAnimation = oldAnimation;
-        } else if(oldAnimation != null) {
-            addon.getLogger().warning("CaseAnimation already has JavaAnimation. Can't add Animation interface for " + name);
-        }
+        this.animation = animation;
     }
 
     public void setDescription(String description) {
@@ -107,7 +88,6 @@ public class CaseAnimation {
         private String description;
         private boolean requireSettings;
         private Class<? extends JavaAnimation> animation;
-        private Animation oldAnimation;
 
         public Builder(String name, Addon addon) {
             this.addon = addon;
@@ -116,12 +96,6 @@ public class CaseAnimation {
 
         public Builder animation(Class<? extends JavaAnimation> animation) {
             this.animation = animation;
-            return this;
-        }
-
-        @Deprecated
-        public Builder oldAnimation(Animation oldAnimation) {
-            this.oldAnimation = oldAnimation;
             return this;
         }
 
@@ -138,7 +112,6 @@ public class CaseAnimation {
         public CaseAnimation build() {
             CaseAnimation caseAnimation = new CaseAnimation(name, addon);
             caseAnimation.setAnimation(animation);
-            caseAnimation.setOldAnimation(oldAnimation);
             caseAnimation.setDescription(description);
             caseAnimation.setRequireSettings(requireSettings);
             return caseAnimation;
