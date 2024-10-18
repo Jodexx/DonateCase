@@ -107,7 +107,7 @@ public class WheelAnimation extends JavaAnimation {
         @Override
         public void accept(BukkitTask task) {
             ticks++;
-            double angle = ticks / (20.0 * (animationTime / 100D)) * speedAx * 2 * Math.PI;
+            double angle = ticks / 20.0  * speedAx * 2 * Math.PI;
 
             if (ticks < animationTime + 1) {
                 handleFlameEffects();
@@ -123,7 +123,7 @@ public class WheelAnimation extends JavaAnimation {
             }
 
             if (ticks < animationTime + 1) {
-                speedAx *= 1 - (speed / (animationTime - 2));
+                speedAx *= 1 - speed / (animationTime - 2);
             }
         }
 
