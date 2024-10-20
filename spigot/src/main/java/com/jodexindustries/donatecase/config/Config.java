@@ -202,31 +202,29 @@ public class Config {
     }
 
     private void checkAndUpdateConfig(YamlConfiguration config, String fileName, String expectedValue) {
-        if (config.getString("config") == null || !config.getString("config", "").equals(expectedValue)) {
+        String version = config.getString("config");
+        if (version == null || !version.equals(expectedValue)) {
             Logger.log("&cOutdated " + fileName + "! Creating a new!");
             File configFile = new File(plugin.getDataFolder(), fileName);
-            configFile.renameTo(new File(plugin.getDataFolder(), fileName + ".old"));
-            plugin.saveResource(fileName, false);
+            File newFile = new File(plugin.getDataFolder(), fileName + ".old");
+            if(configFile.renameTo(newFile)) plugin.saveResource(fileName, false);
         }
     }
 
     private void checkConvertCases() {
         YamlConfiguration configuration = getConfig();
+        File casesDir = new File(plugin.getDataFolder(), "cases");
+        if (!casesDir.exists()) casesDir.mkdir();
         if (configuration.getConfigurationSection("DonateCase.Cases") != null) {
-            new File(plugin.getDataFolder(), "cases").mkdir();
             Logger.log("&cOutdated cases format!");
             converter.convertOldCasesFormat();
-        } else {
-            if (!new File(plugin.getDataFolder(), "cases").exists()) {
-                new File(plugin.getDataFolder(), "cases").mkdir();
-            }
         }
     }
 
     private void checkConvertLocations() {
-        YamlConfiguration configuration = getCases();
-        if (configuration.getString("config") == null ||
-                !configuration.getString("config", "").equalsIgnoreCase("1.0")) {
+        String version = getCases().getString("config");
+
+        if (version == null || !version.equals("1.0")) {
             Logger.log("Conversion of case locations to a new method of storage...");
             converter.convertCasesLocation();
         }
@@ -240,14 +238,14 @@ public class Config {
                 converter.convertLanguage();
             } else {
                 File langRu = new File(plugin.getDataFolder(), "lang/ru_RU.yml");
-                langRu.renameTo(new File(plugin.getDataFolder(), "lang/ru_RU.yml.old"));
-                plugin.saveResource("lang/ru_RU.yml", false);
+                if (langRu.renameTo(new File(plugin.getDataFolder(), "lang/ru_RU.yml.old")))
+                    plugin.saveResource("lang/ru_RU.yml", false);
                 File langEn = new File(plugin.getDataFolder(), "lang/en_US.yml");
-                langEn.renameTo(new File(plugin.getDataFolder(), "lang/en_US.yml.old"));
-                plugin.saveResource("lang/en_US.yml", false);
+                if (langEn.renameTo(new File(plugin.getDataFolder(), "lang/en_US.yml.old")))
+                    plugin.saveResource("lang/en_US.yml", false);
                 File langUa = new File(plugin.getDataFolder(), "lang/ua_UA.yml");
-                langUa.renameTo(new File(plugin.getDataFolder(), "lang/ua_UA.yml.old"));
-                plugin.saveResource("lang/ua_UA.yml", false);
+                if (langUa.renameTo(new File(plugin.getDataFolder(), "lang/ua_UA.yml.old")))
+                    plugin.saveResource("lang/ua_UA.yml", false);
             }
         }
     }
