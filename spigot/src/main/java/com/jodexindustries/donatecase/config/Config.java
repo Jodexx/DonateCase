@@ -29,6 +29,13 @@ public class Config {
 
     private final Converter converter;
 
+    private static final String[] defaultFiles = {
+            "Config.yml",
+            "Cases.yml",
+            "Animations.yml",
+            "lang/en_US.yml",
+    };
+
     /**
      * Default initialization constructor
      *
@@ -38,31 +45,8 @@ public class Config {
         this.plugin = plugin;
         this.converter = new Converter(this);
 
-        String[] files = {
-                "Config.yml",
-                "Cases.yml",
-                "Animations.yml",
-        };
-
-
-        for (String file : files) {
-            checkAndCreateFile(file);
-        }
-
-        File[] directoryFiles = plugin.getDataFolder().listFiles();
-        if(directoryFiles != null) {
-            for (File file : directoryFiles) {
-                if(!file.isFile()) continue;
-                if(file.getName().endsWith(".yml") || file.getName().endsWith(".yaml")) {
-                    try {
-                        YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
-                        configs.put(file, yamlConfiguration);
-                    } catch (Throwable e) {
-                        plugin.getLogger().log(Level.WARNING, "Error with loading configuration : ", e);
-                    }
-                }
-            }
-        }
+        createFiles();
+        loadConfigurations();
 
         checkAndUpdateConfig(getConfig(), "Config.yml", "2.5");
         checkAndUpdateConfig(getAnimations(), "Animations.yml", "1.4");
@@ -79,7 +63,6 @@ public class Config {
         File langFolder = new File(plugin.getDataFolder(), "lang");
         File[] listFiles = langFolder.listFiles();
         File defaultLangFile = new File(langFolder, "en_US.yml");
-        checkAndCreateFile("lang/en_US.yml");
 
         String configLang = getConfig().getString("DonateCase.Languages", "en_US");
 
@@ -195,8 +178,27 @@ public class Config {
         }
     }
 
-    private void checkAndCreateFile(String fileName) {
-        if (!(new File(plugin.getDataFolder(), fileName)).exists()) plugin.saveResource(fileName, false);
+    private void loadConfigurations() {
+        File[] directoryFiles = plugin.getDataFolder().listFiles();
+        if(directoryFiles != null) {
+            for (File file : directoryFiles) {
+                if(!file.isFile()) continue;
+                if(file.getName().endsWith(".yml") || file.getName().endsWith(".yaml")) {
+                    try {
+                        YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
+                        configs.put(file, yamlConfiguration);
+                    } catch (Throwable e) {
+                        plugin.getLogger().log(Level.WARNING, "Error with loading configuration : ", e);
+                    }
+                }
+            }
+        }
+    }
+
+    private void createFiles() {
+        for (String fileName : defaultFiles) {
+            if (!(new File(plugin.getDataFolder(), fileName)).exists()) plugin.saveResource(fileName, false);
+        }
     }
 
     private void checkAndUpdateConfig(YamlConfiguration config, String fileName, String expectedValue) {
