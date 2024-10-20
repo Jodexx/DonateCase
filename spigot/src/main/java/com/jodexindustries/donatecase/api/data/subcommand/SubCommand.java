@@ -23,7 +23,7 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
     private String permission;
     private String[] args;
 
-    public SubCommand(String name, Addon addon) {
+    public SubCommand(@NotNull String name, @NotNull Addon addon) {
         this.addon = addon;
         this.name = name;
     }
@@ -142,7 +142,7 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
         private String[] args;
         private String permission;
 
-        public Builder(String name, Addon addon) {
+        public Builder(@NotNull String name, @NotNull Addon addon) {
             this.addon = addon;
             this.name = name;
         }

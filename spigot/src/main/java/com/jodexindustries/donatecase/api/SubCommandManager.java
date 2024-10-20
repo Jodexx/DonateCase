@@ -39,7 +39,7 @@ public class SubCommandManager {
      * @since 2.2.4.5
      */
     @NotNull
-    public SubCommand.Builder builder(String name) {
+    public SubCommand.Builder builder(@NotNull String name) {
         return new SubCommand.Builder(name, addon);
     }
 
