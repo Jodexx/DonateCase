@@ -106,7 +106,7 @@ tasks.javadoc {
             "https://helpch.at/docs/1.16.5/",
             "https://javadoc.io/static/net.luckperms/api/5.4/",
             "https://milkbowl.github.io/VaultAPI/",
-            "https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/api/$api/raw/"
+//            "https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/api/$api/raw/"
         )
     }
     source = sourceSets["main"].allJava
