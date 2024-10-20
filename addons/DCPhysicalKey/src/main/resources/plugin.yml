@@ -1,0 +1,6 @@
+name: DCPhysicalKey
+version: '${version}'
+main: com.jodexindustries.dcphysicalkey.bootstrap.MainPlugin
+api-version: '1.16'
+depend:
+  - DonateCase

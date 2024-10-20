@@ -1,0 +1,23 @@
+command: physicalkey
+permissions:
+  give: dcphysicalkey.give
+
+messages:
+  invalid-number: "&cInvalid amount specified."
+  player-not-found: "&cCould not find player '%player%'"
+  key-not-found: "&cKey not found."
+  give-key: "&aYou have given %player% %amount% physical keys."
+
+keys:
+  key:
+    case-type: case
+    material: TRIPWIRE_HOOK
+    display-name: "&aDonate Key"
+    lore:
+      - "&r&fSome lore here"
+  another-key:
+    case-type: another-case
+    material: TRIPWIRE_HOOK
+    display-name: "&aSuper Key"
+    lore:
+      - "&r&fSome lore here"
