@@ -168,7 +168,7 @@ public class Case {
      * @return CompletableFuture of keys
      */
     public static CompletableFuture<Integer> getKeysAsync(String caseType, String player) {
-        return CompletableFuture.supplyAsync(() -> getDatabase().getKeys(caseType, player).join());
+        return getDatabase().getKeys(caseType, player);
     }
 
     /**
@@ -214,7 +214,7 @@ public class Case {
      * @return CompletableFuture of open count
      */
     public static CompletableFuture<Integer>  getOpenCountAsync(String caseType, String player) {
-        return CompletableFuture.supplyAsync(() -> getDatabase().getOpenCount(player, caseType).join());
+        return getDatabase().getOpenCount(player, caseType);
     }
 
     /**
