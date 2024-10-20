@@ -1,0 +1,7 @@
+name: DCBlockAnimations
+version: '${version}'
+main: com.jodexindustries.dcblockanimations.bootstrap.MainPlugin
+api-version: '1.16'
+depend: [DonateCase]
+authors: [_Jodex__]
+website: https://www.jodexindustries.xyz

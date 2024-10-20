@@ -1,0 +1,4 @@
+name: DCBlockAnimations
+version: '${version}'
+main: com.jodexindustries.dcblockanimations.bootstrap.MainAddon
+authors: [_Jodex__]
