@@ -189,7 +189,7 @@ public class AnimationManager {
         Case.activeCases.put(uuid, activeCase);
 
         // AnimationStart event
-        AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, block, preStartEvent.getWinItem());
+        AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, block, preStartEvent.getWinItem(), uuid);
         Bukkit.getPluginManager().callEvent(startEvent);
         return true;
     }

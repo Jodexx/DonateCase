@@ -8,6 +8,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 /**
  * Called when the animation starts
  */
@@ -17,6 +19,7 @@ public class AnimationStartEvent extends PlayerEvent {
     private final Block block;
     private final String animation;
     private final CaseData.Item winItem;
+    private final UUID uuid;
 
     /**
      * Default constructor
@@ -26,14 +29,16 @@ public class AnimationStartEvent extends PlayerEvent {
      * @param caseData  Case data
      * @param block     Block where opened
      * @param winItem   Win item
+     * @param uuid Animation UUID
      */
     public AnimationStartEvent(@NotNull Player who, @NotNull String animation, @NotNull CaseData caseData,
-                               @NotNull Block block, @NotNull CaseData.Item winItem) {
+                               @NotNull Block block, @NotNull CaseData.Item winItem, @NotNull UUID uuid) {
         super(who);
         this.caseData = caseData;
         this.block = block;
         this.animation = animation;
         this.winItem = winItem;
+        this.uuid = uuid;
     }
 
     /**
@@ -100,5 +105,9 @@ public class AnimationStartEvent extends PlayerEvent {
      */
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    public UUID getUniqueId() {
+        return uuid;
     }
 }
