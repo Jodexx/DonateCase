@@ -61,14 +61,14 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
 
-            if (Case.getKeys(caseData.getCaseType(), player.getName()) >= 1) {
+            if (Case.getKeys(caseData.getCaseType(), player.getName()) >= 1 || event.isIgnoreKeys()) {
 
                 OpenCaseEvent openEvent = new OpenCaseEvent(player, caseData, location.getBlock());
                 Bukkit.getServer().getPluginManager().callEvent(openEvent);
 
                 if (!openEvent.isCancelled()) {
                     if(Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData))
-                        Case.removeKeys(caseData.getCaseType(), player.getName(), 1);
+                        if(!event.isIgnoreKeys()) Case.removeKeys(caseData.getCaseType(), player.getName(), 1);
                 }
             } else {
                 Case.executeActions(player, caseData.getNoKeyActions());

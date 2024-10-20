@@ -18,6 +18,7 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
     protected boolean cancel;
     private final CaseData caseData;
     private final Block block;
+    private boolean ignoreKeys;
 
     /**
      * Default constructor
@@ -31,6 +32,7 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
         this.caseData = caseData;
         this.block = block;
         cancel = false;
+        ignoreKeys = false;
     }
 
     /**
@@ -86,5 +88,19 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
     @Override
     public void setCancelled(boolean cancel) {
         this.cancel = cancel;
+    }
+
+    /**
+     * @since 2.2.6.6
+     */
+    public boolean isIgnoreKeys() {
+        return ignoreKeys;
+    }
+
+    /**
+     * @since 2.2.6.6
+     */
+    public void setIgnoreKeys(boolean ignoreKeys) {
+        this.ignoreKeys = ignoreKeys;
     }
 }
