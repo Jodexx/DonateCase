@@ -3,7 +3,6 @@ package com.jodexindustries.dcphysicalkey.commands;
 import com.jodexindustries.dcphysicalkey.bootstrap.Bootstrap;
 import com.jodexindustries.dcphysicalkey.tools.ItemManager;
 import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -30,7 +29,7 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
     public void register() {
         SubCommand subCommand = manager.builder(config.get().getString("command", "physicalkey"))
-                .permission(SubCommandType.PLAYER.permission)
+                .permission(config.get().getString("permissions.give", "dcphysicalkey.give"))
                 .description("&2Gives physical key to specific player")
                 .args(new String[]{
                         "givekey",
