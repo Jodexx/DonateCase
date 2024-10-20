@@ -6,6 +6,7 @@ buildscript {
 
 plugins {
     java
+    id("java-library")
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.rikonardo.papermake") version "1.0.6"

@@ -1,0 +1,28 @@
+Webhook: "" # here your discord webhook
+Embed: # Placeholders: %player%, %wingroup%, %casetype%, %animation%, %casetitle%.
+  Title: "DonateCase, opening case:"
+  Description: ""
+  Color:
+    r: 43
+    g: 45
+    b: 49
+  Footer:
+    Text: "DCWebHook | Addon for DonateCase"
+    Icon: "https://www.spigotmc.org/data/resource_icons/106/106701.jpg?1678739430"
+  Author:
+    Name: ""
+    Url: ""
+    Icon: ""
+  Fields:
+    field1:
+      Title: ""
+      Value: "**Player:** %player%"
+      Inline: false
+    field2:
+      Title: ""
+      Value: "**Type:** %casetype%"
+      Inline: false
+    field3:
+      Title: ""
+      Value: "**Prize:** %wingroup%"
+      Inline: false

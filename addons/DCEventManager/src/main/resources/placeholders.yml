@@ -1,0 +1,25 @@
+Events:
+  AddonDisableEvent: # event class name
+    addon: # placeholder id
+      placeholder: "%addon%" # replaced placeholder
+      method: "getAddon#getName" # class method
+    reason: # placeholder id
+      placeholder: "%reason%" # replaced placeholder
+      method: "getReason" # class method
+    caused: # placeholder id
+      placeholder: "%caused%" # replaced placeholder
+      method: "getCaused#getName" # class method
+  AddonEnableEvent: # event class name
+    addon: # placeholder id
+      placeholder: "%addon%" # replaced placeholder
+      method: "getAddon#getName" # class method
+    reason: # placeholder id
+      placeholder: "%reason%" # replaced placeholder
+      method: "getReason" # class method
+    caused: # placeholder id
+      placeholder: "%caused%" # replaced placeholder
+      method: "getCaused#getName" # class method
+  AnimationStartEvent: # event class name
+    player: # placeholder id
+      placeholder: "%player%" # replaced placeholder
+      method: "getPlayer#getName" # class method

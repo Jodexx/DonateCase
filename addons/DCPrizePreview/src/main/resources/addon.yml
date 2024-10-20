@@ -1,0 +1,5 @@
+name: PrizePreview
+version: '${version}'
+main: com.jodexindustries.dcprizepreview.bootstrap.MainAddon
+author: "_Jodex__"
+api: 2.2.5.9

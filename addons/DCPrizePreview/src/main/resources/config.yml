@@ -1,0 +1,4 @@
+cases:
+  case: # case type
+    preview: AUTO # or COMMAND
+    command: "/menu" # COMMAND preview, executes the command by player

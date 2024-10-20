@@ -1,0 +1,4 @@
+name: FriendCase
+main: com.jodexindustries.friendcase.bootstrap.MainAddon
+version: '${version}'
+api: 2.2.5.6

@@ -1,0 +1,25 @@
+# Placeholders
+# %sender%
+# %target%
+# %keys%
+# %case%
+# %required%
+Messages:
+  NumberFormat: "&cNumber format exception"
+  YouReceivedGift: "&aYou successfully received gift from player &e%sender%"
+  YouSendGift: "&aYou successfully send gift for player &e%target%"
+  GiftYourself: "&cYou can't send gift for yourself"
+  PlayerNotFound: "&cPlayer not online"
+  MinNumber: "&cRequires at least %required% of case keys"
+  CaseNotFound: "&cCase not found!"
+  ConfigReloaded: "&aConfig reloaded!"
+  OnlyPlayers: "&cYou can use this command only from player!"
+  Help:
+    - "&9/dc gift &7(&aPlayer&7) (&aCase type&7) (&aKeys&7)"
+
+Api:
+  Description: "&2Send gift for another player"
+  Args:
+    - "&7(&aPlayer&7)"
+    - "(&aCase type&7)"
+    - "(&aKeys&7)"

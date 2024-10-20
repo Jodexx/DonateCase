@@ -1,0 +1,6 @@
+name: DCPrizePreview
+version: '${version}'
+main: com.jodexindustries.dcprizepreview.bootstrap.MainPlugin
+api-version: '1.16'
+depend: [DonateCase]
+authors: [_Jodex__]

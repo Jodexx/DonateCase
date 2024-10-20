@@ -1,0 +1,13 @@
+Debug: false
+Package: "com.jodexindustries.donatecase.api.events" # dont change this
+
+Events: # See wiki -> https://wiki.jodexindustries.xyz/docs/DonateCase/Addons/dc-event-manager
+  MyEvent:
+    Event: AnimationStartEvent
+    Actions:
+      - "[command] say test"
+
+  MyAnotherEvent:
+    Event: AnimationEndEvent
+    Actions:
+      - "[broadcast] &dAnimation ended!"

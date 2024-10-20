@@ -1,0 +1,22 @@
+# How long after logging in will the player be able to get the key to the case?
+TimeToPlay: 3600 # in seconds
+Casename: "case" # the name of the case to issue to the player
+
+# Can a player get a case key only once?
+GetOneTime: true
+
+#PLACEHOLDERS
+Second: "s " #space :D
+Minute: "m "
+Hour: "h "
+Received: "&aKey received"
+
+#MESSAGES
+Done: "&aYou have received a free case key!"
+Wait: "&cYou need to wait &d%time% &cto get key from case."
+AlreadyReceived: "&cYou have already received a free case!"
+ConfigReloaded: "&aConfig successful reloaded!"
+PermissionsNeed: "&cYou don't have permissions!"
+
+# /dc free - get free case; permission: freecases.use; default: true
+# /dc free reload - reload config; permission: freecases.reload; default: false
