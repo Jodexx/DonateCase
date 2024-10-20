@@ -6,7 +6,7 @@ import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.api.events.KeysTransactionEvent;
 import com.jodexindustries.donatecase.config.Config;
-import com.jodexindustries.donatecase.database.sql.MySQLDataBase;
+import com.jodexindustries.donatecase.database.CaseDatabase;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
@@ -119,11 +119,7 @@ public class Case {
         KeysTransactionEvent event = new KeysTransactionEvent(caseType, player, keys, before);
         Bukkit.getPluginManager().callEvent(event);
         if(!event.isCancelled()) {
-            if (instance.databaseType == DatabaseType.YAML) {
-                getConfig().getKeys().setKeys(caseType, player, event.after());
-            } else {
-                getMySQL().setKeys(caseType, player, event.after());
-            }
+            getDatabase().setKeys(caseType, player, event.after());
         }
     }
 
@@ -152,11 +148,7 @@ public class Case {
      * @since 2.2.6.1
      */
     public static void removeAllKeys() {
-        if (instance.databaseType == DatabaseType.YAML) {
-            getConfig().getKeys().delAllKeys();
-        } else {
-            getMySQL().delAllKeys();
-        }
+        getDatabase().delAllKeys();
     }
 
     /**
@@ -176,8 +168,7 @@ public class Case {
      * @return CompletableFuture of keys
      */
     public static CompletableFuture<Integer> getKeysAsync(String caseType, String player) {
-        return CompletableFuture.supplyAsync(() -> instance.databaseType == DatabaseType.SQL ?
-                getMySQL().getKeys(caseType, player).join() : getConfig().getKeys().getKeys(caseType, player));
+        return CompletableFuture.supplyAsync(() -> getDatabase().getKeys(caseType, player).join());
     }
 
     /**
@@ -189,7 +180,7 @@ public class Case {
      * @since 2.2.3.8
      */
     public static int getKeysCache(String caseType, String player) {
-        if(instance.databaseType == DatabaseType.YAML) return getKeys(caseType, player);
+        if(instance.databaseType == DatabaseType.SQLITE) return getKeys(caseType, player);
 
         int keys;
         InfoEntry entry = new InfoEntry(player, caseType);
@@ -223,9 +214,7 @@ public class Case {
      * @return CompletableFuture of open count
      */
     public static CompletableFuture<Integer>  getOpenCountAsync(String caseType, String player) {
-        return CompletableFuture.supplyAsync(() -> instance.databaseType == DatabaseType.SQL ?
-                getMySQL().getOpenCount(player, caseType).join() :
-                getConfig().getData().getOpenCount(player, caseType));
+        return CompletableFuture.supplyAsync(() -> getDatabase().getOpenCount(player, caseType).join());
     }
 
     /**
@@ -237,7 +226,7 @@ public class Case {
      * @since 2.2.3.8
      */
     public static int getOpenCountCache(String caseType, String player) {
-        if(instance.databaseType == DatabaseType.YAML) return getOpenCount(caseType, player);
+        if(instance.databaseType == DatabaseType.SQLITE) return getOpenCount(caseType, player);
 
         int openCount;
         InfoEntry entry = new InfoEntry(player, caseType);
@@ -261,11 +250,7 @@ public class Case {
      * @since 2.2.4.4
      */
     public static void setOpenCount(String caseType, String player, int openCount) {
-        if (instance.databaseType == DatabaseType.YAML) {
-            getConfig().getData().setOpenCount(player, caseType, openCount);
-        } else {
-            getMySQL().setCount(caseType, player, openCount);
-        }
+        getDatabase().setCount(caseType, player, openCount);
     }
 
     /**
@@ -490,10 +475,10 @@ public class Case {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             CaseData.HistoryData data = new CaseData.HistoryData(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
             CaseData.HistoryData[] list;
-            if(instance.databaseType == DatabaseType.YAML) {
+            if(instance.databaseType == DatabaseType.SQLITE) {
                 list = caseData.getHistoryData();
             } else {
-                List<CaseData.HistoryData> temp = getMySQL().getHistoryDataByCaseType(caseData.getCaseType()).join();
+                List<CaseData.HistoryData> temp = getDatabase().getHistoryDataByCaseType(caseData.getCaseType()).join();
                 if(!temp.isEmpty()) {
                     list = temp.toArray(new CaseData.HistoryData[10]);
                 } else {
@@ -506,18 +491,14 @@ public class Case {
             for (int i = 0; i < list.length; i++) {
                 CaseData.HistoryData tempData = list[i];
                 if (tempData != null) {
-                    if (instance.databaseType == DatabaseType.YAML) {
-                        getConfig().getData().setHistoryData(caseData.getCaseType(), i, tempData);
-                    } else {
-                        getMySQL().setHistoryData(caseData.getCaseType(), i, tempData);
-                    }
+                    getDatabase().setHistoryData(caseData.getCaseType(), i, tempData);
                 }
             }
 
             // Set history data in memory
             Objects.requireNonNull(getCase(caseData.getCaseType())).setHistoryData(list);
 
-            addOpenCount(player.getName(), caseData.getCaseType(), 1);
+            addOpenCount(caseData.getCaseType(), player.getName(), 1);
         });
     }
 
@@ -622,13 +603,24 @@ public class Case {
     }
 
     /**
+     * Get plugin database manager
+     * @since 2.2.6.5
+     * @return database manager
+     */
+    @NotNull
+    public static CaseDatabase getDatabase() {
+        return getInstance().database;
+    }
+
+    /**
      * Get plugin mysql database manager
      * @since 2.2.6.1
      * @return mysql manager
      */
     @NotNull
-    public static MySQLDataBase getMySQL() {
-        return getInstance().mysql;
+    @Deprecated
+    public static CaseDatabase getMySQL() {
+        return getDatabase();
     }
 
     /**
@@ -667,7 +659,7 @@ public class Case {
      * @return list of HistoryData (sorted by time)
      */
     public static CompletableFuture<List<CaseData.HistoryData>> getAsyncSortedHistoryData() {
-        return CompletableFuture.supplyAsync(() -> instance.databaseType == DatabaseType.YAML ?
+        return CompletableFuture.supplyAsync(() -> instance.databaseType == DatabaseType.SQLITE ?
                 caseData.values().stream()
                 .filter(Objects::nonNull)
                 .flatMap(data -> {
@@ -676,7 +668,7 @@ public class Case {
                 })
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
-                .collect(Collectors.toList()) : getMySQL().getHistoryData().join().stream().filter(Objects::nonNull)
+                .collect(Collectors.toList()) : getDatabase().getHistoryData().join().stream().filter(Objects::nonNull)
                 .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
                 .collect(Collectors.toList()));
     }
@@ -686,7 +678,7 @@ public class Case {
      * @return list of history data
      */
     public static List<CaseData.HistoryData> getSortedHistoryDataCache() {
-        if (instance.databaseType == DatabaseType.YAML) {
+        if (instance.databaseType == DatabaseType.SQLITE) {
             return getAsyncSortedHistoryData().join();
         }
 

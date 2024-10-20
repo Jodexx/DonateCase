@@ -2,8 +2,7 @@ package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.database.yaml.YamlData;
-import com.jodexindustries.donatecase.database.yaml.YamlKeys;
+import com.jodexindustries.donatecase.api.data.DatabaseType;
 import com.jodexindustries.donatecase.tools.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -25,8 +24,6 @@ public class Config {
     private final YamlConfiguration lang;
 
     private final CasesConfig casesConfig;
-    private final YamlData data;
-    private final YamlKeys keys;
 
     private final Map<File, YamlConfiguration> configs = new HashMap<>();
 
@@ -44,9 +41,7 @@ public class Config {
         String[] files = {
                 "Config.yml",
                 "Cases.yml",
-                "Keys.yml",
                 "Animations.yml",
-                "Data.yml",
         };
 
 
@@ -54,23 +49,23 @@ public class Config {
             checkAndCreateFile(file);
         }
 
-        File fileAnimations = new File(plugin.getDataFolder(), "Animations.yml");
-        YamlConfiguration animations = YamlConfiguration.loadConfiguration(fileAnimations);
-        configs.put(fileAnimations, animations);
+        File[] directoryFiles = plugin.getDataFolder().listFiles();
+        if(directoryFiles != null) {
+            for (File file : directoryFiles) {
+                if(!file.isFile()) continue;
+                if(file.getName().endsWith(".yml") || file.getName().endsWith(".yaml")) {
+                    try {
+                        YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(file);
+                        configs.put(file, yamlConfiguration);
+                    } catch (Throwable e) {
+                        plugin.getLogger().log(Level.WARNING, "Error with loading configuration : ", e);
+                    }
+                }
+            }
+        }
 
-        File fileCases = new File(plugin.getDataFolder(), "Cases.yml");
-        YamlConfiguration cases = YamlConfiguration.loadConfiguration(fileCases);
-        configs.put(fileCases, cases);
-
-        File fileConfig = new File(plugin.getDataFolder(), "Config.yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(fileConfig);
-        configs.put(fileConfig, config);
-
-        checkAndUpdateConfig(config, "Config.yml", "2.5");
-        checkAndUpdateConfig(animations, "Animations.yml", "1.4");
-
-        data = new YamlData();
-        keys = new YamlKeys();
+        checkAndUpdateConfig(getConfig(), "Config.yml", "2.5");
+        checkAndUpdateConfig(getAnimations(), "Animations.yml", "1.4");
 
         converter.convertConfig();
         converter.convertAnimations();
@@ -127,6 +122,8 @@ public class Config {
             Case.openCache.setMaxAge(caching);
             Case.historyCache.setMaxAge(caching);
         }
+
+        plugin.databaseType = getConfig().getBoolean("MySql.Enabled") ? DatabaseType.MYSQL : DatabaseType.SQLITE;
     }
 
     @Nullable
@@ -137,6 +134,15 @@ public class Config {
     @Nullable
     public YamlConfiguration get(@NotNull String name) {
         return configs.get(new File(plugin.getDataFolder(), name));
+    }
+
+    public void delete(@NotNull File file) {
+        if(file.delete()) configs.remove(file);
+    }
+
+    public void delete(@NotNull String name) {
+        File file = new File(plugin.getDataFolder(), name);
+        delete(file);
     }
 
     public boolean save(String name) {
@@ -169,14 +175,6 @@ public class Config {
      */
     public void saveConfig() {
         save("Config.yml");
-    }
-
-    /**
-     * Save Keys.yml configuration
-     */
-    @Deprecated
-    public void saveKeys() {
-        keys.save();
     }
 
     /**
@@ -299,22 +297,8 @@ public class Config {
         return casesConfig;
     }
 
-    /**
-     * Used for data storing
-     *
-     * @return Data.yml config instance
-     */
-    public YamlData getData() {
-        return data;
-    }
-
-    /**
-     * Used for keys storing
-     *
-     * @return Keys.yml config instance
-     */
-    public YamlKeys getKeys() {
-        return keys;
+    public Converter getConverter() {
+        return converter;
     }
 
     /**

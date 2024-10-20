@@ -22,7 +22,7 @@ import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.command.impl.*;
 import com.jodexindustries.donatecase.config.CaseLoader;
 import com.jodexindustries.donatecase.config.Config;
-import com.jodexindustries.donatecase.database.sql.MySQLDataBase;
+import com.jodexindustries.donatecase.database.CaseDatabase;
 import com.jodexindustries.donatecase.impl.actions.*;
 import com.jodexindustries.donatecase.gui.items.HISTORYItemHandlerImpl;
 import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
@@ -52,7 +52,7 @@ import java.util.logging.Level;
 public class DonateCase extends JavaPlugin {
     public static DonateCase instance;
 
-    public MySQLDataBase mysql;
+    public CaseDatabase database;
     public HologramManager hologramManager = null;
     public PAPISupport papi = null;
     public LuckPerms luckPerms = null;
@@ -71,7 +71,7 @@ public class DonateCase extends JavaPlugin {
     public Config config;
 
     public boolean usePackets = false;
-    public DatabaseType databaseType = DatabaseType.YAML;
+    public DatabaseType databaseType = DatabaseType.SQLITE;
 
     private boolean spawnProtectionDisabled = false;
 
@@ -141,7 +141,7 @@ public class DonateCase extends JavaPlugin {
         api.getGuiTypedItemManager().unregisterItems();
 
         if (papi != null) papi.unregister();
-        if (mysql != null) mysql.close();
+        if (database != null) database.close();
         if (hologramManager != null) hologramManager.removeAllHolograms();
         if (packetEventsSupport != null) packetEventsSupport.unload();
 
@@ -221,8 +221,10 @@ public class DonateCase extends JavaPlugin {
     public void loadConfig() {
         config = new Config(this);
 
-        mysql = new MySQLDataBase(this);
-        mysql.connect();
+        database = new CaseDatabase(this);
+        database.connect();
+
+        config.getConverter().convertData();
 
         disableSpawnProtection();
 

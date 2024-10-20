@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.database.sql;
+package com.jodexindustries.donatecase.database;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -9,9 +9,9 @@ import com.j256.ormlite.table.TableUtils;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.CaseData;
 import com.jodexindustries.donatecase.api.data.DatabaseType;
-import com.jodexindustries.donatecase.database.sql.entities.HistoryDataTable;
-import com.jodexindustries.donatecase.database.sql.entities.OpenInfoTable;
-import com.jodexindustries.donatecase.database.sql.entities.PlayerKeysTable;
+import com.jodexindustries.donatecase.database.entities.HistoryDataTable;
+import com.jodexindustries.donatecase.database.entities.OpenInfoTable;
+import com.jodexindustries.donatecase.database.entities.PlayerKeysTable;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class MySQLDataBase {
+public class CaseDatabase {
     private Dao<CaseData.HistoryData, String> historyDataTables;
     private Dao<PlayerKeysTable, String> playerKeysTables;
     private Dao<OpenInfoTable, String> openInfoTables;
@@ -28,35 +28,39 @@ public class MySQLDataBase {
 
     private final DonateCase instance;
 
-    public MySQLDataBase(DonateCase instance) {
+    public CaseDatabase(DonateCase instance) {
         this.instance = instance;
     }
 
     public void connect() {
         ConfigurationSection mysqlSection = instance.config.getConfig().getConfigurationSection("DonateCase.MySql");
-        if (mysqlSection == null) return;
+        if(mysqlSection == null) instance.databaseType = DatabaseType.SQLITE;
 
-        DatabaseType type = mysqlSection.getBoolean("Enabled") ? DatabaseType.SQL : DatabaseType.YAML;
-        if (type != DatabaseType.SQL) return;
-
-        String database = mysqlSection.getString("DataBase");
-        String port = mysqlSection.getString("Port");
-        String host = mysqlSection.getString("Host");
-        String user = mysqlSection.getString("User");
-        String password = mysqlSection.getString("Password");
-
-        com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
+        String url;
 
         try {
-            String url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true";
-            connectionSource = new JdbcConnectionSource(url, user, password);
+            if (instance.databaseType == DatabaseType.MYSQL) {
+                String database = mysqlSection.getString("DataBase");
+                String port = mysqlSection.getString("Port");
+                String host = mysqlSection.getString("Host");
+                String user = mysqlSection.getString("User");
+                String password = mysqlSection.getString("Password");
+
+                url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true";
+                connectionSource = new JdbcConnectionSource(url, user, password);
+            } else {
+                connectionSource = new JdbcConnectionSource("jdbc:sqlite:" +
+                        instance.getDataFolder().getAbsolutePath() + "/database.db");
+            }
+
+            com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
+
             TableUtils.createTableIfNotExists(connectionSource, HistoryDataTable.class);
             TableUtils.createTableIfNotExists(connectionSource, PlayerKeysTable.class);
             TableUtils.createTableIfNotExists(connectionSource, OpenInfoTable.class);
             historyDataTables = DaoManager.createDao(connectionSource, CaseData.HistoryData.class);
             playerKeysTables = DaoManager.createDao(connectionSource, PlayerKeysTable.class);
             openInfoTables = DaoManager.createDao(connectionSource, OpenInfoTable.class);
-            instance.databaseType = type;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -146,7 +150,7 @@ public class MySQLDataBase {
      * @param player   Case type
      * @param count    Number of opened cases
      */
-    public void setCount(String player, String caseType, int count) {
+    public void setCount(String caseType, String player, int count) {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             try {
                 List<OpenInfoTable> results = openInfoTables.queryBuilder()
@@ -173,6 +177,15 @@ public class MySQLDataBase {
                 instance.getLogger().warning(e.getMessage());
             }
         });
+    }
+
+    public void setHistoryData(CaseData.HistoryData[] historyData) {
+        for (int index = 0; index < historyData.length; index++) {
+            CaseData.HistoryData data = historyData[index];
+            if(data == null) continue;
+
+            setHistoryData(data.getCaseType(), index, data);
+        }
     }
 
     public void setHistoryData(String caseType, int index, CaseData.HistoryData data) {

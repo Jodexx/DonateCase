@@ -139,7 +139,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
             if (globalHistoryData.size() <= index) return null;
             data = globalHistoryData.get(index);
         } else {
-            if (Case.getInstance().databaseType == DatabaseType.YAML) {
+            if (Case.getInstance().databaseType == DatabaseType.SQLITE) {
                 data = historyCaseData.getHistoryData()[index];
             } else {
                 List<CaseData.HistoryData> dbData = Case.sortHistoryDataByCase(globalHistoryData, caseType);

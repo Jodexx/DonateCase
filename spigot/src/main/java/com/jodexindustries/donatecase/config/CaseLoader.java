@@ -4,7 +4,6 @@ import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.GUITypedItemManager;
 import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.DatabaseType;
 import com.jodexindustries.donatecase.api.data.GUI;
 import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
@@ -86,7 +85,6 @@ public class CaseLoader {
         CaseData.Hologram hologram = loadHologram(caseSection.getConfigurationSection("Hologram"));
         Map<String, CaseData.Item> items = loadItems(caseType, caseSection);
 
-        CaseData.HistoryData[] historyData = loadHistoryData(caseType);
         Map<String, Integer> levelGroups = loadLevelGroups(caseSection);
 
         GUI gui = loadGUI(caseSection);
@@ -95,7 +93,7 @@ public class CaseLoader {
 
         List<String> noKeyActions = caseSection.getStringList("NoKeyActions");
 
-        return new CaseData(caseType, caseDisplayName, animationName, items, historyData,
+        return new CaseData(caseType, caseDisplayName, animationName, items, new CaseData.HistoryData[10],
                 hologram, levelGroups, gui, noKeyActions, openType, animationSettings);
     }
 
@@ -188,15 +186,6 @@ public class CaseLoader {
         if(withItemStack) itemStack = Tools.loadCaseItem(id);
 
         return new CaseData.Item.Material(id, itemStack, itemDisplayName, enchanted, lore, modelData, rgb);
-    }
-
-    private CaseData.HistoryData[] loadHistoryData(String caseType) {
-        CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
-            if (plugin.databaseType == DatabaseType.YAML) {
-                historyData = plugin.config.getData().getHistoryData(caseType);
-            }
-
-        return historyData;
     }
 
     private Map<String, Integer> loadLevelGroups(ConfigurationSection caseSection) {

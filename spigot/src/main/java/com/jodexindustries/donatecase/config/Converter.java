@@ -1,6 +1,8 @@
 package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.database.CaseDatabase;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.Pair;
 import org.bukkit.Location;
@@ -28,19 +30,90 @@ public class Converter {
             config.saveConfig();
         }
 
-        ConfigurationSection keysSection = config.getKeys().get().getConfigurationSection("DonatCase");
-        if (keysSection != null) {
-            config.getKeys().get().set("DonateCase", keysSection);
-            config.getKeys().get().set("DonatCase", null);
-            config.getKeys().save();
-        }
-
         ConfigurationSection casesSection = config.getCases().getConfigurationSection("DonatCase");
         if (casesSection != null) {
             config.getCases().set("DonateCase", casesSection);
             config.getCases().set("DonatCase", null);
             config.saveCases();
         }
+    }
+
+    public void convertData() {
+        CaseDatabase database = Case.getDatabase();
+        YamlConfiguration dataConfiguration = config.get("Data.yml");
+        if (dataConfiguration != null) {
+            config.getPlugin().getLogger().info("Converting Data.yml to database...");
+            ConfigurationSection dataSection = dataConfiguration.getConfigurationSection("Data");
+            if (dataSection != null) {
+                for (String caseType : dataSection.getKeys(false))
+                    database.setHistoryData(getHistoryData(dataConfiguration, caseType));
+            }
+
+            ConfigurationSection openSection = dataConfiguration.getConfigurationSection("Open");
+            if (openSection != null) {
+                for (String player : openSection.getKeys(false)) {
+                    ConfigurationSection playerSection = openSection.getConfigurationSection(player);
+                    if (playerSection != null) {
+                        for (String caseType : playerSection.getKeys(false)) {
+                            int openCount = playerSection.getInt(caseType);
+                            database.setCount(caseType, player, openCount);
+                        }
+                    }
+                }
+            }
+
+            config.delete("Data.yml");
+        }
+
+        YamlConfiguration keysConfiguration = config.get("Keys.yml");
+        if (keysConfiguration != null) {
+            config.getPlugin().getLogger().info("Converting Keys.yml to database...");
+            ConfigurationSection keysSection = keysConfiguration.getConfigurationSection("DonateCase.Cases");
+            if (keysSection == null) keysConfiguration.getConfigurationSection("DonatCase.Cases");
+
+            if (keysSection != null) {
+                for (String caseType : keysSection.getKeys(false)) {
+                    ConfigurationSection caseSection = keysSection.getConfigurationSection(caseType);
+                    if (caseSection != null) {
+                        for (String player : caseSection.getKeys(false)) {
+                            int keys = caseSection.getInt(player);
+                            database.setKeys(caseType, player, keys);
+                        }
+                    }
+                }
+            }
+
+            config.delete("Keys.yml");
+        }
+    }
+
+    public CaseData.HistoryData[] getHistoryData(YamlConfiguration configuration, String caseType) {
+        CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
+
+        ConfigurationSection dataSection = configuration.getConfigurationSection("Data");
+
+        if (dataSection != null) {
+            ConfigurationSection section = dataSection.getConfigurationSection(caseType);
+
+            if (section != null) {
+                for (String i : section.getKeys(false)) {
+                    ConfigurationSection caseDataSection = section.getConfigurationSection(i);
+
+                    if (caseDataSection != null) {
+                        CaseData.HistoryData data = new CaseData.HistoryData(
+                                caseDataSection.getString("Item"),
+                                caseType,
+                                caseDataSection.getString("Player"),
+                                caseDataSection.getLong("Time"),
+                                caseDataSection.getString("Group"),
+                                caseDataSection.getString("Action"));
+
+                        historyData[Integer.parseInt(i)] = data;
+                    }
+                }
+            }
+        }
+        return historyData;
     }
 
     public void convertAnimations() {
