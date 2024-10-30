@@ -55,19 +55,15 @@ public class EventListener implements Listener {
     public void onCaseKeyPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         ItemStack item = event.getItemInHand();
-
-        // Проверка, что предмет в руке игрока не пуст и имеет метаданные
+        
         if (item != null && item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
             if (meta == null) return;
 
             PersistentDataContainer container = meta.getPersistentDataContainer();
 
-            // Проверка, что предмет является ключом для кейса
             if (container.has(NAMESPACED_KEY, PersistentDataType.STRING)) {
-                // Отменяем установку блока, если предмет - это ключ
                 event.setCancelled(true);
-                player.sendMessage("Этот ключ можно использовать только для открытия кейсов!");
             }
         }
     }
