@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -46,6 +47,23 @@ public class EventListener implements Listener {
                     item.setAmount(item.getAmount() - 1);
                     break;
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onCaseKeyPlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        ItemStack item = event.getItemInHand();
+        
+        if (item != null && item.hasItemMeta()) {
+            ItemMeta meta = item.getItemMeta();
+            if (meta == null) return;
+
+            PersistentDataContainer container = meta.getPersistentDataContainer();
+
+            if (container.has(NAMESPACED_KEY, PersistentDataType.STRING)) {
+                event.setCancelled(true);
             }
         }
     }
