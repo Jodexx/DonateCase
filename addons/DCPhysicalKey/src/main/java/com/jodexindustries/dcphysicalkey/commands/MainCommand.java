@@ -22,13 +22,16 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
     private final Config config;
     private final SubCommandManager manager;
 
+    private String commandName;
+
     public MainCommand(SubCommandManager manager, Bootstrap bootstrap) {
         this.config = bootstrap.getConfig();
         this.manager = manager;
     }
 
     public void register() {
-        SubCommand subCommand = manager.builder(config.get().getString("command", "physicalkey"))
+        commandName = config.get().getString("command", "physicalkey");
+        SubCommand subCommand = manager.builder(commandName)
                 .permission(config.get().getString("permissions.give", "dcphysicalkey.give"))
                 .description("&2Gives physical key to specific player")
                 .args(new String[]{
@@ -44,7 +47,7 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
     }
 
     public void unregister() {
-        manager.unregisterSubCommand(config.get().getString("command", "physicalkey"));
+        if(commandName != null) manager.unregisterSubCommand(commandName);
     }
 
     @Override
