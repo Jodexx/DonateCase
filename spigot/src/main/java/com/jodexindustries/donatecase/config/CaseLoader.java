@@ -146,6 +146,7 @@ public class CaseLoader {
         if(materialSection == null) return null;
 
         CaseData.Item.Material material = loadMaterial(materialSection, true);
+        material.updateMeta();
 
         return new CaseData.Item(item, group, chance, index, material, giveType, actions, randomActions, alternativeActions);
     }
