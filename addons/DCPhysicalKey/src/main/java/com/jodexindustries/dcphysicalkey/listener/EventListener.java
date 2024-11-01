@@ -53,10 +53,9 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onCaseKeyPlace(BlockPlaceEvent event) {
-        Player player = event.getPlayer();
         ItemStack item = event.getItemInHand();
         
-        if (item != null && item.hasItemMeta()) {
+        if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
             if (meta == null) return;
 
