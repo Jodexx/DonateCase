@@ -107,6 +107,19 @@ public class AnimationManager {
      * @param caseData Case data
      */
     public boolean startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseData caseData) {
+        return startAnimation(player, location, caseData, 0);
+    }
+
+    /**
+     * Start animation at a specific location with delay
+     *
+     * @param player   The player who opened the case
+     * @param location Location where to start the animation
+     * @param caseData Case data
+     * @param delay Delay in ticks
+     * @since 2.2.6.7
+     */
+    public boolean startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseData caseData, int delay) {
         Block block = location.getBlock();
 
         if(Case.activeCasesByBlock.containsKey(block)) {
@@ -167,7 +180,7 @@ public class AnimationManager {
 
                     javaAnimation.init(player, caseLocation,
                             uuid, caseData, preStartEvent.getWinItem(), settings);
-                    javaAnimation.start();
+                    Bukkit.getScheduler().runTaskLater(Case.getInstance(), javaAnimation::start, delay);
 
                 } else {
                     throw new IllegalArgumentException("Animation executable class does not exist!");
