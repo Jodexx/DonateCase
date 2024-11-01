@@ -474,29 +474,23 @@ public class Case {
     private static void saveOpenInfo(CaseData caseData, OfflinePlayer player, CaseData.Item item, String choice) {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             CaseData.HistoryData data = new CaseData.HistoryData(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
-            CaseData.HistoryData[] list;
-            if(instance.databaseType == DatabaseType.SQLITE) {
-                list = caseData.getHistoryData();
-            } else {
-                List<CaseData.HistoryData> temp = getDatabase().getHistoryDataByCaseType(caseData.getCaseType()).join();
-                if(!temp.isEmpty()) {
-                    list = temp.toArray(new CaseData.HistoryData[10]);
-                } else {
-                    list = new CaseData.HistoryData[10];
-                }
-            }
-            System.arraycopy(list, 0, list, 1, list.length - 1);
-            list[0] = data;
+            CaseData.HistoryData[] historyData = caseData.getHistoryData();
 
-            for (int i = 0; i < list.length; i++) {
-                CaseData.HistoryData tempData = list[i];
+            List<CaseData.HistoryData> databaseData = getDatabase().getHistoryDataByCaseType(caseData.getCaseType()).join();
+            if(!databaseData.isEmpty()) historyData = databaseData.toArray(new CaseData.HistoryData[10]);
+
+            System.arraycopy(historyData, 0, historyData, 1, historyData.length - 1);
+            historyData[0] = data;
+
+            for (int i = 0; i < historyData.length; i++) {
+                CaseData.HistoryData tempData = historyData[i];
                 if (tempData != null) {
                     getDatabase().setHistoryData(caseData.getCaseType(), i, tempData);
                 }
             }
 
             // Set history data in memory
-            Objects.requireNonNull(getCase(caseData.getCaseType())).setHistoryData(list);
+            Objects.requireNonNull(getCase(caseData.getCaseType())).setHistoryData(historyData);
 
             addOpenCount(caseData.getCaseType(), player.getName(), 1);
         });
