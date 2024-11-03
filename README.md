@@ -25,7 +25,7 @@
 <dependency>
   <groupId>com.jodexindustries.donatecase</groupId>
   <artifactId>spigot</artifactId>
-  <version>2.2.6.6</version>
+  <version>2.2.6.7</version>
 </dependency>
 ```
 > Gradle
@@ -36,5 +36,5 @@ maven {
 }
 ```
 ```groovy
-compileOnly("com.jodexindustries.donatecase:spigot:2.2.6.6")
+compileOnly("com.jodexindustries.donatecase:spigot:2.2.6.7")
 ```

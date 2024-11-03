@@ -5,7 +5,7 @@ sidebar_position: 8
 ---
 # Реєстрація матеріалів
 
-Користувацькі матеріали оброблюються за допомогою інтерфейсу [MaterialHandler](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.6/raw/com/jodexindustries/donatecase/api/data/material/MaterialHandler.html)
+Користувацькі матеріали оброблюються за допомогою інтерфейсу [MaterialHandler](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/data/material/MaterialHandler.html)
 
 ## Приклад реалізації `HEAD` матеріалу
 > HEADMaterialHandlerImpl клас
