@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 /**
@@ -105,8 +106,9 @@ public class AnimationManager {
      * @param player   The player who opened the case
      * @param location Location where to start the animation
      * @param caseData Case data
+     * @return Completable future of completes (when started)
      */
-    public boolean startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseData caseData) {
+    public CompletableFuture<Boolean> startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseData caseData) {
         return startAnimation(player, location, caseData, 0);
     }
 
@@ -117,19 +119,20 @@ public class AnimationManager {
      * @param location Location where to start the animation
      * @param caseData Case data
      * @param delay Delay in ticks
+     * @return Completable future of completes (when started)
      * @since 2.2.6.7
      */
-    public boolean startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseData caseData, int delay) {
+    public CompletableFuture<Boolean> startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseData caseData, int delay) {
         Block block = location.getBlock();
 
-        if(Case.activeCasesByBlock.containsKey(block)) {
+        if (Case.activeCasesByBlock.containsKey(block)) {
             addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation while another animation is running!");
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
 
         if (caseData.getItems().isEmpty()) {
             addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation without items in CaseData!");
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
 
         caseData = caseData.clone();
@@ -139,7 +142,7 @@ public class AnimationManager {
             Tools.msg(player, "&cAn error occurred while opening the case!");
             Tools.msg(player, "&cContact the project administration!");
             addon.getLogger().log(Level.WARNING, "Case animation " + animation + " does not exist!");
-            return false;
+            return CompletableFuture.completedFuture(false);
         }
 
         CaseData.Item winItem = caseData.getRandomItem();
@@ -156,6 +159,7 @@ public class AnimationManager {
 
         CaseAnimation caseAnimation = getRegisteredAnimation(animation);
 
+        CompletableFuture<Boolean> animationCompletion = new CompletableFuture<>();
         if (caseAnimation != null) {
             Location caseLocation = location;
 
@@ -168,19 +172,24 @@ public class AnimationManager {
                 Case.activeCasesByBlock.put(block, uuid);
 
                 if (animationClass != null) {
-                    ConfigurationSection settings =
-                            caseData.getAnimationSettings() != null ?
-                                    caseData.getAnimationSettings() :
-                                    Case.getConfig().getAnimations().getConfigurationSection(animation);
+                    ConfigurationSection settings = caseData.getAnimationSettings() != null ? caseData.getAnimationSettings() : Case.getConfig().getAnimations().getConfigurationSection(animation);
 
-                    if(caseAnimation.isRequireSettings() && settings == null)
+                    if (caseAnimation.isRequireSettings() && settings == null)
                         throw new IllegalArgumentException("Animation " + animation + " requires settings for starting!");
 
                     JavaAnimation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
+                    javaAnimation.init(player, caseLocation, uuid, caseData, preStartEvent.getWinItem(), settings);
 
-                    javaAnimation.init(player, caseLocation,
-                            uuid, caseData, preStartEvent.getWinItem(), settings);
-                    Bukkit.getScheduler().runTaskLater(Case.getInstance(), javaAnimation::start, delay);
+                    Bukkit.getScheduler().runTaskLater(Case.getInstance(), () -> {
+                        try {
+                            javaAnimation.start();
+                            animationCompletion.complete(true);
+                        } catch (Throwable t) {
+                            addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
+                            Case.activeCasesByBlock.remove(block);
+                            animationCompletion.complete(false);
+                        }
+                    }, delay);
 
                 } else {
                     throw new IllegalArgumentException("Animation executable class does not exist!");
@@ -189,7 +198,7 @@ public class AnimationManager {
             } catch (Throwable t) {
                 addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
                 Case.activeCasesByBlock.remove(block);
-                return false;
+                animationCompletion.complete(false);
             }
         }
 
@@ -204,8 +213,9 @@ public class AnimationManager {
         // AnimationStart event
         AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, block, preStartEvent.getWinItem(), uuid);
         Bukkit.getPluginManager().callEvent(startEvent);
-        return true;
+        return animationCompletion;
     }
+
 
     /**
      * Check for animation registration
