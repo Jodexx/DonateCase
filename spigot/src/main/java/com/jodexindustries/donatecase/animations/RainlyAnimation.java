@@ -123,7 +123,7 @@ public class RainlyAnimation extends JavaAnimation {
 
             Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
 
-            world.spawnParticle(Particle.EXPLOSION_HUGE, loc, 0);
+            world.spawnParticle(getParticle("explosion"), loc, 0);
             world.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
         }
 
@@ -158,12 +158,28 @@ public class RainlyAnimation extends JavaAnimation {
                 double x = 0.09 * (9 - t * 2.5) * Math.cos(t + phi);
                 double z = 0.09 * (9 - t * 2.5) * Math.sin(t + phi);
                 particleLocation.add(x, 0.0, z);
-                world.spawnParticle(Particle.FIREWORKS_SPARK, loc.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0);
+                world.spawnParticle(getParticle("fireworks"), loc.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0);
                 particleLocation.subtract(x, 0.0, z);
 
                 if (t >= 22) {
                     particleLocation.add(x, 0.0, z);
                     t = 0.0;
+                }
+            }
+        }
+
+        private Particle getParticle(String name) {
+            if(name.equalsIgnoreCase("explosion")) {
+                try {
+                    return Particle.valueOf("EXPLOSION_HUGE");
+                } catch (IllegalArgumentException e) {
+                    return Particle.valueOf("EXPLOSION");
+                }
+            } else {
+                try {
+                    return Particle.valueOf("FIREWORKS_SPARK");
+                } catch (IllegalArgumentException e) {
+                    return Particle.valueOf("FIREWORK");
                 }
             }
         }

@@ -115,7 +115,7 @@ public class ShapeAnimation extends JavaAnimation {
 
                 if (tick <= 8) {
                     Particle.DustOptions dustOptions = new Particle.DustOptions(orangeColor, orangeSize);
-                    world.spawnParticle(Particle.REDSTONE, l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
+                    world.spawnParticle(getParticle(), l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
                 }
             }
 
@@ -140,7 +140,7 @@ public class ShapeAnimation extends JavaAnimation {
                     Particle.DustOptions dustOptions = new Particle.DustOptions(whiteColor, whiteSize);
 
                     world.spawnParticle(
-                            Bukkit.getVersion().contains("1.12") ? Particle.FIREWORKS_SPARK : Particle.REDSTONE,
+                            getParticle(),
                             loc.clone().add(0.0, 0.4, 0.0),
                             1, 0.1, 0.1, 0.1, 0.0, dustOptions
                     );
@@ -159,6 +159,14 @@ public class ShapeAnimation extends JavaAnimation {
             }
 
             ++tick;
+        }
+
+        private Particle getParticle() {
+            try {
+                return Particle.valueOf("REDSTONE");
+            } catch (IllegalArgumentException e) {
+                return Particle.valueOf("DUST");
+            }
         }
 
     }

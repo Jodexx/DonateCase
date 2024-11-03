@@ -131,7 +131,9 @@ public class SkullCreator {
             return null;
         }
         SkullMeta meta = (SkullMeta) item.getItemMeta();
-        mutateItemMeta(meta, base64);
+        try {
+            mutateItemMeta(meta, base64);
+        } catch (Throwable ignored) {}
         item.setItemMeta(meta);
 
         return item;
