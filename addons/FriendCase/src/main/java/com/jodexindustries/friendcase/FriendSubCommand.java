@@ -3,6 +3,7 @@ package com.jodexindustries.friendcase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
+import com.jodexindustries.donatecase.database.CaseDatabase;
 import com.jodexindustries.friendcase.utils.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -57,22 +58,28 @@ public class FriendSubCommand implements SubCommandExecutor, SubCommandTabComple
                         if (Case.getKeys(caseType, p.getName()) >= 1 && Case.getKeys(caseType, p.getName()) >= keys) {
                             if (target != null) {
                                 if (target != p) {
-                                    Case.removeKeys(caseType, p.getName(), keys);
-                                    Case.addKeys(caseType, target.getName(), keys);
-                                    target.sendMessage(rc(
-                                            t.getConfig().getConfig().getString("Messages.YouReceivedGift", "")
-                                                    .replace("%sender%", sender.getName())
-                                                    .replace("%target%", target.getName())
-                                                    .replace("%keys%", keys + "")
-                                                    .replace("%case%", caseType)
-                                    ));
-                                    sender.sendMessage(rc(
-                                            t.getConfig().getConfig().getString("Messages.YouSendGift", "")
-                                                    .replace("%target%", target.getName())
-                                                    .replace("%sender%", sender.getName())
-                                                    .replace("%keys%", keys + "")
-                                                    .replace("%case%", caseType)
-                                    ));
+                                    Case.removeKeys(caseType, p.getName(), keys).thenAcceptAsync(status -> {
+                                        if(status == CaseDatabase.Status.COMPLETE) {
+                                            Case.addKeys(caseType, target.getName(), keys).thenAcceptAsync(nextStatus -> {
+                                                if(nextStatus == CaseDatabase.Status.COMPLETE) {
+                                                    target.sendMessage(rc(
+                                                            t.getConfig().getConfig().getString("Messages.YouReceivedGift", "")
+                                                                    .replace("%sender%", sender.getName())
+                                                                    .replace("%target%", target.getName())
+                                                                    .replace("%keys%", keys + "")
+                                                                    .replace("%case%", caseType)
+                                                    ));
+                                                    sender.sendMessage(rc(
+                                                            t.getConfig().getConfig().getString("Messages.YouSendGift", "")
+                                                                    .replace("%target%", target.getName())
+                                                                    .replace("%sender%", sender.getName())
+                                                                    .replace("%keys%", keys + "")
+                                                                    .replace("%case%", caseType)
+                                                    ));
+                                                }
+                                            });
+                                        }
+                                    });
                                 } else {
                                     sender.sendMessage(rc(
                                             t.getConfig().getConfig().getString("Messages.GiftYourself", "")));
