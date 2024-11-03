@@ -40,8 +40,7 @@ public class DelKeyCommand implements SubCommandExecutor, SubCommandTabCompleter
                 GlobalCommand.sendHelp(sender, label);
             } else if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("all")) {
-                    Case.removeAllKeys();
-                    Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("all-keys-cleared")));
+                    Case.removeAllKeys().thenAcceptAsync(status -> Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("all-keys-cleared"))));
                 }
             } else {
                 String player = args[0];

@@ -169,6 +169,10 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(px -> px.startsWith(args[0])).collect(Collectors.toList()));
             return list;
         } else if (args.length >= 3) {
+            if (args.length == 4) {
+                list.add("-s");
+                return list;
+            }
             return new ArrayList<>();
         }
         if (args[args.length - 1].isEmpty()) {

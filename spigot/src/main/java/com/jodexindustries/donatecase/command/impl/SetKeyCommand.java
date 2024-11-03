@@ -8,6 +8,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.command.GlobalCommand;
+import com.jodexindustries.donatecase.database.CaseDatabase;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -50,13 +51,19 @@ public class SetKeyCommand implements SubCommandExecutor, SubCommandTabCompleter
             if (Case.hasCaseByType(caseName)) {
                 CaseData data = Case.getCase(caseName);
                 if (data == null) return;
-                Case.setKeys(caseName, player, keys);
-                Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-sets"),
-                        "%player:" + player, "%key:" + keys,
-                        "%casetitle:" + data.getCaseTitle(), "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
-                Tools.msg(target, Tools.rt(Case.getConfig().getLang().getString("keys-sets-target"),
-                        "%player:" + player, "%key:" + keys,
-                        "%casetitle:" + data.getCaseTitle(), "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
+                Case.setKeys(caseName, player, keys).thenAcceptAsync(status -> {
+                    if(status == CaseDatabase.Status.COMPLETE) {
+                        Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-sets"),
+                                "%player:" + player, "%key:" + keys,
+                                "%casetitle:" + data.getCaseTitle(), "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
+
+                        if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
+                            Tools.msg(target, Tools.rt(Case.getConfig().getLang().getString("keys-sets-target"),
+                                    "%player:" + player, "%key:" + keys,
+                                    "%casetitle:" + data.getCaseTitle(), "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
+                        }
+                    }
+                });
             } else {
                 Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"),
                         "%case:" + caseName));
