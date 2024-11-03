@@ -87,8 +87,8 @@ public class CaseDatabase {
         });
     }
 
-    public void setKeys(String name, String player, int keys) {
-        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+    public CompletableFuture<Status> setKeys(String name, String player, int keys) {
+        return CompletableFuture.supplyAsync(() -> {
 
             try {
                 List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
@@ -113,7 +113,9 @@ public class CaseDatabase {
                 }
             } catch (SQLException e) {
                 instance.getLogger().warning(e.getMessage());
+                return Status.FAIL;
             }
+            return Status.COMPLETE;
         });
     }
 
@@ -150,8 +152,8 @@ public class CaseDatabase {
      * @param player   Case type
      * @param count    Number of opened cases
      */
-    public void setCount(String caseType, String player, int count) {
-        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+    public CompletableFuture<Status> setCount(String caseType, String player, int count) {
+        return CompletableFuture.supplyAsync(() -> {
             try {
                 List<OpenInfoTable> results = openInfoTables.queryBuilder()
                         .where()
@@ -175,7 +177,9 @@ public class CaseDatabase {
                 }
             } catch (SQLException e) {
                 instance.getLogger().warning(e.getMessage());
+                return Status.FAIL;
             }
+            return Status.COMPLETE;
         });
     }
 
@@ -188,8 +192,8 @@ public class CaseDatabase {
         }
     }
 
-    public void setHistoryData(String caseType, int index, CaseData.HistoryData data) {
-        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+    public CompletableFuture<Status> setHistoryData(String caseType, int index, CaseData.HistoryData data) {
+        return CompletableFuture.supplyAsync(() -> {
             try {
                 List<CaseData.HistoryData> results = historyDataTables.queryBuilder()
                         .where()
@@ -216,7 +220,9 @@ public class CaseDatabase {
 
             } catch (SQLException e) {
                 instance.getLogger().warning(e.getMessage());
+                return Status.FAIL;
             }
+            return Status.COMPLETE;
         });
 
     }
@@ -250,13 +256,15 @@ public class CaseDatabase {
     }
 
 
-    public void delAllKeys() {
-        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+    public CompletableFuture<Status> delAllKeys() {
+        return CompletableFuture.supplyAsync(() -> {
             try {
                 playerKeysTables.deleteBuilder().delete();
             } catch (SQLException e) {
                 instance.getLogger().warning(e.getMessage());
+                return Status.FAIL;
             }
+            return Status.COMPLETE;
         });
     }
 
@@ -268,6 +276,12 @@ public class CaseDatabase {
                 instance.getLogger().warning(e.getMessage());
             }
         }
+    }
+
+    public enum Status {
+        COMPLETE,
+        CANCELLED,
+        FAIL
     }
 
 }

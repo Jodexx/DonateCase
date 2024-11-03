@@ -98,57 +98,83 @@ public class Case {
     }
 
     /**
-     * Set case keys to a specific player
+     * Set case keys for a specific player, calling an event beforehand
+     *
      * @param caseType Case type
-     * @param player Player name
-     * @param keys Number of keys
+     * @param player   Player name
+     * @param newKeys  New number of keys
+     * @param before   Number of keys before modification
+     * @return CompletableFuture of the operation's status
+     * @since 2.2.6.7
      */
-    public static void setKeys(String caseType, String player, int keys) {
-        getKeysAsync(caseType, player).thenAcceptAsync((from) -> setKeys(caseType, player, keys, from));
+    private static CompletableFuture<CaseDatabase.Status> setKeysWithEvent(String caseType, String player, int newKeys, int before) {
+        KeysTransactionEvent event = new KeysTransactionEvent(caseType, player, newKeys, before);
+        Bukkit.getPluginManager().callEvent(event);
+
+        return !event.isCancelled()
+                ? getDatabase().setKeys(caseType, player, event.after())
+                : CompletableFuture.completedFuture(CaseDatabase.Status.CANCELLED);
     }
 
     /**
-     * Set case keys to a specific player
+     * Directly set case keys to a specific player (bypassing addition/subtraction)
+     *
      * @param caseType Case type
-     * @param player Player name
-     * @param keys Number of keys
-     * @param before Number of keys before transaction
-     * @since 2.2.6.1
+     * @param player   Player name
+     * @param keys     Number of keys
+     * @return CompletableFuture of completion status
      */
-    private static void setKeys(String caseType, String player, int keys, int before) {
-        KeysTransactionEvent event = new KeysTransactionEvent(caseType, player, keys, before);
-        Bukkit.getPluginManager().callEvent(event);
-        if(!event.isCancelled()) {
-            getDatabase().setKeys(caseType, player, event.after());
-        }
+    public static CompletableFuture<CaseDatabase.Status> setKeys(String caseType, String player, int keys) {
+        return getKeysAsync(caseType, player)
+                .thenComposeAsync(before -> setKeysWithEvent(caseType, player, keys, before));
+    }
+
+    /**
+     * Modify case keys for a specific player
+     *
+     * @param caseType Case type
+     * @param player   Player name
+     * @param keys     Number of keys to modify (positive to add, negative to remove)
+     * @return Completable future of completion status
+     * @since 2.2.6.7
+     */
+    public static CompletableFuture<CaseDatabase.Status> modifyKeys(String caseType, String player, int keys) {
+        return getKeysAsync(caseType, player)
+                .thenComposeAsync(before -> setKeysWithEvent(caseType, player, before + keys, before));
     }
 
     /**
      * Add case keys to a specific player (async)
+     *
      * @param caseType Case type
-     * @param player Player name
-     * @param keys Number of keys
+     * @param player   Player name
+     * @param keys     Number of keys
+     * @return Completable future of completes
+     * @see #modifyKeys(String, String, int)
      */
-    public static void addKeys(String caseType, String player, int keys) {
-        getKeysAsync(caseType, player).thenAcceptAsync(before -> setKeys(caseType, player, before + keys, before));
+    public static CompletableFuture<CaseDatabase.Status> addKeys(String caseType, String player, int keys) {
+        return modifyKeys(caseType, player, keys);
     }
 
     /**
      * Delete case keys for a specific player (async)
+     *
      * @param caseType Case name
-     * @param player Player name
-     * @param keys Number of keys
+     * @param player   Player name
+     * @param keys     Number of keys
+     * @return Completable future of completes
+     * @see #modifyKeys(String, String, int)
      */
-    public static void removeKeys(String caseType, String player, int keys) {
-        getKeysAsync(caseType, player).thenAcceptAsync(before -> setKeys(caseType, player, before - keys));
+    public static CompletableFuture<CaseDatabase.Status> removeKeys(String caseType, String player, int keys) {
+        return modifyKeys(caseType, player, -keys);
     }
 
     /**
      * Delete all keys
      * @since 2.2.6.1
      */
-    public static void removeAllKeys() {
-        getDatabase().delAllKeys();
+    public static CompletableFuture<CaseDatabase.Status> removeAllKeys() {
+        return getDatabase().delAllKeys();
     }
 
     /**
@@ -244,24 +270,28 @@ public class Case {
 
     /**
      * Set case keys to a specific player (async)
-     * @param caseType Case type
-     * @param player Player name
+     *
+     * @param caseType  Case type
+     * @param player    Player name
      * @param openCount Opened count
+     * @return Completable future of completes
      * @since 2.2.4.4
      */
-    public static void setOpenCount(String caseType, String player, int openCount) {
-        getDatabase().setCount(caseType, player, openCount);
+    public static CompletableFuture<CaseDatabase.Status> setOpenCount(String caseType, String player, int openCount) {
+        return getDatabase().setCount(caseType, player, openCount);
     }
 
     /**
      * Add count of opened cases by player (async)
-     * @param caseType Case type
-     * @param player Player name
+     *
+     * @param caseType  Case type
+     * @param player    Player name
      * @param openCount Opened count
+     * @return Completable future of completes
      * @since 2.2.4.4
      */
-    public static void addOpenCount(String caseType, String player, int openCount) {
-        getOpenCountAsync(caseType, player).thenAcceptAsync(integer -> setOpenCount(caseType, player, integer + openCount));
+    public static CompletableFuture<CaseDatabase.Status> addOpenCount(String caseType, String player, int openCount) {
+        return getOpenCountAsync(caseType, player).thenComposeAsync(integer -> setOpenCount(caseType, player, integer + openCount));
     }
 
     /**
