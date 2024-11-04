@@ -14,7 +14,6 @@ plugins {
 
 group = "com.jodexindustries.donatecase"
 version = properties["version"].toString()
-val api: String = properties["api"].toString()
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
@@ -86,7 +85,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.jodexindustries.donatecase"
             artifactId = "spigot"
-            version = api
+            version = project.version.toString()
             from(components["java"])
         }
     }
