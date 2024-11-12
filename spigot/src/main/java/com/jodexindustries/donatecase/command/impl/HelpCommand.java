@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.command.impl;
 
-import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -15,9 +15,9 @@ import java.util.List;
 /**
  * Class for /dc help subcommand implementation
  */
-public class HelpCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class HelpCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManager manager) {
+    public static void register(SubCommandManagerImpl manager) {
         HelpCommand command = new HelpCommand();
 
         SubCommand subCommand = manager.builder("help")

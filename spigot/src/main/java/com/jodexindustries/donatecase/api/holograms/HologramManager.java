@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.holograms;
 
-import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
 import org.bukkit.block.Block;
 
 public abstract class HologramManager {
@@ -10,7 +10,7 @@ public abstract class HologramManager {
      * @param block Block, where hologram will be created
      * @param caseData Hooked CaseData
      */
-    public abstract void createHologram(Block block, CaseData caseData);
+    public abstract void createHologram(Block block, CaseDataBukkit caseData);
 
     /**
      * Removes the hologram

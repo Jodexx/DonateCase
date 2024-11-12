@@ -1,9 +1,9 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -20,12 +20,12 @@ import static com.jodexindustries.donatecase.command.GlobalCommand.resolveSDGCom
 /**
  * Class for /dc delkey subcommand implementation
  */
-public class DelKeyCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class DelKeyCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManager manager) {
+    public static void register(SubCommandManagerImpl manager) {
         DelKeyCommand command = new DelKeyCommand();
 
-        SubCommand subCommand = manager.builder("delkey")
+        SubCommand<CommandSender> subCommand = manager.builder("delkey")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)
@@ -46,7 +46,7 @@ public class DelKeyCommand implements SubCommandExecutor, SubCommandTabCompleter
                 String player = args[0];
                 String caseType = args[1];
                 if (Case.hasCaseByType(caseType)) {
-                    CaseData data = Case.getCase(caseType);
+                    CaseDataBukkit data = Case.getCase(caseType);
                     if (data == null) return;
                     int keys;
                     if (args.length == 2) {

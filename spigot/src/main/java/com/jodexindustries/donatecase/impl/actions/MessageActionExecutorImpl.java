@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class MessageActionExecutorImpl implements ActionExecutor {
+public class MessageActionExecutorImpl implements ActionExecutor<OfflinePlayer> {
     /**
      * Send chat message for player with specific cooldown<br>
      * {@code - "[message] (message)"}

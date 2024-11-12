@@ -7,7 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 
-public class SoundActionExecutorImpl implements ActionExecutor {
+public class SoundActionExecutorImpl implements ActionExecutor<OfflinePlayer> {
     /**
      * Player sound for player with specific cooldown<br>
      * {@code - "[sound] (sound) (volume) (pitch)"}

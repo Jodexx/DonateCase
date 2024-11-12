@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.holograms.types;
 
-import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataHologram;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.tools.Tools;
 import eu.decentsoftware.holograms.api.DHAPI;
@@ -18,8 +19,8 @@ public class DecentHologramsSupport extends HologramManager {
     private final HashMap<Block, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void createHologram(Block block, CaseData caseData) {
-        CaseData.Hologram caseHologram = caseData.getHologram();
+    public void createHologram(Block block, CaseDataBukkit caseData) {
+        CaseDataHologram caseHologram = caseData.getHologram();
 
         if (!caseHologram.isEnabled()) return;
 

@@ -1,12 +1,17 @@
 package com.jodexindustries.donatecase.gui.items;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.GUITypedItemManager;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.DatabaseType;
-import com.jodexindustries.donatecase.api.data.GUI;
-import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
-import com.jodexindustries.donatecase.api.data.gui.TypedItemHandler;
+import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
+import com.jodexindustries.donatecase.impl.managers.GUITypedItemManagerImpl;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.data.database.DatabaseType;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemHandler;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,12 +23,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class HISTORYItemHandlerImpl implements TypedItemHandler {
+public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterialBukkit, CaseGui> {
 
-    public static void register(GUITypedItemManager manager) {
+    public static void register(GUITypedItemManagerImpl manager) {
         HISTORYItemHandlerImpl handler = new HISTORYItemHandlerImpl();
 
-        GUITypedItem item = manager.builder("HISTORY")
+        GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> item = manager.builder("HISTORY")
                 .description("Type for displaying the history of case openings")
                 .handler(handler)
                 .build();
@@ -33,12 +38,12 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
     @NotNull
     @Override
-    public GUI.Item handle(@NotNull CaseGui caseGui, GUI.@NotNull Item item) {
-        CaseData caseData = caseGui.getCaseData();
+    public GUI.Item<CaseDataMaterialBukkit> handle(@NotNull CaseGui caseGui, GUI.@NotNull Item<CaseDataMaterialBukkit> item) {
+        CaseDataBukkit caseData = caseGui.getCaseData();
 
         boolean handled = handleHistoryItem(caseData, item, caseGui.getGlobalHistoryData());
 
-        CaseData.Item.Material material = item.getMaterial();
+        CaseDataMaterial material = item.getMaterial();
 
         if (!handled) {
             YamlConfiguration config = Case.getConfig().getCasesConfig().getCase(caseData.getCaseType()).getSecond();
@@ -59,8 +64,8 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         return item;
     }
 
-    private boolean handleHistoryItem(CaseData caseData, GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
-        CaseData.Item.Material itemMaterial = item.getMaterial();
+    private boolean handleHistoryItem(CaseDataBukkit caseData, GUI.Item<CaseDataMaterialBukkit> item, List<CaseDataHistory> globalHistoryData) {
+        CaseDataMaterialBukkit itemMaterial = item.getMaterial();
 
         String caseType = caseData.getCaseType();
 
@@ -69,7 +74,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         caseType = (typeArgs.length >= 3) ? typeArgs[2] : caseType;
         boolean isGlobal = caseType.equalsIgnoreCase("GLOBAL");
 
-        CaseData historyCaseData = isGlobal ? null : Case.getCase(caseType);
+        CaseDataBukkit historyCaseData = isGlobal ? null : Case.getCase(caseType);
         if (historyCaseData == null && !isGlobal) {
             Case.getInstance().getLogger().warning("Case " + caseType + " HistoryData is null!");
             return false;
@@ -77,13 +82,13 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
         if (!isGlobal) historyCaseData = historyCaseData.clone();
 
-        CaseData.HistoryData data = getHistoryData(caseType, isGlobal, globalHistoryData, index, historyCaseData);
+        CaseDataHistory data = getHistoryData(caseType, isGlobal, globalHistoryData, index, historyCaseData);
         if (data == null) return false;
 
         if (isGlobal) historyCaseData = Case.getCase(data.getCaseType());
         if (historyCaseData == null) return false;
 
-        CaseData.Item historyItem = historyCaseData.getItem(data.getItem());
+        CaseDataItem<CaseDataMaterialBukkit> historyItem = historyCaseData.getItem(data.getItem());
         if (historyItem == null) return false;
         String material = item.getMaterial().getId();
         if (material == null) material = "HEAD:" + data.getPlayerName();
@@ -102,7 +107,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         return true;
     }
 
-    private String[] getTemplate(CaseData historyCaseData, CaseData.HistoryData data, CaseData.Item historyItem) {
+    private String[] getTemplate(CaseDataBukkit historyCaseData, CaseDataHistory data, CaseDataItem<CaseDataMaterialBukkit> historyItem) {
 
         DateFormat formatter = new SimpleDateFormat(Case.getConfig().getConfig().getString("DonateCase.DateFormat", "dd.MM HH:mm:ss"));
         String dateFormatted = formatter.format(new Date(data.getTime()));
@@ -112,7 +117,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
         String randomActionDisplayName = "random_action_not_found";
         if (data.getAction() != null && !data.getAction().isEmpty()) {
-            CaseData.Item.RandomAction randomAction = historyItem.getRandomAction(data.getAction());
+            CaseDataItem.RandomAction randomAction = historyItem.getRandomAction(data.getAction());
             if (randomAction != null) {
                 randomActionDisplayName = randomAction.getDisplayName();
             }
@@ -133,16 +138,16 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         };
     }
 
-    private CaseData.HistoryData getHistoryData(String caseType, boolean isGlobal, List<CaseData.HistoryData> globalHistoryData, int index, CaseData historyCaseData) {
-        CaseData.HistoryData data = null;
+    private CaseDataHistory getHistoryData(String caseType, boolean isGlobal, List<CaseDataHistory> globalHistoryData, int index, CaseDataBukkit historyCaseData) {
+        CaseDataHistory data = null;
         if (isGlobal) {
             if (globalHistoryData.size() <= index) return null;
             data = globalHistoryData.get(index);
         } else {
-            if (Case.getInstance().databaseType == DatabaseType.SQLITE) {
+            if (Case.getConfig().getDatabaseType() == DatabaseType.SQLITE) {
                 data = historyCaseData.getHistoryData()[index];
             } else {
-                List<CaseData.HistoryData> dbData = Case.sortHistoryDataByCase(globalHistoryData, caseType);
+                List<CaseDataHistory> dbData = Case.sortHistoryDataByCase(globalHistoryData, caseType);
                 if (!dbData.isEmpty() && dbData.size() > index) {
                     data = dbData.get(index);
                 }

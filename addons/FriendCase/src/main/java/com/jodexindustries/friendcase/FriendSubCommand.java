@@ -3,7 +3,6 @@ package com.jodexindustries.friendcase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
-import com.jodexindustries.donatecase.database.CaseDatabase;
 import com.jodexindustries.friendcase.utils.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -59,9 +58,9 @@ public class FriendSubCommand implements SubCommandExecutor, SubCommandTabComple
                             if (target != null) {
                                 if (target != p) {
                                     Case.removeKeys(caseType, p.getName(), keys).thenAcceptAsync(status -> {
-                                        if(status == CaseDatabase.Status.COMPLETE) {
+                                        if(status == DatabaseStatus.COMPLETE) {
                                             Case.addKeys(caseType, target.getName(), keys).thenAcceptAsync(nextStatus -> {
-                                                if(nextStatus == CaseDatabase.Status.COMPLETE) {
+                                                if(nextStatus == DatabaseStatus.COMPLETE) {
                                                     target.sendMessage(rc(
                                                             t.getConfig().getConfig().getString("Messages.YouReceivedGift", "")
                                                                     .replace("%sender%", sender.getName())

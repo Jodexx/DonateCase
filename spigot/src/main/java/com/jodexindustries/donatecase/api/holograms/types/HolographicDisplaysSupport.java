@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.holograms.types;
 
-import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataHologram;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.Tools;
@@ -23,8 +24,8 @@ public class HolographicDisplaysSupport extends HologramManager {
     private final HashMap<Block, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void createHologram(Block block, CaseData caseData) {
-        CaseData.Hologram crateHologram = caseData.getHologram();
+    public void createHologram(Block block, CaseDataBukkit caseData) {
+        CaseDataHologram crateHologram = caseData.getHologram();
 
         if (!crateHologram.isEnabled()) return;
 

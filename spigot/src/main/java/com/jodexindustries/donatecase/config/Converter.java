@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.database.CaseDatabase;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
+import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.Pair;
 import org.bukkit.Location;
@@ -39,7 +39,7 @@ public class Converter {
     }
 
     public void convertData() {
-        CaseDatabase database = Case.getDatabase();
+        CaseDatabaseImpl database = Case.getDatabase();
         YamlConfiguration dataConfiguration = config.get("Data.yml");
         if (dataConfiguration != null) {
             config.getPlugin().getLogger().info("Converting Data.yml to database...");
@@ -87,8 +87,8 @@ public class Converter {
         }
     }
 
-    public CaseData.HistoryData[] getHistoryData(YamlConfiguration configuration, String caseType) {
-        CaseData.HistoryData[] historyData = new CaseData.HistoryData[10];
+    public CaseDataHistory[] getHistoryData(YamlConfiguration configuration, String caseType) {
+        CaseDataHistory[] historyData = new CaseDataHistory[10];
 
         ConfigurationSection dataSection = configuration.getConfigurationSection("Data");
 
@@ -100,7 +100,7 @@ public class Converter {
                     ConfigurationSection caseDataSection = section.getConfigurationSection(i);
 
                     if (caseDataSection != null) {
-                        CaseData.HistoryData data = new CaseData.HistoryData(
+                        CaseDataHistory data = new CaseDataHistory(
                                 caseDataSection.getString("Item"),
                                 caseType,
                                 caseDataSection.getString("Player"),

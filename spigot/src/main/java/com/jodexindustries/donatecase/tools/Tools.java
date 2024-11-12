@@ -1,9 +1,10 @@
 package com.jodexindustries.donatecase.tools;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.MaterialManager;
+import com.jodexindustries.donatecase.impl.managers.MaterialManagerImpl;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
-import com.jodexindustries.donatecase.api.data.*;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -151,11 +152,11 @@ public class Tools {
         ItemStack itemStack = null;
 
         if(id != null && Material.getMaterial(id) == null) {
-            String temp = MaterialManager.getByStart(id);
+            String temp = MaterialManagerImpl.getByStart(id);
 
 
             if (temp != null) {
-                CaseMaterial caseMaterial = MaterialManager.getRegisteredMaterial(temp);
+                CaseMaterial<ItemStack> caseMaterial = MaterialManagerImpl.getRegisteredMaterial(temp);
                 if (caseMaterial != null) {
                     String context = id.replace(temp, "").replaceFirst(":", "").trim();
                     itemStack = caseMaterial.handle(context);
@@ -236,12 +237,12 @@ public class Tools {
         return Integer.parseInt(builder.toString());
     }
 
-    public static boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, String addon) {
-        List<Map<String, SubCommand>> commands = addonsMap.get(addon);
+    public static boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand<CommandSender>>>> addonsMap, String addon) {
+        List<Map<String, SubCommand<CommandSender>>> commands = addonsMap.get(addon);
         return isHasCommandForSender(sender, commands);
     }
 
-    public static boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
+    public static boolean isHasCommandForSender(CommandSender sender, Map<String, List<Map<String, SubCommand<CommandSender>>>> addonsMap) {
         return addonsMap.keySet().stream().map(addonsMap::get).anyMatch(commands -> isHasCommandForSender(sender, commands));
     }
 
@@ -252,7 +253,7 @@ public class Tools {
      * @param commands List of commands, that loaded in DonateCase
      * @return true, if sender has permission
      */
-    public static boolean isHasCommandForSender(CommandSender sender, List<Map<String, SubCommand>> commands) {
+    public static boolean isHasCommandForSender(CommandSender sender, List<Map<String, SubCommand<CommandSender>>> commands) {
         return commands.stream().flatMap(command -> command.values().stream()).map(SubCommand::getPermission).anyMatch(permission -> permission == null || sender.hasPermission(permission));
     }
 
@@ -322,10 +323,10 @@ public class Tools {
      * @param items Map with Case items
      * @return New map with sorted items
      */
-    public static Map<String, CaseData.Item> sortItemsByIndex(Map<String, CaseData.Item> items) {
+    public static Map<String, CaseDataItem<CaseDataMaterialBukkit>> sortItemsByIndex(Map<String, CaseDataItem<CaseDataMaterialBukkit>> items) {
         return items.entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(CaseData.Item::getIndex)))
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(CaseDataItem::getIndex)))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,

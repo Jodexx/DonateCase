@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.AddonManager;
 import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.addon.PowerReason;
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddon;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -14,7 +14,7 @@ public class AddonDisableEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final InternalAddon addon;
     private final Addon caused;
-    private final AddonManager.PowerReason reason;
+    private final PowerReason reason;
 
     /**
      * Default constructor
@@ -25,7 +25,7 @@ public class AddonDisableEvent extends Event {
     public AddonDisableEvent(InternalAddon addon, Addon caused) {
         this.addon = addon;
         this.caused = caused;
-        this.reason = AddonManager.PowerReason.DONATE_CASE;
+        this.reason = PowerReason.DONATE_CASE;
     }
 
     /**
@@ -35,7 +35,7 @@ public class AddonDisableEvent extends Event {
      * @param caused Which addon caused the disabling
      * @param reason Power reason
      */
-    public AddonDisableEvent(InternalAddon addon, Addon caused, AddonManager.PowerReason reason) {
+    public AddonDisableEvent(InternalAddon addon, Addon caused, PowerReason reason) {
         this.addon = addon;
         this.caused = caused;
         this.reason = reason;
@@ -70,7 +70,7 @@ public class AddonDisableEvent extends Event {
      *
      * @return Power reason
      */
-    public AddonManager.PowerReason getReason() {
+    public PowerReason getReason() {
         return reason;
     }
 

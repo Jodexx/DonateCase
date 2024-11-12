@@ -1,11 +1,14 @@
 package com.jodexindustries.donatecase.gui;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.GUITypedItemManager;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.GUI;
-import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
-import com.jodexindustries.donatecase.api.data.gui.TypedItemHandler;
+import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
+import com.jodexindustries.donatecase.impl.managers.GUITypedItemManagerImpl;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemHandler;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,11 +27,11 @@ import java.util.stream.Collectors;
  */
 public class CaseGui {
     private final Inventory inventory;
-    private final CaseData caseData;
-    private final GUI tempGUI;
+    private final CaseDataBukkit caseData;
+    private final GUI<CaseDataMaterialBukkit> tempGUI;
     private final Location location;
     private final Player player;
-    private List<CaseData.HistoryData> globalHistoryData;
+    private List<CaseDataHistory> globalHistoryData;
 
     /**
      * Default constructor
@@ -36,7 +39,7 @@ public class CaseGui {
      * @param player   Player object
      * @param caseData CaseData object
      */
-    public CaseGui(@NotNull Player player, @NotNull CaseData caseData, @NotNull Location location) {
+    public CaseGui(@NotNull Player player, @NotNull CaseDataBukkit caseData, @NotNull Location location) {
         this.player = player;
         this.caseData = caseData;
         this.tempGUI = caseData.getGui().clone();
@@ -59,7 +62,7 @@ public class CaseGui {
 
         Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () -> {
             globalHistoryData = Case.getSortedHistoryDataCache();
-            for (GUI.Item item : tempGUI.getItems().values()) {
+            for (GUI.Item<CaseDataMaterialBukkit> item : tempGUI.getItems().values()) {
                 try {
                     processItem(item);
                 } catch (Throwable e) {
@@ -72,15 +75,15 @@ public class CaseGui {
         return future;
     }
 
-    private void updateMeta(GUI.Item temp) {
-        CaseData.Item.Material original = getOriginal(temp.getItemName());
-        CaseData.Item.Material material = temp.getMaterial();
+    private void updateMeta(GUI.Item<CaseDataMaterialBukkit> temp) {
+        CaseDataMaterialBukkit original = getOriginal(temp.getItemName());
+        CaseDataMaterialBukkit material = temp.getMaterial();
         material.setDisplayName(setPlaceholders(original.getDisplayName()));
         material.setLore(setPlaceholders(original.getLore()));
         material.updateMeta();
     }
 
-    private void colorize(CaseData.Item.Material material) {
+    private void colorize(CaseDataMaterialBukkit material) {
         material.setDisplayName(Tools.rc(material.getDisplayName()));
         material.setLore(Tools.rc(material.getLore()));
         material.updateMeta();
@@ -97,16 +100,16 @@ public class CaseGui {
         }
     }
 
-    private CaseData.Item.Material getOriginal(String itemName) {
+    private CaseDataMaterialBukkit getOriginal(String itemName) {
         return caseData.getGui().getItems().get(itemName).getMaterial();
     }
 
-    private void processItem(GUI.Item item) {
+    private void processItem(GUI.Item<CaseDataMaterialBukkit> item) {
         String itemType = item.getType();
         if (!itemType.equalsIgnoreCase("DEFAULT")) {
-            GUITypedItem typedItem = GUITypedItemManager.getFromString(itemType);
+            GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> typedItem = GUITypedItemManagerImpl.getFromString(itemType);
             if (typedItem != null) {
-                TypedItemHandler handler = typedItem.getItemHandler();
+                TypedItemHandler<CaseDataMaterialBukkit, CaseGui> handler = typedItem.getItemHandler();
                 if (handler != null) item = handler.handle(this, item);
                 if (typedItem.isUpdateMeta()) updateMeta(item);
             }
@@ -114,7 +117,7 @@ public class CaseGui {
             updateMeta(item);
         }
 
-        CaseData.Item.Material material = item.getMaterial();
+        CaseDataMaterialBukkit material = item.getMaterial();
 
         if (material.getItemStack() == null) material.setItemStack(Tools.loadCaseItem(material.getId()));
 
@@ -191,7 +194,7 @@ public class CaseGui {
      * @return data
      */
     @NotNull
-    public CaseData getCaseData() {
+    public CaseDataBukkit getCaseData() {
         return caseData;
     }
 
@@ -201,7 +204,7 @@ public class CaseGui {
      * @return GUI
      */
     @NotNull
-    public GUI getTempGUI() {
+    public GUI<CaseDataMaterialBukkit> getTempGUI() {
         return tempGUI;
     }
 
@@ -211,7 +214,7 @@ public class CaseGui {
      * @return global history data
      */
     @NotNull
-    public List<CaseData.HistoryData> getGlobalHistoryData() {
+    public List<CaseDataHistory> getGlobalHistoryData() {
         return globalHistoryData;
     }
 }

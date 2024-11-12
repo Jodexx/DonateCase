@@ -3,11 +3,19 @@ package com.jodexindustries.donatecase.api;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
+import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
 import com.jodexindustries.donatecase.api.events.KeysTransactionEvent;
+import com.jodexindustries.donatecase.api.manager.CaseKeyManager;
+import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import com.jodexindustries.donatecase.config.Config;
-import com.jodexindustries.donatecase.database.CaseDatabase;
+import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.gui.CaseGui;
+import com.jodexindustries.donatecase.impl.managers.ActionManagerImpl;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
 import com.jodexindustries.donatecase.api.caching.entry.InfoEntry;
@@ -36,11 +44,11 @@ import static com.jodexindustries.donatecase.DonateCase.*;
 /**
  * The main class for API interaction with DonateCase, this is where most of the functions are located.
  */ 
-public class Case {
+public class Case implements CaseKeyManager {
     /**
      * Active cases
      */
-    public final static Map<UUID, ActiveCase> activeCases = new HashMap<>();
+    public final static Map<UUID, ActiveCase<Block>> activeCases = new HashMap<>();
 
     /**
      * Active cases, but by location
@@ -56,7 +64,7 @@ public class Case {
     /**
      * Loaded cases in runtime
      */
-    public final static Map<String, CaseData> caseData = new HashMap<>();
+    public final static Map<String, CaseDataBukkit> caseData = new HashMap<>();
 
     /**
      * Cache map for storing number of player's keys
@@ -71,7 +79,7 @@ public class Case {
     /**
      * Cache map for storing cases histories
      */
-    public final static SimpleCache<Integer, List<CaseData.HistoryData>> historyCache = new SimpleCache<>(20);
+    public final static SimpleCache<Integer, List<CaseDataHistory>> historyCache = new SimpleCache<>(20);
 
     /**
      * Default constructor, but actually not used. All methods are static.
@@ -85,7 +93,7 @@ public class Case {
      * @param location Case location
      */
     public static void saveLocation(String caseName, String type, Location location) {
-        CaseData caseData = getCase(type);
+        CaseDataBukkit caseData = getCase(type);
         if(location.getWorld() == null) {
             instance.getLogger().warning("Error with saving location: world not found!");
             return;
@@ -107,13 +115,13 @@ public class Case {
      * @return CompletableFuture of the operation's status
      * @since 2.2.6.7
      */
-    private static CompletableFuture<CaseDatabase.Status> setKeysWithEvent(String caseType, String player, int newKeys, int before) {
+    private static CompletableFuture<DatabaseStatus> setKeysWithEvent(String caseType, String player, int newKeys, int before) {
         KeysTransactionEvent event = new KeysTransactionEvent(caseType, player, newKeys, before);
         Bukkit.getPluginManager().callEvent(event);
 
         return !event.isCancelled()
                 ? getDatabase().setKeys(caseType, player, event.after())
-                : CompletableFuture.completedFuture(CaseDatabase.Status.CANCELLED);
+                : CompletableFuture.completedFuture(DatabaseStatus.CANCELLED);
     }
 
     /**
@@ -124,9 +132,8 @@ public class Case {
      * @param keys     Number of keys
      * @return CompletableFuture of completion status
      */
-    public static CompletableFuture<CaseDatabase.Status> setKeys(String caseType, String player, int keys) {
-        return getKeysAsync(caseType, player)
-                .thenComposeAsync(before -> setKeysWithEvent(caseType, player, keys, before));
+    public CompletableFuture<DatabaseStatus> setKeys(String caseType, String player, int keys) {
+        return getKeysAsync(caseType, player).thenComposeAsync(before -> setKeysWithEvent(caseType, player, keys, before));
     }
 
     /**
@@ -138,7 +145,7 @@ public class Case {
      * @return Completable future of completion status
      * @since 2.2.6.7
      */
-    public static CompletableFuture<CaseDatabase.Status> modifyKeys(String caseType, String player, int keys) {
+    public CompletableFuture<DatabaseStatus> modifyKeys(String caseType, String player, int keys) {
         return getKeysAsync(caseType, player)
                 .thenComposeAsync(before -> setKeysWithEvent(caseType, player, before + keys, before));
     }
@@ -152,7 +159,7 @@ public class Case {
      * @return Completable future of completes
      * @see #modifyKeys(String, String, int)
      */
-    public static CompletableFuture<CaseDatabase.Status> addKeys(String caseType, String player, int keys) {
+    public CompletableFuture<DatabaseStatus> addKeys(String caseType, String player, int keys) {
         return modifyKeys(caseType, player, keys);
     }
 
@@ -165,7 +172,7 @@ public class Case {
      * @return Completable future of completes
      * @see #modifyKeys(String, String, int)
      */
-    public static CompletableFuture<CaseDatabase.Status> removeKeys(String caseType, String player, int keys) {
+    public CompletableFuture<DatabaseStatus> removeKeys(String caseType, String player, int keys) {
         return modifyKeys(caseType, player, -keys);
     }
 
@@ -173,7 +180,7 @@ public class Case {
      * Delete all keys
      * @since 2.2.6.1
      */
-    public static CompletableFuture<CaseDatabase.Status> removeAllKeys() {
+    public CompletableFuture<DatabaseStatus> removeAllKeys() {
         return getDatabase().delAllKeys();
     }
 
@@ -183,7 +190,7 @@ public class Case {
      * @param player Player name
      * @return Number of keys
      */
-    public static int getKeys(String caseType, String player) {
+    public int getKeys(String caseType, String player) {
         return getKeysAsync(caseType, player).join();
     }
 
@@ -193,7 +200,7 @@ public class Case {
      * @param player Player name
      * @return CompletableFuture of keys
      */
-    public static CompletableFuture<Integer> getKeysAsync(String caseType, String player) {
+    public CompletableFuture<Integer> getKeysAsync(String caseType, String player) {
         return getDatabase().getKeys(caseType, player);
     }
 
@@ -205,8 +212,8 @@ public class Case {
      * @return Number of keys
      * @since 2.2.3.8
      */
-    public static int getKeysCache(String caseType, String player) {
-        if(instance.databaseType == DatabaseType.SQLITE) return getKeys(caseType, player);
+    public int getKeysCache(String caseType, String player) {
+        if(getConfig().getDatabaseType() == DatabaseType.SQLITE) return getKeys(caseType, player);
 
         int keys;
         InfoEntry entry = new InfoEntry(player, caseType);
@@ -252,7 +259,7 @@ public class Case {
      * @since 2.2.3.8
      */
     public static int getOpenCountCache(String caseType, String player) {
-        if(instance.databaseType == DatabaseType.SQLITE) return getOpenCount(caseType, player);
+        if(getConfig().getDatabaseType() == DatabaseType.SQLITE) return getOpenCount(caseType, player);
 
         int openCount;
         InfoEntry entry = new InfoEntry(player, caseType);
@@ -277,7 +284,7 @@ public class Case {
      * @return Completable future of completes
      * @since 2.2.4.4
      */
-    public static CompletableFuture<CaseDatabase.Status> setOpenCount(String caseType, String player, int openCount) {
+    public static CompletableFuture<DatabaseStatus> setOpenCount(String caseType, String player, int openCount) {
         return getDatabase().setCount(caseType, player, openCount);
     }
 
@@ -290,7 +297,7 @@ public class Case {
      * @return Completable future of completes
      * @since 2.2.4.4
      */
-    public static CompletableFuture<CaseDatabase.Status> addOpenCount(String caseType, String player, int openCount) {
+    public static CompletableFuture<DatabaseStatus> addOpenCount(String caseType, String player, int openCount) {
         return getOpenCountAsync(caseType, player).thenComposeAsync(integer -> setOpenCount(caseType, player, integer + openCount));
     }
 
@@ -423,7 +430,7 @@ public class Case {
      * @param player Player who opened
      * @param uuid Active case uuid
      */
-    public static void animationEnd(CaseData caseData, Player player, UUID uuid, CaseData.Item item) {
+    public static void animationEnd(CaseDataBukkit caseData, Player player, UUID uuid, CaseDataItem<CaseDataMaterialBukkit> item) {
         animationEnd(caseData, (OfflinePlayer) player, uuid, item);
     }
 
@@ -434,8 +441,8 @@ public class Case {
      * @param player Player who opened (offline player)
      * @param uuid Active case uuid
      */
-    public static void animationEnd(CaseData caseData, OfflinePlayer player, UUID uuid, CaseData.Item item) {
-        ActiveCase activeCase = activeCases.get(uuid);
+    public static void animationEnd(CaseDataBukkit caseData, OfflinePlayer player, UUID uuid, CaseDataItem<CaseDataMaterialBukkit> item) {
+        ActiveCase<Block> activeCase = activeCases.get(uuid);
         if(activeCase == null) return;
 
         Block block = activeCase.getBlock();
@@ -456,9 +463,9 @@ public class Case {
      * @param item Item data
      * @since 2.2.4.4
      */
-    public static void animationPreEnd(CaseData caseData, OfflinePlayer player, UUID uuid, CaseData.Item item) {
-        ActiveCase activeCase = activeCases.get(uuid);
-        Location location = activeCase != null ? activeCase.getLocation() : null;
+    public static void animationPreEnd(CaseDataBukkit caseData, OfflinePlayer player, UUID uuid, CaseDataItem<CaseDataMaterialBukkit> item) {
+        ActiveCase<Block> activeCase = activeCases.get(uuid);
+        Location location = activeCase != null ? activeCase.getBlock().getLocation() : null;
         animationPreEnd(caseData, player, location, item);
     }
 
@@ -470,7 +477,7 @@ public class Case {
      * @param item Item data
      * @since 2.2.4.4
      */
-    public static void animationPreEnd(CaseData caseData, OfflinePlayer player, Location location, CaseData.Item item) {
+    public static void animationPreEnd(CaseDataBukkit caseData, OfflinePlayer player, Location location, CaseDataItem<CaseDataMaterialBukkit> item) {
         World world = location != null ? location.getWorld() : null;
         if(world == null) world = Bukkit.getWorlds().get(0);
 
@@ -501,19 +508,19 @@ public class Case {
      * @param item Win item
      * @param choice In fact, these are actions that were selected from the RandomActions section
      */
-    private static void saveOpenInfo(CaseData caseData, OfflinePlayer player, CaseData.Item item, String choice) {
+    private static void saveOpenInfo(CaseDataBukkit caseData, OfflinePlayer player, CaseDataItem<CaseDataMaterialBukkit> item, String choice) {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
-            CaseData.HistoryData data = new CaseData.HistoryData(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
-            CaseData.HistoryData[] historyData = caseData.getHistoryData();
+            CaseDataHistory data = new CaseDataHistory(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
+            CaseDataHistory[] historyData = caseData.getHistoryData();
 
-            List<CaseData.HistoryData> databaseData = getDatabase().getHistoryDataByCaseType(caseData.getCaseType()).join();
-            if(!databaseData.isEmpty()) historyData = databaseData.toArray(new CaseData.HistoryData[10]);
+            List<CaseDataHistory> databaseData = getDatabase().getHistoryDataByCaseType(caseData.getCaseType()).join();
+            if(!databaseData.isEmpty()) historyData = databaseData.toArray(new CaseDataHistory[10]);
 
             System.arraycopy(historyData, 0, historyData, 1, historyData.length - 1);
             historyData[0] = data;
 
             for (int i = 0; i < historyData.length; i++) {
-                CaseData.HistoryData tempData = historyData[i];
+                CaseDataHistory tempData = historyData[i];
                 if (tempData != null) {
                     getDatabase().setHistoryData(caseData.getCaseType(), i, tempData);
                 }
@@ -532,10 +539,10 @@ public class Case {
      * @param item Case item
      * @return random action name
      */
-    public static String getRandomActionChoice(CaseData.Item item) {
+    public static String getRandomActionChoice(CaseDataItem<CaseDataMaterialBukkit> item) {
         ProbabilityCollection<String> collection = new ProbabilityCollection<>();
         for (String name : item.getRandomActions().keySet()) {
-            CaseData.Item.RandomAction randomAction = item.getRandomAction(name);
+            CaseDataItem.RandomAction randomAction = item.getRandomAction(name);
             if(randomAction == null) continue;
             collection.add(name, randomAction.getChance());
         }
@@ -548,9 +555,9 @@ public class Case {
      * @param caseData Case that was opened
      * @param item The prize that was won
      * @param choice In fact, these are actions that were selected from the RandomActions section
-     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseData.Item#getAlternativeActions()})
+     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#getAlternativeActions()})
      */
-   public static void executeActions(OfflinePlayer player, CaseData caseData, CaseData.Item item, String choice, boolean alternative) {
+   public static void executeActions(OfflinePlayer player, CaseDataBukkit caseData, CaseDataItem<CaseDataMaterialBukkit> item, String choice, boolean alternative) {
        final String[] replacementRegex = {
                "%player%:" + player.getName(),
                "%casename%:" + caseData.getCaseType(),
@@ -569,12 +576,12 @@ public class Case {
      * Get actions from case item
      * @param item Case item
      * @param choice In fact, these are actions that were selected from the RandomActions section
-     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseData.Item#getAlternativeActions()})
+     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#getAlternativeActions()})
      * @return list of selected actions
      */
-    public static List<String> getActionsBasedOnChoice(CaseData.Item item, String choice, boolean alternative) {
+    public static List<String> getActionsBasedOnChoice(CaseDataItem<CaseDataMaterialBukkit> item, String choice, boolean alternative) {
         if (choice != null) {
-            CaseData.Item.RandomAction randomAction = item.getRandomAction(choice);
+            CaseDataItem.RandomAction randomAction = item.getRandomAction(choice);
             if (randomAction != null) {
                 return randomAction.getActions();
             }
@@ -606,12 +613,12 @@ public class Case {
      * @param cooldown Cooldown in seconds
      */
     public static void executeAction(OfflinePlayer player, String action, int cooldown) {
-        String temp = ActionManager.getByStart(action);
+        String temp = ActionManagerImpl.getByStart(action);
         if(temp == null) return;
 
         String context = action.replace(temp, "").trim();
 
-        ActionExecutor actionExecutor = ActionManager.getRegisteredAction(temp);
+        ActionExecutor<OfflinePlayer> actionExecutor = ActionManagerImpl.getRegisteredAction(temp);
         if(actionExecutor == null) return;
 
         actionExecutor.execute(player, context, cooldown);
@@ -632,7 +639,7 @@ public class Case {
      * @return database manager
      */
     @NotNull
-    public static CaseDatabase getDatabase() {
+    public static CaseDatabaseImpl getDatabase() {
         return getInstance().database;
     }
 
@@ -643,7 +650,7 @@ public class Case {
      */
     @NotNull
     @Deprecated
-    public static CaseDatabase getMySQL() {
+    public static CaseDatabaseImpl getMySQL() {
         return getDatabase();
     }
 
@@ -656,7 +663,7 @@ public class Case {
      * @param caseData      Case type
      * @param blockLocation Block location
      */
-    public static void openGui(@NotNull Player player, @NotNull CaseData caseData, @NotNull Location blockLocation) {
+    public static void openGui(@NotNull Player player, @NotNull CaseDataBukkit caseData, @NotNull Location blockLocation) {
         if (caseData.getGui() != null) {
             if (!playersGui.containsKey(player.getUniqueId())) {
                 playersGui.put(player.getUniqueId(), new CaseGui(player, caseData.clone(), blockLocation));
@@ -674,7 +681,7 @@ public class Case {
      * @return Case data
      */
     @Nullable
-    public static CaseData getCase(@NotNull String c) {
+    public static CaseDataBukkit getCase(@NotNull String c) {
         return caseData.getOrDefault(c, null);
     }
 
@@ -682,18 +689,18 @@ public class Case {
      * Get sorted history data from all cases with CompletableFuture
      * @return list of HistoryData (sorted by time)
      */
-    public static CompletableFuture<List<CaseData.HistoryData>> getAsyncSortedHistoryData() {
-        return CompletableFuture.supplyAsync(() -> instance.databaseType == DatabaseType.SQLITE ?
+    public static CompletableFuture<List<CaseDataHistory>> getAsyncSortedHistoryData() {
+        return CompletableFuture.supplyAsync(() -> getConfig().getDatabaseType() == DatabaseType.SQLITE ?
                 caseData.values().stream()
                 .filter(Objects::nonNull)
                 .flatMap(data -> {
-                    CaseData.HistoryData[] temp = data.getHistoryData();
+                    CaseDataHistory[] temp = data.getHistoryData();
                     return temp != null ? Arrays.stream(temp) : Stream.empty();
                 })
                 .filter(Objects::nonNull)
-                .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
                 .collect(Collectors.toList()) : getDatabase().getHistoryData().join().stream().filter(Objects::nonNull)
-                .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
                 .collect(Collectors.toList()));
     }
 
@@ -701,18 +708,18 @@ public class Case {
      * Returns no-cached, if mysql disabled
      * @return list of history data
      */
-    public static List<CaseData.HistoryData> getSortedHistoryDataCache() {
-        if (instance.databaseType == DatabaseType.SQLITE) {
+    public static List<CaseDataHistory> getSortedHistoryDataCache() {
+        if (getConfig().getDatabaseType() == DatabaseType.SQLITE) {
             return getAsyncSortedHistoryData().join();
         }
 
-        List<CaseData.HistoryData> cachedList = historyCache.get(1);
+        List<CaseDataHistory> cachedList = historyCache.get(1);
 
         if (cachedList != null) {
             return cachedList;
         }
 
-        List<CaseData.HistoryData> previousList = historyCache.getPrevious(1);
+        List<CaseDataHistory> previousList = historyCache.getPrevious(1);
 
         getAsyncSortedHistoryData().thenAcceptAsync(historyData -> historyCache.put(1, historyData));
 
@@ -726,10 +733,10 @@ public class Case {
      * @param caseType type of case for filtering
      * @return list of case HistoryData
      */
-    public static List<CaseData.HistoryData> sortHistoryDataByCase(List<CaseData.HistoryData> historyData, String caseType) {
+    public static List<CaseDataHistory> sortHistoryDataByCase(List<CaseDataHistory> historyData, String caseType) {
         return historyData.stream().filter(Objects::nonNull)
                 .filter(data -> data.getCaseType().equals(caseType))
-                .sorted(Comparator.comparingLong(CaseData.HistoryData::getTime).reversed())
+                .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
                 .collect(Collectors.toList());
     }
 

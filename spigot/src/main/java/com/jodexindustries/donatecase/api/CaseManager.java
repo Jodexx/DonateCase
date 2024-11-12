@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
+import com.jodexindustries.donatecase.impl.managers.*;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,12 +14,12 @@ import org.jetbrains.annotations.Nullable;
  * Class for getting all DonateCase managers
  */
 public class CaseManager {
-    private final AddonManager addonManager;
-    private final AnimationManager animationManager;
-    private final SubCommandManager subCommandManager;
-    private final ActionManager actionManager;
-    private final MaterialManager materialManager;
-    private final GUITypedItemManager guiTypedItemManager;
+    private final AddonManagerImpl addonManager;
+    private final AnimationManagerImpl animationManager;
+    private final SubCommandManagerImpl subCommandManager;
+    private final ActionManagerImpl actionManager;
+    private final MaterialManagerImpl materialManager;
+    private final GUITypedItemManagerImpl guiTypedItemManager;
     private final Addon addon;
 
     /**
@@ -28,12 +29,12 @@ public class CaseManager {
      */
     public CaseManager(@NotNull Addon addon) {
         this.addon = addon;
-        this.addonManager = new AddonManager(addon);
-        this.subCommandManager = new SubCommandManager(addon);
-        this.animationManager = new AnimationManager(addon);
-        this.actionManager = new ActionManager(addon);
-        this.materialManager = new MaterialManager(addon);
-        this.guiTypedItemManager = new GUITypedItemManager(addon);
+        this.addonManager = new AddonManagerImpl(addon);
+        this.subCommandManager = new SubCommandManagerImpl(addon);
+        this.animationManager = new AnimationManagerImpl(addon);
+        this.actionManager = new ActionManagerImpl(addon);
+        this.materialManager = new MaterialManagerImpl(addon);
+        this.guiTypedItemManager = new GUITypedItemManagerImpl(addon);
     }
 
     /**
@@ -43,12 +44,12 @@ public class CaseManager {
      */
     public CaseManager(@NotNull Plugin plugin) {
         this.addon = new ExternalJavaAddon(plugin);
-        this.addonManager = new AddonManager(addon);
-        this.subCommandManager = new SubCommandManager(addon);
-        this.animationManager = new AnimationManager(addon);
-        this.actionManager = new ActionManager(addon);
-        this.materialManager = new MaterialManager(addon);
-        this.guiTypedItemManager = new GUITypedItemManager(addon);
+        this.addonManager = new AddonManagerImpl(addon);
+        this.subCommandManager = new SubCommandManagerImpl(addon);
+        this.animationManager = new AnimationManagerImpl(addon);
+        this.actionManager = new ActionManagerImpl(addon);
+        this.materialManager = new MaterialManagerImpl(addon);
+        this.guiTypedItemManager = new GUITypedItemManagerImpl(addon);
     }
 
     /**
@@ -67,7 +68,7 @@ public class CaseManager {
      * @return AddonManager instance
      */
     @NotNull
-    public AddonManager getAddonManager() {
+    public AddonManagerImpl getAddonManager() {
         return this.addonManager;
     }
 
@@ -77,7 +78,7 @@ public class CaseManager {
      * @return AnimationManager instance
      */
     @NotNull
-    public AnimationManager getAnimationManager() {
+    public AnimationManagerImpl getAnimationManager() {
         return this.animationManager;
     }
 
@@ -87,7 +88,7 @@ public class CaseManager {
      * @return SubCommandManager instance
      */
     @NotNull
-    public SubCommandManager getSubCommandManager() {
+    public SubCommandManagerImpl getSubCommandManager() {
         return this.subCommandManager;
     }
 
@@ -107,7 +108,7 @@ public class CaseManager {
      * @return ActionManager instance
      */
     @NotNull
-    public ActionManager getActionManager() {
+    public ActionManagerImpl getActionManager() {
         return actionManager;
     }
 
@@ -118,7 +119,7 @@ public class CaseManager {
      * @since 2.2.4.8
      */
     @NotNull
-    public MaterialManager getMaterialManager() {
+    public MaterialManagerImpl getMaterialManager() {
         return materialManager;
     }
 
@@ -129,7 +130,7 @@ public class CaseManager {
      * @since 2.2.4.9
      */
     @NotNull
-    public GUITypedItemManager getGuiTypedItemManager() {
+    public GUITypedItemManagerImpl getGuiTypedItemManager() {
         return guiTypedItemManager;
     }
 

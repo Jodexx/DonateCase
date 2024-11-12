@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.command;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.SubCommandManager;
+import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.tools.Tools;
@@ -27,7 +27,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             sendHelp(sender, label);
         } else {
             String subCommandName = args[0];
-            SubCommand subCommand = SubCommandManager.registeredSubCommands.get(subCommandName);
+            SubCommand<CommandSender> subCommand = SubCommandManagerImpl.registeredSubCommands.get(subCommandName);
 
             if (subCommand == null) {
                 sendHelp(sender, label);
@@ -59,7 +59,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         }
 
         if (Case.getConfig().getConfig().getBoolean("DonateCase.AddonsHelp", true)) {
-            Map<String, List<Map<String, SubCommand>>> addonsMap = buildAddonsMap();
+            Map<String, List<Map<String, SubCommand<CommandSender>>>> addonsMap = buildAddonsMap();
             if (Tools.isHasCommandForSender(sender, addonsMap)) {
                 sendAddonHelpMessages(sender, addonsMap);
             }
@@ -72,9 +72,9 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    private static Map<String, List<Map<String, SubCommand>>> buildAddonsMap() {
-        Map<String, List<Map<String, SubCommand>>> addonsMap = new HashMap<>();
-        SubCommandManager.registeredSubCommands.forEach((subCommandName, subCommand) -> {
+    private static Map<String, List<Map<String, SubCommand<CommandSender>>>> buildAddonsMap() {
+        Map<String, List<Map<String, SubCommand<CommandSender>>>> addonsMap = new HashMap<>();
+        SubCommandManagerImpl.registeredSubCommands.forEach((subCommandName, subCommand) -> {
             Addon addon = subCommand.getAddon();
             addonsMap.computeIfAbsent(addon.getName(), k -> new ArrayList<>())
                     .add(Collections.singletonMap(subCommandName, subCommand));
@@ -82,7 +82,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         return addonsMap;
     }
 
-    private static void sendAddonHelpMessages(CommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
+    private static void sendAddonHelpMessages(CommandSender sender, Map<String, List<Map<String, SubCommand<CommandSender>>>> addonsMap) {
         addonsMap.forEach((addon, commands) -> {
             if (!addon.equalsIgnoreCase("DonateCase") && Tools.isHasCommandForSender(sender, addonsMap, addon)) {
                 String addonNameFormat = Case.getConfig().getLang().getString("help-addons.format.name");
@@ -126,19 +126,19 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         List<String> value = new ArrayList<>();
 
         if (args.length == 1) {
-            Map<String, SubCommand> subCommands = SubCommandManager.registeredSubCommands;
+            Map<String, SubCommand<CommandSender>> subCommands = SubCommandManagerImpl.registeredSubCommands;
 
-            for (Map.Entry<String, SubCommand> entry : subCommands.entrySet()) {
+            for (Map.Entry<String, SubCommand<CommandSender>> entry : subCommands.entrySet()) {
                 String subCommandName = entry.getKey();
-                SubCommand subCommand = entry.getValue();
+                SubCommand<CommandSender> subCommand = entry.getValue();
                 String permission = subCommand.getPermission();
 
                 if (permission == null || sender.hasPermission(permission)) {
                     value.add(subCommandName);
                 }
             }
-        } else if (SubCommandManager.registeredSubCommands.containsKey(args[0])) {
-            return SubCommandManager.getTabCompletionsForSubCommand(sender, args[0], label, Arrays.copyOfRange(args, 1, args.length));
+        } else if (SubCommandManagerImpl.registeredSubCommands.containsKey(args[0])) {
+            return SubCommandManagerImpl.getTabCompletionsForSubCommand(sender, args[0], label, Arrays.copyOfRange(args, 1, args.length));
         } else {
             return new ArrayList<>();
         }

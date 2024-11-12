@@ -2,8 +2,8 @@ package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.CaseManager;
-import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -21,9 +21,9 @@ import java.util.List;
 /**
  * Class for /dc delete subcommand implementation
  */
-public class DeleteCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class DeleteCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManager manager) {
+    public static void register(SubCommandManagerImpl manager) {
         DeleteCommand command = new DeleteCommand();
 
         SubCommand subCommand = manager.builder("delete")

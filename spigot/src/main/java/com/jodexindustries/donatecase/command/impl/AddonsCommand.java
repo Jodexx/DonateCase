@@ -1,9 +1,9 @@
 package com.jodexindustries.donatecase.command.impl;
 
-import com.jodexindustries.donatecase.api.AddonManager;
-import com.jodexindustries.donatecase.api.SubCommandManager;
+import com.jodexindustries.donatecase.impl.managers.AddonManagerImpl;
+import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -18,9 +18,9 @@ import java.util.List;
 /**
  * Class for /dc addons subcommand implementation
  */
-public class AddonsCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class AddonsCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManager manager) {
+    public static void register(SubCommandManagerImpl manager) {
         AddonsCommand command = new AddonsCommand();
 
         SubCommand subCommand = manager.builder("addons")
@@ -33,7 +33,7 @@ public class AddonsCommand implements SubCommandExecutor, SubCommandTabCompleter
 
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        List<InternalJavaAddon> addons = new ArrayList<>(AddonManager.addons.values());
+        List<InternalJavaAddon> addons = new ArrayList<>(AddonManagerImpl.addons.values());
         addons.sort(Comparator.comparing(InternalJavaAddon::getName));
         Tools.msgRaw(sender, "&7Currently loaded addons in DonateCase (&a" + addons.size() + "&7): " + compileAddons(addons));
     }

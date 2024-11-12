@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -19,9 +19,9 @@ import java.util.List;
 /**
  * Class for /dc create subcommand implementation
  */
-public class CreateCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class CreateCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManager manager) {
+    public static void register(SubCommandManagerImpl manager) {
         CreateCommand command = new CreateCommand();
 
         SubCommand subCommand = manager.builder("create")

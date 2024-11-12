@@ -1,10 +1,12 @@
 package com.jodexindustries.donatecase.gui.items;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.GUITypedItemManager;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
-import com.jodexindustries.donatecase.api.data.gui.TypedItemClickHandler;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.impl.managers.GUITypedItemManagerImpl;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.events.OpenCaseEvent;
 import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
@@ -14,12 +16,12 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
+public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiClickEvent> {
 
-    public static void register(GUITypedItemManager manager) {
+    public static void register(GUITypedItemManagerImpl manager) {
         OPENItemClickHandlerImpl handler = new OPENItemClickHandlerImpl();
 
-        GUITypedItem item = manager.builder("OPEN")
+        GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> item = manager.builder("OPEN")
                 .description("Type to open the case")
                 .click(handler)
                 .setUpdateMeta(true)
@@ -35,7 +37,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
         Location location = gui.getLocation();
         String itemType = e.getItemType();
         Player p = (Player) e.getWhoClicked();
-        CaseData caseData = gui.getCaseData();
+        CaseDataBukkit caseData = gui.getCaseData();
         String caseType = caseData.getCaseType();
 
         if (itemType.contains("_")) {
@@ -56,7 +58,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
         p.closeInventory();
     }
 
-    public static void executeOpen(@NotNull CaseData caseData, @NotNull Player player, @NotNull Location location) {
+    public static void executeOpen(@NotNull CaseDataBukkit caseData, @NotNull Player player, @NotNull Location location) {
         PreOpenCaseEvent event = new PreOpenCaseEvent(player, caseData, location.getBlock());
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {

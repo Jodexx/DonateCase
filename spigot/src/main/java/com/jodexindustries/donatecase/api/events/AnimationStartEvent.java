@@ -1,6 +1,8 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -15,10 +17,10 @@ import java.util.UUID;
  */
 public class AnimationStartEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-    private final CaseData caseData;
+    private final CaseDataBukkit caseData;
     private final Block block;
     private final String animation;
-    private final CaseData.Item winItem;
+    private final CaseDataItem<CaseDataMaterialBukkit> winItem;
     private final UUID uuid;
 
     /**
@@ -31,8 +33,8 @@ public class AnimationStartEvent extends PlayerEvent {
      * @param winItem   Win item
      * @param uuid Animation UUID
      */
-    public AnimationStartEvent(@NotNull Player who, @NotNull String animation, @NotNull CaseData caseData,
-                               @NotNull Block block, @NotNull CaseData.Item winItem, @NotNull UUID uuid) {
+    public AnimationStartEvent(@NotNull Player who, @NotNull String animation, @NotNull CaseDataBukkit caseData,
+                               @NotNull Block block, @NotNull CaseDataItem<CaseDataMaterialBukkit> winItem, @NotNull UUID uuid) {
         super(who);
         this.caseData = caseData;
         this.block = block;
@@ -68,7 +70,7 @@ public class AnimationStartEvent extends PlayerEvent {
      * @return case data
      */
     @NotNull
-    public CaseData getCaseData() {
+    public CaseDataBukkit getCaseData() {
         return caseData;
     }
 
@@ -88,7 +90,7 @@ public class AnimationStartEvent extends PlayerEvent {
      * @return win item
      */
     @NotNull
-    public CaseData.Item getWinItem() {
+    public CaseDataItem<CaseDataMaterialBukkit> getWinItem() {
         return winItem;
     }
 

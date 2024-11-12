@@ -1,10 +1,11 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.api.AnimationManager;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.impl.managers.AnimationManagerImpl;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.*;
@@ -15,12 +16,12 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.function.Consumer;
 
-public class FireworkAnimation extends JavaAnimation {
+public class FireworkAnimation extends JavaAnimationBukkit {
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 
-    public static void register(AnimationManager manager) {
-        CaseAnimation caseAnimation = manager.builder("FIREWORK")
+    public static void register(AnimationManagerImpl manager) {
+        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit> caseAnimation = manager.builder("FIREWORK")
                 .animation(FireworkAnimation.class)
                 .description("Fireworks fly to the skies and a prize appears")
                 .requireSettings(true)
@@ -84,12 +85,12 @@ public class FireworkAnimation extends JavaAnimation {
                         as.setCustomNameVisible(true);
                     as.setCustomName(getWinItem().getMaterial().getDisplayName());
                     as.updateMeta();
-                    Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                    Case.animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
                 }
                 if (this.i >= 30) {
                     as.remove();
                     task.cancel();
-                    Case.animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                    Case.animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
                 }
             }
 

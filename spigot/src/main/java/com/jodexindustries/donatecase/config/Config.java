@@ -2,7 +2,7 @@ package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.DatabaseType;
+import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.tools.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -106,7 +106,6 @@ public class Config {
             Case.historyCache.setMaxAge(caching);
         }
 
-        plugin.databaseType = getConfig().getBoolean("MySql.Enabled") ? DatabaseType.MYSQL : DatabaseType.SQLITE;
     }
 
     @Nullable
@@ -299,6 +298,15 @@ public class Config {
 
     public Converter getConverter() {
         return converter;
+    }
+
+    /**
+     * Get database type
+     * @return MYSQL or SQLITE
+     * @since 2.2.6.8
+     */
+    public DatabaseType getDatabaseType() {
+        return getConfig().getBoolean("MySql.Enabled") ? DatabaseType.MYSQL : DatabaseType.SQLITE;
     }
 
     /**

@@ -1,12 +1,13 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.api.AnimationManager;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.impl.managers.AnimationManagerImpl;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -16,13 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class RainlyAnimation extends JavaAnimation {
+public class RainlyAnimation extends JavaAnimationBukkit {
 
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 
-    public static void register(AnimationManager manager) {
-        CaseAnimation caseAnimation = manager.builder("RAINLY")
+    public static void register(AnimationManagerImpl manager) {
+        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit> caseAnimation = manager.builder("RAINLY")
                 .animation(RainlyAnimation.class)
                 .description("Rain drips from the clouds")
                 .requireSettings(true)
@@ -99,7 +100,7 @@ public class RainlyAnimation extends JavaAnimation {
             if (i >= 70) {
                 as.remove();
                 task.cancel();
-                Case.animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                Case.animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
             i++; // Increment tick counter
@@ -121,14 +122,14 @@ public class RainlyAnimation extends JavaAnimation {
             as.setCustomName(winGroupDisplayName);
             as.updateMeta();
 
-            Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+            Case.animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
 
             world.spawnParticle(getParticle("explosion"), loc, 0);
             world.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
         }
 
         private void updateRandomItem() {
-            CaseData.Item item = getCaseData().getRandomItem();
+            CaseDataItem<CaseDataMaterialBukkit> item = getCaseData().getRandomItem();
             String itemDisplayName = Case.getInstance().papi.setPlaceholders(
                     getPlayer(), item.getMaterial().getDisplayName()
             );

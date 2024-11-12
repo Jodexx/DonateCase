@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -16,12 +16,12 @@ import java.util.List;
 /**
  * Class for /dc reload subcommand implementation
  */
-public class ReloadCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class ReloadCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManager manager) {
+    public static void register(SubCommandManagerImpl manager) {
         ReloadCommand command = new ReloadCommand();
 
-        SubCommand subCommand = manager.builder("reload")
+        SubCommand<CommandSender> subCommand = manager.builder("reload")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)
@@ -42,6 +42,7 @@ public class ReloadCommand implements SubCommandExecutor, SubCommandTabCompleter
                 Case.cleanCache();
                 Case.getInstance().loadConfig();
                 Case.getInstance().loadCases();
+                Case.getInstance().loadDatabase();
                 Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("config-cache-reloaded", "&aReloaded all DonateCase Cache")));
             }
         }

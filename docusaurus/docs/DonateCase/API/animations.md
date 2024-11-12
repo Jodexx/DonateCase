@@ -8,14 +8,14 @@ sidebar_position: 6
 
 To create an animation class, we will use the [JavaAnimation](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/data/JavaAnimation.html) abstract class
 
-##### Pay attention to the methods: [Case#animationPreEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationPreEnd(com.jodexindustries.donatecase.api.data.CaseData,org.bukkit.OfflinePlayer,boolean,com.jodexindustries.donatecase.api.data.CaseData.Item,org.bukkit.Location)) and [Case#animationEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationEnd(com.jodexindustries.donatecase.api.data.CaseData,org.bukkit.entity.Player,java.util.UUID,com.jodexindustries.donatecase.api.data.CaseData.Item))
-- [Case#animationPreEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationPreEnd(com.jodexindustries.donatecase.api.data.CaseData,org.bukkit.entity.Player,boolean,com.jodexindustries.donatecase.api.data.CaseData.Item)) is called to grant a group, send a message, and more.
-- [Case#animationEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationEnd(com.jodexindustries.donatecase.api.data.CaseData,org.bukkit.entity.Player,java.util.UUID,com.jodexindustries.donatecase.api.data.CaseData.Item)) is called to completely end the animation.
+##### Pay attention to the methods: [Case#animationPreEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationPreEnd(com.jodexindustries.donatecase.api.data.CaseDataBukkit,org.bukkit.OfflinePlayer,boolean,com.jodexindustries.donatecase.api.data.CaseDataBukkit.Item,org.bukkit.Location)) and [Case#animationEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationEnd(com.jodexindustries.donatecase.api.data.CaseDataBukkit,org.bukkit.entity.Player,java.util.UUID,com.jodexindustries.donatecase.api.data.CaseDataBukkit.Item))
+- [Case#animationPreEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationPreEnd(com.jodexindustries.donatecase.api.data.CaseDataBukkit,org.bukkit.entity.Player,boolean,com.jodexindustries.donatecase.api.data.CaseDataBukkit.Item)) is called to grant a group, send a message, and more.
+- [Case#animationEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationEnd(com.jodexindustries.donatecase.api.data.CaseDataBukkit,org.bukkit.entity.Player,java.util.UUID,com.jodexindustries.donatecase.api.data.CaseDataBukkit.Item)) is called to completely end the animation.
 
 > TestAnimation class
 ```java
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.JavaAnimation;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimation;
 import org.bukkit.Bukkit;
 
 public class TestAnimation extends JavaAnimation {

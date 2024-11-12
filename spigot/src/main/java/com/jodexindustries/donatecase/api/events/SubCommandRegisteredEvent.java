@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -12,14 +12,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class SubCommandRegisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private final SubCommand subCommand;
+    private final SubCommand<CommandSender> subCommand;
 
     /**
      * Default constructor
      *
      * @param subCommand Sub command class
      */
-    public SubCommandRegisteredEvent(SubCommand subCommand) {
+    public SubCommandRegisteredEvent(SubCommand<CommandSender> subCommand) {
         this.subCommand = subCommand;
     }
 
@@ -44,7 +44,7 @@ public class SubCommandRegisteredEvent extends Event {
      * @return SubCommand
      */
     @NotNull
-    public SubCommand getSubCommand() {
+    public SubCommand<CommandSender> getSubCommand() {
         return subCommand;
     }
 

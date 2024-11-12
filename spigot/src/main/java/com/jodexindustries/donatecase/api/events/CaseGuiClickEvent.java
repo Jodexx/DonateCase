@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import org.bukkit.Location;
 import org.bukkit.event.HandlerList;
@@ -80,7 +80,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
      * @return case data
      */
     @Deprecated
-    public CaseData getCaseData() {
+    public CaseDataBukkit getCaseData() {
         return gui.getCaseData();
     }
 

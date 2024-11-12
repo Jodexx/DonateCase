@@ -1,7 +1,9 @@
 package com.jodexindustries.donatecase.api.addon.external;
 
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.logging.Logger;
 
 public class ExternalJavaAddon implements ExternalAddon {
@@ -34,5 +36,10 @@ public class ExternalJavaAddon implements ExternalAddon {
     @Override
     public Logger getLogger() {
         return plugin.getLogger();
+    }
+
+    @Override
+    public @NotNull File getDataFolder() {
+        return plugin.getDataFolder();
     }
 }

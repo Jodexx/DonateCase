@@ -11,6 +11,7 @@ version = apiVersion
 
 dependencies {
     compileOnly("org.jetbrains:annotations:24.1.0")
+    compileOnly("org.yaml:snakeyaml:1.27")
 }
 
 java {
