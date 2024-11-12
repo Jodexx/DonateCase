@@ -23,7 +23,7 @@ public class AddonsCommand implements SubCommandExecutor<CommandSender>, SubComm
     public static void register(SubCommandManagerImpl manager) {
         AddonsCommand command = new AddonsCommand();
 
-        SubCommand subCommand = manager.builder("addons")
+        SubCommand<CommandSender> subCommand = manager.builder("addons")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)

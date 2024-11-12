@@ -25,7 +25,7 @@ public class KeysCommand implements SubCommandExecutor<CommandSender>, SubComman
     public static void register(SubCommandManagerImpl manager) {
         KeysCommand command = new KeysCommand();
 
-        SubCommand subCommand = manager.builder("keys")
+        SubCommand<CommandSender> subCommand = manager.builder("keys")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.PLAYER.permission)

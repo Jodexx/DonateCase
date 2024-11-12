@@ -27,7 +27,7 @@ public class GiveKeyCommand implements SubCommandExecutor<CommandSender>, SubCom
     public static void register(SubCommandManagerImpl manager) {
         GiveKeyCommand command = new GiveKeyCommand();
 
-        SubCommand subCommand = manager.builder("givekey")
+        SubCommand<CommandSender> subCommand = manager.builder("givekey")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.MODER.permission)

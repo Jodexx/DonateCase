@@ -30,7 +30,7 @@ public class AddonCommand implements SubCommandExecutor<CommandSender>, SubComma
     public static void register(SubCommandManagerImpl manager) {
         AddonCommand command = new AddonCommand();
 
-        SubCommand subCommand = manager.builder("addon")
+        SubCommand<CommandSender> subCommand = manager.builder("addon")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)

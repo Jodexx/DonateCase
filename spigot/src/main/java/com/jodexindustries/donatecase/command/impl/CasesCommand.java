@@ -22,7 +22,7 @@ public class CasesCommand implements SubCommandExecutor<CommandSender>, SubComma
     public static void register(SubCommandManagerImpl manager) {
         CasesCommand command = new CasesCommand();
 
-        SubCommand subCommand = manager.builder("cases")
+        SubCommand<CommandSender> subCommand = manager.builder("cases")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.MODER.permission)

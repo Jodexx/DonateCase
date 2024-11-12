@@ -20,7 +20,7 @@ public class HelpCommand implements SubCommandExecutor<CommandSender>, SubComman
     public static void register(SubCommandManagerImpl manager) {
         HelpCommand command = new HelpCommand();
 
-        SubCommand subCommand = manager.builder("help")
+        SubCommand<CommandSender> subCommand = manager.builder("help")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.PLAYER.permission)

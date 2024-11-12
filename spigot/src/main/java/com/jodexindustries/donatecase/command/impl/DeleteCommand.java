@@ -26,7 +26,7 @@ public class DeleteCommand implements SubCommandExecutor<CommandSender>, SubComm
     public static void register(SubCommandManagerImpl manager) {
         DeleteCommand command = new DeleteCommand();
 
-        SubCommand subCommand = manager.builder("delete")
+        SubCommand<CommandSender> subCommand = manager.builder("delete")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)

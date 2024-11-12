@@ -24,7 +24,7 @@ public class CreateCommand implements SubCommandExecutor<CommandSender>, SubComm
     public static void register(SubCommandManagerImpl manager) {
         CreateCommand command = new CreateCommand();
 
-        SubCommand subCommand = manager.builder("create")
+        SubCommand<CommandSender> subCommand = manager.builder("create")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)
