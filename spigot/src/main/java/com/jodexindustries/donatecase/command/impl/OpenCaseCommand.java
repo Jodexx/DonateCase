@@ -1,9 +1,11 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -20,12 +22,12 @@ import java.util.List;
 /**
  * Class for /dc opencase subcommand implementation
  */
-public class OpenCaseCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class OpenCaseCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManager manager) {
+    public static void register(SubCommandManagerImpl manager) {
         OpenCaseCommand command = new OpenCaseCommand();
 
-        SubCommand subCommand = manager.builder("opencase")
+        SubCommand<CommandSender> subCommand = manager.builder("opencase")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.PLAYER.permission)
@@ -44,9 +46,9 @@ public class OpenCaseCommand implements SubCommandExecutor, SubCommandTabComplet
                     Case.getKeysAsync(caseName, playerName).thenAcceptAsync((keys) -> {
                         if (keys >= 1) {
                             Case.removeKeys(caseName, playerName, 1);
-                            CaseData data = Case.getCase(caseName);
+                            CaseDataBukkit data = Case.getCase(caseName);
                             if (data == null) return;
-                            CaseData.Item winGroup = data.getRandomItem();
+                            CaseDataItem<CaseDataMaterialBukkit> winGroup = data.getRandomItem();
                             Case.animationPreEnd(data, player, player.getLocation(), winGroup);
                         } else {
                             Tools.msg(player, Case.getConfig().getLang().getString("no-keys"));

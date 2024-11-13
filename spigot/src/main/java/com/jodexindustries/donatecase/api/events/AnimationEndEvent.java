@@ -1,6 +1,8 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -13,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AnimationEndEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private final CaseData caseData;
+    private final CaseDataBukkit caseData;
     private final Block block;
-    private final CaseData.Item winItem;
+    private final CaseDataItem<CaseDataMaterialBukkit> winItem;
     private final OfflinePlayer player;
 
     /**
@@ -26,7 +28,7 @@ public class AnimationEndEvent extends Event {
      * @param block     Case block (or another, where animation was ended)
      * @param winItem   Player prize
      */
-    public AnimationEndEvent(@NotNull OfflinePlayer who, CaseData caseData, Block block, CaseData.Item winItem) {
+    public AnimationEndEvent(@NotNull OfflinePlayer who, CaseDataBukkit caseData, Block block, CaseDataItem<CaseDataMaterialBukkit> winItem) {
         this.player = who;
         this.caseData = caseData;
         this.block = block;
@@ -59,7 +61,7 @@ public class AnimationEndEvent extends Event {
      * @return case data
      */
     @NotNull
-    public CaseData getCaseData() {
+    public CaseDataBukkit getCaseData() {
         return caseData;
     }
 
@@ -79,7 +81,7 @@ public class AnimationEndEvent extends Event {
      * @return win item
      */
     @NotNull
-    public CaseData.Item getWinItem() {
+    public CaseDataItem<CaseDataMaterialBukkit> getWinItem() {
         return winItem;
     }
 

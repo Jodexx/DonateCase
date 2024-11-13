@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class OpenCaseEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     protected boolean cancel;
-    private final CaseData caseData;
+    private final CaseDataBukkit caseData;
     private final Block block;
 
     /**
@@ -29,7 +29,7 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
      * @param caseData Case data
      * @param block    Case block
      */
-    public OpenCaseEvent(@NotNull final Player who, @NotNull final CaseData caseData, final Block block) {
+    public OpenCaseEvent(@NotNull final Player who, @NotNull final CaseDataBukkit caseData, final Block block) {
         super(who);
         this.caseData = caseData;
         this.block = block;
@@ -52,7 +52,7 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
      * @since 2.2.5.8
      */
     @NotNull
-    public CaseData getCaseData() {
+    public CaseDataBukkit getCaseData() {
         return caseData;
     }
 

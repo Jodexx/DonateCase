@@ -1,27 +1,33 @@
 package com.jodexindustries.donatecase.command.impl;
 
-import com.jodexindustries.donatecase.api.*;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
-import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
+import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
+import com.jodexindustries.donatecase.gui.CaseGui;
+import com.jodexindustries.donatecase.impl.managers.*;
 import com.jodexindustries.donatecase.tools.Tools;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RegistryCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class RegistryCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManager manager) {
+    public static void register(SubCommandManagerImpl manager) {
         RegistryCommand command = new RegistryCommand();
 
-        SubCommand subCommand = manager.builder("registry")
+        SubCommand<CommandSender> subCommand = manager.builder("registry")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.ADMIN.permission)
@@ -77,21 +83,21 @@ public class RegistryCommand implements SubCommandExecutor, SubCommandTabComplet
     }
 
     private static void executeAnimations(CommandSender sender) {
-        Map<String, List<CaseAnimation>> animationsMap = buildAnimationsMap();
-        for (Map.Entry<String, List<CaseAnimation>> entry : animationsMap.entrySet()) {
+        Map<String, List<CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit>>> animationsMap = buildAnimationsMap();
+        for (Map.Entry<String, List<CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit>>> entry : animationsMap.entrySet()) {
             Tools.msgRaw(sender, "&6" + entry.getKey());
-            for (CaseAnimation animation : entry.getValue()) {
+            for (CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit> animation : entry.getValue()) {
                 Tools.msgRaw(sender, "&9- &a" + animation.getName() + " &3- &2" + animation.getDescription());
             }
         }
     }
 
-    private static Map<String, List<CaseAnimation>> buildAnimationsMap() {
-        Map<String, List<CaseAnimation>> animationsMap = new HashMap<>();
-        AnimationManager.registeredAnimations.forEach((animationName, caseAnimation) -> {
+    private static Map<String, List<CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit>>> buildAnimationsMap() {
+        Map<String, List<CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit>>> animationsMap = new HashMap<>();
+        AnimationManagerImpl.registeredAnimations.forEach((animationName, caseAnimation) -> {
             String addon = caseAnimation.getAddon().getName();
 
-            List<CaseAnimation> animations = animationsMap.getOrDefault(addon, new ArrayList<>());
+            List<CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit>> animations = animationsMap.getOrDefault(addon, new ArrayList<>());
             animations.add(caseAnimation);
 
             animationsMap.put(addon, animations);
@@ -100,10 +106,10 @@ public class RegistryCommand implements SubCommandExecutor, SubCommandTabComplet
     }
 
     private static void executeMaterials(CommandSender sender) {
-        Map<String, List<CaseMaterial>> materialsMap = buildMaterialsMap();
-        for (Map.Entry<String, List<CaseMaterial>> entry : materialsMap.entrySet()) {
+        Map<String, List<CaseMaterial<ItemStack>>> materialsMap = buildMaterialsMap();
+        for (Map.Entry<String, List<CaseMaterial<ItemStack>>> entry : materialsMap.entrySet()) {
             Tools.msgRaw(sender, "&6" + entry.getKey());
-            for (CaseMaterial material : entry.getValue()) {
+            for (CaseMaterial<ItemStack> material : entry.getValue()) {
                 Tools.msgRaw(sender, "&9- &a" + material.getId() + " &3- &2" + material.getDescription());
             }
         }
@@ -113,12 +119,12 @@ public class RegistryCommand implements SubCommandExecutor, SubCommandTabComplet
      * Key - Addon name
      * Value - list of CaseMaterial
      */
-    private static Map<String, List<CaseMaterial>> buildMaterialsMap() {
-        Map<String, List<CaseMaterial>> materialsMap = new HashMap<>();
-        MaterialManager.registeredMaterials.forEach((name, caseMaterial) -> {
+    private static Map<String, List<CaseMaterial<ItemStack>>> buildMaterialsMap() {
+        Map<String, List<CaseMaterial<ItemStack>>> materialsMap = new HashMap<>();
+        MaterialManagerImpl.registeredMaterials.forEach((name, caseMaterial) -> {
             String addon = caseMaterial.getAddon().getName();
 
-            List<CaseMaterial> materials = materialsMap.getOrDefault(addon, new ArrayList<>());
+            List<CaseMaterial<ItemStack>> materials = materialsMap.getOrDefault(addon, new ArrayList<>());
             materials.add(caseMaterial);
 
             materialsMap.put(addon, materials);
@@ -128,10 +134,10 @@ public class RegistryCommand implements SubCommandExecutor, SubCommandTabComplet
     }
 
     private static void executeActions(CommandSender sender) {
-        Map<String, List<CaseAction>> actionsMap = buildActionsMap();
-        for (Map.Entry<String, List<CaseAction>> entry : actionsMap.entrySet()) {
+        Map<String, List<CaseAction<OfflinePlayer>>> actionsMap = buildActionsMap();
+        for (Map.Entry<String, List<CaseAction<OfflinePlayer>>> entry : actionsMap.entrySet()) {
             Tools.msgRaw(sender, "&6" + entry.getKey());
-            for (CaseAction action : entry.getValue()) {
+            for (CaseAction<OfflinePlayer> action : entry.getValue()) {
                 Tools.msgRaw(sender, "&9- &a" + action.getName() + " &3- &2" + action.getDescription());
             }
         }
@@ -141,12 +147,12 @@ public class RegistryCommand implements SubCommandExecutor, SubCommandTabComplet
      * Key - Addon name
      * Value - list of CaseAction
      */
-    private static Map<String, List<CaseAction>> buildActionsMap() {
-        Map<String, List<CaseAction>> actionsMap = new HashMap<>();
-        ActionManager.registeredActions.forEach((name, caseAction) -> {
+    private static Map<String, List<CaseAction<OfflinePlayer>>> buildActionsMap() {
+        Map<String, List<CaseAction<OfflinePlayer>>> actionsMap = new HashMap<>();
+        ActionManagerImpl.registeredActions.forEach((name, caseAction) -> {
             String addon = caseAction.getAddon().getName();
 
-            List<CaseAction> actions = actionsMap.getOrDefault(addon, new ArrayList<>());
+            List<CaseAction<OfflinePlayer>> actions = actionsMap.getOrDefault(addon, new ArrayList<>());
             actions.add(caseAction);
 
             actionsMap.put(addon, actions);
@@ -156,10 +162,10 @@ public class RegistryCommand implements SubCommandExecutor, SubCommandTabComplet
     }
 
     private static void executeGuiTypedItems(CommandSender sender) {
-        Map<String, List<GUITypedItem>> guitypeditemsMap = buildGuiTypedItemsMap();
-        for (Map.Entry<String, List<GUITypedItem>> entry : guitypeditemsMap.entrySet()) {
+        Map<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent>>> guitypeditemsMap = buildGuiTypedItemsMap();
+        for (Map.Entry<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent>>> entry : guitypeditemsMap.entrySet()) {
             Tools.msgRaw(sender, "&6" + entry.getKey());
-            for (GUITypedItem guiTypedItem : entry.getValue()) {
+            for (GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> guiTypedItem : entry.getValue()) {
                 Tools.msgRaw(sender, "&9- &a" + guiTypedItem.getId() + " &3- &2" + guiTypedItem.getDescription());
             }
         }
@@ -169,12 +175,12 @@ public class RegistryCommand implements SubCommandExecutor, SubCommandTabComplet
      * Key - Addon name
      * Value - list of GUITypedItem
      */
-    private static Map<String, List<GUITypedItem>> buildGuiTypedItemsMap() {
-        Map<String, List<GUITypedItem>> guiTypedItemsMap = new HashMap<>();
-        GUITypedItemManager.registeredItems.forEach((name, guiTypedItem) -> {
+    private static Map<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent>>> buildGuiTypedItemsMap() {
+        Map<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent>>> guiTypedItemsMap = new HashMap<>();
+        GUITypedItemManagerImpl.registeredItems.forEach((name, guiTypedItem) -> {
             String addon = guiTypedItem.getAddon().getName();
 
-            List<GUITypedItem> actions = guiTypedItemsMap.getOrDefault(addon, new ArrayList<>());
+            List<GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent>> actions = guiTypedItemsMap.getOrDefault(addon, new ArrayList<>());
             actions.add(guiTypedItem);
 
             guiTypedItemsMap.put(addon, actions);

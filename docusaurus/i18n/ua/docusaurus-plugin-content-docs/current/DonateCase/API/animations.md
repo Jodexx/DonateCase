@@ -8,14 +8,14 @@ sidebar_position: 6
 
 Для створення класу animation ми будемо використовувати [JavaAnimation](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/data/JavaAnimation.html) інтерфейс
 
-##### Зверніть увагу на методи: [Case#animationPreEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationPreEnd(com.jodexindustries.donatecase.api.data.CaseData,org.bukkit.entity.Player,boolean,com.jodexindustries.donatecase.api.data.CaseData.Item)) і [Case#animationEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationEnd(com.jodexindustries.donatecase.api.data.CaseData,org.bukkit.entity.Player,java.util.UUID,com.jodexindustries.donatecase.api.data.CaseData.Item))
-- [Case#animationPreEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationPreEnd(com.jodexindustries.donatecase.api.data.CaseData,org.bukkit.entity.Player,boolean,com.jodexindustries.donatecase.api.data.CaseData.Item)) покликаний надати групу, відправити повідомлення і т.д.
-- [Case#animationEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationEnd(com.jodexindustries.donatecase.api.data.CaseData,org.bukkit.entity.Player,java.util.UUID,com.jodexindustries.donatecase.api.data.CaseData.Item)) викликається для завершення анімації.
+##### Зверніть увагу на методи: [Case#animationPreEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationPreEnd(com.jodexindustries.donatecase.api.data.CaseDataBukkit,org.bukkit.entity.Player,boolean,com.jodexindustries.donatecase.api.data.CaseDataBukkit.Item)) і [Case#animationEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationEnd(com.jodexindustries.donatecase.api.data.CaseDataBukkit,org.bukkit.entity.Player,java.util.UUID,com.jodexindustries.donatecase.api.data.CaseDataBukkit.Item))
+- [Case#animationPreEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationPreEnd(com.jodexindustries.donatecase.api.data.CaseDataBukkit,org.bukkit.entity.Player,boolean,com.jodexindustries.donatecase.api.data.CaseDataBukkit.Item)) покликаний надати групу, відправити повідомлення і т.д.
+- [Case#animationEnd](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot/2.2.6.7/raw/com/jodexindustries/donatecase/api/Case.html#animationEnd(com.jodexindustries.donatecase.api.data.CaseDataBukkit,org.bukkit.entity.Player,java.util.UUID,com.jodexindustries.donatecase.api.data.CaseDataBukkit.Item)) викликається для завершення анімації.
 
 > TestAnimation клас
 ```java
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.JavaAnimation;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimation;
 import org.bukkit.Bukkit;
 
 public class TestAnimation extends JavaAnimation {

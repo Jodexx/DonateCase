@@ -1,12 +1,13 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.api.AnimationManager;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.impl.managers.AnimationManagerImpl;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -20,10 +21,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class ShapeAnimation extends JavaAnimation {
+public class ShapeAnimation extends JavaAnimationBukkit {
 
-    public static void register(AnimationManager manager) {
-        CaseAnimation caseAnimation = manager.builder("SHAPE")
+    public static void register(AnimationManagerImpl manager) {
+        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit> caseAnimation = manager.builder("SHAPE")
                 .animation(ShapeAnimation.class)
                 .description("Items flip through and a shape appears")
                 .requireSettings(true)
@@ -95,11 +96,11 @@ public class ShapeAnimation extends JavaAnimation {
                 as.setCustomName(getWinItem().getMaterial().getDisplayName());
                 as.updateMeta();
                 Tools.launchFirework(l.clone().add(0.0, 0.8, 0.0));
-                Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                Case.animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
             if (tick <= 15) {
-                CaseData.Item item = getCaseData().getRandomItem();
+                CaseDataItem<CaseDataMaterialBukkit> item = getCaseData().getRandomItem();
                 if (item.getMaterial().getItemStack().getType() != Material.AIR) {
                     as.setAngle(armorStandEulerAngle);
                     as.setEquipment(itemSlot, item.getMaterial().getItemStack());
@@ -155,7 +156,7 @@ public class ShapeAnimation extends JavaAnimation {
             if (tick >= 40) {
                 as.remove();
                 task.cancel();
-                Case.animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                Case.animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
             ++tick;

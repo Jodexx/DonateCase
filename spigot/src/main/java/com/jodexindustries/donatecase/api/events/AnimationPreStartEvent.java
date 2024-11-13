@@ -1,6 +1,8 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -13,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AnimationPreStartEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-    private final CaseData caseData;
+    private final CaseDataBukkit caseData;
     private final Block block;
-    private CaseData.Item winItem;
+    private CaseDataItem<CaseDataMaterialBukkit> winItem;
 
     /**
      * Default constructor
@@ -26,8 +28,8 @@ public class AnimationPreStartEvent extends PlayerEvent {
      * @param winItem   Win item
      */
     public AnimationPreStartEvent(@NotNull final Player who,
-                                  @NotNull final CaseData caseData, @NotNull final Block block,
-                                  @NotNull final CaseData.Item winItem) {
+                                  @NotNull final CaseDataBukkit caseData, @NotNull final Block block,
+                                  @NotNull final CaseDataItem<CaseDataMaterialBukkit> winItem) {
         super(who);
         this.caseData = caseData;
         this.block = block;
@@ -62,7 +64,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
      * @return case data
      */
     @NotNull
-    public CaseData getCaseData() {
+    public CaseDataBukkit getCaseData() {
         return caseData;
     }
 
@@ -82,7 +84,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
      * @return win item
      */
     @NotNull
-    public CaseData.Item getWinItem() {
+    public CaseDataItem<CaseDataMaterialBukkit> getWinItem() {
         return winItem;
     }
 
@@ -91,7 +93,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
      *
      * @param winItem Win group data
      */
-    public void setWinItem(@NotNull CaseData.Item winItem) {
+    public void setWinItem(@NotNull CaseDataItem<CaseDataMaterialBukkit> winItem) {
         this.winItem = winItem;
     }
 

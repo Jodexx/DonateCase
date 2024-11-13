@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class TitleActionExecutorImpl implements ActionExecutor {
+public class TitleActionExecutorImpl implements ActionExecutor<OfflinePlayer> {
     /**
      * Send title for player with specific cooldown<br>
      * {@code - "[title] (title);(subtitle)"}

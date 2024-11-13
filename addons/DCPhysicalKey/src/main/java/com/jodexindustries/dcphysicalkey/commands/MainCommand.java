@@ -2,7 +2,7 @@ package com.jodexindustries.dcphysicalkey.commands;
 
 import com.jodexindustries.dcphysicalkey.bootstrap.Bootstrap;
 import com.jodexindustries.dcphysicalkey.tools.ItemManager;
-import com.jodexindustries.donatecase.api.SubCommandManager;
+import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -20,11 +20,11 @@ import static com.jodexindustries.donatecase.tools.Tools.rc;
 
 public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
     private final Config config;
-    private final SubCommandManager manager;
+    private final SubCommandManagerImpl manager;
 
     private String commandName;
 
-    public MainCommand(SubCommandManager manager, Bootstrap bootstrap) {
+    public MainCommand(SubCommandManagerImpl manager, Bootstrap bootstrap) {
         this.config = bootstrap.getConfig();
         this.manager = manager;
     }

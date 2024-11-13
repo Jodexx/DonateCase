@@ -1,14 +1,14 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
+import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.command.GlobalCommand;
-import com.jodexindustries.donatecase.database.CaseDatabase;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -22,12 +22,12 @@ import static com.jodexindustries.donatecase.command.GlobalCommand.resolveSDGCom
 /**
  * Class for /dc setkey subcommand implementation
  */
-public class SetKeyCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class SetKeyCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManager manager) {
+    public static void register(SubCommandManagerImpl manager) {
         SetKeyCommand command = new SetKeyCommand();
 
-        SubCommand subCommand = manager.builder("setkey")
+        SubCommand<CommandSender> subCommand = manager.builder("setkey")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.MODER.permission)
@@ -49,10 +49,10 @@ public class SetKeyCommand implements SubCommandExecutor, SubCommandTabCompleter
                 return;
             }
             if (Case.hasCaseByType(caseName)) {
-                CaseData data = Case.getCase(caseName);
+                CaseDataBukkit data = Case.getCase(caseName);
                 if (data == null) return;
                 Case.setKeys(caseName, player, keys).thenAcceptAsync(status -> {
-                    if(status == CaseDatabase.Status.COMPLETE) {
+                    if(status == DatabaseStatus.COMPLETE) {
                         Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-sets"),
                                 "%player:" + player, "%key:" + keys,
                                 "%casetitle:" + data.getCaseTitle(), "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));

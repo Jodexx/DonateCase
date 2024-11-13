@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 /**
  * Class for /dc keys subcommand implementation
  */
-public class KeysCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class KeysCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManager manager) {
+    public static void register(SubCommandManagerImpl manager) {
         KeysCommand command = new KeysCommand();
 
-        SubCommand subCommand = manager.builder("keys")
+        SubCommand<CommandSender> subCommand = manager.builder("keys")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.PLAYER.permission)

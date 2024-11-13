@@ -7,7 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class BroadcastActionExecutorImpl implements ActionExecutor {
+public class BroadcastActionExecutorImpl implements ActionExecutor<OfflinePlayer> {
     /**
      * Send broadcast message for all players on the server with specific cooldown<br>
      * {@code - "[broadcast] (message)"}

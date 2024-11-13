@@ -1,12 +1,13 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.api.AnimationManager;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.impl.managers.AnimationManagerImpl;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,7 +26,7 @@ import java.util.Random;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-public class WheelAnimation extends JavaAnimation {
+public class WheelAnimation extends JavaAnimationBukkit {
 
     private final List<ArmorStandCreator> armorStands = new ArrayList<>();
     private EquipmentSlot itemSlot;
@@ -46,8 +47,8 @@ public class WheelAnimation extends JavaAnimation {
         }
     }
 
-    public static void register(AnimationManager manager) {
-        CaseAnimation caseAnimation = manager.builder("WHEEL")
+    public static void register(AnimationManagerImpl manager) {
+        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit> caseAnimation = manager.builder("WHEEL")
                 .animation(WheelAnimation.class)
                 .description("Items resolve around the case")
                 .requireSettings(true)
@@ -154,7 +155,7 @@ public class WheelAnimation extends JavaAnimation {
                 // RANDOM logic - random items with duplicates
                 armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
                 for (int i = 1; i < itemsCount; i++) {
-                    CaseData.Item randomItem = getCaseData().getRandomItem();
+                    CaseDataItem<CaseDataMaterialBukkit> randomItem = getCaseData().getRandomItem();
                     armorStands.add(spawnArmorStand(getLocation(), randomItem, small));
                 }
                 int rand = new Random().nextInt(armorStands.size());
@@ -209,12 +210,12 @@ public class WheelAnimation extends JavaAnimation {
             for (ArmorStandCreator stand : armorStands) {
                 stand.remove();
             }
-            Case.animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+            Case.animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             armorStands.clear();
         }
     }
 
-    private ArmorStandCreator spawnArmorStand(Location location, CaseData.Item item, boolean small) {
+    private ArmorStandCreator spawnArmorStand(Location location, CaseDataItem<CaseDataMaterialBukkit> item, boolean small) {
         ArmorStandCreator as = Tools.createArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);

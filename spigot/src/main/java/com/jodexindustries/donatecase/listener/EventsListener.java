@@ -1,10 +1,11 @@
 package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.GUITypedItemManager;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
-import com.jodexindustries.donatecase.api.data.gui.TypedItemClickHandler;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.impl.managers.GUITypedItemManagerImpl;
+import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.events.*;
 import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
@@ -60,7 +61,7 @@ public class EventsListener implements Listener {
             e.setCancelled(true);
 
             CaseGui gui = Case.playersGui.get(uuid);
-            CaseData caseData = gui.getCaseData();
+            CaseDataBukkit caseData = gui.getCaseData();
             String itemType = caseData.getGui().getItemTypeBySlot(e.getRawSlot());
             CaseGuiClickEvent caseGuiClickEvent = new CaseGuiClickEvent(e.getView(), e.getSlotType(),
                     e.getSlot(), e.getClick(), e.getAction(), gui, itemType);
@@ -70,10 +71,10 @@ public class EventsListener implements Listener {
 
             if (!caseGuiClickEvent.isCancelled()) {
 
-                GUITypedItem typedItem = GUITypedItemManager.getFromString(itemType);
+                GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> typedItem = GUITypedItemManagerImpl.getFromString(itemType);
                 if (typedItem == null) return;
 
-                TypedItemClickHandler handler = typedItem.getItemClickHandler();
+                TypedItemClickHandler<CaseGuiClickEvent> handler = typedItem.getItemClickHandler();
                 if (handler == null) return;
 
                 handler.onClick(caseGuiClickEvent);
@@ -110,7 +111,7 @@ public class EventsListener implements Listener {
                         return;
                     }
 
-                    CaseData caseData = Case.getCase(caseType);
+                    CaseDataBukkit caseData = Case.getCase(caseType);
                     if (caseData == null) {
                         Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
                         Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");

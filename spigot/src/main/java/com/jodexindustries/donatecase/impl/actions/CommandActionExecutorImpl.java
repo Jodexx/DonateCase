@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class CommandActionExecutorImpl implements ActionExecutor {
+public class CommandActionExecutorImpl implements ActionExecutor<OfflinePlayer> {
     /**
      * Send command to console with specific cooldown<br>
      * {@code - "[command] (command)"}
