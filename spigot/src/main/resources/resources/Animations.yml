@@ -64,8 +64,8 @@ WHEEL:
     RightLeg: 0, 0, 0
     LeftLeg: 0, 0, 0
   ItemsCount: 6 # only for RANDOM type
-  CircleSpeed: 0.5
-  CircleRadius: 1.5
+  Shuffle: true # only for FULL type
+  CircleRadius: 2
   LiftingAlongX: 0
   LiftingAlongY: 0
   LiftingAlongZ: 0
@@ -73,7 +73,9 @@ WHEEL:
     Enabled: true
     Particle: FLAME
   Scroll:
-    Time: 100
+    Count: 1
+    Time: 150
+    EaseAmount: 2.5 # 1 = linear
     Sound: UI_BUTTON_CLICK
     Volume: 10
     Pitch: 1
