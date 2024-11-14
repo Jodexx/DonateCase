@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api.manager;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,9 +8,9 @@ import org.jetbrains.annotations.Nullable;
  * Interface for managing GUI-typed items associated with case data materials, enabling
  * registration, retrieval, and management of GUI elements.
  *
- * @param <C> The type extending {@code CaseDataMaterial} associated with GUI items in this manager
+ * @param <M> The type extending {@code CaseDataMaterial} associated with GUI items in this manager
  */
-public interface GUITypedItemManager<C extends CaseDataMaterial, G, E> {
+public interface GUITypedItemManager<M, G, E> {
 
     /**
      * Provides a builder for creating a new GUI typed item with a specified ID.
@@ -21,7 +20,7 @@ public interface GUITypedItemManager<C extends CaseDataMaterial, G, E> {
      * @see #registerItem(GUITypedItem)
      */
     @NotNull
-    GUITypedItem.Builder<C, G, E> builder(String id);
+    GUITypedItem.Builder<M, G, E> builder(String id);
 
     /**
      * Registers a GUI typed item.
@@ -30,7 +29,7 @@ public interface GUITypedItemManager<C extends CaseDataMaterial, G, E> {
      * @return true if the registration is successful, false otherwise
      * @see #builder(String)
      */
-    boolean registerItem(GUITypedItem<C, G, E> item);
+    boolean registerItem(GUITypedItem<M, G, E> item);
 
     /**
      * Unregisters a GUI typed item by its ID.
@@ -51,7 +50,7 @@ public interface GUITypedItemManager<C extends CaseDataMaterial, G, E> {
      * @return the {@code GUITypedItem} object if found, or null otherwise
      */
     @Nullable
-    GUITypedItem<C, G, E> getRegisteredItem(@NotNull String id);
+    GUITypedItem<M, G, E> getRegisteredItem(@NotNull String id);
 
     /**
      * Retrieves the ID of a registered GUI typed item that matches the start of a given string.
@@ -69,5 +68,5 @@ public interface GUITypedItemManager<C extends CaseDataMaterial, G, E> {
      * @return the {@code GUITypedItem} object if found, or null otherwise
      */
     @Nullable
-    GUITypedItem<C, G, E> getFromString(@NotNull final String string);
+    GUITypedItem<M, G, E> getFromString(@NotNull final String string);
 }

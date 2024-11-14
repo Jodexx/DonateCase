@@ -1,14 +1,15 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
-import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.manager.SubCommandManager;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,7 @@ import static com.jodexindustries.donatecase.command.GlobalCommand.resolveSDGCom
  */
 public class DelKeyCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManagerImpl manager) {
+    public static void register(SubCommandManager<CommandSender> manager) {
         DelKeyCommand command = new DelKeyCommand();
 
         SubCommand<CommandSender> subCommand = manager.builder("delkey")
@@ -40,7 +41,7 @@ public class DelKeyCommand implements SubCommandExecutor<CommandSender>, SubComm
                 GlobalCommand.sendHelp(sender, label);
             } else if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("all")) {
-                    Case.removeAllKeys().thenAcceptAsync(status -> Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("all-keys-cleared"))));
+                    Case.getInstance().api.getCaseKeyManager().removeAllKeys().thenAcceptAsync(status -> ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("all-keys-cleared"))));
                 }
             } else {
                 String player = args[0];
@@ -50,8 +51,8 @@ public class DelKeyCommand implements SubCommandExecutor<CommandSender>, SubComm
                     if (data == null) return;
                     int keys;
                     if (args.length == 2) {
-                        keys = Case.getKeys(caseType, player);
-                        Case.setKeys(caseType, player, 0);
+                        keys = Case.getInstance().api.getCaseKeyManager().getKeys(caseType, player);
+                        Case.getInstance().api.getCaseKeyManager().setKeys(caseType, player, 0);
                     } else {
                         try {
                             keys = Integer.parseInt(args[2]);
@@ -60,13 +61,13 @@ public class DelKeyCommand implements SubCommandExecutor<CommandSender>, SubComm
                             return;
                         }
 
-                        Case.removeKeys(caseType, player, keys);
+                        Case.getInstance().api.getCaseKeyManager().removeKeys(caseType, player, keys);
                     }
-                    Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-cleared"),
+                    ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-cleared"),
                             "%player:" + player, "%casetitle:" + data.getCaseTitle(),
                             "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseType, "%key:" + keys));
                 } else {
-                    Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseType));
+                    ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseType));
                 }
             }
         });

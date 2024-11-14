@@ -39,7 +39,8 @@ public class ExternalJavaAddon implements ExternalAddon {
     }
 
     @Override
-    public @NotNull File getDataFolder() {
+    @NotNull
+    public File getDataFolder() {
         return plugin.getDataFolder();
     }
 }

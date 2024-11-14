@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
-import com.jodexindustries.donatecase.gui.CaseGui;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.gui.CaseGui;
 import org.bukkit.Location;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.ClickType;

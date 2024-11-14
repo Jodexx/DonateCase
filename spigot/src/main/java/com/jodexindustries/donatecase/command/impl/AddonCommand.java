@@ -1,8 +1,9 @@
 package com.jodexindustries.donatecase.command.impl;
 
+import com.jodexindustries.donatecase.api.manager.AddonManager;
+import com.jodexindustries.donatecase.api.manager.SubCommandManager;
 import com.jodexindustries.donatecase.impl.managers.AddonManagerImpl;
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
@@ -11,7 +12,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.command.GlobalCommand;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,9 +26,9 @@ import java.util.stream.Collectors;
  * Class for /dc addon subcommand implementation
  */
 public class AddonCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
-    private final AddonManagerImpl manager = Case.getInstance().api.getAddonManager();
+    private final AddonManager manager = Case.getInstance().api.getAddonManager();
 
-    public static void register(SubCommandManagerImpl manager) {
+    public static void register(SubCommandManager<CommandSender> manager) {
         AddonCommand command = new AddonCommand();
 
         SubCommand<CommandSender> subCommand = manager.builder("addon")
@@ -89,11 +90,11 @@ public class AddonCommand implements SubCommandExecutor<CommandSender>, SubComma
     private void handleEnableCommand(CommandSender sender, String addonName) {
         InternalJavaAddon addon = manager.getAddon(addonName);
         if (addon == null) {
-            Tools.msg(sender, "&cAddon &6" + addonName + " &cnot loaded!");
+            ToolsBukkit.msg(sender, "&cAddon &6" + addonName + " &cnot loaded!");
             return;
         }
         if (addon.isEnabled()) {
-            Tools.msg(sender, "&cAddon &6" + addonName + " &calready enabled!");
+            ToolsBukkit.msg(sender, "&cAddon &6" + addonName + " &calready enabled!");
             return;
         }
         if (manager.enableAddon(addon, PowerReason.DONATE_CASE)) {
@@ -106,11 +107,11 @@ public class AddonCommand implements SubCommandExecutor<CommandSender>, SubComma
     private void handleDisableCommand(CommandSender sender, String addonName) {
         InternalJavaAddon addon = manager.getAddon(addonName);
         if (addon == null) {
-            Tools.msg(sender, "&cAddon &6" + addonName + " &cnot loaded!");
+            ToolsBukkit.msg(sender, "&cAddon &6" + addonName + " &cnot loaded!");
             return;
         }
         if (!addon.isEnabled()) {
-            Tools.msg(sender, "&cAddon &6" + addonName + "&calready disabled!");
+            ToolsBukkit.msg(sender, "&cAddon &6" + addonName + "&calready disabled!");
             return;
         }
         manager.disableAddon(addon, PowerReason.DONATE_CASE);
@@ -120,13 +121,13 @@ public class AddonCommand implements SubCommandExecutor<CommandSender>, SubComma
     private void handleLoadCommand(CommandSender sender, String addonName) {
         File addonFile = new File(AddonManagerImpl.getAddonsFolder(), addonName);
         if (!addonFile.exists()) {
-            Tools.msg(sender, "&cFile &6" + addonName + " &cnot found!");
+            ToolsBukkit.msg(sender, "&cFile &6" + addonName + " &cnot found!");
             return;
         }
 
         InternalAddonClassLoader loader = AddonManagerImpl.getAddonClassLoader(addonFile);
         if (loader != null) {
-            Tools.msg(sender, "&cAddon &6" + addonName + " &calready loaded!");
+            ToolsBukkit.msg(sender, "&cAddon &6" + addonName + " &calready loaded!");
             return;
         }
         if (manager.loadAddon(addonFile)) {
@@ -149,7 +150,7 @@ public class AddonCommand implements SubCommandExecutor<CommandSender>, SubComma
     private void handleUnloadCommand(CommandSender sender, String addonName) {
         InternalJavaAddon addon = manager.getAddon(addonName);
         if (addon == null) {
-            Tools.msg(sender, "&cAddon &6" + addonName + " &calready unloaded!");
+            ToolsBukkit.msg(sender, "&cAddon &6" + addonName + " &calready unloaded!");
             return;
         }
         if (manager.unloadAddon(addon, PowerReason.DONATE_CASE)) {
@@ -160,11 +161,11 @@ public class AddonCommand implements SubCommandExecutor<CommandSender>, SubComma
     }
 
     private void handleAddonError(CommandSender sender, String addonName, String action) {
-        Tools.msg(sender, "&cThere was an error " + action + " the addon &6" + addonName + "&c.");
+        ToolsBukkit.msg(sender, "&cThere was an error " + action + " the addon &6" + addonName + "&c.");
     }
 
     private void handleAddonSuccess(CommandSender sender, String addonName, String action) {
-        Tools.msg(sender, "&aAddon &6" + addonName + " &a" + action + " successfully!");
+        ToolsBukkit.msg(sender, "&aAddon &6" + addonName + " &a" + action + " successfully!");
     }
 
     private List<String> getAddons() {

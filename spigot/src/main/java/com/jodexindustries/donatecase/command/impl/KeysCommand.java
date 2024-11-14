@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
+import com.jodexindustries.donatecase.api.manager.SubCommandManager;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public class KeysCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManagerImpl manager) {
+    public static void register(SubCommandManager<CommandSender> manager) {
         KeysCommand command = new KeysCommand();
 
         SubCommand<CommandSender> subCommand = manager.builder("keys")
@@ -78,7 +78,7 @@ public class KeysCommand implements SubCommandExecutor<CommandSender>, SubComman
         if (placeholder.startsWith("keys_")) {
             String[] parts = placeholder.split("_");
             String caseType = parts[1];
-            int keys = Case.getKeys(caseType, name);
+            int keys = Case.getInstance().api.getCaseKeyManager().getKeys(caseType, name);
             if (parts.length == 2) {
                 result = String.valueOf(keys);
             } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {

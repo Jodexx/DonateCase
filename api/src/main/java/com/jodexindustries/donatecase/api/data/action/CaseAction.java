@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api.data.action;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Class for custom actions storage
@@ -29,7 +30,7 @@ public class CaseAction<P> implements ActionExecutor<P> {
     }
 
     @Override
-    public void execute(@NotNull P player, @NotNull String context, int cooldown) {
+    public void execute(@Nullable P player, @NotNull String context, int cooldown) {
         executor.execute(player, context, cooldown);
     }
 

@@ -1,25 +1,27 @@
 package com.jodexindustries.donatecase.impl.managers;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.CaseManager;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.events.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
 import com.jodexindustries.donatecase.api.events.AnimationUnregisteredEvent;
+import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
-import com.jodexindustries.donatecase.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,14 +33,17 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
 /**
  * Animation control class, registration, playing
  */
-public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit> {
+public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit,
+        ItemStack, Player, Location, CaseDataBukkit> {
     /**
      * Map of registered animations
      */
-    public static final Map<String, CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit>> registeredAnimations = new HashMap<>();
+    public static final Map<String, CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>> registeredAnimations = new HashMap<>();
 
     private final Addon addon;
 
@@ -59,7 +64,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
      */
     @NotNull
     @Override
-    public CaseAnimation.Builder<JavaAnimationBukkit, CaseDataMaterialBukkit> builder(String name) {
+    public CaseAnimation.Builder<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> builder(String name) {
         return new CaseAnimation.Builder<>(name, addon);
     }
 
@@ -71,7 +76,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
      * @since 2.2.6.2
      */
     @Override
-    public boolean registerAnimation(CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit> caseAnimation) {
+    public boolean registerAnimation(CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation) {
         String name = caseAnimation.getName();
         if(!isRegistered(name)) {
             registeredAnimations.put(name, caseAnimation);
@@ -149,8 +154,8 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         caseData.setItems(Tools.sortItemsByIndex(caseData.getItems()));
         String animation = caseData.getAnimation();
         if (!isRegistered(animation)) {
-            Tools.msg(player, "&cAn error occurred while opening the case!");
-            Tools.msg(player, "&cContact the project administration!");
+            ToolsBukkit.msg(player, "&cAn error occurred while opening the case!");
+            ToolsBukkit.msg(player, "&cContact the project administration!");
             addon.getLogger().log(Level.WARNING, "Case animation " + animation + " does not exist!");
             return CompletableFuture.completedFuture(false);
         }
@@ -163,11 +168,11 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         ActiveCase<Block> activeCase = new ActiveCase<>(block, caseData.getCaseType());
         UUID uuid = UUID.randomUUID();
 
-        if (CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {
-            CaseManager.getHologramManager().removeHologram(block);
+        if (instance.hologramManager != null && caseData.getHologram().isEnabled()) {
+            instance.hologramManager.removeHologram(block);
         }
 
-        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit> caseAnimation = getRegisteredAnimation(animation);
+        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = getRegisteredAnimation(animation);
 
         CompletableFuture<Boolean> animationCompletion = new CompletableFuture<>();
         if (caseAnimation != null) {
@@ -246,7 +251,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
      */
     @Nullable
     @Override
-    public CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit> getRegisteredAnimation(String animation) {
+    public CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> getRegisteredAnimation(String animation) {
         return registeredAnimations.get(animation);
     }
 }

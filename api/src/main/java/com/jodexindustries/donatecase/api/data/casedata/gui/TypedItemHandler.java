@@ -1,12 +1,11 @@
 package com.jodexindustries.donatecase.api.data.casedata.gui;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for handling item creating
  */
-public interface TypedItemHandler<M extends CaseDataMaterial, G> {
+public interface TypedItemHandler<M, G> {
 
     /**
      * Called when tried to handle item in GUI <br/>

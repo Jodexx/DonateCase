@@ -6,7 +6,7 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 /**
  * Class for custom animation storage
  */
-public class CaseAnimation<A extends JavaAnimation<M>, M extends CaseDataMaterial> {
+public class CaseAnimation<A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, I> {
     private final Addon addon;
     private final String name;
 
@@ -79,7 +79,7 @@ public class CaseAnimation<A extends JavaAnimation<M>, M extends CaseDataMateria
     /**
      * @since 2.2.6.2
      */
-    public static class Builder<A extends JavaAnimation<M>, M extends CaseDataMaterial> {
+    public static class Builder<A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, I> {
         private final Addon addon;
         private final String name;
 
@@ -92,23 +92,23 @@ public class CaseAnimation<A extends JavaAnimation<M>, M extends CaseDataMateria
             this.name = name;
         }
 
-        public Builder<A, M> animation(Class<? extends A> animation) {
+        public Builder<A, M, I> animation(Class<? extends A> animation) {
             this.animation = animation;
             return this;
         }
 
-        public Builder<A, M> description(String description) {
+        public Builder<A, M, I> description(String description) {
             this.description = description;
             return this;
         }
 
-        public Builder<A, M> requireSettings(boolean requireSettings) {
+        public Builder<A, M, I> requireSettings(boolean requireSettings) {
             this.requireSettings = requireSettings;
             return this;
         }
 
-        public CaseAnimation<A, M> build() {
-            CaseAnimation<A, M> caseAnimation = new CaseAnimation<>(name, addon);
+        public CaseAnimation<A, M, I> build() {
+            CaseAnimation<A, M, I> caseAnimation = new CaseAnimation<>(name, addon);
             caseAnimation.setAnimation(animation);
             caseAnimation.setDescription(description);
             caseAnimation.setRequireSettings(requireSettings);

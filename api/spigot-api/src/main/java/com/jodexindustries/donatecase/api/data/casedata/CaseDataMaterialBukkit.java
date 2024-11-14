@@ -10,9 +10,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.List;
 
-public class CaseDataMaterialBukkit extends CaseDataMaterial {
-
-    private ItemStack itemStack;
+public class CaseDataMaterialBukkit extends CaseDataMaterial<ItemStack> {
 
     /**
      * Default constructor
@@ -26,38 +24,11 @@ public class CaseDataMaterialBukkit extends CaseDataMaterial {
      * @param rgb         Material rgb
      */
     public CaseDataMaterialBukkit(String id, ItemStack itemStack, String displayName, boolean enchanted, List<String> lore, int modelData, String[] rgb) {
-        super(id, displayName, enchanted, lore, modelData, rgb);
-        this.itemStack = itemStack;
+        super(id, itemStack, displayName, enchanted, lore, modelData, rgb);
     }
 
     /**
-     * Get win item itemStack
-     *
-     * @return itemStack
-     */
-    public ItemStack getItemStack() {
-        return itemStack;
-    }
-
-    /**
-     * Set itemStack for win item
-     *
-     * @param itemStack itemStack
-     */
-    public void setItemStack(ItemStack itemStack) {
-        this.itemStack = itemStack;
-        updateMeta();
-    }
-
-    /**
-     * Update {@link #itemStack} metadata
-     */
-    public void updateMeta() {
-        updateMeta(getDisplayName(), getLore(), getModelData(), isEnchanted(), getRgb());
-    }
-
-    /**
-     * Update {@link #itemStack} metadata
+     * Update {@link #getItemStack()} metadata
      *
      * @param displayName Item display name
      * @param lore        Item lore

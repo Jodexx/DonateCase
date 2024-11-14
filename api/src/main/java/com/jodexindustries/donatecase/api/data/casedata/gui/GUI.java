@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api.data.casedata.gui;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GUI<M extends CaseDataMaterial> implements Cloneable {
+public class GUI<M> implements Cloneable {
     private String title;
     private int size;
     private Map<String, Item<M>> items;
@@ -87,7 +86,7 @@ public class GUI<M extends CaseDataMaterial> implements Cloneable {
     }
 
 
-    public static class Item<M extends CaseDataMaterial> implements Cloneable {
+    public static class Item<M> implements Cloneable {
         private String itemName;
         private String type;
         private M material;
@@ -138,9 +137,7 @@ public class GUI<M extends CaseDataMaterial> implements Cloneable {
         @Override
         public Item<M> clone() {
             try {
-                Item<M> item = (Item<M>) super.clone();
-                item.material = (M) this.material.clone();
-                return item;
+                return (Item<M>) super.clone();
             } catch (CloneNotSupportedException e) {
                 throw new AssertionError();
             }

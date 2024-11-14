@@ -1,16 +1,15 @@
 package com.jodexindustries.donatecase.gui.items;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.impl.managers.GUITypedItemManagerImpl;
-import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.events.OpenCaseEvent;
 import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
-import com.jodexindustries.donatecase.gui.CaseGui;
+import com.jodexindustries.donatecase.api.gui.CaseGui;
+import com.jodexindustries.donatecase.api.manager.GUITypedItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -18,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiClickEvent> {
 
-    public static void register(GUITypedItemManagerImpl manager) {
+    public static void register(GUITypedItemManager<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> manager) {
         OPENItemClickHandlerImpl handler = new OPENItemClickHandlerImpl();
 
         GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> item = manager.builder("OPEN")
@@ -69,7 +68,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
                 if (!openEvent.isCancelled()) {
                     Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData).thenAcceptAsync(started -> {
                         if(started) {
-                            if(!event.isIgnoreKeys()) Case.removeKeys(caseData.getCaseType(), player.getName(), 1);
+                            if(!event.isIgnoreKeys()) Case.getInstance().api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1);
                         }
                     });
                 }
@@ -81,6 +80,6 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
 
     private static boolean checkKeys(PreOpenCaseEvent event) {
         if (event.isIgnoreKeys()) return true;
-        return Case.getKeys(event.getCaseType(), event.getPlayer().getName()) >= 1;
+        return Case.getInstance().api.getCaseKeyManager().getKeys(event.getCaseType(), event.getPlayer().getName()) >= 1;
     }
 }

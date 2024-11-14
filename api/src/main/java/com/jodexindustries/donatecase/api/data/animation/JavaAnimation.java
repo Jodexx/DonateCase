@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public abstract class JavaAnimation<M extends CaseDataMaterial> implements IAnimation {
+public abstract class JavaAnimation<M extends CaseDataMaterial<I>, I> implements IAnimation {
     private UUID uuid;
     private CaseData<M> caseData;
     private CaseDataItem<M> winItem;

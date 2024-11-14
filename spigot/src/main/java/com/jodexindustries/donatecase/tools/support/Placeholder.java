@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
 public class Placeholder extends PlaceholderExpansion {
 
 
@@ -43,7 +45,7 @@ public class Placeholder extends PlaceholderExpansion {
             String[] parts = params.split("_", 2);
             int keys = 0;
             for (String caseType : Case.caseData.keySet()) {
-                int cachedKeys = Case.getKeysCache(caseType, player.getName());
+                int cachedKeys = instance.api.getCaseKeyManager().getKeysCache(caseType, player.getName());
                 keys += cachedKeys;
             }
             if (parts.length == 1) {
@@ -55,7 +57,7 @@ public class Placeholder extends PlaceholderExpansion {
 
         if (params.startsWith("keys_")) {
             String[] parts = params.split("_", 3);
-            int keys = Case.getKeysCache(parts[1], player.getName());
+            int keys = instance.api.getCaseKeyManager().getKeysCache(parts[1], player.getName());
             if (parts.length == 2) {
                 return String.valueOf(keys);
             } else if (parts[2].equalsIgnoreCase("format")) {
@@ -72,7 +74,7 @@ public class Placeholder extends PlaceholderExpansion {
             String[] parts = params.split("_", 3);
             int openCount = 0;
             for (String caseType : Case.caseData.keySet()) {
-                openCount += Case.getOpenCountCache(caseType, player.getName());
+                openCount += instance.api.getCaseOpenManager().getOpenCountCache(caseType, player.getName());
             }
             if (parts.length == 2) {
                 return String.valueOf(openCount);
@@ -85,7 +87,7 @@ public class Placeholder extends PlaceholderExpansion {
 
         if (params.startsWith("open_count_")) {
             String[] parts = params.split("_", 4);
-            Integer cachedCount = Case.getOpenCountCache(parts[2], player.getName());
+            Integer cachedCount = instance.api.getCaseOpenManager().getOpenCountCache(parts[2], player.getName());
             if (parts.length == 3) {
                 return String.valueOf(cachedCount);
             } else if (parts[3].equalsIgnoreCase("format")) {

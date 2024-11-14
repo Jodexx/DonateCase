@@ -2,14 +2,15 @@ package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.impl.managers.GUITypedItemManagerImpl;
-import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
+import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
+import com.jodexindustries.donatecase.api.gui.CaseGui;
+import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
-import com.jodexindustries.donatecase.api.events.*;
-import com.jodexindustries.donatecase.gui.CaseGui;
-import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,6 +31,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import java.util.UUID;
 import java.util.logging.Level;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
 
 public class EventsListener implements Listener {
 
@@ -47,7 +50,7 @@ public class EventsListener implements Listener {
             if (p.hasPermission("donatecase.admin")) {
                 new UpdateChecker(Case.getInstance(), 106701).getVersion((version) -> {
                     if (Tools.getPluginVersion(Case.getInstance().getDescription().getVersion()) < Tools.getPluginVersion(version)) {
-                        Tools.msg(p, Tools.rt(Case.getConfig().getLang().getString("new-update"), "%version:" + version));
+                        ToolsBukkit.msg(p, Tools.rt(Case.getConfig().getLang().getString("new-update"), "%version:" + version));
                     }
                 });
             }
@@ -71,7 +74,7 @@ public class EventsListener implements Listener {
 
             if (!caseGuiClickEvent.isCancelled()) {
 
-                GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> typedItem = GUITypedItemManagerImpl.getFromString(itemType);
+                GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> typedItem = instance.api.getGuiTypedItemManager().getFromString(itemType);
                 if (typedItem == null) return;
 
                 TypedItemClickHandler<CaseGuiClickEvent> handler = typedItem.getItemClickHandler();
@@ -107,13 +110,13 @@ public class EventsListener implements Listener {
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (!event.isCancelled()) {
                     if (Case.activeCasesByBlock.containsKey(block)) {
-                        Tools.msg(p, Case.getConfig().getLang().getString("case-opens"));
+                        ToolsBukkit.msg(p, Case.getConfig().getLang().getString("case-opens"));
                         return;
                     }
 
                     CaseDataBukkit caseData = Case.getCase(caseType);
                     if (caseData == null) {
-                        Tools.msg(p, "&cSomething wrong! Contact with server administrator!");
+                        ToolsBukkit.msg(p, "&cSomething wrong! Contact with server administrator!");
                         Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
                         return;
                     }
@@ -141,7 +144,7 @@ public class EventsListener implements Listener {
         Location loc = e.getBlock().getLocation();
         if (Case.hasCaseByLocation(loc)) {
             e.setCancelled(true);
-            Tools.msg(e.getPlayer(), Case.getConfig().getLang().getString("case-destroy-disallow"));
+            ToolsBukkit.msg(e.getPlayer(), Case.getConfig().getLang().getString("case-destroy-disallow"));
         }
 
     }

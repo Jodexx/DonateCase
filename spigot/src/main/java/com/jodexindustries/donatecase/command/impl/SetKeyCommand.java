@@ -2,14 +2,15 @@ package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
-import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
-import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.manager.SubCommandManager;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ import static com.jodexindustries.donatecase.command.GlobalCommand.resolveSDGCom
  */
 public class SetKeyCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManagerImpl manager) {
+    public static void register(SubCommandManager<CommandSender> manager) {
         SetKeyCommand command = new SetKeyCommand();
 
         SubCommand<CommandSender> subCommand = manager.builder("setkey")
@@ -51,21 +52,21 @@ public class SetKeyCommand implements SubCommandExecutor<CommandSender>, SubComm
             if (Case.hasCaseByType(caseName)) {
                 CaseDataBukkit data = Case.getCase(caseName);
                 if (data == null) return;
-                Case.setKeys(caseName, player, keys).thenAcceptAsync(status -> {
+                Case.getInstance().api.getCaseKeyManager().setKeys(caseName, player, keys).thenAcceptAsync(status -> {
                     if(status == DatabaseStatus.COMPLETE) {
-                        Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-sets"),
+                        ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-sets"),
                                 "%player:" + player, "%key:" + keys,
                                 "%casetitle:" + data.getCaseTitle(), "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
 
                         if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
-                            Tools.msg(target, Tools.rt(Case.getConfig().getLang().getString("keys-sets-target"),
+                            ToolsBukkit.msg(target, Tools.rt(Case.getConfig().getLang().getString("keys-sets-target"),
                                     "%player:" + player, "%key:" + keys,
                                     "%casetitle:" + data.getCaseTitle(), "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
                         }
                     }
                 });
             } else {
-                Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"),
+                ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"),
                         "%case:" + caseName));
             }
         } else {

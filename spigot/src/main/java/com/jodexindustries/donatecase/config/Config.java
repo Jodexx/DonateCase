@@ -3,6 +3,8 @@ package com.jodexindustries.donatecase.config;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
+import com.jodexindustries.donatecase.impl.managers.CaseKeyManagerImpl;
+import com.jodexindustries.donatecase.impl.managers.CaseOpenManagerImpl;
 import com.jodexindustries.donatecase.tools.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -101,8 +103,8 @@ public class Config {
 
         long caching = getConfig().getLong("DonateCase.Caching");
         if (caching >= 0) {
-            Case.keysCache.setMaxAge(caching);
-            Case.openCache.setMaxAge(caching);
+            CaseOpenManagerImpl.openCache.setMaxAge(caching);
+            CaseKeyManagerImpl.keysCache.setMaxAge(caching);
             Case.historyCache.setMaxAge(caching);
         }
 

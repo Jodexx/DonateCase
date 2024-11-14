@@ -3,15 +3,15 @@ package com.jodexindustries.donatecase.config;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
-import com.jodexindustries.donatecase.gui.CaseGui;
-import com.jodexindustries.donatecase.impl.managers.GUITypedItemManagerImpl;
-import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.gui.CaseGui;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.*;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static com.jodexindustries.donatecase.DonateCase.instance;
 
 /**
  * Class for loading CaseData's from cases folder
@@ -187,7 +189,7 @@ public class CaseLoader {
         String[] rgb = Tools.parseRGB(itemSection.getString("Rgb"));
 
         ItemStack itemStack = null;
-        if(withItemStack) itemStack = Tools.loadCaseItem(id);
+        if(withItemStack) itemStack = ToolsBukkit.loadCaseItem(id);
 
         return new CaseDataMaterialBukkit(id, itemStack, itemDisplayName, enchanted, lore, modelData, rgb);
     }
@@ -266,13 +268,13 @@ public class CaseLoader {
         ItemStack itemStack = null;
 
         if(itemType.equalsIgnoreCase("DEFAULT")) {
-            itemStack = Tools.loadCaseItem(id);
+            itemStack = ToolsBukkit.loadCaseItem(id);
         } else {
-            GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> typedItem = GUITypedItemManagerImpl.getFromString(itemType);
+            GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> typedItem = instance.api.getGuiTypedItemManager().getFromString(itemType);
             if (typedItem != null) {
-                if(typedItem.isLoadOnCase()) itemStack = Tools.loadCaseItem(id);
+                if(typedItem.isLoadOnCase()) itemStack = ToolsBukkit.loadCaseItem(id);
             } else {
-                itemStack = Tools.loadCaseItem(id);
+                itemStack = ToolsBukkit.loadCaseItem(id);
             }
         }
 

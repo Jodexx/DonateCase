@@ -32,6 +32,7 @@ dependencies {
     compileOnly("com.github.retrooper:packetevents-spigot:2.4.0")
     compileOnly("me.tofaa.entitylib:spigot:2.4.10-SNAPSHOT")
     implementation(project(":api"))
+    implementation(project(":api:spigot-api"))
     implementation("com.alessiodp.libby:libby-bukkit:2.0.0-SNAPSHOT")
 }
 

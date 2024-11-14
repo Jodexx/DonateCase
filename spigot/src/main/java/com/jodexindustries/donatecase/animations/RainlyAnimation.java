@@ -1,7 +1,8 @@
 package com.jodexindustries.donatecase.animations;
 
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
-import com.jodexindustries.donatecase.impl.managers.AnimationManagerImpl;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -9,8 +10,11 @@ import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
@@ -22,8 +26,8 @@ public class RainlyAnimation extends JavaAnimationBukkit {
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 
-    public static void register(AnimationManagerImpl manager) {
-        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit> caseAnimation = manager.builder("RAINLY")
+    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, CaseDataBukkit> manager) {
+        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("RAINLY")
                 .animation(RainlyAnimation.class)
                 .description("Rain drips from the clouds")
                 .requireSettings(true)
@@ -36,7 +40,7 @@ public class RainlyAnimation extends JavaAnimationBukkit {
     public void start() {
         Particle particle = Particle.valueOf(getSettings().getString("FallingParticle"));
 
-        ArmorStandCreator as = Tools.createArmorStand(getLocation().clone().add(0.5, 1, 0.5));
+        ArmorStandCreator as = ToolsBukkit.createArmorStand(getLocation().clone().add(0.5, 1, 0.5));
         as.setVisible(false);
         as.setGravity(false);
 

@@ -7,7 +7,7 @@ import com.jodexindustries.donatecase.api.events.CaseActionRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.CaseActionUnregisteredEvent;
 import com.jodexindustries.donatecase.api.manager.ActionManager;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,11 +42,11 @@ import java.util.Map;
  *
  * Default actions like: {@code [command], [broadcast], [message], [title], etc.} loading here.
  */
-public class ActionManagerImpl implements ActionManager<OfflinePlayer> {
+public class ActionManagerImpl implements ActionManager<Player> {
     /**
      * Map of all registered actions
      */
-    public static final Map<String, CaseAction<OfflinePlayer>> registeredActions = new HashMap<>();
+    public static final Map<String, CaseAction<Player>> registeredActions = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -66,9 +66,9 @@ public class ActionManagerImpl implements ActionManager<OfflinePlayer> {
      * @param description    Action description
      */
     @Override
-    public void registerAction(String name, ActionExecutor<OfflinePlayer> actionExecutor, String description) {
+    public void registerAction(String name, ActionExecutor<Player> actionExecutor, String description) {
         if (!isRegistered(name)) {
-            CaseAction<OfflinePlayer> caseAction = new CaseAction<>(actionExecutor, addon, name, description);
+            CaseAction<Player> caseAction = new CaseAction<>(actionExecutor, addon, name, description);
             registeredActions.put(name, caseAction);
             CaseActionRegisteredEvent event = new CaseActionRegisteredEvent(caseAction);
             Bukkit.getPluginManager().callEvent(event);
@@ -121,7 +121,7 @@ public class ActionManagerImpl implements ActionManager<OfflinePlayer> {
      */
     @Nullable
     @Override
-    public CaseAction<OfflinePlayer> getRegisteredAction(@NotNull String action) {
+    public CaseAction<Player> getRegisteredAction(@NotNull String action) {
         return registeredActions.get(action);
     }
 

@@ -1,6 +1,5 @@
-package com.jodexindustries.donatecase.api.data;
+package com.jodexindustries.donatecase.api.data.casedata;
 
-import com.jodexindustries.donatecase.api.data.casedata.*;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;

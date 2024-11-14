@@ -1,21 +1,18 @@
 package com.jodexindustries.donatecase.gui.items;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
-import com.jodexindustries.donatecase.impl.managers.GUITypedItemManagerImpl;
-import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.api.data.database.DatabaseType;
+import com.jodexindustries.donatecase.api.data.casedata.*;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemHandler;
-import com.jodexindustries.donatecase.gui.CaseGui;
+import com.jodexindustries.donatecase.api.data.database.DatabaseType;
+import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
+import com.jodexindustries.donatecase.api.gui.CaseGui;
+import com.jodexindustries.donatecase.api.manager.GUITypedItemManager;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
@@ -25,7 +22,7 @@ import java.util.List;
 
 public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterialBukkit, CaseGui> {
 
-    public static void register(GUITypedItemManagerImpl manager) {
+    public static void register(GUITypedItemManager<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> manager) {
         HISTORYItemHandlerImpl handler = new HISTORYItemHandlerImpl();
 
         GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> item = manager.builder("HISTORY")
@@ -43,7 +40,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
 
         boolean handled = handleHistoryItem(caseData, item, caseGui.getGlobalHistoryData());
 
-        CaseDataMaterial material = item.getMaterial();
+        CaseDataMaterial<ItemStack> material = item.getMaterial();
 
         if (!handled) {
             YamlConfiguration config = Case.getConfig().getCasesConfig().getCase(caseData.getCaseType()).getSecond();

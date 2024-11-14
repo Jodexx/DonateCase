@@ -1,7 +1,8 @@
 package com.jodexindustries.donatecase.animations;
 
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
-import com.jodexindustries.donatecase.impl.managers.AnimationManagerImpl;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
@@ -9,13 +10,16 @@ import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -47,8 +51,8 @@ public class WheelAnimation extends JavaAnimationBukkit {
         }
     }
 
-    public static void register(AnimationManagerImpl manager) {
-        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit> caseAnimation = manager.builder("WHEEL")
+    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, CaseDataBukkit> manager) {
+        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("WHEEL")
                 .animation(WheelAnimation.class)
                 .description("Items resolve around the case")
                 .requireSettings(true)
@@ -120,7 +124,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
             }
 
             if (ticks == animationTime) {
-                Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                Case.animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
             if (ticks >= animationTime + 20) {
@@ -133,14 +137,14 @@ public class WheelAnimation extends JavaAnimationBukkit {
 
             if (wheelType == WheelType.FULL) {
                 // FULL logic - unique items
-                List<CaseData.Item> uniqueItems = new ArrayList<>(getCaseData().getItems().values());
+                List<CaseDataItem<CaseDataMaterialBukkit>> uniqueItems = new ArrayList<>(getCaseData().getItems().values());
 
                 if (getSettings().getBoolean("Shuffle", true)) {
                     Collections.shuffle(uniqueItems);
                 }
 
                 int additionalSteps = 0;
-                for (CaseData.Item uniqueItem : uniqueItems) {
+                for (CaseDataItem<CaseDataMaterialBukkit> uniqueItem : uniqueItems) {
                     if (uniqueItem.getItemName().equals(getWinItem().getItemName())) {
                         additionalSteps = uniqueItems.size() - armorStands.size();
                         armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
@@ -216,7 +220,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
     }
 
     private ArmorStandCreator spawnArmorStand(Location location, CaseDataItem<CaseDataMaterialBukkit> item, boolean small) {
-        ArmorStandCreator as = Tools.createArmorStand(location);
+        ArmorStandCreator as = ToolsBukkit.createArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);

@@ -1,6 +1,6 @@
 rootProject.name = "DonateCase"
-include("api")
-include("spigot")
+include("api", ":api:spigot-api",
+    "spigot")
 
 file("addons").listFiles()?.forEach { dir ->
     if (dir.isDirectory) {
@@ -16,3 +16,4 @@ dependencyResolutionManagement {
         maven("https://repo.jodexindustries.xyz/releases/")
     }
 }
+include("common")

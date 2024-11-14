@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.holograms;
 
-import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import org.bukkit.block.Block;
 
 public abstract class HologramManager {

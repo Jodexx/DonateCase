@@ -1,7 +1,8 @@
 package com.jodexindustries.donatecase.animations;
 
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
-import com.jodexindustries.donatecase.impl.managers.AnimationManagerImpl;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -9,13 +10,16 @@ import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,8 +27,8 @@ import java.util.function.Consumer;
 
 public class ShapeAnimation extends JavaAnimationBukkit {
 
-    public static void register(AnimationManagerImpl manager) {
-        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit> caseAnimation = manager.builder("SHAPE")
+    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, CaseDataBukkit> manager) {
+        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("SHAPE")
                 .animation(ShapeAnimation.class)
                 .description("Items flip through and a shape appears")
                 .requireSettings(true)
@@ -38,7 +42,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
         getLocation().add(0.5, -0.1, 0.5);
         getLocation().setYaw(-70.0F);
 
-        final ArmorStandCreator as = Tools.createArmorStand(getLocation());
+        final ArmorStandCreator as = ToolsBukkit.createArmorStand(getLocation());
         boolean small = getSettings().getBoolean("Shape.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
@@ -95,7 +99,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
                 as.setAngle(armorStandEulerAngle);
                 as.setCustomName(getWinItem().getMaterial().getDisplayName());
                 as.updateMeta();
-                Tools.launchFirework(l.clone().add(0.0, 0.8, 0.0));
+                ToolsBukkit.launchFirework(l.clone().add(0.0, 0.8, 0.0));
                 Case.animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 

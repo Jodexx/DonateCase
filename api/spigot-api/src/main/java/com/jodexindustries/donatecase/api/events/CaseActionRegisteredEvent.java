@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.api.events;
 
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -11,14 +11,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CaseActionRegisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private final CaseAction<OfflinePlayer> caseAction;
+    private final CaseAction<Player> caseAction;
 
     /**
      * Default constructor
      *
      * @param caseAction Case action
      */
-    public CaseActionRegisteredEvent(CaseAction<OfflinePlayer> caseAction) {
+    public CaseActionRegisteredEvent(CaseAction<Player> caseAction) {
         this.caseAction = caseAction;
     }
 
@@ -28,7 +28,7 @@ public class CaseActionRegisteredEvent extends Event {
      * @return case action
      * @since 2.2.5.8
      */
-    public CaseAction<OfflinePlayer> getCaseAction() {
+    public CaseAction<Player> getCaseAction() {
         return caseAction;
     }
 

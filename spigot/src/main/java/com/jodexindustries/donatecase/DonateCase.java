@@ -8,25 +8,31 @@ import com.jodexindustries.donatecase.animations.*;
 import com.jodexindustries.donatecase.api.*;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
-import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.FancyHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
+import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.command.impl.*;
 import com.jodexindustries.donatecase.config.CaseLoader;
 import com.jodexindustries.donatecase.config.Config;
 import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
-import com.jodexindustries.donatecase.impl.actions.*;
 import com.jodexindustries.donatecase.gui.items.HISTORYItemHandlerImpl;
 import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
+import com.jodexindustries.donatecase.impl.DCAPIBukkitImpl;
+import com.jodexindustries.donatecase.impl.actions.*;
 import com.jodexindustries.donatecase.impl.managers.*;
 import com.jodexindustries.donatecase.impl.materials.*;
 import com.jodexindustries.donatecase.listener.EventsListener;
@@ -35,8 +41,11 @@ import com.jodexindustries.donatecase.tools.support.*;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +69,6 @@ public class DonateCase extends JavaPlugin {
     public Permission permission = null;
     public PermissionDriver permissionDriver = null;
     public HologramDriver hologramDriver = null;
-    public CaseManager api;
     public CaseLoader loader;
     public BukkitLibraryManager libraryManager;
     public ItemsAdderSupport itemsAdderSupport = null;
@@ -68,6 +76,8 @@ public class DonateCase extends JavaPlugin {
     public HeadDatabaseSupport headDatabaseSupport = null;
     public CustomHeadsSupport customHeadsSupport = null;
     public PacketEventsSupport packetEventsSupport;
+
+    public DCAPIBukkit api;
 
     public Config config;
 
@@ -78,10 +88,11 @@ public class DonateCase extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
+        api = new DCAPIBukkitImpl(this);
+        DCAPIBukkit.register(DCAPIBukkitImpl.class);
 
         loadLibraries();
 
-        api = new CaseManager(this);
         api.getAddonManager().loadAddons();
     }
 
@@ -149,6 +160,7 @@ public class DonateCase extends JavaPlugin {
         if (packetEventsSupport != null) packetEventsSupport.unload();
 
         Case.cleanCache();
+        DCAPIBukkit.unregister();
     }
 
     private void loadPlaceholderAPI() {
@@ -267,7 +279,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultSubCommands() {
-        SubCommandManagerImpl manager = api.getSubCommandManager();
+        SubCommandManager<CommandSender> manager = api.getSubCommandManager();
 
         ReloadCommand.register(manager);
         GiveKeyCommand.register(manager);
@@ -287,7 +299,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultAnimations() {
-        AnimationManagerImpl manager = api.getAnimationManager();
+        AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, CaseDataBukkit> manager = api.getAnimationManager();
         ShapeAnimation.register(manager);
         RainlyAnimation.register(manager);
         FireworkAnimation.register(manager);
@@ -296,7 +308,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultActions() {
-        ActionManagerImpl manager = api.getActionManager();
+        ActionManager<Player> manager = api.getActionManager();
         manager.registerAction("[command]", new CommandActionExecutorImpl(),
                 "Sends a command to the console");
         manager.registerAction("[message]", new MessageActionExecutorImpl(),
@@ -311,7 +323,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultMaterials() {
-        MaterialManagerImpl manager = api.getMaterialManager();
+        MaterialManager<ItemStack> manager = api.getMaterialManager();
         manager.registerMaterial("BASE64", new BASE64MaterialHandlerImpl(),
                 "Heads from Minecraft-heads by BASE64 value");
         manager.registerMaterial("MCURL", new MCURLMaterialHandlerImpl(),
@@ -330,7 +342,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultGUITypedItems() {
-        GUITypedItemManagerImpl manager = api.getGuiTypedItemManager();
+        GUITypedItemManager<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> manager = api.getGuiTypedItemManager();
 
         OPENItemClickHandlerImpl.register(manager);
         HISTORYItemHandlerImpl.register(manager);

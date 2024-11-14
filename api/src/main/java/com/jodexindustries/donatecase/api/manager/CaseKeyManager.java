@@ -53,6 +53,8 @@ public interface CaseKeyManager {
      */
     CompletableFuture<DatabaseStatus> removeKeys(String caseType, String player, int keys);
 
+    CompletableFuture<DatabaseStatus> removeAllKeys();
+
     /**
      * Get the keys to a certain player's case
      * @param caseType Case type

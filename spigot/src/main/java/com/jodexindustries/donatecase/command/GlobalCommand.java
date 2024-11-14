@@ -16,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
 /**
  * Class for /dc command implementation with subcommands
  */
@@ -138,7 +140,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                 }
             }
         } else if (SubCommandManagerImpl.registeredSubCommands.containsKey(args[0])) {
-            return SubCommandManagerImpl.getTabCompletionsForSubCommand(sender, args[0], label, Arrays.copyOfRange(args, 1, args.length));
+            return instance.api.getSubCommandManager().getTabCompletionsForSubCommand(sender, args[0], label, Arrays.copyOfRange(args, 1, args.length));
         } else {
             return new ArrayList<>();
         }

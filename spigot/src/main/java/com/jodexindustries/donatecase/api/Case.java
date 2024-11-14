@@ -3,22 +3,21 @@ package com.jodexindustries.donatecase.api;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
-import com.jodexindustries.donatecase.api.events.KeysTransactionEvent;
-import com.jodexindustries.donatecase.api.manager.CaseKeyManager;
+import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import com.jodexindustries.donatecase.config.Config;
 import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
-import com.jodexindustries.donatecase.gui.CaseGui;
-import com.jodexindustries.donatecase.impl.managers.ActionManagerImpl;
+import com.jodexindustries.donatecase.gui.CaseGuiBukkit;
+import com.jodexindustries.donatecase.impl.managers.CaseKeyManagerImpl;
+import com.jodexindustries.donatecase.impl.managers.CaseOpenManagerImpl;
 import com.jodexindustries.donatecase.tools.*;
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
-import com.jodexindustries.donatecase.api.caching.entry.InfoEntry;
 import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -44,7 +43,7 @@ import static com.jodexindustries.donatecase.DonateCase.*;
 /**
  * The main class for API interaction with DonateCase, this is where most of the functions are located.
  */ 
-public class Case implements CaseKeyManager {
+public class Case {
     /**
      * Active cases
      */
@@ -65,16 +64,6 @@ public class Case implements CaseKeyManager {
      * Loaded cases in runtime
      */
     public final static Map<String, CaseDataBukkit> caseData = new HashMap<>();
-
-    /**
-     * Cache map for storing number of player's keys
-     */
-    public final static SimpleCache<InfoEntry, Integer> keysCache = new SimpleCache<>(20);
-
-    /**
-     * Cache map for storing number of player's cases opens
-     */
-    public final static SimpleCache<InfoEntry, Integer> openCache = new SimpleCache<>(20);
 
     /**
      * Cache map for storing cases histories
@@ -98,207 +87,11 @@ public class Case implements CaseKeyManager {
             instance.getLogger().warning("Error with saving location: world not found!");
             return;
         }
-        if(CaseManager.getHologramManager() != null && (caseData != null && caseData.getHologram().isEnabled())) CaseManager.getHologramManager().createHologram(location.getBlock(), caseData);
+        if(instance.hologramManager != null && (caseData != null && caseData.getHologram().isEnabled())) instance.hologramManager.createHologram(location.getBlock(), caseData);
         String tempLocation = location.getWorld().getName() + ";" + location.getX() + ";" + location.getY() + ";" + location.getZ() + ";" + location.getPitch() + ";" + location.getYaw();
         getConfig().getCases().set("DonateCase.Cases." + caseName + ".location", tempLocation);
         getConfig().getCases().set("DonateCase.Cases." + caseName + ".type", type);
         getConfig().saveCases();
-    }
-
-    /**
-     * Set case keys for a specific player, calling an event beforehand
-     *
-     * @param caseType Case type
-     * @param player   Player name
-     * @param newKeys  New number of keys
-     * @param before   Number of keys before modification
-     * @return CompletableFuture of the operation's status
-     * @since 2.2.6.7
-     */
-    private static CompletableFuture<DatabaseStatus> setKeysWithEvent(String caseType, String player, int newKeys, int before) {
-        KeysTransactionEvent event = new KeysTransactionEvent(caseType, player, newKeys, before);
-        Bukkit.getPluginManager().callEvent(event);
-
-        return !event.isCancelled()
-                ? getDatabase().setKeys(caseType, player, event.after())
-                : CompletableFuture.completedFuture(DatabaseStatus.CANCELLED);
-    }
-
-    /**
-     * Directly set case keys to a specific player (bypassing addition/subtraction)
-     *
-     * @param caseType Case type
-     * @param player   Player name
-     * @param keys     Number of keys
-     * @return CompletableFuture of completion status
-     */
-    public CompletableFuture<DatabaseStatus> setKeys(String caseType, String player, int keys) {
-        return getKeysAsync(caseType, player).thenComposeAsync(before -> setKeysWithEvent(caseType, player, keys, before));
-    }
-
-    /**
-     * Modify case keys for a specific player
-     *
-     * @param caseType Case type
-     * @param player   Player name
-     * @param keys     Number of keys to modify (positive to add, negative to remove)
-     * @return Completable future of completion status
-     * @since 2.2.6.7
-     */
-    public CompletableFuture<DatabaseStatus> modifyKeys(String caseType, String player, int keys) {
-        return getKeysAsync(caseType, player)
-                .thenComposeAsync(before -> setKeysWithEvent(caseType, player, before + keys, before));
-    }
-
-    /**
-     * Add case keys to a specific player (async)
-     *
-     * @param caseType Case type
-     * @param player   Player name
-     * @param keys     Number of keys
-     * @return Completable future of completes
-     * @see #modifyKeys(String, String, int)
-     */
-    public CompletableFuture<DatabaseStatus> addKeys(String caseType, String player, int keys) {
-        return modifyKeys(caseType, player, keys);
-    }
-
-    /**
-     * Delete case keys for a specific player (async)
-     *
-     * @param caseType Case name
-     * @param player   Player name
-     * @param keys     Number of keys
-     * @return Completable future of completes
-     * @see #modifyKeys(String, String, int)
-     */
-    public CompletableFuture<DatabaseStatus> removeKeys(String caseType, String player, int keys) {
-        return modifyKeys(caseType, player, -keys);
-    }
-
-    /**
-     * Delete all keys
-     * @since 2.2.6.1
-     */
-    public CompletableFuture<DatabaseStatus> removeAllKeys() {
-        return getDatabase().delAllKeys();
-    }
-
-    /**
-     * Get the keys to a certain player's case
-     * @param caseType Case type
-     * @param player Player name
-     * @return Number of keys
-     */
-    public int getKeys(String caseType, String player) {
-        return getKeysAsync(caseType, player).join();
-    }
-
-    /**
-     * Get the keys to a certain player's case
-     * @param caseType Case type
-     * @param player Player name
-     * @return CompletableFuture of keys
-     */
-    public CompletableFuture<Integer> getKeysAsync(String caseType, String player) {
-        return getDatabase().getKeys(caseType, player);
-    }
-
-    /**
-     * Get the keys to a certain player's case from cache <br/>
-     * Returns no-cached, if mysql disabled
-     * @param caseType Case type
-     * @param player Player name
-     * @return Number of keys
-     * @since 2.2.3.8
-     */
-    public int getKeysCache(String caseType, String player) {
-        if(getConfig().getDatabaseType() == DatabaseType.SQLITE) return getKeys(caseType, player);
-
-        int keys;
-        InfoEntry entry = new InfoEntry(player, caseType);
-        Integer cachedKeys = keysCache.get(entry);
-        if(cachedKeys == null) {
-            // Get previous, if current is null
-            Integer previous = keysCache.getPrevious(entry);
-            keys = previous != null ? previous : getKeys(caseType, player);
-
-            getKeysAsync(caseType, player).thenAcceptAsync(integer -> keysCache.put(entry, integer));
-        } else {
-            keys = cachedKeys;
-        }
-        return keys;
-    }
-
-    /**
-     * Get count of opened cases by player
-     * @param caseType Case type
-     * @param player Player, who opened
-     * @return opened count
-     */
-    public static int getOpenCount(String caseType, String player) {
-        return getOpenCountAsync(caseType, player).join();
-    }
-
-    /**
-     * Get count of opened cases by player
-     * @param caseType Case type
-     * @param player Player, who opened
-     * @return CompletableFuture of open count
-     */
-    public static CompletableFuture<Integer>  getOpenCountAsync(String caseType, String player) {
-        return getDatabase().getOpenCount(player, caseType);
-    }
-
-    /**
-     * Get count of opened cases by player from cache <br/>
-     * Returns no-cached, if mysql disabled
-     * @param caseType Case type
-     * @param player Player, who opened
-     * @return opened count
-     * @since 2.2.3.8
-     */
-    public static int getOpenCountCache(String caseType, String player) {
-        if(getConfig().getDatabaseType() == DatabaseType.SQLITE) return getOpenCount(caseType, player);
-
-        int openCount;
-        InfoEntry entry = new InfoEntry(player, caseType);
-        Integer cachedKeys = openCache.get(entry);
-        if(cachedKeys == null) {
-            getOpenCountAsync(caseType, player).thenAcceptAsync(integer -> openCache.put(entry, integer));
-            // Get previous, if current is null
-            Integer previous = keysCache.getPrevious(entry);
-            openCount = previous != null ? previous : getOpenCount(caseType, player);
-        } else {
-            openCount = cachedKeys;
-        }
-        return openCount;
-    }
-
-    /**
-     * Set case keys to a specific player (async)
-     *
-     * @param caseType  Case type
-     * @param player    Player name
-     * @param openCount Opened count
-     * @return Completable future of completes
-     * @since 2.2.4.4
-     */
-    public static CompletableFuture<DatabaseStatus> setOpenCount(String caseType, String player, int openCount) {
-        return getDatabase().setCount(caseType, player, openCount);
-    }
-
-    /**
-     * Add count of opened cases by player (async)
-     *
-     * @param caseType  Case type
-     * @param player    Player name
-     * @param openCount Opened count
-     * @return Completable future of completes
-     * @since 2.2.4.4
-     */
-    public static CompletableFuture<DatabaseStatus> addOpenCount(String caseType, String player, int openCount) {
-        return getOpenCountAsync(caseType, player).thenComposeAsync(integer -> setOpenCount(caseType, player, integer + openCount));
     }
 
     /**
@@ -448,8 +241,8 @@ public class Case implements CaseKeyManager {
         Block block = activeCase.getBlock();
         activeCasesByBlock.remove(block);
         activeCases.remove(uuid);
-        if (CaseManager.getHologramManager() != null && caseData.getHologram().isEnabled()) {
-            CaseManager.getHologramManager().createHologram(block, caseData);
+        if (instance.hologramManager != null && caseData.getHologram().isEnabled()) {
+            instance.hologramManager.createHologram(block, caseData);
         }
         AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, caseData, block, item);
         Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
@@ -529,7 +322,7 @@ public class Case implements CaseKeyManager {
             // Set history data in memory
             Objects.requireNonNull(getCase(caseData.getCaseType())).setHistoryData(historyData);
 
-            addOpenCount(caseData.getCaseType(), player.getName(), 1);
+            instance.api.getCaseOpenManager().addOpenCount(caseData.getCaseType(), player.getName(), 1);
         });
     }
 
@@ -613,15 +406,15 @@ public class Case implements CaseKeyManager {
      * @param cooldown Cooldown in seconds
      */
     public static void executeAction(OfflinePlayer player, String action, int cooldown) {
-        String temp = ActionManagerImpl.getByStart(action);
+        String temp = instance.api.getActionManager().getByStart(action);
         if(temp == null) return;
 
         String context = action.replace(temp, "").trim();
 
-        ActionExecutor<OfflinePlayer> actionExecutor = ActionManagerImpl.getRegisteredAction(temp);
+        ActionExecutor<Player> actionExecutor = instance.api.getActionManager().getRegisteredAction(temp);
         if(actionExecutor == null) return;
 
-        actionExecutor.execute(player, context, cooldown);
+        actionExecutor.execute(player.getPlayer(), context, cooldown);
     }
 
     /** Get plugin configuration manager
@@ -666,7 +459,7 @@ public class Case implements CaseKeyManager {
     public static void openGui(@NotNull Player player, @NotNull CaseDataBukkit caseData, @NotNull Location blockLocation) {
         if (caseData.getGui() != null) {
             if (!playersGui.containsKey(player.getUniqueId())) {
-                playersGui.put(player.getUniqueId(), new CaseGui(player, caseData.clone(), blockLocation));
+                playersGui.put(player.getUniqueId(), new CaseGuiBukkit(player, caseData.clone(), blockLocation));
             } else {
                 instance.getLogger().warning("Player " + player.getName() + " already opened case: " + caseData.getCaseType());
             }
@@ -823,8 +616,8 @@ public class Case implements CaseKeyManager {
         caseData.clear();
         activeCases.clear();
         activeCasesByBlock.clear();
-        keysCache.clear();
-        openCache.clear();
+        CaseOpenManagerImpl.openCache.clear();
+        CaseKeyManagerImpl.keysCache.clear();
         historyCache.clear();
     }
 

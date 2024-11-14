@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.command.impl;
 
+import com.jodexindustries.donatecase.api.manager.SubCommandManager;
 import com.jodexindustries.donatecase.impl.managers.AddonManagerImpl;
-import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class AddonsCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManagerImpl manager) {
+    public static void register(SubCommandManager<CommandSender> manager) {
         AddonsCommand command = new AddonsCommand();
 
         SubCommand<CommandSender> subCommand = manager.builder("addons")

@@ -6,6 +6,8 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * Interface to manage animations within the donate case API.
  * Provides methods for creating, registering, and managing custom animations, as well as
@@ -14,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <A> the type of JavaAnimation
  * @param <M> the type of CaseDataMaterial
  */
-public interface AnimationManager<A extends JavaAnimation<M>, M extends CaseDataMaterial> {
+public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, I, Player, L, C> {
 
     /**
      * Provides a builder for creating a new animation with the specified name.
@@ -23,7 +25,7 @@ public interface AnimationManager<A extends JavaAnimation<M>, M extends CaseData
      * @return a builder instance for constructing the CaseAnimation
      */
     @NotNull
-    CaseAnimation.Builder<A, M> builder(String name);
+    CaseAnimation.Builder<A, M, I> builder(String name);
 
     /**
      * Registers a custom animation to the system.
@@ -32,7 +34,7 @@ public interface AnimationManager<A extends JavaAnimation<M>, M extends CaseData
      * @return true if registration was successful, false otherwise
      * @see #builder(String)
      */
-    boolean registerAnimation(CaseAnimation<A, M> animation);
+    boolean registerAnimation(CaseAnimation<A, M, I> animation);
 
     /**
      * Unregisters a custom animation by name, removing it from the system.
@@ -46,6 +48,15 @@ public interface AnimationManager<A extends JavaAnimation<M>, M extends CaseData
      */
     void unregisterAnimations();
 
+    /**
+     * Start animation at a specific location
+     *
+     * @param player   The player who opened the case
+     * @param location Location where to start the animation
+     * @param caseData Case data
+     * @return Completable future of completes (when started)
+     */
+    CompletableFuture<Boolean> startAnimation(@NotNull Player player, @NotNull L location, @NotNull C caseData);
 
     /**
      * Checks if an animation with the specified name is registered.
@@ -62,5 +73,5 @@ public interface AnimationManager<A extends JavaAnimation<M>, M extends CaseData
      * @return the CaseAnimation instance if registered, or null if not found
      */
     @Nullable
-    CaseAnimation<A, M> getRegisteredAnimation(String animation);
+    CaseAnimation<A, M, I> getRegisteredAnimation(String animation);
 }

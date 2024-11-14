@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.data.action;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface for registering case actions
@@ -14,5 +15,5 @@ public interface ActionExecutor<P> {
      * @param context  Executing context
      * @param cooldown Action cooldown
      */
-    void execute(@NotNull P player, @NotNull String context, int cooldown);
+    void execute(@Nullable P player, @NotNull String context, int cooldown);
 }

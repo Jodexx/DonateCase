@@ -1,12 +1,9 @@
 package com.jodexindustries.donatecase.api.addon.internal;
 
-import com.jodexindustries.donatecase.api.CaseManager;
-import org.bukkit.plugin.Plugin;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import org.jetbrains.annotations.NotNull;
 
 public interface InternalAddonBukkit extends InternalAddon {
-    @NotNull
-    Plugin getDonateCaseBukkit();
 
     /**
      * Gets the class that represent all DonateCase managers
@@ -14,5 +11,5 @@ public interface InternalAddonBukkit extends InternalAddon {
      * @return The global manager
      */
     @NotNull
-    CaseManager getCaseAPI();
+    DCAPIBukkit getDCAPI();
 }

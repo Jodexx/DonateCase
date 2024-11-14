@@ -13,14 +13,15 @@ import java.util.List;
  * This class provides methods to get and set each attribute, allowing flexible
  * modification and retrieval of material details.
  */
-public class CaseDataMaterial implements Cloneable {
+public abstract class CaseDataMaterial<I> implements Cloneable, MetaUpdatable {
 
-    private String id;
-    private String displayName;
-    private boolean enchanted;
-    private List<String> lore;
-    private int modelData;
-    private String[] rgb;
+    protected String id;
+    protected String displayName;
+    protected boolean enchanted;
+    protected List<String> lore;
+    protected int modelData;
+    protected String[] rgb;
+    protected I itemStack;
 
     /**
      * Constructs a new CaseDataMaterial with specified attributes.
@@ -32,11 +33,12 @@ public class CaseDataMaterial implements Cloneable {
      * @param modelData   the custom model data for the material
      * @param rgb         the RGB color values for the material
      */
-    public CaseDataMaterial(String id, String displayName, boolean enchanted,
+    public CaseDataMaterial(String id, I itemStack, String displayName, boolean enchanted,
                             List<String> lore, int modelData, String[] rgb) {
-        this.displayName = displayName;
-        this.enchanted = enchanted;
         this.id = id;
+        this.displayName = displayName;
+        this.itemStack = itemStack;
+        this.enchanted = enchanted;
         this.lore = lore == null ? new ArrayList<>() : lore;
         this.modelData = modelData;
         this.rgb = rgb;
@@ -154,15 +156,43 @@ public class CaseDataMaterial implements Cloneable {
     }
 
     /**
+     * Get win item itemStack
+     *
+     * @return itemStack
+     */
+    public I getItemStack() {
+        return itemStack;
+    }
+
+    /**
+     * Set itemStack for win item
+     *
+     * @param itemStack itemStack
+     */
+    public void setItemStack(I itemStack) {
+        this.itemStack = itemStack;
+        updateMeta();
+    }
+
+    /**
+     * Update {@link #itemStack} metadata
+     */
+    @Override
+    public void updateMeta() {
+        updateMeta(getDisplayName(), getLore(), getModelData(), isEnchanted(), getRgb());
+    }
+
+    /**
      * Creates a clone of the CaseDataMaterial instance.
      *
      * @return a cloned copy of this CaseDataMaterial
      * @throws AssertionError if cloning is not supported
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public CaseDataMaterial clone() {
+    public CaseDataMaterial<I> clone() {
         try {
-            return (CaseDataMaterial) super.clone();
+            return (CaseDataMaterial<I>) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }

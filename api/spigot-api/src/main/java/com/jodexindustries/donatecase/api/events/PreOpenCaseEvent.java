@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -9,18 +9,16 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Called when the player successfully opens the case (from gui) and player has keys for opening.
- * <br/>
- * At this time, case gui will be already closed.
- * <br/>
- * Can be cancelled. If you cancel this event, animation will not be started and keys will not be removed.
- * <p> Very similar with {@link AnimationPreStartEvent}</p>
+ * Called when a player tries to open a case via the open menu
+ * <br>
+ * Key checks has not started yet
  */
-public class OpenCaseEvent extends PlayerEvent implements Cancellable {
+public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     protected boolean cancel;
     private final CaseDataBukkit caseData;
     private final Block block;
+    private boolean ignoreKeys;
 
     /**
      * Default constructor
@@ -29,15 +27,16 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
      * @param caseData Case data
      * @param block    Case block
      */
-    public OpenCaseEvent(@NotNull final Player who, @NotNull final CaseDataBukkit caseData, final Block block) {
+    public PreOpenCaseEvent(@NotNull final Player who, @NotNull final CaseDataBukkit caseData, Block block) {
         super(who);
         this.caseData = caseData;
         this.block = block;
         cancel = false;
+        ignoreKeys = false;
     }
 
     /**
-     * Get case type
+     * Get case type (type from config)
      *
      * @return case type
      */
@@ -48,6 +47,7 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get case data
+     *
      * @return case data
      * @since 2.2.5.8
      */
@@ -59,7 +59,7 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
     /**
      * Get case block
      *
-     * @return case block
+     * @return Case block
      */
     public Block getBlock() {
         return block;
@@ -88,5 +88,19 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
     @Override
     public void setCancelled(boolean cancel) {
         this.cancel = cancel;
+    }
+
+    /**
+     * @since 2.2.6.6
+     */
+    public boolean isIgnoreKeys() {
+        return ignoreKeys;
+    }
+
+    /**
+     * @since 2.2.6.6
+     */
+    public void setIgnoreKeys(boolean ignoreKeys) {
+        this.ignoreKeys = ignoreKeys;
     }
 }

@@ -1,12 +1,13 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
+import com.jodexindustries.donatecase.api.manager.SubCommandManager;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +19,7 @@ import java.util.List;
  */
 public class ReloadCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManagerImpl manager) {
+    public static void register(SubCommandManager<CommandSender> manager) {
         ReloadCommand command = new ReloadCommand();
 
         SubCommand<CommandSender> subCommand = manager.builder("reload")
@@ -36,14 +37,14 @@ public class ReloadCommand implements SubCommandExecutor<CommandSender>, SubComm
             Case.getInstance().loadCases();
             if (Case.getInstance().hologramManager != null) Case.getInstance().hologramManager.removeAllHolograms();
             Case.getInstance().loadHolograms();
-            Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("config-reloaded")));
+            ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("config-reloaded")));
         } else {
             if (args[0].equalsIgnoreCase("cache")) {
                 Case.cleanCache();
                 Case.getInstance().loadConfig();
                 Case.getInstance().loadCases();
                 Case.getInstance().loadDatabase();
-                Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("config-cache-reloaded", "&aReloaded all DonateCase Cache")));
+                ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("config-cache-reloaded", "&aReloaded all DonateCase Cache")));
             }
         }
     }

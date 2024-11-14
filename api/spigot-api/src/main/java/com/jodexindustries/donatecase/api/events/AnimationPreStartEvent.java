@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import org.bukkit.Location;
@@ -10,37 +10,30 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 /**
- * Called when the animation starts
+ * Called before the animation starts
  */
-public class AnimationStartEvent extends PlayerEvent {
+public class AnimationPreStartEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     private final CaseDataBukkit caseData;
     private final Block block;
-    private final String animation;
-    private final CaseDataItem<CaseDataMaterialBukkit> winItem;
-    private final UUID uuid;
+    private CaseDataItem<CaseDataMaterialBukkit> winItem;
 
     /**
      * Default constructor
      *
-     * @param who       Player who opened case
-     * @param animation Animation name
+     * @param who       Player who opened
      * @param caseData  Case data
      * @param block     Block where opened
      * @param winItem   Win item
-     * @param uuid Animation UUID
      */
-    public AnimationStartEvent(@NotNull Player who, @NotNull String animation, @NotNull CaseDataBukkit caseData,
-                               @NotNull Block block, @NotNull CaseDataItem<CaseDataMaterialBukkit> winItem, @NotNull UUID uuid) {
+    public AnimationPreStartEvent(@NotNull final Player who,
+                                  @NotNull final CaseDataBukkit caseData, @NotNull final Block block,
+                                  @NotNull final CaseDataItem<CaseDataMaterialBukkit> winItem) {
         super(who);
         this.caseData = caseData;
         this.block = block;
-        this.animation = animation;
         this.winItem = winItem;
-        this.uuid = uuid;
     }
 
     /**
@@ -48,6 +41,7 @@ public class AnimationStartEvent extends PlayerEvent {
      *
      * @return case location
      */
+
     @NotNull
     public Location getLocation() {
         return block.getLocation();
@@ -81,7 +75,7 @@ public class AnimationStartEvent extends PlayerEvent {
      */
     @NotNull
     public String getAnimation() {
-        return animation;
+        return caseData.getAnimation();
     }
 
     /**
@@ -92,6 +86,15 @@ public class AnimationStartEvent extends PlayerEvent {
     @NotNull
     public CaseDataItem<CaseDataMaterialBukkit> getWinItem() {
         return winItem;
+    }
+
+    /**
+     * Set the prize before starting the animation (usually a random one is taken from the case configuration)
+     *
+     * @param winItem Win group data
+     */
+    public void setWinItem(@NotNull CaseDataItem<CaseDataMaterialBukkit> winItem) {
+        this.winItem = winItem;
     }
 
     @NotNull
@@ -107,9 +110,5 @@ public class AnimationStartEvent extends PlayerEvent {
      */
     public static HandlerList getHandlerList() {
         return handlers;
-    }
-
-    public UUID getUniqueId() {
-        return uuid;
     }
 }

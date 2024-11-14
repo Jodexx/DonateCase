@@ -1,15 +1,16 @@
 package com.jodexindustries.donatecase.gui;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
-import com.jodexindustries.donatecase.impl.managers.GUITypedItemManagerImpl;
-import com.jodexindustries.donatecase.api.data.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemHandler;
+import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
+import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -17,7 +18,7 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 /**
  * Class for initializing case GUI
  */
-public class CaseGui {
+public class CaseGuiBukkit implements CaseGui {
     private final Inventory inventory;
     private final CaseDataBukkit caseData;
     private final GUI<CaseDataMaterialBukkit> tempGUI;
@@ -39,7 +40,7 @@ public class CaseGui {
      * @param player   Player object
      * @param caseData CaseData object
      */
-    public CaseGui(@NotNull Player player, @NotNull CaseDataBukkit caseData, @NotNull Location location) {
+    public CaseGuiBukkit(@NotNull Player player, @NotNull CaseDataBukkit caseData, @NotNull Location location) {
         this.player = player;
         this.caseData = caseData;
         this.tempGUI = caseData.getGui().clone();
@@ -57,6 +58,7 @@ public class CaseGui {
      *
      * @return Void future
      */
+    @Override
     public CompletableFuture<Void> load() {
         CompletableFuture<Void> future = new CompletableFuture<>();
 
@@ -107,7 +109,7 @@ public class CaseGui {
     private void processItem(GUI.Item<CaseDataMaterialBukkit> item) {
         String itemType = item.getType();
         if (!itemType.equalsIgnoreCase("DEFAULT")) {
-            GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> typedItem = GUITypedItemManagerImpl.getFromString(itemType);
+            GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> typedItem = Case.getInstance().api.getGuiTypedItemManager().getFromString(itemType);
             if (typedItem != null) {
                 TypedItemHandler<CaseDataMaterialBukkit, CaseGui> handler = typedItem.getItemHandler();
                 if (handler != null) item = handler.handle(this, item);
@@ -119,7 +121,7 @@ public class CaseGui {
 
         CaseDataMaterialBukkit material = item.getMaterial();
 
-        if (material.getItemStack() == null) material.setItemStack(Tools.loadCaseItem(material.getId()));
+        if (material.getItemStack() == null) material.setItemStack(ToolsBukkit.loadCaseItem(material.getId()));
 
         colorize(material);
 
@@ -151,7 +153,7 @@ public class CaseGui {
             }
 
             line = line.replace("%" + placeholder + "%",
-                    String.valueOf(Case.getKeysCache(caseType, p.getName())));
+                    String.valueOf(Case.getInstance().api.getCaseKeyManager().getKeysCache(caseType, p.getName())));
         }
 
         return line;
