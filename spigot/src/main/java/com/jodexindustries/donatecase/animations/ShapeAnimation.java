@@ -17,6 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -25,9 +26,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
 public class ShapeAnimation extends JavaAnimationBukkit {
 
-    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, CaseDataBukkit> manager) {
+    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
         CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("SHAPE")
                 .animation(ShapeAnimation.class)
                 .description("Items flip through and a shape appears")
@@ -100,11 +103,11 @@ public class ShapeAnimation extends JavaAnimationBukkit {
                 as.setCustomName(getWinItem().getMaterial().getDisplayName());
                 as.updateMeta();
                 ToolsBukkit.launchFirework(l.clone().add(0.0, 0.8, 0.0));
-                Case.animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+                instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
             if (tick <= 15) {
-                CaseDataItem<CaseDataMaterialBukkit> item = getCaseData().getRandomItem();
+                CaseDataItem<CaseDataMaterialBukkit, ItemStack> item = getCaseData().getRandomItem();
                 if (item.getMaterial().getItemStack().getType() != Material.AIR) {
                     as.setAngle(armorStandEulerAngle);
                     as.setEquipment(itemSlot, item.getMaterial().getItemStack());
@@ -160,7 +163,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
             if (tick >= 40) {
                 as.remove();
                 task.cancel();
-                Case.animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+                instance.api.getAnimationManager().animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
             ++tick;

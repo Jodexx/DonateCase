@@ -87,4 +87,9 @@ public class CaseOpenManagerImpl implements CaseOpenManager {
     public CompletableFuture<DatabaseStatus> addOpenCount(String caseType, String player, int openCount) {
         return getOpenCountAsync(caseType, player).thenComposeAsync(integer -> setOpenCount(caseType, player, integer + openCount));
     }
+
+    @Override
+    public SimpleCache<InfoEntry, Integer> getCache() {
+        return openCache;
+    }
 }

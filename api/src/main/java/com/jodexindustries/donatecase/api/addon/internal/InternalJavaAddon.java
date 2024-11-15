@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.addon.internal;
 
+import com.jodexindustries.donatecase.api.addon.Addon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +21,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
     private File file;
     private InternalAddonClassLoader urlClassLoader;
     private InternalAddonDescription description;
+    private Addon donateCase;
 
     public InternalJavaAddon() {
         ClassLoader classLoader = this.getClass().getClassLoader();
@@ -30,12 +32,13 @@ public abstract class InternalJavaAddon implements InternalAddon {
         }
     }
 
-    void init(InternalAddonDescription description, File file, InternalAddonClassLoader loader) {
+    void init(InternalAddonDescription description, File file, InternalAddonClassLoader loader, Addon donateCase) {
         this.description = description;
         this.file = file;
         this.classLoader = this.getClass().getClassLoader();
         this.urlClassLoader = loader;
         this.internalAddonLogger = new InternalAddonLogger(this);
+        this.donateCase = donateCase;
     }
 
     /**
@@ -156,5 +159,10 @@ public abstract class InternalJavaAddon implements InternalAddon {
     @Override
     public @NotNull InternalAddonDescription getDescription() {
         return description;
+    }
+
+    @Override
+    public @NotNull Addon getDonateCase() {
+        return donateCase;
     }
 }

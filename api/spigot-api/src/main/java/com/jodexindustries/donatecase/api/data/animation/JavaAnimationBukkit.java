@@ -24,7 +24,7 @@ public abstract class JavaAnimationBukkit extends JavaAnimation<CaseDataMaterial
      * @param winItem  winItem
      */
     public final void init(Player player, Location location, UUID uuid, CaseDataBukkit caseData,
-                           CaseDataItem<CaseDataMaterialBukkit> winItem, ConfigurationSection settings) {
+                           CaseDataItem<CaseDataMaterialBukkit, ItemStack> winItem, ConfigurationSection settings) {
         init(uuid, caseData, winItem);
         this.player = player;
         this.location = location;

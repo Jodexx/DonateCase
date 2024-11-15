@@ -41,10 +41,12 @@ import com.jodexindustries.donatecase.tools.support.*;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -62,7 +64,7 @@ import java.util.logging.Level;
 public class DonateCase extends JavaPlugin {
     public static DonateCase instance;
 
-    public CaseDatabaseImpl database;
+    public CaseDatabaseImpl<CaseDataBukkit, CaseDataMaterialBukkit, ItemStack> database;
     public HologramManager hologramManager = null;
     public PAPISupport papi = null;
     public LuckPerms luckPerms = null;
@@ -77,7 +79,7 @@ public class DonateCase extends JavaPlugin {
     public CustomHeadsSupport customHeadsSupport = null;
     public PacketEventsSupport packetEventsSupport;
 
-    public DCAPIBukkit api;
+    public final DCAPIBukkit api = new DCAPIBukkitImpl(this);
 
     public Config config;
 
@@ -85,11 +87,13 @@ public class DonateCase extends JavaPlugin {
 
     private boolean spawnProtectionDisabled = false;
 
+    static {
+        DCAPIBukkit.register(DCAPIBukkitImpl.class);
+    }
+
     @Override
     public void onLoad() {
         instance = this;
-        api = new DCAPIBukkitImpl(this);
-        DCAPIBukkit.register(DCAPIBukkitImpl.class);
 
         loadLibraries();
 
@@ -101,7 +105,7 @@ public class DonateCase extends JavaPlugin {
         long time = System.currentTimeMillis();
 
         loadConfig();
-        database = new CaseDatabaseImpl(getLogger());
+        database = new CaseDatabaseImpl<>(api.getCaseManager(), getLogger());
 
         loadDatabase();
 
@@ -299,7 +303,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultAnimations() {
-        AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, CaseDataBukkit> manager = api.getAnimationManager();
+        AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager = api.getAnimationManager();
         ShapeAnimation.register(manager);
         RainlyAnimation.register(manager);
         FireworkAnimation.register(manager);
@@ -342,7 +346,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultGUITypedItems() {
-        GUITypedItemManager<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> manager = api.getGuiTypedItemManager();
+        GUITypedItemManager<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> manager = api.getGuiTypedItemManager();
 
         OPENItemClickHandlerImpl.register(manager);
         HISTORYItemHandlerImpl.register(manager);
@@ -437,11 +441,11 @@ public class DonateCase extends JavaPlugin {
             String caseType = caseSection.getString("type");
             if(caseType == null) continue;
 
-            CaseDataBukkit caseData = Case.getCase(caseType);
+            CaseDataBukkit caseData = api.getCaseManager().getCase(caseType);
             Location location = Case.getCaseLocationByCustomName(caseName);
             if (caseData != null && caseData.getHologram().isEnabled() && location != null
                     && location.getWorld() != null && hologramManager != null
-                    && !Case.activeCasesByBlock.containsKey(location.getBlock())) {
+                    && !api.getAnimationManager().getActiveCasesByBlock().containsKey(location.getBlock())) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }

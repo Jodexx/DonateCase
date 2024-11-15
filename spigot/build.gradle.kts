@@ -6,8 +6,6 @@ buildscript {
 
 plugins {
     java
-    id("java-library")
-    `maven-publish`
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("com.rikonardo.papermake") version "1.0.6"
 }
@@ -28,11 +26,10 @@ dependencies {
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
     compileOnly("de.oliver:FancyHolograms:2.3.3")
     compileOnly("net.luckperms:api:5.4")
-    compileOnly("com.j256.ormlite:ormlite-jdbc:6.1")
     compileOnly("com.github.retrooper:packetevents-spigot:2.4.0")
     compileOnly("me.tofaa.entitylib:spigot:2.4.10-SNAPSHOT")
-    implementation(project(":api"))
     implementation(project(":api:spigot-api"))
+    implementation(project(":common"))
     implementation("com.alessiodp.libby:libby-bukkit:2.0.0-SNAPSHOT")
 }
 
@@ -40,16 +37,7 @@ tasks.build {
     dependsOn("shadowJar")
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
 tasks.jar {
-    enabled = false
-}
-
-tasks.withType<GenerateModuleMetadata> {
     enabled = false
 }
 
@@ -66,49 +54,4 @@ tasks.shadowJar {
     archiveBaseName.set(project.rootProject.name)
     archiveClassifier.set(null as String?)
     archiveVersion.set(project.version.toString())
-}
-
-publishing {
-    repositories {
-        maven {
-            name = "JodexIndustries"
-            url = uri("https://repo.jodexindustries.xyz/releases")
-            credentials {
-                username = findProperty("repoUser") as String?
-                password = findProperty("repoPassword") as String?
-            }
-            authentication {
-                create<BasicAuthentication>("basic")
-            }
-        }
-    }
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "com.jodexindustries.donatecase"
-            artifactId = "spigot"
-            version = project.version.toString()
-            from(components["java"])
-        }
-    }
-}
-
-tasks.named<Jar>("javadocJar") {
-    archiveBaseName.set(project.rootProject.name)
-}
-
-tasks.named<Jar>("sourcesJar") {
-    archiveBaseName.set(project.rootProject.name)
-}
-
-tasks.javadoc {
-    (options as StandardJavadocDocletOptions).apply {
-        links(
-            "https://docs.oracle.com/en/java/javase/22/docs/api/",
-            "https://helpch.at/docs/1.16.5/",
-            "https://javadoc.io/static/net.luckperms/api/5.4/",
-            "https://milkbowl.github.io/VaultAPI/",
-//            "https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/api/$api/raw/"
-        )
-    }
-    source = sourceSets["main"].allJava
 }

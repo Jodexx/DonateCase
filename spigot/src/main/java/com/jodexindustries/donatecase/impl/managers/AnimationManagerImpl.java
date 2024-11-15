@@ -6,30 +6,29 @@ import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.api.events.AnimationPreStartEvent;
-import com.jodexindustries.donatecase.api.events.AnimationRegisteredEvent;
-import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
-import com.jodexindustries.donatecase.api.events.AnimationUnregisteredEvent;
+import com.jodexindustries.donatecase.api.events.*;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
+import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.ToolsBukkit;
+import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
@@ -39,11 +38,21 @@ import static com.jodexindustries.donatecase.DonateCase.instance;
  * Animation control class, registration, playing
  */
 public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit,
-        ItemStack, Player, Location, CaseDataBukkit> {
+        ItemStack, Player, Location, Block, CaseDataBukkit> {
     /**
      * Map of registered animations
      */
-    public static final Map<String, CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>> registeredAnimations = new HashMap<>();
+    public final static Map<String, CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>> registeredAnimations = new HashMap<>();
+
+    /**
+     * Map of active cases
+     */
+    public final static Map<UUID, ActiveCase<Block>> activeCases = new HashMap<>();
+
+    /**
+     * Active cases, but by location
+     */
+    public final static Map<Block, UUID> activeCasesByBlock = new HashMap<>();
 
     private final Addon addon;
 
@@ -56,25 +65,12 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         this.addon = addon;
     }
 
-    /**
-     * Gets Builder for creating animation
-     * @param name Animation name to create
-     * @return CaseAnimation Builder
-     * @since 2.2.6.2
-     */
     @NotNull
     @Override
     public CaseAnimation.Builder<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> builder(String name) {
         return new CaseAnimation.Builder<>(name, addon);
     }
 
-    /**
-     * Register animation
-     * @see #builder(String)
-     * @param caseAnimation Case animation object
-     * @return true, if successful
-     * @since 2.2.6.2
-     */
     @Override
     public boolean registerAnimation(CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation) {
         String name = caseAnimation.getName();
@@ -89,12 +85,6 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         return false;
     }
 
-
-    /**
-     * Unregister custom animation
-     *
-     * @param name Animation name
-     */
     @Override
     public void unregisterAnimation(String name) {
         if (isRegistered(name)) {
@@ -106,41 +96,22 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         }
     }
 
-    /**
-     * Unregister all animations
-     */
     @Override
     public void unregisterAnimations() {
         List<String> list = new ArrayList<>(registeredAnimations.keySet());
         list.forEach(this::unregisterAnimation);
     }
 
-    /**
-     * Start animation at a specific location
-     *
-     * @param player   The player who opened the case
-     * @param location Location where to start the animation
-     * @param caseData Case data
-     * @return Completable future of completes (when started)
-     */
+    @Override
     public CompletableFuture<Boolean> startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseDataBukkit caseData) {
         return startAnimation(player, location, caseData, 0);
     }
 
-    /**
-     * Start animation at a specific location with delay
-     *
-     * @param player   The player who opened the case
-     * @param location Location where to start the animation
-     * @param caseData Case data
-     * @param delay Delay in ticks
-     * @return Completable future of completes (when started)
-     * @since 2.2.6.7
-     */
+    @Override
     public CompletableFuture<Boolean> startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseDataBukkit caseData, int delay) {
         Block block = location.getBlock();
 
-        if (Case.activeCasesByBlock.containsKey(block)) {
+        if (instance.api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
             addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation while another animation is running!");
             return CompletableFuture.completedFuture(false);
         }
@@ -160,7 +131,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
             return CompletableFuture.completedFuture(false);
         }
 
-        CaseDataItem<CaseDataMaterialBukkit> winItem = caseData.getRandomItem();
+        CaseDataItem<CaseDataMaterialBukkit, ItemStack> winItem = caseData.getRandomItem();
         winItem.getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(player, winItem.getMaterial().getDisplayName()));
         AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, caseData, block, winItem);
         Bukkit.getPluginManager().callEvent(preStartEvent);
@@ -184,7 +155,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
             Class<? extends JavaAnimationBukkit> animationClass = caseAnimation.getAnimation();
 
             try {
-                Case.activeCasesByBlock.put(block, uuid);
+                getActiveCasesByBlock().put(block, uuid);
 
                 if (animationClass != null) {
                     ConfigurationSection settings = caseData.getAnimationSettings() != null ? caseData.getAnimationSettings() : Case.getConfig().getAnimations().getConfigurationSection(animation);
@@ -201,7 +172,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
                             animationCompletion.complete(true);
                         } catch (Throwable t) {
                             addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
-                            Case.activeCasesByBlock.remove(block);
+                            getActiveCasesByBlock().remove(block);
                             animationCompletion.complete(false);
                         }
                     }, delay);
@@ -212,18 +183,18 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
 
             } catch (Throwable t) {
                 addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
-                Case.activeCasesByBlock.remove(block);
+                getActiveCasesByBlock().remove(block);
                 animationCompletion.complete(false);
             }
         }
 
-        for (CaseGui gui : Case.playersGui.values()) {
+        for (CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui : instance.api.getGUIManager().getPlayersGUI().values()) {
             if (gui.getLocation().equals(block.getLocation())) {
                 gui.getPlayer().closeInventory();
             }
         }
 
-        Case.activeCases.put(uuid, activeCase);
+        activeCases.put(uuid, activeCase);
 
         // AnimationStart event
         AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, block, preStartEvent.getWinItem(), uuid);
@@ -231,27 +202,208 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         return animationCompletion;
     }
 
+    @Override
+    public void animationPreEnd(CaseDataBukkit caseData, Player player, UUID uuid, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item) {
+        ActiveCase<Block> activeCase = activeCases.get(uuid);
+        Location location = activeCase != null ? activeCase.getBlock().getLocation() : null;
+        animationPreEnd(caseData, player, location, item);
+    }
+
+    @Override
+    public void animationPreEnd(CaseDataBukkit caseData, Player player, Location location, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item) {
+        World world = location != null ? location.getWorld() : null;
+        if(world == null) world = Bukkit.getWorlds().get(0);
+
+        String choice = "";
+        Map<String, Integer> levelGroups = getDefaultLevelGroup();
+        if(!caseData.getLevelGroups().isEmpty()) levelGroups = caseData.getLevelGroups();
+
+        String playerGroup = getPlayerGroup(world.getName(), player);
+        if(isAlternative(levelGroups, playerGroup, item.getGroup())) {
+            executeActions(player, caseData, item, null, true);
+        } else {
+            if (item.getGiveType().equalsIgnoreCase("ONE")) {
+                executeActions(player, caseData, item, null, false);
+            } else {
+                choice = getRandomActionChoice(item);
+                executeActions(player, caseData, item, choice, false);
+            }
+        }
+
+        saveOpenInfo(caseData, player, item, choice);
+    }
 
     /**
-     * Check for animation registration
-     *
-     * @param name animation name
-     * @return boolean
+     * Animation end method for custom animations is called to completely end the animation
+     * @param item Item data
+     * @param caseData Case data
+     * @param player Player who opened (offline player)
+     * @param uuid Active case uuid
      */
+    @Override
+    public void animationEnd(CaseDataBukkit caseData, Player player, UUID uuid, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item) {
+        ActiveCase<Block> activeCase = activeCases.get(uuid);
+        if(activeCase == null) return;
+
+        Block block = activeCase.getBlock();
+        activeCasesByBlock.remove(block);
+        activeCases.remove(uuid);
+        if (instance.hologramManager != null && caseData.getHologram().isEnabled()) {
+            instance.hologramManager.createHologram(block, caseData);
+        }
+        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, caseData, block, item);
+        Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
+    }
+
     @Override
     public boolean isRegistered(String name) {
         return registeredAnimations.containsKey(name);
     }
 
-    /**
-     * Get registered animation
-     *
-     * @param animation Animation name
-     * @return Animation class instance
-     */
     @Nullable
     @Override
     public CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> getRegisteredAnimation(String animation) {
         return registeredAnimations.get(animation);
+    }
+
+    @Override
+    public Map<UUID, ActiveCase<Block>> getActiveCases() {
+        return activeCases;
+    }
+
+    @Override
+    public Map<Block, UUID> getActiveCasesByBlock() {
+        return activeCasesByBlock;
+    }
+
+    private static void saveOpenInfo(CaseDataBukkit caseData, OfflinePlayer player, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item, String choice) {
+        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+            CaseDataHistory data = new CaseDataHistory(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
+            CaseDataHistory[] historyData = caseData.getHistoryData();
+
+            List<CaseDataHistory> databaseData = instance.database.getHistoryDataByCaseType(caseData.getCaseType()).join();
+            if(!databaseData.isEmpty()) historyData = databaseData.toArray(new CaseDataHistory[10]);
+
+            System.arraycopy(historyData, 0, historyData, 1, historyData.length - 1);
+            historyData[0] = data;
+
+            for (int i = 0; i < historyData.length; i++) {
+                CaseDataHistory tempData = historyData[i];
+                if (tempData != null) {
+                    instance.database.setHistoryData(caseData.getCaseType(), i, tempData);
+                }
+            }
+
+            // Set history data in memory
+            Objects.requireNonNull(instance.api.getCaseManager().getCase(caseData.getCaseType())).setHistoryData(historyData);
+
+            instance.api.getCaseOpenManager().addOpenCount(caseData.getCaseType(), player.getName(), 1);
+        });
+    }
+
+    /**
+     * Get random choice from item random action list
+     * @param item Case item
+     * @return random action name
+     */
+    public static String getRandomActionChoice(CaseDataItem<CaseDataMaterialBukkit, ItemStack> item) {
+        ProbabilityCollection<String> collection = new ProbabilityCollection<>();
+        for (String name : item.getRandomActions().keySet()) {
+            CaseDataItem.RandomAction randomAction = item.getRandomAction(name);
+            if(randomAction == null) continue;
+            collection.add(name, randomAction.getChance());
+        }
+        return collection.get();
+    }
+
+    /**
+     * Execute actions after case opening
+     * @param player Player, who opened
+     * @param caseData Case that was opened
+     * @param item The prize that was won
+     * @param choice In fact, these are actions that were selected from the RandomActions section
+     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#getAlternativeActions()})
+     */
+    public static void executeActions(Player player, CaseDataBukkit caseData, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item, String choice, boolean alternative) {
+        final String[] replacementRegex = {
+                "%player%:" + player.getName(),
+                "%casename%:" + caseData.getCaseType(),
+                "%casedisplayname%:" + caseData.getCaseDisplayName(),
+                "%casetitle%:" + caseData.getCaseTitle(),
+                "%group%:" + item.getGroup(),
+                "%groupdisplayname%:" + item.getMaterial().getDisplayName()
+        };
+
+        List<String> actions = Tools.rt(getActionsBasedOnChoice(item, choice, alternative), replacementRegex);
+
+        instance.api.getActionManager().executeActions(player, actions);
+    }
+
+    /**
+     * Get player primary group from Vault or LuckPerms
+     * @param world Player world
+     * @param player Bukkit player
+     * @return player primary group
+     */
+    public static String getPlayerGroup(String world, OfflinePlayer player) {
+        String group = null;
+        if(instance.permissionDriver == PermissionDriver.vault) if(instance.permission != null) group = instance.permission.getPrimaryGroup(world, player);
+        if(instance.permissionDriver == PermissionDriver.luckperms) if(instance.luckPerms != null) {
+            User user = instance.luckPerms.getUserManager().getUser(player.getUniqueId());
+            if(user != null) group = user.getPrimaryGroup();
+        }
+        return group;
+    }
+
+    /**
+     * Get map of default LevelGroup from Config.yml
+     * @return map of LevelGroup
+     */
+    public static Map<String, Integer> getDefaultLevelGroup() {
+        Map<String, Integer> levelGroup = new HashMap<>();
+        boolean isEnabled = instance.config.getConfig().getBoolean("DonateCase.LevelGroup");
+        if(isEnabled) {
+            ConfigurationSection section = instance.config.getConfig().getConfigurationSection("DonateCase.LevelGroups");
+            if (section != null) {
+                for (String group : section.getKeys(false)) {
+                    int level = section.getInt(group);
+                    levelGroup.put(group, level);
+                }
+            }
+        }
+        return levelGroup;
+    }
+
+    /**
+     * Check for alternative actions
+     * @param levelGroups map of LevelGroups (can be from case config or default Config.yml)
+     * @param playerGroup player primary group
+     * @param winGroup player win group
+     * @return boolean
+     */
+    public static boolean isAlternative(Map<String, Integer> levelGroups, String playerGroup, String winGroup) {
+        if(levelGroups.containsKey(playerGroup) && levelGroups.containsKey(winGroup)) {
+            int playerGroupLevel = levelGroups.get(playerGroup);
+            int winGroupLevel = levelGroups.get(winGroup);
+            return playerGroupLevel >= winGroupLevel;
+        }
+        return false;
+    }
+
+    /**
+     * Get actions from case item
+     * @param item Case item
+     * @param choice In fact, these are actions that were selected from the RandomActions section
+     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#getAlternativeActions()})
+     * @return list of selected actions
+     */
+    public static List<String> getActionsBasedOnChoice(CaseDataItem<CaseDataMaterialBukkit, ItemStack> item, String choice, boolean alternative) {
+        if (choice != null) {
+            CaseDataItem.RandomAction randomAction = item.getRandomAction(choice);
+            if (randomAction != null) {
+                return randomAction.getActions();
+            }
+        }
+        return alternative ? item.getAlternativeActions() : item.getActions();
     }
 }

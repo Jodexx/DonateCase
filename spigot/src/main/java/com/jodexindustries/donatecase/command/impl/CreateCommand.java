@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
 /**
  * Class for /dc create subcommand implementation
  */
@@ -41,7 +43,7 @@ public class CreateCommand implements SubCommandExecutor<CommandSender>, SubComm
             if (args.length >= 2) {
                 String caseType = args[0];
                 String caseName = args[1];
-                if (Case.hasCaseByType(caseType)) {
+                if (instance.api.getCaseManager().hasCaseByType(caseType)) {
                     if (Case.hasCaseByLocation(l)) {
                         ToolsBukkit.msg(sender, Case.getConfig().getLang().getString("case-already-created"));
                     } else {

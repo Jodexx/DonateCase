@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.addon.internal;
 
 import com.jodexindustries.donatecase.api.DCAPIBukkit;
+import com.jodexindustries.donatecase.api.addon.Addon;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -9,8 +10,8 @@ public abstract class InternalJavaAddonBukkit extends InternalJavaAddon implemen
     private DCAPIBukkit api;
 
     @Override
-    void init(InternalAddonDescription description, File file, InternalAddonClassLoader loader) {
-        super.init(description, file, loader);
+    void init(InternalAddonDescription description, File file, InternalAddonClassLoader loader, Addon donateCase) {
+        super.init(description, file, loader, donateCase);
         this.api = DCAPIBukkit.get(this);
     }
 
@@ -19,5 +20,4 @@ public abstract class InternalJavaAddonBukkit extends InternalJavaAddon implemen
     public DCAPIBukkit getDCAPI() {
         return api;
     }
-
 }

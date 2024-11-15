@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
 import static com.jodexindustries.donatecase.command.GlobalCommand.resolveSDGCompletions;
 
 /**
@@ -46,8 +47,8 @@ public class DelKeyCommand implements SubCommandExecutor<CommandSender>, SubComm
             } else {
                 String player = args[0];
                 String caseType = args[1];
-                if (Case.hasCaseByType(caseType)) {
-                    CaseDataBukkit data = Case.getCase(caseType);
+                if (instance.api.getCaseManager().hasCaseByType(caseType)) {
+                    CaseDataBukkit data = instance.api.getCaseManager().getCase(caseType);
                     if (data == null) return;
                     int keys;
                     if (args.length == 2) {

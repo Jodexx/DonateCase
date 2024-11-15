@@ -8,6 +8,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,7 +18,7 @@ public class AnimationEndEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final CaseDataBukkit caseData;
     private final Block block;
-    private final CaseDataItem<CaseDataMaterialBukkit> winItem;
+    private final CaseDataItem<CaseDataMaterialBukkit, ItemStack> winItem;
     private final OfflinePlayer player;
 
     /**
@@ -28,7 +29,7 @@ public class AnimationEndEvent extends Event {
      * @param block     Case block (or another, where animation was ended)
      * @param winItem   Player prize
      */
-    public AnimationEndEvent(@NotNull OfflinePlayer who, CaseDataBukkit caseData, Block block, CaseDataItem<CaseDataMaterialBukkit> winItem) {
+    public AnimationEndEvent(@NotNull OfflinePlayer who, CaseDataBukkit caseData, Block block, CaseDataItem<CaseDataMaterialBukkit, ItemStack> winItem) {
         this.player = who;
         this.caseData = caseData;
         this.block = block;
@@ -81,7 +82,7 @@ public class AnimationEndEvent extends Event {
      * @return win item
      */
     @NotNull
-    public CaseDataItem<CaseDataMaterialBukkit> getWinItem() {
+    public CaseDataItem<CaseDataMaterialBukkit, ItemStack> getWinItem() {
         return winItem;
     }
 

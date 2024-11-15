@@ -260,7 +260,7 @@ public class Tools {
      * @param items Map with Case items
      * @return New map with sorted items
      */
-    public static Map<String, CaseDataItem<CaseDataMaterialBukkit>> sortItemsByIndex(Map<String, CaseDataItem<CaseDataMaterialBukkit>> items) {
+    public static Map<String, CaseDataItem<CaseDataMaterialBukkit, ItemStack>> sortItemsByIndex(Map<String, CaseDataItem<CaseDataMaterialBukkit, ItemStack>> items) {
         return items.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(CaseDataItem::getIndex)))

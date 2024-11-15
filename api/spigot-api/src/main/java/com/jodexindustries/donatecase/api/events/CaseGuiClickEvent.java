@@ -1,13 +1,16 @@
 package com.jodexindustries.donatecase.api.events;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CaseGuiClickEvent extends InventoryClickEvent {
     private static final HandlerList handlers = new HandlerList();
-    private final CaseGui gui;
+    private final CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui;
     private final String itemType;
     private boolean cancel;
 
@@ -33,7 +36,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
      */
     public CaseGuiClickEvent(@NotNull InventoryView view, @NotNull InventoryType.SlotType type,
                              int slot, @NotNull ClickType click, @NotNull InventoryAction action,
-                             @NotNull CaseGui gui, String itemType) {
+                             @NotNull CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui, String itemType) {
         super(view, type, slot, click, action);
         this.gui = gui;
         this.itemType = itemType;
@@ -60,7 +63,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
      * @return gui
      */
     @NotNull
-    public CaseGui getGui() {
+    public CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> getGui() {
         return gui;
     }
 

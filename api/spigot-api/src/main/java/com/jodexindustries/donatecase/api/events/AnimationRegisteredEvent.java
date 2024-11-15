@@ -34,6 +34,10 @@ public class AnimationRegisteredEvent extends Event {
         return caseAnimation;
     }
 
+    /**
+     * Check if animation registered from DonateCase
+     * @return true, if default
+     */
     public boolean isDefault() {
         return caseAnimation.getAddon().getName().equals("DonateCase");
     }

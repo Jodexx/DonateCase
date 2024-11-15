@@ -1,11 +1,15 @@
 package com.jodexindustries.donatecase.impl.managers;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.GUITypedItemManager;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,11 +18,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GUITypedItemManagerImpl implements GUITypedItemManager<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> {
+public class GUITypedItemManagerImpl implements GUITypedItemManager<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> {
     /**
      * Map of all registered items
      */
-    public final static Map<String, GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent>> registeredItems = new HashMap<>();
+    public final static Map<String, GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent>> registeredItems = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -33,12 +37,12 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager<CaseDataMate
 
     @NotNull
     @Override
-    public GUITypedItem.Builder<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> builder(String id) {
+    public GUITypedItem.Builder<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> builder(String id) {
         return new GUITypedItem.Builder<>(id, addon);
     }
 
     @Override
-    public boolean registerItem(GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> item) {
+    public boolean registerItem(GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> item) {
         String id = item.getId().toLowerCase();
         if (registeredItems.get(id) == null) {
             registeredItems.put(id, item);
@@ -67,7 +71,7 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager<CaseDataMate
 
     @Nullable
     @Override
-    public GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> getRegisteredItem(@NotNull String id) {
+    public GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> getRegisteredItem(@NotNull String id) {
         return registeredItems.get(id.toLowerCase());
     }
 
@@ -79,7 +83,7 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager<CaseDataMate
 
     @Nullable
     @Override
-    public GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> getFromString(@NotNull final String string) {
+    public GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> getFromString(@NotNull final String string) {
         String temp = getByStart(string);
         return temp != null ? getRegisteredItem(temp) : null;
     }

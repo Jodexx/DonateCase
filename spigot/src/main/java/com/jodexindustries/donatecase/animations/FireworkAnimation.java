@@ -11,6 +11,7 @@ import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -20,11 +21,13 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.function.Consumer;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
 public class FireworkAnimation extends JavaAnimationBukkit {
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 
-    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, CaseDataBukkit> manager) {
+    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
         CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("FIREWORK")
                 .animation(FireworkAnimation.class)
                 .description("Fireworks fly to the skies and a prize appears")
@@ -89,12 +92,12 @@ public class FireworkAnimation extends JavaAnimationBukkit {
                         as.setCustomNameVisible(true);
                     as.setCustomName(getWinItem().getMaterial().getDisplayName());
                     as.updateMeta();
-                    Case.animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+                    instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
                 }
                 if (this.i >= 30) {
                     as.remove();
                     task.cancel();
-                    Case.animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+                    instance.api.getAnimationManager().animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
                 }
             }
 

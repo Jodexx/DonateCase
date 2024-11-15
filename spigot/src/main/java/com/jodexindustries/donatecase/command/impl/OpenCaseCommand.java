@@ -14,10 +14,13 @@ import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.jodexindustries.donatecase.DonateCase.instance;
 
 
 /**
@@ -43,14 +46,14 @@ public class OpenCaseCommand implements SubCommandExecutor<CommandSender>, SubCo
             Player player = (Player) sender;
             if (args.length >= 1) {
                 String caseName = args[0];
-                if (Case.hasCaseByType(caseName)) {
+                if (instance.api.getCaseManager().hasCaseByType(caseName)) {
                     Case.getInstance().api.getCaseKeyManager().getKeysAsync(caseName, playerName).thenAcceptAsync((keys) -> {
                         if (keys >= 1) {
                             Case.getInstance().api.getCaseKeyManager().removeKeys(caseName, playerName, 1);
-                            CaseDataBukkit data = Case.getCase(caseName);
+                            CaseDataBukkit data = instance.api.getCaseManager().getCase(caseName);
                             if (data == null) return;
-                            CaseDataItem<CaseDataMaterialBukkit> winGroup = data.getRandomItem();
-                            Case.animationPreEnd(data, player, player.getLocation(), winGroup);
+                            CaseDataItem<CaseDataMaterialBukkit, ItemStack> winGroup = data.getRandomItem();
+                            instance.api.getAnimationManager().animationPreEnd(data, player, player.getLocation(), winGroup);
                         } else {
                             ToolsBukkit.msg(player, Case.getConfig().getLang().getString("no-keys"));
                         }

@@ -17,9 +17,11 @@ import com.jodexindustries.donatecase.api.manager.*;
  * @param <I>   the type of item stack
  * @param <S>   the type of command sender, used in the sub-command manager
  * @param <L>   the type of location
+ * @param <B>   the type of block
  * @param <C>   the type of CaseData
+ * @param <Inventory> the type of inventory
  */
-public interface DCAPI<Player, A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, G, E, I, S, L, C>  {
+public interface DCAPI<Player, A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, G, E, I, S, L, B, C, Inventory> {
 
     /**
      * Gets the ActionManager responsible for handling actions within the system.
@@ -40,7 +42,7 @@ public interface DCAPI<Player, A extends JavaAnimation<M, I>, M extends CaseData
      *
      * @return the animation manager instance
      */
-    AnimationManager<A, M, I, Player, L, C> getAnimationManager();
+    AnimationManager<A, M, I, Player, L, B, C> getAnimationManager();
 
     /**
      * Gets the CaseKeyManager responsible for managing keys associated with cases.
@@ -49,12 +51,16 @@ public interface DCAPI<Player, A extends JavaAnimation<M, I>, M extends CaseData
      */
     CaseKeyManager getCaseKeyManager();
 
+    CaseManager<C> getCaseManager();
+
     /**
      * Gets the CaseOpenManager responsible for handling case-opening functionality.
      *
      * @return the case open manager instance
      */
     CaseOpenManager getCaseOpenManager();
+
+    GUIManager<Inventory, L, Player, C, M> getGUIManager();
 
     /**
      * Gets the GUITypedItemManager responsible for managing GUI-typed items.
@@ -78,4 +84,5 @@ public interface DCAPI<Player, A extends JavaAnimation<M, I>, M extends CaseData
     SubCommandManager<S> getSubCommandManager();
 
     CaseDatabase getDatabase();
-    }
+
+}

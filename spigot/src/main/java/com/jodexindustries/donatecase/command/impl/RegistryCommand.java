@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
@@ -15,8 +16,10 @@ import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.SubCommandManager;
 import com.jodexindustries.donatecase.impl.managers.*;
 import com.jodexindustries.donatecase.tools.Tools;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -163,10 +166,10 @@ public class RegistryCommand implements SubCommandExecutor<CommandSender>, SubCo
     }
 
     private static void executeGuiTypedItems(CommandSender sender) {
-        Map<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent>>> guitypeditemsMap = buildGuiTypedItemsMap();
-        for (Map.Entry<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent>>> entry : guitypeditemsMap.entrySet()) {
+        Map<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent>>> guitypeditemsMap = buildGuiTypedItemsMap();
+        for (Map.Entry<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent>>> entry : guitypeditemsMap.entrySet()) {
             Tools.msgRaw(sender, "&6" + entry.getKey());
-            for (GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> guiTypedItem : entry.getValue()) {
+            for (GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> guiTypedItem : entry.getValue()) {
                 Tools.msgRaw(sender, "&9- &a" + guiTypedItem.getId() + " &3- &2" + guiTypedItem.getDescription());
             }
         }
@@ -176,12 +179,12 @@ public class RegistryCommand implements SubCommandExecutor<CommandSender>, SubCo
      * Key - Addon name
      * Value - list of GUITypedItem
      */
-    private static Map<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent>>> buildGuiTypedItemsMap() {
-        Map<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent>>> guiTypedItemsMap = new HashMap<>();
+    private static Map<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent>>> buildGuiTypedItemsMap() {
+        Map<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent>>> guiTypedItemsMap = new HashMap<>();
         GUITypedItemManagerImpl.registeredItems.forEach((name, guiTypedItem) -> {
             String addon = guiTypedItem.getAddon().getName();
 
-            List<GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent>> actions = guiTypedItemsMap.getOrDefault(addon, new ArrayList<>());
+            List<GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent>> actions = guiTypedItemsMap.getOrDefault(addon, new ArrayList<>());
             actions.add(guiTypedItem);
 
             guiTypedItemsMap.put(addon, actions);

@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 
 import java.util.UUID;
 import java.util.logging.Level;
@@ -60,10 +61,10 @@ public class EventsListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void InventoryClick(InventoryClickEvent e) {
         UUID uuid = e.getWhoClicked().getUniqueId();
-        if (Case.playersGui.containsKey(uuid)) {
+        if (instance.api.getGUIManager().getPlayersGUI().containsKey(uuid)) {
             e.setCancelled(true);
 
-            CaseGui gui = Case.playersGui.get(uuid);
+            CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui =instance.api.getGUIManager().getPlayersGUI().get(uuid);
             CaseDataBukkit caseData = gui.getCaseData();
             String itemType = caseData.getGui().getItemTypeBySlot(e.getRawSlot());
             CaseGuiClickEvent caseGuiClickEvent = new CaseGuiClickEvent(e.getView(), e.getSlotType(),
@@ -74,7 +75,7 @@ public class EventsListener implements Listener {
 
             if (!caseGuiClickEvent.isCancelled()) {
 
-                GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> typedItem = instance.api.getGuiTypedItemManager().getFromString(itemType);
+                GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> typedItem = instance.api.getGuiTypedItemManager().getFromString(itemType);
                 if (typedItem == null) return;
 
                 TypedItemClickHandler<CaseGuiClickEvent> handler = typedItem.getItemClickHandler();
@@ -109,12 +110,12 @@ public class EventsListener implements Listener {
             Bukkit.getServer().getPluginManager().callEvent(event);
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (!event.isCancelled()) {
-                    if (Case.activeCasesByBlock.containsKey(block)) {
+                    if (instance.api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
                         ToolsBukkit.msg(p, Case.getConfig().getLang().getString("case-opens"));
                         return;
                     }
 
-                    CaseDataBukkit caseData = Case.getCase(caseType);
+                    CaseDataBukkit caseData = instance.api.getCaseManager().getCase(caseType);
                     if (caseData == null) {
                         ToolsBukkit.msg(p, "&cSomething wrong! Contact with server administrator!");
                         Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
@@ -123,7 +124,7 @@ public class EventsListener implements Listener {
 
                     switch (caseData.getOpenType()) {
                         case GUI:
-                            Case.openGui(p, caseData, blockLocation);
+                            instance.api.getGUIManager().open(p, caseData, blockLocation);
                             break;
                         case BLOCK:
                             OPENItemClickHandlerImpl.executeOpen(caseData, p, blockLocation);
@@ -136,7 +137,7 @@ public class EventsListener implements Listener {
 
     @EventHandler
     public void InventoryClose(InventoryCloseEvent e) {
-        Case.playersGui.remove(e.getPlayer().getUniqueId());
+        instance.api.getGUIManager().getPlayersGUI().remove(e.getPlayer().getUniqueId());
     }
 
     @EventHandler

@@ -4,9 +4,8 @@ plugins {
     `maven-publish`
 }
 
-val apiVersion: String = properties["api"].toString()
 group = "com.jodexindustries.donatecase.api"
-version = apiVersion
+version = properties["api"].toString()
 
 
 dependencies {
@@ -17,6 +16,10 @@ dependencies {
 java {
     withSourcesJar()
     withJavadocJar()
+}
+
+tasks.withType<GenerateModuleMetadata> {
+    enabled = false
 }
 
 publishing {
@@ -37,8 +40,35 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.jodexindustries.donatecase"
             artifactId = "api"
-            version = apiVersion
             from(components["java"])
         }
     }
 }
+
+tasks.javadoc {
+    (options as StandardJavadocDocletOptions).apply {
+        links(
+            "https://docs.oracle.com/en/java/javase/22/docs/api/",
+         )
+    }
+    source = sourceSets["main"].allJava
+}
+
+tasks.register<Delete>("cleanGenerated") {
+   delete("${buildDir}/generated")
+}
+
+tasks.register<Copy>("generateJava") {
+    from(project.file("src/template/java"))
+    into("${buildDir}/generated/java")
+    expand(properties)
+}
+
+sourceSets.main { java.srcDir("${buildDir}/generated/java") }
+
+tasks.compileJava { dependsOn("generateJava", "cleanGenerated") }
+
+tasks.named<Jar>("sourcesJar") { dependsOn("generateJava") }
+
+sourceSets.main { resources.srcDir("src/generated/resources") }
+

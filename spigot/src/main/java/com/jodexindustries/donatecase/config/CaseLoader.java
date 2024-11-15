@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
@@ -13,8 +12,11 @@ import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +51,7 @@ public class CaseLoader {
      * Load all cases from "cases" folder to memory
      */
     public void load() {
-        Case.caseData.clear();
+        plugin.api.getCaseManager().getMap().clear();
         int count = 0;
 
         for (String caseType : plugin.config.getCasesConfig().getCases().keySet()) {
@@ -64,7 +66,7 @@ public class CaseLoader {
             CaseDataBukkit caseData = loadCaseData(caseType, caseSection);
 
             if (caseData != null) {
-                Case.caseData.put(caseType, caseData);
+                plugin.api.getCaseManager().getMap().put(caseType, caseData);
                 count++;
             }
         }
@@ -88,7 +90,7 @@ public class CaseLoader {
         }
 
         CaseDataHologram hologram = loadHologram(caseSection.getConfigurationSection("Hologram"));
-        Map<String, CaseDataItem<CaseDataMaterialBukkit>> items = loadItems(caseType, caseSection);
+        Map<String, CaseDataItem<CaseDataMaterialBukkit, ItemStack>> items = loadItems(caseType, caseSection);
 
         Map<String, Integer> levelGroups = loadLevelGroups(caseSection);
 
@@ -115,8 +117,8 @@ public class CaseLoader {
                 : new CaseDataHologram();
     }
 
-    private Map<String, CaseDataItem<CaseDataMaterialBukkit>> loadItems(String caseType, ConfigurationSection caseSection) {
-        Map<String, CaseDataItem<CaseDataMaterialBukkit>> items = new HashMap<>();
+    private Map<String, CaseDataItem<CaseDataMaterialBukkit, ItemStack>> loadItems(String caseType, ConfigurationSection caseSection) {
+        Map<String, CaseDataItem<CaseDataMaterialBukkit, ItemStack>> items = new HashMap<>();
         ConfigurationSection itemsSection = caseSection.getConfigurationSection("Items");
 
         if (itemsSection != null) {
@@ -128,7 +130,7 @@ public class CaseLoader {
                     continue;
                 }
 
-                CaseDataItem<CaseDataMaterialBukkit> caseItem = loadItem(item, itemSection);
+                CaseDataItem<CaseDataMaterialBukkit, ItemStack> caseItem = loadItem(item, itemSection);
                 if(caseItem != null) items.put(item, caseItem);
             }
         } else {
@@ -138,7 +140,7 @@ public class CaseLoader {
         return items;
     }
 
-    private CaseDataItem<CaseDataMaterialBukkit> loadItem(String item, ConfigurationSection itemSection) {
+    private CaseDataItem<CaseDataMaterialBukkit, ItemStack> loadItem(String item, ConfigurationSection itemSection) {
         String group = itemSection.getString("Group", "");
         double chance = itemSection.getDouble("Chance");
         int index = itemSection.getInt("Index");
@@ -270,7 +272,7 @@ public class CaseLoader {
         if(itemType.equalsIgnoreCase("DEFAULT")) {
             itemStack = ToolsBukkit.loadCaseItem(id);
         } else {
-            GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> typedItem = instance.api.getGuiTypedItemManager().getFromString(itemType);
+            GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> typedItem = instance.api.getGuiTypedItemManager().getFromString(itemType);
             if (typedItem != null) {
                 if(typedItem.isLoadOnCase()) itemStack = ToolsBukkit.loadCaseItem(id);
             } else {

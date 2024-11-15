@@ -1,5 +1,7 @@
 package com.jodexindustries.donatecase.api.manager;
 
+import com.jodexindustries.donatecase.api.caching.SimpleCache;
+import com.jodexindustries.donatecase.api.caching.entry.InfoEntry;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 
 import java.util.concurrent.CompletableFuture;
@@ -56,4 +58,6 @@ public interface CaseOpenManager {
      * @return Completable future of completes
      */
     CompletableFuture<DatabaseStatus> addOpenCount(String caseType, String player, int openCount);
+
+    SimpleCache<InfoEntry, Integer> getCache();
 }

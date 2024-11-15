@@ -13,11 +13,11 @@ import java.util.Map;
 /**
  * Class for implementing cases that are loaded into the plugin's memory.
  */
-public class CaseData<M extends CaseDataMaterial> implements Cloneable {
+public class CaseData<M extends CaseDataMaterial<I>, I> implements Cloneable {
     private final String caseType;
     private String caseDisplayName;
     private String animation;
-    private Map<String, CaseDataItem<M>> items;
+    private Map<String, CaseDataItem<M, I>> items;
     private CaseDataHistory[] historyData;
     private CaseDataHologram hologram;
     private Map<String, Integer> levelGroups;
@@ -40,7 +40,7 @@ public class CaseData<M extends CaseDataMaterial> implements Cloneable {
      * @param openType          Open type
      */
     public CaseData(String caseType, String caseDisplayName, String animation, Map<String,
-            CaseDataItem<M>> items, CaseDataHistory[] historyData, CaseDataHologram hologram, Map<String, Integer> levelGroups, GUI<M> gui,
+            CaseDataItem<M, I>> items, CaseDataHistory[] historyData, CaseDataHologram hologram, Map<String, Integer> levelGroups, GUI<M> gui,
                     List<String> noKeyActions, @NotNull OpenType openType) {
         this.caseType = caseType;
         this.caseDisplayName = caseDisplayName;
@@ -82,7 +82,7 @@ public class CaseData<M extends CaseDataMaterial> implements Cloneable {
      *
      * @return items
      */
-    public Map<String, CaseDataItem<M>> getItems() {
+    public Map<String, CaseDataItem<M, I>> getItems() {
         return items;
     }
 
@@ -93,7 +93,7 @@ public class CaseData<M extends CaseDataMaterial> implements Cloneable {
      * @return item
      */
     @Nullable
-    public CaseDataItem<M> getItem(String name) {
+    public CaseDataItem<M, I> getItem(String name) {
         return items.getOrDefault(name, null);
     }
 
@@ -102,9 +102,9 @@ public class CaseData<M extends CaseDataMaterial> implements Cloneable {
      *
      * @return Random item
      */
-    public CaseDataItem<M> getRandomItem() {
-        ProbabilityCollection<CaseDataItem<M>> collection = new ProbabilityCollection<>();
-        for (CaseDataItem<M> item : items.values()) {
+    public CaseDataItem<M, I> getRandomItem() {
+        ProbabilityCollection<CaseDataItem<M, I>> collection = new ProbabilityCollection<>();
+        for (CaseDataItem<M, I> item : items.values()) {
             collection.add(item, item.getChance());
         }
         return collection.get();
@@ -124,7 +124,7 @@ public class CaseData<M extends CaseDataMaterial> implements Cloneable {
      *
      * @param items map of CaseData.Item items
      */
-    public void setItems(Map<String, CaseDataItem<M>> items) {
+    public void setItems(Map<String, CaseDataItem<M, I>> items) {
         this.items = items;
     }
 
@@ -180,9 +180,9 @@ public class CaseData<M extends CaseDataMaterial> implements Cloneable {
 
     @SuppressWarnings("unchecked")
     @Override
-    public CaseData<M> clone() {
+    public CaseData<M, I> clone() {
         try {
-            CaseData<M> clonedCaseData = (CaseData<M>) super.clone();
+            CaseData<M, I> clonedCaseData = (CaseData<M, I>) super.clone();
 
             // Deep clone the map of items
             clonedCaseData.items = cloneItemsMap(this.items);
@@ -214,9 +214,9 @@ public class CaseData<M extends CaseDataMaterial> implements Cloneable {
     /**
      * Clone method for CaseData deep clone
      */
-    protected Map<String, CaseDataItem<M>> cloneItemsMap(Map<String, CaseDataItem<M>> originalMap) {
-        Map<String, CaseDataItem<M>> clonedMap = new HashMap<>();
-        for (Map.Entry<String, CaseDataItem<M>> entry : originalMap.entrySet()) {
+    protected Map<String, CaseDataItem<M, I>> cloneItemsMap(Map<String, CaseDataItem<M, I>> originalMap) {
+        Map<String, CaseDataItem<M, I>> clonedMap = new HashMap<>();
+        for (Map.Entry<String, CaseDataItem<M, I>> entry : originalMap.entrySet()) {
             clonedMap.put(entry.getKey(), entry.getValue().clone());
         }
         return clonedMap;

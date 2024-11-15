@@ -13,14 +13,15 @@ import com.jodexindustries.donatecase.api.manager.GUITypedItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiClickEvent> {
 
-    public static void register(GUITypedItemManager<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> manager) {
+    public static void register(GUITypedItemManager<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> manager) {
         OPENItemClickHandlerImpl handler = new OPENItemClickHandlerImpl();
 
-        GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> item = manager.builder("OPEN")
+        GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> item = manager.builder("OPEN")
                 .description("Type to open the case")
                 .click(handler)
                 .setUpdateMeta(true)
@@ -32,7 +33,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
 
     @Override
     public void onClick(@NotNull CaseGuiClickEvent e) {
-        CaseGui gui = e.getGui();
+        CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui = e.getGui();
         Location location = gui.getLocation();
         String itemType = e.getItemType();
         Player p = (Player) e.getWhoClicked();
@@ -43,7 +44,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
             String[] parts = itemType.split("_");
             if (parts.length >= 2) {
                 caseType = parts[1];
-                caseData = Case.getCase(caseType);
+                caseData = Case.getInstance().api.getCaseManager().getCase(caseType);
             }
         }
 
@@ -73,7 +74,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
                     });
                 }
             } else {
-                Case.executeActions(player, caseData.getNoKeyActions());
+                Case.getInstance().api.getActionManager().executeActions(player, caseData.getNoKeyActions());
             }
         }
     }

@@ -6,28 +6,42 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.TableUtils;
+import com.jodexindustries.donatecase.api.caching.SimpleCache;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
+import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
+import com.jodexindustries.donatecase.api.manager.CaseManager;
 import com.jodexindustries.donatecase.database.entities.HistoryDataTable;
 import com.jodexindustries.donatecase.database.entities.OpenInfoTable;
 import com.jodexindustries.donatecase.database.entities.PlayerKeysTable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class CaseDatabaseImpl implements CaseDatabase {
+public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMaterial<I>, I> implements CaseDatabase {
     private Dao<HistoryDataTable, String> historyDataTables;
     private Dao<PlayerKeysTable, String> playerKeysTables;
     private Dao<OpenInfoTable, String> openInfoTables;
     private JdbcConnectionSource connectionSource;
 
+    private final CaseManager<C> api;
     private final Logger logger;
+    private DatabaseType databaseType;
 
-    public CaseDatabaseImpl(Logger logger) {
+    /**
+     * Cache map for storing cases histories
+     */
+    public final static SimpleCache<Integer, List<CaseDataHistory>> historyCache = new SimpleCache<>(20);
+
+    public CaseDatabaseImpl(CaseManager<C> api, Logger logger) {
+        this.api = api;
         this.logger = logger;
     }
 
@@ -40,6 +54,7 @@ public class CaseDatabaseImpl implements CaseDatabase {
         try {
             close();
             connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path + "/database.db");
+            databaseType = DatabaseType.SQLITE;
             init();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -59,6 +74,7 @@ public class CaseDatabaseImpl implements CaseDatabase {
         try {
             close();
             connectionSource = new JdbcConnectionSource("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
+            databaseType = DatabaseType.MYSQL;
             init();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -237,7 +253,7 @@ public class CaseDatabaseImpl implements CaseDatabase {
 
     }
 
-
+    @Override
     public CompletableFuture<List<CaseDataHistory>> getHistoryData() {
         List<CaseDataHistory> result = new ArrayList<>();
         return CompletableFuture.supplyAsync(() -> {
@@ -253,6 +269,23 @@ public class CaseDatabaseImpl implements CaseDatabase {
         });
     }
 
+    @Override
+    public CompletableFuture<List<CaseDataHistory>> getAsyncSortedHistoryData() {
+        return CompletableFuture.supplyAsync(() -> databaseType == DatabaseType.SQLITE ?
+                api.getMap().values().stream()
+                        .filter(Objects::nonNull)
+                        .flatMap(data -> {
+                            CaseDataHistory[] temp = data.getHistoryData();
+                            return temp != null ? Arrays.stream(temp) : Stream.empty();
+                        })
+                        .filter(Objects::nonNull)
+                        .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
+                        .collect(Collectors.toList()) : getHistoryData().join().stream().filter(Objects::nonNull)
+                .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
+                .collect(Collectors.toList()));
+    }
+
+    @Override
     public CompletableFuture<List<CaseDataHistory>> getHistoryDataByCaseType(String caseType) {
         List<CaseDataHistory> result = new ArrayList<>();
         return CompletableFuture.supplyAsync(() -> {
@@ -270,6 +303,37 @@ public class CaseDatabaseImpl implements CaseDatabase {
         });
     }
 
+    @Override
+    public List<CaseDataHistory> getSortedHistoryDataCache() {
+        if (databaseType == DatabaseType.SQLITE) {
+            return getAsyncSortedHistoryData().join();
+        }
+
+        List<CaseDataHistory> cachedList = historyCache.get(1);
+
+        if (cachedList != null) {
+            return cachedList;
+        }
+
+        List<CaseDataHistory> previousList = historyCache.getPrevious(1);
+
+        getAsyncSortedHistoryData().thenAcceptAsync(historyData -> historyCache.put(1, historyData));
+
+        return (previousList != null) ? previousList : getAsyncSortedHistoryData().join();
+    }
+
+    /**
+     * Get sorted history data by case
+     * @param historyData HistoryData from all cases (or not all)
+     * @param caseType type of case for filtering
+     * @return list of case HistoryData
+     */
+    public static List<CaseDataHistory> sortHistoryDataByCase(List<CaseDataHistory> historyData, String caseType) {
+        return historyData.stream().filter(Objects::nonNull)
+                .filter(data -> data.getCaseType().equals(caseType))
+                .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
+                .collect(Collectors.toList());
+    }
 
     public CompletableFuture<DatabaseStatus> delAllKeys() {
         return CompletableFuture.supplyAsync(() -> {

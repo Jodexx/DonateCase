@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api.data.casedata;
 
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,7 +11,7 @@ import java.util.*;
 /**
  * Class for implementing cases that are loaded into the plugin's memory.
  */
-public class CaseDataBukkit extends CaseData<CaseDataMaterialBukkit> {
+public class CaseDataBukkit extends CaseData<CaseDataMaterialBukkit, ItemStack> {
     private ConfigurationSection animationSettings;
 
     /**
@@ -28,7 +29,7 @@ public class CaseDataBukkit extends CaseData<CaseDataMaterialBukkit> {
      * @param openType        Open type
      * @param animationSettings Animation settings section
      */
-    public CaseDataBukkit(String caseType, String caseDisplayName, String animation, Map<String, CaseDataItem<CaseDataMaterialBukkit>> items,
+    public CaseDataBukkit(String caseType, String caseDisplayName, String animation, Map<String, CaseDataItem<CaseDataMaterialBukkit, ItemStack>> items,
                           CaseDataHistory[] historyData, CaseDataHologram hologram, Map<String, Integer> levelGroups, GUI<CaseDataMaterialBukkit> gui,
                           List<String> noKeyActions, @NotNull OpenType openType, ConfigurationSection animationSettings) {
         super(caseType, caseDisplayName, animation, items, historyData, hologram, levelGroups, gui, noKeyActions, openType);
@@ -56,7 +57,6 @@ public class CaseDataBukkit extends CaseData<CaseDataMaterialBukkit> {
         this.animationSettings = animationSettings;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public CaseDataBukkit clone() {
         return (CaseDataBukkit) super.clone();

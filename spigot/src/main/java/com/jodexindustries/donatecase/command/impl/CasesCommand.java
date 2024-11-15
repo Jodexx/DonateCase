@@ -33,7 +33,7 @@ public class CasesCommand implements SubCommandExecutor<CommandSender>, SubComma
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         int num = 0;
-        for (CaseDataBukkit data : Case.caseData.values()) {
+        for (CaseDataBukkit data : Case.getInstance().api.getCaseManager().getMap().values()) {
             num++;
             Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("list-of-cases"),
                     "%casename:" + data.getCaseType(), "%num:" + num,

@@ -5,6 +5,8 @@ import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * Interface for managing executable actions, allowing for registration, retrieval, and unregistration of actions.
  *
@@ -58,4 +60,19 @@ public interface ActionManager<Player> {
      */
     @Nullable
     String getByStart(@NotNull final String string);
+
+    /**
+     * Execute action with specific cooldown
+     * @param player Player, who opened case (maybe another reason)
+     * @param action Action to be executed
+     * @param cooldown Cooldown in seconds
+     */
+    void executeAction(Player player, String action, int cooldown);
+
+    /**
+     * Execute actions
+     * @param player Player, who opened case (maybe another reason)
+     * @param actions List of actions
+     */
+    void executeActions(Player player, List<String> actions);
 }

@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -29,6 +30,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Collections;
 import java.util.function.Consumer;
+
+import static com.jodexindustries.donatecase.DonateCase.instance;
 
 public class WheelAnimation extends JavaAnimationBukkit {
 
@@ -51,7 +54,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
         }
     }
 
-    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, CaseDataBukkit> manager) {
+    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
         CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("WHEEL")
                 .animation(WheelAnimation.class)
                 .description("Items resolve around the case")
@@ -124,7 +127,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
             }
 
             if (ticks == animationTime) {
-                Case.animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+                instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
             if (ticks >= animationTime + 20) {
@@ -137,14 +140,14 @@ public class WheelAnimation extends JavaAnimationBukkit {
 
             if (wheelType == WheelType.FULL) {
                 // FULL logic - unique items
-                List<CaseDataItem<CaseDataMaterialBukkit>> uniqueItems = new ArrayList<>(getCaseData().getItems().values());
+                List<CaseDataItem<CaseDataMaterialBukkit, ItemStack>> uniqueItems = new ArrayList<>(getCaseData().getItems().values());
 
                 if (getSettings().getBoolean("Shuffle", true)) {
                     Collections.shuffle(uniqueItems);
                 }
 
                 int additionalSteps = 0;
-                for (CaseDataItem<CaseDataMaterialBukkit> uniqueItem : uniqueItems) {
+                for (CaseDataItem<CaseDataMaterialBukkit, ItemStack> uniqueItem : uniqueItems) {
                     if (uniqueItem.getItemName().equals(getWinItem().getItemName())) {
                         additionalSteps = uniqueItems.size() - armorStands.size();
                         armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
@@ -159,7 +162,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
                 // RANDOM logic - random items with duplicates
                 armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
                 for (int i = 1; i < itemsCount; i++) {
-                    CaseDataItem<CaseDataMaterialBukkit> randomItem = getCaseData().getRandomItem();
+                    CaseDataItem<CaseDataMaterialBukkit, ItemStack> randomItem = getCaseData().getRandomItem();
                     armorStands.add(spawnArmorStand(getLocation(), randomItem, small));
                 }
                 int rand = new Random().nextInt(armorStands.size());
@@ -214,12 +217,12 @@ public class WheelAnimation extends JavaAnimationBukkit {
             for (ArmorStandCreator stand : armorStands) {
                 stand.remove();
             }
-            Case.animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+            instance.api.getAnimationManager().animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             armorStands.clear();
         }
     }
 
-    private ArmorStandCreator spawnArmorStand(Location location, CaseDataItem<CaseDataMaterialBukkit> item, boolean small) {
+    private ArmorStandCreator spawnArmorStand(Location location, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item, boolean small) {
         ArmorStandCreator as = ToolsBukkit.createArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);

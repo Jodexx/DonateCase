@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api.database;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public interface CaseDatabase {
@@ -48,4 +49,16 @@ public interface CaseDatabase {
     CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count);
 
     CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseDataHistory data);
+
+    CompletableFuture<List<CaseDataHistory>> getHistoryData();
+
+    CompletableFuture<List<CaseDataHistory>> getAsyncSortedHistoryData();
+
+    CompletableFuture<List<CaseDataHistory>> getHistoryDataByCaseType(String caseType);
+
+    /**
+     * Returns no-cached, if mysql disabled
+     * @return list of history data
+     */
+    List<CaseDataHistory> getSortedHistoryDataCache();
 }

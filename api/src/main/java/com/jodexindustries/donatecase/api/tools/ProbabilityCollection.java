@@ -182,7 +182,7 @@ public final class ProbabilityCollection<E> {
         ProbabilitySetElement<E> toFind = new ProbabilitySetElement<>(null, 0);
         toFind.setIndex(this.random.nextDouble(1, this.totalProbability + 1));
 
-        return Objects.requireNonNull(this.collection.floor(toFind).getObject());
+        return Objects.requireNonNull(this.collection.floor(toFind)).getObject();
     }
 
     /**

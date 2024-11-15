@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
+import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.impl.managers.CaseKeyManagerImpl;
 import com.jodexindustries.donatecase.impl.managers.CaseOpenManagerImpl;
 import com.jodexindustries.donatecase.tools.Logger;
@@ -105,7 +105,7 @@ public class Config {
         if (caching >= 0) {
             CaseOpenManagerImpl.openCache.setMaxAge(caching);
             CaseKeyManagerImpl.keysCache.setMaxAge(caching);
-            Case.historyCache.setMaxAge(caching);
+            CaseDatabaseImpl.historyCache.setMaxAge(caching);
         }
 
     }

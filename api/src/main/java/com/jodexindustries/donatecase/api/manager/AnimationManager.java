@@ -1,11 +1,15 @@
 package com.jodexindustries.donatecase.api.manager;
 
+import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimation;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -16,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
  * @param <A> the type of JavaAnimation
  * @param <M> the type of CaseDataMaterial
  */
-public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, I, Player, L, C> {
+public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, I, Player, L, B, C> {
 
     /**
      * Provides a builder for creating a new animation with the specified name.
@@ -59,6 +63,44 @@ public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseD
     CompletableFuture<Boolean> startAnimation(@NotNull Player player, @NotNull L location, @NotNull C caseData);
 
     /**
+     * Start animation at a specific location with delay
+     *
+     * @param player   The player who opened the case
+     * @param location Location where to start the animation
+     * @param caseData Case data
+     * @param delay Delay in ticks
+     * @return Completable future of completes (when started)
+     */
+    CompletableFuture<Boolean> startAnimation(@NotNull Player player, @NotNull L location, @NotNull C caseData, int delay);
+
+    /**
+     * Animation pre end method for custom animations is called to grant a group, send a message, and more
+     * @param caseData Case data
+     * @param player Player who opened (offline player)
+     * @param uuid Active case uuid
+     * @param item Item data
+     */
+    void animationPreEnd(C caseData, Player player, UUID uuid, CaseDataItem<M, I> item);
+
+    /**
+     * Animation pre end method for custom animations is called to grant a group, send a message, and more
+     * @param caseData Case data
+     * @param player Player who opened (offline player)
+     * @param location Active case block location
+     * @param item Item data
+     */
+     void animationPreEnd(C caseData, Player player, L location, CaseDataItem<M, I> item);
+
+    /**
+     * Animation end method for custom animations is called to completely end the animation
+     * @param item Item data
+     * @param caseData Case data
+     * @param player Player who opened (offline player)
+     * @param uuid Active case uuid
+     */
+    void animationEnd(C caseData, Player player, UUID uuid, CaseDataItem<M, I> item);
+
+    /**
      * Checks if an animation with the specified name is registered.
      *
      * @param name the name of the animation
@@ -74,4 +116,8 @@ public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseD
      */
     @Nullable
     CaseAnimation<A, M, I> getRegisteredAnimation(String animation);
+
+    Map<UUID, ActiveCase<B>> getActiveCases();
+
+    Map<B, UUID> getActiveCasesByBlock();
 }

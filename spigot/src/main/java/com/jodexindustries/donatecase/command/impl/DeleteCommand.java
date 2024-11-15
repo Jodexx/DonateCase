@@ -44,7 +44,7 @@ public class DeleteCommand implements SubCommandExecutor<CommandSender>, SubComm
                 Block block = player.getTargetBlock(null, 5);
                 String customName = Case.getCaseCustomNameByLocation(block.getLocation());
                 if (customName != null) {
-                    if (!Case.activeCasesByBlock.containsKey(block)) {
+                    if (!instance.api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
                         Case.deleteCaseByName(customName);
                         if (instance.hologramManager != null)
                             instance.hologramManager.removeHologram(block);
@@ -60,7 +60,7 @@ public class DeleteCommand implements SubCommandExecutor<CommandSender>, SubComm
             String name = args[0];
             Location location = Case.getCaseLocationByCustomName(name);
             if (location != null) {
-                if (!Case.activeCasesByBlock.containsKey(location.getBlock())) {
+                if (!instance.api.getAnimationManager().getActiveCasesByBlock().containsKey(location.getBlock())) {
                     if (instance.hologramManager != null)
                         instance.hologramManager.removeHologram(location.getBlock());
 

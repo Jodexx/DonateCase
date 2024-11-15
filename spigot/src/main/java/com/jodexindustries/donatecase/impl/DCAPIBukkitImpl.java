@@ -13,8 +13,10 @@ import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.impl.managers.*;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -41,7 +43,7 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
     }
 
     @Override
-    public AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, CaseDataBukkit> getAnimationManager() {
+    public AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> getAnimationManager() {
         return new AnimationManagerImpl(addon);
     }
 
@@ -51,12 +53,22 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
     }
 
     @Override
+    public CaseManager<CaseDataBukkit> getCaseManager() {
+        return new CaseManagerImpl();
+    }
+
+    @Override
     public CaseOpenManager getCaseOpenManager() {
         return new CaseOpenManagerImpl();
     }
 
     @Override
-    public GUITypedItemManager<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> getGuiTypedItemManager() {
+    public GUIManager<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> getGUIManager() {
+        return new GUIManagerImpl(addon);
+    }
+
+    @Override
+    public GUITypedItemManager<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> getGuiTypedItemManager() {
         return new GUITypedItemManagerImpl(addon);
     }
 

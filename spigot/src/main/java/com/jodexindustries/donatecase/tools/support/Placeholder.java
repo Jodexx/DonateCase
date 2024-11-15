@@ -44,7 +44,7 @@ public class Placeholder extends PlaceholderExpansion {
         if (params.startsWith("keys")) {
             String[] parts = params.split("_", 2);
             int keys = 0;
-            for (String caseType : Case.caseData.keySet()) {
+            for (String caseType : instance.api.getCaseManager().getMap().keySet()) {
                 int cachedKeys = instance.api.getCaseKeyManager().getKeysCache(caseType, player.getName());
                 keys += cachedKeys;
             }
@@ -73,7 +73,7 @@ public class Placeholder extends PlaceholderExpansion {
         if (params.startsWith("open_count")) {
             String[] parts = params.split("_", 3);
             int openCount = 0;
-            for (String caseType : Case.caseData.keySet()) {
+            for (String caseType : instance.api.getCaseManager().getMap().keySet()) {
                 openCount += instance.api.getCaseOpenManager().getOpenCountCache(caseType, player.getName());
             }
             if (parts.length == 2) {

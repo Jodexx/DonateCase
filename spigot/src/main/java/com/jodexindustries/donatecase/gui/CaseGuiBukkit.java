@@ -23,10 +23,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
 /**
  * Class for initializing case GUI
  */
-public class CaseGuiBukkit implements CaseGui {
+public class CaseGuiBukkit implements CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> {
     private final Inventory inventory;
     private final CaseDataBukkit caseData;
     private final GUI<CaseDataMaterialBukkit> tempGUI;
@@ -63,7 +65,7 @@ public class CaseGuiBukkit implements CaseGui {
         CompletableFuture<Void> future = new CompletableFuture<>();
 
         Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () -> {
-            globalHistoryData = Case.getSortedHistoryDataCache();
+            globalHistoryData = instance.database.getSortedHistoryDataCache();
             for (GUI.Item<CaseDataMaterialBukkit> item : tempGUI.getItems().values()) {
                 try {
                     processItem(item);
@@ -96,7 +98,7 @@ public class CaseGuiBukkit implements CaseGui {
         if (updateRate >= 0) {
             Bukkit.getScheduler().runTaskTimerAsynchronously(Case.getInstance(),
                     (task) -> {
-                        if (!Case.playersGui.containsKey(player.getUniqueId())) task.cancel();
+                        if (!instance.api.getGUIManager().getPlayersGUI().containsKey(player.getUniqueId())) task.cancel();
                         load();
                     }, updateRate, updateRate);
         }
@@ -109,9 +111,9 @@ public class CaseGuiBukkit implements CaseGui {
     private void processItem(GUI.Item<CaseDataMaterialBukkit> item) {
         String itemType = item.getType();
         if (!itemType.equalsIgnoreCase("DEFAULT")) {
-            GUITypedItem<CaseDataMaterialBukkit, CaseGui, CaseGuiClickEvent> typedItem = Case.getInstance().api.getGuiTypedItemManager().getFromString(itemType);
+            GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> typedItem = Case.getInstance().api.getGuiTypedItemManager().getFromString(itemType);
             if (typedItem != null) {
-                TypedItemHandler<CaseDataMaterialBukkit, CaseGui> handler = typedItem.getItemHandler();
+                TypedItemHandler<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>> handler = typedItem.getItemHandler();
                 if (handler != null) item = handler.handle(this, item);
                 if (typedItem.isUpdateMeta()) updateMeta(item);
             }
@@ -191,7 +193,7 @@ public class CaseGuiBukkit implements CaseGui {
     }
 
     /**
-     * Gets GUI CaseData. Can be modified, cause this is clone of original {@link Case#getCase(String)}
+     * Gets GUI CaseData. Can be modified, cause this is clone of original {@link com.jodexindustries.donatecase.api.manager.CaseManager#getCase(String)}
      *
      * @return data
      */

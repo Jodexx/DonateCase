@@ -12,6 +12,7 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.tools.Tools;
 import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -21,12 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
 public class RainlyAnimation extends JavaAnimationBukkit {
 
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 
-    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, CaseDataBukkit> manager) {
+    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
         CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("RAINLY")
                 .animation(RainlyAnimation.class)
                 .description("Rain drips from the clouds")
@@ -104,7 +107,7 @@ public class RainlyAnimation extends JavaAnimationBukkit {
             if (i >= 70) {
                 as.remove();
                 task.cancel();
-                Case.animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+                instance.api.getAnimationManager().animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
             i++; // Increment tick counter
@@ -126,14 +129,14 @@ public class RainlyAnimation extends JavaAnimationBukkit {
             as.setCustomName(winGroupDisplayName);
             as.updateMeta();
 
-            Case.animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+            instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
 
             world.spawnParticle(getParticle("explosion"), loc, 0);
             world.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
         }
 
         private void updateRandomItem() {
-            CaseDataItem<CaseDataMaterialBukkit> item = getCaseData().getRandomItem();
+            CaseDataItem<CaseDataMaterialBukkit, ItemStack> item = getCaseData().getRandomItem();
             String itemDisplayName = Case.getInstance().papi.setPlaceholders(
                     getPlayer(), item.getMaterial().getDisplayName()
             );

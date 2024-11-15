@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Class for the implementation of winning items from the case
  */
-public class CaseDataItem<M extends CaseDataMaterial> implements Cloneable {
+public class CaseDataItem<M extends CaseDataMaterial<I>, I> implements Cloneable {
     private final String itemName;
     private String group;
     private double chance;
@@ -326,9 +326,9 @@ public class CaseDataItem<M extends CaseDataMaterial> implements Cloneable {
 
     @SuppressWarnings("unchecked")
     @Override
-    public CaseDataItem<M> clone() {
+    public CaseDataItem<M, I> clone() {
         try {
-            CaseDataItem<M> clonedItem = (CaseDataItem<M>) super.clone();
+            CaseDataItem<M, I> clonedItem = (CaseDataItem<M, I>) super.clone();
 
             clonedItem.randomActions = cloneRandomActionsMap(this.randomActions);
 

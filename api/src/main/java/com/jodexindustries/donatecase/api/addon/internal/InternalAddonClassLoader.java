@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.addon.internal;
 
+import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.manager.AddonManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,14 +20,16 @@ public class InternalAddonClassLoader extends URLClassLoader {
     private final File file;
     private final AddonManager manager;
     private final InternalJavaAddon addon;
+    private final Addon donateCase;
 
     public InternalAddonClassLoader(@Nullable ClassLoader parent, InternalAddonDescription description,
-                                    File file, AddonManager manager) throws IOException, InvalidAddonException, ClassNotFoundException {
+                                    File file, AddonManager manager, Addon donateCase) throws IOException, InvalidAddonException, ClassNotFoundException {
         super(new URL[]{file.toURI().toURL()}, parent);
 
         this.description = description;
         this.file = file;
         this.manager = manager;
+        this.donateCase = donateCase;
 
         try {
             Class<?> jarClass;
@@ -56,7 +59,7 @@ public class InternalAddonClassLoader extends URLClassLoader {
         if (module.getClass().getClassLoader() != this) {
             throw new IllegalArgumentException("Cannot initialize module outside of this class loader");
         }
-        module.init(description, file, this);
+        module.init(description, file, this, donateCase);
     }
 
     @Override

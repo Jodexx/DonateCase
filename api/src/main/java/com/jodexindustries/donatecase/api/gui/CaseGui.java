@@ -1,18 +1,13 @@
 package com.jodexindustries.donatecase.api.gui;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public interface CaseGui {
+public interface CaseGui<Inventory, L, Player, C, M> {
     /**
      * Loads all items asynchronously
      *
@@ -34,7 +29,7 @@ public interface CaseGui {
      * @return GUI location
      */
     @NotNull
-    Location getLocation();
+    L getLocation();
 
     /**
      * Gets player who opened GUI
@@ -45,12 +40,12 @@ public interface CaseGui {
     Player getPlayer();
 
     /**
-     * Gets GUI CaseData. Can be modified, cause this is clone of original {@link Case#getCase(String)}
+     * Gets GUI CaseData. Can be modified, cause this is clone of original {@link com.jodexindustries.donatecase.api.manager.CaseManager#getCase(String)}
      *
      * @return data
      */
     @NotNull
-    CaseDataBukkit getCaseData();
+    C getCaseData();
 
     /**
      * Gets temporary GUI. Used for updating placeholders, if UpdateRate enabled
@@ -58,7 +53,7 @@ public interface CaseGui {
      * @return GUI
      */
     @NotNull
-     GUI<CaseDataMaterialBukkit> getTempGUI();
+     GUI<M> getTempGUI();
 
     /**
      * Gets GUI global history data

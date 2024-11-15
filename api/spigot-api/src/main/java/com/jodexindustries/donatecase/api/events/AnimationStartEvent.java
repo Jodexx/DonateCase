@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -20,7 +21,7 @@ public class AnimationStartEvent extends PlayerEvent {
     private final CaseDataBukkit caseData;
     private final Block block;
     private final String animation;
-    private final CaseDataItem<CaseDataMaterialBukkit> winItem;
+    private final CaseDataItem<CaseDataMaterialBukkit, ItemStack> winItem;
     private final UUID uuid;
 
     /**
@@ -34,7 +35,7 @@ public class AnimationStartEvent extends PlayerEvent {
      * @param uuid Animation UUID
      */
     public AnimationStartEvent(@NotNull Player who, @NotNull String animation, @NotNull CaseDataBukkit caseData,
-                               @NotNull Block block, @NotNull CaseDataItem<CaseDataMaterialBukkit> winItem, @NotNull UUID uuid) {
+                               @NotNull Block block, @NotNull CaseDataItem<CaseDataMaterialBukkit, ItemStack> winItem, @NotNull UUID uuid) {
         super(who);
         this.caseData = caseData;
         this.block = block;
@@ -90,7 +91,7 @@ public class AnimationStartEvent extends PlayerEvent {
      * @return win item
      */
     @NotNull
-    public CaseDataItem<CaseDataMaterialBukkit> getWinItem() {
+    public CaseDataItem<CaseDataMaterialBukkit, ItemStack> getWinItem() {
         return winItem;
     }
 

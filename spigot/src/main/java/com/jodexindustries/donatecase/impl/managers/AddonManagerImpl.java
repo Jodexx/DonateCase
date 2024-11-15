@@ -1,8 +1,10 @@
 package com.jodexindustries.donatecase.impl.managers;
 
+import com.jodexindustries.donatecase.BuildConstants;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
+import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddonDescription;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
@@ -23,6 +25,8 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
 /**
  * Class for managing add-ons, enabling and disabling.
  */
@@ -36,6 +40,8 @@ public class AddonManagerImpl implements AddonManager {
      * List of all addons loaders
      */
     public static final List<InternalAddonClassLoader> loaders = new CopyOnWriteArrayList<>();
+
+    private final Addon donateCase = new ExternalJavaAddon(instance);
     private final Addon addon;
 
     /**
@@ -83,7 +89,7 @@ public class AddonManagerImpl implements AddonManager {
 
             if (description.getApiVersion() != null) {
                 int addonVersion = Tools.getPluginVersion(description.getApiVersion());
-                int pluginVersion = Tools.getPluginVersion(Case.getInstance().getDescription().getVersion());
+                int pluginVersion = Tools.getPluginVersion(BuildConstants.api);
 
                 if (pluginVersion < addonVersion) {
                     addon.getLogger().warning("Addon API version (" + addonVersion
@@ -95,7 +101,7 @@ public class AddonManagerImpl implements AddonManager {
             loadLibraries(description.getLibraries());
             InternalAddonClassLoader loader;
             try {
-                loader = new InternalAddonClassLoader(addon.getClass().getClassLoader(), description, file, this);
+                loader = new InternalAddonClassLoader(addon.getClass().getClassLoader(), description, file, this, donateCase);
             } catch (Throwable t) {
                 addon.getLogger().log(Level.SEVERE,
                         "Error occurred while loading addon " + description.getName() + " v" + description.getVersion(), t);
