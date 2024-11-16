@@ -26,7 +26,7 @@ public class Bootstrap {
         this.config = new Config(plugin);
         this.itemManager = new ItemManager(this);
         this.eventListener = new EventListener(this);
-        this.mainCommand = new MainCommand(plugin.getCaseManager().getSubCommandManager(), this);
+        this.mainCommand = new MainCommand(plugin.getDCAPI().getSubCommandManager(), this);
     }
 
     public void load() {

@@ -1,6 +1,8 @@
 package com.jodexindustries.dcprizepreview.config;
 
+import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
+import com.jodexindustries.donatecase.api.addon.internal.InternalAddon;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;

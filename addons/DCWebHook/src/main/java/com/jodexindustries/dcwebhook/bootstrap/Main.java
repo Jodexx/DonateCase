@@ -1,6 +1,6 @@
 package com.jodexindustries.dcwebhook.bootstrap;
 
-import com.jodexindustries.donatecase.api.CaseManager;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -11,5 +11,5 @@ public interface Main {
     Logger getLogger();
     File getDataFolder();
     void saveResource(String resource, boolean replace);
-    CaseManager getCaseAPI();
+    DCAPIBukkit getDCAPI();
 }

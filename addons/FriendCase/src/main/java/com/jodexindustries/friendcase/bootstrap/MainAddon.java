@@ -1,9 +1,9 @@
 package com.jodexindustries.friendcase.bootstrap;
 
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
+import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddonBukkit;
 import com.jodexindustries.friendcase.utils.Tools;
 
-public final class MainAddon extends InternalJavaAddon implements Main {
+public final class MainAddon extends InternalJavaAddonBukkit implements Main {
     private Tools t;
 
     @Override

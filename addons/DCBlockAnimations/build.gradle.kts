@@ -8,12 +8,12 @@ plugins {
 }
 
 group = "com.jodexindustries"
-version = "1.0.0"
+version = "1.0.1"
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("org.jetbrains:annotations:24.1.0")
-    compileOnly(project(":spigot"))
+    compileOnly(project(":api:spigot-api"))
 }
 
 tasks.processResources {

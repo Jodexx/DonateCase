@@ -1,8 +1,8 @@
 package com.jodexindustries.dcprizepreview.bootstrap;
 
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
+import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddonBukkit;
 
-public class MainAddon extends InternalJavaAddon {
+public class MainAddon extends InternalJavaAddonBukkit {
     private Loader loader;
 
     @Override

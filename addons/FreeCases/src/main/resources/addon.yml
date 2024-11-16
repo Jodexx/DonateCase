@@ -2,3 +2,4 @@ name: FreeCases
 version: '${version}'
 main: com.jodexindustries.freecases.bootstrap.MainAddon
 author: "_Jodex__"
+api: 2.0.0

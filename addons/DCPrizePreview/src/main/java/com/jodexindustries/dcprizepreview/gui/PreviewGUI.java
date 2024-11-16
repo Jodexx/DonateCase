@@ -1,10 +1,12 @@
 package com.jodexindustries.dcprizepreview.gui;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.GUI;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -13,14 +15,14 @@ import java.util.stream.Collectors;
 public class PreviewGUI {
 
     public static Inventory loadGUI(CaseDataBukkit caseData) {
-        Collection<CaseDataBukkit.Item> items = caseData.getItems().values();
-        GUI gui = caseData.getGui();
+        Collection<CaseDataItem<CaseDataMaterialBukkit, ItemStack>> items = caseData.getItems().values();
+        GUI<CaseDataMaterialBukkit> gui = caseData.getGui();
         if(gui == null) return null;
 
         Inventory inventory = Bukkit.createInventory(null, getSize(items.size()), gui.getTitle());
-        items = items.stream().sorted(Comparator.comparingInt(CaseDataBukkit.Item::getIndex)).collect(Collectors.toList());
-        for (CaseDataBukkit.Item item : items) {
-            CaseDataMaterialBukkit.Material material = item.getMaterial();
+        items = items.stream().sorted(Comparator.comparingInt(CaseDataItem::getIndex)).collect(Collectors.toList());
+        for (CaseDataItem<CaseDataMaterialBukkit, ItemStack>item : items) {
+            CaseDataMaterialBukkit material = item.getMaterial();
             material.updateMeta();
             inventory.addItem(material.getItemStack());
         }

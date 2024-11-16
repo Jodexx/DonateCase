@@ -1,16 +1,14 @@
 package com.jodexindustries.dcphysicalkey.bootstrap;
 
-import com.jodexindustries.donatecase.api.CaseManager;
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
+import com.jodexindustries.donatecase.api.addon.external.ExternalAddon;
+import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddonBukkit;
 import org.bukkit.plugin.Plugin;
 
-public class MainAddon extends InternalJavaAddon implements Main {
+public class MainAddon extends InternalJavaAddonBukkit implements Main {
     private Bootstrap bootstrap;
-    private CaseManager caseManager;
 
     @Override
     public void onEnable() {
-        caseManager = getCaseAPI();
         bootstrap = new Bootstrap(this);
         bootstrap.load();
     }
@@ -22,11 +20,7 @@ public class MainAddon extends InternalJavaAddon implements Main {
 
     @Override
     public Plugin getPlugin() {
-        return getDonateCase();
+        return ((ExternalAddon) getDonateCase()).getPlugin();
     }
 
-    @Override
-    public CaseManager getCaseManager() {
-        return caseManager;
-    }
 }

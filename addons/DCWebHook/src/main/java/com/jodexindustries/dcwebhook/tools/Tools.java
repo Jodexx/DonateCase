@@ -4,12 +4,10 @@ import com.jodexindustries.dcwebhook.bootstrap.Main;
 import com.jodexindustries.dcwebhook.commands.MainCommand;
 import com.jodexindustries.dcwebhook.config.Config;
 import com.jodexindustries.dcwebhook.events.EventListener;
-import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import org.bukkit.Bukkit;
-
-import java.util.logging.Level;
+import org.bukkit.command.CommandSender;
 
 public class Tools {
     private final Main main;
@@ -21,16 +19,9 @@ public class Tools {
     }
 
     public void load() {
-        String ver = Case.getInstance().getDescription().getVersion();
-        int intVer = com.jodexindustries.donatecase.tools.Tools.getPluginVersion(ver);
-        if (intVer < 2245) {
-            main.getLogger().log(Level.SEVERE, "Unsupported version of the DonateCase! Use >2.2.4.5");
-            return;
-        }
-
         Bukkit.getServer().getPluginManager().registerEvents(new EventListener(this), main.getPlugin());
         MainCommand mainCommand = new MainCommand(this);
-        SubCommand subCommand = main.getCaseAPI().getSubCommandManager().builder("webhook")
+        SubCommand<CommandSender> subCommand = main.getDCAPI().getSubCommandManager().builder("webhook")
                 .executor(mainCommand)
                 .tabCompleter(mainCommand)
                 .permission(SubCommandType.ADMIN.permission)
@@ -38,11 +29,11 @@ public class Tools {
                 .description("Reload addon config")
                 .build();
 
-        main.getCaseAPI().getSubCommandManager().registerSubCommand(subCommand);
+        main.getDCAPI().getSubCommandManager().registerSubCommand(subCommand);
     }
 
     public void unload() {
-        main.getCaseAPI().getSubCommandManager().unregisterSubCommand("webhook");
+        main.getDCAPI().getSubCommandManager().unregisterSubCommand("webhook");
     }
 
     public Main getMain() {

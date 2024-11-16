@@ -1,3 +1,4 @@
 name: DCEventManager
 version: '${version}'
 main: com.jodexindustries.dceventmanager.bootstrap.MainAddon
+api: 2.0.0

@@ -1,7 +1,7 @@
 package com.jodexindustries.freecases.utils;
 
-import com.jodexindustries.donatecase.api.data.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.freecases.bootstrap.Main;
 import com.jodexindustries.freecases.commands.MainCommand;
 import com.jodexindustries.freecases.config.Config;
@@ -9,6 +9,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 
 public class Tools {
     private final Main main;
@@ -21,21 +22,21 @@ public class Tools {
 
     public void load() {
         MainCommand executor = new MainCommand(this);
-        SubCommand subCommand = main.getCaseAPI().getSubCommandManager().builder("free")
+        SubCommand<CommandSender> subCommand = main.getDCAPI().getSubCommandManager().builder("free")
                 .executor(executor)
                 .tabCompleter(executor)
                 .permission(SubCommandType.PLAYER.permission)
                 .description("Get free case")
                 .build();
 
-        main.getCaseAPI().getSubCommandManager().registerSubCommand(subCommand);
+        main.getDCAPI().getSubCommandManager().registerSubCommand(subCommand);
         if(Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new Placeholder(this).register();
         }
     }
 
     public void unload() {
-        main.getCaseAPI().getSubCommandManager().unregisterSubCommand("free");
+        main.getDCAPI().getSubCommandManager().unregisterSubCommand("free");
     }
 
     public String setPlaceholders(OfflinePlayer player, String text) {

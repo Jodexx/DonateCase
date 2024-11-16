@@ -1,16 +1,16 @@
 package com.jodexindustries.friendcase.bootstrap;
 
-import com.jodexindustries.donatecase.api.CaseManager;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.friendcase.utils.Tools;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MainPlugin extends JavaPlugin implements Main {
     private Tools t;
-    private CaseManager api;
+    private DCAPIBukkit api;
 
     @Override
     public void onEnable() {
-        api = new CaseManager(this);
+        api = DCAPIBukkit.get(this);
         t = new Tools(this);
     }
 
@@ -20,7 +20,7 @@ public final class MainPlugin extends JavaPlugin implements Main {
     }
 
     @Override
-    public CaseManager getCaseAPI() {
+    public DCAPIBukkit getDCAPI() {
         return api;
     }
 }

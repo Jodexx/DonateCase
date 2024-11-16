@@ -37,8 +37,8 @@ public abstract class InternalJavaAddon implements InternalAddon {
         this.file = file;
         this.classLoader = this.getClass().getClassLoader();
         this.urlClassLoader = loader;
-        this.internalAddonLogger = new InternalAddonLogger(this);
         this.donateCase = donateCase;
+        this.internalAddonLogger = new InternalAddonLogger(this);
     }
 
     /**
