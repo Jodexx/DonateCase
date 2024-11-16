@@ -7,7 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class OraxenMaterialHandlerImpl implements MaterialHandler {
+public class OraxenMaterialHandlerImpl implements MaterialHandler<ItemStack> {
 
     @Override
     public @NotNull ItemStack handle(@NotNull String context) {

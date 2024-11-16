@@ -1,4 +1,4 @@
 name: DCPhysicalKey
 version: '${version}'
-api: 2.2.6.6
+api: 2.0.0
 main: com.jodexindustries.dcphysicalkey.bootstrap.MainAddon

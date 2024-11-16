@@ -2,7 +2,8 @@ package com.jodexindustries.donatecase.api.holograms.types;
 
 import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Holograms.CMIHologram;
-import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataHologram;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import org.bukkit.block.Block;
 import net.Zrips.CMILib.Container.CMILocation;
@@ -18,8 +19,8 @@ public class CMIHologramsSupport extends HologramManager {
     private final HashMap<Block, CMIHologram> holograms = new HashMap<>();
 
     @Override
-    public void createHologram(Block block, CaseData caseData) {
-        CaseData.Hologram caseHologram = caseData.getHologram();
+    public void createHologram(Block block, CaseDataBukkit caseData) {
+        CaseDataHologram caseHologram = caseData.getHologram();
 
         if (!caseHologram.isEnabled()) return;
 

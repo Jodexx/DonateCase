@@ -1,6 +1,6 @@
 rootProject.name = "DonateCase"
-include("api")
-include("spigot")
+include("common", "api", ":api:spigot-api",
+    "spigot")
 
 file("addons").listFiles()?.forEach { dir ->
     if (dir.isDirectory) {

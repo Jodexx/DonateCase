@@ -1,17 +1,17 @@
 package com.jodexindustries.freecases.bootstrap;
 
-import com.jodexindustries.donatecase.api.CaseManager;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.freecases.utils.Tools;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MainPlugin extends JavaPlugin implements Main {
     private Tools t;
-    private CaseManager api;
+    private DCAPIBukkit api;
 
     @Override
     public void onEnable() {
-        api = new CaseManager(this);
+        api = DCAPIBukkit.get(this);
         t = new Tools(this);
         t.load();
     }
@@ -27,7 +27,7 @@ public final class MainPlugin extends JavaPlugin implements Main {
     }
 
     @Override
-    public CaseManager getCaseAPI() {
+    public DCAPIBukkit getDCAPI() {
         return api;
     }
 

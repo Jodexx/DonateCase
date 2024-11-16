@@ -144,4 +144,8 @@ public class Tools implements Listener {
         load();
         main.getLogger().info("Config reloaded");
     }
+
+    public Main getMain() {
+        return main;
+    }
 }

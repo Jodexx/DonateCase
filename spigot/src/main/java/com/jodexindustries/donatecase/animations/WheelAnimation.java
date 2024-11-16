@@ -1,29 +1,39 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.api.AnimationManager;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Collections;
 import java.util.function.Consumer;
 
-public class WheelAnimation extends JavaAnimation {
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
+public class WheelAnimation extends JavaAnimationBukkit {
 
     private final List<ArmorStandCreator> armorStands = new ArrayList<>();
     private EquipmentSlot itemSlot;
@@ -44,8 +54,8 @@ public class WheelAnimation extends JavaAnimation {
         }
     }
 
-    public static void register(AnimationManager manager) {
-        CaseAnimation caseAnimation = manager.builder("WHEEL")
+    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
+        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("WHEEL")
                 .animation(WheelAnimation.class)
                 .description("Items resolve around the case")
                 .requireSettings(true)
@@ -69,6 +79,8 @@ public class WheelAnimation extends JavaAnimation {
 
         private final int itemsCount = getSettings().getInt("ItemsCount");
         private final int animationTime = getSettings().getInt("Scroll.Time", 100);
+        private final int scrollCount = getSettings().getInt("Scroll.Count", 1);
+        private final double easeAmount = getSettings().getDouble("Scroll.EaseAmount", 2.5);
         private final Location flocation = loc.clone().add(0 + getSettings().getDouble("LiftingAlongX"),
                 -1 + getSettings().getDouble("LiftingAlongY"),
                 0 + getSettings().getDouble("LiftingAlongZ"));
@@ -76,7 +88,6 @@ public class WheelAnimation extends JavaAnimation {
         private final Sound sound = Sound.valueOf(getSettings().getString("Scroll.Sound"));
         private final float volume = (float) getSettings().getDouble("Scroll.Volume");
         private final float vpitch = (float) getSettings().getDouble("Scroll.Pitch");
-        private final double speed = getSettings().getDouble("CircleSpeed");
         private final double radius = getSettings().getDouble("CircleRadius");
         private final boolean useFlame = getSettings().getBoolean("Flame.Enabled");
         private final Particle flameParticle = Particle.valueOf(getSettings().getString("Flame.Particle", "FLAME"));
@@ -84,9 +95,7 @@ public class WheelAnimation extends JavaAnimation {
         private final double baseAngle = loc.clone().getDirection().angle(new Vector(0, 0, 1));
         private double lastCompletedRotation = 0.0;
         private int ticks;
-        private double yAx = 0;
-        private double radiusAx = radius;
-        private double speedAx = speed;
+        private double targetAngle;
         private final double rotationThreshold;
         private final double offset;
 
@@ -98,8 +107,8 @@ public class WheelAnimation extends JavaAnimation {
 
             initializeItems();
 
-            rotationThreshold = Math.PI / (armorStands.size() * speed);
-            offset = 2 * Math.PI / armorStands.size();
+            rotationThreshold = Math.PI / armorStands.size();
+            offset = 2 * rotationThreshold;
 
             world = loc.getWorld() != null ? loc.getWorld() : getPlayer().getWorld();
         }
@@ -107,62 +116,81 @@ public class WheelAnimation extends JavaAnimation {
         @Override
         public void accept(BukkitTask task) {
             ticks++;
-            double angle = ticks / 20.0  * speedAx * 2 * Math.PI;
 
-            if (ticks < animationTime + 1) {
+            double progress = Math.min(ticks / (double) animationTime, 1.0); // Progress from 0 to 1
+            double easedProgress = 1 - Math.pow(1 - progress, easeAmount); // ease-out
+            double currentAngle = easedProgress * targetAngle;
+
+            if (ticks <= animationTime) {
                 handleFlameEffects();
-                moveArmorStands(angle);
+                moveArmorStands(currentAngle);
             }
 
-            if (ticks == animationTime + 1) {
-                Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+            if (ticks == animationTime) {
+                instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
             if (ticks >= animationTime + 20) {
                 endAnimation(task);
             }
-
-            if (ticks < animationTime + 1) {
-                speedAx *= 1 - speed / (animationTime - 2);
-            }
         }
 
         private void initializeItems() {
             boolean small = getSettings().getBoolean("SmallArmorStand", true);
-            armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
 
             if (wheelType == WheelType.FULL) {
                 // FULL logic - unique items
+                List<CaseDataItem<CaseDataMaterialBukkit, ItemStack>> uniqueItems = new ArrayList<>(getCaseData().getItems().values());
 
-                for (CaseData.Item uniqueItem : getCaseData().getItems().values()) {
-                    if(uniqueItem.getItemName().equals(getWinItem().getItemName())) continue;
-
-                    armorStands.add(spawnArmorStand(getLocation(), uniqueItem, small));
+                if (getSettings().getBoolean("Shuffle", true)) {
+                    Collections.shuffle(uniqueItems);
                 }
 
-            } else {
+                int additionalSteps = 0;
+                for (CaseDataItem<CaseDataMaterialBukkit, ItemStack> uniqueItem : uniqueItems) {
+                    if (uniqueItem.getItemName().equals(getWinItem().getItemName())) {
+                        additionalSteps = uniqueItems.size() - armorStands.size();
+                        armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
+                    }
+                    else armorStands.add(spawnArmorStand(getLocation(), uniqueItem, small));
+                }
+
+                double additionalAngle = additionalSteps * (2 * Math.PI / armorStands.size());
+                targetAngle = 2 * Math.PI * scrollCount + additionalAngle;
+            }
+            else {
                 // RANDOM logic - random items with duplicates
+                armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
                 for (int i = 1; i < itemsCount; i++) {
-                    CaseData.Item randomItem = getCaseData().getRandomItem();
+                    CaseDataItem<CaseDataMaterialBukkit, ItemStack> randomItem = getCaseData().getRandomItem();
                     armorStands.add(spawnArmorStand(getLocation(), randomItem, small));
                 }
+                int rand = new Random().nextInt(armorStands.size());
+                int additionalSteps = armorStands.size() - rand;
+                double additionalAngle = additionalSteps * (2 * Math.PI / armorStands.size());
+                targetAngle = 2 * Math.PI * scrollCount + additionalAngle;
+                Collections.swap(armorStands, 0, rand);
             }
         }
 
         private void handleFlameEffects() {
             if (useFlame) {
-                yAx += (radius + 4.0) / animationTime * speedAx;
-                radiusAx -= 0.015 / (animationTime / 100.0);
-                double theta = ticks / (20.0 / (speedAx * 6));
-                spawnFlameEffect(theta);
-                spawnFlameEffect(theta + Math.PI); // For the opposite side
+                double progress = Math.min(ticks / (double) animationTime * 0.9, 1); // progress from 0 to 1
+                double easedProgress = 1 - Math.pow(1 - progress, easeAmount); // ease-out
+
+                double deltaX = Math.max((1 - easedProgress) * radius, 0.4);
+                double deltaY = easedProgress * radius + 0.7;
+
+                double theta = ticks / (20.0 / 3);
+                spawnFlameEffect(deltaX, deltaY, theta);
+                spawnFlameEffect(deltaX, deltaY, theta + Math.PI); // For the opposite side
             }
         }
 
-        private void spawnFlameEffect(double theta) {
-            double dx = (radiusAx / 1.1) * Math.sin(theta);
-            double dy = (radiusAx / 1.1) * Math.cos(theta);
-            Location particleLocation = flocation.clone().add(dx, yAx, dy);
+        private void spawnFlameEffect(double deltaX, double deltaY, double theta) {
+            double dx = deltaX * Math.sin(theta);
+            double dz = deltaX * Math.cos(theta);
+            Location particleLocation = flocation.clone().add(dx, deltaY, dz);
             world.spawnParticle(flameParticle, particleLocation, 1, 0, 0, 0, 0, null);
         }
 
@@ -189,13 +217,13 @@ public class WheelAnimation extends JavaAnimation {
             for (ArmorStandCreator stand : armorStands) {
                 stand.remove();
             }
-            Case.animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+            instance.api.getAnimationManager().animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             armorStands.clear();
         }
     }
 
-    private ArmorStandCreator spawnArmorStand(Location location, CaseData.Item item, boolean small) {
-        ArmorStandCreator as = Tools.createArmorStand(location);
+    private ArmorStandCreator spawnArmorStand(Location location, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item, boolean small) {
+        ArmorStandCreator as = ToolsBukkit.createArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);

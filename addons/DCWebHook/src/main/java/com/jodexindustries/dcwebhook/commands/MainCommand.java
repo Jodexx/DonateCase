@@ -11,7 +11,7 @@ import java.util.List;
 
 import static com.jodexindustries.donatecase.tools.Tools.rc;
 
-public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class MainCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
     private final Tools t;
 
     public MainCommand(Tools t) {

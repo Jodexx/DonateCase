@@ -5,7 +5,7 @@ import com.jodexindustries.donatecase.tools.SkullCreator;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class BASE64MaterialHandlerImpl implements MaterialHandler {
+public class BASE64MaterialHandlerImpl implements MaterialHandler<ItemStack> {
 
     @Override
     public @NotNull ItemStack handle(@NotNull String context) {

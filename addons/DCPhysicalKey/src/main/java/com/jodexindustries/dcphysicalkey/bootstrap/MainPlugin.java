@@ -1,16 +1,16 @@
 package com.jodexindustries.dcphysicalkey.bootstrap;
 
-import com.jodexindustries.donatecase.api.CaseManager;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MainPlugin extends JavaPlugin implements Main {
     private Bootstrap bootstrap;
-    private CaseManager caseManager;
+    private DCAPIBukkit api;
 
     @Override
     public void onEnable() {
-        caseManager = new CaseManager(this);
+        api = DCAPIBukkit.get(this);
         bootstrap = new Bootstrap(this);
         bootstrap.load();
     }
@@ -26,7 +26,9 @@ public class MainPlugin extends JavaPlugin implements Main {
     }
 
     @Override
-    public CaseManager getCaseManager() {
-        return caseManager;
+    public DCAPIBukkit getDCAPI() {
+        return api;
     }
+
+
 }

@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.api.holograms.types;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import de.oliver.fancyholograms.api.FancyHologramsPlugin;
 import de.oliver.fancyholograms.api.data.*;
@@ -20,7 +20,7 @@ public class FancyHologramsSupport extends HologramManager {
     private final HashMap<Block, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void createHologram(Block block, CaseData caseData) {
+    public void createHologram(Block block, CaseDataBukkit caseData) {
         YamlConfiguration config = Case.getConfig().getCasesConfig().getCase(caseData.getCaseType()).getSecond();
         if (config == null) return;
 

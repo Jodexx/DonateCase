@@ -1,29 +1,37 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.api.AnimationManager;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class ShapeAnimation extends JavaAnimation {
+import static com.jodexindustries.donatecase.DonateCase.instance;
 
-    public static void register(AnimationManager manager) {
-        CaseAnimation caseAnimation = manager.builder("SHAPE")
+public class ShapeAnimation extends JavaAnimationBukkit {
+
+    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
+        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("SHAPE")
                 .animation(ShapeAnimation.class)
                 .description("Items flip through and a shape appears")
                 .requireSettings(true)
@@ -37,7 +45,7 @@ public class ShapeAnimation extends JavaAnimation {
         getLocation().add(0.5, -0.1, 0.5);
         getLocation().setYaw(-70.0F);
 
-        final ArmorStandCreator as = Tools.createArmorStand(getLocation());
+        final ArmorStandCreator as = ToolsBukkit.createArmorStand(getLocation());
         boolean small = getSettings().getBoolean("Shape.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
@@ -94,12 +102,12 @@ public class ShapeAnimation extends JavaAnimation {
                 as.setAngle(armorStandEulerAngle);
                 as.setCustomName(getWinItem().getMaterial().getDisplayName());
                 as.updateMeta();
-                Tools.launchFirework(l.clone().add(0.0, 0.8, 0.0));
-                Case.animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                ToolsBukkit.launchFirework(l.clone().add(0.0, 0.8, 0.0));
+                instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
             if (tick <= 15) {
-                CaseData.Item item = getCaseData().getRandomItem();
+                CaseDataItem<CaseDataMaterialBukkit, ItemStack> item = getCaseData().getRandomItem();
                 if (item.getMaterial().getItemStack().getType() != Material.AIR) {
                     as.setAngle(armorStandEulerAngle);
                     as.setEquipment(itemSlot, item.getMaterial().getItemStack());
@@ -155,7 +163,7 @@ public class ShapeAnimation extends JavaAnimation {
             if (tick >= 40) {
                 as.remove();
                 task.cancel();
-                Case.animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                instance.api.getAnimationManager().animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
             ++tick;

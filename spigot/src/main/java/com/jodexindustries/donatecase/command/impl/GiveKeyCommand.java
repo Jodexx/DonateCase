@@ -1,15 +1,16 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.manager.SubCommandManager;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
+import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.command.GlobalCommand;
-import com.jodexindustries.donatecase.database.CaseDatabase;
 import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,17 +18,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
 import static com.jodexindustries.donatecase.command.GlobalCommand.resolveSDGCompletions;
 
 /**
  * Class for /dc givekey subcommand implementation
  */
-public class GiveKeyCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class GiveKeyCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManager manager) {
+    public static void register(SubCommandManager<CommandSender> manager) {
         GiveKeyCommand command = new GiveKeyCommand();
 
-        SubCommand subCommand = manager.builder("givekey")
+        SubCommand<CommandSender> subCommand = manager.builder("givekey")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.MODER.permission)
@@ -48,24 +50,24 @@ public class GiveKeyCommand implements SubCommandExecutor, SubCommandTabComplete
                 Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("number-format-exception"), "%string:" + args[2]));
                 return;
             }
-            if (Case.hasCaseByType(caseName)) {
-                CaseData data = Case.getCase(caseName);
+            if (instance.api.getCaseManager().hasCaseByType(caseName)) {
+                CaseDataBukkit data = instance.api.getCaseManager().getCase(caseName);
                 if (data == null) return;
-                Case.addKeys(caseName, player, keys).thenAcceptAsync(status -> {
-                    if(status == CaseDatabase.Status.COMPLETE) {
-                        Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-given"),
+                Case.getInstance().api.getCaseKeyManager().addKeys(caseName, player, keys).thenAcceptAsync(status -> {
+                    if(status == DatabaseStatus.COMPLETE) {
+                        ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-given"),
                                 "%player:" + player, "%key:" + keys, "%casetitle:" + data.getCaseTitle(),
                                 "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
 
                         if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
-                            Tools.msg(target, Tools.rt(Case.getConfig().getLang().getString("keys-given-target"),
+                            ToolsBukkit.msg(target, Tools.rt(Case.getConfig().getLang().getString("keys-given-target"),
                                     "%player:" + player, "%key:" + keys, "%casetitle:" + data.getCaseTitle(),
                                     "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
                         }
                     }
                 });
             } else {
-                Tools.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
+                ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
             }
         } else {
             GlobalCommand.sendHelp(sender, label);

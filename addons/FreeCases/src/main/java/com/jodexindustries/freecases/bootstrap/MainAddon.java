@@ -1,10 +1,11 @@
 package com.jodexindustries.freecases.bootstrap;
 
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
+import com.jodexindustries.donatecase.api.addon.external.ExternalAddon;
+import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddonBukkit;
 import com.jodexindustries.freecases.utils.Tools;
 import org.bukkit.plugin.Plugin;
 
-public final class MainAddon extends InternalJavaAddon implements Main {
+public final class MainAddon extends InternalJavaAddonBukkit implements Main {
     private Tools t;
 
     @Override
@@ -20,7 +21,6 @@ public final class MainAddon extends InternalJavaAddon implements Main {
 
     @Override
     public Plugin getPlugin() {
-        return getDonateCase();
+        return ((ExternalAddon) getDonateCase()).getPlugin();
     }
-
 }

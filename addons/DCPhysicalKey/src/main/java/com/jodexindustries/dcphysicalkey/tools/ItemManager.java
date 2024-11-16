@@ -1,7 +1,6 @@
 package com.jodexindustries.dcphysicalkey.tools;
 
 import com.jodexindustries.dcphysicalkey.bootstrap.Bootstrap;
-import com.jodexindustries.donatecase.api.Case;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -45,7 +44,7 @@ public class ItemManager {
                 continue;
             }
 
-            if (!Case.hasCaseByType(caseType)) {
+            if (!bootstrap.getPlugin().getDCAPI().getCaseManager().hasCaseByType(caseType)) {
                 bootstrap.getPlugin().getLogger().warning("Key " + key + ": Case type \"" + caseType + "\" not found. Skipping this key.");
                 continue;
             }

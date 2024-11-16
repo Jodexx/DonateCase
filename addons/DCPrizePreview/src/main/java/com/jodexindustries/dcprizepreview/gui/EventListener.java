@@ -2,8 +2,8 @@ package com.jodexindustries.dcprizepreview.gui;
 
 import com.jodexindustries.dcprizepreview.config.CasePreview;
 import com.jodexindustries.dcprizepreview.config.Config;
-import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.CaseData;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
 import org.bukkit.entity.Player;
@@ -20,9 +20,11 @@ import java.util.UUID;
 public class EventListener implements Listener {
     private final HashSet<UUID> players = new HashSet<>();
     private final Config config;
+    private final DCAPIBukkit api;
 
-    public EventListener(Config config) {
+    public EventListener(Config config, DCAPIBukkit api) {
         this.config = config;
+        this.api = api;
     }
 
     @EventHandler
@@ -43,7 +45,7 @@ public class EventListener implements Listener {
 
             switch (casePreview.type()) {
                 case AUTO: {
-                    CaseData caseData = Case.getCase(caseType);
+                    CaseDataBukkit caseData = api.getCaseManager().getCase(caseType);
                     if (caseData != null) {
                         Inventory inventory = PreviewGUI.loadGUI(caseData);
                         if (inventory == null) return;

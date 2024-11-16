@@ -24,8 +24,8 @@
 ```xml
 <dependency>
   <groupId>com.jodexindustries.donatecase</groupId>
-  <artifactId>spigot</artifactId>
-  <version>2.2.6.7</version>
+  <artifactId>spigot-api</artifactId>
+  <version>2.0.0</version>
 </dependency>
 ```
 > Gradle
@@ -36,5 +36,5 @@ maven {
 }
 ```
 ```groovy
-compileOnly("com.jodexindustries.donatecase:spigot:2.2.6.7")
+compileOnly("com.jodexindustries.donatecase:spigot-api:2.0.0")
 ```

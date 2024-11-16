@@ -1,9 +1,9 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.SubCommandManager;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.SubCommandType;
+import com.jodexindustries.donatecase.api.manager.SubCommandManager;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -17,12 +17,12 @@ import java.util.List;
 /**
  * Class for /dc cases subcommand implementation
  */
-public class CasesCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class CasesCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
 
-    public static void register(SubCommandManager manager) {
+    public static void register(SubCommandManager<CommandSender> manager) {
         CasesCommand command = new CasesCommand();
 
-        SubCommand subCommand = manager.builder("cases")
+        SubCommand<CommandSender> subCommand = manager.builder("cases")
                 .executor(command)
                 .tabCompleter(command)
                 .permission(SubCommandType.MODER.permission)
@@ -33,7 +33,7 @@ public class CasesCommand implements SubCommandExecutor, SubCommandTabCompleter 
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         int num = 0;
-        for (CaseData data : Case.caseData.values()) {
+        for (CaseDataBukkit data : Case.getInstance().api.getCaseManager().getMap().values()) {
             num++;
             Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("list-of-cases"),
                     "%casename:" + data.getCaseType(), "%num:" + num,

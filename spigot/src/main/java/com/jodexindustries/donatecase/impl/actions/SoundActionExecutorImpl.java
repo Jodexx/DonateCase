@@ -3,11 +3,12 @@ package com.jodexindustries.donatecase.impl.actions;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class SoundActionExecutorImpl implements ActionExecutor {
+public class SoundActionExecutorImpl implements ActionExecutor<Player> {
     /**
      * Player sound for player with specific cooldown<br>
      * {@code - "[sound] (sound) (volume) (pitch)"}
@@ -17,7 +18,7 @@ public class SoundActionExecutorImpl implements ActionExecutor {
      * @param cooldown Cooldown in seconds
      */
     @Override
-    public void execute(@NotNull OfflinePlayer player, @NotNull String context, int cooldown) {
+    public void execute(@Nullable Player player, @NotNull String context, int cooldown) {
         String[] args = context.split(" ");
         Sound sound;
         try {
@@ -37,8 +38,8 @@ public class SoundActionExecutorImpl implements ActionExecutor {
             float pitch = args.length > 2 ? Float.parseFloat(args[2]) : 1;
 
             Bukkit.getScheduler().runTaskLater(Case.getInstance(), () -> {
-                if (player.getPlayer() != null) {
-                    player.getPlayer().playSound(player.getPlayer().getLocation(), sound, volume, pitch);
+                if (player != null) {
+                    player.playSound(player.getLocation(), sound, volume, pitch);
                 }
             }, 20L * cooldown);
         } catch (NumberFormatException e) {

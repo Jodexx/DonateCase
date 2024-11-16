@@ -1,16 +1,22 @@
 package com.jodexindustries.donatecase.gui.items;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.GUITypedItemManager;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.DatabaseType;
-import com.jodexindustries.donatecase.api.data.GUI;
-import com.jodexindustries.donatecase.api.data.gui.GUITypedItem;
-import com.jodexindustries.donatecase.api.data.gui.TypedItemHandler;
-import com.jodexindustries.donatecase.gui.CaseGui;
+import com.jodexindustries.donatecase.api.data.casedata.*;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemHandler;
+import com.jodexindustries.donatecase.api.data.database.DatabaseType;
+import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
+import com.jodexindustries.donatecase.api.gui.CaseGui;
+import com.jodexindustries.donatecase.api.manager.GUITypedItemManager;
+import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.tools.Tools;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
@@ -18,12 +24,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class HISTORYItemHandlerImpl implements TypedItemHandler {
+import static com.jodexindustries.donatecase.DonateCase.instance;
 
-    public static void register(GUITypedItemManager manager) {
-        HISTORYItemHandlerImpl handler = new HISTORYItemHandlerImpl();
+public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>> {
 
-        GUITypedItem item = manager.builder("HISTORY")
+    public static void register(GUITypedItemManager<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> manager) {
+        TypedItemHandler<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>> handler = new HISTORYItemHandlerImpl();
+
+        GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> item = manager.builder("HISTORY")
                 .description("Type for displaying the history of case openings")
                 .handler(handler)
                 .build();
@@ -33,12 +41,12 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
     @NotNull
     @Override
-    public GUI.Item handle(@NotNull CaseGui caseGui, GUI.@NotNull Item item) {
-        CaseData caseData = caseGui.getCaseData();
+    public GUI.Item<CaseDataMaterialBukkit> handle(@NotNull CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> caseGui, GUI.@NotNull Item<CaseDataMaterialBukkit> item) {
+        CaseDataBukkit caseData = caseGui.getCaseData();
 
         boolean handled = handleHistoryItem(caseData, item, caseGui.getGlobalHistoryData());
 
-        CaseData.Item.Material material = item.getMaterial();
+        CaseDataMaterial<ItemStack> material = item.getMaterial();
 
         if (!handled) {
             YamlConfiguration config = Case.getConfig().getCasesConfig().getCase(caseData.getCaseType()).getSecond();
@@ -59,8 +67,8 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         return item;
     }
 
-    private boolean handleHistoryItem(CaseData caseData, GUI.Item item, List<CaseData.HistoryData> globalHistoryData) {
-        CaseData.Item.Material itemMaterial = item.getMaterial();
+    private boolean handleHistoryItem(CaseDataBukkit caseData, GUI.Item<CaseDataMaterialBukkit> item, List<CaseDataHistory> globalHistoryData) {
+        CaseDataMaterialBukkit itemMaterial = item.getMaterial();
 
         String caseType = caseData.getCaseType();
 
@@ -69,7 +77,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         caseType = (typeArgs.length >= 3) ? typeArgs[2] : caseType;
         boolean isGlobal = caseType.equalsIgnoreCase("GLOBAL");
 
-        CaseData historyCaseData = isGlobal ? null : Case.getCase(caseType);
+        CaseDataBukkit historyCaseData = isGlobal ? null : instance.api.getCaseManager().getCase(caseType);
         if (historyCaseData == null && !isGlobal) {
             Case.getInstance().getLogger().warning("Case " + caseType + " HistoryData is null!");
             return false;
@@ -77,13 +85,13 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
         if (!isGlobal) historyCaseData = historyCaseData.clone();
 
-        CaseData.HistoryData data = getHistoryData(caseType, isGlobal, globalHistoryData, index, historyCaseData);
+        CaseDataHistory data = getHistoryData(caseType, isGlobal, globalHistoryData, index, historyCaseData);
         if (data == null) return false;
 
-        if (isGlobal) historyCaseData = Case.getCase(data.getCaseType());
+        if (isGlobal) historyCaseData = instance.api.getCaseManager().getCase(data.getCaseType());
         if (historyCaseData == null) return false;
 
-        CaseData.Item historyItem = historyCaseData.getItem(data.getItem());
+        CaseDataItem<CaseDataMaterialBukkit, ItemStack> historyItem = historyCaseData.getItem(data.getItem());
         if (historyItem == null) return false;
         String material = item.getMaterial().getId();
         if (material == null) material = "HEAD:" + data.getPlayerName();
@@ -102,7 +110,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         return true;
     }
 
-    private String[] getTemplate(CaseData historyCaseData, CaseData.HistoryData data, CaseData.Item historyItem) {
+    private String[] getTemplate(CaseDataBukkit historyCaseData, CaseDataHistory data, CaseDataItem<CaseDataMaterialBukkit, ItemStack> historyItem) {
 
         DateFormat formatter = new SimpleDateFormat(Case.getConfig().getConfig().getString("DonateCase.DateFormat", "dd.MM HH:mm:ss"));
         String dateFormatted = formatter.format(new Date(data.getTime()));
@@ -112,7 +120,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
         String randomActionDisplayName = "random_action_not_found";
         if (data.getAction() != null && !data.getAction().isEmpty()) {
-            CaseData.Item.RandomAction randomAction = historyItem.getRandomAction(data.getAction());
+            CaseDataItem.RandomAction randomAction = historyItem.getRandomAction(data.getAction());
             if (randomAction != null) {
                 randomActionDisplayName = randomAction.getDisplayName();
             }
@@ -133,16 +141,16 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         };
     }
 
-    private CaseData.HistoryData getHistoryData(String caseType, boolean isGlobal, List<CaseData.HistoryData> globalHistoryData, int index, CaseData historyCaseData) {
-        CaseData.HistoryData data = null;
+    private CaseDataHistory getHistoryData(String caseType, boolean isGlobal, List<CaseDataHistory> globalHistoryData, int index, CaseDataBukkit historyCaseData) {
+        CaseDataHistory data = null;
         if (isGlobal) {
             if (globalHistoryData.size() <= index) return null;
             data = globalHistoryData.get(index);
         } else {
-            if (Case.getInstance().databaseType == DatabaseType.SQLITE) {
+            if (Case.getConfig().getDatabaseType() == DatabaseType.SQLITE) {
                 data = historyCaseData.getHistoryData()[index];
             } else {
-                List<CaseData.HistoryData> dbData = Case.sortHistoryDataByCase(globalHistoryData, caseType);
+                List<CaseDataHistory> dbData = CaseDatabaseImpl.sortHistoryDataByCase(globalHistoryData, caseType);
                 if (!dbData.isEmpty() && dbData.size() > index) {
                     data = dbData.get(index);
                 }

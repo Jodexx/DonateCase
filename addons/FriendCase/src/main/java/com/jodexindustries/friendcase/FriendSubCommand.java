@@ -1,9 +1,8 @@
 package com.jodexindustries.friendcase;
 
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
-import com.jodexindustries.donatecase.database.CaseDatabase;
 import com.jodexindustries.friendcase.utils.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 
 import static com.jodexindustries.donatecase.tools.Tools.rc;
 
-public class FriendSubCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
     private final Tools t;
 
     public FriendSubCommand(Tools t) {
@@ -54,14 +53,14 @@ public class FriendSubCommand implements SubCommandExecutor, SubCommandTabComple
                         sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.NumberFormat", "")));
                         return;
                     }
-                    if (Case.hasCaseByType(caseType)) {
-                        if (Case.getKeys(caseType, p.getName()) >= 1 && Case.getKeys(caseType, p.getName()) >= keys) {
+                    if (t.getDCAPI().getCaseManager().hasCaseByType(caseType)) {
+                        if (t.getDCAPI().getCaseKeyManager().getKeys(caseType, p.getName()) >= 1 && t.getDCAPI().getCaseKeyManager().getKeys(caseType, p.getName()) >= keys) {
                             if (target != null) {
                                 if (target != p) {
-                                    Case.removeKeys(caseType, p.getName(), keys).thenAcceptAsync(status -> {
-                                        if(status == CaseDatabase.Status.COMPLETE) {
-                                            Case.addKeys(caseType, target.getName(), keys).thenAcceptAsync(nextStatus -> {
-                                                if(nextStatus == CaseDatabase.Status.COMPLETE) {
+                                    t.getDCAPI().getCaseKeyManager().removeKeys(caseType, p.getName(), keys).thenAcceptAsync(status -> {
+                                        if(status == DatabaseStatus.COMPLETE) {
+                                            t.getDCAPI().getCaseKeyManager().addKeys(caseType, target.getName(), keys).thenAcceptAsync(nextStatus -> {
+                                                if(nextStatus == DatabaseStatus.COMPLETE) {
                                                     target.sendMessage(rc(
                                                             t.getConfig().getConfig().getString("Messages.YouReceivedGift", "")
                                                                     .replace("%sender%", sender.getName())
@@ -118,7 +117,7 @@ public class FriendSubCommand implements SubCommandExecutor, SubCommandTabComple
             return strings;
         } else {
             if (args.length == 2) {
-                strings = new ArrayList<>(Case.getConfig().getCasesConfig().getCases().keySet());
+                strings = new ArrayList<>(t.getDCAPI().getCaseManager().getMap().keySet());
                 return strings;
             }
         }

@@ -2,11 +2,11 @@ package com.jodexindustries.dcphysicalkey.commands;
 
 import com.jodexindustries.dcphysicalkey.bootstrap.Bootstrap;
 import com.jodexindustries.dcphysicalkey.tools.ItemManager;
-import com.jodexindustries.donatecase.api.SubCommandManager;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.dcphysicalkey.config.Config;
+import com.jodexindustries.donatecase.api.manager.SubCommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -18,20 +18,20 @@ import java.util.List;
 
 import static com.jodexindustries.donatecase.tools.Tools.rc;
 
-public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class MainCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
     private final Config config;
-    private final SubCommandManager manager;
+    private final SubCommandManager<CommandSender> manager;
 
     private String commandName;
 
-    public MainCommand(SubCommandManager manager, Bootstrap bootstrap) {
+    public MainCommand(SubCommandManager<CommandSender> manager, Bootstrap bootstrap) {
         this.config = bootstrap.getConfig();
         this.manager = manager;
     }
 
     public void register() {
         commandName = config.get().getString("command", "physicalkey");
-        SubCommand subCommand = manager.builder(commandName)
+        SubCommand<CommandSender> subCommand = manager.builder(commandName)
                 .permission(config.get().getString("permissions.give", "dcphysicalkey.give"))
                 .description("&2Gives physical key to specific player")
                 .args(new String[]{

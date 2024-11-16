@@ -1,8 +1,10 @@
 package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.DatabaseType;
+import com.jodexindustries.donatecase.api.data.database.DatabaseType;
+import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
+import com.jodexindustries.donatecase.impl.managers.CaseKeyManagerImpl;
+import com.jodexindustries.donatecase.impl.managers.CaseOpenManagerImpl;
 import com.jodexindustries.donatecase.tools.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -101,12 +103,11 @@ public class Config {
 
         long caching = getConfig().getLong("DonateCase.Caching");
         if (caching >= 0) {
-            Case.keysCache.setMaxAge(caching);
-            Case.openCache.setMaxAge(caching);
-            Case.historyCache.setMaxAge(caching);
+            CaseOpenManagerImpl.openCache.setMaxAge(caching);
+            CaseKeyManagerImpl.keysCache.setMaxAge(caching);
+            CaseDatabaseImpl.historyCache.setMaxAge(caching);
         }
 
-        plugin.databaseType = getConfig().getBoolean("MySql.Enabled") ? DatabaseType.MYSQL : DatabaseType.SQLITE;
     }
 
     @Nullable
@@ -299,6 +300,15 @@ public class Config {
 
     public Converter getConverter() {
         return converter;
+    }
+
+    /**
+     * Get database type
+     * @return MYSQL or SQLITE
+     * @since 2.2.6.8
+     */
+    public DatabaseType getDatabaseType() {
+        return getConfig().getBoolean("MySql.Enabled") ? DatabaseType.MYSQL : DatabaseType.SQLITE;
     }
 
     /**

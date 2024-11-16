@@ -6,26 +6,34 @@ import com.alessiodp.libby.Library;
 import com.alessiodp.libby.logging.LogLevel;
 import com.jodexindustries.donatecase.animations.*;
 import com.jodexindustries.donatecase.api.*;
-import com.jodexindustries.donatecase.api.data.CaseData;
-import com.jodexindustries.donatecase.api.data.DatabaseType;
+import com.jodexindustries.donatecase.api.addon.PowerReason;
+import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.FancyHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
+import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.command.impl.*;
 import com.jodexindustries.donatecase.config.CaseLoader;
 import com.jodexindustries.donatecase.config.Config;
-import com.jodexindustries.donatecase.database.CaseDatabase;
-import com.jodexindustries.donatecase.impl.actions.*;
+import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.gui.items.HISTORYItemHandlerImpl;
 import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
+import com.jodexindustries.donatecase.impl.DCAPIBukkitImpl;
+import com.jodexindustries.donatecase.impl.actions.*;
+import com.jodexindustries.donatecase.impl.managers.*;
 import com.jodexindustries.donatecase.impl.materials.*;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
@@ -33,8 +41,13 @@ import com.jodexindustries.donatecase.tools.support.*;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +56,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
 import java.util.logging.Level;
 
 /**
@@ -52,14 +64,13 @@ import java.util.logging.Level;
 public class DonateCase extends JavaPlugin {
     public static DonateCase instance;
 
-    public CaseDatabase database;
+    public CaseDatabaseImpl<CaseDataBukkit, CaseDataMaterialBukkit, ItemStack> database;
     public HologramManager hologramManager = null;
     public PAPISupport papi = null;
     public LuckPerms luckPerms = null;
     public Permission permission = null;
     public PermissionDriver permissionDriver = null;
     public HologramDriver hologramDriver = null;
-    public CaseManager api;
     public CaseLoader loader;
     public BukkitLibraryManager libraryManager;
     public ItemsAdderSupport itemsAdderSupport = null;
@@ -68,12 +79,17 @@ public class DonateCase extends JavaPlugin {
     public CustomHeadsSupport customHeadsSupport = null;
     public PacketEventsSupport packetEventsSupport;
 
+    public final DCAPIBukkit api = new DCAPIBukkitImpl(this);
+
     public Config config;
 
     public boolean usePackets = false;
-    public DatabaseType databaseType = DatabaseType.SQLITE;
 
     private boolean spawnProtectionDisabled = false;
+
+    static {
+        DCAPIBukkit.register(DCAPIBukkitImpl.class);
+    }
 
     @Override
     public void onLoad() {
@@ -81,7 +97,6 @@ public class DonateCase extends JavaPlugin {
 
         loadLibraries();
 
-        api = new CaseManager(this);
         api.getAddonManager().loadAddons();
     }
 
@@ -90,6 +105,9 @@ public class DonateCase extends JavaPlugin {
         long time = System.currentTimeMillis();
 
         loadConfig();
+        database = new CaseDatabaseImpl<>(api.getCaseManager(), getLogger());
+
+        loadDatabase();
 
         loader = new CaseLoader(this);
 
@@ -118,7 +136,7 @@ public class DonateCase extends JavaPlugin {
         loadUpdater();
         loadMetrics();
 
-        api.getAddonManager().enableAddons(AddonManager.PowerReason.DONATE_CASE);
+        api.getAddonManager().enableAddons(PowerReason.DONATE_CASE);
 
         DonateCaseEnableEvent donateCaseEnableEvent = new DonateCaseEnableEvent(this);
         getServer().getPluginManager().callEvent(donateCaseEnableEvent);
@@ -133,7 +151,7 @@ public class DonateCase extends JavaPlugin {
         DonateCaseDisableEvent donateCaseDisableEvent = new DonateCaseDisableEvent(this);
         getServer().getPluginManager().callEvent(donateCaseDisableEvent);
 
-        api.getAddonManager().unloadAddons(AddonManager.PowerReason.DONATE_CASE);
+        api.getAddonManager().unloadAddons(PowerReason.DONATE_CASE);
         api.getAnimationManager().unregisterAnimations();
         api.getSubCommandManager().unregisterSubCommands();
         api.getActionManager().unregisterActions();
@@ -146,6 +164,7 @@ public class DonateCase extends JavaPlugin {
         if (packetEventsSupport != null) packetEventsSupport.unload();
 
         Case.cleanCache();
+        DCAPIBukkit.unregister();
     }
 
     private void loadPlaceholderAPI() {
@@ -221,15 +240,34 @@ public class DonateCase extends JavaPlugin {
     public void loadConfig() {
         config = new Config(this);
 
-        database = new CaseDatabase(this);
-        database.connect();
-
         config.getConverter().convertData();
 
         disableSpawnProtection();
 
         DonateCaseReloadEvent reloadEvent = new DonateCaseReloadEvent(this, DonateCaseReloadEvent.Type.CONFIG);
         getServer().getPluginManager().callEvent(reloadEvent);
+    }
+
+    public void loadDatabase() {
+        ConfigurationSection section = config.getConfig().getConfigurationSection("DonateCase.MySql");
+        if(section == null || !section.getBoolean("Enabled")) {
+            database.connect(getDataFolder().getAbsolutePath());
+            return;
+        }
+
+        String databaseName = section.getString("Database");
+        String port = section.getString("Port");
+        String host = section.getString("Host");
+        String user = section.getString("User");
+        String password = section.getString("Password");
+
+        database.connect(
+                databaseName,
+                port,
+                host,
+                user,
+                password
+        );
     }
 
     public void loadCases() {
@@ -245,7 +283,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultSubCommands() {
-        SubCommandManager manager = api.getSubCommandManager();
+        SubCommandManager<CommandSender> manager = api.getSubCommandManager();
 
         ReloadCommand.register(manager);
         GiveKeyCommand.register(manager);
@@ -261,20 +299,20 @@ public class DonateCase extends JavaPlugin {
         AddonCommand.register(manager);
         RegistryCommand.register(manager);
 
-        Logger.log("&aRegistered &c" + SubCommandManager.registeredSubCommands.size() + " &acommands");
+        Logger.log("&aRegistered &c" + SubCommandManagerImpl.registeredSubCommands.size() + " &acommands");
     }
 
     private void registerDefaultAnimations() {
-        AnimationManager manager = api.getAnimationManager();
+        AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager = api.getAnimationManager();
         ShapeAnimation.register(manager);
         RainlyAnimation.register(manager);
         FireworkAnimation.register(manager);
         WheelAnimation.register(manager);
-        Logger.log("&aRegistered &c" + AnimationManager.registeredAnimations.size() + " &aanimations");
+        Logger.log("&aRegistered &c" + AnimationManagerImpl.registeredAnimations.size() + " &aanimations");
     }
 
     private void registerDefaultActions() {
-        ActionManager manager = api.getActionManager();
+        ActionManager<Player> manager = api.getActionManager();
         manager.registerAction("[command]", new CommandActionExecutorImpl(),
                 "Sends a command to the console");
         manager.registerAction("[message]", new MessageActionExecutorImpl(),
@@ -285,11 +323,11 @@ public class DonateCase extends JavaPlugin {
                 "Sends a broadcast to the players");
         manager.registerAction("[sound]", new SoundActionExecutorImpl(),
                 "Sends a sound to the player");
-        Logger.log("&aRegistered &c" + ActionManager.registeredActions.size() + " &aactions");
+        Logger.log("&aRegistered &c" + ActionManagerImpl.registeredActions.size() + " &aactions");
     }
 
     private void registerDefaultMaterials() {
-        MaterialManager manager = api.getMaterialManager();
+        MaterialManager<ItemStack> manager = api.getMaterialManager();
         manager.registerMaterial("BASE64", new BASE64MaterialHandlerImpl(),
                 "Heads from Minecraft-heads by BASE64 value");
         manager.registerMaterial("MCURL", new MCURLMaterialHandlerImpl(),
@@ -304,16 +342,16 @@ public class DonateCase extends JavaPlugin {
                 "Heads from CustomHeads plugin");
         manager.registerMaterial("HDB", new HDBMaterialHandlerImpl(),
                 "Heads from HeadDatabase plugin");
-        Logger.log("&aRegistered &c" + MaterialManager.registeredMaterials.size() + " &amaterials");
+        Logger.log("&aRegistered &c" + MaterialManagerImpl.registeredMaterials.size() + " &amaterials");
     }
 
     private void registerDefaultGUITypedItems() {
-        GUITypedItemManager manager = api.getGuiTypedItemManager();
+        GUITypedItemManager<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> manager = api.getGuiTypedItemManager();
 
         OPENItemClickHandlerImpl.register(manager);
         HISTORYItemHandlerImpl.register(manager);
 
-        Logger.log("&aRegistered &c" + GUITypedItemManager.registeredItems.size() + " &agui typed items");
+        Logger.log("&aRegistered &c" + GUITypedItemManagerImpl.registeredItems.size() + " &agui typed items");
     }
 
     private void loadPermissionDriver() {
@@ -403,11 +441,11 @@ public class DonateCase extends JavaPlugin {
             String caseType = caseSection.getString("type");
             if(caseType == null) continue;
 
-            CaseData caseData = Case.getCase(caseType);
+            CaseDataBukkit caseData = api.getCaseManager().getCase(caseType);
             Location location = Case.getCaseLocationByCustomName(caseName);
             if (caseData != null && caseData.getHologram().isEnabled() && location != null
                     && location.getWorld() != null && hologramManager != null
-                    && !Case.activeCasesByBlock.containsKey(location.getBlock())) {
+                    && !api.getAnimationManager().getActiveCasesByBlock().containsKey(location.getBlock())) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
         }
@@ -469,24 +507,13 @@ public class DonateCase extends JavaPlugin {
 
         try {
             if (!outFile.exists() || replace) {
-                saveFromInputStream(in, outFile);
+                InternalAddonClassLoader.saveFromInputStream(in, outFile);
             } else {
                 getLogger().log(java.util.logging.Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }
         } catch (IOException ex) {
             getLogger().log(java.util.logging.Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, ex);
         }
-    }
-
-    public static void saveFromInputStream(InputStream in, File outFile) throws IOException {
-        OutputStream out = Files.newOutputStream(outFile.toPath());
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-        }
-        out.close();
-        in.close();
     }
 
     @Nullable

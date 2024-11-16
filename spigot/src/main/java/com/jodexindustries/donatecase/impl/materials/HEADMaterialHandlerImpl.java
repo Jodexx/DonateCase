@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class HEADMaterialHandlerImpl implements MaterialHandler {
+public class HEADMaterialHandlerImpl implements MaterialHandler<ItemStack> {
 
     @Override
     public @NotNull ItemStack handle(@NotNull String context) {

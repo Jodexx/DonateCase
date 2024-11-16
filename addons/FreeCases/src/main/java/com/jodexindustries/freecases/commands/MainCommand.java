@@ -1,6 +1,5 @@
 package com.jodexindustries.freecases.commands;
 
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.freecases.utils.CooldownManager;
@@ -14,7 +13,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public class MainCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
     private final Tools t;
     public MainCommand(Tools t) {
         this.t = t;
@@ -36,7 +35,7 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
                     if (time <= 0) {
                         sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                                 t.getConfig().getConfig().getString("Done", "")));
-                        Case.addKeys(caseName, sender.getName(), 1);
+                        t.getMain().getDCAPI().getCaseKeyManager().addKeys(caseName, sender.getName(), 1);
                         List<String> players = t.getConfig().getData().getStringList("Used");
                         players.add(player.getName());
                         if(t.getConfig().getConfig().getBoolean("GetOneTime")) {
