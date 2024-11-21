@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.tools;
+package com.jodexindustries.donatecase.api.tools;
 
 public class Pair<A, B> {
     private final A first;

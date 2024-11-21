@@ -119,7 +119,7 @@ public class AddonCommand implements SubCommandExecutor<CommandSender>, SubComma
     }
 
     private void handleLoadCommand(CommandSender sender, String addonName) {
-        File addonFile = new File(AddonManagerImpl.getAddonsFolder(), addonName);
+        File addonFile = new File(manager.getAddonsFolder(), addonName);
         if (!addonFile.exists()) {
             ToolsBukkit.msg(sender, "&cFile &6" + addonName + " &cnot found!");
             return;
@@ -169,15 +169,15 @@ public class AddonCommand implements SubCommandExecutor<CommandSender>, SubComma
     }
 
     private List<String> getAddons() {
-        return AddonManagerImpl.addons.values().stream().map(InternalJavaAddon::getName).collect(Collectors.toList());
+        return manager.getAddons().values().stream().map(InternalJavaAddon::getName).collect(Collectors.toList());
     }
 
     private List<String> getDisabledAddons() {
-        return AddonManagerImpl.addons.values().stream().filter(internalJavaAddon -> !internalJavaAddon.isEnabled()).map(InternalJavaAddon::getName).collect(Collectors.toList());
+        return manager.getAddons().values().stream().filter(internalJavaAddon -> !internalJavaAddon.isEnabled()).map(InternalJavaAddon::getName).collect(Collectors.toList());
     }
 
     private List<String> getEnabledAddons() {
-        return AddonManagerImpl.addons.values().stream().filter(InternalJavaAddon::isEnabled).map(InternalJavaAddon::getName).collect(Collectors.toList());
+        return manager.getAddons().values().stream().filter(InternalJavaAddon::isEnabled).map(InternalJavaAddon::getName).collect(Collectors.toList());
     }
 
     private List<String> getAddonsFiles() {

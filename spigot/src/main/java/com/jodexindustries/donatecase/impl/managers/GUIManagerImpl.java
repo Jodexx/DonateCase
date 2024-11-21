@@ -20,7 +20,7 @@ public class GUIManagerImpl implements GUIManager<Inventory, Location, Player, C
     /**
      * Players, who opened cases (open gui)
      */
-    public final static Map<UUID, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>> playersGui = new ConcurrentHashMap<>();
+    private final static Map<UUID, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>> playersGui = new ConcurrentHashMap<>();
 
     private final Addon addon;
 

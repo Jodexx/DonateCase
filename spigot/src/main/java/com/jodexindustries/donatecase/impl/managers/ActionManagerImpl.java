@@ -50,7 +50,7 @@ public class ActionManagerImpl implements ActionManager<Player> {
     /**
      * Map of all registered actions
      */
-    public static final Map<String, CaseAction<Player>> registeredActions = new HashMap<>();
+    private static final Map<String, CaseAction<Player>> registeredActions = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -127,6 +127,11 @@ public class ActionManagerImpl implements ActionManager<Player> {
     @Override
     public CaseAction<Player> getRegisteredAction(@NotNull String action) {
         return registeredActions.get(action);
+    }
+
+    @Override
+    public @NotNull Map<String, CaseAction<Player>> getRegisteredActions() {
+        return registeredActions;
     }
 
     /**

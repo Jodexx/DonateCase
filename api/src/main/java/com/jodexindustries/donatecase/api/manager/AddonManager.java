@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * Interface for managing addons, including loading, enabling, disabling, and unloading addons.
@@ -102,6 +103,12 @@ public interface AddonManager {
      */
     @Nullable
     InternalJavaAddon getAddon(String addon);
+
+    @NotNull
+    Map<String, InternalJavaAddon> getAddons();
+
+    @NotNull
+    File getAddonsFolder();
 
     /**
      * Retrieves the main class of an addon by its binary name.

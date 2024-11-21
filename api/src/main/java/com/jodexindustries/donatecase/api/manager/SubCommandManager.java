@@ -2,8 +2,10 @@ package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for managing subcommands, providing methods to register, unregister, and retrieve
@@ -43,6 +45,12 @@ public interface SubCommandManager<S> {
      * Unregisters all subcommands currently managed by this instance.
      */
     void unregisterSubCommands();
+
+    @Nullable
+    SubCommand<S> getRegisteredSubCommand(String commandName);
+
+    @NotNull
+    Map<String, SubCommand<S>> getRegisteredSubCommands();
 
     /**
      * Provides a list of possible tab completions for a given subcommand, based on the command's

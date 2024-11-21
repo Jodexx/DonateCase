@@ -1,7 +1,8 @@
 package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.tools.Pair;
+import com.jodexindustries.donatecase.api.config.ConfigCasesBukkit;
+import com.jodexindustries.donatecase.api.tools.Pair;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 /**
  * Class for loading cases configurations
  */
-public class CasesConfig {
+public class ConfigCasesImpl implements ConfigCasesBukkit {
     private final Map<String, Pair<File, YamlConfiguration>> cases = new HashMap<>();
 
     /**
@@ -23,7 +24,7 @@ public class CasesConfig {
      *
      * @param plugin Plugin object
      */
-    public CasesConfig(Plugin plugin) {
+    public ConfigCasesImpl(Plugin plugin) {
         if (getCasesInFolder().isEmpty())
             plugin.saveResource("cases/case.yml", false);
 
@@ -66,7 +67,7 @@ public class CasesConfig {
      *
      * @return list of files
      */
-    public static List<File> getCasesInFolder() {
+    private static List<File> getCasesInFolder() {
         List<File> files = new ArrayList<>();
         File directory = new File(Case.getInstance().getDataFolder(), "cases");
         File[] array = directory.listFiles();
@@ -79,6 +80,7 @@ public class CasesConfig {
      *
      * @return map of configuration
      */
+    @Override
     public Map<String, Pair<File, YamlConfiguration>> getCases() {
         return cases;
     }
@@ -89,6 +91,7 @@ public class CasesConfig {
      * @param name Case type (file name without .yml)
      * @return case configuration
      */
+    @Override
     public Pair<File, YamlConfiguration> getCase(String name) {
         return cases.get(name);
     }

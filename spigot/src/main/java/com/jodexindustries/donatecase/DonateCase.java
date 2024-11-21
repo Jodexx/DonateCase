@@ -1,9 +1,6 @@
 package com.jodexindustries.donatecase;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
-import com.alessiodp.libby.BukkitLibraryManager;
-import com.alessiodp.libby.Library;
-import com.alessiodp.libby.logging.LogLevel;
 import com.jodexindustries.donatecase.animations.*;
 import com.jodexindustries.donatecase.api.*;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
@@ -27,13 +24,12 @@ import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.command.impl.*;
 import com.jodexindustries.donatecase.config.CaseLoader;
-import com.jodexindustries.donatecase.config.Config;
+import com.jodexindustries.donatecase.config.ConfigImpl;
 import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.gui.items.HISTORYItemHandlerImpl;
 import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
 import com.jodexindustries.donatecase.impl.DCAPIBukkitImpl;
 import com.jodexindustries.donatecase.impl.actions.*;
-import com.jodexindustries.donatecase.impl.managers.*;
 import com.jodexindustries.donatecase.impl.materials.*;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.*;
@@ -56,7 +52,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Level;
 
 /**
  * Main DonateCase class for loading
@@ -72,7 +67,6 @@ public class DonateCase extends JavaPlugin {
     public PermissionDriver permissionDriver = null;
     public HologramDriver hologramDriver = null;
     public CaseLoader loader;
-    public BukkitLibraryManager libraryManager;
     public ItemsAdderSupport itemsAdderSupport = null;
     public OraxenSupport oraxenSupport = null;
     public HeadDatabaseSupport headDatabaseSupport = null;
@@ -81,7 +75,7 @@ public class DonateCase extends JavaPlugin {
 
     public final DCAPIBukkit api = new DCAPIBukkitImpl(this);
 
-    public Config config;
+    public ConfigImpl config;
 
     public boolean usePackets = false;
 
@@ -94,8 +88,6 @@ public class DonateCase extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-
-        loadLibraries();
 
         api.getAddonManager().loadAddons();
     }
@@ -238,7 +230,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     public void loadConfig() {
-        config = new Config(this);
+        config = new ConfigImpl(this);
 
         config.getConverter().convertData();
 
@@ -299,7 +291,7 @@ public class DonateCase extends JavaPlugin {
         AddonCommand.register(manager);
         RegistryCommand.register(manager);
 
-        Logger.log("&aRegistered &c" + SubCommandManagerImpl.registeredSubCommands.size() + " &acommands");
+        Logger.log("&aRegistered &c" + manager.getRegisteredSubCommands().size() + " &acommands");
     }
 
     private void registerDefaultAnimations() {
@@ -308,7 +300,7 @@ public class DonateCase extends JavaPlugin {
         RainlyAnimation.register(manager);
         FireworkAnimation.register(manager);
         WheelAnimation.register(manager);
-        Logger.log("&aRegistered &c" + AnimationManagerImpl.registeredAnimations.size() + " &aanimations");
+        Logger.log("&aRegistered &c" + manager.getRegisteredAnimations().size() + " &aanimations");
     }
 
     private void registerDefaultActions() {
@@ -323,7 +315,7 @@ public class DonateCase extends JavaPlugin {
                 "Sends a broadcast to the players");
         manager.registerAction("[sound]", new SoundActionExecutorImpl(),
                 "Sends a sound to the player");
-        Logger.log("&aRegistered &c" + ActionManagerImpl.registeredActions.size() + " &aactions");
+        Logger.log("&aRegistered &c" + manager.getRegisteredActions().size() + " &aactions");
     }
 
     private void registerDefaultMaterials() {
@@ -342,7 +334,7 @@ public class DonateCase extends JavaPlugin {
                 "Heads from CustomHeads plugin");
         manager.registerMaterial("HDB", new HDBMaterialHandlerImpl(),
                 "Heads from HeadDatabase plugin");
-        Logger.log("&aRegistered &c" + MaterialManagerImpl.registeredMaterials.size() + " &amaterials");
+        Logger.log("&aRegistered &c" + manager.getRegisteredMaterials().size() + " &amaterials");
     }
 
     private void registerDefaultGUITypedItems() {
@@ -351,7 +343,7 @@ public class DonateCase extends JavaPlugin {
         OPENItemClickHandlerImpl.register(manager);
         HISTORYItemHandlerImpl.register(manager);
 
-        Logger.log("&aRegistered &c" + GUITypedItemManagerImpl.registeredItems.size() + " &agui typed items");
+        Logger.log("&aRegistered &c" + manager.getRegisteredItems().size() + " &agui typed items");
     }
 
     private void loadPermissionDriver() {
@@ -448,26 +440,6 @@ public class DonateCase extends JavaPlugin {
                     && !api.getAnimationManager().getActiveCasesByBlock().containsKey(location.getBlock())) {
                 hologramManager.createHologram(location.getBlock(), caseData);
             }
-        }
-    }
-
-    private void loadLibraries() {
-        getLogger().info("Loading libraries...");
-        Library entityLibSpigot = Library.builder()
-                .groupId("me{}tofaa{}entitylib")
-                .artifactId("spigot")
-                .version("2.4.9-SNAPSHOT")
-                .resolveTransitiveDependencies(true)
-                .build();
-        libraryManager = new BukkitLibraryManager(this);
-        libraryManager.setLogLevel(LogLevel.WARN);
-        libraryManager.addRepository("https://maven.evokegames.gg/snapshots");
-        libraryManager.addMavenCentral();
-        try {
-            libraryManager.loadLibrary(entityLibSpigot);
-            getLogger().info("Libraries loaded!");
-        } catch (RuntimeException e) {
-            getLogger().log(Level.SEVERE, "Error with loading libraries", e);
         }
     }
 

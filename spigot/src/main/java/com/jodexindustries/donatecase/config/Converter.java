@@ -6,7 +6,7 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.tools.Logger;
-import com.jodexindustries.donatecase.tools.Pair;
+import com.jodexindustries.donatecase.api.tools.Pair;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,9 +19,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Converter {
-    private final Config config;
+    private final ConfigImpl config;
 
-    public Converter(Config config) {
+    public Converter(ConfigImpl config) {
         this.config = config;
     }
 
@@ -42,7 +42,7 @@ public class Converter {
     }
 
     public void convertData() {
-        CaseDatabaseImpl<CaseDataBukkit, CaseDataMaterialBukkit, ItemStack> database = Case.getDatabase();
+        CaseDatabaseImpl<CaseDataBukkit, CaseDataMaterialBukkit, ItemStack> database = Case.getInstance().database;
         YamlConfiguration dataConfiguration = config.get("Data.yml");
         if (dataConfiguration != null) {
             config.getPlugin().getLogger().info("Converting Data.yml to database...");
@@ -132,8 +132,8 @@ public class Converter {
     }
 
     public void convertOverall() {
-        for (String caseType : config.getCasesConfig().getCases().keySet()) {
-            Pair<File, YamlConfiguration> pair = config.getCasesConfig().getCases().get(caseType);
+        for (String caseType : config.getConfigCases().getCases().keySet()) {
+            Pair<File, YamlConfiguration> pair = config.getConfigCases().getCases().get(caseType);
             YamlConfiguration caseConfig = pair.getSecond();
             String version = caseConfig.getString("config");
 

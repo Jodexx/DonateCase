@@ -21,7 +21,7 @@ public class FancyHologramsSupport extends HologramManager {
 
     @Override
     public void createHologram(Block block, CaseDataBukkit caseData) {
-        YamlConfiguration config = Case.getConfig().getCasesConfig().getCase(caseData.getCaseType()).getSecond();
+        YamlConfiguration config = Case.getConfig().getConfigCases().getCase(caseData.getCaseType()).getSecond();
         if (config == null) return;
 
         ConfigurationSection section = config.getConfigurationSection("case.Hologram.FancyHolograms");
