@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.gui;
 
+import com.jodexindustries.donatecase.api.data.casedata.CCloneable;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
 import org.jetbrains.annotations.NotNull;
@@ -7,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public interface CaseGui<Inventory, L, Player, C, M> {
+public interface CaseGui<Inventory, L, Player, C, M extends CCloneable> {
     /**
      * Loads all items asynchronously
      *

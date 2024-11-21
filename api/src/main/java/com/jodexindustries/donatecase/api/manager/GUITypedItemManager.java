@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.manager;
 
+import com.jodexindustries.donatecase.api.data.casedata.CCloneable;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @param <M> The type extending {@code CaseDataMaterial} associated with GUI items in this manager
  */
-public interface GUITypedItemManager<M, G, E> {
+public interface GUITypedItemManager<M extends CCloneable, G, E> {
 
     /**
      * Provides a builder for creating a new GUI typed item with a specified ID.

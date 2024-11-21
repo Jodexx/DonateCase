@@ -70,6 +70,15 @@ public class RainlyAnimation extends JavaAnimationBukkit {
         private final ArmorStandCreator as;
         private final World world;
 
+        private final Sound endSound = Sound.valueOf(getSettings().getString("End.Sound", "ENTITY_GENERIC_EXPLODE"));
+        private final float endVolume = (float) getSettings().getDouble("End.Volume");
+        private final float endPitch = (float) getSettings().getDouble("End.Pitch");
+
+        private final Sound scrollSound = Sound.valueOf(getSettings().getString("Scroll.Sound", "ENTITY_EXPERIENCE_ORB_PICKUP"));
+        private final float scrollVolume = (float) getSettings().getDouble("Scroll.Volume");
+        private final float scrollPitch = (float) getSettings().getDouble("Scroll.Pitch");
+
+
         public Task(ArmorStandCreator as, Particle particle) {
             this.as = as;
             this.loc = as.getLocation();
@@ -132,7 +141,7 @@ public class RainlyAnimation extends JavaAnimationBukkit {
             instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
 
             world.spawnParticle(getParticle("explosion"), loc, 0);
-            world.playSound(loc, Sound.ENTITY_GENERIC_EXPLODE, 1, 1);
+            world.playSound(loc, endSound, endVolume, endPitch);
         }
 
         private void updateRandomItem() {
@@ -154,7 +163,7 @@ public class RainlyAnimation extends JavaAnimationBukkit {
             }
 
             as.updateMeta();
-            world.playSound(loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 5.0F);
+            world.playSound(loc, scrollSound, scrollVolume, scrollPitch);
         }
 
         private void playFireworkParticles() {

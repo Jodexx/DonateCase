@@ -42,17 +42,17 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
     /**
      * Map of registered animations
      */
-    public final static Map<String, CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>> registeredAnimations = new HashMap<>();
+    private final static Map<String, CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>> registeredAnimations = new HashMap<>();
 
     /**
      * Map of active cases
      */
-    public final static Map<UUID, ActiveCase<Block>> activeCases = new HashMap<>();
+    private final static Map<UUID, ActiveCase<Block>> activeCases = new HashMap<>();
 
     /**
      * Active cases, but by location
      */
-    public final static Map<Block, UUID> activeCasesByBlock = new HashMap<>();
+    private final static Map<Block, UUID> activeCasesByBlock = new HashMap<>();
 
     private final Addon addon;
 
@@ -111,25 +111,14 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
     public CompletableFuture<Boolean> startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseDataBukkit caseData, int delay) {
         Block block = location.getBlock();
 
-        if (instance.api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
-            addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation while another animation is running!");
-            return CompletableFuture.completedFuture(false);
-        }
-
-        if (caseData.getItems().isEmpty()) {
-            addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation without items in CaseData!");
+        if(!validateStartConditions(caseData, block, player)) {
             return CompletableFuture.completedFuture(false);
         }
 
         caseData = caseData.clone();
         caseData.setItems(Tools.sortItemsByIndex(caseData.getItems()));
+
         String animation = caseData.getAnimation();
-        if (!isRegistered(animation)) {
-            ToolsBukkit.msg(player, "&cAn error occurred while opening the case!");
-            ToolsBukkit.msg(player, "&cContact the project administration!");
-            addon.getLogger().log(Level.WARNING, "Case animation " + animation + " does not exist!");
-            return CompletableFuture.completedFuture(false);
-        }
 
         CaseDataItem<CaseDataMaterialBukkit, ItemStack> winItem = caseData.getRandomItem();
         winItem.getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(player, winItem.getMaterial().getDisplayName()));
@@ -155,7 +144,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
             Class<? extends JavaAnimationBukkit> animationClass = caseAnimation.getAnimation();
 
             try {
-                getActiveCasesByBlock().put(block, uuid);
+                activeCasesByBlock.put(block, uuid);
 
                 if (animationClass != null) {
                     ConfigurationSection settings = caseData.getAnimationSettings() != null ? caseData.getAnimationSettings() : Case.getConfig().getAnimations().getConfigurationSection(animation);
@@ -172,7 +161,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
                             animationCompletion.complete(true);
                         } catch (Throwable t) {
                             addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
-                            getActiveCasesByBlock().remove(block);
+                            activeCasesByBlock.remove(block);
                             animationCompletion.complete(false);
                         }
                     }, delay);
@@ -183,7 +172,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
 
             } catch (Throwable t) {
                 addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
-                getActiveCasesByBlock().remove(block);
+                activeCasesByBlock.remove(block);
                 animationCompletion.complete(false);
             }
         }
@@ -274,6 +263,33 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
     @Override
     public Map<Block, UUID> getActiveCasesByBlock() {
         return activeCasesByBlock;
+    }
+
+    private boolean validateStartConditions(CaseDataBukkit caseData, Block block, Player player) {
+        if (!isRegistered(caseData.getAnimation())) {
+            addon.getLogger().log(Level.WARNING, "Case animation " + caseData.getAnimation() + " does not exist!");
+            return false;
+        }
+
+        if (activeCasesByBlock.containsKey(block)) {
+            addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation while another animation is running in case: {}!",
+                    caseData.getCaseType());
+            return false;
+        }
+
+        if (caseData.getItems().isEmpty()) {
+            addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation without items in case: {}!",
+                    caseData.getCaseType());
+            return false;
+        }
+
+        if(!caseData.hasRealItems()) {
+            addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation without real (chance > 0) items in case: {}!",
+                    caseData.getCaseType());
+            return false;
+        }
+
+        return true;
     }
 
     private static void saveOpenInfo(CaseDataBukkit caseData, OfflinePlayer player, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item, String choice) {

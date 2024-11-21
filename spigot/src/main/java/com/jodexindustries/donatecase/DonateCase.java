@@ -255,7 +255,7 @@ public class DonateCase extends JavaPlugin {
             return;
         }
 
-        String databaseName = section.getString("Database");
+        String databaseName = section.getString("DataBase");
         String port = section.getString("Port");
         String host = section.getString("Host");
         String user = section.getString("User");

@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Class for implementing cases that are loaded into the plugin's memory.
  */
-public class CaseData<M extends CaseDataMaterial<I>, I> implements Cloneable {
+public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
     private final String caseType;
     private String caseDisplayName;
     private String animation;
@@ -105,9 +105,20 @@ public class CaseData<M extends CaseDataMaterial<I>, I> implements Cloneable {
     public CaseDataItem<M, I> getRandomItem() {
         ProbabilityCollection<CaseDataItem<M, I>> collection = new ProbabilityCollection<>();
         for (CaseDataItem<M, I> item : items.values()) {
-            collection.add(item, item.getChance());
+            double chance = item.getChance();
+            if(chance > 0) collection.add(item, chance);
         }
         return collection.get();
+    }
+
+    /**
+     * Checks if the current collection of items contains any "real" items.
+     * A "real" item is defined as an item with a chance greater than 0.
+     *
+     * @return {@code true} if all items in the collection have a chance greater than 0, {@code false} otherwise.
+     */
+    public boolean hasRealItems() {
+        return items.values().stream().noneMatch(item -> item.getChance() <= 0);
     }
 
     /**

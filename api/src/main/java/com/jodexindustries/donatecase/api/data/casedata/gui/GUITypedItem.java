@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.data.casedata.gui;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.data.casedata.CCloneable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * @see TypedItemClickHandler
  * @since 2.2.4.9
  */
-public class GUITypedItem<M, G, E> {
+public class GUITypedItem<M extends CCloneable, G, E> {
     private final String id;
     private final Addon addon;
     private final boolean updateMeta;
@@ -98,7 +99,7 @@ public class GUITypedItem<M, G, E> {
         return builder;
     }
 
-    public static class Builder<M, G, E> {
+    public static class Builder<M extends CCloneable, G, E> {
         private final Addon addon;
         private final String id;
 

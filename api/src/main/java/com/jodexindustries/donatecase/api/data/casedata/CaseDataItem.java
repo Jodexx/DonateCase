@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Class for the implementation of winning items from the case
  */
-public class CaseDataItem<M extends CaseDataMaterial<I>, I> implements Cloneable {
+public class CaseDataItem<M extends CaseDataMaterial<I>, I> implements CCloneable {
     private final String itemName;
     private String group;
     private double chance;
@@ -231,7 +231,7 @@ public class CaseDataItem<M extends CaseDataMaterial<I>, I> implements Cloneable
     /**
      * Class to implement a random action
      */
-    public static class RandomAction implements Cloneable {
+    public static class RandomAction implements CCloneable {
         private double chance;
         private List<String> actions;
         private String displayName;
