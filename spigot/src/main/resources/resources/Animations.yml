@@ -27,6 +27,14 @@ RAINLY:
     LeftArm: 0, 0, 0
     RightLeg: 0, 0, 0
     LeftLeg: 0, 0, 0
+  Scroll:
+    Sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    Volume: 1
+    Pitch: 1
+  End:
+    Sound: ENTITY_GENERIC_EXPLODE
+    Volume: 1
+    Pitch: 1
   FallingParticle: FALLING_WATER # you can use all particles, full list: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
   # FALLING_WATER
   # FALLING_LAVA
