@@ -8,9 +8,8 @@ import com.jodexindustries.donatecase.api.data.casedata.*;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import com.jodexindustries.donatecase.tools.Logger;
-import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -29,8 +28,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static com.jodexindustries.donatecase.DonateCase.instance;
 
 /**
  * Class for loading CaseData's from cases folder
@@ -79,8 +76,8 @@ public class CaseLoader {
 
     private CaseDataBukkit loadCaseData(String caseType, ConfigurationSection caseSection) {
         OpenType openType = OpenType.getOpenType(caseSection.getString("OpenType", "GUI"));
-        String caseTitle = Tools.rc(caseSection.getString("Title", ""));
-        String caseDisplayName = Tools.rc(caseSection.getString("DisplayName", ""));
+        String caseTitle = DCToolsBukkit.rc(caseSection.getString("Title", ""));
+        String caseDisplayName = DCToolsBukkit.rc(caseSection.getString("DisplayName", ""));
         String animationName = caseSection.getString("Animation");
         ConfigurationSection animationSettings = caseSection.getConfigurationSection("AnimationSettings");
 
@@ -184,14 +181,14 @@ public class CaseLoader {
     private CaseDataMaterialBukkit loadMaterial(ConfigurationSection itemSection, boolean withItemStack) {
         String id = itemSection.getString("ID") != null ? itemSection.getString("ID") :
                 itemSection.getString("Material");
-        String itemDisplayName = Tools.rc(itemSection.getString("DisplayName"));
-        List<String> lore = Tools.rc(itemSection.getStringList("Lore"));
+        String itemDisplayName = DCToolsBukkit.rc(itemSection.getString("DisplayName"));
+        List<String> lore = DCToolsBukkit.rc(itemSection.getStringList("Lore"));
         boolean enchanted = itemSection.getBoolean("Enchanted");
         int modelData = itemSection.getInt("ModelData", -1);
-        String[] rgb = Tools.parseRGB(itemSection.getString("Rgb"));
+        String[] rgb = DCToolsBukkit.parseRGB(itemSection.getString("Rgb"));
 
         ItemStack itemStack = null;
-        if(withItemStack) itemStack = ToolsBukkit.loadCaseItem(id);
+        if(withItemStack) itemStack = plugin.api.getTools().loadCaseItem(id);
 
         return new CaseDataMaterialBukkit(id, itemStack, itemDisplayName, enchanted, lore, modelData, rgb);
     }
@@ -215,7 +212,7 @@ public class CaseLoader {
         ConfigurationSection guiSection = caseSection.getConfigurationSection("Gui");
 
         if (guiSection != null) {
-            String title = Tools.rc(guiSection.getString("Title", ""));
+            String title = DCToolsBukkit.rc(guiSection.getString("Title", ""));
             int size = guiSection.getInt("Size", 45);
             int updateRate = guiSection.getInt("UpdateRate", -1);
             if (!isValidGuiSize(size)) {
@@ -270,13 +267,13 @@ public class CaseLoader {
         ItemStack itemStack = null;
 
         if(itemType.equalsIgnoreCase("DEFAULT")) {
-            itemStack = ToolsBukkit.loadCaseItem(id);
+            itemStack = plugin.api.getTools().loadCaseItem(id);
         } else {
-            GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> typedItem = instance.api.getGuiTypedItemManager().getFromString(itemType);
+            GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> typedItem = plugin.api.getGuiTypedItemManager().getFromString(itemType);
             if (typedItem != null) {
-                if(typedItem.isLoadOnCase()) itemStack = ToolsBukkit.loadCaseItem(id);
+                if(typedItem.isLoadOnCase()) itemStack = plugin.api.getTools().loadCaseItem(id);
             } else {
-                itemStack = ToolsBukkit.loadCaseItem(id);
+                itemStack = plugin.api.getTools().loadCaseItem(id);
             }
         }
 

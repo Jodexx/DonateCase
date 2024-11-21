@@ -7,6 +7,7 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -22,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 
 public abstract class DCAPIBukkit implements DCAPI<Player, JavaAnimationBukkit, CaseDataMaterialBukkit,
         CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent,
-        ItemStack, CommandSender, Location, Block, CaseDataBukkit, Inventory, ConfigBukkit> {
+        ItemStack, CommandSender, Location, Block, CaseDataBukkit, Inventory, ConfigBukkit, DCToolsBukkit> {
 
     @Nullable
     private static Class<? extends DCAPIBukkit> clazz = null;

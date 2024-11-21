@@ -6,8 +6,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
-import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -48,12 +47,12 @@ public class DeleteCommand implements SubCommandExecutor<CommandSender>, SubComm
                         Case.deleteCaseByName(customName);
                         if (instance.hologramManager != null)
                             instance.hologramManager.removeHologram(block);
-                        ToolsBukkit.msg(sender, Case.getConfig().getLang().getString("case-removed"));
+                        instance.api.getTools().msg(sender, Case.getConfig().getLang().getString("case-removed"));
                     } else {
-                        ToolsBukkit.msg(sender, Case.getConfig().getLang().getString("case-opens"));
+                        instance.api.getTools().msg(sender, Case.getConfig().getLang().getString("case-opens"));
                     }
                 } else {
-                    ToolsBukkit.msg(sender, Case.getConfig().getLang().getString("block-is-not-case"));
+                    instance.api.getTools().msg(sender, Case.getConfig().getLang().getString("block-is-not-case"));
                 }
             }
         } else if (args.length == 1) {
@@ -65,12 +64,12 @@ public class DeleteCommand implements SubCommandExecutor<CommandSender>, SubComm
                         instance.hologramManager.removeHologram(location.getBlock());
 
                     Case.deleteCaseByName(name);
-                    ToolsBukkit.msg(sender, Case.getConfig().getLang().getString("case-removed"));
+                    instance.api.getTools().msg(sender, Case.getConfig().getLang().getString("case-removed"));
                 } else {
-                    ToolsBukkit.msg(sender, Case.getConfig().getLang().getString("case-opens"));
+                    instance.api.getTools().msg(sender, Case.getConfig().getLang().getString("case-opens"));
                 }
             } else {
-                ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + name));
+                instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + name));
             }
         }
     }

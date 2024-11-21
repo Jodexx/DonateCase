@@ -11,7 +11,7 @@ import com.jodexindustries.donatecase.api.addon.internal.InvalidAddonException;
 import com.jodexindustries.donatecase.api.events.AddonDisableEvent;
 import com.jodexindustries.donatecase.api.events.AddonEnableEvent;
 import com.jodexindustries.donatecase.api.manager.AddonManager;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.api.tools.DCTools;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import static com.jodexindustries.donatecase.DonateCase.instance;
+import static com.jodexindustries.donatecase.api.tools.DCTools.getPluginVersion;
 
 /**
  * Class for managing add-ons, enabling and disabling.
@@ -88,8 +89,8 @@ public class AddonManagerImpl implements AddonManager {
             }
 
             if (description.getApiVersion() != null) {
-                int addonVersion = Tools.getPluginVersion(description.getApiVersion());
-                int pluginVersion = Tools.getPluginVersion(BuildConstants.api);
+                int addonVersion = DCTools.getPluginVersion(description.getApiVersion());
+                int pluginVersion = DCTools.getPluginVersion(BuildConstants.api);
 
                 if (pluginVersion < addonVersion) {
                     addon.getLogger().warning("Addon " + description.getName() + " API version (" + description.getApiVersion()

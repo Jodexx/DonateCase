@@ -6,13 +6,14 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
-import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.jodexindustries.donatecase.DonateCase.instance;
 
 /**
  * Class for /dc reload subcommand implementation
@@ -37,14 +38,14 @@ public class ReloadCommand implements SubCommandExecutor<CommandSender>, SubComm
             Case.getInstance().loadCases();
             if (Case.getInstance().hologramManager != null) Case.getInstance().hologramManager.removeAllHolograms();
             Case.getInstance().loadHolograms();
-            ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("config-reloaded")));
+            instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("config-reloaded")));
         } else {
             if (args[0].equalsIgnoreCase("cache")) {
                 Case.cleanCache();
                 Case.getInstance().loadConfig();
                 Case.getInstance().loadCases();
                 Case.getInstance().loadDatabase();
-                ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("config-cache-reloaded", "&aReloaded all DonateCase Cache")));
+                instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("config-cache-reloaded", "&aReloaded all DonateCase Cache")));
             }
         }
     }

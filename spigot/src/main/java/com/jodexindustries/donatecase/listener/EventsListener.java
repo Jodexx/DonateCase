@@ -5,12 +5,12 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
+import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
-import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import com.jodexindustries.donatecase.tools.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -50,8 +50,8 @@ public class EventsListener implements Listener {
         if (Case.getConfig().getConfig().getBoolean("DonateCase.UpdateChecker")) {
             if (p.hasPermission("donatecase.admin")) {
                 new UpdateChecker(Case.getInstance(), 106701).getVersion((version) -> {
-                    if (Tools.getPluginVersion(Case.getInstance().getDescription().getVersion()) < Tools.getPluginVersion(version)) {
-                        ToolsBukkit.msg(p, Tools.rt(Case.getConfig().getLang().getString("new-update"), "%version:" + version));
+                    if (DCTools.getPluginVersion(Case.getInstance().getDescription().getVersion()) < DCTools.getPluginVersion(version)) {
+                        instance.api.getTools().msg(p, DCToolsBukkit.rt(Case.getConfig().getLang().getString("new-update"), "%version:" + version));
                     }
                 });
             }
@@ -111,13 +111,13 @@ public class EventsListener implements Listener {
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (!event.isCancelled()) {
                     if (instance.api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
-                        ToolsBukkit.msg(p, Case.getConfig().getLang().getString("case-opens"));
+                        instance.api.getTools().msg(p, Case.getConfig().getLang().getString("case-opens"));
                         return;
                     }
 
                     CaseDataBukkit caseData = instance.api.getCaseManager().getCase(caseType);
                     if (caseData == null) {
-                        ToolsBukkit.msg(p, "&cSomething wrong! Contact with server administrator!");
+                        instance.api.getTools().msg(p, "&cSomething wrong! Contact with server administrator!");
                         Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
                         return;
                     }
@@ -145,7 +145,7 @@ public class EventsListener implements Listener {
         Location loc = e.getBlock().getLocation();
         if (Case.hasCaseByLocation(loc)) {
             e.setCancelled(true);
-            ToolsBukkit.msg(e.getPlayer(), Case.getConfig().getLang().getString("case-destroy-disallow"));
+            instance.api.getTools().msg(e.getPlayer(), Case.getConfig().getLang().getString("case-destroy-disallow"));
         }
 
     }

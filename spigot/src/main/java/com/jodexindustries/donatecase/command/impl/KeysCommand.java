@@ -6,7 +6,8 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,6 +17,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.jodexindustries.donatecase.DonateCase.instance;
 
 /**
  * Class for /dc keys subcommand implementation
@@ -54,7 +57,7 @@ public class KeysCommand implements SubCommandExecutor<CommandSender>, SubComman
                 sender.sendMessage(formattedMessage);
             }
         } else {
-            Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
+            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("no-permission")));
         }
     }
 
@@ -66,14 +69,14 @@ public class KeysCommand implements SubCommandExecutor<CommandSender>, SubComman
                 sender.sendMessage(formattedMessage.replace("%player", target));
             }
         } else {
-            Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
+            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("no-permission")));
         }
     }
 
     private String formatMessage(String name, Player player, String message) {
         if (player != null) message = Case.getInstance().papi.setPlaceholders(player, message);
 
-        String placeholder = Tools.getLocalPlaceholder(message);
+        String placeholder = DCTools.getLocalPlaceholder(message);
         String result = "0";
         if (placeholder.startsWith("keys_")) {
             String[] parts = placeholder.split("_");
@@ -85,7 +88,7 @@ public class KeysCommand implements SubCommandExecutor<CommandSender>, SubComman
                 result = NumberFormat.getNumberInstance().format(keys);
             }
         }
-        return Tools.rc(message.replace("%" + placeholder + "%", result));
+        return DCToolsBukkit.rc(message.replace("%" + placeholder + "%", result));
     }
 
 

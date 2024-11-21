@@ -7,8 +7,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.command.GlobalCommand;
-import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -45,19 +44,19 @@ public class CreateCommand implements SubCommandExecutor<CommandSender>, SubComm
                 String caseName = args[1];
                 if (instance.api.getCaseManager().hasCaseByType(caseType)) {
                     if (Case.hasCaseByLocation(l)) {
-                        ToolsBukkit.msg(sender, Case.getConfig().getLang().getString("case-already-created"));
+                        instance.api.getTools().msg(sender, Case.getConfig().getLang().getString("case-already-created"));
                     } else {
                         if (!Case.hasCaseByCustomName(caseName)) {
                             Case.saveLocation(caseName, caseType, l);
-                            ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-added"),
+                            instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("case-added"),
                                     "%casename:" + caseName, "%casetype:" + caseType));
                         } else {
-                            ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-already-exist"),
+                            instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("case-already-exist"),
                                     "%casename:" + caseName));
                         }
                     }
                 } else {
-                    ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"),
+                    instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("case-does-not-exist"),
                             "%case:" + caseType));
                 }
             } else {

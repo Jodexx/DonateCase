@@ -10,7 +10,7 @@ import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.GUITypedItemManager;
 import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -57,7 +57,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
                 material.setDisplayName(section.getString("DisplayName"));
                 material.setLore(section.getStringList("Lore"));
                 material.setEnchanted(section.getBoolean("Enchanted"));
-                material.setRgb(Tools.parseRGB(section.getString("Rgb")));
+                material.setRgb(DCToolsBukkit.parseRGB(section.getString("Rgb")));
                 material.setModelData(section.getInt("ModelData", -1));
             } else {
                 material.setId("AIR");
@@ -100,8 +100,8 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
 
         String[] template = getTemplate(historyCaseData, data, historyItem);
 
-        String displayName = Tools.rt(item.getMaterial().getDisplayName(), template);
-        List<String> lore = Tools.rt(item.getMaterial().getLore(), template);
+        String displayName = DCToolsBukkit.rt(item.getMaterial().getDisplayName(), template);
+        List<String> lore = DCToolsBukkit.rt(item.getMaterial().getLore(), template);
 
         itemMaterial.setId(material);
         itemMaterial.setDisplayName(displayName);

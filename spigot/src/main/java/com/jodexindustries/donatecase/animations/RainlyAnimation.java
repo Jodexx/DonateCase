@@ -9,8 +9,7 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -43,11 +42,11 @@ public class RainlyAnimation extends JavaAnimationBukkit {
     public void start() {
         Particle particle = Particle.valueOf(getSettings().getString("FallingParticle"));
 
-        ArmorStandCreator as = ToolsBukkit.createArmorStand(getLocation().clone().add(0.5, 1, 0.5));
+        ArmorStandCreator as = instance.api.getTools().createArmorStand(getLocation().clone().add(0.5, 1, 0.5));
         as.setVisible(false);
         as.setGravity(false);
 
-        armorStandEulerAngle = Tools.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
+        armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
 
         itemSlot = EquipmentSlot.valueOf(
                 getSettings().getString("ItemSlot", "HEAD").toUpperCase()

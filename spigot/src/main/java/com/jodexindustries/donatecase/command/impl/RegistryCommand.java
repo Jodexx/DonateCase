@@ -14,7 +14,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.SubCommandManager;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -43,7 +43,7 @@ public class RegistryCommand implements SubCommandExecutor<CommandSender>, SubCo
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
-            Tools.msgRaw(sender, "&c/" + label + " registry (animations|materials|actions|guitypeditems)");
+            DCToolsBukkit.msgRaw(sender, "&c/" + label + " registry (animations|materials|actions|guitypeditems)");
             return;
         }
 
@@ -61,7 +61,7 @@ public class RegistryCommand implements SubCommandExecutor<CommandSender>, SubCo
                 executeGuiTypedItems(sender);
                 break;
             default:
-                Tools.msgRaw(sender, "&c/" + label + " registry (animations|materials|actions|guitypeditems)");
+                DCToolsBukkit.msgRaw(sender, "&c/" + label + " registry (animations|materials|actions|guitypeditems)");
                 break;
         }
     }
@@ -90,9 +90,9 @@ public class RegistryCommand implements SubCommandExecutor<CommandSender>, SubCo
     private static void executeAnimations(CommandSender sender) {
         Map<String, List<CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>>> animationsMap = buildAnimationsMap();
         for (Map.Entry<String, List<CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>>> entry : animationsMap.entrySet()) {
-            Tools.msgRaw(sender, "&6" + entry.getKey());
+            DCToolsBukkit.msgRaw(sender, "&6" + entry.getKey());
             for (CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> animation : entry.getValue()) {
-                Tools.msgRaw(sender, "&9- &a" + animation.getName() + " &3- &2" + animation.getDescription());
+                DCToolsBukkit.msgRaw(sender, "&9- &a" + animation.getName() + " &3- &2" + animation.getDescription());
             }
         }
     }
@@ -113,9 +113,9 @@ public class RegistryCommand implements SubCommandExecutor<CommandSender>, SubCo
     private static void executeMaterials(CommandSender sender) {
         Map<String, List<CaseMaterial<ItemStack>>> materialsMap = buildMaterialsMap();
         for (Map.Entry<String, List<CaseMaterial<ItemStack>>> entry : materialsMap.entrySet()) {
-            Tools.msgRaw(sender, "&6" + entry.getKey());
+            DCToolsBukkit.msgRaw(sender, "&6" + entry.getKey());
             for (CaseMaterial<ItemStack> material : entry.getValue()) {
-                Tools.msgRaw(sender, "&9- &a" + material.getId() + " &3- &2" + material.getDescription());
+                DCToolsBukkit.msgRaw(sender, "&9- &a" + material.getId() + " &3- &2" + material.getDescription());
             }
         }
     }
@@ -141,9 +141,9 @@ public class RegistryCommand implements SubCommandExecutor<CommandSender>, SubCo
     private static void executeActions(CommandSender sender) {
         Map<String, List<CaseAction<Player>>> actionsMap = buildActionsMap();
         for (Map.Entry<String, List<CaseAction<Player>>> entry : actionsMap.entrySet()) {
-            Tools.msgRaw(sender, "&6" + entry.getKey());
+            DCToolsBukkit.msgRaw(sender, "&6" + entry.getKey());
             for (CaseAction<Player> action : entry.getValue()) {
-                Tools.msgRaw(sender, "&9- &a" + action.getName() + " &3- &2" + action.getDescription());
+                DCToolsBukkit.msgRaw(sender, "&9- &a" + action.getName() + " &3- &2" + action.getDescription());
             }
         }
     }
@@ -169,9 +169,9 @@ public class RegistryCommand implements SubCommandExecutor<CommandSender>, SubCo
     private static void executeGuiTypedItems(CommandSender sender) {
         Map<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent>>> guitypeditemsMap = buildGuiTypedItemsMap();
         for (Map.Entry<String, List<GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent>>> entry : guitypeditemsMap.entrySet()) {
-            Tools.msgRaw(sender, "&6" + entry.getKey());
+            DCToolsBukkit.msgRaw(sender, "&6" + entry.getKey());
             for (GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> guiTypedItem : entry.getValue()) {
-                Tools.msgRaw(sender, "&9- &a" + guiTypedItem.getId() + " &3- &2" + guiTypedItem.getDescription());
+                DCToolsBukkit.msgRaw(sender, "&9- &a" + guiTypedItem.getId() + " &3- &2" + guiTypedItem.getDescription());
             }
         }
     }

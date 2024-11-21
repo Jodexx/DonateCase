@@ -7,7 +7,8 @@ import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.events.CaseActionRegisteredEvent;
 import com.jodexindustries.donatecase.api.events.CaseActionUnregisteredEvent;
 import com.jodexindustries.donatecase.api.manager.ActionManager;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -162,8 +163,8 @@ public class ActionManagerImpl implements ActionManager<Player> {
     public void executeActions(Player player, List<String> actions) {
         for (String action : actions) {
 
-            action = Tools.rc(Case.getInstance().papi.setPlaceholders(player, action));
-            int cooldown = Tools.extractCooldown(action);
+            action = DCToolsBukkit.rc(Case.getInstance().papi.setPlaceholders(player, action));
+            int cooldown = DCTools.extractCooldown(action);
             action = action.replaceFirst("\\[cooldown:(.*?)]", "");
 
             executeAction(player, action, cooldown);

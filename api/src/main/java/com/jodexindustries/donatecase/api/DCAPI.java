@@ -5,6 +5,7 @@ import com.jodexindustries.donatecase.api.data.animation.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.api.manager.*;
+import com.jodexindustries.donatecase.api.tools.DCTools;
 
 /**
  * Interface for managing various components of the Donate Case API (DCAPI) system.
@@ -12,6 +13,7 @@ import com.jodexindustries.donatecase.api.manager.*;
  * animations, case keys, case openings, GUI typed items, materials, and sub-commands.
  *
  * @param <Player>   the type of player
+ * @param <A>  the type of JavaAnimation
  * @param <M>  the type of CaseDataMaterial representing materials associated with cases
  * @param <G>   the type of case gui
  * @param <E>   the type of case gui click event
@@ -22,8 +24,9 @@ import com.jodexindustries.donatecase.api.manager.*;
  * @param <C>   the type of CaseData
  * @param <Inventory> the type of inventory
  * @param <CG> the type of config
+ * @param <T> the type of DCTools
  */
-public interface DCAPI<Player, A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, G, E, I, S, L, B, C, Inventory, CG extends Config> {
+public interface DCAPI<Player, A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, G, E, I, S, L, B, C, Inventory, CG extends Config, T extends DCTools> {
 
     /**
      * Gets the ActionManager responsible for handling actions within the system.
@@ -88,5 +91,7 @@ public interface DCAPI<Player, A extends JavaAnimation<M, I>, M extends CaseData
     CaseDatabase getDatabase();
 
     CG getConfig();
+
+    T getTools();
 
 }

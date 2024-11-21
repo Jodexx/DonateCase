@@ -9,8 +9,7 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -67,7 +66,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
     @Override
     public void start() {
         wheelType = WheelType.getType(getSettings().getString("Type", "RANDOM"));
-        armorStandEulerAngle = Tools.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
+        armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
         itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD").toUpperCase());
         Bukkit.getScheduler().runTaskTimer(Case.getInstance(), new Task(), 0L, 0L);
     }
@@ -223,7 +222,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
     }
 
     private ArmorStandCreator spawnArmorStand(Location location, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item, boolean small) {
-        ArmorStandCreator as = ToolsBukkit.createArmorStand(location);
+        ArmorStandCreator as = instance.api.getTools().createArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);

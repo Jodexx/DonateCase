@@ -3,7 +3,7 @@ package com.jodexindustries.donatecase.command;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -39,7 +39,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
             if (permission == null || sender.hasPermission(permission))
                 subCommand.execute(sender, label, Arrays.copyOfRange(args, 1, args.length));
-            else Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
+            else DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("no-permission")));
         }
 
         return true;
@@ -47,11 +47,11 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     public static void sendHelp(CommandSender sender, String label) {
         if (!sender.hasPermission("donatecase.player")) {
-            Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("no-permission")));
+            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("no-permission")));
             return;
         }
 
-        Tools.msgRaw(sender, Tools.rt("&aDonateCase " + Case.getInstance().getDescription().getVersion() + " &7by &c_Jodex__"));
+        DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt("&aDonateCase " + Case.getInstance().getDescription().getVersion() + " &7by &c_Jodex__"));
 
         if (!sender.hasPermission("donatecase.mod")) {
             sendHelpMessages(sender, "help-player", label);
@@ -61,7 +61,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
         if (Case.getConfig().getConfig().getBoolean("DonateCase.AddonsHelp", true)) {
             Map<String, List<Map<String, SubCommand<CommandSender>>>> addonsMap = buildAddonsMap();
-            if (Tools.isHasCommandForSender(sender, addonsMap)) {
+            if (DCToolsBukkit.isHasCommandForSender(sender, addonsMap)) {
                 sendAddonHelpMessages(sender, addonsMap);
             }
         }
@@ -69,7 +69,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     private static void sendHelpMessages(CommandSender sender, String path, String label) {
         for (String string : Case.getConfig().getLang().getStringList(path)) {
-            Tools.msgRaw(sender, Tools.rt(string, "%cmd:" + label));
+            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(string, "%cmd:" + label));
         }
     }
 
@@ -85,21 +85,21 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     private static void sendAddonHelpMessages(CommandSender sender, Map<String, List<Map<String, SubCommand<CommandSender>>>> addonsMap) {
         addonsMap.forEach((addon, commands) -> {
-            if (!addon.equalsIgnoreCase("DonateCase") && Tools.isHasCommandForSender(sender, addonsMap, addon)) {
+            if (!addon.equalsIgnoreCase("DonateCase") && DCToolsBukkit.isHasCommandForSender(sender, addonsMap, addon)) {
                 String addonNameFormat = Case.getConfig().getLang().getString("help-addons.format.name");
                 if (addonNameFormat != null && !addonNameFormat.isEmpty()) {
-                    Tools.msgRaw(sender, Tools.rt(addonNameFormat, "%addon:" + addon));
+                    DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(addonNameFormat, "%addon:" + addon));
                 }
 
                 commands.forEach(command -> command.forEach((commandName, subCommand) -> {
                     String description = subCommand.getDescription();
-                    description = (description != null) ? Tools.rt(Case.getConfig().getLang().getString("help-addons.format.description"), "%description:" + description) : "";
+                    description = (description != null) ? DCToolsBukkit.rt(Case.getConfig().getLang().getString("help-addons.format.description"), "%description:" + description) : "";
 
                     StringBuilder argsBuilder = compileSubCommandArgs(subCommand.getArgs());
                     String permission = subCommand.getPermission();
 
                     if (permission == null || sender.hasPermission(permission)) {
-                        Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("help-addons.format.command"),
+                        DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("help-addons.format.command"),
                                 "%cmd:" + commandName,
                                 "%args:" + argsBuilder,
                                 "%description:" + description

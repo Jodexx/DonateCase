@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jodexindustries.donatecase.tools.Tools.rc;
+import static com.jodexindustries.donatecase.tools.DCToolsBukkit.rc;
 
 public class MainCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
     private final Config config;

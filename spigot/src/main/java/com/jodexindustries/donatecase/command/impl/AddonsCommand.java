@@ -6,7 +6,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ public class AddonsCommand implements SubCommandExecutor<CommandSender>, SubComm
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         List<InternalJavaAddon> addons = new ArrayList<>(instance.api.getAddonManager().getAddons().values());
         addons.sort(Comparator.comparing(InternalJavaAddon::getName));
-        Tools.msgRaw(sender, "&7Currently loaded addons in DonateCase (&a" + addons.size() + "&7): " + compileAddons(addons));
+        DCToolsBukkit.msgRaw(sender, "&7Currently loaded addons in DonateCase (&a" + addons.size() + "&7): " + compileAddons(addons));
     }
 
     @Override
