@@ -56,6 +56,7 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
             connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path + "/database.db");
             databaseType = DatabaseType.SQLITE;
             init();
+            logger.info("Using SQLITE database type!");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -76,6 +77,7 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
             connectionSource = new JdbcConnectionSource("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
             databaseType = DatabaseType.MYSQL;
             init();
+            logger.info("Using MYSQL database type!");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
