@@ -67,7 +67,7 @@ public class CaseDataMaterialBukkit extends CaseDataMaterial<ItemStack> {
     @Override
     public CaseDataMaterialBukkit clone() {
         CaseDataMaterialBukkit cloned = (CaseDataMaterialBukkit) super.clone();
-        cloned.setItemStack(cloned.itemStack.clone());
+        if (cloned.itemStack != null) cloned.setItemStack(cloned.itemStack.clone());
         return cloned;
     }
 
