@@ -112,12 +112,20 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         Block block = location.getBlock();
 
         if (instance.api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
-            addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation while another animation is running!");
+            addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation while another animation is running in case: {}!",
+                    caseData.getCaseType());
             return CompletableFuture.completedFuture(false);
         }
 
         if (caseData.getItems().isEmpty()) {
-            addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation without items in CaseData!");
+            addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation without items in case: {}!",
+                    caseData.getCaseType());
+            return CompletableFuture.completedFuture(false);
+        }
+
+        if(!caseData.hasRealItems()) {
+            addon.getLogger().log(Level.WARNING, "Player " + player.getName() + " trying to start animation without real (chance > 0) items in case: {}!",
+                    caseData.getCaseType());
             return CompletableFuture.completedFuture(false);
         }
 
