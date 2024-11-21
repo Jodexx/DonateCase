@@ -49,7 +49,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
         CaseDataMaterial<ItemStack> material = item.getMaterial();
 
         if (!handled) {
-            YamlConfiguration config = Case.getConfig().getCasesConfig().getCase(caseData.getCaseType()).getSecond();
+            YamlConfiguration config = Case.getConfig().getConfigCases().getCase(caseData.getCaseType()).getSecond();
             String path = "case.Gui.Items." + item.getItemName() + ".HistoryNotFound";
             ConfigurationSection section = config.getConfigurationSection(path);
             if (section != null) {

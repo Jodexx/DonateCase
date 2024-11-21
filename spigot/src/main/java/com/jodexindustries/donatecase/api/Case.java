@@ -2,16 +2,13 @@ package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.config.Config;
-import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
+import com.jodexindustries.donatecase.config.ConfigImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -166,18 +163,8 @@ public class Case {
      * @since 2.2.3.8
      */
     @NotNull
-    public static Config getConfig() {
+    public static ConfigImpl getConfig() {
         return getInstance().config;
-    }
-
-    /**
-     * Get plugin database manager
-     *
-     * @return database manager
-     * @since 2.2.6.5
-     */
-    public static CaseDatabaseImpl<CaseDataBukkit, CaseDataMaterialBukkit, ItemStack> getDatabase() {
-        return getInstance().database;
     }
 
     /**

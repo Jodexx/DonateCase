@@ -69,7 +69,7 @@ public class OpenCaseCommand implements SubCommandExecutor<CommandSender>, SubCo
 
     @Override
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        List<String> list = new ArrayList<>(Case.getConfig().getCasesConfig().getCases().keySet());
+        List<String> list = new ArrayList<>(Case.getConfig().getConfigCases().getCases().keySet());
         if (args.length >= 2) {
             return new ArrayList<>();
         }

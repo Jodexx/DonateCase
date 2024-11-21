@@ -164,7 +164,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
      */
     @NotNull
     public static List<String> resolveSDGCompletions(String[] args) {
-        List<String> value = new ArrayList<>(Case.getConfig().getCasesConfig().getCases().keySet());
+        List<String> value = new ArrayList<>(Case.getConfig().getConfigCases().getCases().keySet());
         List<String> list = new ArrayList<>();
         if (args.length == 1) {
             list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(px -> px.startsWith(args[0])).collect(Collectors.toList()));

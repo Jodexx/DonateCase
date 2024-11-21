@@ -1,7 +1,8 @@
 package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.api.data.database.DatabaseType;
+import com.jodexindustries.donatecase.api.config.ConfigBukkit;
+import com.jodexindustries.donatecase.api.config.ConfigCasesBukkit;
 import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.impl.managers.CaseKeyManagerImpl;
 import com.jodexindustries.donatecase.impl.managers.CaseOpenManagerImpl;
@@ -18,14 +19,14 @@ import java.util.logging.Level;
 /**
  * Class for load all configuration files
  */
-public class Config {
+public class ConfigImpl implements ConfigBukkit {
 
     private final DonateCase plugin;
 
     private File fileLang;
     private final YamlConfiguration lang;
 
-    private final CasesConfig casesConfig;
+    private final ConfigCasesImpl casesConfig;
 
     private final Map<File, YamlConfiguration> configs = new HashMap<>();
 
@@ -43,7 +44,7 @@ public class Config {
      *
      * @param plugin Plugin object
      */
-    public Config(DonateCase plugin) {
+    public ConfigImpl(DonateCase plugin) {
         this.plugin = plugin;
         this.converter = new Converter(this);
 
@@ -58,7 +59,7 @@ public class Config {
 
         checkConvertCases();
 
-        casesConfig = new CasesConfig(plugin);
+        casesConfig = new ConfigCasesImpl(plugin);
 
         checkConvertLocations();
 
@@ -110,29 +111,35 @@ public class Config {
 
     }
 
+    @Override
     @Nullable
     public YamlConfiguration get(@NotNull File file) {
         return configs.get(file);
     }
 
+    @Override
     @Nullable
     public YamlConfiguration get(@NotNull String name) {
         return configs.get(new File(plugin.getDataFolder(), name));
     }
 
+    @Override
     public void delete(@NotNull File file) {
         if(file.delete()) configs.remove(file);
     }
 
+    @Override
     public void delete(@NotNull String name) {
         File file = new File(plugin.getDataFolder(), name);
         delete(file);
     }
 
+    @Override
     public boolean save(String name) {
         return save(new File(plugin.getDataFolder(), name));
     }
 
+    @Override
     public boolean save(File file) {
         String name = file.getName();
         YamlConfiguration configuration = configs.get(file);
@@ -171,6 +178,7 @@ public class Config {
     /**
      * Save lang configuration
      */
+    @Override
     public void saveLang() {
         try {
             lang.save(fileLang);
@@ -251,39 +259,12 @@ public class Config {
         }
     }
 
-
-    /**
-     * Get Cases.yml configuration
-     *
-     * @return Configuration
-     */
-    public YamlConfiguration getCases() {
-        return get("Cases.yml");
-    }
-
-    /**
-     * Get Config.yml configuration
-     *
-     * @return Configuration
-     */
-    public YamlConfiguration getConfig() {
-        return get("Config.yml");
-    }
-
-    /**
-     * Get Animations.yml configuration
-     *
-     * @return Configuration
-     */
-    public YamlConfiguration getAnimations() {
-        return get("Animations.yml");
-    }
-
     /**
      * Get language configuration
      *
      * @return Lang configuration
      */
+    @Override
     public YamlConfiguration getLang() {
         return lang;
     }
@@ -294,21 +275,13 @@ public class Config {
      *
      * @return CasesConfig class
      */
-    public CasesConfig getCasesConfig() {
+    @Override
+    public ConfigCasesBukkit getConfigCases() {
         return casesConfig;
     }
 
     public Converter getConverter() {
         return converter;
-    }
-
-    /**
-     * Get database type
-     * @return MYSQL or SQLITE
-     * @since 2.2.6.8
-     */
-    public DatabaseType getDatabaseType() {
-        return getConfig().getBoolean("MySql.Enabled") ? DatabaseType.MYSQL : DatabaseType.SQLITE;
     }
 
     /**

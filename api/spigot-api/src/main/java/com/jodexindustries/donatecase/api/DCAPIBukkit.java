@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.config.ConfigBukkit;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
@@ -20,7 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 
 public abstract class DCAPIBukkit implements DCAPI<Player, JavaAnimationBukkit, CaseDataMaterialBukkit,
-        CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent, ItemStack, CommandSender, Location, Block, CaseDataBukkit, Inventory> {
+        CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent,
+        ItemStack, CommandSender, Location, Block, CaseDataBukkit, Inventory, ConfigBukkit> {
 
     @Nullable
     private static Class<? extends DCAPIBukkit> clazz = null;

@@ -54,8 +54,8 @@ public class CaseLoader {
         plugin.api.getCaseManager().getMap().clear();
         int count = 0;
 
-        for (String caseType : plugin.config.getCasesConfig().getCases().keySet()) {
-            YamlConfiguration config = plugin.config.getCasesConfig().getCase(caseType).getSecond();
+        for (String caseType : plugin.config.getConfigCases().getCases().keySet()) {
+            YamlConfiguration config = plugin.config.getConfigCases().getCase(caseType).getSecond();
             ConfigurationSection caseSection = config.getConfigurationSection("case");
 
             if (caseSection == null) {

@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
@@ -20,8 +21,9 @@ import com.jodexindustries.donatecase.api.manager.*;
  * @param <B>   the type of block
  * @param <C>   the type of CaseData
  * @param <Inventory> the type of inventory
+ * @param <CG> the type of config
  */
-public interface DCAPI<Player, A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, G, E, I, S, L, B, C, Inventory> {
+public interface DCAPI<Player, A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, G, E, I, S, L, B, C, Inventory, CG extends Config> {
 
     /**
      * Gets the ActionManager responsible for handling actions within the system.
@@ -84,5 +86,7 @@ public interface DCAPI<Player, A extends JavaAnimation<M, I>, M extends CaseData
     SubCommandManager<S> getSubCommandManager();
 
     CaseDatabase getDatabase();
+
+    CG getConfig();
 
 }

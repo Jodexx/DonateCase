@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
+import com.jodexindustries.donatecase.api.config.ConfigBukkit;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
@@ -85,5 +86,10 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
     @Override
     public CaseDatabase getDatabase() {
         return DonateCase.instance.database;
+    }
+
+    @Override
+    public ConfigBukkit getConfig() {
+        return DonateCase.instance.config;
     }
 }

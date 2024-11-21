@@ -24,7 +24,7 @@ import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.command.impl.*;
 import com.jodexindustries.donatecase.config.CaseLoader;
-import com.jodexindustries.donatecase.config.Config;
+import com.jodexindustries.donatecase.config.ConfigImpl;
 import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.gui.items.HISTORYItemHandlerImpl;
 import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
@@ -75,7 +75,7 @@ public class DonateCase extends JavaPlugin {
 
     public final DCAPIBukkit api = new DCAPIBukkitImpl(this);
 
-    public Config config;
+    public ConfigImpl config;
 
     public boolean usePackets = false;
 
@@ -230,7 +230,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     public void loadConfig() {
-        config = new Config(this);
+        config = new ConfigImpl(this);
 
         config.getConverter().convertData();
 
