@@ -9,8 +9,8 @@ import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemHandler;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
-import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
+import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -49,7 +49,7 @@ public class CaseGuiBukkit implements CaseGui<Inventory, Location, Player, CaseD
         this.location = location;
 
         String title = caseData.getCaseTitle();
-        inventory = Bukkit.createInventory(null, tempGUI.getSize(), Tools.rc(title));
+        inventory = Bukkit.createInventory(null, tempGUI.getSize(), DCToolsBukkit.rc(title));
         load();
         player.openInventory(inventory);
         startUpdateTask();
@@ -88,8 +88,8 @@ public class CaseGuiBukkit implements CaseGui<Inventory, Location, Player, CaseD
     }
 
     private void colorize(CaseDataMaterialBukkit material) {
-        material.setDisplayName(Tools.rc(material.getDisplayName()));
-        material.setLore(Tools.rc(material.getLore()));
+        material.setDisplayName(DCToolsBukkit.rc(material.getDisplayName()));
+        material.setLore(DCToolsBukkit.rc(material.getLore()));
         material.updateMeta();
     }
 
@@ -123,7 +123,7 @@ public class CaseGuiBukkit implements CaseGui<Inventory, Location, Player, CaseD
 
         CaseDataMaterialBukkit material = item.getMaterial();
 
-        if (material.getItemStack() == null) material.setItemStack(ToolsBukkit.loadCaseItem(material.getId()));
+        if (material.getItemStack() == null) material.setItemStack(instance.api.getTools().loadCaseItem(material.getId()));
 
         colorize(material);
 
@@ -144,7 +144,7 @@ public class CaseGuiBukkit implements CaseGui<Inventory, Location, Player, CaseD
     }
 
     private String processPlaceholders(String line, String caseType, Player p) {
-        String placeholder = Tools.getLocalPlaceholder(line);
+        String placeholder = DCTools.getLocalPlaceholder(line);
 
         if (p != null && placeholder.startsWith("keys")) {
             if (placeholder.startsWith("keys_")) {

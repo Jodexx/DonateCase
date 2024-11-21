@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.jodexindustries.donatecase.tools.Tools.rc;
+import static com.jodexindustries.donatecase.tools.DCToolsBukkit.rc;
 
 public class ItemManager {
 

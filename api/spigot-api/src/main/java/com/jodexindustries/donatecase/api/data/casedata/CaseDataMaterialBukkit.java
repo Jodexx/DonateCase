@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.data.casedata;
 
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Color;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -48,7 +48,7 @@ public class CaseDataMaterialBukkit extends CaseDataMaterial<ItemStack> {
 
                 if (rgb != null && meta instanceof LeatherArmorMeta) {
                     LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) meta;
-                    leatherArmorMeta.setColor(Tools.fromRGBString(rgb, Color.WHITE));
+                    leatherArmorMeta.setColor(DCToolsBukkit.fromRGBString(rgb, Color.WHITE));
                 }
 
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);

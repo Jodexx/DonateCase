@@ -3,7 +3,7 @@ package com.jodexindustries.donatecase.api.holograms.types;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHologram;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import org.bukkit.block.Block;
@@ -29,7 +29,7 @@ public class DecentHologramsSupport extends HologramManager {
 
         hologram.setDisplayRange(caseHologram.getRange());
 
-        caseHologram.getMessages().forEach(line -> DHAPI.addHologramLine(hologram, Tools.rc(line)));
+        caseHologram.getMessages().forEach(line -> DHAPI.addHologramLine(hologram, DCToolsBukkit.rc(line)));
 
         this.holograms.put(block, hologram);
     }

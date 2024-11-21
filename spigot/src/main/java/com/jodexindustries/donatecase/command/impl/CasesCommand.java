@@ -7,12 +7,14 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.jodexindustries.donatecase.DonateCase.instance;
 
 /**
  * Class for /dc cases subcommand implementation
@@ -35,7 +37,7 @@ public class CasesCommand implements SubCommandExecutor<CommandSender>, SubComma
         int num = 0;
         for (CaseDataBukkit data : Case.getInstance().api.getCaseManager().getMap().values()) {
             num++;
-            Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("list-of-cases"),
+            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("list-of-cases"),
                     "%casename:" + data.getCaseType(), "%num:" + num,
                     "%casedisplayname:" + data.getCaseDisplayName(),
                     "%casetitle:" + data.getCaseTitle()));

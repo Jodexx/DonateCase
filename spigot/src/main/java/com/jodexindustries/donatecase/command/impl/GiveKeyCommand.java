@@ -9,8 +9,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.command.GlobalCommand;
-import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -47,7 +46,7 @@ public class GiveKeyCommand implements SubCommandExecutor<CommandSender>, SubCom
             try {
                 keys = Integer.parseInt(args[2]);
             } catch (NumberFormatException e) {
-                Tools.msgRaw(sender, Tools.rt(Case.getConfig().getLang().getString("number-format-exception"), "%string:" + args[2]));
+                DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("number-format-exception"), "%string:" + args[2]));
                 return;
             }
             if (instance.api.getCaseManager().hasCaseByType(caseName)) {
@@ -55,19 +54,19 @@ public class GiveKeyCommand implements SubCommandExecutor<CommandSender>, SubCom
                 if (data == null) return;
                 Case.getInstance().api.getCaseKeyManager().addKeys(caseName, player, keys).thenAcceptAsync(status -> {
                     if(status == DatabaseStatus.COMPLETE) {
-                        ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("keys-given"),
+                        instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("keys-given"),
                                 "%player:" + player, "%key:" + keys, "%casetitle:" + data.getCaseTitle(),
                                 "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
 
                         if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
-                            ToolsBukkit.msg(target, Tools.rt(Case.getConfig().getLang().getString("keys-given-target"),
+                            instance.api.getTools().msg(target, DCToolsBukkit.rt(Case.getConfig().getLang().getString("keys-given-target"),
                                     "%player:" + player, "%key:" + keys, "%casetitle:" + data.getCaseTitle(),
                                     "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
                         }
                     }
                 });
             } else {
-                ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
+                instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
             }
         } else {
             GlobalCommand.sendHelp(sender, label);

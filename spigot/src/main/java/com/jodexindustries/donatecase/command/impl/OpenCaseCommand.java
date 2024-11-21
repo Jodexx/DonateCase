@@ -10,8 +10,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.command.GlobalCommand;
-import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -55,11 +54,11 @@ public class OpenCaseCommand implements SubCommandExecutor<CommandSender>, SubCo
                             CaseDataItem<CaseDataMaterialBukkit, ItemStack> winGroup = data.getRandomItem();
                             instance.api.getAnimationManager().animationPreEnd(data, player, player.getLocation(), winGroup);
                         } else {
-                            ToolsBukkit.msg(player, Case.getConfig().getLang().getString("no-keys"));
+                            instance.api.getTools().msg(player, Case.getConfig().getLang().getString("no-keys"));
                         }
                     });
                 } else {
-                    ToolsBukkit.msg(sender, Tools.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
+                    instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
                 }
             } else {
                 GlobalCommand.sendHelp(sender, label);

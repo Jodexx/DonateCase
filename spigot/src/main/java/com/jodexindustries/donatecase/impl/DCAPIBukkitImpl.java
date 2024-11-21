@@ -13,6 +13,8 @@ import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.impl.managers.*;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
+import com.jodexindustries.donatecase.tools.ToolsImpl;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -91,5 +93,10 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
     @Override
     public ConfigBukkit getConfig() {
         return DonateCase.instance.config;
+    }
+
+    @Override
+    public DCToolsBukkit getTools() {
+        return new ToolsImpl(DonateCase.instance);
     }
 }

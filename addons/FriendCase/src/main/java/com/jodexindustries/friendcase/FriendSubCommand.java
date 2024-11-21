@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.jodexindustries.donatecase.tools.Tools.rc;
+import static com.jodexindustries.donatecase.tools.DCToolsBukkit.rc;
 
 public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
     private final Tools t;

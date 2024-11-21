@@ -21,6 +21,7 @@ import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport
 import com.jodexindustries.donatecase.api.holograms.types.FancyHologramsSupport;
 import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
 import com.jodexindustries.donatecase.api.manager.*;
+import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.command.impl.*;
 import com.jodexindustries.donatecase.config.CaseLoader;
@@ -221,7 +222,7 @@ public class DonateCase extends JavaPlugin {
     private void loadUpdater() {
         if (config.getConfig().getBoolean("DonateCase.UpdateChecker")) {
             new UpdateChecker(this, 106701).getVersion((version) -> {
-                if (Tools.getPluginVersion(getDescription().getVersion()) < Tools.getPluginVersion(version)) {
+                if (DCTools.getPluginVersion(getDescription().getVersion()) < DCTools.getPluginVersion(version)) {
                     Logger.log(ChatColor.GREEN + "There is a new update " + version + " available.");
                     Logger.log(ChatColor.GREEN + "Download - https://www.spigotmc.org/resources/donatecase.106701/");
                 }

@@ -13,7 +13,7 @@ import com.jodexindustries.donatecase.api.events.*;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
-import com.jodexindustries.donatecase.tools.Tools;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -115,7 +115,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         }
 
         caseData = caseData.clone();
-        caseData.setItems(Tools.sortItemsByIndex(caseData.getItems()));
+        caseData.setItems(DCToolsBukkit.sortItemsByIndex(caseData.getItems()));
 
         String animation = caseData.getAnimation();
 
@@ -354,7 +354,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
                 "%groupdisplayname%:" + item.getMaterial().getDisplayName()
         };
 
-        List<String> actions = Tools.rt(getActionsBasedOnChoice(item, choice, alternative), replacementRegex);
+        List<String> actions = DCToolsBukkit.rt(getActionsBasedOnChoice(item, choice, alternative), replacementRegex);
 
         instance.api.getActionManager().executeActions(player, actions);
     }

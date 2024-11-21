@@ -9,8 +9,7 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -45,7 +44,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
         getLocation().add(0.5, -0.1, 0.5);
         getLocation().setYaw(-70.0F);
 
-        final ArmorStandCreator as = ToolsBukkit.createArmorStand(getLocation());
+        final ArmorStandCreator as = instance.api.getTools().createArmorStand(getLocation());
         boolean small = getSettings().getBoolean("Shape.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
@@ -55,8 +54,8 @@ public class ShapeAnimation extends JavaAnimationBukkit {
         final String orangeRgbString = getSettings().getString("Shape.Particle.Orange.Rgb");
         final String whiteRgbString = getSettings().getString("Shape.Particle.White.Rgb");
 
-        final Color orangeColor = Tools.fromRGBString(orangeRgbString, Color.ORANGE);
-        final Color whiteColor = Tools.fromRGBString(whiteRgbString, Color.WHITE);
+        final Color orangeColor = DCToolsBukkit.fromRGBString(orangeRgbString, Color.ORANGE);
+        final Color whiteColor = DCToolsBukkit.fromRGBString(whiteRgbString, Color.WHITE);
 
         Bukkit.getScheduler().runTaskTimer(Case.getInstance(),
                 new Task(as, orangeColor, whiteColor),
@@ -89,7 +88,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
             this.whiteColor = whiteColor;
             this.itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD")
                     .toUpperCase());
-            this.armorStandEulerAngle = Tools.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
+            this.armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
             world = l.getWorld() != null ? l.getWorld() : getPlayer().getWorld();
         }
 
@@ -102,7 +101,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
                 as.setAngle(armorStandEulerAngle);
                 as.setCustomName(getWinItem().getMaterial().getDisplayName());
                 as.updateMeta();
-                ToolsBukkit.launchFirework(l.clone().add(0.0, 0.8, 0.0));
+                instance.api.getTools().launchFirework(l.clone().add(0.0, 0.8, 0.0));
                 instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
@@ -113,7 +112,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
                     as.setEquipment(itemSlot, item.getMaterial().getItemStack());
                 }
 
-                String winGroupDisplayName = Tools.rc(Case.getInstance().papi.setPlaceholders(getPlayer(),
+                String winGroupDisplayName = DCToolsBukkit.rc(Case.getInstance().papi.setPlaceholders(getPlayer(),
                         item.getMaterial().getDisplayName()));
                 if (item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty()) {
                     as.setCustomNameVisible(true);

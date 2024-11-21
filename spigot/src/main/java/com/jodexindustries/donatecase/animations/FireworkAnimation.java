@@ -8,8 +8,7 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
-import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
+import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Firework;
@@ -40,11 +39,11 @@ public class FireworkAnimation extends JavaAnimationBukkit {
     @Override
     public void start() {
         itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD").toUpperCase());
-        armorStandEulerAngle = Tools.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
+        armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
         String displayName = getWinItem().getMaterial().getDisplayName();
         getWinItem().getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(getPlayer(), displayName));
         getLocation().add(0.5, 1, 0.5);
-        ArmorStandCreator as = ToolsBukkit.createArmorStand(getLocation());
+        ArmorStandCreator as = instance.api.getTools().createArmorStand(getLocation());
 
         boolean small = getSettings().getBoolean("SmallArmorStand", true);
         as.setSmall(small);
@@ -74,7 +73,7 @@ public class FireworkAnimation extends JavaAnimationBukkit {
                 FireworkMeta data = firework.getFireworkMeta();
                 data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
                 for (String color : getSettings().getStringList("FireworkColors")) {
-                    data.addEffect(FireworkEffect.builder().withColor(Tools.parseColor(color)).build());
+                    data.addEffect(FireworkEffect.builder().withColor(DCToolsBukkit.parseColor(color)).build());
                 }
                 data.setPower(getSettings().getInt("Power"));
                 firework.setFireworkMeta(data);
