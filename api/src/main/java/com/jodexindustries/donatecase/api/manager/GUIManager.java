@@ -1,12 +1,13 @@
 package com.jodexindustries.donatecase.api.manager;
 
+import com.jodexindustries.donatecase.api.data.casedata.CCloneable;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
 
-public interface GUIManager<Inventory, L, Player, C, M> {
+public interface GUIManager<Inventory, L, Player, C, M extends CCloneable> {
 
     /**
      * Open case gui

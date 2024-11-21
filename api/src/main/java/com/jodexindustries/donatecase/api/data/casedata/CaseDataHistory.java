@@ -3,7 +3,7 @@ package com.jodexindustries.donatecase.api.data.casedata;
 /**
  * Class to implement information about case opening histories
  */
-public class CaseDataHistory implements Cloneable {
+public class CaseDataHistory implements CCloneable {
     private int id;
     private String item;
     private String playerName;

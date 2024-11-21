@@ -13,7 +13,7 @@ import java.util.List;
  * This class provides methods to get and set each attribute, allowing flexible
  * modification and retrieval of material details.
  */
-public abstract class CaseDataMaterial<I> implements Cloneable, MetaUpdatable {
+public abstract class CaseDataMaterial<I> implements CCloneable, MetaUpdatable {
 
     protected String id;
     protected String displayName;

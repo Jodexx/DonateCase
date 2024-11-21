@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Class for implementing cases that are loaded into the plugin's memory.
  */
-public class CaseData<M extends CaseDataMaterial<I>, I> implements Cloneable {
+public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
     private final String caseType;
     private String caseDisplayName;
     private String animation;
