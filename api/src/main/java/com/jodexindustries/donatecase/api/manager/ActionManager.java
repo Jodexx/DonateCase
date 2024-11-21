@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for managing executable actions, allowing for registration, retrieval, and unregistration of actions.
@@ -51,6 +52,9 @@ public interface ActionManager<Player> {
      */
     @Nullable
     CaseAction<Player> getRegisteredAction(@NotNull String action);
+
+    @NotNull
+    Map<String, CaseAction<Player>> getRegisteredActions();
 
     /**
      * Retrieves a registered action by matching the beginning of a string.

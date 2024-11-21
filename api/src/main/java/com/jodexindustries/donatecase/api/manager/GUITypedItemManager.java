@@ -5,6 +5,8 @@ import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 /**
  * Interface for managing GUI-typed items associated with case data materials, enabling
  * registration, retrieval, and management of GUI elements.
@@ -52,6 +54,9 @@ public interface GUITypedItemManager<M extends CCloneable, G, E> {
      */
     @Nullable
     GUITypedItem<M, G, E> getRegisteredItem(@NotNull String id);
+
+    @NotNull
+    Map<String, GUITypedItem<M, G, E>> getRegisteredItems();
 
     /**
      * Retrieves the ID of a registered GUI typed item that matches the start of a given string.

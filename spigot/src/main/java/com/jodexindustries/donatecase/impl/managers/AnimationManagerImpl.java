@@ -14,7 +14,6 @@ import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import com.jodexindustries.donatecase.tools.Tools;
-import com.jodexindustries.donatecase.tools.ToolsBukkit;
 import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -253,6 +252,11 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
     @Override
     public CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> getRegisteredAnimation(String animation) {
         return registeredAnimations.get(animation);
+    }
+
+    @Override
+    public Map<String, CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>> getRegisteredAnimations() {
+        return registeredAnimations;
     }
 
     @Override

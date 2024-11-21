@@ -8,6 +8,7 @@ import com.jodexindustries.donatecase.api.manager.SubCommandManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class SubCommandManagerImpl implements SubCommandManager<CommandSender> {
     /**
      * Map of all registered subcommands
      */
-    public static final Map<String, SubCommand<CommandSender>> registeredSubCommands = new HashMap<>();
+    private static final Map<String, SubCommand<CommandSender>> registeredSubCommands = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -88,6 +89,16 @@ public class SubCommandManagerImpl implements SubCommandManager<CommandSender> {
     public void unregisterSubCommands() {
         List<String> list = new ArrayList<>(registeredSubCommands.keySet());
         list.forEach(this::unregisterSubCommand);
+    }
+
+    @Override
+    public @Nullable SubCommand<CommandSender> getRegisteredSubCommand(String commandName) {
+        return registeredSubCommands.get(commandName);
+    }
+
+    @Override
+    public @NotNull Map<String, SubCommand<CommandSender>> getRegisteredSubCommands() {
+        return registeredSubCommands;
     }
 
     /**

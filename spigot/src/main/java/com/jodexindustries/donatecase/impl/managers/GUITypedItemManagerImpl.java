@@ -22,7 +22,7 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager<CaseDataMate
     /**
      * Map of all registered items
      */
-    public final static Map<String, GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent>> registeredItems = new HashMap<>();
+    private final static Map<String, GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent>> registeredItems = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -73,6 +73,11 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager<CaseDataMate
     @Override
     public GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> getRegisteredItem(@NotNull String id) {
         return registeredItems.get(id.toLowerCase());
+    }
+
+    @Override
+    public @NotNull Map<String, GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent>> getRegisteredItems() {
+        return registeredItems;
     }
 
     @Nullable

@@ -117,6 +117,8 @@ public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseD
     @Nullable
     CaseAnimation<A, M, I> getRegisteredAnimation(String animation);
 
+    Map<String, CaseAnimation<A, M, I>> getRegisteredAnimations();
+
     Map<UUID, ActiveCase<B>> getActiveCases();
 
     Map<B, UUID> getActiveCasesByBlock();

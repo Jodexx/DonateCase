@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.command;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.impl.managers.SubCommandManagerImpl;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.tools.Tools;
@@ -29,7 +28,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             sendHelp(sender, label);
         } else {
             String subCommandName = args[0];
-            SubCommand<CommandSender> subCommand = SubCommandManagerImpl.registeredSubCommands.get(subCommandName);
+            SubCommand<CommandSender> subCommand = instance.api.getSubCommandManager().getRegisteredSubCommand(subCommandName);
 
             if (subCommand == null) {
                 sendHelp(sender, label);
@@ -76,7 +75,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     private static Map<String, List<Map<String, SubCommand<CommandSender>>>> buildAddonsMap() {
         Map<String, List<Map<String, SubCommand<CommandSender>>>> addonsMap = new HashMap<>();
-        SubCommandManagerImpl.registeredSubCommands.forEach((subCommandName, subCommand) -> {
+        instance.api.getSubCommandManager().getRegisteredSubCommands().forEach((subCommandName, subCommand) -> {
             Addon addon = subCommand.getAddon();
             addonsMap.computeIfAbsent(addon.getName(), k -> new ArrayList<>())
                     .add(Collections.singletonMap(subCommandName, subCommand));
@@ -128,7 +127,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
         List<String> value = new ArrayList<>();
 
         if (args.length == 1) {
-            Map<String, SubCommand<CommandSender>> subCommands = SubCommandManagerImpl.registeredSubCommands;
+            Map<String, SubCommand<CommandSender>> subCommands = instance.api.getSubCommandManager().getRegisteredSubCommands();
 
             for (Map.Entry<String, SubCommand<CommandSender>> entry : subCommands.entrySet()) {
                 String subCommandName = entry.getKey();
@@ -139,7 +138,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     value.add(subCommandName);
                 }
             }
-        } else if (SubCommandManagerImpl.registeredSubCommands.containsKey(args[0])) {
+        } else if (instance.api.getSubCommandManager().getRegisteredSubCommands().containsKey(args[0])) {
             return instance.api.getSubCommandManager().getTabCompletionsForSubCommand(sender, args[0], label, Arrays.copyOfRange(args, 1, args.length));
         } else {
             return new ArrayList<>();

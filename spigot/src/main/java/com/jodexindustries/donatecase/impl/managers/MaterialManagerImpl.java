@@ -17,7 +17,7 @@ public class MaterialManagerImpl implements MaterialManager<ItemStack> {
     /**
      * Map of all registered materials
      */
-    public static final Map<String, CaseMaterial<ItemStack>> registeredMaterials = new HashMap<>();
+    private static final Map<String, CaseMaterial<ItemStack>> registeredMaterials = new HashMap<>();
     private final Addon addon;
 
     /**
@@ -64,6 +64,11 @@ public class MaterialManagerImpl implements MaterialManager<ItemStack> {
     @Override
     public CaseMaterial<ItemStack> getRegisteredMaterial(@NotNull String id) {
         return registeredMaterials.get(id);
+    }
+
+    @Override
+    public @NotNull Map<String, CaseMaterial<ItemStack>> getRegisteredMaterials() {
+        return registeredMaterials;
     }
 
     @Nullable

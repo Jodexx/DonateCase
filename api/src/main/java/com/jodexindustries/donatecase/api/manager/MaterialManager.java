@@ -5,6 +5,8 @@ import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 /**
  * Interface for managing item materials, allowing registration, retrieval, and unregistration of case materials.
  *
@@ -49,6 +51,9 @@ public interface MaterialManager<I> {
      */
     @Nullable
     CaseMaterial<I> getRegisteredMaterial(@NotNull String id);
+
+    @NotNull
+    Map<String, CaseMaterial<I>> getRegisteredMaterials();
 
     /**
      * Retrieves a registered material ID that matches the start of a given string.
