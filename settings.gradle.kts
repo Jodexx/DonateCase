@@ -14,5 +14,6 @@ dependencyResolutionManagement {
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://repo.fancyplugins.de/releases")
         maven("https://repo.jodexindustries.xyz/releases/")
+        maven("https://repo.alessiodp.com/releases/")
     }
 }
