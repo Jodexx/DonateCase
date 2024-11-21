@@ -54,5 +54,5 @@ tasks.shadowJar {
     archiveClassifier.set(null as String?)
     archiveVersion.set(project.version.toString())
 
-    relocate("net.byteflux.libby", "com.jodexindustries.donatecase.libby")
+    relocate("me.tofaa.entitylib", "com.jodexindustries.donatecase.entitylib")
 }
