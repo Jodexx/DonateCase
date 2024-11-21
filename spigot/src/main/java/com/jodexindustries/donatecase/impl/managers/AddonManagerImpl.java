@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.impl.managers;
 
 import com.jodexindustries.donatecase.BuildConstants;
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
 import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
@@ -11,8 +10,6 @@ import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.addon.internal.InvalidAddonException;
 import com.jodexindustries.donatecase.api.events.AddonDisableEvent;
 import com.jodexindustries.donatecase.api.events.AddonEnableEvent;
-import com.alessiodp.libby.Library;
-import com.alessiodp.libby.LibraryManager;
 import com.jodexindustries.donatecase.api.manager.AddonManager;
 import com.jodexindustries.donatecase.tools.Tools;
 import org.bukkit.Bukkit;
@@ -35,7 +32,7 @@ public class AddonManagerImpl implements AddonManager {
     /**
      * Map of all loaded addons
      */
-    public static final Map<String, InternalJavaAddon> addons = new HashMap<>();
+    private static final Map<String, InternalJavaAddon> addons = new HashMap<>();
     /**
      * List of all addons loaders
      */
@@ -44,6 +41,8 @@ public class AddonManagerImpl implements AddonManager {
     private final Addon donateCase = new ExternalJavaAddon(instance);
     private final Addon addon;
 
+    private final File addonsFolder;
+
     /**
      * Default constructor
      *
@@ -51,6 +50,7 @@ public class AddonManagerImpl implements AddonManager {
      */
     public AddonManagerImpl(Addon addon) {
         this.addon = addon;
+        this.addonsFolder = new File(donateCase.getDataFolder(), "addons");
     }
 
     @Override
@@ -98,7 +98,6 @@ public class AddonManagerImpl implements AddonManager {
                 }
             }
 
-            loadLibraries(description.getLibraries());
             InternalAddonClassLoader loader;
             try {
                 loader = new InternalAddonClassLoader(addon.getClass().getClassLoader(), description, file, this, donateCase);
@@ -229,14 +228,20 @@ public class AddonManagerImpl implements AddonManager {
         return addons.get(addon);
     }
 
+    @Override
+    public @NotNull Map<String, InternalJavaAddon> getAddons() {
+        return addons;
+    }
+
     /**
      * Gets "addons" folder
      *
      * @return The folder
      * @since 2.2.4.3
      */
-    public static File getAddonsFolder() {
-        return new File(Case.getInstance().getDataFolder(), "addons");
+    @NotNull
+    public File getAddonsFolder() {
+        return addonsFolder;
     }
 
     /**
@@ -249,28 +254,6 @@ public class AddonManagerImpl implements AddonManager {
     @Nullable
     public static InternalAddonClassLoader getAddonClassLoader(File file) {
         return loaders.stream().filter(loader -> loader.getFile().equals(file)).findFirst().orElse(null);
-    }
-
-    private void loadLibraries(List<String> libraries) {
-        LibraryManager manager = Case.getInstance().libraryManager;
-        for (String lib : libraries) {
-            String[] params = lib.split(":");
-            if (params.length == 3) {
-                String groupId = params[0];
-                String artifactId = params[1];
-                String version = params[2];
-                Library library = Library.builder()
-                        .groupId(groupId)
-                        .artifactId(artifactId)
-                        .version(version)
-                        .build();
-                try {
-                    manager.loadLibrary(library);
-                } catch (RuntimeException e) {
-                    addon.getLogger().log(Level.WARNING, "Error with loading library " + lib, e);
-                }
-            }
-        }
     }
 
 
