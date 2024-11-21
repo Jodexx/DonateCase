@@ -92,8 +92,8 @@ public class AddonManagerImpl implements AddonManager {
                 int pluginVersion = Tools.getPluginVersion(BuildConstants.api);
 
                 if (pluginVersion < addonVersion) {
-                    addon.getLogger().warning("Addon API version (" + addonVersion
-                            + ") incompatible with current DonateCase version (" + pluginVersion + ")! Abort.");
+                    addon.getLogger().warning("Addon " + description.getName() + " API version (" + description.getApiVersion()
+                            + ") incompatible with current API version (" + BuildConstants.api + ")! Abort.");
                     return false;
                 }
             }
