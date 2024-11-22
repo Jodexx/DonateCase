@@ -5,11 +5,10 @@ import com.jodexindustries.donatecase.api.data.casedata.*;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemHandler;
-import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.GUITypedItemManager;
-import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
+import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -85,7 +84,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
 
         if (!isGlobal) historyCaseData = historyCaseData.clone();
 
-        CaseDataHistory data = getHistoryData(caseType, isGlobal, globalHistoryData, index, historyCaseData);
+        CaseDataHistory data = getHistoryData(caseType, isGlobal, globalHistoryData, index);
         if (data == null) return false;
 
         if (isGlobal) historyCaseData = instance.api.getCaseManager().getCase(data.getCaseType());
@@ -141,19 +140,15 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
         };
     }
 
-    private CaseDataHistory getHistoryData(String caseType, boolean isGlobal, List<CaseDataHistory> globalHistoryData, int index, CaseDataBukkit historyCaseData) {
+    private CaseDataHistory getHistoryData(String caseType, boolean isGlobal, List<CaseDataHistory> globalHistoryData, int index) {
         CaseDataHistory data = null;
         if (isGlobal) {
             if (globalHistoryData.size() <= index) return null;
             data = globalHistoryData.get(index);
         } else {
-            if (Case.getConfig().getDatabaseType() == DatabaseType.SQLITE) {
-                data = historyCaseData.getHistoryData()[index];
-            } else {
-                List<CaseDataHistory> dbData = CaseDatabaseImpl.sortHistoryDataByCase(globalHistoryData, caseType);
-                if (!dbData.isEmpty() && dbData.size() > index) {
-                    data = dbData.get(index);
-                }
+            List<CaseDataHistory> dbData = DCTools.sortHistoryDataByCase(globalHistoryData, caseType);
+            if (!dbData.isEmpty() && dbData.size() > index) {
+                data = dbData.get(index);
             }
         }
         return data;
