@@ -146,8 +146,7 @@ public class Case {
         ConfigurationSection section = getConfig().getCases().getConfigurationSection("DonateCase.Cases");
         if(section == null) return false;
 
-        return getConfig().getCases().getConfigurationSection("DonateCase.Cases") != null
-                && section.contains(name);
+        return section.contains(name);
     }
 
     /**
