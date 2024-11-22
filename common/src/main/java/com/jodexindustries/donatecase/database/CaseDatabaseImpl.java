@@ -324,19 +324,6 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
         return (previousList != null) ? previousList : getAsyncSortedHistoryData().join();
     }
 
-    /**
-     * Get sorted history data by case
-     * @param historyData HistoryData from all cases (or not all)
-     * @param caseType type of case for filtering
-     * @return list of case HistoryData
-     */
-    public static List<CaseDataHistory> sortHistoryDataByCase(List<CaseDataHistory> historyData, String caseType) {
-        return historyData.stream().filter(Objects::nonNull)
-                .filter(data -> data.getCaseType().equals(caseType))
-                .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
-                .collect(Collectors.toList());
-    }
-
     public CompletableFuture<DatabaseStatus> delAllKeys() {
         return CompletableFuture.supplyAsync(() -> {
             try {

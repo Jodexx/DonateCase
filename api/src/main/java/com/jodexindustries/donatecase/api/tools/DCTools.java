@@ -1,7 +1,13 @@
 package com.jodexindustries.donatecase.api.tools;
 
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public interface DCTools {
 
@@ -51,5 +57,18 @@ public interface DCTools {
             return Integer.parseInt(matcher.group(1));
         }
         return 0;
+    }
+
+    /**
+     * Get sorted history data by case
+     * @param historyData HistoryData from all cases (or not all)
+     * @param caseType type of case for filtering
+     * @return list of case HistoryData
+     */
+    static List<CaseDataHistory> sortHistoryDataByCase(List<CaseDataHistory> historyData, String caseType) {
+        return historyData.stream().filter(Objects::nonNull)
+                .filter(data -> data.getCaseType().equals(caseType))
+                .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
+                .collect(Collectors.toList());
     }
 }
