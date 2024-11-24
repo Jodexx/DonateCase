@@ -148,12 +148,8 @@ public class GUI<M extends CCloneable> implements CCloneable {
 
         @Override
         public String toString() {
-            return "Item{" +
-                    "itemName='" + itemName + '\'' +
-                    ", type='" + type + '\'' +
-                    ", material=" + material +
-                    ", slots=" + slots +
-                    '}';
+            return String.format("Item{itemName='%s', type='%s', material=%s, slots=%s}",
+                    itemName, type, material, slots);
         }
     }
 }

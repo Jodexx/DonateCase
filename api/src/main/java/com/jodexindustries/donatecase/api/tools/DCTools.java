@@ -35,14 +35,12 @@ public interface DCTools {
      * Output: <code>2222</code>
      */
     static int getPluginVersion(String version) {
-        StringBuilder builder = new StringBuilder();
         version = version.replaceAll("\\.", "");
-        if(version.length() < 4) {
-            for (int i = 0; i < 4 - version.length(); i++) builder.append(version).append("0");
-        } else {
-            builder.append(version);
+        if (version.length() == 4) {
+            return Integer.parseInt(version);
         }
-        return Integer.parseInt(builder.toString());
+        version = version.concat("0000");
+        return Integer.parseInt(version.substring(0, 4));
     }
 
     /**
