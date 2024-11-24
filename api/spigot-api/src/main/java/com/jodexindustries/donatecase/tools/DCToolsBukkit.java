@@ -166,8 +166,7 @@ public interface DCToolsBukkit extends DCTools {
         return commands.stream().flatMap(command -> command.values().stream()).map(SubCommand::getPermission).anyMatch(permission -> permission == null || sender.hasPermission(permission));
     }
 
-    static String[] parseRGB(String string) {
-        if(string == null) return null;
+    static String[] parseRGB(@NotNull String string) {
         return string.replaceAll(" ", "").split(",");
     }
 

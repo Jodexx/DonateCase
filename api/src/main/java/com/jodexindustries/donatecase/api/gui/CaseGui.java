@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public interface CaseGui<Inventory, L, Player, C, M extends CCloneable> {
+public interface CaseGui<I, L, P, C, M extends CCloneable> {
     /**
      * Loads all items asynchronously
      *
@@ -22,7 +22,7 @@ public interface CaseGui<Inventory, L, Player, C, M extends CCloneable> {
      * @return inventory
      */
     @NotNull
-    Inventory getInventory();
+    I getInventory();
 
     /**
      * Gets location where GUI opened
@@ -38,7 +38,7 @@ public interface CaseGui<Inventory, L, Player, C, M extends CCloneable> {
      * @return player who opened
      */
     @NotNull
-    Player getPlayer();
+    P getPlayer();
 
     /**
      * Gets GUI CaseData. Can be modified, cause this is clone of original {@link com.jodexindustries.donatecase.api.manager.CaseManager#getCase(String)}
@@ -54,7 +54,7 @@ public interface CaseGui<Inventory, L, Player, C, M extends CCloneable> {
      * @return GUI
      */
     @NotNull
-     GUI<M> getTempGUI();
+    GUI<M> getTempGUI();
 
     /**
      * Gets GUI global history data

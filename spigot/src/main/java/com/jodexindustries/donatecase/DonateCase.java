@@ -477,7 +477,7 @@ public class DonateCase extends JavaPlugin {
         }
 
         try {
-            if (!outFile.exists() || replace) {
+            if (replace) {
                 InternalAddonClassLoader.saveFromInputStream(in, outFile);
             } else {
                 getLogger().log(java.util.logging.Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");

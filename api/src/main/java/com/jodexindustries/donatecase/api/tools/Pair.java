@@ -1,5 +1,7 @@
 package com.jodexindustries.donatecase.api.tools;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Pair<A, B> {
     private final A first;
     private final B second;
@@ -9,10 +11,12 @@ public class Pair<A, B> {
         this.second = second;
     }
 
+    @NotNull
     public A getFirst() {
         return first;
     }
 
+    @NotNull
     public B getSecond() {
         return second;
     }
