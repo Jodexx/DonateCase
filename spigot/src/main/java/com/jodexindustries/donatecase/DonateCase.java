@@ -351,10 +351,8 @@ public class DonateCase extends JavaPlugin {
         loadLuckPerms();
         loadVault();
         PermissionDriver temp = PermissionDriver.getDriver(config.getConfig().getString("DonateCase.PermissionDriver", "vault"));
-        if (temp == PermissionDriver.vault && permission != null) {
-            permissionDriver = temp;
-        }
-        if (temp == PermissionDriver.luckperms && luckPerms != null) {
+        if ((temp == PermissionDriver.vault && permission != null) ||
+                (temp == PermissionDriver.luckperms && luckPerms != null)) {
             permissionDriver = temp;
         }
         if (permissionDriver != null) Logger.log("&aUsing &b" + permissionDriver + " &aas permission driver");
