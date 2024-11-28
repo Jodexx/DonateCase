@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.config;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.config.ConfigBukkit;
 import com.jodexindustries.donatecase.api.config.ConfigCasesBukkit;
+import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.impl.managers.CaseKeyManagerImpl;
 import com.jodexindustries.donatecase.impl.managers.CaseOpenManagerImpl;
@@ -24,7 +25,7 @@ public class ConfigImpl implements ConfigBukkit {
     private final DonateCase plugin;
 
     private File fileLang;
-    private final YamlConfiguration lang;
+    private YamlConfiguration lang;
 
     private final ConfigCasesImpl casesConfig;
 
@@ -47,20 +48,36 @@ public class ConfigImpl implements ConfigBukkit {
     public ConfigImpl(DonateCase plugin) {
         this.plugin = plugin;
         this.converter = new Converter(this);
+        this.casesConfig = new ConfigCasesImpl(plugin);
+    }
 
+    @Override
+    @Nullable
+    public YamlConfiguration get(@NotNull File file) {
+        return configs.get(file);
+    }
+
+    @Override
+    @Nullable
+    public YamlConfiguration get(@NotNull String name) {
+        return configs.get(new File(plugin.getDataFolder(), name));
+    }
+
+    @Override
+    public void load() {
         createFiles();
         loadConfigurations();
+
+        casesConfig.load();
 
         checkAndUpdateConfig(getConfig(), "Config.yml", "2.5");
         checkAndUpdateConfig(getAnimations(), "Animations.yml", "1.4");
 
         converter.convertConfig();
         converter.convertAnimations();
+        converter.convertData();
 
         checkConvertCases();
-
-        casesConfig = new ConfigCasesImpl(plugin);
-
         checkConvertLocations();
 
         File langFolder = new File(plugin.getDataFolder(), "lang");
@@ -109,18 +126,8 @@ public class ConfigImpl implements ConfigBukkit {
             CaseDatabaseImpl.historyCache.setMaxAge(caching);
         }
 
-    }
-
-    @Override
-    @Nullable
-    public YamlConfiguration get(@NotNull File file) {
-        return configs.get(file);
-    }
-
-    @Override
-    @Nullable
-    public YamlConfiguration get(@NotNull String name) {
-        return configs.get(new File(plugin.getDataFolder(), name));
+        DonateCaseReloadEvent reloadEvent = new DonateCaseReloadEvent(plugin, DonateCaseReloadEvent.Type.CONFIG);
+        plugin.getServer().getPluginManager().callEvent(reloadEvent);
     }
 
     @Override

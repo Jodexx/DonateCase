@@ -7,6 +7,8 @@ import java.io.File;
 
 public interface Config {
 
+    void load();
+
     void delete(@NotNull File file);
 
     void delete(@NotNull String name);

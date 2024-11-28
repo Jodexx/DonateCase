@@ -18,6 +18,7 @@ import java.util.Map;
  */
 public class ConfigCasesImpl implements ConfigCasesBukkit {
     private final Map<String, Pair<File, YamlConfiguration>> cases = new HashMap<>();
+    private final Plugin plugin;
 
     /**
      * Default initialization constructor
@@ -25,20 +26,7 @@ public class ConfigCasesImpl implements ConfigCasesBukkit {
      * @param plugin Plugin object
      */
     public ConfigCasesImpl(Plugin plugin) {
-        if (getCasesInFolder().isEmpty())
-            plugin.saveResource("cases/case.yml", false);
-
-        for (File file : getCasesInFolder()) {
-            if (isYamlFile(file)) {
-                String name = getFileNameWithoutExtension(file);
-                YamlConfiguration caseConfig = YamlConfiguration.loadConfiguration(file);
-                if (caseConfig.getConfigurationSection("case") != null) {
-                    cases.put(name, new Pair<>(file, caseConfig));
-                } else {
-                    Case.getInstance().getLogger().warning("Case " + name + " has a broken case section, skipped.");
-                }
-            }
-        }
+        this.plugin = plugin;
     }
 
     /**
@@ -94,5 +82,23 @@ public class ConfigCasesImpl implements ConfigCasesBukkit {
     @Override
     public Pair<File, YamlConfiguration> getCase(String name) {
         return cases.get(name);
+    }
+
+    @Override
+    public void load() {
+        if (getCasesInFolder().isEmpty())
+            plugin.saveResource("cases/case.yml", false);
+
+        for (File file : getCasesInFolder()) {
+            if (isYamlFile(file)) {
+                String name = getFileNameWithoutExtension(file);
+                YamlConfiguration caseConfig = YamlConfiguration.loadConfiguration(file);
+                if (caseConfig.getConfigurationSection("case") != null) {
+                    cases.put(name, new Pair<>(file, caseConfig));
+                } else {
+                    Case.getInstance().getLogger().warning("Case " + name + " has a broken case section, skipped.");
+                }
+            }
+        }
     }
 }
