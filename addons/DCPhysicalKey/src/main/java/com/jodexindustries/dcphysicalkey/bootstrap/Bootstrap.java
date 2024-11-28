@@ -32,7 +32,7 @@ public class Bootstrap {
     public void load() {
         mainCommand.register();
         itemManager.load();
-        Bukkit.getServer().getPluginManager().registerEvents(eventListener, plugin.getPlugin());
+        Bukkit.getServer().getPluginManager().registerEvents(eventListener, plugin.getDCAPI().getDonateCase());
 
     }
 

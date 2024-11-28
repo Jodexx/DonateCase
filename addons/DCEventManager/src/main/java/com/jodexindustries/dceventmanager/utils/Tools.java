@@ -113,7 +113,7 @@ public class Tools implements Listener {
             Class<? extends Event> clazz = classes.get(i);
             String event = clazz.getSimpleName();
             pluginManager.registerEvent(clazz, this, EventPriority.NORMAL,
-                    new DCEventExecutor(event, this), main.getPlugin());
+                    new DCEventExecutor(event, this), main.getDCAPI().getDonateCase());
             if (debug) main.getLogger().info("Event " + event + " registered");
         }
 

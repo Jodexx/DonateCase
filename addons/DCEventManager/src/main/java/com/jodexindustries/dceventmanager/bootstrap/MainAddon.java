@@ -1,9 +1,7 @@
 package com.jodexindustries.dceventmanager.bootstrap;
 
 import com.jodexindustries.dceventmanager.utils.Tools;
-import com.jodexindustries.donatecase.api.addon.external.ExternalAddon;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddonBukkit;
-import org.bukkit.plugin.Plugin;
 
 public final class MainAddon extends InternalJavaAddonBukkit implements Main {
     private Tools t;
@@ -19,8 +17,4 @@ public final class MainAddon extends InternalJavaAddonBukkit implements Main {
         t.unload();
     }
 
-    @Override
-    public Plugin getPlugin() {
-        return ((ExternalAddon) getDonateCase()).getPlugin();
-    }
 }

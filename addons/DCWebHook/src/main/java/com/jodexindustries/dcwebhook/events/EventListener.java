@@ -24,7 +24,7 @@ public class EventListener implements Listener {
         String caseType = e.getCaseData().getCaseType();
         String winGroup = e.getWinItem().getGroup();
         String caseTitle = ChatColor.stripColor(e.getCaseData().getCaseTitle());
-        Bukkit.getScheduler().runTaskAsynchronously(t.getMain().getPlugin(),  () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(t.getMain().getDCAPI().getDonateCase(),  () -> {
             String webhook = t.getConfig().getConfig().getString("Webhook");
             if(webhook != null && !webhook.isEmpty()) {
                 DiscordWebhook.EmbedObject object = new DiscordWebhook.EmbedObject();

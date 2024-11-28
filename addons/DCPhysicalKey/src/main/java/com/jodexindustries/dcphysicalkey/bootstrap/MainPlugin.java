@@ -1,7 +1,6 @@
 package com.jodexindustries.dcphysicalkey.bootstrap;
 
 import com.jodexindustries.donatecase.api.DCAPIBukkit;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MainPlugin extends JavaPlugin implements Main {
@@ -18,11 +17,6 @@ public class MainPlugin extends JavaPlugin implements Main {
     @Override
     public void onDisable() {
         bootstrap.unload();
-    }
-
-    @Override
-    public Plugin getPlugin() {
-        return this;
     }
 
     @Override

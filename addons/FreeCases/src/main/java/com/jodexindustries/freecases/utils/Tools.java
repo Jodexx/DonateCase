@@ -40,7 +40,7 @@ public class Tools {
     }
 
     public String setPlaceholders(OfflinePlayer player, String text) {
-        return main.getPlugin().getServer().getPluginManager().getPlugin("PlaceholderAPI") == null ? text : PlaceholderAPI.setPlaceholders(player, text);
+        return main.getDCAPI().getDonateCase().getServer().getPluginManager().getPlugin("PlaceholderAPI") == null ? text : PlaceholderAPI.setPlaceholders(player, text);
     }
 
     public String formatTime(long time) {

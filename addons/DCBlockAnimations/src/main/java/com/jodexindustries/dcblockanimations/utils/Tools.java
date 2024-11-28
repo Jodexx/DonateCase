@@ -26,7 +26,7 @@ public class Tools implements Listener {
     }
 
     public void load() {
-        main.getPlugin().getServer().getPluginManager().registerEvents(this, main.getPlugin());
+        main.getDCAPI().getDonateCase().getServer().getPluginManager().registerEvents(this, main.getDCAPI().getDonateCase());
     }
 
     public void unload() {

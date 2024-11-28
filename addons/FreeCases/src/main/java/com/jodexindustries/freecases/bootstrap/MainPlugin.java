@@ -2,7 +2,6 @@ package com.jodexindustries.freecases.bootstrap;
 
 import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.freecases.utils.Tools;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MainPlugin extends JavaPlugin implements Main {
@@ -18,12 +17,6 @@ public final class MainPlugin extends JavaPlugin implements Main {
     @Override
     public void onDisable() {
         t.unload();
-    }
-
-
-    @Override
-    public Plugin getPlugin() {
-        return this;
     }
 
     @Override

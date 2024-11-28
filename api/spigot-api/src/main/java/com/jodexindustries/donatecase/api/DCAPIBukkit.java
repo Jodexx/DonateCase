@@ -57,4 +57,6 @@ public abstract class DCAPIBukkit implements DCAPI<Player, JavaAnimationBukkit, 
     public static void unregister() {
         DCAPIBukkit.clazz = null;
     }
+
+    public abstract Plugin getDonateCase();
 }

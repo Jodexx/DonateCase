@@ -19,7 +19,7 @@ public class Tools {
     }
 
     public void load() {
-        Bukkit.getServer().getPluginManager().registerEvents(new EventListener(this), main.getPlugin());
+        Bukkit.getServer().getPluginManager().registerEvents(new EventListener(this), main.getDCAPI().getDonateCase());
         MainCommand mainCommand = new MainCommand(this);
         SubCommand<CommandSender> subCommand = main.getDCAPI().getSubCommandManager().builder("webhook")
                 .executor(mainCommand)

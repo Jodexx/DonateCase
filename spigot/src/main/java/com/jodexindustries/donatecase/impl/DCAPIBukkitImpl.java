@@ -99,4 +99,9 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
     public DCToolsBukkit getTools() {
         return new ToolsImpl(DonateCase.instance);
     }
+
+    @Override
+    public Plugin getDonateCase() {
+        return DonateCase.instance;
+    }
 }
