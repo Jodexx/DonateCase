@@ -52,24 +52,24 @@ public class KeysCommand implements SubCommandExecutor<CommandSender>, SubComman
 
     private void handlePlayer(CommandSender sender, Player player) {
         if (sender.hasPermission("donatecase.player")) {
-            for (String message : Case.getConfig().getLang().getStringList("my-keys")) {
+            for (String message : instance.api.getConfig().getLang().getStringList("my-keys")) {
                 String formattedMessage = formatMessage(player.getName(), player, message);
                 sender.sendMessage(formattedMessage);
             }
         } else {
-            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("no-permission")));
+            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("no-permission")));
         }
     }
 
     private void handleMod(CommandSender sender, String target) {
         if (sender.hasPermission("donatecase.mod")) {
-            for (String message : Case.getConfig().getLang().getStringList("player-keys")) {
+            for (String message : instance.api.getConfig().getLang().getStringList("player-keys")) {
                 Player targetPlayer = Bukkit.getPlayerExact(target);
                 String formattedMessage = formatMessage(target, targetPlayer, message);
                 sender.sendMessage(formattedMessage.replace("%player", target));
             }
         } else {
-            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("no-permission")));
+            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("no-permission")));
         }
     }
 

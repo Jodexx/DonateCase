@@ -47,12 +47,12 @@ public class DeleteCommand implements SubCommandExecutor<CommandSender>, SubComm
                         Case.deleteCaseByName(customName);
                         if (instance.hologramManager != null)
                             instance.hologramManager.removeHologram(block);
-                        instance.api.getTools().msg(sender, Case.getConfig().getLang().getString("case-removed"));
+                        instance.api.getTools().msg(sender, instance.api.getConfig().getLang().getString("case-removed"));
                     } else {
-                        instance.api.getTools().msg(sender, Case.getConfig().getLang().getString("case-opens"));
+                        instance.api.getTools().msg(sender, instance.api.getConfig().getLang().getString("case-opens"));
                     }
                 } else {
-                    instance.api.getTools().msg(sender, Case.getConfig().getLang().getString("block-is-not-case"));
+                    instance.api.getTools().msg(sender, instance.api.getConfig().getLang().getString("block-is-not-case"));
                 }
             }
         } else if (args.length == 1) {
@@ -64,12 +64,12 @@ public class DeleteCommand implements SubCommandExecutor<CommandSender>, SubComm
                         instance.hologramManager.removeHologram(location.getBlock());
 
                     Case.deleteCaseByName(name);
-                    instance.api.getTools().msg(sender, Case.getConfig().getLang().getString("case-removed"));
+                    instance.api.getTools().msg(sender, instance.api.getConfig().getLang().getString("case-removed"));
                 } else {
-                    instance.api.getTools().msg(sender, Case.getConfig().getLang().getString("case-opens"));
+                    instance.api.getTools().msg(sender, instance.api.getConfig().getLang().getString("case-opens"));
                 }
             } else {
-                instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + name));
+                instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("case-does-not-exist"), "%case:" + name));
             }
         }
     }
@@ -78,7 +78,7 @@ public class DeleteCommand implements SubCommandExecutor<CommandSender>, SubComm
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         List<String> value;
         if (args.length == 1) {
-            ConfigurationSection section = Case.getConfig().getCases().getConfigurationSection("DonateCase.Cases");
+            ConfigurationSection section = instance.api.getConfig().getCases().getConfigurationSection("DonateCase.Cases");
             if (section != null) {
                 value = new ArrayList<>(section.getKeys(false));
             } else {

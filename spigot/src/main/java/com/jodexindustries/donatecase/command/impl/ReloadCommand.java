@@ -34,18 +34,17 @@ public class ReloadCommand implements SubCommandExecutor<CommandSender>, SubComm
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         if (args.length == 0) {
-            Case.getInstance().loadConfig();
+            instance.api.getConfig().load();
             Case.getInstance().loadCases();
-            if (Case.getInstance().hologramManager != null) Case.getInstance().hologramManager.removeAllHolograms();
             Case.getInstance().loadHolograms();
-            instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("config-reloaded")));
+            instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("config-reloaded")));
         } else {
             if (args[0].equalsIgnoreCase("cache")) {
                 Case.cleanCache();
-                Case.getInstance().loadConfig();
+                instance.api.getConfig().load();
                 Case.getInstance().loadCases();
                 Case.getInstance().loadDatabase();
-                instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("config-cache-reloaded", "&aReloaded all DonateCase Cache")));
+                instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("config-cache-reloaded", "&aReloaded all DonateCase Cache")));
             }
         }
     }

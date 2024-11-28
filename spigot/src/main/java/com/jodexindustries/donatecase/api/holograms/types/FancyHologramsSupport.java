@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api.holograms.types;
 
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import de.oliver.fancyholograms.api.FancyHologramsPlugin;
@@ -14,6 +13,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static com.jodexindustries.donatecase.DonateCase.instance;
+
 public class FancyHologramsSupport extends HologramManager {
 
     private final de.oliver.fancyholograms.api.HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
@@ -21,8 +22,7 @@ public class FancyHologramsSupport extends HologramManager {
 
     @Override
     public void createHologram(Block block, CaseDataBukkit caseData) {
-        YamlConfiguration config = Case.getConfig().getConfigCases().getCase(caseData.getCaseType()).getSecond();
-        if (config == null) return;
+        YamlConfiguration config = instance.api.getConfig().getConfigCases().getCase(caseData.getCaseType()).getSecond();
 
         ConfigurationSection section = config.getConfigurationSection("case.Hologram.FancyHolograms");
         if (section == null) return;

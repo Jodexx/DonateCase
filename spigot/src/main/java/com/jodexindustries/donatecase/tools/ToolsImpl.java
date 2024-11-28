@@ -77,7 +77,7 @@ public class ToolsImpl implements DCToolsBukkit {
     @Override
     public void msg(CommandSender s, String msg) {
         if (s != null) {
-            DCToolsBukkit.msgRaw(s, Case.getConfig().getLang().getString("prefix") + msg);
+            DCToolsBukkit.msgRaw(s, instance.api.getConfig().getLang().getString("prefix") + msg);
         }
     }
 }

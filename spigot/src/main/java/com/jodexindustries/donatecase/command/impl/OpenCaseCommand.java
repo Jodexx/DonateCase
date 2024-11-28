@@ -54,11 +54,11 @@ public class OpenCaseCommand implements SubCommandExecutor<CommandSender>, SubCo
                             CaseDataItem<CaseDataMaterialBukkit, ItemStack> winGroup = data.getRandomItem();
                             instance.api.getAnimationManager().animationPreEnd(data, player, player.getLocation(), winGroup);
                         } else {
-                            instance.api.getTools().msg(player, Case.getConfig().getLang().getString("no-keys"));
+                            instance.api.getTools().msg(player, instance.api.getConfig().getLang().getString("no-keys"));
                         }
                     });
                 } else {
-                    instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
+                    instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
                 }
             } else {
                 GlobalCommand.sendHelp(sender, label);
@@ -68,7 +68,7 @@ public class OpenCaseCommand implements SubCommandExecutor<CommandSender>, SubCo
 
     @Override
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        List<String> list = new ArrayList<>(Case.getConfig().getConfigCases().getCases().keySet());
+        List<String> list = new ArrayList<>(instance.api.getConfig().getConfigCases().getCases().keySet());
         if (args.length >= 2) {
             return new ArrayList<>();
         }

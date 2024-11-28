@@ -39,7 +39,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
             if (permission == null || sender.hasPermission(permission))
                 subCommand.execute(sender, label, Arrays.copyOfRange(args, 1, args.length));
-            else DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("no-permission")));
+            else DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("no-permission")));
         }
 
         return true;
@@ -47,7 +47,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     public static void sendHelp(CommandSender sender, String label) {
         if (!sender.hasPermission("donatecase.player")) {
-            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("no-permission")));
+            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("no-permission")));
             return;
         }
 
@@ -59,7 +59,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             sendHelpMessages(sender, "help", label);
         }
 
-        if (Case.getConfig().getConfig().getBoolean("DonateCase.AddonsHelp", true)) {
+        if (instance.api.getConfig().getConfig().getBoolean("DonateCase.AddonsHelp", true)) {
             Map<String, List<Map<String, SubCommand<CommandSender>>>> addonsMap = buildAddonsMap();
             if (DCToolsBukkit.isHasCommandForSender(sender, addonsMap)) {
                 sendAddonHelpMessages(sender, addonsMap);
@@ -68,7 +68,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
     }
 
     private static void sendHelpMessages(CommandSender sender, String path, String label) {
-        for (String string : Case.getConfig().getLang().getStringList(path)) {
+        for (String string : instance.api.getConfig().getLang().getStringList(path)) {
             DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(string, "%cmd:" + label));
         }
     }
@@ -86,20 +86,20 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
     private static void sendAddonHelpMessages(CommandSender sender, Map<String, List<Map<String, SubCommand<CommandSender>>>> addonsMap) {
         addonsMap.forEach((addon, commands) -> {
             if (!addon.equalsIgnoreCase("DonateCase") && DCToolsBukkit.isHasCommandForSender(sender, addonsMap, addon)) {
-                String addonNameFormat = Case.getConfig().getLang().getString("help-addons.format.name");
+                String addonNameFormat = instance.api.getConfig().getLang().getString("help-addons.format.name");
                 if (addonNameFormat != null && !addonNameFormat.isEmpty()) {
                     DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(addonNameFormat, "%addon:" + addon));
                 }
 
                 commands.forEach(command -> command.forEach((commandName, subCommand) -> {
                     String description = subCommand.getDescription();
-                    description = (description != null) ? DCToolsBukkit.rt(Case.getConfig().getLang().getString("help-addons.format.description"), "%description:" + description) : "";
+                    description = (description != null) ? DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("help-addons.format.description"), "%description:" + description) : "";
 
                     StringBuilder argsBuilder = compileSubCommandArgs(subCommand.getArgs());
                     String permission = subCommand.getPermission();
 
                     if (permission == null || sender.hasPermission(permission)) {
-                        DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("help-addons.format.command"),
+                        DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("help-addons.format.command"),
                                 "%cmd:" + commandName,
                                 "%args:" + argsBuilder,
                                 "%description:" + description
@@ -164,7 +164,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
      */
     @NotNull
     public static List<String> resolveSDGCompletions(String[] args) {
-        List<String> value = new ArrayList<>(Case.getConfig().getConfigCases().getCases().keySet());
+        List<String> value = new ArrayList<>(instance.api.getConfig().getConfigCases().getCases().keySet());
         List<String> list = new ArrayList<>();
         if (args.length == 1) {
             list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(px -> px.startsWith(args[0])).collect(Collectors.toList()));

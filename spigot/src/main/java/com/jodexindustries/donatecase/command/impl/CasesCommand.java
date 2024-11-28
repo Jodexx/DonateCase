@@ -37,7 +37,7 @@ public class CasesCommand implements SubCommandExecutor<CommandSender>, SubComma
         int num = 0;
         for (CaseDataBukkit data : Case.getInstance().api.getCaseManager().getMap().values()) {
             num++;
-            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("list-of-cases"),
+            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("list-of-cases"),
                     "%casename:" + data.getCaseType(), "%num:" + num,
                     "%casedisplayname:" + data.getCaseDisplayName(),
                     "%casetitle:" + data.getCaseTitle()));

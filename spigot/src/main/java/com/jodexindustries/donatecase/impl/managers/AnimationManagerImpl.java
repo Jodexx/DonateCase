@@ -146,7 +146,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
                 activeCasesByBlock.put(block, uuid);
 
                 if (animationClass != null) {
-                    ConfigurationSection settings = caseData.getAnimationSettings() != null ? caseData.getAnimationSettings() : Case.getConfig().getAnimations().getConfigurationSection(animation);
+                    ConfigurationSection settings = caseData.getAnimationSettings() != null ? caseData.getAnimationSettings() : instance.api.getConfig().getAnimations().getConfigurationSection(animation);
 
                     if (caseAnimation.isRequireSettings() && settings == null)
                         throw new IllegalArgumentException("Animation " + animation + " requires settings for starting!");

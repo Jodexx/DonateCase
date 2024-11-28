@@ -46,7 +46,7 @@ public class GiveKeyCommand implements SubCommandExecutor<CommandSender>, SubCom
             try {
                 keys = Integer.parseInt(args[2]);
             } catch (NumberFormatException e) {
-                DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("number-format-exception"), "%string:" + args[2]));
+                DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("number-format-exception"), "%string:" + args[2]));
                 return;
             }
             if (instance.api.getCaseManager().hasCaseByType(caseName)) {
@@ -54,19 +54,19 @@ public class GiveKeyCommand implements SubCommandExecutor<CommandSender>, SubCom
                 if (data == null) return;
                 Case.getInstance().api.getCaseKeyManager().addKeys(caseName, player, keys).thenAcceptAsync(status -> {
                     if(status == DatabaseStatus.COMPLETE) {
-                        instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("keys-given"),
+                        instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("keys-given"),
                                 "%player:" + player, "%key:" + keys, "%casetitle:" + data.getCaseTitle(),
                                 "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
 
                         if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
-                            instance.api.getTools().msg(target, DCToolsBukkit.rt(Case.getConfig().getLang().getString("keys-given-target"),
+                            instance.api.getTools().msg(target, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("keys-given-target"),
                                     "%player:" + player, "%key:" + keys, "%casetitle:" + data.getCaseTitle(),
                                     "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
                         }
                     }
                 });
             } else {
-                instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
+                instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
             }
         } else {
             GlobalCommand.sendHelp(sender, label);

@@ -44,19 +44,19 @@ public class CreateCommand implements SubCommandExecutor<CommandSender>, SubComm
                 String caseName = args[1];
                 if (instance.api.getCaseManager().hasCaseByType(caseType)) {
                     if (Case.hasCaseByLocation(l)) {
-                        instance.api.getTools().msg(sender, Case.getConfig().getLang().getString("case-already-created"));
+                        instance.api.getTools().msg(sender, instance.api.getConfig().getLang().getString("case-already-created"));
                     } else {
                         if (!Case.hasCaseByCustomName(caseName)) {
                             Case.saveLocation(caseName, caseType, l);
-                            instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("case-added"),
+                            instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("case-added"),
                                     "%casename:" + caseName, "%casetype:" + caseType));
                         } else {
-                            instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("case-already-exist"),
+                            instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("case-already-exist"),
                                     "%casename:" + caseName));
                         }
                     }
                 } else {
-                    instance.api.getTools().msg(sender, DCToolsBukkit.rt(Case.getConfig().getLang().getString("case-does-not-exist"),
+                    instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("case-does-not-exist"),
                             "%case:" + caseType));
                 }
             } else {
@@ -67,7 +67,7 @@ public class CreateCommand implements SubCommandExecutor<CommandSender>, SubComm
 
     @Override
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        List<String> list = new ArrayList<>(Case.getConfig().getConfigCases().getCases().keySet());
+        List<String> list = new ArrayList<>(instance.api.getConfig().getConfigCases().getCases().keySet());
         if (args.length >= 2) {
             return new ArrayList<>();
         }

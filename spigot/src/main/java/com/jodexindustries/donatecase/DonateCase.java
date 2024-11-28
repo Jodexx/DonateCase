@@ -13,7 +13,6 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
-import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.holograms.HologramManager;
 import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
@@ -80,8 +79,6 @@ public class DonateCase extends JavaPlugin {
 
     public boolean usePackets = false;
 
-    private boolean spawnProtectionDisabled = false;
-
     static {
         DCAPIBukkit.register(DCAPIBukkitImpl.class);
     }
@@ -89,7 +86,6 @@ public class DonateCase extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-
         api.getAddonManager().loadAddons();
     }
 
@@ -97,7 +93,9 @@ public class DonateCase extends JavaPlugin {
     public void onEnable() {
         long time = System.currentTimeMillis();
 
-        loadConfig();
+        config = new ConfigImpl(this);
+        config.load();
+
         database = new CaseDatabaseImpl<>(api.getCaseManager(), getLogger());
 
         loadDatabase();
@@ -128,6 +126,8 @@ public class DonateCase extends JavaPlugin {
 
         loadUpdater();
         loadMetrics();
+
+        disableSpawnProtection();
 
         api.getAddonManager().enableAddons(PowerReason.DONATE_CASE);
 
@@ -228,17 +228,6 @@ public class DonateCase extends JavaPlugin {
                 }
             });
         }
-    }
-
-    public void loadConfig() {
-        config = new ConfigImpl(this);
-
-        config.getConverter().convertData();
-
-        disableSpawnProtection();
-
-        DonateCaseReloadEvent reloadEvent = new DonateCaseReloadEvent(this, DonateCaseReloadEvent.Type.CONFIG);
-        getServer().getPluginManager().callEvent(reloadEvent);
     }
 
     public void loadDatabase() {
@@ -423,6 +412,9 @@ public class DonateCase extends JavaPlugin {
     }
 
     public void loadHolograms() {
+        if(hologramManager == null) return;
+
+        hologramManager.removeAllHolograms();
         ConfigurationSection section = config.getCases().getConfigurationSection("DonateCase.Cases");
         if (section == null || section.getKeys(false).isEmpty()) return;
         for (String caseName : section.getKeys(false)) {
@@ -449,9 +441,8 @@ public class DonateCase extends JavaPlugin {
 
     private void disableSpawnProtection() {
         if (config.getConfig().getBoolean("DonateCase.DisableSpawnProtection", false)) {
-            if (getServer().getSpawnRadius() > 0 && !spawnProtectionDisabled) {
+            if (getServer().getSpawnRadius() > 0) {
                 getServer().setSpawnRadius(0);
-                spawnProtectionDisabled = true;
                 Logger.log("&aSpawn protection disabled!");
             }
         }

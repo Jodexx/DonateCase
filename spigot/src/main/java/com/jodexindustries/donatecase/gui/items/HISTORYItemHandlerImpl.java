@@ -48,7 +48,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
         CaseDataMaterial<ItemStack> material = item.getMaterial();
 
         if (!handled) {
-            YamlConfiguration config = Case.getConfig().getConfigCases().getCase(caseData.getCaseType()).getSecond();
+            YamlConfiguration config = instance.api.getConfig().getConfigCases().getCase(caseData.getCaseType()).getSecond();
             String path = "case.Gui.Items." + item.getItemName() + ".HistoryNotFound";
             ConfigurationSection section = config.getConfigurationSection(path);
             if (section != null) {
@@ -111,7 +111,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
 
     private String[] getTemplate(CaseDataBukkit historyCaseData, CaseDataHistory data, CaseDataItem<CaseDataMaterialBukkit, ItemStack> historyItem) {
 
-        DateFormat formatter = new SimpleDateFormat(Case.getConfig().getConfig().getString("DonateCase.DateFormat", "dd.MM HH:mm:ss"));
+        DateFormat formatter = new SimpleDateFormat(instance.api.getConfig().getConfig().getString("DonateCase.DateFormat", "dd.MM HH:mm:ss"));
         String dateFormatted = formatter.format(new Date(data.getTime()));
         String group = data.getGroup();
         String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "group_not_found";

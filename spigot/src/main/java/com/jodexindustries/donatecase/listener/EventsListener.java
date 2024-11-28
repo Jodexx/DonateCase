@@ -47,11 +47,11 @@ public class EventsListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onAdminJoined(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if (Case.getConfig().getConfig().getBoolean("DonateCase.UpdateChecker")) {
+        if (instance.api.getConfig().getConfig().getBoolean("DonateCase.UpdateChecker")) {
             if (p.hasPermission("donatecase.admin")) {
                 new UpdateChecker(Case.getInstance(), 106701).getVersion((version) -> {
                     if (DCTools.getPluginVersion(Case.getInstance().getDescription().getVersion()) < DCTools.getPluginVersion(version)) {
-                        instance.api.getTools().msg(p, DCToolsBukkit.rt(Case.getConfig().getLang().getString("new-update"), "%version:" + version));
+                        instance.api.getTools().msg(p, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("new-update"), "%version:" + version));
                     }
                 });
             }
@@ -111,7 +111,7 @@ public class EventsListener implements Listener {
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (!event.isCancelled()) {
                     if (instance.api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
-                        instance.api.getTools().msg(p, Case.getConfig().getLang().getString("case-opens"));
+                        instance.api.getTools().msg(p, instance.api.getConfig().getLang().getString("case-opens"));
                         return;
                     }
 
@@ -145,7 +145,7 @@ public class EventsListener implements Listener {
         Location loc = e.getBlock().getLocation();
         if (Case.hasCaseByLocation(loc)) {
             e.setCancelled(true);
-            instance.api.getTools().msg(e.getPlayer(), Case.getConfig().getLang().getString("case-destroy-disallow"));
+            instance.api.getTools().msg(e.getPlayer(), instance.api.getConfig().getLang().getString("case-destroy-disallow"));
         }
 
     }

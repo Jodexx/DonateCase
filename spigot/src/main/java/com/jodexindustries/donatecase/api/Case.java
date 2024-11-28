@@ -2,14 +2,12 @@ package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.config.ConfigImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.jodexindustries.donatecase.DonateCase.*;
@@ -40,9 +38,9 @@ public class Case {
         }
         if(instance.hologramManager != null && (caseData != null && caseData.getHologram().isEnabled())) instance.hologramManager.createHologram(location.getBlock(), caseData);
         String tempLocation = location.getWorld().getName() + ";" + location.getX() + ";" + location.getY() + ";" + location.getZ() + ";" + location.getPitch() + ";" + location.getYaw();
-        getConfig().getCases().set("DonateCase.Cases." + caseName + ".location", tempLocation);
-        getConfig().getCases().set("DonateCase.Cases." + caseName + ".type", type);
-        getConfig().saveCases();
+        instance.config.getCases().set("DonateCase.Cases." + caseName + ".location", tempLocation);
+        instance.config.getCases().set("DonateCase.Cases." + caseName + ".type", type);
+        instance.config.saveCases();
     }
 
     /**
@@ -50,8 +48,8 @@ public class Case {
      * @param name Case name
      */
     public static void deleteCaseByName(String name) {
-        getConfig().getCases().set("DonateCase.Cases." + name, null);
-        getConfig().saveCases();
+        instance.config.getCases().set("DonateCase.Cases." + name, null);
+        instance.config.saveCases();
     }
 
     /**
@@ -71,7 +69,7 @@ public class Case {
      */
     private static <T> T getCaseInfoByLocation(Location loc, String infoType, Class<T> clazz) {
         T object = null;
-        ConfigurationSection casesSection = getConfig().getCases().getConfigurationSection("DonateCase.Cases");
+        ConfigurationSection casesSection = instance.config.getCases().getConfigurationSection("DonateCase.Cases");
         if (casesSection == null) return null;
 
         for (String name : casesSection.getValues(false).keySet()) {
@@ -143,7 +141,7 @@ public class Case {
      * @return true - if case created on the server
      */
     public static boolean hasCaseByCustomName(String name) {
-        ConfigurationSection section = getConfig().getCases().getConfigurationSection("DonateCase.Cases");
+        ConfigurationSection section = instance.config.getCases().getConfigurationSection("DonateCase.Cases");
         if(section == null) return false;
 
         return section.contains(name);
@@ -157,15 +155,6 @@ public class Case {
         return instance;
     }
 
-    /** Get plugin configuration manager
-     * @return configuration manager instance
-     * @since 2.2.3.8
-     */
-    @NotNull
-    public static ConfigImpl getConfig() {
-        return getInstance().config;
-    }
-
     /**
      * Get case location by custom name (/dc create (type) (customname)
      * @param name Case custom name
@@ -173,7 +162,7 @@ public class Case {
      */
     @Nullable
     public static Location getCaseLocationByCustomName(String name) {
-        String location = getConfig().getCases().getString("DonateCase.Cases." + name + ".location");
+        String location = instance.config.getCases().getString("DonateCase.Cases." + name + ".location");
         if (location == null) return null;
         String[] worldLocation = location.split(";");
         World world = Bukkit.getWorld(worldLocation[0]);

@@ -185,7 +185,7 @@ public class CaseLoader {
         List<String> lore = DCToolsBukkit.rc(itemSection.getStringList("Lore"));
         boolean enchanted = itemSection.getBoolean("Enchanted");
         int modelData = itemSection.getInt("ModelData", -1);
-        String[] rgb = DCToolsBukkit.parseRGB(itemSection.getString("Rgb"));
+        String[] rgb = DCToolsBukkit.parseRGB(itemSection.getString("Rgb", ""));
 
         ItemStack itemStack = null;
         if(withItemStack) itemStack = plugin.api.getTools().loadCaseItem(id);

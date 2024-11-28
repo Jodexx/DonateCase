@@ -46,7 +46,7 @@ public class CaseDataMaterialBukkit extends CaseDataMaterial<ItemStack> {
                 meta.setCustomModelData(modelData);
                 if (enchanted) meta.addEnchant(Enchantment.LURE, 1, true);
 
-                if (rgb != null && meta instanceof LeatherArmorMeta) {
+                if (rgb != null && rgb.length >= 3 && meta instanceof LeatherArmorMeta) {
                     LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) meta;
                     leatherArmorMeta.setColor(DCToolsBukkit.fromRGBString(rgb, Color.WHITE));
                 }
