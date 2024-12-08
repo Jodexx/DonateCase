@@ -1,12 +1,11 @@
 package com.jodexindustries.dcprizepreview.config;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
+import com.jodexindustries.donatecase.api.addon.external.ExternalAddon;
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddon;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,17 +19,16 @@ public class Config {
     private final Addon addon;
     public final Map<String, CasePreview> previewMap = new HashMap<>();
 
-    public Config(InternalAddon addon) {
+    public Config(Addon addon) {
         this.addon = addon;
         configFile = new File(addon.getDataFolder(), "config.yml");
-        if(!configFile.exists()) addon.saveResource("config.yml", false);
-        reload();
-    }
-
-    public Config(Plugin plugin) {
-        this.addon = new ExternalJavaAddon(plugin);
-        configFile = new File(plugin.getDataFolder(), "config.yml");
-        if(!configFile.exists()) plugin.saveResource("config.yml", false);
+        if(!configFile.exists()) {
+            if(addon instanceof InternalAddon) {
+                ((InternalAddon) addon).saveResource("config.yml", false);
+            } else if(addon instanceof ExternalAddon) {
+                ((ExternalAddon) addon).getPlugin().saveResource("config.yml", false);
+            }
+        }
         reload();
     }
 

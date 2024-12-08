@@ -1,12 +1,15 @@
 package com.jodexindustries.dcphysicalkey.bootstrap;
 
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddonBukkit;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
+import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 
-public class MainAddon extends InternalJavaAddonBukkit implements Main {
+public class MainAddon extends InternalJavaAddon implements Main {
     private Bootstrap bootstrap;
+    private DCAPIBukkit api;
 
     @Override
     public void onEnable() {
+        api = DCAPIBukkit.get(this);
         bootstrap = new Bootstrap(this);
         bootstrap.load();
     }
@@ -16,4 +19,8 @@ public class MainAddon extends InternalJavaAddonBukkit implements Main {
         bootstrap.unload();
     }
 
+    @Override
+    public DCAPIBukkit getDCAPI() {
+        return api;
+    }
 }

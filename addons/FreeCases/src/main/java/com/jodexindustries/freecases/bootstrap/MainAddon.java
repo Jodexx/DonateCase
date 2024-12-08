@@ -1,13 +1,16 @@
 package com.jodexindustries.freecases.bootstrap;
 
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddonBukkit;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
+import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 import com.jodexindustries.freecases.utils.Tools;
 
-public final class MainAddon extends InternalJavaAddonBukkit implements Main {
+public final class MainAddon extends InternalJavaAddon implements Main {
     private Tools t;
+    private DCAPIBukkit api;
 
     @Override
     public void onEnable() {
+        api = DCAPIBukkit.get(this);
         t = new Tools(this);
         t.load();
     }
@@ -15,5 +18,10 @@ public final class MainAddon extends InternalJavaAddonBukkit implements Main {
     @Override
     public void onDisable() {
         t.unload();
+    }
+
+    @Override
+    public DCAPIBukkit getDCAPI() {
+        return api;
     }
 }

@@ -3,31 +3,33 @@ package com.jodexindustries.dcprizepreview.bootstrap;
 import com.jodexindustries.dcprizepreview.config.Config;
 import com.jodexindustries.dcprizepreview.gui.EventListener;
 import com.jodexindustries.donatecase.api.DCAPIBukkit;
-import com.jodexindustries.donatecase.api.addon.external.ExternalAddon;
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddonBukkit;
+import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
+import com.jodexindustries.donatecase.api.addon.internal.InternalAddon;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class Loader {
     private final Plugin plugin;
-    private InternalJavaAddonBukkit addon;
+    private final DCAPIBukkit api;
+    private final Addon addon;
     private EventListener listener;
-    private DCAPIBukkit api;
 
-    public Loader(JavaPlugin plugin) {
+    public Loader(Plugin plugin) {
+        this.addon = new ExternalJavaAddon(plugin);
+        this.api = DCAPIBukkit.get(plugin);
         this.plugin = plugin;
     }
 
-    public Loader(InternalJavaAddonBukkit addon) {
+    public Loader(InternalAddon addon) {
         this.addon = addon;
-        this.plugin = ((ExternalAddon) addon.getDonateCase()).getPlugin();
+        this.api = DCAPIBukkit.get(addon);
+        this.plugin = api.getDonateCase();
     }
 
     public void enable() {
-        Config config = addon != null ? new Config(addon) : new Config(plugin);
-        api = addon != null ? DCAPIBukkit.get(addon) : DCAPIBukkit.get(plugin);
+        Config config = new Config(addon);
         listener = new EventListener(config, api);
         Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
     }
