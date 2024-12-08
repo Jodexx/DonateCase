@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.command;
 
+import com.jodexindustries.donatecase.BuildConstants;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
@@ -51,7 +52,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt("&aDonateCase " + Case.getInstance().getDescription().getVersion() + " &7by &c_Jodex__"));
+        DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt("&aDonateCase &7v&6" + Case.getInstance().getDescription().getVersion() + " &7(&eAPI &7v&6" + BuildConstants.api + "&7) by &c_Jodex__"));
 
         if (!sender.hasPermission("donatecase.mod")) {
             sendHelpMessages(sender, "help-player", label);
