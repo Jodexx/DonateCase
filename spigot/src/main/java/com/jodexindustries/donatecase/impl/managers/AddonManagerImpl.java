@@ -23,7 +23,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import static com.jodexindustries.donatecase.DonateCase.instance;
-import static com.jodexindustries.donatecase.api.tools.DCTools.getPluginVersion;
 
 /**
  * Class for managing add-ons, enabling and disabling.
@@ -119,15 +118,6 @@ public class AddonManagerImpl implements AddonManager {
                     loader.close();
                 } catch (IOException ex) {
                     addon.getLogger().log(Level.SEVERE, e.getLocalizedMessage(), e.getCause());
-                }
-                if (e.getCause() instanceof ClassNotFoundException) {
-                    ClassNotFoundException error = (ClassNotFoundException) e.getCause();
-                    if (error.getLocalizedMessage().contains("JavaAddon")) {
-                        addon.getLogger().log(Level.SEVERE,
-                                "Error occurred while enabling addon " + description.getName() + " v" + description.getVersion() +
-                                        "\nIncompatible DonateCaseAPI! Contact with developer or update addon!", e);
-                        return false;
-                    }
                 }
                 addon.getLogger().log(Level.SEVERE,
                         "Error occurred while enabling addon " + description.getName() + " v" + description.getVersion(), e);
