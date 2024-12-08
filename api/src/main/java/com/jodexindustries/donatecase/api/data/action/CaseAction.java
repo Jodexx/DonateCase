@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Class for custom actions storage
+ * @param <P> the type of Player
  */
 public class CaseAction<P> implements ActionExecutor<P> {
     private final ActionExecutor<P> executor;

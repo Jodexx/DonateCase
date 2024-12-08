@@ -19,9 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 public class GUITypedItemManagerImpl implements GUITypedItemManager<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> {
-    /**
-     * Map of all registered items
-     */
     private final static Map<String, GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent>> registeredItems = new HashMap<>();
     private final Addon addon;
 
@@ -29,7 +26,6 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager<CaseDataMate
      * Default constructor
      *
      * @param addon An addon that will manage items
-     * @since 2.2.4.9
      */
     public GUITypedItemManagerImpl(Addon addon) {
         this.addon = addon;

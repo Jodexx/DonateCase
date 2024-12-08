@@ -9,8 +9,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Utility interface for the DonateCase system, providing tools for parsing, validation, and manipulation.
+ */
 public interface DCTools {
 
+    /**
+     * Extracts the local placeholder from a string, delimited by `%`.
+     *
+     * @param string the input string containing placeholders in the format `%placeholder%`.
+     * @return the extracted placeholder without `%` symbols, or "null" if no placeholder is found.
+     */
     static String getLocalPlaceholder(String string) {
         Pattern pattern = Pattern.compile("%(.*?)%");
         Matcher matcher = pattern.matcher(string);
@@ -24,15 +33,16 @@ public interface DCTools {
     }
 
     /**
-     * Parse version from string
-     * @param version String, to be parsed
-     * @return numbered version.
-     * <br>
-     * Example: <br>
-     * Input text: <code>2.2.2</code> <br>
-     * Output: <code>2220</code> <br>
-     * Input text: <code>2.2.2.2</code> <br>
-     * Output: <code>2222</code>
+     * Parses a plugin version string into a numbered version.
+     *
+     * @param version the version string to be parsed (e.g., "2.2.2").
+     * @return the numeric representation of the version (e.g., "2220").
+     * <p>
+     * Examples:
+     * <ul>
+     *     <li>Input: <code>"2.2.2"</code> → Output: <code>2220</code></li>
+     *     <li>Input: <code>"2.2.2.2"</code> → Output: <code>2222</code></li>
+     * </ul>
      */
     static int getPluginVersion(String version) {
         version = version.replaceAll("\\.", "");
@@ -44,9 +54,10 @@ public interface DCTools {
     }
 
     /**
-     * Extract cooldown from action string
-     * @param action Action string. Format [cooldown:int]
-     * @return cooldown
+     * Extracts a cooldown value from an action string.
+     *
+     * @param action the action string containing a cooldown in the format <code>[cooldown:int]</code>.
+     * @return the cooldown value, or 0 if no cooldown is specified.
      */
     static int extractCooldown(String action) {
         Pattern pattern = Pattern.compile("\\[cooldown:(.*?)]");
@@ -58,13 +69,16 @@ public interface DCTools {
     }
 
     /**
-     * Get sorted history data by case
-     * @param historyData HistoryData from all cases (or not all)
-     * @param caseType type of case for filtering
-     * @return list of case HistoryData
+     * Sorts and filters case history data based on a specific case type.
+     *
+     * @param historyData the list of {@link CaseDataHistory} objects to sort and filter.
+     * @param caseType    the type of case to filter by.
+     * @return a sorted list of {@link CaseDataHistory}, filtered by the specified case type,
+     * sorted in descending order of time.
      */
     static List<CaseDataHistory> sortHistoryDataByCase(List<CaseDataHistory> historyData, String caseType) {
-        return historyData.stream().filter(Objects::nonNull)
+        return historyData.stream()
+                .filter(Objects::nonNull)
                 .filter(data -> data.getCaseType().equals(caseType))
                 .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
                 .collect(Collectors.toList());

@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when keys are issued or keys are taken away from a player
- * @since 2.2.6.1
  */
 public class KeysTransactionEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

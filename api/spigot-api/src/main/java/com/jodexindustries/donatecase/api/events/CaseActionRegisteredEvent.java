@@ -26,7 +26,6 @@ public class CaseActionRegisteredEvent extends Event {
      * Get case action
      *
      * @return case action
-     * @since 2.2.5.8
      */
     public CaseAction<Player> getCaseAction() {
         return caseAction;

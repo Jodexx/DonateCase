@@ -49,7 +49,6 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
      * Get case data
      *
      * @return case data
-     * @since 2.2.5.8
      */
     @NotNull
     public CaseDataBukkit getCaseData() {
@@ -90,16 +89,10 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
         this.cancel = cancel;
     }
 
-    /**
-     * @since 2.2.6.6
-     */
     public boolean isIgnoreKeys() {
         return ignoreKeys;
     }
 
-    /**
-     * @since 2.2.6.6
-     */
     public void setIgnoreKeys(boolean ignoreKeys) {
         this.ignoreKeys = ignoreKeys;
     }

@@ -221,13 +221,6 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         saveOpenInfo(caseData, player, item, choice);
     }
 
-    /**
-     * Animation end method for custom animations is called to completely end the animation
-     * @param item Item data
-     * @param caseData Case data
-     * @param player Player who opened (offline player)
-     * @param uuid Active case uuid
-     */
     @Override
     public void animationEnd(CaseDataBukkit caseData, Player player, UUID uuid, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item) {
         ActiveCase<Block> activeCase = activeCases.get(uuid);

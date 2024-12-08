@@ -12,6 +12,8 @@ import java.util.Map;
  * registration, retrieval, and management of GUI elements.
  *
  * @param <M> The type extending {@code CaseDataMaterial} associated with GUI items in this manager
+ * @param <G>        The type representing a GUI component for cases.
+ * @param <E>        The type representing GUI click events.
  */
 public interface GUITypedItemManager<M extends CCloneable, G, E> {
 

@@ -238,7 +238,6 @@ public class AddonManagerImpl implements AddonManager {
      * Gets "addons" folder
      *
      * @return The folder
-     * @since 2.2.4.3
      */
     @NotNull
     public File getAddonsFolder() {
@@ -250,7 +249,6 @@ public class AddonManagerImpl implements AddonManager {
      *
      * @param file Addon jar file
      * @return InternalAddon ClassLoader
-     * @since 2.2.4.3
      */
     @Nullable
     public static InternalAddonClassLoader getAddonClassLoader(File file) {

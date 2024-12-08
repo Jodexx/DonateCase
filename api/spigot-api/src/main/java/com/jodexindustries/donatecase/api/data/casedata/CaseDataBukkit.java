@@ -40,7 +40,6 @@ public class CaseDataBukkit extends CaseData<CaseDataMaterialBukkit, ItemStack> 
      * Gets animation settings section
      *
      * @return settings
-     * @since 2.2.5.9
      */
     @Nullable
     public ConfigurationSection getAnimationSettings() {
@@ -51,7 +50,6 @@ public class CaseDataBukkit extends CaseData<CaseDataMaterialBukkit, ItemStack> 
      * Sets animation settings section
      *
      * @param animationSettings animation settings section
-     * @since 2.2.5.9
      */
     public void setAnimationSettings(ConfigurationSection animationSettings) {
         this.animationSettings = animationSettings;

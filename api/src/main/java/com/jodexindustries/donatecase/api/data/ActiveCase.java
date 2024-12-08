@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api.data;
 
 /**
  * Class for saving active cases data
+ * @param <B> the type of Block
  */
 public class ActiveCase<B> {
     /**
@@ -38,7 +39,6 @@ public class ActiveCase<B> {
      * Get case block
      *
      * @return case block
-     * @since 2.2.5.8
      */
     public B getBlock() {
         return block;

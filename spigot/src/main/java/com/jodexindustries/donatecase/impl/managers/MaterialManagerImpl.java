@@ -24,7 +24,6 @@ public class MaterialManagerImpl implements MaterialManager<ItemStack> {
      * Default constructor
      *
      * @param addon An addon that will manage materials
-     * @since 2.2.4.8
      */
     public MaterialManagerImpl(Addon addon) {
         this.addon = addon;

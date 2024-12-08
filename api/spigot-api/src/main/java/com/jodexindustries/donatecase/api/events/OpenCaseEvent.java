@@ -49,7 +49,6 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
     /**
      * Get case data
      * @return case data
-     * @since 2.2.5.8
      */
     @NotNull
     public CaseDataBukkit getCaseData() {

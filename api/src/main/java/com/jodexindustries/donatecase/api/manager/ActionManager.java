@@ -9,74 +9,83 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Interface for managing executable actions, allowing for registration, retrieval, and unregistration of actions.
+ * Interface for managing executable actions within the Donate Case system.
+ * Provides methods for registering, unregistering, retrieving, and executing actions.
  *
- * @param <Player> The type representing a player entity
+ * @param <P> The type representing a player entity
  */
-public interface ActionManager<Player> {
+public interface ActionManager<P> {
 
     /**
-     * Registers an action with a specified name, executor, and description.
+     * Registers an action with the specified name, executor, and description.
      *
-     * @param name           the name of the action, e.g., "[command]"
-     * @param actionExecutor the executor responsible for executing the action
-     * @param description    a description of the action's functionality
+     * @param name           the unique name of the action (e.g., "[command]")
+     * @param actionExecutor the executor responsible for the logic of the action
+     * @param description    a textual description of the action's functionality
+     * @return True if the registration was successful, false otherwise.
      */
-    void registerAction(String name, ActionExecutor<Player> actionExecutor, String description);
+    boolean registerAction(@NotNull String name, @NotNull ActionExecutor<P> actionExecutor, @NotNull String description);
 
     /**
-     * Unregisters a specific action by name.
+     * Unregisters an action by its name.
      *
-     * @param name the name of the action to unregister
+     * @param name the unique name of the action to unregister
      */
-    void unregisterAction(String name);
+    void unregisterAction(@NotNull String name);
 
     /**
-     * Unregisters all registered actions.
+     * Unregisters all currently registered actions.
      */
     void unregisterActions();
 
     /**
-     * Checks if a specific action is registered.
+     * Checks whether an action with the specified name is registered.
      *
      * @param name the name of the action to check
-     * @return true if the action is registered, false otherwise
+     * @return {@code true} if the action is registered, {@code false} otherwise
      */
-    boolean isRegistered(String name);
+    boolean isRegistered(@NotNull String name);
 
     /**
      * Retrieves a registered action by its name.
      *
-     * @param action the name of the action to retrieve
-     * @return the {@code CaseAction} instance if found, or null otherwise
+     * @param name the name of the action to retrieve
+     * @return the {@code CaseAction} instance if found, or {@code null} if not found
      */
     @Nullable
-    CaseAction<Player> getRegisteredAction(@NotNull String action);
-
-    @NotNull
-    Map<String, CaseAction<Player>> getRegisteredActions();
+    CaseAction<P> getRegisteredAction(@NotNull String name);
 
     /**
-     * Retrieves a registered action by matching the beginning of a string.
+     * Retrieves all currently registered actions.
      *
-     * @param string the string used to match the start of an action name
-     * @return the name of the matched action if found, or null otherwise
+     * @return a map of action names to their respective {@code CaseAction} instances
+     */
+    @NotNull
+    Map<String, CaseAction<P>> getRegisteredActions();
+
+    /**
+     * Retrieves the name of a registered action that matches the beginning of a given string.
+     *
+     * @param prefix the prefix string to match against action names
+     * @return the name of the matching action, or {@code null} if no match is found
      */
     @Nullable
-    String getByStart(@NotNull final String string);
+    String getByStart(@NotNull String prefix);
 
     /**
-     * Execute action with specific cooldown
-     * @param player Player, who opened case (maybe another reason)
-     * @param action Action to be executed
-     * @param cooldown Cooldown in seconds
+     * Executes a specific action for a player, applying a cooldown.
+     *
+     * @param player   the player for whom the action is executed
+     * @param action   the name of the action to execute
+     * @param cooldown the cooldown duration in seconds
      */
-    void executeAction(Player player, String action, int cooldown);
+    void executeAction(@NotNull P player, @NotNull String action, int cooldown);
 
     /**
-     * Execute actions
-     * @param player Player, who opened case (maybe another reason)
-     * @param actions List of actions
+     * Executes a list of actions for a player.
+     *
+     * @param player  the player for whom the actions are executed
+     * @param actions the list of action names to execute
      */
-    void executeActions(Player player, List<String> actions);
+    void executeActions(@NotNull P player, @NotNull List<String> actions);
 }

@@ -182,7 +182,6 @@ public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
      * Get case type
      *
      * @return case type
-     * @since 2.2.1.8
      */
     @NotNull
     public String getCaseType() {
@@ -311,7 +310,6 @@ public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
      * Gets actions to be performed if a player tries to open a case without keys
      *
      * @return List of actions
-     * @since 2.2.4.3
      */
     public List<String> getNoKeyActions() {
         return noKeyActions;
@@ -321,7 +319,6 @@ public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
      * Set actions to be performed if a player tries to open a case without keys
      *
      * @param noKeyActions List of actions
-     * @since 2.2.4.3
      */
     public void setNoKeyActions(List<String> noKeyActions) {
         this.noKeyActions = noKeyActions;

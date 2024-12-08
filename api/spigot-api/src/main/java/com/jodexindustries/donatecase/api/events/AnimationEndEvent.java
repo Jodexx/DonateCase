@@ -50,7 +50,6 @@ public class AnimationEndEvent extends Event {
      * Get case block
      *
      * @return case block
-     * @since 2.2.5.8
      */
     public Block getBlock() {
         return block;

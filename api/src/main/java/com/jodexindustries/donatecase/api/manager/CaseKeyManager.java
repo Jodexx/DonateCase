@@ -42,7 +42,9 @@ public interface CaseKeyManager {
      * @return Completable future of completes
      * @see #modifyKeys(String, String, int)
      */
-    CompletableFuture<DatabaseStatus> addKeys(String caseType, String player, int keys);
+    default CompletableFuture<DatabaseStatus> addKeys(String caseType, String player, int keys) {
+        return modifyKeys(caseType, player, keys);
+    }
 
     /**
      * Delete case keys for a specific player (async)
@@ -53,7 +55,9 @@ public interface CaseKeyManager {
      * @return Completable future of completes
      * @see #modifyKeys(String, String, int)
      */
-    CompletableFuture<DatabaseStatus> removeKeys(String caseType, String player, int keys);
+    default CompletableFuture<DatabaseStatus> removeKeys(String caseType, String player, int keys) {
+        return modifyKeys(caseType, player, -keys);
+    }
 
     CompletableFuture<DatabaseStatus> removeAllKeys();
 

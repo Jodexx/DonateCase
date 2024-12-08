@@ -4,9 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for implement subcommand executor
- * @since 2.2.4.5
  */
 public interface SubCommandExecutor<S> {
+
     /**
      * Executes the given sub command
      *

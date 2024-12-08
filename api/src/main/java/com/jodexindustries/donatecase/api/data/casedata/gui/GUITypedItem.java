@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
  * Class for creating GUI typed item
  * @see TypedItemHandler
  * @see TypedItemClickHandler
- * @since 2.2.4.9
  */
 public class GUITypedItem<M extends CCloneable, G, E> {
     private final String id;

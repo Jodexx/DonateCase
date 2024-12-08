@@ -10,9 +10,9 @@ public class InternalAddonLogger extends Logger {
     private final String addonName;
 
     /**
-     * Creates a new PluginLogger that extracts the name from a plugin.
+     * Creates a new AddonLogger that extracts the name from an addon
      *
-     * @param context A reference to the plugin
+     * @param context A reference to the addon
      */
     public InternalAddonLogger(@NotNull InternalAddon context) {
         super(context.getDonateCase().getName(), null);

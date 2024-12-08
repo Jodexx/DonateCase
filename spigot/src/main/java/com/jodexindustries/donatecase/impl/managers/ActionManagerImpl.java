@@ -21,36 +21,8 @@ import java.util.Map;
 
 import static com.jodexindustries.donatecase.DonateCase.instance;
 
-/**
- * Class for managing executable actions. <br>
- * Used in case configuration like this:
- * <pre>{@code
- *       Actions: # GiveType: ONE
- *         - '[command] lp user %player% parent set %group%'
- *         - '[title] &aCongratulations!;&5you won %groupdisplayname%'
- *         - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
- *       AlternativeActions: # GiveType: any, it doesn't matter; is performed if the group is lower in rank than the player's group in LevelGroups
- *         - "[message] &cI'm sorry %player%, but you have group a stronger group than you won:("
- *       RandomActions: # GiveType: RANDOM
- *         first:
- *           Chance: 50
- *           DisplayName: "something" # displayname for historydata displaying
- *           Actions:
- *             - '[command] say something'
- *             - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
- *         second:
- *           Chance: 50
- *           Actions:
- *             - '[command] say something'
- *             - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
- * }</pre>
- *
- * Default actions like: {@code [command], [broadcast], [message], [title], etc.} loading here.
- */
 public class ActionManagerImpl implements ActionManager<Player> {
-    /**
-     * Map of all registered actions
-     */
+
     private static final Map<String, CaseAction<Player>> registeredActions = new HashMap<>();
     private final Addon addon;
 
@@ -63,32 +35,22 @@ public class ActionManagerImpl implements ActionManager<Player> {
         this.addon = addon;
     }
 
-    /**
-     * Register action
-     *
-     * @param name           Action name, like: "[command]"
-     * @param actionExecutor Action executor
-     * @param description    Action description
-     */
     @Override
-    public void registerAction(String name, ActionExecutor<Player> actionExecutor, String description) {
+    public boolean registerAction(@NotNull String name, @NotNull ActionExecutor<Player> actionExecutor, @NotNull String description) {
         if (!isRegistered(name)) {
             CaseAction<Player> caseAction = new CaseAction<>(actionExecutor, addon, name, description);
             registeredActions.put(name, caseAction);
             CaseActionRegisteredEvent event = new CaseActionRegisteredEvent(caseAction);
             Bukkit.getPluginManager().callEvent(event);
+            return true;
         } else {
             addon.getLogger().warning("CaseAction with name " + name + " already registered!");
         }
+        return false;
     }
 
-    /**
-     * Unregister action
-     *
-     * @param name Action name
-     */
     @Override
-    public void unregisterAction(String name) {
+    public void unregisterAction(@NotNull String name) {
         if (isRegistered(name)) {
             registeredActions.remove(name);
             CaseActionUnregisteredEvent event = new CaseActionUnregisteredEvent(name);
@@ -98,32 +60,17 @@ public class ActionManagerImpl implements ActionManager<Player> {
         }
     }
 
-    /**
-     * Unregister all actions
-     */
     @Override
     public void unregisterActions() {
         List<String> list = new ArrayList<>(registeredActions.keySet());
         list.forEach(this::unregisterAction);
     }
 
-    /**
-     * Check for action registration
-     *
-     * @param name action name
-     * @return boolean
-     */
     @Override
-    public boolean isRegistered(String name) {
+    public boolean isRegistered(@NotNull String name) {
         return registeredActions.containsKey(name);
     }
 
-    /**
-     * Get registered action
-     *
-     * @param action CaseAction name
-     * @return CaseAction class instance
-     */
     @Nullable
     @Override
     public CaseAction<Player> getRegisteredAction(@NotNull String action) {
@@ -135,19 +82,13 @@ public class ActionManagerImpl implements ActionManager<Player> {
         return registeredActions;
     }
 
-    /**
-     * Get registered action by string start
-     *
-     * @param string String to be parsed
-     * @return Case action name
-     */
     @Override
     public @Nullable String getByStart(@NotNull final String string) {
         return registeredActions.keySet().stream().filter(string::startsWith).findFirst().orElse(null);
     }
 
     @Override
-    public void executeAction(Player player, String action, int cooldown) {
+    public void executeAction(@NotNull Player player, @NotNull String action, int cooldown) {
         String temp = instance.api.getActionManager().getByStart(action);
         if(temp == null) return;
 
@@ -160,7 +101,7 @@ public class ActionManagerImpl implements ActionManager<Player> {
     }
 
     @Override
-    public void executeActions(Player player, List<String> actions) {
+    public void executeActions(@NotNull Player player, @NotNull List<String> actions) {
         for (String action : actions) {
 
             action = DCToolsBukkit.rc(Case.getInstance().papi.setPlaceholders(player, action));

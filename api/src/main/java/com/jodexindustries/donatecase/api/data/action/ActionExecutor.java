@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface for registering case actions
+ * @param <P> the type of Player
  */
 public interface ActionExecutor<P> {
 

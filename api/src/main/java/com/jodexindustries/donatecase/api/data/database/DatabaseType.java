@@ -1,9 +1,16 @@
 package com.jodexindustries.donatecase.api.data.database;
 
 /**
- * @since 2.2.6.7
+ * Enum representing the types of databases supported by the DonateCase
  */
 public enum DatabaseType {
+    /**
+     * MySQL database type.
+     */
     MYSQL,
+
+    /**
+     * SQLite database type.
+     */
     SQLITE
 }

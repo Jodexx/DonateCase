@@ -17,9 +17,15 @@ public class InternalAddonDescription {
     private final String mainClass;
     private final String version;
     private final String apiVersion;
-    private final List<String> libraries;
     private final List<String> authors;
 
+    /**
+     * Constructor to load addon description from a JAR file.
+     *
+     * @param file The addon JAR file.
+     * @throws IOException If an I/O error occurs while reading the file.
+     * @throws InvalidAddonException If the addon does not contain a valid addon.yml descriptor.
+     */
     public InternalAddonDescription(File file) throws IOException, InvalidAddonException {
         JarFile jarFile = new JarFile(file);
         JarEntry entry = jarFile.getJarEntry("addon.yml");
@@ -46,36 +52,40 @@ public class InternalAddonDescription {
             }
         }
 
-        libraries = new ArrayList<>();
-
-        if (data.get("libraries") != null) {
-            for (Object o : (Iterable<?>) data.get("libraries")) {
-                libraries.add(o.toString());
-            }
-        }
         jarFile.close();
     }
 
+    /**
+     * @return The version of the addon.
+     */
     public String getVersion() {
         return version;
     }
 
+    /**
+     * @return The fully qualified name of the main class of the addon.
+     */
     public String getMainClass() {
         return mainClass;
     }
 
+    /**
+     * @return The name of the addon.
+     */
     public String getName() {
         return name;
     }
 
-    public List<String> getLibraries() {
-        return libraries;
-    }
-
+    /**
+     * @return A list of authors of the addon.
+     */
     public List<String> getAuthors() {
         return authors;
     }
 
+    /**
+     * @return The API version the addon is compatible with, or null if not specified.
+     */
     @Nullable
     public String getApiVersion() {
         return apiVersion;

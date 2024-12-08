@@ -50,7 +50,6 @@ public abstract class JavaAnimationBukkit extends JavaAnimation<CaseDataMaterial
      * Gets animation settings section
      *
      * @return Section with settings
-     * @since 2.2.5.9
      */
     @NotNull
     public final ConfigurationSection getSettings() {

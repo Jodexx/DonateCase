@@ -50,16 +50,6 @@ public class CaseKeyManagerImpl implements CaseKeyManager {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> addKeys(String caseType, String player, int keys) {
-        return modifyKeys(caseType, player, keys);
-    }
-
-    @Override
-    public CompletableFuture<DatabaseStatus> removeKeys(String caseType, String player, int keys) {
-        return modifyKeys(caseType, player, -keys);
-    }
-
-    @Override
     public CompletableFuture<DatabaseStatus> removeAllKeys() {
         return instance.database.delAllKeys();
     }

@@ -173,7 +173,6 @@ public class Case {
      * Trying to clean all entities with "case" metadata value,
      * all loaded cases in runtime,
      * all active cases, keys and open caches
-     * @since 2.2.3.8
      */
     public static void cleanCache() {
         instance.api.getGUIManager().getPlayersGUI().values().parallelStream().forEach(gui -> gui.getPlayer().closeInventory());

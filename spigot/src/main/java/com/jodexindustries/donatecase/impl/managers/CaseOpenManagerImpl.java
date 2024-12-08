@@ -43,7 +43,6 @@ public class CaseOpenManagerImpl implements CaseOpenManager {
      * @param caseType Case type
      * @param player Player, who opened
      * @return opened count
-     * @since 2.2.3.8
      */
     public int getOpenCountCache(String caseType, String player) {
         if(instance.config.getDatabaseType() == DatabaseType.SQLITE) return getOpenCount(caseType, player);
@@ -69,7 +68,6 @@ public class CaseOpenManagerImpl implements CaseOpenManager {
      * @param player    Player name
      * @param openCount Opened count
      * @return Completable future of completes
-     * @since 2.2.4.4
      */
     public CompletableFuture<DatabaseStatus> setOpenCount(String caseType, String player, int openCount) {
         return instance.database.setCount(caseType, player, openCount);
@@ -82,7 +80,6 @@ public class CaseOpenManagerImpl implements CaseOpenManager {
      * @param player    Player name
      * @param openCount Opened count
      * @return Completable future of completes
-     * @since 2.2.4.4
      */
     public CompletableFuture<DatabaseStatus> addOpenCount(String caseType, String player, int openCount) {
         return getOpenCountAsync(caseType, player).thenComposeAsync(integer -> setOpenCount(caseType, player, integer + openCount));

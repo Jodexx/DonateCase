@@ -15,44 +15,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Class for managing subcommands, registering commands.
- */
 public class SubCommandManagerImpl implements SubCommandManager<CommandSender> {
-    /**
-     * Map of all registered subcommands
-     */
     private static final Map<String, SubCommand<CommandSender>> registeredSubCommands = new HashMap<>();
     private final Addon addon;
 
-    /**
-     * Default constructor
-     * @param addon An addon that will manage subcommands
-     */
     public SubCommandManagerImpl(Addon addon) {
         this.addon = addon;
     }
 
-    /**
-     * Gets Builder for creating sub command
-     * @param name Sub command name to create
-     * @see #registerSubCommand(SubCommand)
-     * @return SubCommand Builder
-     * @since 2.2.4.5
-     */
     @NotNull
     @Override
     public SubCommand.Builder<CommandSender> builder(@NotNull String name) {
         return new SubCommand.Builder<>(name, addon);
     }
 
-    /**
-     * Register sub command
-     * @see #builder(String)
-     * @param subCommand SubCommand object
-     * @return true, if successful
-     * @since 2.2.4.5
-     */
     @Override
     public boolean registerSubCommand(SubCommand<CommandSender> subCommand) {
         String name = subCommand.getName();
@@ -67,10 +43,6 @@ public class SubCommandManagerImpl implements SubCommandManager<CommandSender> {
         return false;
     }
 
-    /**
-     * Unregister sub command
-     * @param commandName Sub command name to unregister
-     */
     @Override
     public void unregisterSubCommand(String commandName) {
         if(registeredSubCommands.get(commandName.toLowerCase()) != null) {
@@ -82,9 +54,6 @@ public class SubCommandManagerImpl implements SubCommandManager<CommandSender> {
         }
     }
 
-    /**
-     * Unregister all subcommands
-     */
     @Override
     public void unregisterSubCommands() {
         List<String> list = new ArrayList<>(registeredSubCommands.keySet());
@@ -101,13 +70,6 @@ public class SubCommandManagerImpl implements SubCommandManager<CommandSender> {
         return registeredSubCommands;
     }
 
-    /**
-     * Get tab completions for a subcommand
-     * @param sender Source of the command
-     * @param args Passed command arguments
-     * @param subCommandName Sub command name
-     * @return Tab completions
-     */
     @Override
     public List<String> getTabCompletionsForSubCommand(CommandSender sender, String subCommandName, String label, String[] args) {
         SubCommand<CommandSender> subCommand = registeredSubCommands.get(subCommandName.toLowerCase());

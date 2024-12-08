@@ -6,6 +6,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 
+/**
+ * Represents an internal addon for the DonateCase API, providing additional
+ * lifecycle methods and resource management utilities.
+ */
 public interface InternalAddon extends Addon {
 
     /**

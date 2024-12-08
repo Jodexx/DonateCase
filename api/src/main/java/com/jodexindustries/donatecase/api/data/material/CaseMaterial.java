@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Class for custom material storage
- * @since 2.2.4.8
  */
 public class CaseMaterial<I> implements MaterialHandler<I> {
     private final MaterialHandler<I> materialHandler;

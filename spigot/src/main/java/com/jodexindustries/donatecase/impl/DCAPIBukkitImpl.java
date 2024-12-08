@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 public class DCAPIBukkitImpl extends DCAPIBukkit {
 
@@ -101,7 +102,7 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
     }
 
     @Override
-    public Plugin getDonateCase() {
+    public @NotNull Plugin getDonateCase() {
         return DonateCase.instance;
     }
 }

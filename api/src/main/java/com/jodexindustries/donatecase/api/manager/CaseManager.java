@@ -5,6 +5,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
+/**
+ *
+ * @param <C>        The type of case data structure.
+ */
 public interface CaseManager<C> {
 
     /**

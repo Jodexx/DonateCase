@@ -28,7 +28,6 @@ public class AnimationRegisteredEvent extends Event {
      * Get case animation
      *
      * @return animation
-     * @since 2.2.5.8
      */
     public CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> getCaseAnimation() {
         return caseAnimation;

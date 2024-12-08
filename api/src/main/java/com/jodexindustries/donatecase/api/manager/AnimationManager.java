@@ -13,20 +13,24 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Interface to manage animations within the donate case API.
- * Provides methods for creating, registering, and managing custom animations, as well as
- * checking and retrieving registered animations.
+ * Interface to manage animations within the DonateCase API.
+ * Provides methods for creating, registering, managing custom animations, and handling active cases.
  *
- * @param <A> the type of JavaAnimation
- * @param <M> the type of CaseDataMaterial
+ * @param <A> The type of JavaAnimation associated with the manager.
+ * @param <M> The type of CaseDataMaterial used in the animations.
+ * @param <L> The type representing the location in the game world.
+ * @param <B> The type representing a block in the game world.
+ * @param <C> The type representing case data for animations.
+ * @param <I> The type of ItemStack associated with materials or items.
+ * @param <P> The type of Player interacting with animations.
  */
-public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, I, Player, L, B, C> {
+public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, I, P, L, B, C> {
 
     /**
-     * Provides a builder for creating a new animation with the specified name.
+     * Creates a builder for defining and constructing a new custom animation.
      *
-     * @param name the name of the animation to create
-     * @return a builder instance for constructing the CaseAnimation
+     * @param name The name of the animation to be created.
+     * @return A {@link CaseAnimation.Builder} instance for building the animation.
      */
     @NotNull
     CaseAnimation.Builder<A, M, I> builder(String name);
@@ -34,92 +38,110 @@ public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseD
     /**
      * Registers a custom animation to the system.
      *
-     * @param animation the CaseAnimation object to register
-     * @return true if registration was successful, false otherwise
+     * @param animation The {@link CaseAnimation} object to register.
+     * @return True if the registration was successful, false otherwise.
      * @see #builder(String)
      */
     boolean registerAnimation(CaseAnimation<A, M, I> animation);
 
     /**
-     * Unregisters a custom animation by name, removing it from the system.
+     * Unregisters a specific animation from the system by its name.
      *
-     * @param name the name of the animation to unregister
+     * @param name The name of the animation to unregister.
      */
     void unregisterAnimation(String name);
 
     /**
-     * Unregisters all animations from the system.
+     * Unregisters all animations currently registered in the system.
      */
     void unregisterAnimations();
 
     /**
-     * Start animation at a specific location
+     * Starts an animation at a specified location.
      *
-     * @param player   The player who opened the case
-     * @param location Location where to start the animation
-     * @param caseData Case data
-     * @return Completable future of completes (when started)
+     * @param player   The player who triggered the animation.
+     * @param location The location where the animation should start.
+     * @param caseData The case data associated with the animation.
+     * @return A {@link CompletableFuture} that completes when the animation starts.
      */
-    CompletableFuture<Boolean> startAnimation(@NotNull Player player, @NotNull L location, @NotNull C caseData);
+    CompletableFuture<Boolean> startAnimation(@NotNull P player, @NotNull L location, @NotNull C caseData);
 
     /**
-     * Start animation at a specific location with delay
+     * Starts an animation at a specified location after a delay.
      *
-     * @param player   The player who opened the case
-     * @param location Location where to start the animation
-     * @param caseData Case data
-     * @param delay Delay in ticks
-     * @return Completable future of completes (when started)
+     * @param player   The player who triggered the animation.
+     * @param location The location where the animation should start.
+     * @param caseData The case data associated with the animation.
+     * @param delay    The delay in ticks before starting the animation.
+     * @return A {@link CompletableFuture} that completes when the animation starts.
      */
-    CompletableFuture<Boolean> startAnimation(@NotNull Player player, @NotNull L location, @NotNull C caseData, int delay);
+    CompletableFuture<Boolean> startAnimation(@NotNull P player, @NotNull L location, @NotNull C caseData, int delay);
 
     /**
-     * Animation pre end method for custom animations is called to grant a group, send a message, and more
-     * @param caseData Case data
-     * @param player Player who opened (offline player)
-     * @param uuid Active case uuid
-     * @param item Item data
-     */
-    void animationPreEnd(C caseData, Player player, UUID uuid, CaseDataItem<M, I> item);
-
-    /**
-     * Animation pre end method for custom animations is called to grant a group, send a message, and more
-     * @param caseData Case data
-     * @param player Player who opened (offline player)
-     * @param location Active case block location
-     * @param item Item data
-     */
-     void animationPreEnd(C caseData, Player player, L location, CaseDataItem<M, I> item);
-
-    /**
-     * Animation end method for custom animations is called to completely end the animation
-     * @param item Item data
-     * @param caseData Case data
-     * @param player Player who opened (offline player)
-     * @param uuid Active case uuid
-     */
-    void animationEnd(C caseData, Player player, UUID uuid, CaseDataItem<M, I> item);
-
-    /**
-     * Checks if an animation with the specified name is registered.
+     * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
      *
-     * @param name the name of the animation
-     * @return true if the animation is registered, false otherwise
+     * @param caseData The case data associated with the animation.
+     * @param player   The player interacting with the animation (can be offline).
+     * @param uuid     The unique ID of the active case.
+     * @param item     The item data associated with the animation's result.
+     */
+    void animationPreEnd(C caseData, P player, UUID uuid, CaseDataItem<M, I> item);
+
+    /**
+     * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
+     *
+     * @param caseData The case data associated with the animation.
+     * @param player   The player interacting with the animation (can be offline).
+     * @param location The location of the active case block.
+     * @param item     The item data associated with the animation's result.
+     */
+    void animationPreEnd(C caseData, P player, L location, CaseDataItem<M, I> item);
+
+    /**
+     * Completes the animation process and performs cleanup tasks.
+     *
+     * @param caseData The case data associated with the animation.
+     * @param player   The player interacting with the animation (can be offline).
+     * @param uuid     The unique ID of the active case.
+     * @param item     The item data associated with the animation's result.
+     */
+    void animationEnd(C caseData, P player, UUID uuid, CaseDataItem<M, I> item);
+
+    /**
+     * Checks whether an animation with the specified name is registered.
+     *
+     * @param name The name of the animation.
+     * @return True if the animation is registered, false otherwise.
      */
     boolean isRegistered(String name);
 
     /**
      * Retrieves a registered animation by its name.
      *
-     * @param animation the name of the animation to retrieve
-     * @return the CaseAnimation instance if registered, or null if not found
+     * @param animation The name of the animation to retrieve.
+     * @return The {@link CaseAnimation} instance if registered, or null if not found.
      */
     @Nullable
     CaseAnimation<A, M, I> getRegisteredAnimation(String animation);
 
+    /**
+     * Retrieves a map of all registered animations.
+     *
+     * @return A map where keys are animation names and values are {@link CaseAnimation} instances.
+     */
     Map<String, CaseAnimation<A, M, I>> getRegisteredAnimations();
 
+    /**
+     * Retrieves a map of all active cases currently running in the system.
+     *
+     * @return A map where keys are UUIDs and values are {@link ActiveCase} instances associated with blocks.
+     */
     Map<UUID, ActiveCase<B>> getActiveCases();
 
+    /**
+     * Retrieves a map of active cases by their associated blocks.
+     *
+     * @return A map where keys are blocks and values are UUIDs of the active cases.
+     */
     Map<B, UUID> getActiveCasesByBlock();
 }

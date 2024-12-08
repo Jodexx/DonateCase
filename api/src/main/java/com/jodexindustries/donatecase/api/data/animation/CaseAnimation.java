@@ -55,11 +55,6 @@ public class CaseAnimation<A extends JavaAnimation<M, I>, M extends CaseDataMate
         return description;
     }
 
-    /**
-     *
-     * @since 2.2.6.2
-     * @return Require settings
-     */
     public boolean isRequireSettings() {
         return requireSettings;
     }
@@ -76,9 +71,6 @@ public class CaseAnimation<A extends JavaAnimation<M, I>, M extends CaseDataMate
         this.requireSettings = requireSettings;
     }
 
-    /**
-     * @since 2.2.6.2
-     */
     public static class Builder<A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, I> {
         private final Addon addon;
         private final String name;

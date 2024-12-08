@@ -174,20 +174,11 @@ public abstract class CaseDataMaterial<I> implements CCloneable, MetaUpdatable {
         updateMeta();
     }
 
-    /**
-     * Update {@link #itemStack} metadata
-     */
     @Override
     public void updateMeta() {
         updateMeta(getDisplayName(), getLore(), getModelData(), isEnchanted(), getRgb());
     }
 
-    /**
-     * Creates a clone of the CaseDataMaterial instance.
-     *
-     * @return a cloned copy of this CaseDataMaterial
-     * @throws AssertionError if cloning is not supported
-     */
     @SuppressWarnings("unchecked")
     @Override
     public CaseDataMaterial<I> clone() {
@@ -198,13 +189,6 @@ public abstract class CaseDataMaterial<I> implements CCloneable, MetaUpdatable {
         }
     }
 
-    /**
-     * Provides a string representation of the CaseDataMaterial instance, including
-     * all properties such as id, display name, enchanted status, model data, RGB values,
-     * and lore.
-     *
-     * @return a string representation of the material's attributes
-     */
     @Override
     public String toString() {
         return "Material{" +

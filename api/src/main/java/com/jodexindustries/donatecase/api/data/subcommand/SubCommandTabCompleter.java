@@ -6,16 +6,16 @@ import java.util.List;
 
 /**
  * Interface for implement subcommand tab completer
- * @since 2.2.4.5
  */
 public interface SubCommandTabCompleter<S> {
+
     /**
-     * Get command tab completions
+     * Provides tab-completion suggestions for the subcommand.
      *
-     * @param sender Command sender
-     * @param label  Command label
-     * @param args   Command args
-     * @return tab completions
+     * @param sender The sender requesting tab completions.
+     * @param label  The command label.
+     * @param args   The current arguments input by the sender.
+     * @return A list of tab-completion suggestions.
      */
     List<String> getTabCompletions(@NotNull S sender, @NotNull String label, @NotNull String[] args);
 }
