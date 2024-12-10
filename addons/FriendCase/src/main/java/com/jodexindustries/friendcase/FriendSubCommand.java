@@ -55,7 +55,8 @@ public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubC
                     }
                     if (!t.getConfig().getConfig().getStringList("BlackList").contains(caseType)) {
                         if (t.getDCAPI().getCaseManager().hasCaseByType(caseType)) {
-                            if (t.getDCAPI().getCaseKeyManager().getKeys(caseType, p.getName()) >= 1 && t.getDCAPI().getCaseKeyManager().getKeys(caseType, p.getName()) >= keys) {
+                            int playerKeys = t.getDCAPI().getCaseKeyManager().getKeys(caseType, p.getName());
+                            if (playerKeys >= 1 && playerKeys >= keys) {
                                 if (target != null) {
                                     if (target != p) {
                                         t.getDCAPI().getCaseKeyManager().removeKeys(caseType, p.getName(), keys).thenAcceptAsync(status -> {
