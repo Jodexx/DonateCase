@@ -30,6 +30,8 @@ public interface CaseDatabase {
 
     CompletableFuture<DatabaseStatus> setKeys(String name, String player, int keys);
 
+    CompletableFuture<DatabaseStatus> delAllKeys();
+
     /**
      * Get count of opened cases by player
      *
@@ -48,6 +50,8 @@ public interface CaseDatabase {
      */
     CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count);
 
+    void setHistoryData(CaseDataHistory[] historyData);
+
     CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseDataHistory data);
 
     CompletableFuture<List<CaseDataHistory>> getHistoryData();
@@ -61,4 +65,6 @@ public interface CaseDatabase {
      * @return list of history data
      */
     List<CaseDataHistory> getSortedHistoryDataCache();
+
+    void close();
 }
