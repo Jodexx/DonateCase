@@ -3,6 +3,7 @@ package com.jodexindustries.friendcase;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
+import com.jodexindustries.donatecase.api.events.CaseGiftEvent;
 import com.jodexindustries.friendcase.utils.Tools;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -77,6 +78,9 @@ public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubC
                                                                         .replace("%keys%", keys + "")
                                                                         .replace("%case%", caseType)
                                                         ));
+
+                                                        CaseGiftEvent event = new CaseGiftEvent(p, target, caseType, keys);
+                                                        Bukkit.getPluginManager().callEvent(event);
                                                     }
                                                 });
                                             }
