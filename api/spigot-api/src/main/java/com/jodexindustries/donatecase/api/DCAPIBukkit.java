@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
 import com.jodexindustries.donatecase.api.config.ConfigBukkit;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
@@ -31,6 +32,16 @@ public abstract class DCAPIBukkit implements DCAPI<Player, JavaAnimationBukkit, 
 
     @Nullable
     private static Class<? extends DCAPIBukkit> clazz = null;
+    protected final Addon addon;
+
+
+    protected DCAPIBukkit(Addon addon) {
+        this.addon = addon;
+    }
+
+    protected DCAPIBukkit(Plugin plugin) {
+        this.addon = new ExternalJavaAddon(plugin);
+    }
 
     /**
      * Retrieves an instance of DCAPIBukkit using the provided Addon.

@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.impl;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
 import com.jodexindustries.donatecase.api.config.ConfigBukkit;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
@@ -26,14 +25,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class DCAPIBukkitImpl extends DCAPIBukkit {
 
-    private final Addon addon;
-
     public DCAPIBukkitImpl(Addon addon) {
-        this.addon = addon;
+        super(addon);
     }
 
     public DCAPIBukkitImpl(Plugin plugin) {
-        this.addon = new ExternalJavaAddon(plugin);
+        super(plugin);
     }
 
     @Override
