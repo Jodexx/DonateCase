@@ -7,13 +7,10 @@ import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.TableUtils;
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
-import com.jodexindustries.donatecase.api.manager.CaseManager;
 import com.jodexindustries.donatecase.database.entities.HistoryDataTable;
 import com.jodexindustries.donatecase.database.entities.OpenInfoTable;
 import com.jodexindustries.donatecase.database.entities.PlayerKeysTable;
@@ -23,15 +20,13 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMaterial<I>, I> implements CaseDatabase {
+public class CaseDatabaseImpl implements CaseDatabase {
     private Dao<HistoryDataTable, String> historyDataTables;
     private Dao<PlayerKeysTable, String> playerKeysTables;
     private Dao<OpenInfoTable, String> openInfoTables;
     private JdbcConnectionSource connectionSource;
 
-    private final CaseManager<C> api;
     private final Logger logger;
     private DatabaseType databaseType;
 
@@ -40,16 +35,11 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
      */
     public final static SimpleCache<Integer, List<CaseDataHistory>> historyCache = new SimpleCache<>(20);
 
-    public CaseDatabaseImpl(CaseManager<C> api, Logger logger) {
-        this.api = api;
+    public CaseDatabaseImpl(Logger logger) {
         this.logger = logger;
     }
 
-    /**
-     * Connect via SQLITE
-     *
-     * @param path Database absolute path
-     */
+    @Override
     public void connect(String path) {
         try {
             close();
@@ -62,15 +52,7 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
         }
     }
 
-    /**
-     * Connect via MySQL
-     *
-     * @param database Database name
-     * @param port     MySQL port
-     * @param host     MySQL host
-     * @param user     Database user
-     * @param password User password
-     */
+    @Override
     public void connect(String database, String port, String host, String user, String password) {
         try {
             close();
@@ -94,6 +76,7 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
         openInfoTables = DaoManager.createDao(connectionSource, OpenInfoTable.class);
     }
 
+    @Override
     public CompletableFuture<Integer> getKeys(String name, String player) {
         return CompletableFuture.supplyAsync(() -> {
             int keys = 0;
@@ -115,6 +98,7 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
         });
     }
 
+    @Override
     public CompletableFuture<DatabaseStatus> setKeys(String name, String player, int keys) {
         return CompletableFuture.supplyAsync(() -> {
 
@@ -147,13 +131,7 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
         });
     }
 
-    /**
-     * Get count of opened cases by player
-     *
-     * @param player   Player, who opened
-     * @param caseType Case type
-     * @return number of opened cases
-     */
+    @Override
     public CompletableFuture<Integer> getOpenCount(String player, String caseType) {
         return CompletableFuture.supplyAsync(() -> {
             OpenInfoTable openInfoTable = null;
@@ -173,13 +151,7 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
         });
     }
 
-    /**
-     * Set count of opened cases by player
-     *
-     * @param caseType Player, who opened
-     * @param player   Case type
-     * @param count    Number of opened cases
-     */
+    @Override
     public CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count) {
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -211,6 +183,7 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
         });
     }
 
+    @Override
     public void setHistoryData(CaseDataHistory[] historyData) {
         for (int index = 0; index < historyData.length; index++) {
             CaseDataHistory data = historyData[index];
@@ -220,6 +193,7 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
         }
     }
 
+    @Override
     public CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseDataHistory data) {
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -273,17 +247,10 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
 
     @Override
     public CompletableFuture<List<CaseDataHistory>> getAsyncSortedHistoryData() {
-        return CompletableFuture.supplyAsync(() -> databaseType == DatabaseType.SQLITE ?
-                api.getMap().values().stream()
-                        .filter(Objects::nonNull)
-                        .flatMap(data -> {
-                            CaseDataHistory[] temp = data.getHistoryData();
-                            return temp != null ? Arrays.stream(temp) : Stream.empty();
-                        })
-                        .filter(Objects::nonNull)
-                        .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
-                        .collect(Collectors.toList()) : getHistoryData().join().stream().filter(Objects::nonNull)
-                .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
+        return CompletableFuture.supplyAsync(() -> getHistoryData().join().stream()
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparingLong(CaseDataHistory::getTime)
+                        .reversed())
                 .collect(Collectors.toList()));
     }
 
@@ -324,6 +291,7 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
         return (previousList != null) ? previousList : getAsyncSortedHistoryData().join();
     }
 
+    @Override
     public CompletableFuture<DatabaseStatus> delAllKeys() {
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -336,6 +304,7 @@ public class CaseDatabaseImpl<C extends CaseData<M, I>, M extends CaseDataMateri
         });
     }
 
+    @Override
     public void close() {
         if (connectionSource != null) {
             try {
