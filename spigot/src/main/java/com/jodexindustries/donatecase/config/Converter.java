@@ -1,16 +1,13 @@
 package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
+import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.api.tools.Pair;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +39,7 @@ public class Converter {
     }
 
     public void convertData() {
-        CaseDatabaseImpl<CaseDataBukkit, CaseDataMaterialBukkit, ItemStack> database = Case.getInstance().database;
+        CaseDatabase database = Case.getInstance().database;
         YamlConfiguration dataConfiguration = config.get("Data.yml");
         if (dataConfiguration != null) {
             config.getPlugin().getLogger().info("Converting Data.yml to database...");

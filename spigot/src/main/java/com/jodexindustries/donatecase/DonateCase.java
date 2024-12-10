@@ -10,6 +10,7 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
@@ -59,7 +60,7 @@ import java.net.URLConnection;
 public class DonateCase extends JavaPlugin {
     public static DonateCase instance;
 
-    public CaseDatabaseImpl<CaseDataBukkit, CaseDataMaterialBukkit, ItemStack> database;
+    public CaseDatabase database;
     public HologramManager hologramManager = null;
     public PAPISupport papi = null;
     public LuckPerms luckPerms = null;
@@ -96,7 +97,7 @@ public class DonateCase extends JavaPlugin {
         config = new ConfigImpl(this);
         config.load();
 
-        database = new CaseDatabaseImpl<>(api.getCaseManager(), getLogger());
+        database = new CaseDatabaseImpl(getLogger());
 
         loadDatabase();
 
