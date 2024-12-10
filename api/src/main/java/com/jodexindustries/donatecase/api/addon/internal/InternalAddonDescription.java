@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.addon.internal;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
@@ -13,12 +14,15 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class InternalAddonDescription {
+
+    private final File file;
     private final String name;
     private final String mainClass;
     private final String version;
     private final String apiVersion;
     private final List<String> authors;
-
+    private final List<String> depend = new ArrayList<>();
+    private final List<String> softDepend = new ArrayList<>();
     /**
      * Constructor to load addon description from a JAR file.
      *
@@ -27,6 +31,8 @@ public class InternalAddonDescription {
      * @throws InvalidAddonException If the addon does not contain a valid addon.yml descriptor.
      */
     public InternalAddonDescription(File file) throws IOException, InvalidAddonException {
+        this.file = file;
+
         JarFile jarFile = new JarFile(file);
         JarEntry entry = jarFile.getJarEntry("addon.yml");
         if (entry == null) {
@@ -49,6 +55,18 @@ public class InternalAddonDescription {
         if (data.get("authors") != null) {
             for (Object o : (Iterable<?>) data.get("authors")) {
                 authors.add(o.toString());
+            }
+        }
+
+        if(data.get("softdepend") != null) {
+            for (Object o : (Iterable<?>) data.get("softdepend")) {
+                softDepend.add(o.toString());
+            }
+        }
+
+        if(data.get("depend") != null) {
+            for (Object o : (Iterable<?>) data.get("depend")) {
+                depend.add(o.toString());
             }
         }
 
@@ -89,5 +107,27 @@ public class InternalAddonDescription {
     @Nullable
     public String getApiVersion() {
         return apiVersion;
+    }
+
+    /**
+     * @since 2.0.2
+     * @return List of addon dependencies
+     */
+    @NotNull
+    public List<String> getDepend() {
+        return depend;
+    }
+
+    /**
+     * @since 2.0.2
+     * @return List of addon soft dependencies
+     */
+    @NotNull
+    public List<String> getSoftDepend() {
+        return softDepend;
+    }
+
+    public File getFile() {
+        return file;
     }
 }

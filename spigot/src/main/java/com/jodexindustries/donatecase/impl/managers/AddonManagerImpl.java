@@ -1,5 +1,7 @@
 package com.jodexindustries.donatecase.impl.managers;
 
+import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.MutableGraph;
 import com.jodexindustries.donatecase.BuildConstants;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
@@ -38,6 +40,9 @@ public class AddonManagerImpl implements AddonManager {
      */
     public static final List<InternalAddonClassLoader> loaders = new CopyOnWriteArrayList<>();
 
+    private MutableGraph<String> dependencyGraph = GraphBuilder.directed().build();
+
+
     private final Addon donateCase = new ExternalJavaAddon(instance);
     private final Addon addon;
 
@@ -56,15 +61,151 @@ public class AddonManagerImpl implements AddonManager {
     @Override
     public void loadAddons() {
         File addonsDir = getAddonsFolder();
-        File[] files = addonsDir.listFiles();
         if (!addonsDir.exists()) {
             addonsDir.mkdir();
         }
-        if (files != null) {
-            for (File file : files) {
-                loadAddon(file);
+
+        File[] files = addonsDir.listFiles();
+        if (files == null) return;
+
+        Map<String, InternalAddonDescription> descriptions = new HashMap<>();
+
+        for (File file : files) {
+            if (file.isFile() && file.getName().endsWith(".jar")) {
+                try {
+                    InternalAddonDescription description = new InternalAddonDescription(file);
+                    descriptions.put(description.getName(), description);
+
+                    Collection<String> depend = description.getDepend();
+                    Collection<String> softDepend = description.getSoftDepend();
+
+                    for (String dependency : depend) {
+                        dependencyGraph.putEdge(description.getName(), dependency);
+                    }
+                    for (String softDependency : softDepend) {
+                        dependencyGraph.putEdge(description.getName(), softDependency);
+                    }
+                } catch (IOException | InvalidAddonException e) {
+                    addon.getLogger().log(Level.SEVERE, "Failed to parse addon: " + file.getName(), e);
+                }
             }
         }
+
+        List<String> loadOrder = resolveLoadOrder();
+        if (loadOrder == null) {
+            addon.getLogger().severe("Cyclic dependency detected! Aborting addon loading.");
+            return;
+        }
+
+        for (String addonName : loadOrder) {
+            InternalAddonDescription description = descriptions.get(addonName);
+            if (description != null) {
+                loadAddon(description);
+                descriptions.remove(addonName);
+            }
+        }
+
+        for (InternalAddonDescription description : descriptions.values()) {
+            loadAddon(description);
+        }
+    }
+
+    /**
+     * Resolves the load order of addons based on their dependencies using topological sort.
+     *
+     * @return A list of addon names in load order, or null if a cycle is detected.
+     */
+    private List<String> resolveLoadOrder() {
+        List<String> sorted = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+        Set<String> visiting = new HashSet<>();
+
+        for (String addon : dependencyGraph.nodes()) {
+            if (!visited.contains(addon) && !topologicalSort(addon, sorted, visited, visiting)) {
+                return null;
+            }
+        }
+
+        return sorted;
+    }
+
+    /**
+     * Performs a topological sort for a single addon.
+     *
+     * @param addon    The current addon.
+     * @param sorted   The resulting sorted list.
+     * @param visited  The set of fully visited addons.
+     * @param visiting The set of currently visiting addons (for cycle detection).
+     * @return True if the sort is successful, false if a cycle is detected.
+     */
+    private boolean topologicalSort(String addon, List<String> sorted, Set<String> visited, Set<String> visiting) {
+        if (visiting.contains(addon)) {
+            return false; // Cycle detected
+        }
+        if (visited.contains(addon)) {
+            return true; // Already processed
+        }
+
+        visiting.add(addon);
+        for (String dependency : dependencyGraph.successors(addon)) {
+            if (!topologicalSort(dependency, sorted, visited, visiting)) {
+                return false;
+            }
+        }
+        visiting.remove(addon);
+        visited.add(addon);
+        sorted.add(addon);
+
+        return true;
+    }
+
+    private boolean loadAddon(InternalAddonDescription description) {
+        addon.getLogger().info("Loading " + description.getName() + " addon v" + description.getVersion());
+        if (addons.get(description.getName()) != null) {
+            if (description.getName().equalsIgnoreCase("DonateCase")) {
+                addon.getLogger().warning("Addon " + description.getName() + " trying to load with DonateCase name! Abort.");
+                return false;
+            }
+            addon.getLogger().warning("Addon with name " + description.getName() + " already loaded!");
+            return false;
+        }
+
+        if (description.getApiVersion() != null) {
+            int addonVersion = DCTools.getPluginVersion(description.getApiVersion());
+            int pluginVersion = DCTools.getPluginVersion(BuildConstants.api);
+
+            if (pluginVersion < addonVersion) {
+                addon.getLogger().warning("Addon " + description.getName() + " API version (" + description.getApiVersion()
+                        + ") incompatible with current API version (" + BuildConstants.api + ")! Abort.");
+                return false;
+            }
+        }
+
+        InternalAddonClassLoader loader;
+        try {
+            loader = new InternalAddonClassLoader(addon.getClass().getClassLoader(), description, this, donateCase);
+        } catch (Throwable t) {
+            addon.getLogger().log(Level.SEVERE,
+                    "Error occurred while loading addon " + description.getName() + " v" + description.getVersion(), t);
+            return false;
+        }
+        try {
+            InternalJavaAddon addon = loader.getAddon();
+            addons.put(description.getName(), addon);
+            loaders.add(loader);
+            addon.onLoad();
+            return true;
+        } catch (Throwable e) {
+            addons.remove(description.getName());
+            try {
+                loader.close();
+            } catch (IOException ex) {
+                addon.getLogger().log(Level.SEVERE, e.getLocalizedMessage(), e.getCause());
+            }
+            addon.getLogger().log(Level.SEVERE,
+                    "Error occurred while enabling addon " + description.getName() + " v" + description.getVersion(), e);
+        }
+        return false;
     }
 
     @Override
@@ -77,51 +218,7 @@ public class AddonManagerImpl implements AddonManager {
                 throw new RuntimeException(e);
             }
 
-            addon.getLogger().info("Loading " + description.getName() + " addon v" + description.getVersion());
-            if (addons.get(description.getName()) != null) {
-                if (description.getName().equalsIgnoreCase("DonateCase")) {
-                    addon.getLogger().warning("Addon " + file.getName() + " trying to load with DonateCase name! Abort.");
-                    return false;
-                }
-                addon.getLogger().warning("Addon with name " + description.getName() + " already loaded!");
-                return false;
-            }
-
-            if (description.getApiVersion() != null) {
-                int addonVersion = DCTools.getPluginVersion(description.getApiVersion());
-                int pluginVersion = DCTools.getPluginVersion(BuildConstants.api);
-
-                if (pluginVersion < addonVersion) {
-                    addon.getLogger().warning("Addon " + description.getName() + " API version (" + description.getApiVersion()
-                            + ") incompatible with current API version (" + BuildConstants.api + ")! Abort.");
-                    return false;
-                }
-            }
-
-            InternalAddonClassLoader loader;
-            try {
-                loader = new InternalAddonClassLoader(addon.getClass().getClassLoader(), description, file, this, donateCase);
-            } catch (Throwable t) {
-                addon.getLogger().log(Level.SEVERE,
-                        "Error occurred while loading addon " + description.getName() + " v" + description.getVersion(), t);
-                return false;
-            }
-            try {
-                InternalJavaAddon addon = loader.getAddon();
-                addons.put(description.getName(), addon);
-                loaders.add(loader);
-                addon.onLoad();
-                return true;
-            } catch (Throwable e) {
-                addons.remove(description.getName());
-                try {
-                    loader.close();
-                } catch (IOException ex) {
-                    addon.getLogger().log(Level.SEVERE, e.getLocalizedMessage(), e.getCause());
-                }
-                addon.getLogger().log(Level.SEVERE,
-                        "Error occurred while enabling addon " + description.getName() + " v" + description.getVersion(), e);
-            }
+            return loadAddon(description);
         }
         return false;
     }
@@ -189,6 +286,7 @@ public class AddonManagerImpl implements AddonManager {
         for (InternalJavaAddon internalJavaAddon : list) {
             unloadAddon(internalJavaAddon, reason);
         }
+        dependencyGraph = GraphBuilder.directed().build();
         addons.clear();
     }
 
