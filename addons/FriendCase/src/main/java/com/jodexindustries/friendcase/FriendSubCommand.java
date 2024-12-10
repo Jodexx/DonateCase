@@ -53,48 +53,52 @@ public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubC
                         sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.NumberFormat", "")));
                         return;
                     }
-                    if (t.getDCAPI().getCaseManager().hasCaseByType(caseType)) {
-                        if (t.getDCAPI().getCaseKeyManager().getKeys(caseType, p.getName()) >= 1 && t.getDCAPI().getCaseKeyManager().getKeys(caseType, p.getName()) >= keys) {
-                            if (target != null) {
-                                if (target != p) {
-                                    t.getDCAPI().getCaseKeyManager().removeKeys(caseType, p.getName(), keys).thenAcceptAsync(status -> {
-                                        if(status == DatabaseStatus.COMPLETE) {
-                                            t.getDCAPI().getCaseKeyManager().addKeys(caseType, target.getName(), keys).thenAcceptAsync(nextStatus -> {
-                                                if(nextStatus == DatabaseStatus.COMPLETE) {
-                                                    target.sendMessage(rc(
-                                                            t.getConfig().getConfig().getString("Messages.YouReceivedGift", "")
-                                                                    .replace("%sender%", sender.getName())
-                                                                    .replace("%target%", target.getName())
-                                                                    .replace("%keys%", keys + "")
-                                                                    .replace("%case%", caseType)
-                                                    ));
-                                                    sender.sendMessage(rc(
-                                                            t.getConfig().getConfig().getString("Messages.YouSendGift", "")
-                                                                    .replace("%target%", target.getName())
-                                                                    .replace("%sender%", sender.getName())
-                                                                    .replace("%keys%", keys + "")
-                                                                    .replace("%case%", caseType)
-                                                    ));
-                                                }
-                                            });
-                                        }
-                                    });
+                    if (!t.getConfig().getConfig().getStringList("BlackList").contains(caseType)) {
+                        if (t.getDCAPI().getCaseManager().hasCaseByType(caseType)) {
+                            if (t.getDCAPI().getCaseKeyManager().getKeys(caseType, p.getName()) >= 1 && t.getDCAPI().getCaseKeyManager().getKeys(caseType, p.getName()) >= keys) {
+                                if (target != null) {
+                                    if (target != p) {
+                                        t.getDCAPI().getCaseKeyManager().removeKeys(caseType, p.getName(), keys).thenAcceptAsync(status -> {
+                                            if (status == DatabaseStatus.COMPLETE) {
+                                                t.getDCAPI().getCaseKeyManager().addKeys(caseType, target.getName(), keys).thenAcceptAsync(nextStatus -> {
+                                                    if (nextStatus == DatabaseStatus.COMPLETE) {
+                                                        target.sendMessage(rc(
+                                                                t.getConfig().getConfig().getString("Messages.YouReceivedGift", "")
+                                                                        .replace("%sender%", sender.getName())
+                                                                        .replace("%target%", target.getName())
+                                                                        .replace("%keys%", keys + "")
+                                                                        .replace("%case%", caseType)
+                                                        ));
+                                                        sender.sendMessage(rc(
+                                                                t.getConfig().getConfig().getString("Messages.YouSendGift", "")
+                                                                        .replace("%target%", target.getName())
+                                                                        .replace("%sender%", sender.getName())
+                                                                        .replace("%keys%", keys + "")
+                                                                        .replace("%case%", caseType)
+                                                        ));
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        sender.sendMessage(rc(
+                                                t.getConfig().getConfig().getString("Messages.GiftYourself", "")));
+                                    }
                                 } else {
                                     sender.sendMessage(rc(
-                                            t.getConfig().getConfig().getString("Messages.GiftYourself", "")));
+                                            t.getConfig().getConfig().getString("Messages.PlayerNotFound", "")));
                                 }
                             } else {
                                 sender.sendMessage(rc(
-                                        t.getConfig().getConfig().getString("Messages.PlayerNotFound", "")));
+                                        t.getConfig().getConfig().getString("Messages.MinNumber", "")
+                                                .replace("%required%", keys + "")
+                                ));
                             }
                         } else {
-                            sender.sendMessage(rc(
-                                    t.getConfig().getConfig().getString("Messages.MinNumber", "")
-                                            .replace("%required%", keys + "")
-                            ));
+                            sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.CaseNotFound", "")));
                         }
                     } else {
-                        sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.CaseNotFound", "")));
+                        sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.CaseInBlackList", "")));
                     }
                 }
             }

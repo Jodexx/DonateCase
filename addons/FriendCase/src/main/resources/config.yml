@@ -5,6 +5,7 @@
 # %case%
 # %required%
 Messages:
+  CaseInBlackList: "&cThis case in black list!"
   NumberFormat: "&cNumber format exception"
   YouReceivedGift: "&aYou successfully received gift from player &e%sender%"
   YouSendGift: "&aYou successfully send gift for player &e%target%"
@@ -16,6 +17,9 @@ Messages:
   OnlyPlayers: "&cYou can use this command only from player!"
   Help:
     - "&9/dc gift &7(&aPlayer&7) (&aCase type&7) (&aKeys&7)"
+
+BlackList:
+  - "somecase"
 
 Api:
   Description: "&2Send gift for another player"
