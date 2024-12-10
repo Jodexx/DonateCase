@@ -118,7 +118,7 @@ public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
      * @return {@code true} if all items in the collection have a chance greater than 0, {@code false} otherwise.
      */
     public boolean hasRealItems() {
-        return items.values().stream().noneMatch(item -> item.getChance() <= 0);
+        return items.values().stream().anyMatch(item -> item.getChance() > 0);
     }
 
     /**
