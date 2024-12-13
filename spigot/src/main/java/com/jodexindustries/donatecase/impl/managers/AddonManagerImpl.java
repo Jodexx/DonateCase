@@ -288,6 +288,7 @@ public class AddonManagerImpl implements AddonManager {
         }
         dependencyGraph = GraphBuilder.directed().build();
         addons.clear();
+        loaders.clear();
     }
 
     @Override
