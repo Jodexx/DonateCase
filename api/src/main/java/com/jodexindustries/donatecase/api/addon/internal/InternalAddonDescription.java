@@ -16,6 +16,7 @@ import java.util.jar.JarFile;
 public class InternalAddonDescription {
 
     private final File file;
+    private final JarFile jar;
     private final String name;
     private final String mainClass;
     private final String version;
@@ -32,13 +33,13 @@ public class InternalAddonDescription {
      */
     public InternalAddonDescription(File file) throws IOException, InvalidAddonException {
         this.file = file;
+        this.jar = new JarFile(file);
 
-        JarFile jarFile = new JarFile(file);
-        JarEntry entry = jarFile.getJarEntry("addon.yml");
+        JarEntry entry = jar.getJarEntry("addon.yml");
         if (entry == null) {
             throw new InvalidAddonException("Addon " + file.getName() + " trying to load without addon.yml! Abort.");
         }
-        InputStream input = jarFile.getInputStream(entry);
+        InputStream input = jar.getInputStream(entry);
         Yaml yaml = new Yaml();
         Map<String, Object> data = yaml.load(input);
         name = String.valueOf(data.get("name"));
@@ -70,7 +71,8 @@ public class InternalAddonDescription {
             }
         }
 
-        jarFile.close();
+        jar.close();
+
     }
 
     /**
@@ -130,4 +132,5 @@ public class InternalAddonDescription {
     public File getFile() {
         return file;
     }
+
 }

@@ -11,6 +11,7 @@ version = properties["api"].toString()
 dependencies {
     compileOnly("org.jetbrains:annotations:24.1.0")
     compileOnly("org.yaml:snakeyaml:1.27")
+    compileOnly("com.google.guava:guava:33.3.1-jre")
 }
 
 java {
