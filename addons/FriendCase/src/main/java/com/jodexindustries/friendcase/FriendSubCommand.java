@@ -78,9 +78,10 @@ public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubC
                                                                         .replace("%keys%", keys + "")
                                                                         .replace("%case%", caseType)
                                                         ));
-
-                                                        CaseGiftEvent event = new CaseGiftEvent(p, target, caseType, keys);
-                                                        Bukkit.getPluginManager().callEvent(event);
+                                                        Bukkit.getScheduler().runTask(t.getDCAPI().getDonateCase(), () -> {
+                                                            CaseGiftEvent event = new CaseGiftEvent(p, target, caseType, keys);
+                                                            Bukkit.getPluginManager().callEvent(event);
+                                                        });
                                                     }
                                                 });
                                             }
