@@ -5,6 +5,7 @@ import com.jodexindustries.dceventmanager.config.Config;
 import com.jodexindustries.dceventmanager.data.EventData;
 import com.jodexindustries.dceventmanager.data.Placeholder;
 import com.jodexindustries.dceventmanager.event.DCEventExecutor;
+import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Event;
@@ -128,9 +129,17 @@ public class Tools implements Listener {
         ArrayList<Class<? extends Event>> classes;
 
         try {
-            classes = Reflection.getClassesForPackage(getClass().getClassLoader(),
-                    config.getConfig().getString("Package",
-                            "com.jodexindustries.donatecase.api.events"));
+            String pkg = config.getConfig().getString("Package",
+                    "com.jodexindustries.donatecase.api.events");
+
+            // load classes from DonateCase
+            classes = Reflection.getClassesForPackage(getClass().getClassLoader().getParent(), pkg);
+
+            // load classes from addons
+            for (InternalJavaAddon addon : main.getDCAPI().getAddonManager().getAddons().values()) {
+                classes.addAll(Reflection.getClassesForPackage(addon.getUrlClassLoader(), pkg));
+            }
+
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
