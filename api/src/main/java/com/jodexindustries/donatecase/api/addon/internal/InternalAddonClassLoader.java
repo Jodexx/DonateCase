@@ -22,6 +22,10 @@ public class InternalAddonClassLoader extends URLClassLoader {
     private final InternalJavaAddon addon;
     private final Addon donateCase;
 
+    static {
+        ClassLoader.registerAsParallelCapable();
+    }
+
     public InternalAddonClassLoader(@Nullable ClassLoader parent, InternalAddonDescription description, AddonManager manager, Addon donateCase) throws IOException, InvalidAddonException, ClassNotFoundException {
         super(new URL[]{description.getFile().toURI().toURL()}, parent);
 
