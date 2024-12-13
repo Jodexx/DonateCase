@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.logging.Level;
 
 /**
@@ -116,7 +117,14 @@ public abstract class InternalJavaAddon implements InternalAddon {
 
         try {
             if (!outFile.exists() || replace) {
-                InternalAddonClassLoader.saveFromInputStream(in, outFile);
+                OutputStream out = Files.newOutputStream(outFile.toPath());
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+                out.close();
+                in.close();
             } else {
                 getLogger().log(Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }

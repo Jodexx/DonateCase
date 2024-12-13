@@ -9,11 +9,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
 import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.Enumeration;
@@ -164,17 +162,6 @@ public class InternalAddonClassLoader extends URLClassLoader {
         }
 
         return result;
-    }
-
-    public static void saveFromInputStream(InputStream in, File outFile) throws IOException {
-        OutputStream out = Files.newOutputStream(outFile.toPath());
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-        }
-        out.close();
-        in.close();
     }
 
     public File getFile() {

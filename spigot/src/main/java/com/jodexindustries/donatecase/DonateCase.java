@@ -4,7 +4,6 @@ import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.jodexindustries.donatecase.animations.*;
 import com.jodexindustries.donatecase.api.*;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
-import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
@@ -47,12 +46,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * Main DonateCase class for loading
@@ -446,54 +439,6 @@ public class DonateCase extends JavaPlugin {
                 getServer().setSpawnRadius(0);
                 Logger.log("&aSpawn protection disabled!");
             }
-        }
-    }
-
-    public void saveResource(@NotNull String resourcePath, boolean replace) {
-        if (resourcePath.isEmpty()) {
-            throw new IllegalArgumentException("ResourcePath cannot be null or empty");
-        }
-
-        resourcePath = resourcePath.replace('\\', '/');
-        InputStream in = getResource(resourcePath);
-        if (in == null) {
-            throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found");
-        }
-
-        File outFile = new File(getDataFolder(), resourcePath);
-        int lastIndex = resourcePath.lastIndexOf('/');
-        File outDir = new File(getDataFolder(), resourcePath.substring(0, Math.max(lastIndex, 0)));
-
-        if (!outDir.exists()) {
-            outDir.mkdirs();
-        }
-
-        try {
-            if (!outFile.exists() || replace) {
-                InternalAddonClassLoader.saveFromInputStream(in, outFile);
-            } else {
-                getLogger().log(java.util.logging.Level.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
-            }
-        } catch (IOException ex) {
-            getLogger().log(java.util.logging.Level.SEVERE, "Could not save " + outFile.getName() + " to " + outFile, ex);
-        }
-    }
-
-    @Nullable
-    public InputStream getResource(@NotNull String filename) {
-
-        try {
-            URL url = getClassLoader().getResource("resources/" + filename);
-
-            if (url == null) {
-                return null;
-            }
-
-            URLConnection connection = url.openConnection();
-            connection.setUseCaches(false);
-            return connection.getInputStream();
-        } catch (IOException ex) {
-            return null;
         }
     }
 
