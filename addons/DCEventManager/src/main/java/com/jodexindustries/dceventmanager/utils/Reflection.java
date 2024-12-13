@@ -26,14 +26,11 @@ public class Reflection {
      * @param classes
      *            the current ArrayList of all classes. This method will simply
      *            add new classes.
-     * @throws ClassNotFoundException
-     *             if a file isn't loaded but still is in the jar file
      * @throws IOException
      *             if it can't correctly read from the jar file.
      */
     private static void checkJarFile(JarURLConnection connection,
-                                     String pckgname, ArrayList<Class<? extends Event>> classes)
-            throws ClassNotFoundException, IOException {
+                                     String pckgname, ArrayList<Class<? extends Event>> classes) throws IOException {
         final JarFile jarFile = connection.getJarFile();
         final Enumeration<JarEntry> entries = jarFile.entries();
         String name;
@@ -46,10 +43,12 @@ public class Reflection {
                 name = name.substring(0, name.length() - 6).replace('/', '.');
 
                 if (name.contains(pckgname)) {
-                    Class<?> clazz = Class.forName(name);
-                    if(Event.class.isAssignableFrom(clazz)) {
-                        classes.add(clazz.asSubclass(Event.class));
-                    }
+                    try {
+                        Class<?> clazz = Class.forName(name);
+                        if (Event.class.isAssignableFrom(clazz)) {
+                            classes.add(clazz.asSubclass(Event.class));
+                        }
+                    } catch (Throwable ignored) {}
                 }
             }
         }
