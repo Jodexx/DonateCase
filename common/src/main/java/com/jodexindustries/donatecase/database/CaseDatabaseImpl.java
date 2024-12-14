@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.TableUtils;
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
@@ -197,6 +198,13 @@ public class CaseDatabaseImpl implements CaseDatabase {
     public CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseDataHistory data) {
         return CompletableFuture.supplyAsync(() -> {
             try {
+                if(data == null) {
+                    DeleteBuilder<HistoryDataTable, String> deleteBuilder = historyDataTables.deleteBuilder();
+                    deleteBuilder.where().eq("id", index).and().eq("case_type", caseType);
+                    deleteBuilder.delete();
+                    return DatabaseStatus.COMPLETE;
+                }
+
                 List<HistoryDataTable> results = historyDataTables.queryBuilder()
                         .where()
                         .eq("id", index)
