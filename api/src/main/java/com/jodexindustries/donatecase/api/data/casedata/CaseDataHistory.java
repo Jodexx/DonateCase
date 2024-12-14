@@ -106,18 +106,18 @@ public class CaseDataHistory implements CCloneable {
     }
 
     /**
-     * Get material id like HDB:1234, HEAD:name, RED_WOOL etc.
+     * History index
      *
-     * @return material id
+     * @return data history index
      */
     public int getId() {
         return id;
     }
 
     /**
-     * Set material id like HDB:1234, HEAD:name, RED_WOOL etc.
+     * Set history index
      *
-     * @param id material id
+     * @param id data history index
      */
     public void setId(int id) {
         this.id = id;
