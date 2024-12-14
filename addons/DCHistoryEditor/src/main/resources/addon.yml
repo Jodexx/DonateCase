@@ -1,0 +1,4 @@
+name: DCHistoryEditor
+version: '${version}'
+api: 2.0.2
+main: com.jodexindustries.dchistoryeditor.bootstrap.MainAddon
