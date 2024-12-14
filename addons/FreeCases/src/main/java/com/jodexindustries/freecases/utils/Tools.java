@@ -15,32 +15,36 @@ public class Tools {
     private final Main main;
     private final Config config;
 
+    private final Placeholder placeholder;
+
     public Tools(Main main) {
         this.main = main;
         this.config = new Config(main);
+
+        this.placeholder = Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI") ? new Placeholder(this) : null;
     }
 
     public void load() {
         MainCommand executor = new MainCommand(this);
         SubCommand<CommandSender> subCommand = main.getDCAPI().getSubCommandManager().builder("free")
                 .executor(executor)
-                .tabCompleter(executor)
                 .permission(SubCommandType.PLAYER.permission)
                 .description("Get free case")
                 .build();
 
         main.getDCAPI().getSubCommandManager().registerSubCommand(subCommand);
-        if(Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new Placeholder(this).register();
-        }
+
+        if(placeholder != null) placeholder.register();
     }
 
     public void unload() {
         main.getDCAPI().getSubCommandManager().unregisterSubCommand("free");
+
+        if(placeholder != null) placeholder.unregister();
     }
 
     public String setPlaceholders(OfflinePlayer player, String text) {
-        return main.getDCAPI().getDonateCase().getServer().getPluginManager().getPlugin("PlaceholderAPI") == null ? text : PlaceholderAPI.setPlaceholders(player, text);
+        return placeholder == null ? text : PlaceholderAPI.setPlaceholders(player, text);
     }
 
     public String formatTime(long time) {

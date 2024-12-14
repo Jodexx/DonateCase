@@ -15,8 +15,6 @@ Received: "&aKey received"
 Done: "&aYou have received a free case key!"
 Wait: "&cYou need to wait &d%time% &cto get key from case."
 AlreadyReceived: "&cYou have already received a free case!"
-ConfigReloaded: "&aConfig successful reloaded!"
 PermissionsNeed: "&cYou don't have permissions!"
 
 # /dc free - get free case; permission: freecases.use; default: true
-# /dc free reload - reload config; permission: freecases.reload; default: false

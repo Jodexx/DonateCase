@@ -8,7 +8,5 @@ depend:
 softdepend:
   - PlaceholderAPI
 permissions:
-  freecases.reload:
-    default: op
   freecases.use:
     default: true

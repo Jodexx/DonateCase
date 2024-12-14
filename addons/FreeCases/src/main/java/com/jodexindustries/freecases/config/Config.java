@@ -30,6 +30,7 @@ public class Config {
     public void reloadConfig() {
         config = YamlConfiguration.loadConfiguration(configFile);
         data = YamlConfiguration.loadConfiguration(dataFile);
+        logger.info("Config reloaded");
     }
 
     public YamlConfiguration getConfig() {
