@@ -16,6 +16,14 @@ SHAPE:
     White:
       Size: 1.0
       Rgb: 255, 255, 255
+  Tail:
+    Radius: 0.5
+  Scroll:
+    Time: 15
+    Height: 0.91
+    Interval: 1
+  End:
+    Time: 25
 
 RAINLY:
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST

@@ -65,8 +65,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
     private class Task implements Consumer<BukkitTask> {
 
         private int tick;
-        private double tail;
-        private final Location l;
+
 
         @NotNull
         private final World world;
@@ -74,98 +73,123 @@ public class ShapeAnimation extends JavaAnimationBukkit {
         private final ArmorStandEulerAngle armorStandEulerAngle;
 
         private final ArmorStandCreator as;
+        private final Location location;
+
         private final float whiteSize;
         private final float orangeSize;
         private final Color orangeColor;
         private final Color whiteColor;
 
+        private final double tailRadius;
+        private double currentTail;
+
+        private final int scrollTime;
+        private final int scrollInterval;
+        private final int endTime;
+        private final double blockPerTick;
+
+        private final Particle particle = getParticle();
+
         public Task(final ArmorStandCreator as, final Color orangeColor, final Color whiteColor) {
             this.as = as;
-            this.l = as.getLocation();
+            this.location = as.getLocation();
             this.whiteSize = (float) getSettings().getDouble("Particle.White.Size");
             this.orangeSize = (float) getSettings().getDouble("Particle.Orange.Size");
             this.orangeColor = orangeColor;
             this.whiteColor = whiteColor;
+
+            double height = getSettings().getDouble("Scroll.Height", 1.5);
+
+            this.tailRadius = getSettings().getDouble("Tail.Radius", 0.5);
+            this.currentTail = tailRadius;
+
+            this.scrollTime = getSettings().getInt("Scroll.Time", 40);
+            this.scrollInterval = getSettings().getInt("Scroll.Interval", 1);
+            this.endTime = getSettings().getInt("End.Time", 40);
+            this.blockPerTick = height / scrollTime;
+
             this.itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD")
                     .toUpperCase());
             this.armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
-            world = l.getWorld() != null ? l.getWorld() : getPlayer().getWorld();
+            world = as.getLocation().getWorld() != null ? as.getLocation().getWorld() : getPlayer().getWorld();
         }
 
         @Override
         public void accept(BukkitTask task) {
-            if (tick == 16) {
+
+            location.setYaw(location.getYaw() + 20.0F);
+
+            if (tick <= scrollTime) {
+                location.add(0.0, blockPerTick, 0.0);
+
+                Particle.DustOptions dustOptions = new Particle.DustOptions(orangeColor, orangeSize);
+                world.spawnParticle(particle, as.getLocation().clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
+            }
+
+            as.teleport(location);
+
+            if (tick <= scrollTime) {
+                handleTail();
+
+                if (tick % scrollInterval == 0) {
+                    CaseDataItem<CaseDataMaterialBukkit, ItemStack> item = getCaseData().getRandomItem();
+                    if (item.getMaterial().getItemStack().getType() != Material.AIR) {
+                        as.setAngle(armorStandEulerAngle);
+                        as.setEquipment(itemSlot, item.getMaterial().getItemStack());
+                    }
+
+                    String winGroupDisplayName = DCToolsBukkit.rc(Case.getInstance().papi.setPlaceholders(getPlayer(),
+                            item.getMaterial().getDisplayName()));
+                    if (item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty()) {
+                        as.setCustomNameVisible(true);
+                    }
+                    as.setCustomName(winGroupDisplayName);
+                    as.updateMeta();
+                }
+
+            }
+
+            if (tick == scrollTime + 1) {
                 if (getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
                     as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
                 }
                 as.setAngle(armorStandEulerAngle);
                 as.setCustomName(getWinItem().getMaterial().getDisplayName());
                 as.updateMeta();
-                instance.api.getTools().launchFirework(l.clone().add(0.0, 0.8, 0.0));
+                instance.api.getTools().launchFirework(as.getLocation().add(0, 0.5, 0));
                 instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
-            if (tick <= 15) {
-                CaseDataItem<CaseDataMaterialBukkit, ItemStack> item = getCaseData().getRandomItem();
-                if (item.getMaterial().getItemStack().getType() != Material.AIR) {
-                    as.setAngle(armorStandEulerAngle);
-                    as.setEquipment(itemSlot, item.getMaterial().getItemStack());
-                }
-
-                String winGroupDisplayName = DCToolsBukkit.rc(Case.getInstance().papi.setPlaceholders(getPlayer(),
-                        item.getMaterial().getDisplayName()));
-                if (item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty()) {
-                    as.setCustomNameVisible(true);
-                }
-                as.setCustomName(winGroupDisplayName);
-                as.updateMeta();
-
-                if (tick <= 8) {
-                    Particle.DustOptions dustOptions = new Particle.DustOptions(orangeColor, orangeSize);
-                    world.spawnParticle(getParticle(), l.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
-                }
-            }
-
-            Location las = as.getLocation();
-            las.setYaw(las.getYaw() + 20.0F);
-            as.teleport(las);
-
-            l.add(0.0, 0.13, 0.0);
-            if (tick <= 7) {
-                l.setYaw(las.getYaw());
-                as.teleport(l);
-            }
-
-            if (tick <= 15) {
-                tail += 0.25;
-                Location loc = l.clone().add(0.0, 0.5, 0.0);
-
-                for (double phi = 0.0; phi <= 9.4; phi += 1) {
-                    double x = 0.09 * (9.5 - tail * 2.5) * Math.cos(tail + phi);
-                    double z = 0.09 * (9.5 - tail * 2.5) * Math.sin(tail + phi);
-                    loc.add(x, 0.0, z);
-                    Particle.DustOptions dustOptions = new Particle.DustOptions(whiteColor, whiteSize);
-
-                    world.spawnParticle(
-                            getParticle(),
-                            loc.clone().add(0.0, 0.4, 0.0),
-                            1, 0.1, 0.1, 0.1, 0.0, dustOptions
-                    );
-                    loc.subtract(x, 0.0, z);
-                }
-
-                if (tail >= 22) {
-                    tail = 0.0;
-                }
-            }
-
-            if (tick >= 40) {
+            if (tick >= scrollTime + endTime) {
                 as.remove();
                 task.cancel();
                 instance.api.getAnimationManager().animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
             }
 
             ++tick;
+        }
+
+        private void handleTail() {
+            currentTail -= tailRadius / scrollTime;
+            Location loc = as.getLocation().clone().add(0.0, blockPerTick, 0.0);
+
+            double c = 2 * Math.PI * 0.5;
+            double angle = c / 10;
+
+            for (double t = 0.0; t <= c; t += angle) {
+                double x = currentTail * Math.cos(t);
+                double z = currentTail * Math.sin(t);
+                loc.add(x, 0.4, z);
+                Particle.DustOptions dustOptions = new Particle.DustOptions(whiteColor, whiteSize);
+
+                world.spawnParticle(
+                        particle,
+                        loc,
+                        1, 0.1, 0.1, 0.1, 0.0, dustOptions
+                );
+                loc.subtract(x, 0.4, z);
+            }
+
         }
 
         private Particle getParticle() {
