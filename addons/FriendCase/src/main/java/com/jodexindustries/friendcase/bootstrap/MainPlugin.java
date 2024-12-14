@@ -12,6 +12,7 @@ public final class MainPlugin extends JavaPlugin implements Main {
     public void onEnable() {
         api = DCAPIBukkit.get(this);
         t = new Tools(this);
+        t.load();
     }
 
     @Override
