@@ -6,7 +6,10 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.friendcase.FriendSubCommand;
 import com.jodexindustries.friendcase.bootstrap.Main;
 import com.jodexindustries.friendcase.config.Config;
+import com.jodexindustries.friendcase.event.EventListener;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.HandlerList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +20,13 @@ public class Tools {
     private final Main main;
     private final Config config;
 
+    private final EventListener eventListener;
+
     public Tools(Main main) {
         this.main = main;
         this.config = new Config(main);
+
+        this.eventListener = new EventListener(this);
     }
 
     public void load() {
@@ -42,10 +49,13 @@ public class Tools {
                 .build();
 
         main.getDCAPI().getSubCommandManager().registerSubCommand(subCommand);
+
+        Bukkit.getPluginManager().registerEvents(eventListener, main.getDCAPI().getDonateCase());
     }
 
     public void unload() {
         main.getDCAPI().getSubCommandManager().unregisterSubCommand("gift");
+        HandlerList.unregisterAll(eventListener);
     }
 
     public Config getConfig() {

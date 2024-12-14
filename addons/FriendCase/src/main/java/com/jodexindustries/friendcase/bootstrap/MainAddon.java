@@ -14,6 +14,7 @@ public final class MainAddon extends InternalJavaAddon implements Main {
         t = new Tools(this);
         t.load();
     }
+
     @Override
     public void onDisable() {
         t.unload();

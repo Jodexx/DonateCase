@@ -26,90 +26,94 @@ public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubC
 
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        if (sender instanceof Player) {
-            Player p = (Player) sender;
-            if (args.length == 0) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.OnlyPlayers", "")));
+            return;
+        }
+        Player p = (Player) sender;
+        if (args.length == 0) {
+            sendHelp(sender);
+        } else {
+            if (args.length < 3) {
                 sendHelp(sender);
-            } else {
-                if (args.length < 3) {
-                    if (args.length == 1) {
-                        if (args[0].equalsIgnoreCase("reload")) {
-                            if (sender.hasPermission("donatecase.admin")) {
-                                t.getConfig().reloadConfig();
-                                sender.sendMessage(rc(
-                                        t.getConfig().getConfig().getString("Messages.ConfigReloaded", "")
-                                ));
-                            }
-                        } else {
-                            sendHelp(sender);
-                        }
-                    }
-                } else {
-                    Player target = Bukkit.getPlayerExact(args[0]);
-                    String caseType = args[1];
-                    int keys;
-                    try {
-                        keys = Math.abs(Integer.parseInt(args[2]));
-                    } catch (NumberFormatException e) {
-                        sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.NumberFormat", "")));
+                return;
+            }
+
+            Player target = Bukkit.getPlayerExact(args[0]);
+            String caseType = args[1];
+            int keys;
+            try {
+                keys = Math.abs(Integer.parseInt(args[2]));
+            } catch (NumberFormatException e) {
+                sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.NumberFormat", "")));
+                return;
+            }
+
+            if (t.getConfig().getConfig().getStringList("BlackList").contains(caseType)) {
+                sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.CaseInBlackList", "")));
+                return;
+            }
+
+            if (!t.getDCAPI().getCaseManager().hasCaseByType(caseType)) {
+                sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.CaseNotFound", "")));
+                return;
+            }
+
+            int playerKeys = t.getDCAPI().getCaseKeyManager().getKeys(caseType, p.getName());
+
+            if (playerKeys < 1 || playerKeys < keys) {
+                sender.sendMessage(rc(
+                        t.getConfig().getConfig().getString("Messages.MinNumber", "")
+                                .replace("%required%", keys + "")
+                ));
+                return;
+            }
+
+
+            if (target == null) {
+                sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.PlayerNotFound", "")));
+                return;
+            }
+
+            if (target == p) {
+                sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.GiftYourself", "")));
+                return;
+            }
+
+            t.getDCAPI().getCaseKeyManager().removeKeys(caseType, p.getName(), keys).thenAcceptAsync(status -> {
+
+                if (status != DatabaseStatus.COMPLETE) {
+                    return;
+                }
+
+                t.getDCAPI().getCaseKeyManager().addKeys(caseType, target.getName(), keys).thenAcceptAsync(nextStatus -> {
+
+                    if (nextStatus != DatabaseStatus.COMPLETE) {
                         return;
                     }
-                    if (!t.getConfig().getConfig().getStringList("BlackList").contains(caseType)) {
-                        if (t.getDCAPI().getCaseManager().hasCaseByType(caseType)) {
-                            int playerKeys = t.getDCAPI().getCaseKeyManager().getKeys(caseType, p.getName());
-                            if (playerKeys >= 1 && playerKeys >= keys) {
-                                if (target != null) {
-                                    if (target != p) {
-                                        t.getDCAPI().getCaseKeyManager().removeKeys(caseType, p.getName(), keys).thenAcceptAsync(status -> {
-                                            if (status == DatabaseStatus.COMPLETE) {
-                                                t.getDCAPI().getCaseKeyManager().addKeys(caseType, target.getName(), keys).thenAcceptAsync(nextStatus -> {
-                                                    if (nextStatus == DatabaseStatus.COMPLETE) {
-                                                        target.sendMessage(rc(
-                                                                t.getConfig().getConfig().getString("Messages.YouReceivedGift", "")
-                                                                        .replace("%sender%", sender.getName())
-                                                                        .replace("%target%", target.getName())
-                                                                        .replace("%keys%", keys + "")
-                                                                        .replace("%case%", caseType)
-                                                        ));
-                                                        sender.sendMessage(rc(
-                                                                t.getConfig().getConfig().getString("Messages.YouSendGift", "")
-                                                                        .replace("%target%", target.getName())
-                                                                        .replace("%sender%", sender.getName())
-                                                                        .replace("%keys%", keys + "")
-                                                                        .replace("%case%", caseType)
-                                                        ));
-                                                        Bukkit.getScheduler().runTask(t.getDCAPI().getDonateCase(), () -> {
-                                                            CaseGiftEvent event = new CaseGiftEvent(p, target, caseType, keys);
-                                                            Bukkit.getPluginManager().callEvent(event);
-                                                        });
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    } else {
-                                        sender.sendMessage(rc(
-                                                t.getConfig().getConfig().getString("Messages.GiftYourself", "")));
-                                    }
-                                } else {
-                                    sender.sendMessage(rc(
-                                            t.getConfig().getConfig().getString("Messages.PlayerNotFound", "")));
-                                }
-                            } else {
-                                sender.sendMessage(rc(
-                                        t.getConfig().getConfig().getString("Messages.MinNumber", "")
-                                                .replace("%required%", keys + "")
-                                ));
-                            }
-                        } else {
-                            sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.CaseNotFound", "")));
-                        }
-                    } else {
-                        sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.CaseInBlackList", "")));
-                    }
-                }
-            }
-        } else {
-            sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.OnlyPlayers", "")));
+
+                    target.sendMessage(rc(
+                            t.getConfig().getConfig().getString("Messages.YouReceivedGift", "")
+                                    .replace("%sender%", sender.getName())
+                                    .replace("%target%", target.getName())
+                                    .replace("%keys%", keys + "")
+                                    .replace("%case%", caseType)
+                    ));
+                    sender.sendMessage(rc(
+                            t.getConfig().getConfig().getString("Messages.YouSendGift", "")
+                                    .replace("%target%", target.getName())
+                                    .replace("%sender%", sender.getName())
+                                    .replace("%keys%", keys + "")
+                                    .replace("%case%", caseType)
+                    ));
+
+                    Bukkit.getScheduler().runTask(t.getDCAPI().getDonateCase(), () -> {
+                        CaseGiftEvent event = new CaseGiftEvent(p, target, caseType, keys);
+                        Bukkit.getPluginManager().callEvent(event);
+                    });
+                });
+            });
+
         }
     }
 
@@ -121,16 +125,12 @@ public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubC
 
     @Override
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        List<String> strings;
+        List<String> strings = new ArrayList<>();
         if (args.length == 1) {
-            strings = Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
-            return strings;
-        } else {
-            if (args.length == 2) {
-                strings = new ArrayList<>(t.getDCAPI().getCaseManager().getMap().keySet());
-                return strings;
-            }
+            strings.addAll(Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
+        } else if (args.length == 2) {
+            strings.addAll(t.getDCAPI().getCaseManager().getMap().keySet());
         }
-        return new ArrayList<>();
+        return strings;
     }
 }

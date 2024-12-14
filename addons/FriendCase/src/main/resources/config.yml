@@ -13,7 +13,6 @@ Messages:
   PlayerNotFound: "&cPlayer not online"
   MinNumber: "&cRequires at least %required% of case keys"
   CaseNotFound: "&cCase not found!"
-  ConfigReloaded: "&aConfig reloaded!"
   OnlyPlayers: "&cYou can use this command only from player!"
   Help:
     - "&9/dc gift &7(&aPlayer&7) (&aCase type&7) (&aKeys&7)"
