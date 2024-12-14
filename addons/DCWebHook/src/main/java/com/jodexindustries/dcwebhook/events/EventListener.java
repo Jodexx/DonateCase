@@ -3,30 +3,38 @@ package com.jodexindustries.dcwebhook.events;
 import com.jodexindustries.dcwebhook.tools.DiscordWebhook;
 import com.jodexindustries.dcwebhook.tools.Tools;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
+import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.IOException;
 
 public class EventListener implements Listener {
     private final Tools t;
+
     public EventListener(Tools t) {
         this.t = t;
     }
+
+    @EventHandler
+    public void onReload(DonateCaseReloadEvent e) {
+        if (e.getType() == DonateCaseReloadEvent.Type.CONFIG) t.getConfig().reloadConfig();
+    }
+
     @EventHandler
     public void onAnimationEnd(AnimationEndEvent e) {
-        String player = e.getPlayer().getName();
+        String player = e.getPlayer().getName() == null ? "" : e.getPlayer().getName();
         String animation = e.getAnimation();
         String caseType = e.getCaseData().getCaseType();
         String winGroup = e.getWinItem().getGroup();
         String caseTitle = ChatColor.stripColor(e.getCaseData().getCaseTitle());
-        Bukkit.getScheduler().runTaskAsynchronously(t.getMain().getDCAPI().getDonateCase(),  () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(t.getMain().getDCAPI().getDonateCase(), () -> {
             String webhook = t.getConfig().getConfig().getString("Webhook");
-            if(webhook != null && !webhook.isEmpty()) {
+            if (webhook != null && !webhook.isEmpty()) {
                 DiscordWebhook.EmbedObject object = new DiscordWebhook.EmbedObject();
                 DiscordWebhook discordWebhook = new DiscordWebhook(webhook);
                 String title = t.getConfig().getConfig().getString("Embed.Title");
@@ -51,7 +59,7 @@ public class EventListener implements Listener {
                 String footerIcon = t.getConfig().getConfig().getString("Embed.Footer.Icon", "");
                 ConfigurationSection fieldsSection = t.getConfig().getConfig().getConfigurationSection("Embed.Fields");
                 object.setTitle(title);
-                if(fieldsSection != null) {
+                if (fieldsSection != null) {
                     for (String field : fieldsSection.getKeys(false)) {
                         String fieldTitle = t.getConfig().getConfig().getString("Embed.Fields." + field + ".Title", "")
                                 .replaceAll("%player%", player)

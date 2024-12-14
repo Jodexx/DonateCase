@@ -1,39 +1,30 @@
 package com.jodexindustries.dcwebhook.tools;
 
 import com.jodexindustries.dcwebhook.bootstrap.Main;
-import com.jodexindustries.dcwebhook.commands.MainCommand;
 import com.jodexindustries.dcwebhook.config.Config;
 import com.jodexindustries.dcwebhook.events.EventListener;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
+import org.bukkit.event.HandlerList;
 
 public class Tools {
     private final Main main;
     private final Config config;
 
+    private final EventListener eventListener;
+
     public Tools(Main main) {
         this.main = main;
         this.config = new Config(main);
+
+        this.eventListener = new EventListener(this);
     }
 
     public void load() {
-        Bukkit.getServer().getPluginManager().registerEvents(new EventListener(this), main.getDCAPI().getDonateCase());
-        MainCommand mainCommand = new MainCommand(this);
-        SubCommand<CommandSender> subCommand = main.getDCAPI().getSubCommandManager().builder("webhook")
-                .executor(mainCommand)
-                .tabCompleter(mainCommand)
-                .permission(SubCommandType.ADMIN.permission)
-                .args(new String[]{"reload"})
-                .description("Reload addon config")
-                .build();
-
-        main.getDCAPI().getSubCommandManager().registerSubCommand(subCommand);
+        Bukkit.getServer().getPluginManager().registerEvents(eventListener, main.getDCAPI().getDonateCase());
     }
 
     public void unload() {
-        main.getDCAPI().getSubCommandManager().unregisterSubCommand("webhook");
+        HandlerList.unregisterAll(eventListener);
     }
 
     public Main getMain() {

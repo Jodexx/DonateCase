@@ -7,10 +7,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 
 public class Config {
+
+    private final Main main;
     private YamlConfiguration config;
     private final File configFile;
 
     public Config(Main main) {
+        this.main = main;
         configFile = new File(main.getDataFolder(), "config.yml");
         if (!configFile.exists()) main.saveResource("config.yml", false);
 
@@ -23,9 +26,7 @@ public class Config {
 
     public void reloadConfig() {
         config = YamlConfiguration.loadConfiguration(configFile);
+        main.getLogger().info("Config reloaded");
     }
 
-    public File getConfigFile() {
-        return configFile;
-    }
 }
