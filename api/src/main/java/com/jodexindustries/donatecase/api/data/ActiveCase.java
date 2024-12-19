@@ -15,6 +15,8 @@ public class ActiveCase<B> {
      */
     private final String caseType;
 
+    private boolean keyRemoved;
+
     /**
      * Default constructor
      *
@@ -42,5 +44,21 @@ public class ActiveCase<B> {
      */
     public B getBlock() {
         return block;
+    }
+
+    /**
+     * @since 2.0.2.1
+     * @return true if key removed from player
+     */
+    public boolean isKeyRemoved() {
+        return keyRemoved;
+    }
+
+    /**
+     * @since 2.0.2.1
+     * @param keyRemoved is removed key from player
+     */
+    public void setKeyRemoved(boolean keyRemoved) {
+        this.keyRemoved = keyRemoved;
     }
 }

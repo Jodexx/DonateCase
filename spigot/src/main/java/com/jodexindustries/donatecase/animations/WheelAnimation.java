@@ -30,8 +30,6 @@ import java.util.Random;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
-
 public class WheelAnimation extends JavaAnimationBukkit {
 
     private final List<ArmorStandCreator> armorStands = new ArrayList<>();
@@ -54,7 +52,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
     }
 
     public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
-        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("WHEEL")
+        CaseAnimation<JavaAnimationBukkit> caseAnimation = manager.builder("WHEEL")
                 .animation(WheelAnimation.class)
                 .description("Items resolve around the case")
                 .requireSettings(true)
@@ -126,7 +124,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
             }
 
             if (ticks == animationTime) {
-                instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+                getApi().getAnimationManager().animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
             }
 
             if (ticks >= animationTime + 20) {
@@ -216,13 +214,13 @@ public class WheelAnimation extends JavaAnimationBukkit {
             for (ArmorStandCreator stand : armorStands) {
                 stand.remove();
             }
-            instance.api.getAnimationManager().animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+            getApi().getAnimationManager().animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
             armorStands.clear();
         }
     }
 
     private ArmorStandCreator spawnArmorStand(Location location, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item, boolean small) {
-        ArmorStandCreator as = instance.api.getTools().createArmorStand(location);
+        ArmorStandCreator as = getApi().getTools().createArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);

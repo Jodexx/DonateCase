@@ -25,12 +25,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
-
 public class ShapeAnimation extends JavaAnimationBukkit {
 
     public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
-        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("SHAPE")
+        CaseAnimation<JavaAnimationBukkit> caseAnimation = manager.builder("SHAPE")
                 .animation(ShapeAnimation.class)
                 .description("Items flip through and a shape appears")
                 .requireSettings(true)
@@ -47,7 +45,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
 
         getLocation().add(x, y, z);
 
-        final ArmorStandCreator as = instance.api.getTools().createArmorStand(getLocation());
+        final ArmorStandCreator as = getApi().getTools().createArmorStand(getLocation());
         boolean small = getSettings().getBoolean("Shape.SmallArmorStand", true);
         as.setSmall(small);
         as.setVisible(false);
@@ -163,14 +161,14 @@ public class ShapeAnimation extends JavaAnimationBukkit {
                 as.setAngle(armorStandEulerAngle);
                 as.setCustomName(getWinItem().getMaterial().getDisplayName());
                 as.updateMeta();
-                instance.api.getTools().launchFirework(as.getLocation().add(0, 0.5, 0));
-                instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+                getApi().getTools().launchFirework(as.getLocation().add(0, 0.5, 0));
+                getApi().getAnimationManager().animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
             }
 
             if (tick >= scrollTime + endTime) {
                 as.remove();
                 task.cancel();
-                instance.api.getAnimationManager().animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+                getApi().getAnimationManager().animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
             }
 
             ++tick;

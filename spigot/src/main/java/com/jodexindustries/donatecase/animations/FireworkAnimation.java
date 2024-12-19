@@ -20,14 +20,12 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.function.Consumer;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
-
 public class FireworkAnimation extends JavaAnimationBukkit {
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 
     public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
-        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("FIREWORK")
+        CaseAnimation<JavaAnimationBukkit> caseAnimation = manager.builder("FIREWORK")
                 .animation(FireworkAnimation.class)
                 .description("Fireworks fly to the skies and a prize appears")
                 .requireSettings(true)
@@ -43,7 +41,7 @@ public class FireworkAnimation extends JavaAnimationBukkit {
         String displayName = getWinItem().getMaterial().getDisplayName();
         getWinItem().getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(getPlayer(), displayName));
         getLocation().add(0.5, 1, 0.5);
-        ArmorStandCreator as = instance.api.getTools().createArmorStand(getLocation());
+        ArmorStandCreator as = getApi().getTools().createArmorStand(getLocation());
 
         boolean small = getSettings().getBoolean("SmallArmorStand", true);
         as.setSmall(small);
@@ -91,12 +89,12 @@ public class FireworkAnimation extends JavaAnimationBukkit {
                         as.setCustomNameVisible(true);
                     as.setCustomName(getWinItem().getMaterial().getDisplayName());
                     as.updateMeta();
-                    instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+                    getApi().getAnimationManager().animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
                 }
                 if (this.i >= 30) {
                     as.remove();
                     task.cancel();
-                    instance.api.getAnimationManager().animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+                    getApi().getAnimationManager().animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
                 }
             }
 

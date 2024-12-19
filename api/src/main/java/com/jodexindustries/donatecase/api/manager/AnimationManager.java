@@ -24,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
  * @param <I> The type of ItemStack associated with materials or items.
  * @param <P> The type of Player interacting with animations.
  */
-public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, I, P, L, B, C> {
+public interface AnimationManager<A extends JavaAnimation<M, I, C>, M extends CaseDataMaterial<I>, I, P, L, B, C> {
 
     /**
      * Creates a builder for defining and constructing a new custom animation.
@@ -33,7 +33,7 @@ public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseD
      * @return A {@link CaseAnimation.Builder} instance for building the animation.
      */
     @NotNull
-    CaseAnimation.Builder<A, M, I> builder(String name);
+    CaseAnimation.Builder<A> builder(String name);
 
     /**
      * Registers a custom animation to the system.
@@ -42,7 +42,7 @@ public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseD
      * @return True if the registration was successful, false otherwise.
      * @see #builder(String)
      */
-    boolean registerAnimation(CaseAnimation<A, M, I> animation);
+    boolean registerAnimation(CaseAnimation<A> animation);
 
     /**
      * Unregisters a specific animation from the system by its name.
@@ -64,7 +64,7 @@ public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseD
      * @param caseData The case data associated with the animation.
      * @return A {@link CompletableFuture} that completes when the animation starts.
      */
-    CompletableFuture<Boolean> startAnimation(@NotNull P player, @NotNull L location, @NotNull C caseData);
+    CompletableFuture<UUID> startAnimation(@NotNull P player, @NotNull L location, @NotNull C caseData);
 
     /**
      * Starts an animation at a specified location after a delay.
@@ -75,7 +75,7 @@ public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseD
      * @param delay    The delay in ticks before starting the animation.
      * @return A {@link CompletableFuture} that completes when the animation starts.
      */
-    CompletableFuture<Boolean> startAnimation(@NotNull P player, @NotNull L location, @NotNull C caseData, int delay);
+    CompletableFuture<UUID> startAnimation(@NotNull P player, @NotNull L location, @NotNull C caseData, int delay);
 
     /**
      * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
@@ -122,14 +122,14 @@ public interface AnimationManager<A extends JavaAnimation<M, I>, M extends CaseD
      * @return The {@link CaseAnimation} instance if registered, or null if not found.
      */
     @Nullable
-    CaseAnimation<A, M, I> getRegisteredAnimation(String animation);
+    CaseAnimation<A> getRegisteredAnimation(String animation);
 
     /**
      * Retrieves a map of all registered animations.
      *
      * @return A map where keys are animation names and values are {@link CaseAnimation} instances.
      */
-    Map<String, CaseAnimation<A, M, I>> getRegisteredAnimations();
+    Map<String, CaseAnimation<A>> getRegisteredAnimations();
 
     /**
      * Retrieves a map of all active cases currently running in the system.

@@ -1,18 +1,19 @@
 package com.jodexindustries.donatecase.api.data.animation;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 
 /**
  * Class for custom animation storage
+ * @param <A> the type of JavaAnimation
  */
-public class CaseAnimation<A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, I> {
+public class CaseAnimation<A> {
     private final Addon addon;
     private final String name;
 
     private Class<? extends A> animation;
     private String description;
     private boolean requireSettings;
+    private boolean removeKeyAtStart;
 
     public CaseAnimation(String name, Addon addon) {
         this.addon = addon;
@@ -59,24 +60,17 @@ public class CaseAnimation<A extends JavaAnimation<M, I>, M extends CaseDataMate
         return requireSettings;
     }
 
-    public void setAnimation(Class<? extends A> animation) {
-        this.animation = animation;
+    public boolean isRemoveKeyAtStart() {
+        return removeKeyAtStart;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setRequireSettings(boolean requireSettings) {
-        this.requireSettings = requireSettings;
-    }
-
-    public static class Builder<A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, I> {
+    public static class Builder<A> {
         private final Addon addon;
         private final String name;
 
         private String description;
         private boolean requireSettings;
+        private boolean removeKeyAtStart;
         private Class<? extends A> animation;
 
         public Builder(String name, Addon addon) {
@@ -84,26 +78,32 @@ public class CaseAnimation<A extends JavaAnimation<M, I>, M extends CaseDataMate
             this.name = name;
         }
 
-        public Builder<A, M, I> animation(Class<? extends A> animation) {
+        public Builder<A> animation(Class<? extends A> animation) {
             this.animation = animation;
             return this;
         }
 
-        public Builder<A, M, I> description(String description) {
+        public Builder<A> description(String description) {
             this.description = description;
             return this;
         }
 
-        public Builder<A, M, I> requireSettings(boolean requireSettings) {
+        public Builder<A> requireSettings(boolean requireSettings) {
             this.requireSettings = requireSettings;
             return this;
         }
 
-        public CaseAnimation<A, M, I> build() {
-            CaseAnimation<A, M, I> caseAnimation = new CaseAnimation<>(name, addon);
-            caseAnimation.setAnimation(animation);
-            caseAnimation.setDescription(description);
-            caseAnimation.setRequireSettings(requireSettings);
+        public Builder<A> removeKeyAtStart(boolean removeKeyAtStart) {
+            this.removeKeyAtStart = removeKeyAtStart;
+            return this;
+        }
+
+        public CaseAnimation<A> build() {
+            CaseAnimation<A> caseAnimation = new CaseAnimation<>(name, addon);
+            caseAnimation.animation = animation;
+            caseAnimation.description = description;
+            caseAnimation.requireSettings = requireSettings;
+            caseAnimation.removeKeyAtStart = removeKeyAtStart;
             return caseAnimation;
         }
     }

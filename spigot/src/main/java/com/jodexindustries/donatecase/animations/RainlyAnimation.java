@@ -21,15 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
-
 public class RainlyAnimation extends JavaAnimationBukkit {
 
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 
     public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
-        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = manager.builder("RAINLY")
+        CaseAnimation<JavaAnimationBukkit> caseAnimation = manager.builder("RAINLY")
                 .animation(RainlyAnimation.class)
                 .description("Rain drips from the clouds")
                 .requireSettings(true)
@@ -42,7 +40,7 @@ public class RainlyAnimation extends JavaAnimationBukkit {
     public void start() {
         Particle particle = Particle.valueOf(getSettings().getString("FallingParticle"));
 
-        ArmorStandCreator as = instance.api.getTools().createArmorStand(getLocation().clone().add(0.5, 1, 0.5));
+        ArmorStandCreator as = getApi().getTools().createArmorStand(getLocation().clone().add(0.5, 1, 0.5));
         as.setVisible(false);
         as.setGravity(false);
 
@@ -115,7 +113,7 @@ public class RainlyAnimation extends JavaAnimationBukkit {
             if (i >= 70) {
                 as.remove();
                 task.cancel();
-                instance.api.getAnimationManager().animationEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+                getApi().getAnimationManager().animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
             }
 
             i++; // Increment tick counter
@@ -137,7 +135,7 @@ public class RainlyAnimation extends JavaAnimationBukkit {
             as.setCustomName(winGroupDisplayName);
             as.updateMeta();
 
-            instance.api.getAnimationManager().animationPreEnd(getCaseDataBukkit(), getPlayer(), getUuid(), getWinItem());
+            getApi().getAnimationManager().animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
 
             world.spawnParticle(getParticle("explosion"), loc, 0);
             world.playSound(loc, endSound, endVolume, endPitch);

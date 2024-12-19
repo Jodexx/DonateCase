@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.impl.managers;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
@@ -41,7 +42,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
     /**
      * Map of registered animations
      */
-    private final static Map<String, CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>> registeredAnimations = new HashMap<>();
+    private final static Map<String, CaseAnimation<JavaAnimationBukkit>> registeredAnimations = new HashMap<>();
 
     /**
      * Map of active cases
@@ -53,25 +54,27 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
      */
     private final static Map<Block, UUID> activeCasesByBlock = new HashMap<>();
 
+    private final DCAPIBukkit api;
     private final Addon addon;
 
     /**
      * Default constructor
      *
-     * @param addon An addon that will manage animations
+     * @param api An DCAPI that will manage animations
      */
-    public AnimationManagerImpl(@NotNull Addon addon) {
-        this.addon = addon;
+    public AnimationManagerImpl(@NotNull DCAPIBukkit api) {
+        this.api = api;
+        this.addon = api.getAddon();
     }
 
     @NotNull
     @Override
-    public CaseAnimation.Builder<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> builder(String name) {
+    public CaseAnimation.Builder<JavaAnimationBukkit> builder(String name) {
         return new CaseAnimation.Builder<>(name, addon);
     }
 
     @Override
-    public boolean registerAnimation(CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation) {
+    public boolean registerAnimation(CaseAnimation<JavaAnimationBukkit> caseAnimation) {
         String name = caseAnimation.getName();
         if(!isRegistered(name)) {
             registeredAnimations.put(name, caseAnimation);
@@ -102,16 +105,16 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
     }
 
     @Override
-    public CompletableFuture<Boolean> startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseDataBukkit caseData) {
+    public CompletableFuture<UUID> startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseDataBukkit caseData) {
         return startAnimation(player, location, caseData, 0);
     }
 
     @Override
-    public CompletableFuture<Boolean> startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseDataBukkit caseData, int delay) {
+    public CompletableFuture<UUID> startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseDataBukkit caseData, int delay) {
         Block block = location.getBlock();
 
         if(!validateStartConditions(caseData, block, player)) {
-            return CompletableFuture.completedFuture(false);
+            return CompletableFuture.completedFuture(null);
         }
 
         caseData = caseData.clone();
@@ -131,9 +134,9 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
             instance.hologramManager.removeHologram(block);
         }
 
-        CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation = getRegisteredAnimation(animation);
+        CaseAnimation<JavaAnimationBukkit> caseAnimation = getRegisteredAnimation(animation);
 
-        CompletableFuture<Boolean> animationCompletion = new CompletableFuture<>();
+        CompletableFuture<UUID> animationCompletion = new CompletableFuture<>();
         if (caseAnimation != null) {
             Location caseLocation = location;
 
@@ -152,16 +155,16 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
                         throw new IllegalArgumentException("Animation " + animation + " requires settings for starting!");
 
                     JavaAnimationBukkit javaAnimation = animationClass.getDeclaredConstructor().newInstance();
-                    javaAnimation.init(player, caseLocation, uuid, caseData, preStartEvent.getWinItem(), settings);
+                    javaAnimation.init(api, player, caseLocation, uuid, caseData, preStartEvent.getWinItem(), settings);
 
                     Bukkit.getScheduler().runTaskLater(Case.getInstance(), () -> {
                         try {
                             javaAnimation.start();
-                            animationCompletion.complete(true);
+                            animationCompletion.complete(uuid);
                         } catch (Throwable t) {
                             addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
                             activeCasesByBlock.remove(block);
-                            animationCompletion.complete(false);
+                            animationCompletion.complete(null);
                         }
                     }, delay);
 
@@ -172,7 +175,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
             } catch (Throwable t) {
                 addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
                 activeCasesByBlock.remove(block);
-                animationCompletion.complete(false);
+                animationCompletion.complete(null);
             }
         }
 
@@ -226,6 +229,8 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         ActiveCase<Block> activeCase = activeCases.get(uuid);
         if(activeCase == null) return;
 
+        if(!activeCase.isKeyRemoved()) Case.getInstance().api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1);
+
         Block block = activeCase.getBlock();
         activeCasesByBlock.remove(block);
         activeCases.remove(uuid);
@@ -243,12 +248,12 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
 
     @Nullable
     @Override
-    public CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> getRegisteredAnimation(String animation) {
+    public CaseAnimation<JavaAnimationBukkit> getRegisteredAnimation(String animation) {
         return registeredAnimations.get(animation);
     }
 
     @Override
-    public Map<String, CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>> getRegisteredAnimations() {
+    public Map<String, CaseAnimation<JavaAnimationBukkit>> getRegisteredAnimations() {
         return registeredAnimations;
     }
 

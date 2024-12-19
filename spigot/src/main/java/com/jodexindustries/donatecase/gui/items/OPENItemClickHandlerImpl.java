@@ -68,8 +68,12 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
 
                 if (!openEvent.isCancelled()) {
                     Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData).thenAcceptAsync(started -> {
-                        if(started) {
-                            if(!event.isIgnoreKeys()) Case.getInstance().api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1);
+                        if(started != null) {
+                            if(!event.isIgnoreKeys()) {
+                                Case.getInstance().api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1).thenAcceptAsync(status -> {
+                                    Case.getInstance().api.getAnimationManager().getActiveCases().get(started).setKeyRemoved(true);
+                                });
+                            }
                         }
                     });
                 }

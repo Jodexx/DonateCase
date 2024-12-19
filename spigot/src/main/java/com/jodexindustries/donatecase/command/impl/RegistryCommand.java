@@ -88,21 +88,21 @@ public class RegistryCommand implements SubCommandExecutor<CommandSender>, SubCo
     }
 
     private static void executeAnimations(CommandSender sender) {
-        Map<String, List<CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>>> animationsMap = buildAnimationsMap();
-        for (Map.Entry<String, List<CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>>> entry : animationsMap.entrySet()) {
+        Map<String, List<CaseAnimation<JavaAnimationBukkit>>> animationsMap = buildAnimationsMap();
+        for (Map.Entry<String, List<CaseAnimation<JavaAnimationBukkit>>> entry : animationsMap.entrySet()) {
             DCToolsBukkit.msgRaw(sender, "&6" + entry.getKey());
-            for (CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> animation : entry.getValue()) {
+            for (CaseAnimation<JavaAnimationBukkit> animation : entry.getValue()) {
                 DCToolsBukkit.msgRaw(sender, "&9- &a" + animation.getName() + " &3- &2" + animation.getDescription());
             }
         }
     }
 
-    private static Map<String, List<CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>>> buildAnimationsMap() {
-        Map<String, List<CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>>> animationsMap = new HashMap<>();
+    private static Map<String, List<CaseAnimation<JavaAnimationBukkit>>> buildAnimationsMap() {
+        Map<String, List<CaseAnimation<JavaAnimationBukkit>>> animationsMap = new HashMap<>();
         instance.api.getAnimationManager().getRegisteredAnimations().forEach((animationName, caseAnimation) -> {
             String addon = caseAnimation.getAddon().getName();
 
-            List<CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack>> animations = animationsMap.getOrDefault(addon, new ArrayList<>());
+            List<CaseAnimation<JavaAnimationBukkit>> animations = animationsMap.getOrDefault(addon, new ArrayList<>());
             animations.add(caseAnimation);
 
             animationsMap.put(addon, animations);
