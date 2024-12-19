@@ -39,32 +39,30 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
     public void execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         Bukkit.getScheduler().runTaskAsynchronously(api.getDonateCase(), () -> {
             if (args.length < 3) {
-                sender.sendMessage(DCToolsBukkit.rc("&c/dc historyeditor (remove/set) (casetype) (index) [param] [value]"));
+                sender.sendMessage(DCToolsBukkit.rc("&c/dc historyeditor (remove/set) (casetype) (index/all) [param] [value]"));
                 return;
             }
 
             String action = args[0].toLowerCase();
             String caseType = args[1];
-            int index = parseInt(args[2]);
-
-            if (index <= -1 || index > 10) {
-                sender.sendMessage(DCToolsBukkit.rc("&cNumber format exception!"));
-                return;
-            }
 
             switch (action) {
                 case "remove": {
-                    database.setHistoryData(caseType, index, null).thenAccept(status -> {
-                        if (status == DatabaseStatus.COMPLETE) {
-                            sender.sendMessage(DCToolsBukkit.rc("&aHistory data removed!"));
-                        } else {
-                            sender.sendMessage(DCToolsBukkit.rc("&cError with history data removing!"));
-                        }
-                    });
+                    if(args[2].equalsIgnoreCase("all") ) {
+                            database.removeHistoryData(caseType).thenAccept(status -> removeInform(sender, status));
+                    } else {
+                        int index = getIndex(sender, args[2]);
+                        if(index == -1) return;
+
+                        database.removeHistoryData(caseType, index).thenAccept(status -> removeInform(sender, status));
+                    }
                     return;
                 }
 
                 case "set": {
+                    int index = getIndex(sender, args[2]);
+                    if(index == -1) return;
+
                     if (args.length < 5) {
                         // usage
                         sender.sendMessage(DCToolsBukkit.rc("&c/dc historyeditor set (casetype) (index) (value) (param)"));
@@ -81,8 +79,7 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
                     }
 
                     CaseDataHistory history = getHistoryData(caseType, index);
-                    if(history == null) history = new CaseDataHistory(null, caseType, null, 0, null, null);
-                    history.setId(index);
+                    if(history == null) history = new CaseDataHistory(null, caseType, null, index, null, null);
 
                     switch (param) {
                         case "item": {
@@ -142,6 +139,7 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
         }
 
         if(args.length == 3) {
+            list.add("all");
             IntStream.rangeClosed(0, 10).mapToObj(String::valueOf).forEach(list::add);
         }
 
@@ -156,6 +154,20 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
         List<CaseDataHistory> histories = database.getHistoryDataByCaseType(caseType).join();
 
         return histories.stream().filter(history -> history.getId() == index).findFirst().orElse(null);
+    }
+
+    private void removeInform(CommandSender sender, DatabaseStatus status) {
+        sender.sendMessage(status == DatabaseStatus.COMPLETE ? DCToolsBukkit.rc("&aHistory data removed!") :
+                DCToolsBukkit.rc("&cError with history data removing!"));
+    }
+
+    private int getIndex(CommandSender sender, String string) {
+        int index = parseInt(string);
+        if (index <= -1 || index > 10) {
+            sender.sendMessage(DCToolsBukkit.rc("&cNumber format exception!"));
+            return -1;
+        }
+        return index;
     }
 
     private int parseInt(String string) {
