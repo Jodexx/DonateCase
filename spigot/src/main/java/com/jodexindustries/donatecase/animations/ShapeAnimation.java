@@ -46,7 +46,6 @@ public class ShapeAnimation extends JavaAnimationBukkit {
         double z = getSettings().getDouble("StartPosition.Z", 0.5);
 
         getLocation().add(x, y, z);
-        getLocation().setYaw(-70.0F);
 
         final ArmorStandCreator as = instance.api.getTools().createArmorStand(getLocation());
         boolean small = getSettings().getBoolean("Shape.SmallArmorStand", true);
@@ -61,9 +60,11 @@ public class ShapeAnimation extends JavaAnimationBukkit {
         final Color orangeColor = DCToolsBukkit.fromRGBString(orangeRgbString, Color.ORANGE);
         final Color whiteColor = DCToolsBukkit.fromRGBString(whiteRgbString, Color.WHITE);
 
+        long period = getSettings().getLong("Scroll.Period");
+
         Bukkit.getScheduler().runTaskTimer(Case.getInstance(),
                 new Task(as, orangeColor, whiteColor),
-                0L, 2L);
+                0L, period);
     }
 
     private class Task implements Consumer<BukkitTask> {
@@ -91,6 +92,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
         private final int scrollInterval;
         private final int endTime;
         private final double blockPerTick;
+        private final float yaw;
 
         private final Particle particle = getParticle();
 
@@ -111,6 +113,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
             this.scrollInterval = getSettings().getInt("Scroll.Interval", 1);
             this.endTime = getSettings().getInt("End.Time", 40);
             this.blockPerTick = height / scrollTime;
+            this.yaw = (float) getSettings().getDouble("Scroll.Yaw", 20.0);
 
             this.itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD")
                     .toUpperCase());
@@ -121,7 +124,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
         @Override
         public void accept(BukkitTask task) {
 
-            location.setYaw(location.getYaw() + 20.0F);
+            location.setYaw(location.getYaw() + yaw);
 
             if (tick <= scrollTime) {
                 location.add(0.0, blockPerTick, 0.0);

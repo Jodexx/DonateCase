@@ -23,9 +23,11 @@ SHAPE:
   Tail:
     Radius: 0.5
   Scroll:
+    Period: 2
     Time: 15
     Height: 0.91
     Interval: 1
+    Yaw: 20.0
   End:
     Time: 25
 
