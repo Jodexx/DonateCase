@@ -44,15 +44,28 @@ public interface CaseDatabase {
     /**
      * Set count of opened cases by player
      *
-     * @param caseType Player, who opened
-     * @param player   Case type
+     * @param caseType Case type
+     * @param player   Player, who opened
      * @param count    Number of opened cases
      */
     CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count);
 
     void setHistoryData(CaseDataHistory[] historyData);
 
+    CompletableFuture<DatabaseStatus> setHistoryData(String caseType, CaseDataHistory data);
+
+    /**
+     * Sets history data for specific case type and index
+     * @param caseType Case type
+     * @param index Data index, if less than 0 - selects all data
+     * @param data History data, if null - deletes
+     * @return Future of DatabaseStatus
+     */
     CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseDataHistory data);
+
+    CompletableFuture<DatabaseStatus> removeHistoryData(String caseType);
+
+    CompletableFuture<DatabaseStatus> removeHistoryData(String caseType, int index);
 
     CompletableFuture<List<CaseDataHistory>> getHistoryData();
 

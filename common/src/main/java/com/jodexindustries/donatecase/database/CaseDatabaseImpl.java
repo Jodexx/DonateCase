@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.TableUtils;
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
@@ -195,37 +196,16 @@ public class CaseDatabaseImpl implements CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseDataHistory data) {
+    public CompletableFuture<DatabaseStatus> setHistoryData(String caseType, CaseDataHistory data) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                if(data == null) {
-                    DeleteBuilder<HistoryDataTable, String> deleteBuilder = historyDataTables.deleteBuilder();
-                    deleteBuilder.where().eq("id", index).and().eq("case_type", caseType);
-                    deleteBuilder.delete();
-                    return DatabaseStatus.COMPLETE;
-                }
+                QueryBuilder<HistoryDataTable, String> queryBuilder = historyDataTables.queryBuilder();
+                queryBuilder.where().eq("case_type", caseType);
 
-                List<HistoryDataTable> results = historyDataTables.queryBuilder()
-                        .where()
-                        .eq("id", index)
-                        .and()
-                        .eq("case_type", caseType)
-                        .query();
+                List<HistoryDataTable> results = queryBuilder.query();
 
-                HistoryDataTable historyDataTable = results.isEmpty() ? null : results.get(0);
-
-                if (historyDataTable == null) {
-                    data.setId(index);
-                    historyDataTables.create(new HistoryDataTable(data));
-                } else {
-                    UpdateBuilder<HistoryDataTable, String> updateBuilder = historyDataTables.updateBuilder();
-                    updateBuilder.updateColumnValue("item", data.getItem());
-                    updateBuilder.updateColumnValue("player_name", data.getPlayerName());
-                    updateBuilder.updateColumnValue("time", data.getTime());
-                    updateBuilder.updateColumnValue("group", data.getGroup());
-                    updateBuilder.updateColumnValue("action", data.getAction());
-                    updateBuilder.where().eq("id", index).and().eq("case_type", caseType);
-                    updateBuilder.update();
+                for (HistoryDataTable historyDataTable : results) {
+                    setHistoryDataTable(historyDataTable, historyDataTable.getId(), data);
                 }
 
             } catch (SQLException e) {
@@ -235,6 +215,70 @@ public class CaseDatabaseImpl implements CaseDatabase {
             return DatabaseStatus.COMPLETE;
         });
 
+    }
+
+    private void setHistoryDataTable(HistoryDataTable historyDataTable, int index, CaseDataHistory data) throws SQLException {
+        if (historyDataTable == null) {
+            data.setId(index);
+            historyDataTables.create(new HistoryDataTable(data));
+        } else {
+            UpdateBuilder<HistoryDataTable, String> updateBuilder = historyDataTables.updateBuilder();
+            updateBuilder.updateColumnValue("item", data.getItem());
+            updateBuilder.updateColumnValue("player_name", data.getPlayerName());
+            updateBuilder.updateColumnValue("time", data.getTime());
+            updateBuilder.updateColumnValue("group", data.getGroup());
+            updateBuilder.updateColumnValue("action", data.getAction());
+            updateBuilder.where().eq("id", index).and().eq("case_type", data.getCaseType());
+            updateBuilder.update();
+        }
+    }
+
+    @Override
+    public CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseDataHistory data) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                QueryBuilder<HistoryDataTable, String> queryBuilder = historyDataTables.queryBuilder();
+                queryBuilder.where().eq("case_type", caseType).and().eq("id", index);
+
+                List<HistoryDataTable> results = queryBuilder.query();
+                HistoryDataTable historyDataTable = results.isEmpty() ? null : results.get(0);
+                setHistoryDataTable(historyDataTable, index, data);
+            } catch (SQLException e) {
+                logger.warning(e.getMessage());
+                return DatabaseStatus.FAIL;
+            }
+            return DatabaseStatus.COMPLETE;
+        });
+    }
+
+    @Override
+    public CompletableFuture<DatabaseStatus> removeHistoryData(String caseType) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                DeleteBuilder<HistoryDataTable, String> deleteBuilder = historyDataTables.deleteBuilder();
+                deleteBuilder.where().eq("case_type", caseType);
+                deleteBuilder.delete();
+                return DatabaseStatus.COMPLETE;
+            } catch (SQLException e) {
+                logger.warning(e.getMessage());
+                return DatabaseStatus.FAIL;
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<DatabaseStatus> removeHistoryData(String caseType, int index) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                DeleteBuilder<HistoryDataTable, String> deleteBuilder = historyDataTables.deleteBuilder();
+                deleteBuilder.where().eq("case_type", caseType).and().eq("id", index);
+                deleteBuilder.delete();
+                return DatabaseStatus.COMPLETE;
+            } catch (SQLException e) {
+                logger.warning(e.getMessage());
+                return DatabaseStatus.FAIL;
+            }
+        });
     }
 
     @Override

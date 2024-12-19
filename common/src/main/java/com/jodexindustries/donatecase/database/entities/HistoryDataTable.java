@@ -33,6 +33,14 @@ public class HistoryDataTable {
     }
 
     public HistoryDataTable(CaseDataHistory historyData) {
+        update(historyData);
+    }
+
+    public CaseDataHistory toHistoryData() {
+        return new CaseDataHistory(item, caseType, playerName, time, group, action);
+    }
+
+    public void update(CaseDataHistory historyData) {
         this.caseType = historyData.getCaseType();
         this.id = historyData.getId();
         this.item = historyData.getItem();
@@ -40,10 +48,6 @@ public class HistoryDataTable {
         this.time = historyData.getTime();
         this.group = historyData.getGroup();
         this.action = historyData.getAction();
-    }
-
-    public CaseDataHistory toHistoryData() {
-        return new CaseDataHistory(item, caseType, playerName, time, group, action);
     }
 
     public int getId() {
