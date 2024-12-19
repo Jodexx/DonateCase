@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.gui.items;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
@@ -12,6 +13,7 @@ import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.GUITypedItemManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -67,12 +69,15 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
                 Bukkit.getServer().getPluginManager().callEvent(openEvent);
 
                 if (!openEvent.isCancelled()) {
-                    Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData).thenAcceptAsync(started -> {
-                        if(started != null) {
+                    Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData).thenAcceptAsync(uuid -> {
+                        if(uuid != null) {
+                            ActiveCase<Block> activeCase = Case.getInstance().api.getAnimationManager().getActiveCases().get(uuid);
                             if(!event.isIgnoreKeys()) {
                                 Case.getInstance().api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1).thenAcceptAsync(status -> {
-                                    Case.getInstance().api.getAnimationManager().getActiveCases().get(started).setKeyRemoved(true);
+                                    activeCase.setKeyRemoved(true);
                                 });
+                            } else {
+                                activeCase.setKeyRemoved(true);
                             }
                         }
                     });
