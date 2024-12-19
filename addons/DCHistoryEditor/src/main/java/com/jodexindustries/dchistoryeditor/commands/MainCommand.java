@@ -48,74 +48,12 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
 
             switch (action) {
                 case "remove": {
-                    if(args[2].equalsIgnoreCase("all") ) {
-                            database.removeHistoryData(caseType).thenAccept(status -> removeInform(sender, status));
-                    } else {
-                        int index = getIndex(sender, args[2]);
-                        if(index == -1) return;
-
-                        database.removeHistoryData(caseType, index).thenAccept(status -> removeInform(sender, status));
-                    }
+                    handleRemove(sender, caseType, args[2]);
                     return;
                 }
 
                 case "set": {
-                    int index = getIndex(sender, args[2]);
-                    if(index == -1) return;
-
-                    if (args.length < 5) {
-                        // usage
-                        sender.sendMessage(DCToolsBukkit.rc("&c/dc historyeditor set (casetype) (index) (value) (param)"));
-                        return;
-                    }
-
-                    String param = args[3].toLowerCase();
-                    String value = args[4];
-
-                    if (!params.contains(param)) {
-                        // param is not found
-                        sender.sendMessage(DCToolsBukkit.rc("&cParam " + param + " is not found!"));
-                        return;
-                    }
-
-                    CaseDataHistory history = getHistoryData(caseType, index);
-                    if(history == null) history = new CaseDataHistory(null, caseType, null, index, null, null);
-
-                    switch (param) {
-                        case "item": {
-                            history.setItem(value);
-                            break;
-                        }
-
-                        case "playername": {
-                            history.setPlayerName(value);
-                            break;
-                        }
-
-                        case "time": {
-                            history.setTime(Long.parseLong(value));
-                            break;
-                        }
-
-                        case "group": {
-                            history.setGroup(value);
-                            break;
-                        }
-
-                        case "action": {
-                            history.setAction(value);
-                            break;
-                        }
-                    }
-
-                    database.setHistoryData(caseType, index, history).thenAccept(status -> {
-                        if (status == DatabaseStatus.COMPLETE) {
-                            sender.sendMessage(DCToolsBukkit.rc("&aHistory data updated!"));
-                        } else {
-                            sender.sendMessage(DCToolsBukkit.rc("&cError with history data updating!"));
-                        }
-                    });
-
+                    handleSet(sender, caseType, args);
                     return;
                 }
 
@@ -148,6 +86,75 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
         }
 
         return list;
+    }
+
+    private void handleRemove(CommandSender sender, String caseType, String arg) {
+        if(arg.equalsIgnoreCase("all") ) {
+            database.removeHistoryData(caseType).thenAccept(status -> removeInform(sender, status));
+        } else {
+            int index = getIndex(sender, arg);
+            if(index == -1) return;
+
+            database.removeHistoryData(caseType, index).thenAccept(status -> removeInform(sender, status));
+        }
+    }
+
+    private void handleSet(CommandSender sender, String caseType, String[] args) {
+        int index = getIndex(sender, args[2]);
+        if(index == -1) return;
+
+        if (args.length < 5) {
+            // usage
+            sender.sendMessage(DCToolsBukkit.rc("&c/dc historyeditor set (casetype) (index) (value) (param)"));
+            return;
+        }
+
+        String param = args[3].toLowerCase();
+        String value = args[4];
+
+        if (!params.contains(param)) {
+            // param is not found
+            sender.sendMessage(DCToolsBukkit.rc("&cParam " + param + " is not found!"));
+            return;
+        }
+
+        CaseDataHistory history = getHistoryData(caseType, index);
+        if(history == null) history = new CaseDataHistory(null, caseType, null, index, null, null);
+
+        switch (param) {
+            case "item": {
+                history.setItem(value);
+                break;
+            }
+
+            case "playername": {
+                history.setPlayerName(value);
+                break;
+            }
+
+            case "time": {
+                history.setTime(Long.parseLong(value));
+                break;
+            }
+
+            case "group": {
+                history.setGroup(value);
+                break;
+            }
+
+            case "action": {
+                history.setAction(value);
+                break;
+            }
+        }
+
+        database.setHistoryData(caseType, index, history).thenAccept(status -> {
+            if (status == DatabaseStatus.COMPLETE) {
+                sender.sendMessage(DCToolsBukkit.rc("&aHistory data updated!"));
+            } else {
+                sender.sendMessage(DCToolsBukkit.rc("&cError with history data updating!"));
+            }
+        });
     }
 
     private CaseDataHistory getHistoryData(String caseType, int index) {

@@ -18,7 +18,7 @@ public class Bootstrap {
         MainCommand mainCommand = new MainCommand(api);
         this.subCommand = api.getSubCommandManager().builder("historyeditor")
                 .description("Edit case history")
-                .args(new String[]{"&7(&aremove&7/&aset&7)", "&7(&acasetype&7)", "&7(&aindex&7)", "&7[&aparam&7]", "&7[&avalue&7]"})
+                .args(new String[]{"&7(&aremove&7/&aset&7)", "&7(&acasetype&7)", "&7(&aindex&7/&aall&7)", "&7[&aparam&7]", "&7[&avalue&7]"})
                 .executor(mainCommand)
                 .tabCompleter(mainCommand)
                 .permission(SubCommandType.ADMIN.permission)
