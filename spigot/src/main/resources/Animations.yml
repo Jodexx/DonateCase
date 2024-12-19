@@ -16,6 +16,10 @@ SHAPE:
     White:
       Size: 1.0
       Rgb: 255, 255, 255
+  StartPosition:
+    X: 0.5
+    Y: -0.1
+    Z: 0.5
   Tail:
     Radius: 0.5
   Scroll:

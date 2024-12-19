@@ -41,7 +41,11 @@ public class ShapeAnimation extends JavaAnimationBukkit {
 
     @Override
     public void start() {
-        getLocation().add(0.5, -0.1, 0.5);
+        double x = getSettings().getDouble("StartPosition.X", 0.5);
+        double y = getSettings().getDouble("StartPosition.Y", -0.1);
+        double z = getSettings().getDouble("StartPosition.Z", 0.5);
+
+        getLocation().add(x, y, z);
         getLocation().setYaw(-70.0F);
 
         final ArmorStandCreator as = instance.api.getTools().createArmorStand(getLocation());
