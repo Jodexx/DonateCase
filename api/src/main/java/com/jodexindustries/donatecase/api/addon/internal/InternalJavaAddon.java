@@ -77,7 +77,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
     }
 
     @Override
-    public @NotNull File getDataFolder() {
+    public final @NotNull File getDataFolder() {
         File data = new File(getDonateCase().getDataFolder(), "addons/" + getDescription().getName());
         if (!data.exists()) {
             data.mkdir();
@@ -86,17 +86,17 @@ public abstract class InternalJavaAddon implements InternalAddon {
     }
 
     @Override
-    public String getVersion() {
+    public final String getVersion() {
         return getDescription().getVersion();
     }
 
     @Override
-    public @NotNull String getName() {
+    public final @NotNull String getName() {
         return getDescription().getName();
     }
 
     @Override
-    public void saveResource(@NotNull String resourcePath, boolean replace) {
+    public final void saveResource(@NotNull String resourcePath, boolean replace) {
         if (resourcePath.isEmpty()) {
             throw new IllegalArgumentException("ResourcePath cannot be empty");
         }
@@ -135,7 +135,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
 
     @Nullable
     @Override
-    public InputStream getResource(@NotNull String filename) {
+    public final InputStream getResource(@NotNull String filename) {
 
         try {
             URL url = getUrlClassLoader().getResource(filename);
@@ -152,25 +152,25 @@ public abstract class InternalJavaAddon implements InternalAddon {
         }
     }
 
-    public ClassLoader getClassLoader() {
+    public final ClassLoader getClassLoader() {
         return classLoader;
     }
 
-    public @NotNull InternalAddonLogger getLogger() {
+    public final @NotNull InternalAddonLogger getLogger() {
         return internalAddonLogger;
     }
 
-    public InternalAddonClassLoader getUrlClassLoader() {
+    public final InternalAddonClassLoader getUrlClassLoader() {
         return urlClassLoader;
     }
 
     @Override
-    public @NotNull InternalAddonDescription getDescription() {
+    public final @NotNull InternalAddonDescription getDescription() {
         return description;
     }
 
     @Override
-    public @NotNull Addon getDonateCase() {
+    public final @NotNull Addon getDonateCase() {
         return donateCase;
     }
 }
