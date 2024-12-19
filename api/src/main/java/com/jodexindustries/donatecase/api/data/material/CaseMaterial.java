@@ -1,12 +1,11 @@
 package com.jodexindustries.donatecase.api.data.material;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Class for custom material storage
  */
-public class CaseMaterial<I> implements MaterialHandler<I> {
+public class CaseMaterial<I> {
     private final MaterialHandler<I> materialHandler;
     private final Addon addon;
     private final String id;
@@ -54,8 +53,8 @@ public class CaseMaterial<I> implements MaterialHandler<I> {
         return description;
     }
 
-    @Override
-    public @NotNull I handle(@NotNull String context) {
-        return materialHandler.handle(context);
+    public MaterialHandler<I> getMaterialHandler() {
+        return materialHandler;
     }
+
 }

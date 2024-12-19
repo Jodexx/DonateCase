@@ -39,7 +39,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             String permission = subCommand.getPermission();
 
             if (permission == null || sender.hasPermission(permission))
-                subCommand.execute(sender, label, Arrays.copyOfRange(args, 1, args.length));
+                subCommand.getExecutor().execute(sender, label, Arrays.copyOfRange(args, 1, args.length));
             else DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("no-permission")));
         }
 

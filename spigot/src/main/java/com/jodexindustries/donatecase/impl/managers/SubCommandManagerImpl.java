@@ -73,7 +73,7 @@ public class SubCommandManagerImpl implements SubCommandManager<CommandSender> {
     @Override
     public List<String> getTabCompletionsForSubCommand(CommandSender sender, String subCommandName, String label, String[] args) {
         SubCommand<CommandSender> subCommand = registeredSubCommands.get(subCommandName.toLowerCase());
-        return subCommand != null ? subCommand.getTabCompletions(sender, label, args) : null;
+        return subCommand != null ? subCommand.getTabCompleter().getTabCompletions(sender, label, args) : null;
     }
 
 }

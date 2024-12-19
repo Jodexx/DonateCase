@@ -3,16 +3,14 @@ package com.jodexindustries.donatecase.api.data.subcommand;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Represents a subcommand with execution and tab-completion capabilities.
  *
  * @param <S> The type of the command sender.
  */
-public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabCompleter<S> {
+public class SubCommand<S> {
     private final Addon addon;
     private final String name;
 
@@ -34,17 +32,6 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
         this.name = name;
     }
 
-    @Override
-    public void execute(@NotNull S sender, @NotNull String label, String[] args) {
-        if (executor != null) executor.execute(sender, label, args);
-    }
-
-    @Override
-    public List<String> getTabCompletions(@NotNull S sender, @NotNull String label, String[] args) {
-        if (tabCompleter == null) return new ArrayList<>();
-        return tabCompleter.getTabCompletions(sender, label, args);
-    }
-
     /**
      * Gets the executor responsible for handling the subcommand's logic.
      *
@@ -55,30 +42,12 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
     }
 
     /**
-     * Sets the executor responsible for handling the subcommand's logic.
-     *
-     * @param executor The executor.
-     */
-    public void setExecutor(SubCommandExecutor<S> executor) {
-        this.executor = executor;
-    }
-
-    /**
      * Gets the tab completer responsible for providing argument suggestions.
      *
      * @return The tab completer.
      */
     public SubCommandTabCompleter<S> getTabCompleter() {
         return tabCompleter;
-    }
-
-    /**
-     * Sets the tab completer responsible for providing argument suggestions.
-     *
-     * @param tabCompleter The tab completer.
-     */
-    public void setTabCompleter(SubCommandTabCompleter<S> tabCompleter) {
-        this.tabCompleter = tabCompleter;
     }
 
     /**
@@ -100,15 +69,6 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
     }
 
     /**
-     * Sets the description of the subcommand.
-     *
-     * @param description The description.
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
      * Gets the arguments for the subcommand.
      *
      * @return The arguments.
@@ -118,30 +78,12 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
     }
 
     /**
-     * Sets the arguments for the subcommand.
-     *
-     * @param args The arguments.
-     */
-    public void setArgs(String[] args) {
-        this.args = args;
-    }
-
-    /**
      * Gets the permission required to execute the subcommand.
      *
      * @return The permission.
      */
     public String getPermission() {
         return permission;
-    }
-
-    /**
-     * Sets the permission required to execute the subcommand.
-     *
-     * @param permission The permission.
-     */
-    public void setPermission(String permission) {
-        this.permission = permission;
     }
 
     /**
@@ -269,11 +211,11 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
          */
         public SubCommand<S> build() {
             SubCommand<S> subCommand = new SubCommand<>(name, addon);
-            subCommand.setExecutor(executor);
-            subCommand.setTabCompleter(tabCompleter);
-            subCommand.setDescription(description);
-            subCommand.setArgs(args);
-            subCommand.setPermission(permission);
+            subCommand.executor = executor;
+            subCommand.tabCompleter = tabCompleter;
+            subCommand.description = description;
+            subCommand.args = args;
+            subCommand.permission = permission;
             return subCommand;
         }
     }

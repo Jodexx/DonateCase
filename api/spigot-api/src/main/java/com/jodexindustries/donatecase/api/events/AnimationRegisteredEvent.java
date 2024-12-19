@@ -2,10 +2,8 @@ package com.jodexindustries.donatecase.api.events;
 
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,14 +11,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class AnimationRegisteredEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private final CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation;
+    private final CaseAnimation<JavaAnimationBukkit> caseAnimation;
 
     /**
      * Default constructor
      *
      * @param caseAnimation Case animation
      */
-    public AnimationRegisteredEvent(CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> caseAnimation) {
+    public AnimationRegisteredEvent(CaseAnimation<JavaAnimationBukkit> caseAnimation) {
         this.caseAnimation = caseAnimation;
     }
 
@@ -29,7 +27,7 @@ public class AnimationRegisteredEvent extends Event {
      *
      * @return animation
      */
-    public CaseAnimation<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack> getCaseAnimation() {
+    public CaseAnimation<JavaAnimationBukkit> getCaseAnimation() {
         return caseAnimation;
     }
 

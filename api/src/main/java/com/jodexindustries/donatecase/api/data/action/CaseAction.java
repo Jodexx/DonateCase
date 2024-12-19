@@ -1,14 +1,12 @@
 package com.jodexindustries.donatecase.api.data.action;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Class for custom actions storage
  * @param <P> the type of Player
  */
-public class CaseAction<P> implements ActionExecutor<P> {
+public class CaseAction<P> {
     private final ActionExecutor<P> executor;
     private final Addon addon;
     private final String name;
@@ -28,11 +26,6 @@ public class CaseAction<P> implements ActionExecutor<P> {
         this.name = name;
         this.description = description;
 
-    }
-
-    @Override
-    public void execute(@Nullable P player, @NotNull String context, int cooldown) {
-        executor.execute(player, context, cooldown);
     }
 
     /**
@@ -60,6 +53,10 @@ public class CaseAction<P> implements ActionExecutor<P> {
      */
     public String getName() {
         return name;
+    }
+
+    public ActionExecutor<P> getExecutor() {
+        return executor;
     }
 
     @Override

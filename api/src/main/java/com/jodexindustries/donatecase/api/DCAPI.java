@@ -1,11 +1,13 @@
 package com.jodexindustries.donatecase.api;
 
+import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for managing various components of the DonateCase API (DCAPI) system.
@@ -25,7 +27,7 @@ import com.jodexindustries.donatecase.api.tools.DCTools;
  * @param <CG>       The type of configuration system, extending {@link Config}.
  * @param <T>        The type of tools and utilities, extending {@link DCTools}.
  */
-public interface DCAPI<P, A extends JavaAnimation<M, I>, M extends CaseDataMaterial<I>, G, E, I, S, L, B, C, IY, CG extends Config, T extends DCTools> {
+public interface DCAPI<P, A extends JavaAnimation<M, I, C>, M extends CaseDataMaterial<I>, G, E, I, S, L, B, C, IY, CG extends Config, T extends DCTools> {
 
     /**
      * Retrieves the {@link ActionManager} responsible for handling custom actions in the system.
@@ -117,4 +119,12 @@ public interface DCAPI<P, A extends JavaAnimation<M, I>, M extends CaseDataMater
      * @return The tools instance.
      */
     T getTools();
+
+    /**
+     * Should return the Addon instance associated with that API.
+     *
+     * @return The Addon instance.
+     */
+    @NotNull
+    Addon getAddon();
 }

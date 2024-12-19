@@ -49,7 +49,7 @@ public class ToolsImpl implements DCToolsBukkit {
                 CaseMaterial<ItemStack> caseMaterial = instance.api.getMaterialManager().getRegisteredMaterial(temp);
                 if (caseMaterial != null) {
                     String context = id.replace(temp, "").replaceFirst(":", "").trim();
-                    itemStack = caseMaterial.handle(context);
+                    itemStack = caseMaterial.getMaterialHandler().handle(context);
                 }
             }
         }

@@ -45,7 +45,7 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
 
     @Override
     public AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> getAnimationManager() {
-        return new AnimationManagerImpl(addon);
+        return new AnimationManagerImpl(this);
     }
 
     @Override
@@ -101,5 +101,10 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
     @Override
     public @NotNull Plugin getDonateCase() {
         return DonateCase.instance;
+    }
+
+    @Override
+    public @NotNull Addon getAddon() {
+        return addon;
     }
 }

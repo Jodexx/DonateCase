@@ -94,10 +94,10 @@ public class ActionManagerImpl implements ActionManager<Player> {
 
         String context = action.replace(temp, "").trim();
 
-        ActionExecutor<Player> actionExecutor = instance.api.getActionManager().getRegisteredAction(temp);
-        if(actionExecutor == null) return;
+        CaseAction<Player> caseAction = instance.api.getActionManager().getRegisteredAction(temp);
+        if(caseAction == null) return;
 
-        actionExecutor.execute(player.getPlayer(), context, cooldown);
+        caseAction.getExecutor().execute(player.getPlayer(), context, cooldown);
     }
 
     @Override
