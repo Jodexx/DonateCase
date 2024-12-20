@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.IntStream;
 
 public class MainCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
@@ -48,14 +47,21 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
             String action = args[0].toLowerCase();
             String caseType = args[1];
 
+            CaseDataBukkit caseData = api.getCaseManager().getCase(caseType);
+
+            if(caseData == null) {
+                sender.sendMessage(DCToolsBukkit.rc("&cCase with type: " + caseType + " not found!"));
+                return;
+            }
+
             switch (action) {
                 case "remove": {
-                    handleRemove(sender, caseType, args[2]);
+                    handleRemove(sender, caseData, args[2]);
                     return;
                 }
 
                 case "set": {
-                    handleSet(sender, caseType, args);
+                    handleSet(sender, caseData, args);
                     return;
                 }
 
@@ -90,29 +96,24 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
         return list;
     }
 
-    private void handleRemove(CommandSender sender, String caseType, String arg) {
+    private void handleRemove(CommandSender sender, CaseDataBukkit caseData, String arg) {
         if(arg.equalsIgnoreCase("all") ) {
-            database.removeHistoryData(caseType).thenAccept(status -> {
+            database.removeHistoryData(caseData.getCaseType()).thenAccept(status -> {
                 removeInform(sender, status);
-                if(status == DatabaseStatus.COMPLETE)
-                    Objects.requireNonNull(api.getCaseManager().getCase(caseType)).setHistoryData(new CaseDataHistory[10]);
+                if(status == DatabaseStatus.COMPLETE) caseData.setHistoryData(new CaseDataHistory[10]);
             });
         } else {
             int index = getIndex(sender, arg);
             if(index == -1) return;
 
-            database.removeHistoryData(caseType, index).thenAccept(status -> {
+            database.removeHistoryData(caseData.getCaseType(), index).thenAccept(status -> {
                 removeInform(sender, status);
-                if(status == DatabaseStatus.COMPLETE) {
-                    CaseDataBukkit caseData = api.getCaseManager().getCase(caseType);
-                    CaseDataHistory[] history = Objects.requireNonNull(caseData).getHistoryData();
-                    history[index] = null;
-                }
+                if(status == DatabaseStatus.COMPLETE) caseData.getHistoryData()[index] = null;
             });
         }
     }
 
-    private void handleSet(CommandSender sender, String caseType, String[] args) {
+    private void handleSet(CommandSender sender, CaseDataBukkit caseData, String[] args) {
         int index = getIndex(sender, args[2]);
         if(index == -1) return;
 
@@ -131,9 +132,9 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
             return;
         }
 
-        CaseDataHistory tempHistory = getHistoryData(caseType, index);
+        CaseDataHistory tempHistory = getHistoryData(caseData.getCaseType(), index);
 
-        CaseDataHistory history = tempHistory == null ? new CaseDataHistory(null, caseType, null, index, null, null) : tempHistory;
+        CaseDataHistory history = tempHistory == null ? new CaseDataHistory(null, caseData.getCaseType(), null, index, null, null) : tempHistory;
 
         switch (param) {
             case "item": {
@@ -162,9 +163,9 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
             }
         }
 
-        database.setHistoryData(caseType, index, history).thenAccept(status -> {
+        database.setHistoryData(caseData.getCaseType(), index, history).thenAccept(status -> {
             if (status == DatabaseStatus.COMPLETE) {
-                Objects.requireNonNull(api.getCaseManager().getCase(caseType)).getHistoryData()[index] = history;
+                caseData.getHistoryData()[index] = history;
                 sender.sendMessage(DCToolsBukkit.rc("&aHistory data updated!"));
             } else {
                 sender.sendMessage(DCToolsBukkit.rc("&cError with history data updating!"));
