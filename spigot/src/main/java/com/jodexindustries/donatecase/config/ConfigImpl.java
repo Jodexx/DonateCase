@@ -75,7 +75,6 @@ public class ConfigImpl implements ConfigBukkit {
 
         converter.convertConfig();
         converter.convertAnimations();
-        converter.convertData();
 
         checkConvertCases();
         checkConvertLocations();

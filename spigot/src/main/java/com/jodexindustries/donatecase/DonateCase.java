@@ -94,6 +94,8 @@ public class DonateCase extends JavaPlugin {
 
         loadDatabase();
 
+        config.getConverter().convertData();
+
         loader = new CaseLoader(this);
 
         registerDefaultCommand();
