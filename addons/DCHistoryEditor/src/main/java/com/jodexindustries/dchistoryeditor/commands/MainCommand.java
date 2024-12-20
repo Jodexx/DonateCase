@@ -1,6 +1,7 @@
 package com.jodexindustries.dchistoryeditor.commands;
 
 import com.jodexindustries.donatecase.api.DCAPIBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 public class MainCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
@@ -90,12 +92,23 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
 
     private void handleRemove(CommandSender sender, String caseType, String arg) {
         if(arg.equalsIgnoreCase("all") ) {
-            database.removeHistoryData(caseType).thenAccept(status -> removeInform(sender, status));
+            database.removeHistoryData(caseType).thenAccept(status -> {
+                removeInform(sender, status);
+                if(status == DatabaseStatus.COMPLETE)
+                    Objects.requireNonNull(api.getCaseManager().getCase(caseType)).setHistoryData(new CaseDataHistory[10]);
+            });
         } else {
             int index = getIndex(sender, arg);
             if(index == -1) return;
 
-            database.removeHistoryData(caseType, index).thenAccept(status -> removeInform(sender, status));
+            database.removeHistoryData(caseType, index).thenAccept(status -> {
+                removeInform(sender, status);
+                if(status == DatabaseStatus.COMPLETE) {
+                    CaseDataBukkit caseData = api.getCaseManager().getCase(caseType);
+                    CaseDataHistory[] history = Objects.requireNonNull(caseData).getHistoryData();
+                    history[index] = null;
+                }
+            });
         }
     }
 
@@ -118,8 +131,9 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
             return;
         }
 
-        CaseDataHistory history = getHistoryData(caseType, index);
-        if(history == null) history = new CaseDataHistory(null, caseType, null, index, null, null);
+        CaseDataHistory tempHistory = getHistoryData(caseType, index);
+
+        CaseDataHistory history = tempHistory == null ? new CaseDataHistory(null, caseType, null, index, null, null) : tempHistory;
 
         switch (param) {
             case "item": {
@@ -150,6 +164,7 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
 
         database.setHistoryData(caseType, index, history).thenAccept(status -> {
             if (status == DatabaseStatus.COMPLETE) {
+                Objects.requireNonNull(api.getCaseManager().getCase(caseType)).getHistoryData()[index] = history;
                 sender.sendMessage(DCToolsBukkit.rc("&aHistory data updated!"));
             } else {
                 sender.sendMessage(DCToolsBukkit.rc("&cError with history data updating!"));
