@@ -56,7 +56,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
                 material.setDisplayName(section.getString("DisplayName"));
                 material.setLore(section.getStringList("Lore"));
                 material.setEnchanted(section.getBoolean("Enchanted"));
-                material.setRgb(DCToolsBukkit.parseRGB(section.getString("Rgb")));
+                material.setRgb(DCToolsBukkit.parseRGB(section.getString("Rgb", "")));
                 material.setModelData(section.getInt("ModelData", -1));
             } else {
                 material.setId("AIR");
