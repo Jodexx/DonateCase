@@ -1,5 +1,6 @@
 package com.jodexindustries.friendcase;
 
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -54,7 +55,9 @@ public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubC
                 return;
             }
 
-            if (!t.getDCAPI().getCaseManager().hasCaseByType(caseType)) {
+            CaseDataBukkit caseData = t.getDCAPI().getCaseManager().getCase(caseType);
+
+            if (caseData == null) {
                 sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.CaseNotFound", "")));
                 return;
             }
@@ -108,7 +111,7 @@ public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubC
                     ));
 
                     Bukkit.getScheduler().runTask(t.getDCAPI().getDonateCase(), () -> {
-                        CaseGiftEvent event = new CaseGiftEvent(p, target, caseType, keys);
+                        CaseGiftEvent event = new CaseGiftEvent(p, target, caseData, keys);
                         Bukkit.getPluginManager().callEvent(event);
                     });
                 });
