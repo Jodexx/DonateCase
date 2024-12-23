@@ -1,11 +1,16 @@
 package com.jodexindustries.donatecase.tools.support;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import static com.jodexindustries.donatecase.DonateCase.instance;
 
@@ -30,13 +35,10 @@ public class Placeholder extends PlaceholderExpansion {
 
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
-        if (params.startsWith("keys")) {
-            return processKeys(params, player);
-        }
+        if (params.startsWith("keys")) return processKeys(params, player);
+        if (params.startsWith("open_count")) return processOpenCount(params, player);
+        if (params.startsWith("history_")) return processHistory(params.replaceFirst("history_", ""));
 
-        if (params.startsWith("open_count")) {
-            return processOpenCount(params, player);
-        }
         return null;
     }
 
@@ -97,6 +99,58 @@ public class Placeholder extends PlaceholderExpansion {
             }
         }
         return null;
+    }
+
+    private String processHistory(@NotNull String params) {
+        String[] parts = params.split("_");
+        if (parts.length >= 3) {
+            String caseType = parts[0];
+            int index = parseInt(parts[1]);
+            if(index >= 0) {
+                List<CaseDataHistory> list = instance.api.getDatabase().getHistoryDataCache(caseType);
+                if(list.size() > index) {
+                    CaseDataHistory history = list.get(index);
+                    String type = parts[2].toLowerCase();
+
+                    switch (type) {
+                        case "player" : {
+                            return history.getPlayerName();
+                        }
+
+                        case "casetype" : {
+                            return history.getCaseType();
+                        }
+
+                        case "group" : {
+                            return history.getGroup();
+                        }
+
+                        case "action" : {
+                            return history.getAction();
+                        }
+
+                        case "item" : {
+                            return history.getItem();
+                        }
+
+                        case "time" : {
+                            DateFormat formatter = new SimpleDateFormat(instance.api.getConfig().getConfig().getString("DonateCase.DateFormat", "dd.MM HH:mm:ss"));
+                            return formatter.format(new Date(history.getTime()));
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private int parseInt(String string) {
+        try {
+            return Integer.parseInt(string);
+        } catch (NumberFormatException ignored) {
+        }
+        return -1;
     }
 
 }
