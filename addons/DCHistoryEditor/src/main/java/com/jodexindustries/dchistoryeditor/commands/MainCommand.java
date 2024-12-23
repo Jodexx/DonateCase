@@ -174,7 +174,7 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
     }
 
     private CaseDataHistory getHistoryData(String caseType, int index) {
-        List<CaseDataHistory> histories = database.getHistoryDataByCaseType(caseType).join();
+        List<CaseDataHistory> histories = database.getHistoryData(caseType).join();
 
         return histories.stream().filter(history -> history.getId() == index).findFirst().orElse(null);
     }

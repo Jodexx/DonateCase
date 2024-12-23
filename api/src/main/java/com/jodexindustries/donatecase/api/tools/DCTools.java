@@ -83,4 +83,12 @@ public interface DCTools {
                 .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
                 .collect(Collectors.toList());
     }
+
+    static List<CaseDataHistory> sortHistoryDataByDate(List<CaseDataHistory> list) {
+        return list.stream()
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparingLong(CaseDataHistory::getTime)
+                        .reversed())
+                .collect(Collectors.toList());
+    }
 }

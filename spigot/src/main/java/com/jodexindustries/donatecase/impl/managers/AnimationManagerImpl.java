@@ -300,7 +300,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
             CaseDataHistory[] historyData = caseData.getHistoryData();
 
             if(historyData.length > 0) {
-                List<CaseDataHistory> databaseData = instance.database.getHistoryDataByCaseType(caseData.getCaseType()).join();
+                List<CaseDataHistory> databaseData = instance.database.getHistoryData(caseData.getCaseType()).join();
                 if (!databaseData.isEmpty())
                     historyData = databaseData.toArray(new CaseDataHistory[historyData.length]);
 

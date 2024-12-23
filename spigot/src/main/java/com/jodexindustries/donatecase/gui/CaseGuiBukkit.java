@@ -65,7 +65,7 @@ public class CaseGuiBukkit implements CaseGui<Inventory, Location, Player, CaseD
         CompletableFuture<Void> future = new CompletableFuture<>();
 
         Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () -> {
-            globalHistoryData = instance.database.getSortedHistoryDataCache();
+            globalHistoryData = DCTools.sortHistoryDataByDate(instance.database.getHistoryDataCache());
             for (GUI.Item<CaseDataMaterialBukkit> item : tempGUI.getItems().values()) {
                 try {
                     processItem(item);

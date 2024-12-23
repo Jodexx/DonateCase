@@ -69,15 +69,15 @@ public interface CaseDatabase {
 
     CompletableFuture<List<CaseDataHistory>> getHistoryData();
 
-    CompletableFuture<List<CaseDataHistory>> getAsyncSortedHistoryData();
-
-    CompletableFuture<List<CaseDataHistory>> getHistoryDataByCaseType(String caseType);
+    CompletableFuture<List<CaseDataHistory>> getHistoryData(String caseType);
 
     /**
      * Returns no-cached, if mysql disabled
-     * @return list of history data
+     * @return list of all history data
      */
-    List<CaseDataHistory> getSortedHistoryDataCache();
+    List<CaseDataHistory> getHistoryDataCache();
+
+    List<CaseDataHistory> getHistoryDataCache(String caseType);
 
     void close();
 }

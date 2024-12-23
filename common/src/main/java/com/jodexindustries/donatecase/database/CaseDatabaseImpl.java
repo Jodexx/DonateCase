@@ -18,10 +18,10 @@ import com.jodexindustries.donatecase.database.entities.OpenInfoTable;
 import com.jodexindustries.donatecase.database.entities.PlayerKeysTable;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class CaseDatabaseImpl implements CaseDatabase {
     private Dao<HistoryDataTable, String> historyDataTables;
@@ -35,7 +35,7 @@ public class CaseDatabaseImpl implements CaseDatabase {
     /**
      * Cache map for storing cases histories
      */
-    public final static SimpleCache<Integer, List<CaseDataHistory>> historyCache = new SimpleCache<>(20);
+    public final static SimpleCache<String, List<CaseDataHistory>> historyCache = new SimpleCache<>(20);
 
     public CaseDatabaseImpl(Logger logger) {
         this.logger = logger;
@@ -298,16 +298,7 @@ public class CaseDatabaseImpl implements CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<List<CaseDataHistory>> getAsyncSortedHistoryData() {
-        return CompletableFuture.supplyAsync(() -> getHistoryData().join().stream()
-                .filter(Objects::nonNull)
-                .sorted(Comparator.comparingLong(CaseDataHistory::getTime)
-                        .reversed())
-                .collect(Collectors.toList()));
-    }
-
-    @Override
-    public CompletableFuture<List<CaseDataHistory>> getHistoryDataByCaseType(String caseType) {
+    public CompletableFuture<List<CaseDataHistory>> getHistoryData(String caseType) {
         List<CaseDataHistory> result = new ArrayList<>();
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -324,23 +315,39 @@ public class CaseDatabaseImpl implements CaseDatabase {
         });
     }
 
-    @Override
-    public List<CaseDataHistory> getSortedHistoryDataCache() {
-        if (databaseType == DatabaseType.SQLITE) {
-            return getAsyncSortedHistoryData().join();
-        }
 
-        List<CaseDataHistory> cachedList = historyCache.get(1);
+    @Override
+    public List<CaseDataHistory> getHistoryDataCache() {
+        if (databaseType == DatabaseType.SQLITE) return getHistoryData().join();
+
+        List<CaseDataHistory> cachedList = historyCache.get("all!");
 
         if (cachedList != null) {
             return cachedList;
         }
 
-        List<CaseDataHistory> previousList = historyCache.getPrevious(1);
+        List<CaseDataHistory> previousList = historyCache.getPrevious("all!");
 
-        getAsyncSortedHistoryData().thenAcceptAsync(historyData -> historyCache.put(1, historyData));
+        getHistoryData().thenAcceptAsync(historyData -> historyCache.put("all!", historyData));
 
-        return (previousList != null) ? previousList : getAsyncSortedHistoryData().join();
+        return (previousList != null) ? previousList : getHistoryData().join();
+    }
+
+    @Override
+    public List<CaseDataHistory> getHistoryDataCache(String caseType) {
+        if (databaseType == DatabaseType.SQLITE) return getHistoryData(caseType).join();
+
+        List<CaseDataHistory> cachedList = historyCache.get(caseType);
+
+        if (cachedList != null) {
+            return cachedList;
+        }
+
+        List<CaseDataHistory> previousList = historyCache.getPrevious(caseType);
+
+        getHistoryData(caseType).thenAcceptAsync(historyData -> historyCache.put(caseType, historyData));
+
+        return (previousList != null) ? previousList : getHistoryData(caseType).join();
     }
 
     @Override
