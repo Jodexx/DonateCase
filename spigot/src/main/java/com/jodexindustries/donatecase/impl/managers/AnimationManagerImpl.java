@@ -299,21 +299,24 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
             CaseDataHistory data = new CaseDataHistory(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
             CaseDataHistory[] historyData = caseData.getHistoryData();
 
-            List<CaseDataHistory> databaseData = instance.database.getHistoryDataByCaseType(caseData.getCaseType()).join();
-            if(!databaseData.isEmpty()) historyData = databaseData.toArray(new CaseDataHistory[10]);
+            if(historyData.length > 0) {
+                List<CaseDataHistory> databaseData = instance.database.getHistoryDataByCaseType(caseData.getCaseType()).join();
+                if (!databaseData.isEmpty())
+                    historyData = databaseData.toArray(new CaseDataHistory[historyData.length]);
 
-            System.arraycopy(historyData, 0, historyData, 1, historyData.length - 1);
-            historyData[0] = data;
+                System.arraycopy(historyData, 0, historyData, 1, historyData.length - 1);
+                historyData[0] = data;
 
-            for (int i = 0; i < historyData.length; i++) {
-                CaseDataHistory tempData = historyData[i];
-                if (tempData != null) {
-                    instance.database.setHistoryData(caseData.getCaseType(), i, tempData);
+                for (int i = 0; i < historyData.length; i++) {
+                    CaseDataHistory tempData = historyData[i];
+                    if (tempData != null) {
+                        instance.database.setHistoryData(caseData.getCaseType(), i, tempData);
+                    }
                 }
-            }
 
-            // Set history data in memory
-            Objects.requireNonNull(instance.api.getCaseManager().getCase(caseData.getCaseType())).setHistoryData(historyData);
+                // Set history data in memory
+                Objects.requireNonNull(instance.api.getCaseManager().getCase(caseData.getCaseType())).setHistoryData(historyData);
+            }
 
             instance.api.getCaseOpenManager().addOpenCount(caseData.getCaseType(), player.getName(), 1);
         });

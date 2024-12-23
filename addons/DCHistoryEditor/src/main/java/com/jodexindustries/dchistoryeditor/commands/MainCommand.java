@@ -100,7 +100,7 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
         if(arg.equalsIgnoreCase("all") ) {
             database.removeHistoryData(caseData.getCaseType()).thenAccept(status -> {
                 removeInform(sender, status);
-                if(status == DatabaseStatus.COMPLETE) caseData.setHistoryData(new CaseDataHistory[10]);
+                if(status == DatabaseStatus.COMPLETE) caseData.setHistoryData(new CaseDataHistory[caseData.getHistoryData().length]);
             });
         } else {
             int index = getIndex(sender, arg);

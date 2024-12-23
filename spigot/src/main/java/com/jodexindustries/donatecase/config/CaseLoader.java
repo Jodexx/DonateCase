@@ -97,7 +97,11 @@ public class CaseLoader {
 
         List<String> noKeyActions = caseSection.getStringList("NoKeyActions");
 
-        return new CaseDataBukkit(caseType, caseDisplayName, animationName, items, new CaseDataHistory[10],
+        int historyDataSize = caseSection.getInt("HistoryDataSize", 10);
+
+        if(historyDataSize < 0) historyDataSize = 0;
+
+        return new CaseDataBukkit(caseType, caseDisplayName, animationName, items, new CaseDataHistory[historyDataSize],
                 hologram, levelGroups, gui, noKeyActions, openType, animationSettings);
     }
 

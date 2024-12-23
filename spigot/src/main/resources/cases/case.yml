@@ -43,6 +43,8 @@ case:
     - "[message] &cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.com"
     - "[sound] ENTITY_ENDERMAN_TELEPORT"
 
+  HistoryDataSize: 10 # 0 if you want to disable history data
+
   LevelGroups: # delete all of this section, if you want to use default LevelGroups from Config.yml
     ultra: 6
     legend: 5
