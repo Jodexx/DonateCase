@@ -7,7 +7,7 @@
 [![wakatime](https://wakatime.com/badge/user/829f0c0b-33fd-4885-a87a-8ee676d706fd/project/eaecf335-b19a-4642-9d6c-2637e4a392f5.svg)](https://wakatime.com/badge/user/829f0c0b-33fd-4885-a87a-8ee676d706fd/project/eaecf335-b19a-4642-9d6c-2637e4a392f5)
 [![CodeFactor](https://www.codefactor.io/repository/github/jodexx/donatecase/badge)](https://www.codefactor.io/repository/github/jodexx/donatecase)
 
-| [MavenRepo](https://repo.jodexindustries.xyz/#/releases/com/jodexindustries/donatecase/) | [JavaDocs](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot-api/latest) | [Wiki](https://wiki.jodexindustries.xyz/docs/DonateCase/API/donatecase-api-main) |
+| [MavenRepo](https://repo.jodexindustries.xyz/#/releases/com/jodexindustries/donatecase/) | [JavaDocs](https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot-api/latest) | [Wiki](https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/API/install) |
 |------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
 
 
