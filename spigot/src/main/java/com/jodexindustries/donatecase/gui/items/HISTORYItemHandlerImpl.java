@@ -117,15 +117,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
         String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "group_not_found";
         String action = data.getAction() != null ? data.getAction() : group;
 
-        String randomActionDisplayName = "random_action_not_found";
-        if (data.getAction() != null && !data.getAction().isEmpty()) {
-            CaseDataItem.RandomAction randomAction = historyItem.getRandomAction(data.getAction());
-            if (randomAction != null) {
-                randomActionDisplayName = randomAction.getDisplayName();
-            }
-        } else {
-            randomActionDisplayName = groupDisplayName;
-        }
+        String randomActionDisplayName = getActionDisplayName(action, groupDisplayName, historyItem);
 
         return new String[]{
                 "%action%:" + action,
@@ -138,6 +130,20 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
                 "%player%:" + data.getPlayerName(),
                 "%groupdisplayname%:" + groupDisplayName
         };
+    }
+
+    public static String getActionDisplayName(String action, String groupDisplayName, CaseDataItem<CaseDataMaterialBukkit, ItemStack> historyItem) {
+        String randomActionDisplayName = "random_action_not_found";
+        if (action != null && !action.isEmpty()) {
+            CaseDataItem.RandomAction randomAction = historyItem.getRandomAction(action);
+            if (randomAction != null) {
+                randomActionDisplayName = randomAction.getDisplayName();
+            }
+        } else {
+            randomActionDisplayName = groupDisplayName;
+        }
+
+        return randomActionDisplayName;
     }
 
     private CaseDataHistory getHistoryData(String caseType, boolean isGlobal, List<CaseDataHistory> globalHistoryData, int index) {
