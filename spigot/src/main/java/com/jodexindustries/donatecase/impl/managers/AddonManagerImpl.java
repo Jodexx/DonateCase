@@ -101,12 +101,11 @@ public class AddonManagerImpl implements AddonManager {
             InternalAddonDescription description = descriptions.get(addonName);
             if (description != null) {
                 loadAddon(description);
-                descriptions.remove(addonName);
             }
         }
 
         for (InternalAddonDescription description : descriptions.values()) {
-            loadAddon(description);
+            if(!addons.containsKey(description.getName())) loadAddon(description);
         }
     }
 
