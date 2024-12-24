@@ -18,20 +18,37 @@ public class KeysTransactionEvent extends Event implements Cancellable {
     private TransactionType transactionType;
     private boolean cancelled = false;
 
+    /**
+     * Default constructor
+     * @param caseType Case type
+     * @param playerName Player name
+     * @param after Amount after the transaction
+     * @param before Amount before the transaction
+     */
     public KeysTransactionEvent(@NotNull final String caseType, @NotNull final String playerName,
                                 final int after, final int before) {
         super(true);
         this.caseType = caseType;
         this.playerName = playerName;
         this.before = before;
-        setAfter(after);
+        after(after);
     }
 
+    /**
+     * Returns the type of the case associated with the key.
+     *
+     * @return the case type
+     */
     @NotNull
     public String caseType() {
         return caseType;
     }
 
+    /**
+     * Returns the name of the player to whom the transaction was sent.
+     *
+     * @return the player's name
+     */
     @NotNull
     public String playerName() {
         return playerName;
@@ -45,6 +62,11 @@ public class KeysTransactionEvent extends Event implements Cancellable {
         return amount;
     }
 
+    /**
+     * Returns the type of the transaction.
+     *
+     * @return the transaction type
+     */
     @NotNull
     public TransactionType type() {
         return transactionType;
@@ -70,7 +92,7 @@ public class KeysTransactionEvent extends Event implements Cancellable {
      * Sets number of keys after transaction
      * @param after number of keys
      */
-    public void setAfter(int after) {
+    public void after(int after) {
         this.after = after;
         if (this.before == after) {
             this.amount = 0;
@@ -90,6 +112,11 @@ public class KeysTransactionEvent extends Event implements Cancellable {
         return handlers;
     }
 
+    /**
+     * Get handlers
+     *
+     * @return handlers list
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
@@ -105,9 +132,22 @@ public class KeysTransactionEvent extends Event implements Cancellable {
         this.cancelled = cancel;
     }
 
+    /**
+     * Represents the type of transaction.
+     */
     public enum TransactionType {
+        /**
+         *  A transaction that adds keys
+         */
         ADD,
+        /**
+         * A transaction that removes keys
+         */
         REMOVE,
+        /**
+         * A transaction where no action is performed, and the number of keys remains unchanged
+         */
         NOTHING
     }
+
 }

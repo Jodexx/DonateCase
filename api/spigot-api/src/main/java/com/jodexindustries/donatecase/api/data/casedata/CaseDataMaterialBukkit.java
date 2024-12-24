@@ -10,6 +10,9 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.List;
 
+/**
+ * Represents material data for a case in Bukkit/Spigot implementation
+ */
 public class CaseDataMaterialBukkit extends CaseDataMaterial<ItemStack> {
 
     /**

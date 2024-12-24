@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    protected boolean cancel;
+    private boolean cancel;
     private final CaseDataBukkit caseData;
     private final Block block;
     private boolean ignoreKeys;
@@ -31,8 +31,6 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
         super(who);
         this.caseData = caseData;
         this.block = block;
-        cancel = false;
-        ignoreKeys = false;
     }
 
     /**
@@ -89,11 +87,22 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
         this.cancel = cancel;
     }
 
+    /**
+     * Determines whether the player's keys should be ignored.
+     *
+     * @return {@code true} if the keys should be ignored, {@code false} otherwise.
+     */
     public boolean isIgnoreKeys() {
         return ignoreKeys;
     }
 
+    /**
+     * Sets whether the player's keys should be ignored.
+     *
+     * @param ignoreKeys {@code true} to ignore the player's keys, {@code false} otherwise.
+     */
     public void setIgnoreKeys(boolean ignoreKeys) {
         this.ignoreKeys = ignoreKeys;
     }
+
 }

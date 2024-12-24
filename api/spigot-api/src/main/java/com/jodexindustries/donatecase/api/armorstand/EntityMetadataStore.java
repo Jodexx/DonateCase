@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 /**
- * An EntityMetadataStore stores metadata values for all {@link Entity} classes an their descendants.
+ * An EntityMetadataStore stores metadata values for all {@link Entity} classes an descendants.
  */
 public class EntityMetadataStore extends MetadataStoreBase<UUID> implements MetadataStore<UUID> {
     /**

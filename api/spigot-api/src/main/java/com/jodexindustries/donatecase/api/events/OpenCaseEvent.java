@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OpenCaseEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    protected boolean cancel;
+    private boolean cancel;
     private final CaseDataBukkit caseData;
     private final Block block;
 
@@ -33,7 +33,6 @@ public class OpenCaseEvent extends PlayerEvent implements Cancellable {
         super(who);
         this.caseData = caseData;
         this.block = block;
-        cancel = false;
     }
 
     /**
