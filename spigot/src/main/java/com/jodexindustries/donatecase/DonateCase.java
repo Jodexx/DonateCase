@@ -370,6 +370,7 @@ public class DonateCase extends JavaPlugin {
         if (hologramManager == null) {
             for (HologramDriver fallbackDriver : HologramDriver.values()) {
                 if (tryInitializeHologramManager(fallbackDriver)) {
+                    hologramDriver = fallbackDriver;
                     break;
                 }
             }
