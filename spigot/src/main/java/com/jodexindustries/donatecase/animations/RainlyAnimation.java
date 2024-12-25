@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.animations;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
@@ -54,7 +53,7 @@ public class RainlyAnimation extends JavaAnimationBukkit {
         as.setSmall(small);
         as.spawn();
 
-        Bukkit.getScheduler().runTaskTimer(Case.getInstance(), new Task(as, particle), 0L, 2L);
+        Bukkit.getScheduler().runTaskTimer(getApi().getDonateCase(), new Task(as, particle), 0L, 2L);
     }
 
     private class Task implements Consumer<BukkitTask> {
@@ -113,7 +112,7 @@ public class RainlyAnimation extends JavaAnimationBukkit {
             if (i >= 70) {
                 as.remove();
                 task.cancel();
-                getApi().getAnimationManager().animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                end();
             }
 
             i++; // Increment tick counter
@@ -125,7 +124,7 @@ public class RainlyAnimation extends JavaAnimationBukkit {
                 as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
             }
 
-            String winGroupDisplayName = Case.getInstance().papi.setPlaceholders(
+            String winGroupDisplayName = getApi().getTools().getPAPI().setPlaceholders(
                     getPlayer(), getWinItem().getMaterial().getDisplayName()
             );
             getWinItem().getMaterial().setDisplayName(winGroupDisplayName);
@@ -135,15 +134,15 @@ public class RainlyAnimation extends JavaAnimationBukkit {
             as.setCustomName(winGroupDisplayName);
             as.updateMeta();
 
-            getApi().getAnimationManager().animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+            preEnd();
 
             world.spawnParticle(getParticle("explosion"), loc, 0);
             world.playSound(loc, endSound, endVolume, endPitch);
         }
 
         private void updateRandomItem() {
-            CaseDataItem<CaseDataMaterialBukkit, ItemStack> item = getCaseData().getRandomItem();
-            String itemDisplayName = Case.getInstance().papi.setPlaceholders(
+            CaseDataItem<CaseDataMaterialBukkit> item = getCaseData().getRandomItem();
+            String itemDisplayName = getApi().getTools().getPAPI().setPlaceholders(
                     getPlayer(), item.getMaterial().getDisplayName()
             );
             item.getMaterial().setDisplayName(itemDisplayName);

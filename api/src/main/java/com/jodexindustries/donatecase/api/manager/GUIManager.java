@@ -10,6 +10,7 @@ import java.util.UUID;
 
 /**
  *
+ * Interface for implement gui management
  * @param <IY>       The type of inventory representation.
  * @param <L>        The type representing a location in the game world.
  * @param <P>        The type representing the player interacting with the system.
@@ -27,5 +28,9 @@ public interface GUIManager<IY, L, P, C, M extends CCloneable> {
      */
     void open(@NotNull P player, @NotNull C caseData, @NotNull L location);
 
+    /**
+     * Gets map of case gui
+     * @return map of case gui
+     */
     Map<UUID, CaseGui<IY, L, P, C, M>> getPlayersGUI();
 }

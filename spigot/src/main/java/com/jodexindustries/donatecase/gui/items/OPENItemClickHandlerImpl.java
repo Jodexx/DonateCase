@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.gui.items;
 import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
@@ -71,7 +72,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
                 if (!openEvent.isCancelled()) {
                     Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData).thenAcceptAsync(uuid -> {
                         if(uuid != null) {
-                            ActiveCase<Block> activeCase = Case.getInstance().api.getAnimationManager().getActiveCases().get(uuid);
+                            ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = Case.getInstance().api.getAnimationManager().getActiveCases().get(uuid);
                             if(!event.isIgnoreKeys()) {
                                 Case.getInstance().api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1).thenAcceptAsync(status -> {
                                     activeCase.setKeyRemoved(true);

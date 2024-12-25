@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for implement subcommand executor
+ * @param <S> the type of command sender
  */
 public interface SubCommandExecutor<S> {
 

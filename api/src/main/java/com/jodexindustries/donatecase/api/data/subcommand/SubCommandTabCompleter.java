@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Interface for implement subcommand tab completer
+ * @param <S> the type of command sender
  */
 public interface SubCommandTabCompleter<S> {
 

@@ -7,12 +7,11 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public abstract class JavaAnimationBukkit extends JavaAnimation<CaseDataMaterialBukkit, ItemStack, CaseDataBukkit> {
+public abstract class JavaAnimationBukkit extends JavaAnimation<CaseDataMaterialBukkit, CaseDataBukkit> {
 
     private DCAPIBukkit api;
     private Player player;
@@ -20,14 +19,17 @@ public abstract class JavaAnimationBukkit extends JavaAnimation<CaseDataMaterial
     private ConfigurationSection settings;
 
     /**
+     * Method for animation initialization
+     * @param api      DonateCase API
      * @param player   Player who opened case
      * @param uuid     Active case uuid
      * @param location Case location
      * @param caseData Case data
-     * @param winItem  winItem
+     * @param winItem  Win item
+     * @param settings Animation settings
      */
     public final void init(DCAPIBukkit api, Player player, Location location, UUID uuid, CaseDataBukkit caseData,
-                           CaseDataItem<CaseDataMaterialBukkit, ItemStack> winItem, ConfigurationSection settings) {
+                           CaseDataItem<CaseDataMaterialBukkit> winItem, ConfigurationSection settings) {
         init(uuid, caseData, winItem);
         this.api = api;
         this.player = player;
@@ -35,11 +37,19 @@ public abstract class JavaAnimationBukkit extends JavaAnimation<CaseDataMaterial
         this.settings = settings;
     }
 
+    /**
+     * Gets player who opened the case
+     * @return the player object
+     */
     @NotNull
     public final Player getPlayer() {
         return player;
     }
 
+    /**
+     * Gets animation start location
+     * @return animation location
+     */
     @NotNull
     public final Location getLocation() {
         return location;
@@ -66,10 +76,19 @@ public abstract class JavaAnimationBukkit extends JavaAnimation<CaseDataMaterial
     }
 
     /**
+     * Returns DonateCase API
      * @since 2.0.2.1
      * @return AnimationManager's DCAPIBukkit instance
      */
     public DCAPIBukkit getApi() {
         return api;
+    }
+
+    public final void preEnd() {
+        api.getAnimationManager().animationPreEnd(getUuid());
+    }
+
+    public final void end() {
+        api.getAnimationManager().animationEnd(getUuid());
     }
 }

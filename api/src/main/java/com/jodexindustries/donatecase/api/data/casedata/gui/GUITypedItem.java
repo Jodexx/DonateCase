@@ -9,6 +9,9 @@ import org.jetbrains.annotations.Nullable;
  * Class for creating GUI typed item
  * @see TypedItemHandler
  * @see TypedItemClickHandler
+ * @param <M> the type of {@link com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial}
+ * @param <G> the type of {@link com.jodexindustries.donatecase.api.gui.CaseGui}
+ * @param <E> the type of clicked event
  */
 public class GUITypedItem<M extends CCloneable, G, E> {
     private final String id;
@@ -87,15 +90,6 @@ public class GUITypedItem<M extends CCloneable, G, E> {
 
     public boolean isLoadOnCase() {
         return loadOnCase;
-    }
-
-    public Builder<M, G, E> toBuilder() {
-        Builder<M, G, E> builder = new Builder<>(id, addon);
-        builder.updateMeta = updateMeta;
-        builder.description = description;
-        builder.itemHandler = itemHandler;
-        builder.itemClickHandler = itemClickHandler;
-        return builder;
     }
 
     public static class Builder<M extends CCloneable, G, E> {

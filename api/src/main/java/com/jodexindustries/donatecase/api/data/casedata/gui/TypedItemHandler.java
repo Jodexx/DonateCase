@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for handling item creating
+ * @param <G> the type of {@link com.jodexindustries.donatecase.api.gui.CaseGui}
+ * @param <M> the type of {@link com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial}
  */
 public interface TypedItemHandler<M extends CCloneable, G> {
 

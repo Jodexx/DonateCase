@@ -90,7 +90,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
         if (isGlobal) historyCaseData = instance.api.getCaseManager().getCase(data.getCaseType());
         if (historyCaseData == null) return false;
 
-        CaseDataItem<CaseDataMaterialBukkit, ItemStack> historyItem = historyCaseData.getItem(data.getItem());
+        CaseDataItem<CaseDataMaterialBukkit> historyItem = historyCaseData.getItem(data.getItem());
         if (historyItem == null) return false;
         String material = item.getMaterial().getId();
         if (material == null) material = "HEAD:" + data.getPlayerName();
@@ -109,7 +109,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
         return true;
     }
 
-    private String[] getTemplate(CaseDataBukkit historyCaseData, CaseDataHistory data, CaseDataItem<CaseDataMaterialBukkit, ItemStack> historyItem) {
+    private String[] getTemplate(CaseDataBukkit historyCaseData, CaseDataHistory data, CaseDataItem<CaseDataMaterialBukkit> historyItem) {
 
         DateFormat formatter = new SimpleDateFormat(instance.api.getConfig().getConfig().getString("DonateCase.DateFormat", "dd.MM HH:mm:ss"));
         String dateFormatted = formatter.format(new Date(data.getTime()));
@@ -132,7 +132,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
         };
     }
 
-    public static String getActionDisplayName(String action, String groupDisplayName, CaseDataItem<CaseDataMaterialBukkit, ItemStack> historyItem) {
+    public static String getActionDisplayName(String action, String groupDisplayName, CaseDataItem<CaseDataMaterialBukkit> historyItem) {
         String randomActionDisplayName = "random_action_not_found";
         if (action != null && !action.isEmpty()) {
             CaseDataItem.RandomAction randomAction = historyItem.getRandomAction(action);

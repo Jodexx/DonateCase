@@ -38,6 +38,11 @@ public class ToolsImpl implements DCToolsBukkit {
     }
 
     @Override
+    public PAPI getPAPI() {
+        return instance.papi;
+    }
+
+    @Override
     public ItemStack loadCaseItem(String id) {
         ItemStack itemStack = null;
 

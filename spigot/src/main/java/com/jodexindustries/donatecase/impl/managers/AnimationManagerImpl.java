@@ -47,7 +47,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
     /**
      * Map of active cases
      */
-    private final static Map<UUID, ActiveCase<Block>> activeCases = new HashMap<>();
+    private final static Map<UUID, ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>>> activeCases = new HashMap<>();
 
     /**
      * Active cases, but by location
@@ -122,13 +122,15 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
 
         String animation = caseData.getAnimation();
 
-        CaseDataItem<CaseDataMaterialBukkit, ItemStack> winItem = caseData.getRandomItem();
+        CaseDataItem<CaseDataMaterialBukkit> winItem = caseData.getRandomItem();
         winItem.getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(player, winItem.getMaterial().getDisplayName()));
         AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, caseData, block, winItem);
         Bukkit.getPluginManager().callEvent(preStartEvent);
 
-        ActiveCase<Block> activeCase = new ActiveCase<>(block, caseData.getCaseType());
+        winItem = preStartEvent.getWinItem();
+
         UUID uuid = UUID.randomUUID();
+        ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = new ActiveCase<>(uuid, block, player, winItem, caseData.getCaseType());
 
         if (instance.hologramManager != null && caseData.getHologram().isEnabled()) {
             instance.hologramManager.removeHologram(block);
@@ -188,20 +190,32 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         activeCases.put(uuid, activeCase);
 
         // AnimationStart event
-        AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, block, preStartEvent.getWinItem(), uuid);
+        AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, block, winItem, uuid);
         Bukkit.getPluginManager().callEvent(startEvent);
         return animationCompletion;
     }
 
     @Override
-    public void animationPreEnd(CaseDataBukkit caseData, Player player, UUID uuid, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item) {
-        ActiveCase<Block> activeCase = activeCases.get(uuid);
+    public void animationPreEnd(UUID uuid) {
+        ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = activeCases.get(uuid);
+        if(activeCase == null) {
+            addon.getLogger().warning("Animation with uuid: " + uuid + " not found!");
+            return;
+        }
+
+        CaseDataBukkit caseData = api.getCaseManager().getCase(activeCase.getCaseType());
+        animationPreEnd(caseData, activeCase.getPlayer(), activeCase.getBlock().getLocation(), activeCase.getWinItem());
+    }
+
+    @Override
+    public void animationPreEnd(CaseDataBukkit caseData, Player player, UUID uuid, CaseDataItem<CaseDataMaterialBukkit> item) {
+        ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = activeCases.get(uuid);
         Location location = activeCase != null ? activeCase.getBlock().getLocation() : null;
         animationPreEnd(caseData, player, location, item);
     }
 
     @Override
-    public void animationPreEnd(CaseDataBukkit caseData, Player player, Location location, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item) {
+    public void animationPreEnd(CaseDataBukkit caseData, Player player, Location location, CaseDataItem<CaseDataMaterialBukkit> item) {
         World world = location != null ? location.getWorld() : null;
         if(world == null) world = Bukkit.getWorlds().get(0);
 
@@ -225,15 +239,39 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
     }
 
     @Override
-    public void animationEnd(CaseDataBukkit caseData, Player player, UUID uuid, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item) {
-        ActiveCase<Block> activeCase = activeCases.get(uuid);
-        if(activeCase == null) return;
+    public void animationEnd(UUID uuid) {
+        ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = activeCases.get(uuid);
+        if(activeCase == null) {
+            addon.getLogger().warning("Animation with uuid: " + uuid + " not found!");
+            return;
+        }
+
+        animationEnd(activeCase);
+    }
+
+    @Override
+    public void animationEnd(CaseDataBukkit caseData, Player player, UUID uuid, CaseDataItem<CaseDataMaterialBukkit> item) {
+        ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = activeCases.get(uuid);
+        if(activeCase == null) {
+            addon.getLogger().warning("Animation with uuid: " + uuid + " not found!");
+            return;
+        }
+
+        animationEnd(activeCase);
+    }
+
+    private void animationEnd(@NotNull ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase) {
+        CaseDataBukkit caseData = Case.getInstance().api.getCaseManager().getCase(activeCase.getCaseType());
+        if(caseData == null) return;
+
+        CaseDataItem<CaseDataMaterialBukkit> item = activeCase.getWinItem();
+        Player player = activeCase.getPlayer();
 
         if(!activeCase.isKeyRemoved()) Case.getInstance().api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1);
 
         Block block = activeCase.getBlock();
         activeCasesByBlock.remove(block);
-        activeCases.remove(uuid);
+        activeCases.remove(activeCase.getUuid());
         if (instance.hologramManager != null && caseData.getHologram().isEnabled()) {
             instance.hologramManager.createHologram(block, caseData);
         }
@@ -258,7 +296,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
     }
 
     @Override
-    public Map<UUID, ActiveCase<Block>> getActiveCases() {
+    public Map<UUID, ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>>> getActiveCases() {
         return activeCases;
     }
 
@@ -294,7 +332,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         return true;
     }
 
-    private static void saveOpenInfo(CaseDataBukkit caseData, OfflinePlayer player, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item, String choice) {
+    private static void saveOpenInfo(CaseDataBukkit caseData, OfflinePlayer player, CaseDataItem<CaseDataMaterialBukkit> item, String choice) {
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             CaseDataHistory data = new CaseDataHistory(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
             CaseDataHistory[] historyData = caseData.getHistoryData();
@@ -327,7 +365,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
      * @param item Case item
      * @return random action name
      */
-    public static String getRandomActionChoice(CaseDataItem<CaseDataMaterialBukkit, ItemStack> item) {
+    public static String getRandomActionChoice(CaseDataItem<CaseDataMaterialBukkit> item) {
         ProbabilityCollection<String> collection = new ProbabilityCollection<>();
         for (String name : item.getRandomActions().keySet()) {
             CaseDataItem.RandomAction randomAction = item.getRandomAction(name);
@@ -345,7 +383,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
      * @param choice In fact, these are actions that were selected from the RandomActions section
      * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#getAlternativeActions()})
      */
-    public static void executeActions(Player player, CaseDataBukkit caseData, CaseDataItem<CaseDataMaterialBukkit, ItemStack> item, String choice, boolean alternative) {
+    public static void executeActions(Player player, CaseDataBukkit caseData, CaseDataItem<CaseDataMaterialBukkit> item, String choice, boolean alternative) {
         final String[] replacementRegex = {
                 "%player%:" + player.getName(),
                 "%casename%:" + caseData.getCaseType(),
@@ -418,7 +456,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
      * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#getAlternativeActions()})
      * @return list of selected actions
      */
-    public static List<String> getActionsBasedOnChoice(CaseDataItem<CaseDataMaterialBukkit, ItemStack> item, String choice, boolean alternative) {
+    public static List<String> getActionsBasedOnChoice(CaseDataItem<CaseDataMaterialBukkit> item, String choice, boolean alternative) {
         if (choice != null) {
             CaseDataItem.RandomAction randomAction = item.getRandomAction(choice);
             if (randomAction != null) {

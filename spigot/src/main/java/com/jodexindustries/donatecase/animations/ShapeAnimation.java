@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.animations;
 import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
@@ -60,7 +59,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
 
         long period = getSettings().getLong("Scroll.Period");
 
-        Bukkit.getScheduler().runTaskTimer(Case.getInstance(),
+        Bukkit.getScheduler().runTaskTimer(getApi().getDonateCase(),
                 new Task(as, orangeColor, whiteColor),
                 0L, period);
     }
@@ -137,13 +136,13 @@ public class ShapeAnimation extends JavaAnimationBukkit {
                 handleTail();
 
                 if (tick % scrollInterval == 0) {
-                    CaseDataItem<CaseDataMaterialBukkit, ItemStack> item = getCaseData().getRandomItem();
+                    CaseDataItem<CaseDataMaterialBukkit> item = getCaseData().getRandomItem();
                     if (item.getMaterial().getItemStack().getType() != Material.AIR) {
                         as.setAngle(armorStandEulerAngle);
                         as.setEquipment(itemSlot, item.getMaterial().getItemStack());
                     }
 
-                    String winGroupDisplayName = DCToolsBukkit.rc(Case.getInstance().papi.setPlaceholders(getPlayer(),
+                    String winGroupDisplayName = DCToolsBukkit.rc(getApi().getTools().getPAPI().setPlaceholders(getPlayer(),
                             item.getMaterial().getDisplayName()));
                     if (item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty()) {
                         as.setCustomNameVisible(true);
@@ -162,13 +161,13 @@ public class ShapeAnimation extends JavaAnimationBukkit {
                 as.setCustomName(getWinItem().getMaterial().getDisplayName());
                 as.updateMeta();
                 getApi().getTools().launchFirework(as.getLocation().add(0, 0.5, 0));
-                getApi().getAnimationManager().animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                preEnd();
             }
 
             if (tick >= scrollTime + endTime) {
                 as.remove();
                 task.cancel();
-                getApi().getAnimationManager().animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                end();
             }
 
             ++tick;

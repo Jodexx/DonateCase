@@ -87,7 +87,7 @@ public class CaseLoader {
         }
 
         CaseDataHologram hologram = loadHologram(caseSection.getConfigurationSection("Hologram"));
-        Map<String, CaseDataItem<CaseDataMaterialBukkit, ItemStack>> items = loadItems(caseType, caseSection);
+        Map<String, CaseDataItem<CaseDataMaterialBukkit>> items = loadItems(caseType, caseSection);
 
         Map<String, Integer> levelGroups = loadLevelGroups(caseSection);
 
@@ -118,8 +118,8 @@ public class CaseLoader {
                 : new CaseDataHologram();
     }
 
-    private Map<String, CaseDataItem<CaseDataMaterialBukkit, ItemStack>> loadItems(String caseType, ConfigurationSection caseSection) {
-        Map<String, CaseDataItem<CaseDataMaterialBukkit, ItemStack>> items = new HashMap<>();
+    private Map<String, CaseDataItem<CaseDataMaterialBukkit>> loadItems(String caseType, ConfigurationSection caseSection) {
+        Map<String, CaseDataItem<CaseDataMaterialBukkit>> items = new HashMap<>();
         ConfigurationSection itemsSection = caseSection.getConfigurationSection("Items");
 
         if (itemsSection != null) {
@@ -131,7 +131,7 @@ public class CaseLoader {
                     continue;
                 }
 
-                CaseDataItem<CaseDataMaterialBukkit, ItemStack> caseItem = loadItem(item, itemSection);
+                CaseDataItem<CaseDataMaterialBukkit> caseItem = loadItem(item, itemSection);
                 if(caseItem != null) items.put(item, caseItem);
             }
         } else {
@@ -141,7 +141,7 @@ public class CaseLoader {
         return items;
     }
 
-    private CaseDataItem<CaseDataMaterialBukkit, ItemStack> loadItem(String item, ConfigurationSection itemSection) {
+    private CaseDataItem<CaseDataMaterialBukkit> loadItem(String item, ConfigurationSection itemSection) {
         String group = itemSection.getString("Group", "");
         double chance = itemSection.getDouble("Chance");
         int index = itemSection.getInt("Index");

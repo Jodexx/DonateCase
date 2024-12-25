@@ -24,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
  * @param <I> The type of ItemStack associated with materials or items.
  * @param <P> The type of Player interacting with animations.
  */
-public interface AnimationManager<A extends JavaAnimation<M, I, C>, M extends CaseDataMaterial<I>, I, P, L, B, C> {
+public interface AnimationManager<A extends JavaAnimation<M, C>, M extends CaseDataMaterial<I>, I, P, L, B, C> {
 
     /**
      * Creates a builder for defining and constructing a new custom animation.
@@ -79,13 +79,20 @@ public interface AnimationManager<A extends JavaAnimation<M, I, C>, M extends Ca
 
     /**
      * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
+     * @param uuid The unique ID of the active case.
+     */
+    void animationPreEnd(UUID uuid);
+
+    /**
+     * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
      *
      * @param caseData The case data associated with the animation.
      * @param player   The player interacting with the animation (can be offline).
      * @param uuid     The unique ID of the active case.
      * @param item     The item data associated with the animation's result.
      */
-    void animationPreEnd(C caseData, P player, UUID uuid, CaseDataItem<M, I> item);
+    @Deprecated
+    void animationPreEnd(C caseData, P player, UUID uuid, CaseDataItem<M> item);
 
     /**
      * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
@@ -95,7 +102,14 @@ public interface AnimationManager<A extends JavaAnimation<M, I, C>, M extends Ca
      * @param location The location of the active case block.
      * @param item     The item data associated with the animation's result.
      */
-    void animationPreEnd(C caseData, P player, L location, CaseDataItem<M, I> item);
+    void animationPreEnd(C caseData, P player, L location, CaseDataItem<M> item);
+
+    /**
+     * Completes the animation process and performs cleanup tasks.
+     *
+     * @param uuid The unique ID of the active case.
+     */
+    void animationEnd(UUID uuid);
 
     /**
      * Completes the animation process and performs cleanup tasks.
@@ -105,7 +119,8 @@ public interface AnimationManager<A extends JavaAnimation<M, I, C>, M extends Ca
      * @param uuid     The unique ID of the active case.
      * @param item     The item data associated with the animation's result.
      */
-    void animationEnd(C caseData, P player, UUID uuid, CaseDataItem<M, I> item);
+    @Deprecated
+    void animationEnd(C caseData, P player, UUID uuid, CaseDataItem<M> item);
 
     /**
      * Checks whether an animation with the specified name is registered.
@@ -136,7 +151,7 @@ public interface AnimationManager<A extends JavaAnimation<M, I, C>, M extends Ca
      *
      * @return A map where keys are UUIDs and values are {@link ActiveCase} instances associated with blocks.
      */
-    Map<UUID, ActiveCase<B>> getActiveCases();
+    Map<UUID, ActiveCase<B, P, CaseDataItem<M>>> getActiveCases();
 
     /**
      * Retrieves a map of active cases by their associated blocks.

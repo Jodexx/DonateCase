@@ -12,12 +12,13 @@ import java.util.Map;
 
 /**
  * Class for implementing cases that are loaded into the plugin's memory.
+ * @param <M> the type of CaseDataMaterial
  */
-public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
+public class CaseData<M extends CCloneable> implements CCloneable {
     private final String caseType;
     private String caseDisplayName;
     private String animation;
-    private Map<String, CaseDataItem<M, I>> items;
+    private Map<String, CaseDataItem<M>> items;
     private CaseDataHistory[] historyData;
     private CaseDataHologram hologram;
     private Map<String, Integer> levelGroups;
@@ -40,7 +41,7 @@ public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
      * @param openType          Open type
      */
     public CaseData(String caseType, String caseDisplayName, String animation, Map<String,
-            CaseDataItem<M, I>> items, CaseDataHistory[] historyData, CaseDataHologram hologram, Map<String, Integer> levelGroups, GUI<M> gui,
+            CaseDataItem<M>> items, CaseDataHistory[] historyData, CaseDataHologram hologram, Map<String, Integer> levelGroups, GUI<M> gui,
                     List<String> noKeyActions, @NotNull OpenType openType) {
         this.caseType = caseType;
         this.caseDisplayName = caseDisplayName;
@@ -82,7 +83,7 @@ public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
      *
      * @return items
      */
-    public Map<String, CaseDataItem<M, I>> getItems() {
+    public Map<String, CaseDataItem<M>> getItems() {
         return items;
     }
 
@@ -93,7 +94,7 @@ public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
      * @return item
      */
     @Nullable
-    public CaseDataItem<M, I> getItem(String name) {
+    public CaseDataItem<M> getItem(String name) {
         return items.getOrDefault(name, null);
     }
 
@@ -102,9 +103,9 @@ public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
      *
      * @return Random item
      */
-    public CaseDataItem<M, I> getRandomItem() {
-        ProbabilityCollection<CaseDataItem<M, I>> collection = new ProbabilityCollection<>();
-        for (CaseDataItem<M, I> item : items.values()) {
+    public CaseDataItem<M> getRandomItem() {
+        ProbabilityCollection<CaseDataItem<M>> collection = new ProbabilityCollection<>();
+        for (CaseDataItem<M> item : items.values()) {
             double chance = item.getChance();
             if(chance > 0) collection.add(item, chance);
         }
@@ -135,7 +136,7 @@ public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
      *
      * @param items map of CaseData.Item items
      */
-    public void setItems(Map<String, CaseDataItem<M, I>> items) {
+    public void setItems(Map<String, CaseDataItem<M>> items) {
         this.items = items;
     }
 
@@ -190,9 +191,9 @@ public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
 
     @SuppressWarnings("unchecked")
     @Override
-    public CaseData<M, I> clone() {
+    public CaseData<M> clone() {
         try {
-            CaseData<M, I> clonedCaseData = (CaseData<M, I>) super.clone();
+            CaseData<M> clonedCaseData = (CaseData<M>) super.clone();
 
             // Deep clone the map of items
             clonedCaseData.items = cloneItemsMap(this.items);
@@ -224,9 +225,9 @@ public class CaseData<M extends CaseDataMaterial<I>, I> implements CCloneable {
     /**
      * Clone method for CaseData deep clone
      */
-    protected Map<String, CaseDataItem<M, I>> cloneItemsMap(Map<String, CaseDataItem<M, I>> originalMap) {
-        Map<String, CaseDataItem<M, I>> clonedMap = new HashMap<>();
-        for (Map.Entry<String, CaseDataItem<M, I>> entry : originalMap.entrySet()) {
+    protected Map<String, CaseDataItem<M>> cloneItemsMap(Map<String, CaseDataItem<M>> originalMap) {
+        Map<String, CaseDataItem<M>> clonedMap = new HashMap<>();
+        for (Map.Entry<String, CaseDataItem<M>> entry : originalMap.entrySet()) {
             clonedMap.put(entry.getKey(), entry.getValue().clone());
         }
         return clonedMap;

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 /**
- *
+ * Interface for implement case management
  * @param <C>        The type of case data structure.
  */
 public interface CaseManager<C> {

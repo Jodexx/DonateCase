@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * @param <CG>       The type of configuration system, extending {@link Config}.
  * @param <T>        The type of tools and utilities, extending {@link DCTools}.
  */
-public interface DCAPI<P, A extends JavaAnimation<M, I, C>, M extends CaseDataMaterial<I>, G, E, I, S, L, B, C, IY, CG extends Config, T extends DCTools> {
+public interface DCAPI<P, A extends JavaAnimation<M, C>, M extends CaseDataMaterial<I>, G, E, I, S, L, B, C, IY, CG extends Config, T extends DCTools> {
 
     /**
      * Retrieves the {@link ActionManager} responsible for handling custom actions in the system.

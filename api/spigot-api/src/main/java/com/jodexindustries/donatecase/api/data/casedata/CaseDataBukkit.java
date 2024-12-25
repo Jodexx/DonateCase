@@ -2,7 +2,6 @@ package com.jodexindustries.donatecase.api.data.casedata;
 
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,7 +10,7 @@ import java.util.*;
 /**
  * Class for implementing cases that are loaded into the plugin's memory.
  */
-public class CaseDataBukkit extends CaseData<CaseDataMaterialBukkit, ItemStack> {
+public class CaseDataBukkit extends CaseData<CaseDataMaterialBukkit> {
     private ConfigurationSection animationSettings;
 
     /**
@@ -29,7 +28,7 @@ public class CaseDataBukkit extends CaseData<CaseDataMaterialBukkit, ItemStack> 
      * @param openType        Open type
      * @param animationSettings Animation settings section
      */
-    public CaseDataBukkit(String caseType, String caseDisplayName, String animation, Map<String, CaseDataItem<CaseDataMaterialBukkit, ItemStack>> items,
+    public CaseDataBukkit(String caseType, String caseDisplayName, String animation, Map<String, CaseDataItem<CaseDataMaterialBukkit>> items,
                           CaseDataHistory[] historyData, CaseDataHologram hologram, Map<String, Integer> levelGroups, GUI<CaseDataMaterialBukkit> gui,
                           List<String> noKeyActions, @NotNull OpenType openType, ConfigurationSection animationSettings) {
         super(caseType, caseDisplayName, animation, items, historyData, hologram, levelGroups, gui, noKeyActions, openType);

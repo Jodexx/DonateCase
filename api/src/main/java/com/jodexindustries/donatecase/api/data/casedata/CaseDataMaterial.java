@@ -12,21 +12,44 @@ import java.util.List;
  * enchantment status, lore, custom model data, and RGB values.
  * This class provides methods to get and set each attribute, allowing flexible
  * modification and retrieval of material details.
+ * @param <I> the type of ItemStack
  */
 public abstract class CaseDataMaterial<I> implements CCloneable, MetaUpdatable {
 
+    /**
+     * the unique identifier for the material
+     */
     protected String id;
+    /**
+     * the display name of the material
+     */
     protected String displayName;
+    /**
+     * whether the material is enchanted
+     */
     protected boolean enchanted;
+    /**
+     * the lore associated with the material; if null, an empty list is assigned
+     */
     protected List<String> lore;
+    /**
+     * the custom model data for the material
+     */
     protected int modelData;
+    /**
+     * the RGB color values for the material
+     */
     protected String[] rgb;
+    /**
+     * the itemstack of the material
+     */
     protected I itemStack;
 
     /**
      * Constructs a new CaseDataMaterial with specified attributes.
      *
      * @param id          the unique identifier for the material, such as HDB:1234 or RED_WOOL
+     * @param itemStack   the itemstack of the material
      * @param displayName the display name of the material
      * @param enchanted   whether the material is enchanted
      * @param lore        the lore associated with the material; if null, an empty list is assigned

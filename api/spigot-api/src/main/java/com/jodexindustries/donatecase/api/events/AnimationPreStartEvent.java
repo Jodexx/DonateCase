@@ -8,7 +8,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,7 +17,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     private final CaseDataBukkit caseData;
     private final Block block;
-    private CaseDataItem<CaseDataMaterialBukkit, ItemStack> winItem;
+    private CaseDataItem<CaseDataMaterialBukkit> winItem;
 
     /**
      * Default constructor
@@ -30,7 +29,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
      */
     public AnimationPreStartEvent(@NotNull final Player who,
                                   @NotNull final CaseDataBukkit caseData, @NotNull final Block block,
-                                  @NotNull final CaseDataItem<CaseDataMaterialBukkit, ItemStack> winItem) {
+                                  @NotNull final CaseDataItem<CaseDataMaterialBukkit> winItem) {
         super(who);
         this.caseData = caseData;
         this.block = block;
@@ -84,7 +83,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
      * @return win item
      */
     @NotNull
-    public CaseDataItem<CaseDataMaterialBukkit, ItemStack> getWinItem() {
+    public CaseDataItem<CaseDataMaterialBukkit> getWinItem() {
         return winItem;
     }
 
@@ -93,7 +92,7 @@ public class AnimationPreStartEvent extends PlayerEvent {
      *
      * @param winItem Win group data
      */
-    public void setWinItem(@NotNull CaseDataItem<CaseDataMaterialBukkit, ItemStack> winItem) {
+    public void setWinItem(@NotNull CaseDataItem<CaseDataMaterialBukkit> winItem) {
         this.winItem = winItem;
     }
 

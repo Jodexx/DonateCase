@@ -1,15 +1,14 @@
 package com.jodexindustries.donatecase.api.data.animation;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public abstract class JavaAnimation<M extends CaseDataMaterial<I>, I, C> implements IAnimation {
+public abstract class JavaAnimation<M, C> implements IAnimation {
     private UUID uuid;
     private C caseData;
-    private CaseDataItem<M, I> winItem;
+    private CaseDataItem<M> winItem;
 
     /**
      * @param uuid     Active case uuid
@@ -17,7 +16,7 @@ public abstract class JavaAnimation<M extends CaseDataMaterial<I>, I, C> impleme
      * @param winItem  winItem
      */
     public void init(UUID uuid, C caseData,
-                           CaseDataItem<M, I> winItem) {
+                           CaseDataItem<M> winItem) {
         this.uuid = uuid;
         this.caseData = caseData;
         this.winItem = winItem;
@@ -34,7 +33,7 @@ public abstract class JavaAnimation<M extends CaseDataMaterial<I>, I, C> impleme
     }
 
     @NotNull
-    public final CaseDataItem<M, I> getWinItem() {
+    public final CaseDataItem<M> getWinItem() {
         return winItem;
     }
 }

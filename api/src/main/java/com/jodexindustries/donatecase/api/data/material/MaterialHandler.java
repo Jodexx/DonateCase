@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for handling item initializing
+ * @param <I> the type of ItemStack
  */
 public interface MaterialHandler<I> {
 

@@ -39,7 +39,7 @@ public class FireworkAnimation extends JavaAnimationBukkit {
         itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD").toUpperCase());
         armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
         String displayName = getWinItem().getMaterial().getDisplayName();
-        getWinItem().getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(getPlayer(), displayName));
+        getWinItem().getMaterial().setDisplayName(getApi().getTools().getPAPI().setPlaceholders(getPlayer(), displayName));
         getLocation().add(0.5, 1, 0.5);
         ArmorStandCreator as = getApi().getTools().createArmorStand(getLocation());
 
@@ -48,7 +48,7 @@ public class FireworkAnimation extends JavaAnimationBukkit {
         as.setVisible(false);
         as.setGravity(false);
         as.spawn();
-        Bukkit.getScheduler().runTaskTimer(Case.getInstance(), new Task(as), 0L, 2L);
+        Bukkit.getScheduler().runTaskTimer(getApi().getDonateCase(), new Task(as), 0L, 2L);
     }
 
     private class Task implements Consumer<BukkitTask> {
@@ -89,12 +89,12 @@ public class FireworkAnimation extends JavaAnimationBukkit {
                         as.setCustomNameVisible(true);
                     as.setCustomName(getWinItem().getMaterial().getDisplayName());
                     as.updateMeta();
-                    getApi().getAnimationManager().animationPreEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                    preEnd();
                 }
                 if (this.i >= 30) {
                     as.remove();
                     task.cancel();
-                    getApi().getAnimationManager().animationEnd(getCaseData(), getPlayer(), getUuid(), getWinItem());
+                    end();
                 }
             }
 

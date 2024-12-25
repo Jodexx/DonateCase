@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for handling (inventory) click on item event
+ * @param <E> the type of clicked event
  */
 public interface TypedItemClickHandler<E> {
 

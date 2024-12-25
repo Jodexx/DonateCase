@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.addon.Addon;
 
 /**
  * Class for custom material storage
+ * @param <I> the type of ItemStack
  */
 public class CaseMaterial<I> {
     private final MaterialHandler<I> materialHandler;
@@ -53,6 +54,11 @@ public class CaseMaterial<I> {
         return description;
     }
 
+    /**
+     * Gets material handler
+     *
+     * @return material handler
+     */
     public MaterialHandler<I> getMaterialHandler() {
         return materialHandler;
     }

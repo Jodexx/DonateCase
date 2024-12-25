@@ -13,7 +13,6 @@ import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -51,7 +50,7 @@ public class OpenCaseCommand implements SubCommandExecutor<CommandSender>, SubCo
                             Case.getInstance().api.getCaseKeyManager().removeKeys(caseName, playerName, 1);
                             CaseDataBukkit data = instance.api.getCaseManager().getCase(caseName);
                             if (data == null) return;
-                            CaseDataItem<CaseDataMaterialBukkit, ItemStack> winGroup = data.getRandomItem();
+                            CaseDataItem<CaseDataMaterialBukkit> winGroup = data.getRandomItem();
                             instance.api.getAnimationManager().animationPreEnd(data, player, player.getLocation(), winGroup);
                         } else {
                             instance.api.getTools().msg(player, instance.api.getConfig().getLang().getString("no-keys"));

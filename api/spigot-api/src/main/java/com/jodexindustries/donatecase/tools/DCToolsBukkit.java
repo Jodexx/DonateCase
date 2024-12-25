@@ -31,6 +31,13 @@ public interface DCToolsBukkit extends DCTools {
 
     ArmorStandCreator createArmorStand(Location location);
 
+    /**
+     * Gets PlaceholderAPI support class
+     * @since 2.0.2.2
+     * @return PlaceholderAPI support class
+     */
+    PAPI getPAPI();
+
     static void msgRaw(CommandSender s, String msg) {
         if (s != null) {
             s.sendMessage(rc(msg));
@@ -230,7 +237,7 @@ public interface DCToolsBukkit extends DCTools {
      * @param items Map with Case items
      * @return New map with sorted items
      */
-    static Map<String, CaseDataItem<CaseDataMaterialBukkit, ItemStack>> sortItemsByIndex(Map<String, CaseDataItem<CaseDataMaterialBukkit, ItemStack>> items) {
+    static Map<String, CaseDataItem<CaseDataMaterialBukkit>> sortItemsByIndex(Map<String, CaseDataItem<CaseDataMaterialBukkit>> items) {
         return items.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(CaseDataItem::getIndex)))
