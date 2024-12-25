@@ -101,3 +101,9 @@ WHEEL:
     Sound: UI_BUTTON_CLICK
     Volume: 10
     Pitch: 1
+
+RANDOM:
+  SHAPE: 25 # Chance
+  RAINLY: 25
+  FIREWORK: 25
+  WHEEL: 25

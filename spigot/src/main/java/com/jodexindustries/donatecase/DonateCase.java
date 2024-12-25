@@ -286,6 +286,7 @@ public class DonateCase extends JavaPlugin {
         RainlyAnimation.register(manager);
         FireworkAnimation.register(manager);
         WheelAnimation.register(manager);
+        RandomAnimation.register(manager);
         Logger.log("&aRegistered &c" + manager.getRegisteredAnimations().size() + " &aanimations");
     }
 
