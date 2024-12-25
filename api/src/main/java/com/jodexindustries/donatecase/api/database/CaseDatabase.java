@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public interface CaseDatabase {
@@ -25,6 +26,8 @@ public interface CaseDatabase {
      * @param password User password
      */
     void connect(String database, String port, String host, String user, String password);
+
+    CompletableFuture<Map<String, Integer>> getKeys(String player);
 
     CompletableFuture<Integer> getKeys(String name, String player);
 

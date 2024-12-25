@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.caching.SimpleCache;
 import com.jodexindustries.donatecase.api.caching.entry.InfoEntry;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -70,12 +71,28 @@ public interface CaseKeyManager {
     int getKeys(String caseType, String player);
 
     /**
+     * Get the map of all player's keys
+     * @param player Player name
+     * @return Map of the keys. Key - Case type, Value - Number of keys
+     * @since 2.0.2.2
+     */
+    Map<String, Integer> getKeys(String player);
+
+    /**
      * Get the keys to a certain player's case
      * @param caseType Case type
      * @param player Player name
      * @return CompletableFuture of keys
      */
     CompletableFuture<Integer> getKeysAsync(String caseType, String player);
+
+    /**
+     * Get the map of all player's keys
+     * @param player Player name
+     * @since 2.0.2.2
+     * @return Map of the keys. Key - Case type, Value - Number of keys
+     */
+    CompletableFuture<Map<String, Integer>> getKeysAsync(String player);
 
     /**
      * Get the keys to a certain player's case from cache <br/>
@@ -86,5 +103,7 @@ public interface CaseKeyManager {
      */
     int getKeysCache(String caseType, String player);
 
-    SimpleCache<InfoEntry, Integer> getCache();
+    Map<String, Integer> getKeysCache(String player);
+
+    SimpleCache<String, Map<String, Integer>> getCache();
 }

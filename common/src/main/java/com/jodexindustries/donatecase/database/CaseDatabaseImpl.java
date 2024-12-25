@@ -19,7 +19,9 @@ import com.jodexindustries.donatecase.database.entities.PlayerKeysTable;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
@@ -76,6 +78,26 @@ public class CaseDatabaseImpl implements CaseDatabase {
         historyDataTables = DaoManager.createDao(connectionSource, HistoryDataTable.class);
         playerKeysTables = DaoManager.createDao(connectionSource, PlayerKeysTable.class);
         openInfoTables = DaoManager.createDao(connectionSource, OpenInfoTable.class);
+    }
+
+    @Override
+    public CompletableFuture<Map<String, Integer>> getKeys(String player) {
+        return CompletableFuture.supplyAsync(() -> {
+            Map<String, Integer> keys = new HashMap<>();
+            try {
+                List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
+                        .where()
+                        .eq("player", player)
+                        .query();
+
+                for (PlayerKeysTable result : results) {
+                    keys.put(result.getCaseType(), result.getKeys());
+                }
+            } catch (SQLException e) {
+                logger.warning(e.getMessage());
+            }
+            return keys;
+        });
     }
 
     @Override

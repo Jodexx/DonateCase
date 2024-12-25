@@ -1,13 +1,13 @@
 package com.jodexindustries.donatecase.impl.managers;
 
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
-import com.jodexindustries.donatecase.api.caching.entry.InfoEntry;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.events.KeysTransactionEvent;
 import com.jodexindustries.donatecase.api.manager.CaseKeyManager;
 import org.bukkit.Bukkit;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static com.jodexindustries.donatecase.DonateCase.instance;
@@ -18,7 +18,7 @@ public class CaseKeyManagerImpl implements CaseKeyManager {
     /**
      * Cache map for storing number of player's keys
      */
-    public final static SimpleCache<InfoEntry, Integer> keysCache = new SimpleCache<>(20);
+    public final static SimpleCache<String, Map<String, Integer>> keysCache = new SimpleCache<>(20);
 
     /**
      * Set case keys for a specific player, calling an event beforehand
@@ -60,31 +60,46 @@ public class CaseKeyManagerImpl implements CaseKeyManager {
     }
 
     @Override
+    public Map<String, Integer> getKeys(String player) {
+        return getKeysAsync(player).join();
+    }
+
+    @Override
     public CompletableFuture<Integer> getKeysAsync(String caseType, String player) {
         return instance.database.getKeys(caseType, player);
     }
 
     @Override
-    public int getKeysCache(String caseType, String player) {
-        if(instance.config.getDatabaseType() == DatabaseType.SQLITE) return getKeys(caseType, player);
+    public CompletableFuture<Map<String, Integer>> getKeysAsync(String player) {
+        return instance.database.getKeys(player);
+    }
 
-        int keys;
-        InfoEntry entry = new InfoEntry(player, caseType);
-        Integer cachedKeys = keysCache.get(entry);
+    @Override
+    public int getKeysCache(String caseType, String player) {
+        return getKeysCache(player).get(caseType);
+    }
+
+    @Override
+    public Map<String, Integer> getKeysCache(String player) {
+        if(instance.config.getDatabaseType() == DatabaseType.SQLITE) return getKeys(player);
+
+        Map<String, Integer> keys;
+        Map<String, Integer> cachedKeys = keysCache.get(player);
         if(cachedKeys == null) {
             // Get previous, if current is null
-            Integer previous = keysCache.getPrevious(entry);
-            keys = previous != null ? previous : getKeys(caseType, player);
+            Map<String, Integer> previous = keysCache.getPrevious(player);
+            keys = previous != null ? previous : getKeys(player);
 
-            getKeysAsync(caseType, player).thenAcceptAsync(integer -> keysCache.put(entry, integer));
+            getKeysAsync(player).thenAcceptAsync(map -> keysCache.put(player, map));
         } else {
             keys = cachedKeys;
         }
+
         return keys;
     }
 
     @Override
-    public SimpleCache<InfoEntry, Integer> getCache() {
+    public SimpleCache<String, Map<String, Integer>> getCache() {
         return keysCache;
     }
 }

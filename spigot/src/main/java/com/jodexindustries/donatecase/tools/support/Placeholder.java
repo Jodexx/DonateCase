@@ -11,6 +11,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static com.jodexindustries.donatecase.DonateCase.instance;
 
@@ -45,11 +46,9 @@ public class Placeholder extends PlaceholderExpansion {
     private String processKeys(@NotNull String params, OfflinePlayer player) {
         if (params.startsWith("keys")) {
             String[] parts = params.split("_", 2);
-            int keys = 0;
-            for (String caseType : instance.api.getCaseManager().getMap().keySet()) {
-                int cachedKeys = instance.api.getCaseKeyManager().getKeysCache(caseType, player.getName());
-                keys += cachedKeys;
-            }
+            Map<String, Integer> map = instance.api.getCaseKeyManager().getKeysCache(player.getName());
+            int keys = map.values().stream().mapToInt(key -> key).sum();
+
             if (parts.length == 1) {
                 return String.valueOf(keys);
             } else if (parts[1].equalsIgnoreCase("format")) {
