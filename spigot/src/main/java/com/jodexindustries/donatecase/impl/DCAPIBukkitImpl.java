@@ -44,7 +44,7 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
     }
 
     @Override
-    public AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> getAnimationManager() {
+    public AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, Player, Location, Block, CaseDataBukkit> getAnimationManager() {
         return new AnimationManagerImpl(this);
     }
 

@@ -281,7 +281,7 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void registerDefaultAnimations() {
-        AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager = api.getAnimationManager();
+        AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, Player, Location, Block, CaseDataBukkit> manager = api.getAnimationManager();
         ShapeAnimation.register(manager);
         RainlyAnimation.register(manager);
         FireworkAnimation.register(manager);

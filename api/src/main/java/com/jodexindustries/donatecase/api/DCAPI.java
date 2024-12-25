@@ -48,7 +48,7 @@ public interface DCAPI<P, A extends JavaAnimation<M, C>, M extends CaseDataMater
      *
      * @return The animation manager instance.
      */
-    AnimationManager<A, M, I, P, L, B, C> getAnimationManager();
+    AnimationManager<A, M, P, L, B, C> getAnimationManager();
 
     /**
      * Retrieves the {@link CaseKeyManager}, which manages case keys and related functionality.

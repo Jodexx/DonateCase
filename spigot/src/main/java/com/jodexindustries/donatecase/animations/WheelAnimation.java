@@ -18,7 +18,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +49,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
         }
     }
 
-    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
+    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, Player, Location, Block, CaseDataBukkit> manager) {
         CaseAnimation<JavaAnimationBukkit> caseAnimation = manager.builder("WHEEL")
                 .animation(WheelAnimation.class)
                 .description("Items resolve around the case")

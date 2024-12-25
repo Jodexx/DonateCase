@@ -18,7 +18,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +25,7 @@ import java.util.function.Consumer;
 
 public class ShapeAnimation extends JavaAnimationBukkit {
 
-    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
+    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, Player, Location, Block, CaseDataBukkit> manager) {
         CaseAnimation<JavaAnimationBukkit> caseAnimation = manager.builder("SHAPE")
                 .animation(ShapeAnimation.class)
                 .description("Items flip through and a shape appears")

@@ -24,7 +24,6 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +37,7 @@ import static com.jodexindustries.donatecase.DonateCase.instance;
  * Animation control class, registration, playing
  */
 public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit,
-        ItemStack, Player, Location, Block, CaseDataBukkit> {
+        Player, Location, Block, CaseDataBukkit> {
     /**
      * Map of registered animations
      */

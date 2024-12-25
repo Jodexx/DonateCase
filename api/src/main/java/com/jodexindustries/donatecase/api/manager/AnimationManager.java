@@ -2,9 +2,7 @@ package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
-import com.jodexindustries.donatecase.api.data.animation.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,10 +19,9 @@ import java.util.concurrent.CompletableFuture;
  * @param <L> The type representing the location in the game world.
  * @param <B> The type representing a block in the game world.
  * @param <C> The type representing case data for animations.
- * @param <I> The type of ItemStack associated with materials or items.
  * @param <P> The type of Player interacting with animations.
  */
-public interface AnimationManager<A extends JavaAnimation<M, C>, M extends CaseDataMaterial<I>, I, P, L, B, C> {
+public interface AnimationManager<A, M, P, L, B, C> {
 
     /**
      * Creates a builder for defining and constructing a new custom animation.

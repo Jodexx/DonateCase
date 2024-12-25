@@ -4,7 +4,6 @@ import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
-import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
@@ -14,7 +13,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -24,7 +22,7 @@ public class FireworkAnimation extends JavaAnimationBukkit {
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
 
-    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, ItemStack, Player, Location, Block, CaseDataBukkit> manager) {
+    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, Player, Location, Block, CaseDataBukkit> manager) {
         CaseAnimation<JavaAnimationBukkit> caseAnimation = manager.builder("FIREWORK")
                 .animation(FireworkAnimation.class)
                 .description("Fireworks fly to the skies and a prize appears")
