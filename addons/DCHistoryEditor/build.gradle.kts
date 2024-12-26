@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.jodexindustries.dchistoryeditor"
-version = "1.0.0"
+version = "1.0.1"
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
