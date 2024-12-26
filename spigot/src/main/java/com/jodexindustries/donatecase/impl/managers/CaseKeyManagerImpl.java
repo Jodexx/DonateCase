@@ -76,7 +76,9 @@ public class CaseKeyManagerImpl implements CaseKeyManager {
 
     @Override
     public int getKeysCache(String caseType, String player) {
-        return getKeysCache(player).get(caseType);
+        Integer keys = getKeysCache(player).get(caseType);
+        if(keys == null) return 0;
+        return keys;
     }
 
     @Override
