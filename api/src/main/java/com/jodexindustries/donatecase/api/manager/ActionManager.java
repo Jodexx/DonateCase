@@ -1,12 +1,15 @@
 package com.jodexindustries.donatecase.api.manager;
 
+import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Interface for managing executable actions within the Donate Case system.
@@ -33,6 +36,11 @@ public interface ActionManager<P> {
      */
     void unregisterAction(@NotNull String name);
 
+    default void unregisterActions(Addon addon) {
+        List<CaseAction<P>> list = new ArrayList<>(getRegisteredActions(addon));
+        list.stream().map(CaseAction::getName).forEach(this::unregisterAction);
+    }
+
     /**
      * Unregisters all currently registered actions.
      */
@@ -54,6 +62,17 @@ public interface ActionManager<P> {
      */
     @Nullable
     CaseAction<P> getRegisteredAction(@NotNull String name);
+
+    /**
+     * Retrieves all registered actions by addon.
+     * @param addon The addon instance
+     * @return List of actions
+     * @since 2.0.2.3
+     */
+    default List<CaseAction<P>> getRegisteredActions(Addon addon) {
+        return getRegisteredActions().values().stream().filter(action ->
+                action.getAddon().equals(addon)).collect(Collectors.toList());
+    }
 
     /**
      * Retrieves all currently registered actions.

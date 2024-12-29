@@ -40,7 +40,7 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
 
     @Override
     public AddonManager getAddonManager() {
-        return new AddonManagerImpl(addon);
+        return new AddonManagerImpl(this);
     }
 
     @Override

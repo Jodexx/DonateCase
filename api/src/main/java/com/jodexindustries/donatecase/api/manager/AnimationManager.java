@@ -1,14 +1,18 @@
 package com.jodexindustries.donatecase.api.manager;
 
+import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * Interface to manage animations within the DonateCase API.
@@ -47,6 +51,11 @@ public interface AnimationManager<A, M, P, L, B, C> {
      * @param name The name of the animation to unregister.
      */
     void unregisterAnimation(String name);
+
+    default void unregisterAnimations(Addon addon) {
+        List<CaseAnimation<A>> list = new ArrayList<>(getRegisteredAnimations(addon));
+        list.stream().map(CaseAnimation::getName).forEach(this::unregisterAnimation);
+    }
 
     /**
      * Unregisters all animations currently registered in the system.
@@ -135,6 +144,17 @@ public interface AnimationManager<A, M, P, L, B, C> {
      */
     @Nullable
     CaseAnimation<A> getRegisteredAnimation(String animation);
+
+    /**
+     * Retrieves all registered animations by addon.
+     * @param addon The addon instance
+     * @return List of animations
+     * @since 2.0.2.3
+     */
+    default List<CaseAnimation<A>> getRegisteredAnimations(Addon addon) {
+        return getRegisteredAnimations().values().stream().filter(animation ->
+                animation.getAddon().equals(addon)).collect(Collectors.toList());
+    }
 
     /**
      * Retrieves a map of all registered animations.

@@ -1,11 +1,15 @@
 package com.jodexindustries.donatecase.api.manager;
 
+import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.casedata.CCloneable;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Interface for managing GUI-typed items associated with case data materials, enabling
@@ -43,6 +47,11 @@ public interface GUITypedItemManager<M extends CCloneable, G, E> {
      */
     void unregisterItem(String id);
 
+    default void unregisterItems(Addon addon) {
+        List<GUITypedItem<M, G, E>> list = new ArrayList<>(getRegisteredItems(addon));
+        list.stream().map(GUITypedItem::getId).forEach(this::unregisterItem);
+    }
+
     /**
      * Unregisters all registered GUI typed items.
      */
@@ -57,8 +66,14 @@ public interface GUITypedItemManager<M extends CCloneable, G, E> {
     @Nullable
     GUITypedItem<M, G, E> getRegisteredItem(@NotNull String id);
 
+    default List<GUITypedItem<M, G, E>> getRegisteredItems(Addon addon) {
+        return getRegisteredItems().values().stream().filter(item ->
+                item.getAddon().equals(addon)).collect(Collectors.toList());
+    }
+
     @NotNull
     Map<String, GUITypedItem<M, G, E>> getRegisteredItems();
+
 
     /**
      * Retrieves the ID of a registered GUI typed item that matches the start of a given string.

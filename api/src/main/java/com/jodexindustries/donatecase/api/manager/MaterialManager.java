@@ -1,11 +1,15 @@
 package com.jodexindustries.donatecase.api.manager;
 
+import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Interface for managing item materials, allowing registration, retrieval, and unregistration of case materials.
@@ -30,6 +34,11 @@ public interface MaterialManager<I> {
      */
     void unregisterMaterial(String id);
 
+    default void unregisterMaterials(Addon addon) {
+        List<CaseMaterial<I>> list = new ArrayList<>(getRegisteredMaterials(addon));
+        list.stream().map(CaseMaterial::getId).forEach(this::unregisterMaterial);
+    }
+
     /**
      * Unregisters all registered case materials.
      */
@@ -51,6 +60,11 @@ public interface MaterialManager<I> {
      */
     @Nullable
     CaseMaterial<I> getRegisteredMaterial(@NotNull String id);
+
+    default List<CaseMaterial<I>> getRegisteredMaterials(Addon addon) {
+        return getRegisteredMaterials().values().stream().filter(material ->
+                material.getAddon().equals(addon)).collect(Collectors.toList());
+    }
 
     @NotNull
     Map<String, CaseMaterial<I>> getRegisteredMaterials();

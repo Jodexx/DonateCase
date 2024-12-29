@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.impl.managers;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import com.jodexindustries.donatecase.BuildConstants;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
 import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
@@ -43,26 +44,28 @@ public class AddonManagerImpl implements AddonManager {
     private MutableGraph<String> dependencyGraph = GraphBuilder.directed().build();
 
 
-    private final Addon donateCase = new ExternalJavaAddon(instance);
+    private final DCAPIBukkit api;
     private final Addon addon;
+    private final Addon donatecase = new ExternalJavaAddon(instance);
 
     private final File addonsFolder;
 
     /**
      * Default constructor
      *
-     * @param addon An addon that will manage other addons
+     * @param api An DCAPI that will manage animations
      */
-    public AddonManagerImpl(Addon addon) {
-        this.addon = addon;
-        this.addonsFolder = new File(donateCase.getDataFolder(), "addons");
+    public AddonManagerImpl(DCAPIBukkit api) {
+        this.api = api;
+        this.addon = api.getAddon();
+        this.addonsFolder = new File(donatecase.getDataFolder(), "addons");
     }
 
     @Override
     public void loadAddons() {
         File addonsDir = getAddonsFolder();
         if (!addonsDir.exists()) {
-            addonsDir.mkdir();
+            if(!addonsDir.mkdir()) return;
         }
 
         File[] files = addonsDir.listFiles();
@@ -182,7 +185,7 @@ public class AddonManagerImpl implements AddonManager {
 
         InternalAddonClassLoader loader;
         try {
-            loader = new InternalAddonClassLoader(addon.getClass().getClassLoader(), description, this, donateCase);
+            loader = new InternalAddonClassLoader(addon.getClass().getClassLoader(), description, this, donatecase);
         } catch (Throwable t) {
             addon.getLogger().log(Level.SEVERE,
                     "Error occurred while loading addon " + description.getName() + " v" + description.getVersion(), t);
@@ -268,6 +271,11 @@ public class AddonManagerImpl implements AddonManager {
             if (addon.isEnabled()) {
                 addon.getLogger().info("Disabling " + addon.getName() + " addon v" + addon.getVersion());
                 addon.setEnabled(false);
+                api.getActionManager().unregisterActions(addon);
+                api.getAnimationManager().unregisterAnimations(addon);
+                api.getGuiTypedItemManager().unregisterItems(addon);
+                api.getMaterialManager().unregisterMaterials(addon);
+                api.getSubCommandManager().unregisterSubCommands(addon);
                 AddonDisableEvent addonDisableEvent = new AddonDisableEvent(addon, this.addon, reason);
                 Bukkit.getPluginManager().callEvent(addonDisableEvent);
                 return true;
