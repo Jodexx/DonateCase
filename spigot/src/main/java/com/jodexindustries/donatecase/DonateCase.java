@@ -117,7 +117,7 @@ public class DonateCase extends JavaPlugin {
         loadHeadDatabaseAPI();
         loadCustomHeadsAPI();
 
-        loadCases();
+        loader.load();
         loadHolograms();
 
         loadUpdater();
@@ -246,10 +246,6 @@ public class DonateCase extends JavaPlugin {
                 user,
                 password
         );
-    }
-
-    public void loadCases() {
-        loader.load();
     }
 
     private void registerDefaultCommand() {
