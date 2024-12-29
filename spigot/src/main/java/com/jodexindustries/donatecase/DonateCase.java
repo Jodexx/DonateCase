@@ -67,7 +67,7 @@ public class DonateCase extends JavaPlugin {
     public CustomHeadsSupport customHeadsSupport = null;
     public PacketEventsSupport packetEventsSupport;
 
-    public final DCAPIBukkit api = new DCAPIBukkitImpl(this);
+    public DCAPIBukkit api;
 
     public ConfigImpl config;
 
@@ -80,6 +80,7 @@ public class DonateCase extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
+        api = new DCAPIBukkitImpl(this);
         api.getAddonManager().loadAddons();
     }
 
