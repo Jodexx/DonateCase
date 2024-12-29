@@ -193,12 +193,11 @@ public class AddonManagerImpl implements AddonManager {
         }
         try {
             InternalJavaAddon addon = loader.getAddon();
+            addon.onLoad();
             addons.put(description.getName(), addon);
             loaders.add(loader);
-            addon.onLoad();
             return true;
         } catch (Throwable e) {
-            addons.remove(description.getName());
             try {
                 loader.close();
             } catch (IOException ex) {
