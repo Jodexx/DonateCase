@@ -15,5 +15,6 @@ dependencyResolutionManagement {
         maven("https://repo.fancyplugins.de/releases")
         maven("https://repo.jodexindustries.xyz/releases/")
         maven("https://repo.alessiodp.com/releases/")
+        maven("https://maven.evokegames.gg/snapshots")
     }
 }
