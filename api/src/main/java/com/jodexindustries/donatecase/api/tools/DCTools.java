@@ -91,4 +91,8 @@ public interface DCTools {
                         .reversed())
                 .collect(Collectors.toList());
     }
+
+    static boolean isValidGuiSize(int size) {
+        return size >= 9 && size <= 54 && size % 9 == 0;
+    }
 }

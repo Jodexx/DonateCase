@@ -8,6 +8,7 @@ import com.jodexindustries.donatecase.api.data.casedata.*;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import com.jodexindustries.donatecase.tools.Logger;
 import org.bukkit.Bukkit;
@@ -219,7 +220,7 @@ public class CaseLoader {
             String title = DCToolsBukkit.rc(guiSection.getString("Title", ""));
             int size = guiSection.getInt("Size", 45);
             int updateRate = guiSection.getInt("UpdateRate", -1);
-            if (!isValidGuiSize(size)) {
+            if (!DCTools.isValidGuiSize(size)) {
                 size = 54;
                 plugin.getLogger().warning("Wrong GUI size: " + size + ".Using 54");
             }
@@ -322,7 +323,4 @@ public class CaseLoader {
         return IntStream.rangeClosed(range1, range2).boxed().collect(Collectors.toList());
     }
 
-    private static boolean isValidGuiSize(int size) {
-        return size >= 9 && size <= 54 && size % 9 == 0;
-    }
 }
