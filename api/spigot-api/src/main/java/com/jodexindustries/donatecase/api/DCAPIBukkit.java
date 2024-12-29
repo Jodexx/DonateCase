@@ -104,4 +104,9 @@ public abstract class DCAPIBukkit implements DCAPI<Player, JavaAnimationBukkit, 
      */
     @NotNull
     public abstract Plugin getDonateCase();
+
+    @Override
+    public @NotNull Addon getAddon() {
+        return addon;
+    }
 }

@@ -25,6 +25,19 @@ import org.jetbrains.annotations.NotNull;
 
 public class DCAPIBukkitImpl extends DCAPIBukkit {
 
+    private final ActionManager<Player> actionManager = new ActionManagerImpl(addon);
+    private final AddonManager addonManager = new AddonManagerImpl(this);
+    private final AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, Player, Location, Block, CaseDataBukkit> animationmanager = new AnimationManagerImpl(this);
+    private final GUIManager<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> guiManager = new GUIManagerImpl(addon);
+    private final GUITypedItemManager<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> guiTypedItemManager = new GUITypedItemManagerImpl(addon);
+    private final MaterialManager<ItemStack> materialManager = new MaterialManagerImpl(addon);
+    private final SubCommandManager<CommandSender> subCommandManager = new SubCommandManagerImpl(addon);
+
+    private static final CaseKeyManager caseKeyManager = new CaseKeyManagerImpl();
+    private static final CaseOpenManager caseOpenManager = new CaseOpenManagerImpl();
+    private static final CaseManager<CaseDataBukkit> caseManager = new CaseManagerImpl();
+    private static final DCToolsBukkit tools = new ToolsImpl(DonateCase.instance);
+
     public DCAPIBukkitImpl(Addon addon) {
         super(addon);
     }
@@ -35,52 +48,52 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
 
     @Override
     public ActionManager<Player> getActionManager() {
-        return new ActionManagerImpl(addon);
+        return actionManager;
     }
 
     @Override
     public AddonManager getAddonManager() {
-        return new AddonManagerImpl(this);
+        return addonManager;
     }
 
     @Override
     public AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, Player, Location, Block, CaseDataBukkit> getAnimationManager() {
-        return new AnimationManagerImpl(this);
+        return animationmanager;
     }
 
     @Override
     public CaseKeyManager getCaseKeyManager() {
-        return new CaseKeyManagerImpl();
+        return caseKeyManager;
     }
 
     @Override
     public CaseManager<CaseDataBukkit> getCaseManager() {
-        return new CaseManagerImpl();
+        return caseManager;
     }
 
     @Override
     public CaseOpenManager getCaseOpenManager() {
-        return new CaseOpenManagerImpl();
+        return caseOpenManager;
     }
 
     @Override
     public GUIManager<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> getGUIManager() {
-        return new GUIManagerImpl(addon);
+        return guiManager;
     }
 
     @Override
     public GUITypedItemManager<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> getGuiTypedItemManager() {
-        return new GUITypedItemManagerImpl(addon);
+        return guiTypedItemManager;
     }
 
     @Override
     public MaterialManager<ItemStack> getMaterialManager() {
-        return new MaterialManagerImpl(addon);
+        return materialManager;
     }
 
     @Override
     public SubCommandManager<CommandSender> getSubCommandManager() {
-        return new SubCommandManagerImpl(addon);
+        return subCommandManager;
     }
 
     @Override
@@ -95,7 +108,7 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
 
     @Override
     public DCToolsBukkit getTools() {
-        return new ToolsImpl(DonateCase.instance);
+        return tools;
     }
 
     @Override
@@ -103,8 +116,4 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
         return DonateCase.instance;
     }
 
-    @Override
-    public @NotNull Addon getAddon() {
-        return addon;
-    }
 }
