@@ -250,13 +250,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
 
     @Override
     public void animationEnd(CaseDataBukkit caseData, Player player, UUID uuid, CaseDataItem<CaseDataMaterialBukkit> item) {
-        ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = activeCases.get(uuid);
-        if(activeCase == null) {
-            addon.getLogger().warning("Animation with uuid: " + uuid + " not found!");
-            return;
-        }
-
-        animationEnd(activeCase);
+        animationEnd(uuid);
     }
 
     private void animationEnd(@NotNull ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase) {
@@ -275,7 +269,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
             instance.hologramManager.createHologram(block, caseData);
         }
         AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, caseData, block, item);
-        Bukkit.getServer().getPluginManager().callEvent(animationEndEvent);
+        Bukkit.getScheduler().runTask(api.getDonateCase(), () -> Bukkit.getServer().getPluginManager().callEvent(animationEndEvent));
     }
 
     @Override
