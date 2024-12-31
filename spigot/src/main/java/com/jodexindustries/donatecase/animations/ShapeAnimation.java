@@ -43,8 +43,11 @@ public class ShapeAnimation extends JavaAnimationBukkit {
 
         getLocation().add(x, y, z);
 
+        final ArmorStandEulerAngle armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
         final ArmorStandCreator as = getApi().getTools().createArmorStand(getLocation());
+
         boolean small = getSettings().getBoolean("Shape.SmallArmorStand", true);
+        as.setAngle(armorStandEulerAngle);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
@@ -71,7 +74,6 @@ public class ShapeAnimation extends JavaAnimationBukkit {
         @NotNull
         private final World world;
         private final EquipmentSlot itemSlot;
-        private final ArmorStandEulerAngle armorStandEulerAngle;
 
         private final ArmorStandCreator as;
         private final Location location;
@@ -109,27 +111,25 @@ public class ShapeAnimation extends JavaAnimationBukkit {
             this.scrollInterval = getSettings().getInt("Scroll.Interval", 1);
             this.endTime = getSettings().getInt("End.Time", 40);
             this.blockPerTick = height / scrollTime;
-            this.yaw = (float) getSettings().getDouble("Scroll.Yaw", 20.0);
+            this.yaw = (float) getSettings().getDouble("Scroll.Yaw", 20.0F);
 
             this.itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD")
                     .toUpperCase());
-            this.armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
             world = as.getLocation().getWorld() != null ? as.getLocation().getWorld() : getPlayer().getWorld();
         }
 
         @Override
         public void accept(BukkitTask task) {
 
-            location.setYaw(location.getYaw() + yaw);
-
             if (tick <= scrollTime) {
+                location.setYaw(location.getYaw() + yaw);
                 location.add(0.0, blockPerTick, 0.0);
 
                 Particle.DustOptions dustOptions = new Particle.DustOptions(orangeColor, orangeSize);
                 world.spawnParticle(particle, as.getLocation().clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
+                as.teleport(location);
             }
 
-            as.teleport(location);
 
             if (tick <= scrollTime) {
                 handleTail();
@@ -137,7 +137,6 @@ public class ShapeAnimation extends JavaAnimationBukkit {
                 if (tick % scrollInterval == 0) {
                     CaseDataItem<CaseDataMaterialBukkit> item = getCaseData().getRandomItem();
                     if (item.getMaterial().getItemStack().getType() != Material.AIR) {
-                        as.setAngle(armorStandEulerAngle);
                         as.setEquipment(itemSlot, item.getMaterial().getItemStack());
                     }
 
@@ -156,7 +155,6 @@ public class ShapeAnimation extends JavaAnimationBukkit {
                 if (getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
                     as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
                 }
-                as.setAngle(armorStandEulerAngle);
                 as.setCustomName(getWinItem().getMaterial().getDisplayName());
                 as.updateMeta();
                 getApi().getTools().launchFirework(as.getLocation().add(0, 0.5, 0));
