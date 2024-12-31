@@ -68,6 +68,13 @@ FIREWORK:
     RightLeg: 0, 0, 0
     LeftLeg: 0, 0, 0
   Power: 0 # Firework power
+  StartPosition:
+    X: 0.5
+    Y: 1
+    Z: 0.5
+  Scroll:
+    Period: 2
+    Yaw: 20.0
   FireworkColors:
     - RED
     - BLUE

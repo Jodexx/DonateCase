@@ -19,8 +19,6 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.function.Consumer;
 
 public class FireworkAnimation extends JavaAnimationBukkit {
-    private EquipmentSlot itemSlot;
-    private ArmorStandEulerAngle armorStandEulerAngle;
 
     public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, Player, Location, Block, CaseDataBukkit> manager) {
         CaseAnimation<JavaAnimationBukkit> caseAnimation = manager.builder("FIREWORK")
@@ -34,38 +32,52 @@ public class FireworkAnimation extends JavaAnimationBukkit {
 
     @Override
     public void start() {
-        itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD").toUpperCase());
-        armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
-        String displayName = getWinItem().getMaterial().getDisplayName();
-        getWinItem().getMaterial().setDisplayName(getApi().getTools().getPAPI().setPlaceholders(getPlayer(), displayName));
-        getLocation().add(0.5, 1, 0.5);
-        ArmorStandCreator as = getApi().getTools().createArmorStand(getLocation());
+        double x = getSettings().getDouble("StartPosition.X", 0.5);
+        double y = getSettings().getDouble("StartPosition.Y", 1);
+        double z = getSettings().getDouble("StartPosition.Z", 0.5);
+
+        getLocation().add(x, y, z);
+
+        final ArmorStandEulerAngle armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
+        final ArmorStandCreator as = getApi().getTools().createArmorStand(getLocation());
 
         boolean small = getSettings().getBoolean("SmallArmorStand", true);
+        as.setAngle(armorStandEulerAngle);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
         as.spawn();
-        Bukkit.getScheduler().runTaskTimer(getApi().getDonateCase(), new Task(as), 0L, 2L);
+
+        long period = getSettings().getLong("Scroll.Period");
+
+        Bukkit.getScheduler().runTaskTimer(getApi().getDonateCase(), new Task(as), 0L, period);
     }
 
     private class Task implements Consumer<BukkitTask> {
 
-        private int i; //ticks count
-        private final Location l;
+        private int tick;
+
+        private final Location location;
         private final ArmorStandCreator as;
         private final World world;
 
-        public Task(ArmorStandCreator as) {
+        private final EquipmentSlot itemSlot;
+        private final float yaw;
+
+        public Task(final ArmorStandCreator as) {
             this.as = as;
-            this.l = as.getLocation();
-            world = l.getWorld() != null ? l.getWorld() : getPlayer().getWorld();
+            this.location = as.getLocation();
+
+            this.itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD").toUpperCase());
+            this.yaw = (float) getSettings().getDouble("Scroll.Yaw", 20.0F);
+
+            world = location.getWorld() != null ? location.getWorld() : getPlayer().getWorld();
         }
 
         @Override
         public void accept(BukkitTask task) {
-            if (this.i == 1) {
-                Firework firework = world.spawn(l, Firework.class);
+            if (tick == 0) {
+                Firework firework = world.spawn(location, Firework.class);
                 FireworkMeta data = firework.getFireworkMeta();
                 data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
                 for (String color : getSettings().getStringList("FireworkColors")) {
@@ -74,29 +86,30 @@ public class FireworkAnimation extends JavaAnimationBukkit {
                 data.setPower(getSettings().getInt("Power"));
                 firework.setFireworkMeta(data);
             }
-            if (this.i >= 7) {
-                l.setYaw(l.getYaw() + 20F);
-                as.teleport(l);
 
-                if (this.i == 10) {
-                    if (getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
-                        as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
-                    }
-                    as.setAngle(armorStandEulerAngle);
-                    if (getWinItem().getMaterial().getDisplayName() != null && !getWinItem().getMaterial().getDisplayName().isEmpty())
-                        as.setCustomNameVisible(true);
-                    as.setCustomName(getWinItem().getMaterial().getDisplayName());
-                    as.updateMeta();
-                    preEnd();
+            if (tick == 10) {
+                if (getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
+                    as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
                 }
-                if (this.i >= 30) {
-                    as.remove();
-                    task.cancel();
-                    end();
-                }
+                if (getWinItem().getMaterial().getDisplayName() != null && !getWinItem().getMaterial().getDisplayName().isEmpty())
+                    as.setCustomNameVisible(true);
+                as.setCustomName(getWinItem().getMaterial().getDisplayName());
+                as.updateMeta();
+                preEnd();
             }
 
-            ++this.i;
+            if(tick >= 10 && tick <= 30) {
+                location.setYaw(location.getYaw() + yaw);
+                as.teleport(location);
+            }
+
+            if (tick >= 60) {
+                task.cancel();
+                as.remove();
+                end();
+            }
+
+            tick++;
         }
     }
 }
