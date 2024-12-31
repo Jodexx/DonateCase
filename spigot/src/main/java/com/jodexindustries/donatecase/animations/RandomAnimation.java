@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
+import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -28,6 +29,6 @@ public class RandomAnimation extends JavaAnimationBukkit {
         getSettings().getKeys(false).forEach(animation -> collection.add(animation, getSettings().getInt(animation)));
         getCaseData().setAnimation(collection.get());
         end();
-        getApi().getAnimationManager().startAnimation(getPlayer(), getLocation(), getCaseData());
+        OPENItemClickHandlerImpl.executeOpenWithoutEvent(getPlayer(), getLocation(), getCaseData(), true);
     }
 }

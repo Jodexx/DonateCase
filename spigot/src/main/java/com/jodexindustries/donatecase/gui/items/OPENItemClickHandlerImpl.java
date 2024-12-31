@@ -69,24 +69,26 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
                 OpenCaseEvent openEvent = new OpenCaseEvent(player, caseData, location.getBlock());
                 Bukkit.getServer().getPluginManager().callEvent(openEvent);
 
-                if (!openEvent.isCancelled()) {
-                    Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData).thenAcceptAsync(uuid -> {
-                        if(uuid != null) {
-                            ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = Case.getInstance().api.getAnimationManager().getActiveCases().get(uuid);
-                            if(!event.isIgnoreKeys()) {
-                                Case.getInstance().api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1).thenAcceptAsync(status -> {
-                                    activeCase.setKeyRemoved(true);
-                                });
-                            } else {
-                                activeCase.setKeyRemoved(true);
-                            }
-                        }
-                    });
-                }
+                if (!openEvent.isCancelled()) executeOpenWithoutEvent(player, location, caseData, event.isIgnoreKeys());
             } else {
                 Case.getInstance().api.getActionManager().executeActions(player, caseData.getNoKeyActions());
             }
         }
+    }
+
+    public static void executeOpenWithoutEvent(Player player, Location location, CaseDataBukkit caseData, boolean ignoreKeys) {
+        Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData).thenAcceptAsync(uuid -> {
+            if(uuid != null) {
+                ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = Case.getInstance().api.getAnimationManager().getActiveCases().get(uuid);
+                if(!ignoreKeys) {
+                    Case.getInstance().api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1).thenAcceptAsync(status -> {
+                        activeCase.setKeyRemoved(true);
+                    });
+                } else {
+                    activeCase.setKeyRemoved(true);
+                }
+            }
+        });
     }
 
     private static boolean checkKeys(PreOpenCaseEvent event) {
