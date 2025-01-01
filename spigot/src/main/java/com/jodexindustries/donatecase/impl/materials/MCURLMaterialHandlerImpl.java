@@ -16,7 +16,8 @@ public class MCURLMaterialHandlerImpl implements MaterialHandler<ItemStack> {
     public @NotNull ItemStack handle(@NotNull String context) {
         try {
             return SkullCreator.itemFromUrl("http://textures.minecraft.net/texture/" + context);
-        } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+                 ClassNotFoundException e) {
             DonateCase.instance.getLogger().log(Level.WARNING, "Error with handling item: " + context, e);
         }
 

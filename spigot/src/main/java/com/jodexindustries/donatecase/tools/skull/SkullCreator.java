@@ -68,7 +68,7 @@ public class SkullCreator {
      * @param url The Mojang URL.
      * @return The head of the Player.
      */
-    public static ItemStack itemFromUrl(String url) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public static ItemStack itemFromUrl(String url) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
         return itemWithUrl(createSkull(), url);
     }
 
@@ -78,7 +78,7 @@ public class SkullCreator {
      * @param base64 The Base64 string.
      * @return The head of the Player.
      */
-    public static ItemStack itemFromBase64(String base64) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public static ItemStack itemFromBase64(String base64) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
         return itemWithBase64(createSkull(), base64);
     }
 
@@ -110,7 +110,7 @@ public class SkullCreator {
      * @param url  The URL of the Mojang skin.
      * @return The head associated with the URL.
      */
-    public static ItemStack itemWithUrl(ItemStack item, String url) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public static ItemStack itemWithUrl(ItemStack item, String url) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException {
         notNull(item, "item");
         notNull(url, "url");
 
@@ -124,7 +124,7 @@ public class SkullCreator {
      * @param base64 The base64 string containing the texture.
      * @return The head with a custom texture.
      */
-    public static ItemStack itemWithBase64(ItemStack item, String base64) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    public static ItemStack itemWithBase64(ItemStack item, String base64) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, ClassNotFoundException {
         notNull(item, "item");
         notNull(base64, "base64");
 
@@ -132,10 +132,9 @@ public class SkullCreator {
             return null;
         }
         SkullMeta meta = (SkullMeta) item.getItemMeta();
-        if(mutateWithNew) {
+        if (mutateWithNew || !mutateItemMeta(meta, base64)) {
             mutateNewItemMeta(meta, base64);
-        } else {
-            if(!mutateItemMeta(meta, base64)) mutateWithNew = true;
+            mutateWithNew = true;
         }
         item.setItemMeta(meta);
 
@@ -210,7 +209,7 @@ public class SkullCreator {
         return true;
     }
 
-    private static void mutateNewItemMeta(SkullMeta meta, String b64) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    private static void mutateNewItemMeta(SkullMeta meta, String b64) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
         final UUID uuid = UUID.randomUUID();
         final Method method = Bukkit.getServer().getClass().getDeclaredMethod("createPlayerProfile", UUID.class, String.class);
         method.setAccessible(true);
@@ -219,7 +218,7 @@ public class SkullCreator {
         setPropertyMethod.setAccessible(true);
         setPropertyMethod.invoke(playerProfile, "textures", new Property("textures", b64));
 
-        final Method setOwnerProfileMethod = meta.getClass().getDeclaredMethod("setOwnerProfile", playerProfile.getClass());
+        final Method setOwnerProfileMethod = meta.getClass().getMethod("setOwnerProfile", Class.forName("org.bukkit.profile.PlayerProfile"));
         setOwnerProfileMethod.setAccessible(true);
         setOwnerProfileMethod.invoke(meta, playerProfile);
     }
