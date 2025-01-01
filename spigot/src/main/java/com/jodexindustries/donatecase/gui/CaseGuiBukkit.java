@@ -49,7 +49,7 @@ public class CaseGuiBukkit implements CaseGui<Inventory, Location, Player, CaseD
         this.location = location;
 
         String title = caseData.getCaseTitle();
-        inventory = Bukkit.createInventory(null, tempGUI.getSize(), DCToolsBukkit.rc(title));
+        inventory = Bukkit.createInventory(null, tempGUI.getSize(), DCToolsBukkit.rc(setPlaceholders(title)));
         load();
         player.openInventory(inventory);
         startUpdateTask();
