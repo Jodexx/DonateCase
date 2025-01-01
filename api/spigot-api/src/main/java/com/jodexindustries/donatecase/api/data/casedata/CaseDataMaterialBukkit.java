@@ -44,9 +44,9 @@ public class CaseDataMaterialBukkit extends CaseDataMaterial<ItemStack> {
         if (this.itemStack != null) {
             ItemMeta meta = this.itemStack.getItemMeta();
             if (meta != null) {
-                meta.setDisplayName(displayName);
-                meta.setLore(lore);
-                meta.setCustomModelData(modelData);
+                if(displayName != null) meta.setDisplayName(displayName);
+                if(lore != null) meta.setLore(lore);
+                if(modelData != -1) meta.setCustomModelData(modelData);
                 if (enchanted) meta.addEnchant(Enchantment.LURE, 1, true);
 
                 if (rgb != null && rgb.length >= 3 && meta instanceof LeatherArmorMeta) {
