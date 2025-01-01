@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.tools;
+package com.jodexindustries.donatecase.tools.skull;
 
 
 import com.mojang.authlib.GameProfile;
@@ -31,6 +31,7 @@ public class SkullCreator {
     private SkullCreator() {}
 
     private static boolean warningPosted = false;
+    private static boolean mutateWithNew = false;
 
     private static Method metaSetProfileMethod;
     private static Field metaProfileField;
@@ -67,7 +68,7 @@ public class SkullCreator {
      * @param url The Mojang URL.
      * @return The head of the Player.
      */
-    public static ItemStack itemFromUrl(String url) {
+    public static ItemStack itemFromUrl(String url) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         return itemWithUrl(createSkull(), url);
     }
 
@@ -77,7 +78,7 @@ public class SkullCreator {
      * @param base64 The Base64 string.
      * @return The head of the Player.
      */
-    public static ItemStack itemFromBase64(String base64) {
+    public static ItemStack itemFromBase64(String base64) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         return itemWithBase64(createSkull(), base64);
     }
 
@@ -109,7 +110,7 @@ public class SkullCreator {
      * @param url  The URL of the Mojang skin.
      * @return The head associated with the URL.
      */
-    public static ItemStack itemWithUrl(ItemStack item, String url) {
+    public static ItemStack itemWithUrl(ItemStack item, String url) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         notNull(item, "item");
         notNull(url, "url");
 
@@ -123,7 +124,7 @@ public class SkullCreator {
      * @param base64 The base64 string containing the texture.
      * @return The head with a custom texture.
      */
-    public static ItemStack itemWithBase64(ItemStack item, String base64) {
+    public static ItemStack itemWithBase64(ItemStack item, String base64) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         notNull(item, "item");
         notNull(base64, "base64");
 
@@ -131,9 +132,11 @@ public class SkullCreator {
             return null;
         }
         SkullMeta meta = (SkullMeta) item.getItemMeta();
-        try {
-            mutateItemMeta(meta, base64);
-        } catch (Throwable ignored) {}
+        if(mutateWithNew) {
+            mutateNewItemMeta(meta, base64);
+        } else {
+            if(!mutateItemMeta(meta, base64)) mutateWithNew = true;
+        }
         item.setItemMeta(meta);
 
         return item;
@@ -185,7 +188,7 @@ public class SkullCreator {
         return profile;
     }
 
-    private static void mutateItemMeta(SkullMeta meta, String b64) {
+    private static boolean mutateItemMeta(SkullMeta meta, String b64) {
         try {
             if (metaSetProfileMethod == null) {
                 metaSetProfileMethod = meta.getClass().getDeclaredMethod("setProfile", GameProfile.class);
@@ -193,19 +196,32 @@ public class SkullCreator {
             }
             metaSetProfileMethod.invoke(meta, makeProfile(b64));
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ex) {
-            // if in an older API where there is no setProfile method,
-            // we set the profile field directly.
             try {
                 if (metaProfileField == null) {
                     metaProfileField = meta.getClass().getDeclaredField("profile");
                     metaProfileField.setAccessible(true);
                 }
                 metaProfileField.set(meta, makeProfile(b64));
-
-            } catch (NoSuchFieldException | IllegalAccessException ex2) {
-                throw new RuntimeException(ex);
+            } catch (Exception e) {
+                return false;
             }
         }
+
+        return true;
+    }
+
+    private static void mutateNewItemMeta(SkullMeta meta, String b64) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        final UUID uuid = UUID.randomUUID();
+        final Method method = Bukkit.getServer().getClass().getDeclaredMethod("createPlayerProfile", UUID.class, String.class);
+        method.setAccessible(true);
+        final Object playerProfile = method.invoke(Bukkit.getServer(), uuid, uuid.toString().substring(0, 16));
+        Method setPropertyMethod = playerProfile.getClass().getDeclaredMethod("setProperty", String.class, Property.class);
+        setPropertyMethod.setAccessible(true);
+        setPropertyMethod.invoke(playerProfile, "textures", new Property("textures", b64));
+
+        final Method setOwnerProfileMethod = meta.getClass().getDeclaredMethod("setOwnerProfile", playerProfile.getClass());
+        setOwnerProfileMethod.setAccessible(true);
+        setOwnerProfileMethod.invoke(meta, playerProfile);
     }
 
     // suppress warning since PLAYER_HEAD doesn't exist in 1.12.2,
