@@ -223,7 +223,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
         as.setVisible(false);
         as.setGravity(false);
         as.setAngle(armorStandEulerAngle);
-        as.setCustomName(item.getMaterial().getDisplayName());
+        as.setCustomName(getApi().getTools().getPAPI().setPlaceholders(getPlayer(), item.getMaterial().getDisplayName()));
         as.setCustomNameVisible(item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty());
         as.spawn();
         if (item.getMaterial().getItemStack().getType() != Material.AIR) {

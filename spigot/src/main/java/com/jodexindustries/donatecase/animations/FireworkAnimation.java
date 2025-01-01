@@ -93,7 +93,7 @@ public class FireworkAnimation extends JavaAnimationBukkit {
                 }
                 if (getWinItem().getMaterial().getDisplayName() != null && !getWinItem().getMaterial().getDisplayName().isEmpty())
                     as.setCustomNameVisible(true);
-                as.setCustomName(getWinItem().getMaterial().getDisplayName());
+                as.setCustomName(getApi().getTools().getPAPI().setPlaceholders(getPlayer(), getWinItem().getMaterial().getDisplayName()));
                 as.updateMeta();
                 preEnd();
             }
