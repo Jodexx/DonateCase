@@ -150,6 +150,12 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
 
             Location tempLocation = Case.getCaseLocationByBlockLocation(block.getLocation());
             if (tempLocation != null) caseLocation = tempLocation;
+
+            for (CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui : api.getGUIManager().getPlayersGUI().values()) {
+                if (gui.getLocation().equals(block.getLocation())) {
+                    gui.getPlayer().closeInventory();
+                }
+            }
         }
 
         Class<? extends JavaAnimationBukkit> animationClass = caseAnimation.getAnimation();
@@ -179,12 +185,6 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
             addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
             if(caseAnimation.isRequireBlock()) activeCasesByBlock.remove(block);
             animationCompletion.complete(null);
-        }
-
-        for (CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui : api.getGUIManager().getPlayersGUI().values()) {
-            if (gui.getLocation().equals(block.getLocation())) {
-                gui.getPlayer().closeInventory();
-            }
         }
 
         activeCases.put(uuid, activeCase);
