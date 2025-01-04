@@ -29,6 +29,7 @@ public class RainlyAnimation extends JavaAnimationBukkit {
                 .animation(RainlyAnimation.class)
                 .description("Rain drips from the clouds")
                 .requireSettings(true)
+                .requireBlock(true)
                 .build();
 
         manager.registerAnimation(caseAnimation);

@@ -110,19 +110,26 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
 
     @Override
     public CompletableFuture<UUID> startAnimation(@NotNull Player player, @NotNull Location location, @NotNull CaseDataBukkit caseData, int delay) {
+        String animation = caseData.getAnimation();
+        CaseAnimation<JavaAnimationBukkit> caseAnimation = getRegisteredAnimation(animation);
+
+        ConfigurationSection settings = caseData.getAnimationSettings() != null ? caseData.getAnimationSettings() : api.getConfig().getAnimations().getConfigurationSection(animation);
+
         Block block = location.getBlock();
 
-        if(!validateStartConditions(caseData, block, player)) {
+
+        if (!validateStartConditions(caseData, caseAnimation, settings, block, player)) {
             return CompletableFuture.completedFuture(null);
         }
+
+        assert caseAnimation != null;
 
         caseData = caseData.clone();
         caseData.setItems(DCToolsBukkit.sortItemsByIndex(caseData.getItems()));
 
-        String animation = caseData.getAnimation();
 
         CaseDataItem<CaseDataMaterialBukkit> winItem = caseData.getRandomItem();
-        winItem.getMaterial().setDisplayName(Case.getInstance().papi.setPlaceholders(player, winItem.getMaterial().getDisplayName()));
+        winItem.getMaterial().setDisplayName(api.getTools().getPAPI().setPlaceholders(player, winItem.getMaterial().getDisplayName()));
         AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, caseData, block, winItem);
         Bukkit.getPluginManager().callEvent(preStartEvent);
 
@@ -131,56 +138,50 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         UUID uuid = UUID.randomUUID();
         ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = new ActiveCase<>(uuid, block, player, winItem, caseData.getCaseType());
 
-        if (instance.hologramManager != null && caseData.getHologram().isEnabled()) {
-            instance.hologramManager.removeHologram(block);
-        }
-
-        CaseAnimation<JavaAnimationBukkit> caseAnimation = getRegisteredAnimation(animation);
 
         CompletableFuture<UUID> animationCompletion = new CompletableFuture<>();
-        if (caseAnimation != null) {
-            Location caseLocation = location;
+        Location caseLocation = location;
+
+        if(caseAnimation.isRequireBlock()) {
+            activeCasesByBlock.put(block, uuid);
+            if (instance.hologramManager != null && caseData.getHologram().isEnabled()) {
+                instance.hologramManager.removeHologram(block);
+            }
 
             Location tempLocation = Case.getCaseLocationByBlockLocation(block.getLocation());
             if (tempLocation != null) caseLocation = tempLocation;
-
-            Class<? extends JavaAnimationBukkit> animationClass = caseAnimation.getAnimation();
-
-            try {
-                activeCasesByBlock.put(block, uuid);
-
-                if (animationClass != null) {
-                    ConfigurationSection settings = caseData.getAnimationSettings() != null ? caseData.getAnimationSettings() : instance.api.getConfig().getAnimations().getConfigurationSection(animation);
-
-                    if (caseAnimation.isRequireSettings() && settings == null)
-                        throw new IllegalArgumentException("Animation " + animation + " requires settings for starting!");
-
-                    JavaAnimationBukkit javaAnimation = animationClass.getDeclaredConstructor().newInstance();
-                    javaAnimation.init(api, player, caseLocation, uuid, caseData, preStartEvent.getWinItem(), settings);
-
-                    Bukkit.getScheduler().runTaskLater(Case.getInstance(), () -> {
-                        try {
-                            javaAnimation.start();
-                            animationCompletion.complete(uuid);
-                        } catch (Throwable t) {
-                            addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
-                            activeCasesByBlock.remove(block);
-                            animationCompletion.complete(null);
-                        }
-                    }, delay);
-
-                } else {
-                    throw new IllegalArgumentException("Animation executable class does not exist!");
-                }
-
-            } catch (Throwable t) {
-                addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
-                activeCasesByBlock.remove(block);
-                animationCompletion.complete(null);
-            }
         }
 
-        for (CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui : instance.api.getGUIManager().getPlayersGUI().values()) {
+        Class<? extends JavaAnimationBukkit> animationClass = caseAnimation.getAnimation();
+
+        try {
+
+            if (animationClass != null) {
+                JavaAnimationBukkit javaAnimation = animationClass.getDeclaredConstructor().newInstance();
+                javaAnimation.init(api, player, caseLocation, uuid, caseData, preStartEvent.getWinItem(), settings);
+
+                Bukkit.getScheduler().runTaskLater(Case.getInstance(), () -> {
+                    try {
+                        javaAnimation.start();
+                        animationCompletion.complete(uuid);
+                    } catch (Throwable t) {
+                        addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
+                        if(caseAnimation.isRequireBlock()) activeCasesByBlock.remove(block);
+                        animationCompletion.complete(null);
+                    }
+                }, delay);
+
+            } else {
+                throw new IllegalArgumentException("Animation executable class does not exist!");
+            }
+
+        } catch (Throwable t) {
+            addon.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
+            if(caseAnimation.isRequireBlock()) activeCasesByBlock.remove(block);
+            animationCompletion.complete(null);
+        }
+
+        for (CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui : api.getGUIManager().getPlayersGUI().values()) {
             if (gui.getLocation().equals(block.getLocation())) {
                 gui.getPlayer().closeInventory();
             }
@@ -257,16 +258,22 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         CaseDataBukkit caseData = Case.getInstance().api.getCaseManager().getCase(activeCase.getCaseType());
         if(caseData == null) return;
 
+        CaseAnimation<JavaAnimationBukkit> caseAnimation = getRegisteredAnimation(caseData.getAnimation());
+        if(caseAnimation == null) return;
+
         CaseDataItem<CaseDataMaterialBukkit> item = activeCase.getWinItem();
         Player player = activeCase.getPlayer();
 
         if(!activeCase.isKeyRemoved()) Case.getInstance().api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1);
 
         Block block = activeCase.getBlock();
-        activeCasesByBlock.remove(block);
         activeCases.remove(activeCase.getUuid());
-        if (instance.hologramManager != null && caseData.getHologram().isEnabled()) {
-            instance.hologramManager.createHologram(block, caseData);
+
+        if(caseAnimation.isRequireBlock()) {
+            activeCasesByBlock.remove(block);
+            if (instance.hologramManager != null && caseData.getHologram().isEnabled()) {
+                instance.hologramManager.createHologram(block, caseData);
+            }
         }
         AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, caseData, block, item);
         Bukkit.getScheduler().runTask(api.getDonateCase(), () -> Bukkit.getServer().getPluginManager().callEvent(animationEndEvent));
@@ -298,15 +305,21 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         return activeCasesByBlock;
     }
 
-    private boolean validateStartConditions(CaseDataBukkit caseData, Block block, Player player) {
-        if (!isRegistered(caseData.getAnimation())) {
+    private boolean validateStartConditions(CaseDataBukkit caseData, CaseAnimation<JavaAnimationBukkit> animation,
+                                            ConfigurationSection settings, Block block, Player player) {
+        if (animation == null) {
             addon.getLogger().log(Level.WARNING, "Case animation " + caseData.getAnimation() + " does not exist!");
             return false;
         }
 
-        if (activeCasesByBlock.containsKey(block)) {
+        if (animation.isRequireBlock() && activeCasesByBlock.containsKey(block)) {
             addon.getLogger().log(Level.WARNING, "Player " + player.getName() +
                     " trying to start animation while another animation is running in case: " + caseData.getCaseType());
+            return false;
+        }
+
+        if (animation.isRequireSettings() && settings == null) {
+            addon.getLogger().log(Level.WARNING, "Animation " + animation + " requires settings for starting!");
             return false;
         }
 

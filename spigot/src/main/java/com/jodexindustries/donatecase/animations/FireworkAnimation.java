@@ -25,6 +25,7 @@ public class FireworkAnimation extends JavaAnimationBukkit {
                 .animation(FireworkAnimation.class)
                 .description("Fireworks fly to the skies and a prize appears")
                 .requireSettings(true)
+                .requireBlock(true)
                 .build();
 
         manager.registerAnimation(caseAnimation);

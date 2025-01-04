@@ -30,6 +30,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
                 .animation(ShapeAnimation.class)
                 .description("Items flip through and a shape appears")
                 .requireSettings(true)
+                .requireBlock(true)
                 .build();
 
         manager.registerAnimation(caseAnimation);

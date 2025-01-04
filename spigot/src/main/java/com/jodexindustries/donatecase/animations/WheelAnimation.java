@@ -54,6 +54,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
                 .animation(WheelAnimation.class)
                 .description("Items resolve around the case")
                 .requireSettings(true)
+                .requireBlock(true)
                 .build();
 
         manager.registerAnimation(caseAnimation);

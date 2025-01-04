@@ -18,6 +18,7 @@ public class RandomAnimation extends JavaAnimationBukkit {
                 .animation(RandomAnimation.class)
                 .description("Selects the random animation from config")
                 .requireSettings(true)
+                .requireBlock(true)
                 .build();
 
         manager.registerAnimation(caseAnimation);

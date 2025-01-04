@@ -12,6 +12,7 @@ public class CaseAnimation<A> {
 
     private Class<? extends A> animation;
     private String description;
+    private boolean requireBlock = true;
     private boolean requireSettings;
     private boolean removeKeyAtStart;
 
@@ -64,6 +65,15 @@ public class CaseAnimation<A> {
         return removeKeyAtStart;
     }
 
+    /**
+     * Is require block for animation starting?
+     * @since 2.2.0.4
+     * @return true - if animation requires a case block
+     */
+    public boolean isRequireBlock() {
+        return requireBlock;
+    }
+
     public static class Builder<A> {
         private final Addon addon;
         private final String name;
@@ -71,6 +81,7 @@ public class CaseAnimation<A> {
         private String description;
         private boolean requireSettings;
         private boolean removeKeyAtStart;
+        private boolean requireBlock;
         private Class<? extends A> animation;
 
         public Builder(String name, Addon addon) {
@@ -98,12 +109,18 @@ public class CaseAnimation<A> {
             return this;
         }
 
+        public Builder<A> requireBlock(boolean requireBlock) {
+            this.requireBlock =  requireBlock;
+            return this;
+        }
+
         public CaseAnimation<A> build() {
             CaseAnimation<A> caseAnimation = new CaseAnimation<>(name, addon);
             caseAnimation.animation = animation;
             caseAnimation.description = description;
             caseAnimation.requireSettings = requireSettings;
             caseAnimation.removeKeyAtStart = removeKeyAtStart;
+            caseAnimation.requireBlock = requireBlock;
             return caseAnimation;
         }
     }
