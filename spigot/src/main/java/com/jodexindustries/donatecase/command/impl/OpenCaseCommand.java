@@ -1,8 +1,9 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.manager.SubCommandManager;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
@@ -44,18 +45,28 @@ public class OpenCaseCommand implements SubCommandExecutor<CommandSender>, SubCo
             Player player = (Player) sender;
             if (args.length >= 1) {
                 String caseName = args[0];
-                if (instance.api.getCaseManager().hasCaseByType(caseName)) {
-                    Case.getInstance().api.getCaseKeyManager().getKeysAsync(caseName, playerName).thenAcceptAsync((keys) -> {
-                        if (keys >= 1) {
-                            Case.getInstance().api.getCaseKeyManager().removeKeys(caseName, playerName, 1);
-                            CaseDataBukkit data = instance.api.getCaseManager().getCase(caseName);
-                            if (data == null) return;
-                            CaseDataItem<CaseDataMaterialBukkit> winGroup = data.getRandomItem();
-                            instance.api.getAnimationManager().animationPreEnd(data, player, player.getLocation(), winGroup);
-                        } else {
-                            instance.api.getTools().msg(player, instance.api.getConfig().getLang().getString("no-keys"));
-                        }
-                    });
+                CaseDataBukkit data = instance.api.getCaseManager().getCase(caseName);
+
+                if (data != null) {
+                    CaseAnimation<JavaAnimationBukkit> animation = instance.api.getAnimationManager().getRegisteredAnimation(data.getAnimation());
+                    if (animation == null) return;
+
+                    if (animation.isRequireBlock()) {
+                        Case.getInstance().api.getCaseKeyManager().getKeysAsync(caseName, playerName).thenAccept((keys) -> {
+                            if (keys >= 1) {
+                                Case.getInstance().api.getCaseKeyManager().removeKeys(caseName, playerName, 1).thenAccept(status -> {
+                                    if (status == DatabaseStatus.COMPLETE) {
+                                        instance.api.getAnimationManager().animationPreEnd(data, player, player.getLocation(), data.getRandomItem());
+                                    }
+                                });
+                            } else {
+                                instance.api.getTools().msg(player, instance.api.getConfig().getLang().getString("no-keys"));
+                            }
+                        });
+                    } else {
+                        instance.api.getAnimationManager().startAnimation(player, player.getLocation(), data);
+                    }
+
                 } else {
                     instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
                 }
