@@ -53,6 +53,9 @@ tasks.shadowJar {
     archiveBaseName.set(project.rootProject.name)
     archiveClassifier.set(null as String?)
     archiveVersion.set(project.version.toString())
+    dependencies {
+        exclude(dependency("org.jetbrains:annotations:.*"))
+    }
 
     relocate("me.tofaa.entitylib", "com.jodexindustries.donatecase.entitylib")
 }
