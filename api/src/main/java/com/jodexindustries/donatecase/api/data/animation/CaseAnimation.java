@@ -81,7 +81,7 @@ public class CaseAnimation<A> {
         private String description;
         private boolean requireSettings;
         private boolean removeKeyAtStart;
-        private boolean requireBlock;
+        private boolean requireBlock = true;
         private Class<? extends A> animation;
 
         public Builder(String name, Addon addon) {
