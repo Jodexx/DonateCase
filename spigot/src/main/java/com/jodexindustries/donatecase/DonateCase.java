@@ -421,11 +421,15 @@ public class DonateCase extends JavaPlugin {
 
             CaseDataBukkit caseData = api.getCaseManager().getCase(caseType);
             Location location = Case.getCaseLocationByCustomName(caseName);
-            if (caseData != null && caseData.getHologram().isEnabled() && location != null
-                    && location.getWorld() != null && hologramManager != null
-                    && !api.getAnimationManager().getActiveCasesByBlock().containsKey(location.getBlock())) {
-                hologramManager.createHologram(location.getBlock(), caseData);
+
+            if(caseData == null || !caseData.getHologram().isEnabled() || location == null) continue;
+
+            if(location.getWorld() == null) {
+                getLogger().warning("Hologram creation error. World is null for case name: " + caseName);
+                continue;
             }
+
+            hologramManager.createHologram(location.getBlock(), caseData);
         }
     }
 
