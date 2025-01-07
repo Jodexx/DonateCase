@@ -34,7 +34,7 @@ public interface AnimationManager<A, M, P, L, B, C> {
      * @return A {@link CaseAnimation.Builder} instance for building the animation.
      */
     @NotNull
-    CaseAnimation.Builder<A> builder(String name);
+    CaseAnimation.Builder<A> builder(@NotNull String name);
 
     /**
      * Registers a custom animation to the system.
@@ -50,7 +50,7 @@ public interface AnimationManager<A, M, P, L, B, C> {
      *
      * @param name The name of the animation to unregister.
      */
-    void unregisterAnimation(String name);
+    void unregisterAnimation(@NotNull String name);
 
     default void unregisterAnimations(Addon addon) {
         List<CaseAnimation<A>> list = new ArrayList<>(getRegisteredAnimations(addon));

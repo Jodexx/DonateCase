@@ -68,17 +68,17 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
 
     @NotNull
     @Override
-    public CaseAnimation.Builder<JavaAnimationBukkit> builder(String name) {
+    public CaseAnimation.Builder<JavaAnimationBukkit> builder(@NotNull String name) {
         return new CaseAnimation.Builder<>(name, addon);
     }
 
     @Override
     public boolean registerAnimation(CaseAnimation<JavaAnimationBukkit> caseAnimation) {
         String name = caseAnimation.getName();
+        if(name == null) return false;
+
         if(!isRegistered(name)) {
             registeredAnimations.put(name, caseAnimation);
-            AnimationRegisteredEvent animationRegisteredEvent = new AnimationRegisteredEvent(caseAnimation);
-            Bukkit.getServer().getPluginManager().callEvent(animationRegisteredEvent);
             return true;
         } else {
             addon.getLogger().warning("Animation " + name + " already registered!");
@@ -87,11 +87,9 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
     }
 
     @Override
-    public void unregisterAnimation(String name) {
+    public void unregisterAnimation(@NotNull String name) {
         if (isRegistered(name)) {
             registeredAnimations.remove(name);
-            AnimationUnregisteredEvent animationUnRegisteredEvent = new AnimationUnregisteredEvent(name);
-            Bukkit.getServer().getPluginManager().callEvent(animationUnRegisteredEvent);
         } else {
             addon.getLogger().warning("Animation with name " + name + " already unregistered!");
         }
