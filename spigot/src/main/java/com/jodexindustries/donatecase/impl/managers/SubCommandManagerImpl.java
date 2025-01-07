@@ -2,10 +2,7 @@ package com.jodexindustries.donatecase.impl.managers;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.events.SubCommandRegisteredEvent;
-import com.jodexindustries.donatecase.api.events.SubCommandUnregisteredEvent;
 import com.jodexindustries.donatecase.api.manager.SubCommandManager;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,8 +31,6 @@ public class SubCommandManagerImpl implements SubCommandManager<CommandSender> {
         String name = subCommand.getName();
         if (registeredSubCommands.get(name.toLowerCase()) == null) {
             registeredSubCommands.put(name.toLowerCase(), subCommand);
-            SubCommandRegisteredEvent subCommandRegisteredEvent = new SubCommandRegisteredEvent(subCommand);
-            Bukkit.getServer().getPluginManager().callEvent(subCommandRegisteredEvent);
             return true;
         } else {
             addon.getLogger().warning("Sub command " + name + " already registered!");
@@ -47,8 +42,6 @@ public class SubCommandManagerImpl implements SubCommandManager<CommandSender> {
     public void unregisterSubCommand(String commandName) {
         if(registeredSubCommands.get(commandName.toLowerCase()) != null) {
             registeredSubCommands.remove(commandName.toLowerCase());
-            SubCommandUnregisteredEvent subCommandUnregisteredEvent = new SubCommandUnregisteredEvent(commandName);
-            Bukkit.getServer().getPluginManager().callEvent(subCommandUnregisteredEvent);
         } else {
             addon.getLogger().warning("Sub command " + commandName + " already unregistered!");
         }

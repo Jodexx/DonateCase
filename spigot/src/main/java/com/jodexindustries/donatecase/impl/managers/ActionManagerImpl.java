@@ -4,12 +4,9 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
-import com.jodexindustries.donatecase.api.events.CaseActionRegisteredEvent;
-import com.jodexindustries.donatecase.api.events.CaseActionUnregisteredEvent;
 import com.jodexindustries.donatecase.api.manager.ActionManager;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,8 +37,6 @@ public class ActionManagerImpl implements ActionManager<Player> {
         if (!isRegistered(name)) {
             CaseAction<Player> caseAction = new CaseAction<>(actionExecutor, addon, name, description);
             registeredActions.put(name, caseAction);
-            CaseActionRegisteredEvent event = new CaseActionRegisteredEvent(caseAction);
-            Bukkit.getPluginManager().callEvent(event);
             return true;
         } else {
             addon.getLogger().warning("CaseAction with name " + name + " already registered!");
@@ -53,8 +48,6 @@ public class ActionManagerImpl implements ActionManager<Player> {
     public void unregisterAction(@NotNull String name) {
         if (isRegistered(name)) {
             registeredActions.remove(name);
-            CaseActionUnregisteredEvent event = new CaseActionUnregisteredEvent(name);
-            Bukkit.getServer().getPluginManager().callEvent(event);
         } else {
             addon.getLogger().warning("CaseAction with name " + name + " already unregistered!");
         }
