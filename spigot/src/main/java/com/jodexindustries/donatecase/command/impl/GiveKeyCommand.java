@@ -1,13 +1,10 @@
 package com.jodexindustries.donatecase.command.impl;
 
-import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.manager.SubCommandManager;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Bukkit;
@@ -17,23 +14,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
-import static com.jodexindustries.donatecase.command.GlobalCommand.resolveSDGCompletions;
+public class GiveKeyCommand extends SubCommand<CommandSender> {
+    
+    private final DCAPIBukkit api;
 
-/**
- * Class for /dc givekey subcommand implementation
- */
-public class GiveKeyCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
-
-    public static void register(SubCommandManager<CommandSender> manager) {
-        GiveKeyCommand command = new GiveKeyCommand();
-
-        SubCommand<CommandSender> subCommand = manager.builder("givekey")
-                .executor(command)
-                .tabCompleter(command)
-                .permission(SubCommandType.MODER.permission)
-                .build();
-        manager.registerSubCommand(subCommand);
+    public GiveKeyCommand(DCAPIBukkit api) {
+        super("givekey", api.getAddon());
+        setPermission(SubCommandType.MODER.permission);
+        this.api = api;
     }
 
     @Override
@@ -41,8 +29,8 @@ public class GiveKeyCommand implements SubCommandExecutor<CommandSender>, SubCom
         if (args.length >= 3) {
             String playerName = args[0];
             String caseName = args[1];
-            if(!instance.api.getTools().isValidPlayerName(playerName)) {
-                instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("player-not-found"), "%player:" + playerName));
+            if(!api.getTools().isValidPlayerName(playerName)) {
+                api.getTools().msg(sender, DCToolsBukkit.rt(api.getConfig().getLang().getString("player-not-found"), "%player:" + playerName));
                 return;
             }
 
@@ -50,28 +38,28 @@ public class GiveKeyCommand implements SubCommandExecutor<CommandSender>, SubCom
             try {
                 keys = Integer.parseInt(args[2]);
             } catch (NumberFormatException e) {
-                DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("number-format-exception"), "%string:" + args[2]));
+                DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(api.getConfig().getLang().getString("number-format-exception"), "%string:" + args[2]));
                 return;
             }
-            if (instance.api.getCaseManager().hasCaseByType(caseName)) {
-                CaseDataBukkit data = instance.api.getCaseManager().getCase(caseName);
+            if (api.getCaseManager().hasCaseByType(caseName)) {
+                CaseDataBukkit data = api.getCaseManager().getCase(caseName);
                 if (data == null) return;
-                Case.getInstance().api.getCaseKeyManager().addKeys(caseName, playerName, keys).thenAcceptAsync(status -> {
+                api.getCaseKeyManager().addKeys(caseName, playerName, keys).thenAcceptAsync(status -> {
                     if(status == DatabaseStatus.COMPLETE) {
-                        instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("keys-given"),
+                        api.getTools().msg(sender, DCToolsBukkit.rt(api.getConfig().getLang().getString("keys-given"),
                                 "%player:" + playerName, "%key:" + keys, "%casetitle:" + data.getCaseTitle(),
                                 "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
 
                         if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
                             Player target = Bukkit.getPlayer(playerName);
-                            instance.api.getTools().msg(target, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("keys-given-target"),
+                            api.getTools().msg(target, DCToolsBukkit.rt(api.getConfig().getLang().getString("keys-given-target"),
                                     "%player:" + playerName, "%key:" + keys, "%casetitle:" + data.getCaseTitle(),
                                     "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
                         }
                     }
                 });
             } else {
-                instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
+                api.getTools().msg(sender, DCToolsBukkit.rt(api.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
             }
         } else {
             GlobalCommand.sendHelp(sender, label);
@@ -80,6 +68,6 @@ public class GiveKeyCommand implements SubCommandExecutor<CommandSender>, SubCom
 
     @Override
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        return resolveSDGCompletions(args);
+        return api.getTools().resolveSDGCompletions(args);
     }
 }

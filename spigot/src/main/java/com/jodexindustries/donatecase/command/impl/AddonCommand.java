@@ -1,17 +1,14 @@
 package com.jodexindustries.donatecase.command.impl;
 
-import com.jodexindustries.donatecase.api.DCAPIBukkit;
-import com.jodexindustries.donatecase.api.manager.SubCommandManager;
-import com.jodexindustries.donatecase.impl.managers.AddonManagerImpl;
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.command.GlobalCommand;
+import com.jodexindustries.donatecase.impl.managers.AddonManagerImpl;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,21 +18,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Class for /dc addon subcommand implementation
- */
-public class AddonCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
-    private final DCAPIBukkit api = Case.getInstance().api;
+public class AddonCommand extends SubCommand<CommandSender> {
 
-    public static void register(SubCommandManager<CommandSender> manager) {
-        AddonCommand command = new AddonCommand();
+    private final DCAPIBukkit api;
 
-        SubCommand<CommandSender> subCommand = manager.builder("addon")
-                .executor(command)
-                .tabCompleter(command)
-                .permission(SubCommandType.ADMIN.permission)
-                .build();
-        manager.registerSubCommand(subCommand);
+    public AddonCommand(DCAPIBukkit api) {
+        super("addon", api.getAddon());
+        setPermission(SubCommandType.ADMIN.permission);
+        this.api = api;
     }
 
     @Override

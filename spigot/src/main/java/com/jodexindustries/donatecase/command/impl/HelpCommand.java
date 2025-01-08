@@ -1,10 +1,8 @@
 package com.jodexindustries.donatecase.command.impl;
 
-import com.jodexindustries.donatecase.api.manager.SubCommandManager;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.command.GlobalCommand;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -12,20 +10,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Class for /dc help subcommand implementation
- */
-public class HelpCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
+public class HelpCommand extends SubCommand<CommandSender> {
 
-    public static void register(SubCommandManager<CommandSender> manager) {
-        HelpCommand command = new HelpCommand();
-
-        SubCommand<CommandSender> subCommand = manager.builder("help")
-                .executor(command)
-                .tabCompleter(command)
-                .permission(SubCommandType.PLAYER.permission)
-                .build();
-        manager.registerSubCommand(subCommand);
+    public HelpCommand(DCAPIBukkit api) {
+        super("help", api.getAddon());
+        setPermission(SubCommandType.PLAYER.permission);
     }
 
     @Override

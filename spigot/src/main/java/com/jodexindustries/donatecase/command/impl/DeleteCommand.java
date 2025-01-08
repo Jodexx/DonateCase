@@ -1,11 +1,9 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.manager.SubCommandManager;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -17,22 +15,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
 
-/**
- * Class for /dc delete subcommand implementation
- */
-public class DeleteCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
-
-    public static void register(SubCommandManager<CommandSender> manager) {
-        DeleteCommand command = new DeleteCommand();
-
-        SubCommand<CommandSender> subCommand = manager.builder("delete")
-                .executor(command)
-                .tabCompleter(command)
-                .permission(SubCommandType.ADMIN.permission)
-                .build();
-        manager.registerSubCommand(subCommand);
+public class DeleteCommand extends SubCommand<CommandSender> {
+    
+    private final DCAPIBukkit api;
+    
+    public DeleteCommand(DCAPIBukkit api) {
+        super("delete", api.getAddon());
+        setPermission(SubCommandType.ADMIN.permission);
+        this.api = api;
     }
 
     @Override
@@ -43,33 +34,33 @@ public class DeleteCommand implements SubCommandExecutor<CommandSender>, SubComm
                 Block block = player.getTargetBlock(null, 5);
                 String customName = Case.getCaseCustomNameByLocation(block.getLocation());
                 if (customName != null) {
-                    if (!instance.api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
+                    if (!api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
                         Case.deleteCaseByName(customName);
-                        if (instance.hologramManager != null)
-                            instance.hologramManager.removeHologram(block);
-                        instance.api.getTools().msg(sender, instance.api.getConfig().getLang().getString("case-removed"));
+                        if (api.getHologramManager() != null)
+                            api.getHologramManager().removeHologram(block);
+                        api.getTools().msg(sender, api.getConfig().getLang().getString("case-removed"));
                     } else {
-                        instance.api.getTools().msg(sender, instance.api.getConfig().getLang().getString("case-opens"));
+                        api.getTools().msg(sender, api.getConfig().getLang().getString("case-opens"));
                     }
                 } else {
-                    instance.api.getTools().msg(sender, instance.api.getConfig().getLang().getString("block-is-not-case"));
+                    api.getTools().msg(sender, api.getConfig().getLang().getString("block-is-not-case"));
                 }
             }
         } else if (args.length == 1) {
             String name = args[0];
             Location location = Case.getCaseLocationByCustomName(name);
             if (location != null) {
-                if (!instance.api.getAnimationManager().getActiveCasesByBlock().containsKey(location.getBlock())) {
-                    if (instance.hologramManager != null)
-                        instance.hologramManager.removeHologram(location.getBlock());
+                if (!api.getAnimationManager().getActiveCasesByBlock().containsKey(location.getBlock())) {
+                    if (api.getHologramManager() != null)
+                        api.getHologramManager().removeHologram(location.getBlock());
 
                     Case.deleteCaseByName(name);
-                    instance.api.getTools().msg(sender, instance.api.getConfig().getLang().getString("case-removed"));
+                    api.getTools().msg(sender, api.getConfig().getLang().getString("case-removed"));
                 } else {
-                    instance.api.getTools().msg(sender, instance.api.getConfig().getLang().getString("case-opens"));
+                    api.getTools().msg(sender, api.getConfig().getLang().getString("case-opens"));
                 }
             } else {
-                instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("case-does-not-exist"), "%case:" + name));
+                api.getTools().msg(sender, DCToolsBukkit.rt(api.getConfig().getLang().getString("case-does-not-exist"), "%case:" + name));
             }
         }
     }
@@ -78,7 +69,7 @@ public class DeleteCommand implements SubCommandExecutor<CommandSender>, SubComm
     public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         List<String> value;
         if (args.length == 1) {
-            ConfigurationSection section = instance.api.getConfig().getCases().getConfigurationSection("DonateCase.Cases");
+            ConfigurationSection section = api.getConfig().getCases().getConfigurationSection("DonateCase.Cases");
             if (section != null) {
                 value = new ArrayList<>(section.getKeys(false));
             } else {

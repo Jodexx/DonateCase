@@ -5,12 +5,10 @@ import com.jodexindustries.donatecase.api.Case;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -18,9 +16,6 @@ import java.util.stream.Collectors;
 
 import static com.jodexindustries.donatecase.DonateCase.instance;
 
-/**
- * Class for /dc command implementation with subcommands
- */
 public class GlobalCommand implements CommandExecutor, TabCompleter {
 
     @Override
@@ -39,7 +34,7 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
             String permission = subCommand.getPermission();
 
             if (permission == null || sender.hasPermission(permission))
-                subCommand.getExecutor().execute(sender, label, Arrays.copyOfRange(args, 1, args.length));
+                subCommand.execute(sender, label, Arrays.copyOfRange(args, 1, args.length));
             else DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("no-permission")));
         }
 
@@ -139,10 +134,11 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                     value.add(subCommandName);
                 }
             }
-        } else if (instance.api.getSubCommandManager().getRegisteredSubCommands().containsKey(args[0])) {
-            return instance.api.getSubCommandManager().getTabCompletionsForSubCommand(sender, args[0], label, Arrays.copyOfRange(args, 1, args.length));
         } else {
-            return new ArrayList<>();
+            SubCommand<CommandSender> subCommand = instance.api.getSubCommandManager().getRegisteredSubCommand(args[0].toLowerCase());
+            if(subCommand == null) return new ArrayList<>();
+
+            return subCommand.getTabCompletions(sender, label, Arrays.copyOfRange(args, 1, args.length));
         }
 
         if (args[args.length - 1].isEmpty()) {
@@ -154,34 +150,5 @@ public class GlobalCommand implements CommandExecutor, TabCompleter {
                 .filter(tmp -> tmp.startsWith(args[args.length - 1]))
                 .sorted()
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * This method used in SetKeyCommand, DelKeyCommand and GiveKeyCommand classes
-     * Not for API usable
-     *
-     * @param args tab completion args
-     * @return list of completions
-     */
-    @NotNull
-    public static List<String> resolveSDGCompletions(String[] args) {
-        List<String> value = new ArrayList<>(instance.api.getConfig().getConfigCases().getCases().keySet());
-        List<String> list = new ArrayList<>();
-        if (args.length == 1) {
-            list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(px -> px.startsWith(args[0])).collect(Collectors.toList()));
-            return list;
-        } else if (args.length >= 3) {
-            if (args.length == 4) {
-                list.add("-s");
-                return list;
-            }
-            return new ArrayList<>();
-        }
-        if (args[args.length - 1].isEmpty()) {
-            list = value;
-        } else {
-            list.addAll(value.stream().filter(tmp -> tmp.startsWith(args[args.length - 1])).collect(Collectors.toList()));
-        }
-        return list;
     }
 }

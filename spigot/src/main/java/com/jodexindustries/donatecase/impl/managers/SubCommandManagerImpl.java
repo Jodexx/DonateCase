@@ -1,23 +1,42 @@
 package com.jodexindustries.donatecase.impl.managers;
 
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.manager.SubCommandManager;
+import com.jodexindustries.donatecase.command.impl.*;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.Level;
 
 public class SubCommandManagerImpl implements SubCommandManager<CommandSender> {
+
+    private static final List<? extends Class<? extends SubCommand<CommandSender>>> defaultCommands = Arrays.asList(
+            AddonCommand.class,
+            AddonsCommand.class,
+            CasesCommand.class,
+            CreateCommand.class,
+            DeleteCommand.class,
+            DelKeyCommand.class,
+            GiveKeyCommand.class,
+            HelpCommand.class,
+            KeysCommand.class,
+            OpenCaseCommand.class,
+            RegistryCommand.class,
+            ReloadCommand.class,
+            SetKeyCommand.class
+    );
+
     private static final Map<String, SubCommand<CommandSender>> registeredSubCommands = new HashMap<>();
+    private final DCAPIBukkit api;
     private final Addon addon;
 
-    public SubCommandManagerImpl(Addon addon) {
-        this.addon = addon;
+    public SubCommandManagerImpl(DCAPIBukkit api) {
+        this.api = api;
+        this.addon = api.getAddon();
     }
 
     @NotNull
@@ -64,9 +83,15 @@ public class SubCommandManagerImpl implements SubCommandManager<CommandSender> {
     }
 
     @Override
-    public List<String> getTabCompletionsForSubCommand(CommandSender sender, String subCommandName, String label, String[] args) {
-        SubCommand<CommandSender> subCommand = registeredSubCommands.get(subCommandName.toLowerCase());
-        return subCommand != null ? subCommand.getTabCompleter().getTabCompletions(sender, label, args) : null;
+    public void registerDefaultSubCommands() {
+        defaultCommands.forEach(commandClass -> {
+            try {
+                SubCommand<CommandSender> command = commandClass.getDeclaredConstructor(DCAPIBukkit.class).newInstance(api);
+                registerSubCommand(command);
+            } catch (Exception e) {
+                addon.getLogger().log(Level.WARNING, "Failed to register command: " + commandClass.getSimpleName(), e);
+            }
+        });
     }
 
 }

@@ -2,27 +2,22 @@ package com.jodexindustries.donatecase;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.jodexindustries.donatecase.animations.*;
-import com.jodexindustries.donatecase.api.*;
+import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
-import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
 import com.jodexindustries.donatecase.api.data.PermissionDriver;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseDisableEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseEnableEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
-import com.jodexindustries.donatecase.api.holograms.HologramManager;
-import com.jodexindustries.donatecase.api.holograms.types.CMIHologramsSupport;
-import com.jodexindustries.donatecase.api.holograms.types.DecentHologramsSupport;
-import com.jodexindustries.donatecase.api.holograms.types.FancyHologramsSupport;
-import com.jodexindustries.donatecase.api.holograms.types.HolographicDisplaysSupport;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.command.GlobalCommand;
-import com.jodexindustries.donatecase.command.impl.*;
 import com.jodexindustries.donatecase.config.CaseLoader;
 import com.jodexindustries.donatecase.config.ConfigImpl;
 import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
@@ -30,13 +25,20 @@ import com.jodexindustries.donatecase.gui.items.HISTORYItemHandlerImpl;
 import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
 import com.jodexindustries.donatecase.impl.DCAPIBukkitImpl;
 import com.jodexindustries.donatecase.impl.actions.*;
+import com.jodexindustries.donatecase.impl.holograms.CMIHologramsImpl;
+import com.jodexindustries.donatecase.impl.holograms.DecentHologramsImpl;
+import com.jodexindustries.donatecase.impl.holograms.FancyHologramsImpl;
+import com.jodexindustries.donatecase.impl.holograms.HolographicDisplaysImpl;
 import com.jodexindustries.donatecase.impl.materials.*;
 import com.jodexindustries.donatecase.listener.EventsListener;
-import com.jodexindustries.donatecase.tools.*;
+import com.jodexindustries.donatecase.tools.Logger;
+import com.jodexindustries.donatecase.tools.Metrics;
+import com.jodexindustries.donatecase.tools.UpdateChecker;
 import com.jodexindustries.donatecase.tools.support.*;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -259,20 +261,7 @@ public class DonateCase extends JavaPlugin {
 
     private void registerDefaultSubCommands() {
         SubCommandManager<CommandSender> manager = api.getSubCommandManager();
-
-        ReloadCommand.register(manager);
-        GiveKeyCommand.register(manager);
-        DelKeyCommand.register(manager);
-        SetKeyCommand.register(manager);
-        KeysCommand.register(manager);
-        CasesCommand.register(manager);
-        OpenCaseCommand.register(manager);
-        HelpCommand.register(manager);
-        CreateCommand.register(manager);
-        DeleteCommand.register(manager);
-        AddonsCommand.register(manager);
-        AddonCommand.register(manager);
-        RegistryCommand.register(manager);
+        manager.registerDefaultSubCommands();
 
         Logger.log("&aRegistered &c" + manager.getRegisteredSubCommands().size() + " &acommands");
     }
@@ -381,25 +370,25 @@ public class DonateCase extends JavaPlugin {
         switch (driver) {
             case cmi:
                 if (getServer().getPluginManager().isPluginEnabled("CMI") && CMIModule.holograms.isEnabled()) {
-                    hologramManager = new CMIHologramsSupport();
+                    hologramManager = new CMIHologramsImpl();
                     return true;
                 }
                 break;
             case decentholograms:
                 if (getServer().getPluginManager().isPluginEnabled("DecentHolograms")) {
-                    hologramManager = new DecentHologramsSupport();
+                    hologramManager = new DecentHologramsImpl();
                     return true;
                 }
                 break;
             case holographicdisplays:
                 if (getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
-                    hologramManager = new HolographicDisplaysSupport();
+                    hologramManager = new HolographicDisplaysImpl();
                     return true;
                 }
                 break;
             case fancyholograms:
                 if(getServer().getPluginManager().isPluginEnabled("FancyHolograms")) {
-                    hologramManager = new FancyHologramsSupport();
+                    hologramManager = new FancyHologramsImpl();
                     return true;
                 }
         }

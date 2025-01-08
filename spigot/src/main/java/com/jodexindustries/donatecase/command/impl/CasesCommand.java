@@ -1,12 +1,9 @@
 package com.jodexindustries.donatecase.command.impl;
 
-import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.manager.SubCommandManager;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -14,30 +11,22 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
+public class CasesCommand extends SubCommand<CommandSender> {
 
-/**
- * Class for /dc cases subcommand implementation
- */
-public class CasesCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
+    private final DCAPIBukkit api;
 
-    public static void register(SubCommandManager<CommandSender> manager) {
-        CasesCommand command = new CasesCommand();
-
-        SubCommand<CommandSender> subCommand = manager.builder("cases")
-                .executor(command)
-                .tabCompleter(command)
-                .permission(SubCommandType.MODER.permission)
-                .build();
-        manager.registerSubCommand(subCommand);
+    public CasesCommand(DCAPIBukkit api) {
+        super("cases", api.getAddon());
+        setPermission(SubCommandType.MODER.permission);
+        this.api = api;
     }
 
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         int num = 0;
-        for (CaseDataBukkit data : Case.getInstance().api.getCaseManager().getMap().values()) {
+        for (CaseDataBukkit data : api.getCaseManager().getMap().values()) {
             num++;
-            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("list-of-cases"),
+            DCToolsBukkit.msgRaw(sender, DCToolsBukkit.rt(api.getConfig().getLang().getString("list-of-cases"),
                     "%casename:" + data.getCaseType(), "%num:" + num,
                     "%casedisplayname:" + data.getCaseDisplayName(),
                     "%casetitle:" + data.getCaseTitle()));

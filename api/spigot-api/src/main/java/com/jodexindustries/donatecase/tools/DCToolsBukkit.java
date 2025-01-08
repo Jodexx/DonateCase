@@ -40,6 +40,9 @@ public interface DCToolsBukkit extends DCTools {
      */
     PAPI getPAPI();
 
+    @NotNull
+    List<String> resolveSDGCompletions(String[] args);
+
     static void msgRaw(CommandSender s, String msg) {
         if (s != null) {
             s.sendMessage(rc(msg));

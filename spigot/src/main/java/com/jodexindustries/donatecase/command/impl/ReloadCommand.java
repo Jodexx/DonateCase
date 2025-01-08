@@ -1,11 +1,9 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.manager.SubCommandManager;
+import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -13,35 +11,27 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
+public class ReloadCommand extends SubCommand<CommandSender> {
 
-/**
- * Class for /dc reload subcommand implementation
- */
-public class ReloadCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
+    private final DCAPIBukkit api;
 
-    public static void register(SubCommandManager<CommandSender> manager) {
-        ReloadCommand command = new ReloadCommand();
-
-        SubCommand<CommandSender> subCommand = manager.builder("reload")
-                .executor(command)
-                .tabCompleter(command)
-                .permission(SubCommandType.ADMIN.permission)
-                .build();
-        manager.registerSubCommand(subCommand);
+    public ReloadCommand(DCAPIBukkit api) {
+        super("reload", api.getAddon());
+        setPermission(SubCommandType.ADMIN.permission);
+        this.api = api;
     }
 
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         if (args.length == 0) {
             load();
-            instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("config-reloaded")));
+            api.getTools().msg(sender, DCToolsBukkit.rt(api.getConfig().getLang().getString("config-reloaded")));
         } else {
             if (args[0].equalsIgnoreCase("cache")) {
                 Case.cleanCache();
                 load();
                 Case.getInstance().loadDatabase();
-                instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("config-cache-reloaded",
+                api.getTools().msg(sender, DCToolsBukkit.rt(api.getConfig().getLang().getString("config-cache-reloaded",
                         "&aReloaded all DonateCase Cache")));
             }
         }
@@ -57,7 +47,7 @@ public class ReloadCommand implements SubCommandExecutor<CommandSender>, SubComm
     }
 
     private void load() {
-        instance.api.getConfig().load();
+        api.getConfig().load();
         Case.getInstance().loader.load();
         Case.getInstance().loadHolograms();
     }

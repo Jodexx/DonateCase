@@ -9,13 +9,18 @@ import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class ToolsImpl implements DCToolsBukkit {
     
@@ -47,6 +52,28 @@ public class ToolsImpl implements DCToolsBukkit {
     @Override
     public PAPI getPAPI() {
         return instance.papi;
+    }
+
+    @Override
+    public @NotNull List<String> resolveSDGCompletions(String[] args) {
+        List<String> value = new ArrayList<>(instance.api.getConfig().getConfigCases().getCases().keySet());
+        List<String> list = new ArrayList<>();
+        if (args.length == 1) {
+            list.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(px -> px.startsWith(args[0])).collect(Collectors.toList()));
+            return list;
+        } else if (args.length >= 3) {
+            if (args.length == 4) {
+                list.add("-s");
+                return list;
+            }
+            return new ArrayList<>();
+        }
+        if (args[args.length - 1].isEmpty()) {
+            list = value;
+        } else {
+            list.addAll(value.stream().filter(tmp -> tmp.startsWith(args[args.length - 1])).collect(Collectors.toList()));
+        }
+        return list;
     }
 
     @Override

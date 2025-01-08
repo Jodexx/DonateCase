@@ -4,13 +4,14 @@ import com.jodexindustries.donatecase.api.addon.Addon;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Represents a subcommand with execution and tab-completion capabilities.
  *
  * @param <S> The type of the command sender.
  */
-public class SubCommand<S> {
+public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabCompleter<S> {
     private final Addon addon;
     private final String name;
 
@@ -86,6 +87,18 @@ public class SubCommand<S> {
         return permission;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
+
+    public void setArgs(String[] args) {
+        this.args = args;
+    }
+
     /**
      * Converts the subcommand to a builder for modification or recreation.
      *
@@ -121,6 +134,16 @@ public class SubCommand<S> {
                 ", permission='" + permission + '\'' +
                 ", args=" + Arrays.toString(args) +
                 '}';
+    }
+
+    @Override
+    public void execute(@NotNull S sender, @NotNull String label, @NotNull String[] args) {
+        executor.execute(sender, label, args);
+    }
+
+    @Override
+    public List<String> getTabCompletions(@NotNull S sender, @NotNull String label, @NotNull String[] args) {
+        return tabCompleter.getTabCompletions(sender, label, args);
     }
 
     /**

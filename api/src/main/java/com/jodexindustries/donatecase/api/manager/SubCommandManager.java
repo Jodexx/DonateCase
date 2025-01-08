@@ -65,16 +65,5 @@ public interface SubCommandManager<S> {
     @NotNull
     Map<String, SubCommand<S>> getRegisteredSubCommands();
 
-    /**
-     * Provides a list of possible tab completions for a given subcommand, based on the command's
-     * sender, name, and provided arguments.
-     *
-     * @param sender         the source of the command (e.g., player or console)
-     * @param subCommandName the name of the subcommand
-     * @param label          the main command label
-     * @param args           the arguments passed with the command
-     * @return a list of possible tab completions
-     */
-    List<String> getTabCompletionsForSubCommand(S sender, String subCommandName, String label, String[] args);
-
+    void registerDefaultSubCommands();
 }
