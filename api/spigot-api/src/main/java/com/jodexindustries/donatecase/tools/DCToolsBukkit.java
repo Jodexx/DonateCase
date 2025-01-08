@@ -119,18 +119,11 @@ public interface DCToolsBukkit extends DCTools {
 
         String[] materialParts = id.split(":");
 
-        Material ma = Material.getMaterial(materialParts[0]);
+        Material material = Material.getMaterial(materialParts[0]);
 
-        byte data = (materialParts.length > 1) ? Byte.parseByte(materialParts[1]) : -1;
+        if (material == null) return item;
 
-        if (ma == null) return item;
-        if (data == -1) {
-            item = new ItemStack(ma, 1);
-        } else if (Bukkit.getVersion().contains("1.12.2")) {
-            item = new ItemStack(ma, 1, (short) 1, data);
-        } else {
-            item = new ItemStack(ma, 1);
-        }
+        item = new ItemStack(material, 1);
         return item;
     }
 
