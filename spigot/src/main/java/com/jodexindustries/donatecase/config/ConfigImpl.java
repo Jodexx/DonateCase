@@ -25,7 +25,7 @@ public class ConfigImpl implements ConfigBukkit {
     private final DonateCase plugin;
 
     private File fileLang;
-    private YamlConfiguration lang;
+    private LangConfig lang;
 
     private final ConfigCasesImpl casesConfig;
 
@@ -111,7 +111,7 @@ public class ConfigImpl implements ConfigBukkit {
             }
         }
 
-        this.lang = YamlConfiguration.loadConfiguration(fileLang);
+        this.lang = LangConfig.loadConfiguration(fileLang);
 
         checkLanguageVersion();
 
@@ -247,9 +247,9 @@ public class ConfigImpl implements ConfigBukkit {
 
     private void checkLanguageVersion() {
         String version = lang.getString("config");
-        if (version == null || !version.equalsIgnoreCase("2.6")) {
+        if (!version.equalsIgnoreCase("2.6")) {
             Logger.log("&cOutdated language config! Creating a new!");
-            if (version != null && version.equalsIgnoreCase("2.5")) {
+            if (version.equalsIgnoreCase("2.5")) {
                 converter.convertLanguage();
             } else {
                 File langRu = new File(plugin.getDataFolder(), "lang/ru_RU.yml");
@@ -271,7 +271,7 @@ public class ConfigImpl implements ConfigBukkit {
      * @return Lang configuration
      */
     @Override
-    public YamlConfiguration getLang() {
+    public LangConfig getLang() {
         return lang;
     }
 
