@@ -33,32 +33,35 @@ public class DeleteCommand extends SubCommand<CommandSender> {
                 Player player = (Player) sender;
                 Block block = player.getTargetBlock(null, 5);
                 String customName = Case.getCaseCustomNameByLocation(block.getLocation());
-                if (customName != null) {
-                    if (!api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
-                        Case.deleteCaseByName(customName);
-                        if (api.getHologramManager() != null)
-                            api.getHologramManager().removeHologram(block);
-                        api.getTools().msg(sender, api.getConfig().getLang().getString("case-removed"));
-                    } else {
-                        api.getTools().msg(sender, api.getConfig().getLang().getString("case-opens"));
-                    }
-                } else {
+                if(customName == null) {
                     api.getTools().msg(sender, api.getConfig().getLang().getString("block-is-not-case"));
+                    return;
                 }
+
+                if(api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
+                    api.getTools().msg(sender, api.getConfig().getLang().getString("case-opens"));
+                    return;
+                }
+
+                Case.deleteCaseByName(customName);
+                if (api.getHologramManager() != null) api.getHologramManager().removeHologram(block);
+                api.getTools().msg(sender, api.getConfig().getLang().getString("case-removed"));
             }
         } else if (args.length == 1) {
             String name = args[0];
             Location location = Case.getCaseLocationByCustomName(name);
             if (location != null) {
-                if (!api.getAnimationManager().getActiveCasesByBlock().containsKey(location.getBlock())) {
-                    if (api.getHologramManager() != null)
-                        api.getHologramManager().removeHologram(location.getBlock());
+                if(location.getWorld() != null) {
+                    if(api.getAnimationManager().getActiveCasesByBlock().containsKey(location.getBlock())) {
+                        api.getTools().msg(sender, api.getConfig().getLang().getString("case-opens"));
+                        return;
+                    }
 
-                    Case.deleteCaseByName(name);
-                    api.getTools().msg(sender, api.getConfig().getLang().getString("case-removed"));
-                } else {
-                    api.getTools().msg(sender, api.getConfig().getLang().getString("case-opens"));
+                    if (api.getHologramManager() != null) api.getHologramManager().removeHologram(location.getBlock());
                 }
+
+                Case.deleteCaseByName(name);
+                api.getTools().msg(sender, api.getConfig().getLang().getString("case-removed"));
             } else {
                 api.getTools().msg(sender, DCToolsBukkit.rt(api.getConfig().getLang().getString("case-does-not-exist"), "%case:" + name));
             }
