@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.api.data.subcommand;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,24 +30,6 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
     public SubCommand(@NotNull String name, @NotNull Addon addon) {
         this.addon = addon;
         this.name = name;
-    }
-
-    /**
-     * Gets the executor responsible for handling the subcommand's logic.
-     *
-     * @return The executor.
-     */
-    public SubCommandExecutor<S> getExecutor() {
-        return executor;
-    }
-
-    /**
-     * Gets the tab completer responsible for providing argument suggestions.
-     *
-     * @return The tab completer.
-     */
-    public SubCommandTabCompleter<S> getTabCompleter() {
-        return tabCompleter;
     }
 
     /**
@@ -100,40 +81,12 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
     }
 
     /**
-     * Converts the subcommand to a builder for modification or recreation.
-     *
-     * @return A builder with the current subcommand's data.
-     */
-    public Builder<S> toBuilder() {
-        Builder<S> builder = new Builder<>(name, addon);
-        builder.permission = permission;
-        builder.description = description;
-        builder.args = args;
-        builder.tabCompleter = tabCompleter;
-        builder.executor = executor;
-        return builder;
-    }
-
-    /**
      * Gets the addon associated with this subcommand.
      *
      * @return The associated addon.
      */
     public Addon getAddon() {
         return addon;
-    }
-
-    @Override
-    public String toString() {
-        return "SubCommand{" +
-                "addon=" + addon +
-                ", name='" + name + '\'' +
-                ", executor=" + executor +
-                ", tabCompleter=" + tabCompleter +
-                ", description='" + description + '\'' +
-                ", permission='" + permission + '\'' +
-                ", args=" + Arrays.toString(args) +
-                '}';
     }
 
     @Override
