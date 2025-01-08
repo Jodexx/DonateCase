@@ -1,9 +1,9 @@
 package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
-import com.jodexindustries.donatecase.api.caching.entry.InfoEntry;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -22,6 +22,8 @@ public interface CaseOpenManager {
      */
     int getOpenCount(String caseType, String player);
 
+    Map<String, Integer> getOpenCount(String player);
+
     /**
      * Get count of opened cases by player
      * @param caseType Case type
@@ -29,6 +31,8 @@ public interface CaseOpenManager {
      * @return CompletableFuture of open count
      */
     CompletableFuture<Integer> getOpenCountAsync(String caseType, String player);
+
+    CompletableFuture<Map<String, Integer>> getOpenCountAsync(String player);
 
     /**
      * Get count of opened cases by player from cache <br/>
@@ -38,6 +42,8 @@ public interface CaseOpenManager {
      * @return opened count
      */
     int getOpenCountCache(String caseType, String player);
+
+    Map<String, Integer> getOpenCountCache(String player);
 
     /**
      * Set case keys to a specific player (async)
@@ -59,5 +65,5 @@ public interface CaseOpenManager {
      */
     CompletableFuture<DatabaseStatus> addOpenCount(String caseType, String player, int openCount);
 
-    SimpleCache<InfoEntry, Integer> getCache();
+    SimpleCache<String, Map<String, Integer>> getCache();
 }

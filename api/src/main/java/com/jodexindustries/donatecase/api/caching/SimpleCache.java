@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api.caching;
 
-import com.jodexindustries.donatecase.api.caching.entry.CacheEntry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;

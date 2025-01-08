@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api.caching.entry;
+package com.jodexindustries.donatecase.api.caching;
 
 public class CacheEntry<V> {
 

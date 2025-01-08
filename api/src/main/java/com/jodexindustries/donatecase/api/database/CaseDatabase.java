@@ -44,6 +44,8 @@ public interface CaseDatabase {
      */
     CompletableFuture<Integer> getOpenCount(String player, String caseType);
 
+    CompletableFuture<Map<String, Integer>> getOpenCount(String player);
+
     /**
      * Set count of opened cases by player
      *

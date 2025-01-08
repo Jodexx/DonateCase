@@ -73,28 +73,27 @@ public class Placeholder extends PlaceholderExpansion {
     private String processOpenCount(@NotNull String params, OfflinePlayer player) {
         if (params.startsWith("open_count")) {
             String[] parts = params.split("_", 3);
-            int openCount = 0;
-            for (String caseType : instance.api.getCaseManager().getMap().keySet()) {
-                openCount += instance.api.getCaseOpenManager().getOpenCountCache(caseType, player.getName());
-            }
+            Map<String, Integer> map = instance.api.getCaseOpenManager().getOpenCountCache(player.getName());
+            int count = map.values().stream().mapToInt(c -> c).sum();
+
             if (parts.length == 2) {
-                return String.valueOf(openCount);
+                return String.valueOf(count);
             } else if (parts[2].equalsIgnoreCase("format")) {
-                return NumberFormat.getNumberInstance().format(openCount);
+                return NumberFormat.getNumberInstance().format(count);
             } else {
-                return String.valueOf(openCount);
+                return String.valueOf(count);
             }
         }
 
         if (params.startsWith("open_count_")) {
             String[] parts = params.split("_", 4);
-            Integer cachedCount = instance.api.getCaseOpenManager().getOpenCountCache(parts[2], player.getName());
+            int count = instance.api.getCaseOpenManager().getOpenCountCache(parts[2], player.getName());
             if (parts.length == 3) {
-                return String.valueOf(cachedCount);
+                return String.valueOf(count);
             } else if (parts[3].equalsIgnoreCase("format")) {
-                return NumberFormat.getNumberInstance().format(cachedCount);
+                return NumberFormat.getNumberInstance().format(count);
             } else {
-                return String.valueOf(cachedCount);
+                return String.valueOf(count);
             }
         }
         return null;

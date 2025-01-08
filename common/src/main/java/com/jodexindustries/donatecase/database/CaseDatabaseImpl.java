@@ -176,6 +176,25 @@ public class CaseDatabaseImpl implements CaseDatabase {
     }
 
     @Override
+    public CompletableFuture<Map<String, Integer>> getOpenCount(String player) {
+        return CompletableFuture.supplyAsync(() -> {
+            Map<String, Integer> opens = new HashMap<>();
+            try {
+                List<OpenInfoTable> results = openInfoTables.queryBuilder()
+                        .where()
+                        .eq("player", player)
+                        .query();
+                for (OpenInfoTable result : results) {
+                    opens.put(result.getCaseType(), result.getCount());
+                }
+            } catch (SQLException e) {
+                logger.warning(e.getMessage());
+            }
+            return opens;
+        });
+    }
+
+    @Override
     public CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count) {
         return CompletableFuture.supplyAsync(() -> {
             try {
