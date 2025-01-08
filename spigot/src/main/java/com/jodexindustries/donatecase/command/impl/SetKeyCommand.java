@@ -39,9 +39,12 @@ public class SetKeyCommand implements SubCommandExecutor<CommandSender>, SubComm
     @Override
     public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         if (args.length >= 3) {
-            String player = args[0];
+            String playerName = args[0];
             String caseName = args[1];
-            Player target = Bukkit.getPlayer(player);
+            if(!instance.api.getTools().isValidPlayerName(playerName)) {
+                instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("player-not-found"), "%player:" + playerName));
+                return;
+            }
             int keys;
             try {
                 keys = Integer.parseInt(args[2]);
@@ -52,15 +55,16 @@ public class SetKeyCommand implements SubCommandExecutor<CommandSender>, SubComm
             if (instance.api.getCaseManager().hasCaseByType(caseName)) {
                 CaseDataBukkit data = instance.api.getCaseManager().getCase(caseName);
                 if (data == null) return;
-                Case.getInstance().api.getCaseKeyManager().setKeys(caseName, player, keys).thenAcceptAsync(status -> {
+                Case.getInstance().api.getCaseKeyManager().setKeys(caseName, playerName, keys).thenAcceptAsync(status -> {
                     if(status == DatabaseStatus.COMPLETE) {
                         instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("keys-sets"),
-                                "%player:" + player, "%key:" + keys,
+                                "%player:" + playerName, "%key:" + keys,
                                 "%casetitle:" + data.getCaseTitle(), "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
 
                         if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
+                            Player target = Bukkit.getPlayer(playerName);
                             instance.api.getTools().msg(target, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("keys-sets-target"),
-                                    "%player:" + player, "%key:" + keys,
+                                    "%player:" + playerName, "%key:" + keys,
                                     "%casetitle:" + data.getCaseTitle(), "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
                         }
                     }

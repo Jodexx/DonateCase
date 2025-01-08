@@ -44,15 +44,19 @@ public class DelKeyCommand implements SubCommandExecutor<CommandSender>, SubComm
                     Case.getInstance().api.getCaseKeyManager().removeAllKeys().thenAcceptAsync(status -> instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("all-keys-cleared"))));
                 }
             } else {
-                String player = args[0];
+                String playerName = args[0];
                 String caseType = args[1];
+                if(!instance.api.getTools().isValidPlayerName(playerName)) {
+                    instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("player-not-found"), "%player:" + playerName));
+                    return;
+                }
                 if (instance.api.getCaseManager().hasCaseByType(caseType)) {
                     CaseDataBukkit data = instance.api.getCaseManager().getCase(caseType);
                     if (data == null) return;
                     int keys;
                     if (args.length == 2) {
-                        keys = Case.getInstance().api.getCaseKeyManager().getKeys(caseType, player);
-                        Case.getInstance().api.getCaseKeyManager().setKeys(caseType, player, 0);
+                        keys = Case.getInstance().api.getCaseKeyManager().getKeys(caseType, playerName);
+                        Case.getInstance().api.getCaseKeyManager().setKeys(caseType, playerName, 0);
                     } else {
                         try {
                             keys = Integer.parseInt(args[2]);
@@ -61,10 +65,10 @@ public class DelKeyCommand implements SubCommandExecutor<CommandSender>, SubComm
                             return;
                         }
 
-                        Case.getInstance().api.getCaseKeyManager().removeKeys(caseType, player, keys);
+                        Case.getInstance().api.getCaseKeyManager().removeKeys(caseType, playerName, keys);
                     }
                     instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("keys-cleared"),
-                            "%player:" + player, "%casetitle:" + data.getCaseTitle(),
+                            "%player:" + playerName, "%casetitle:" + data.getCaseTitle(),
                             "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseType, "%key:" + keys));
                 } else {
                     instance.api.getTools().msg(sender, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseType));

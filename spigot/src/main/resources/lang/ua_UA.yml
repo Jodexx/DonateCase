@@ -37,6 +37,7 @@ config-reloaded: '&aКонфіг перезавантажено!'
 config-cache-reloaded: '&aПерезавантажено весь кеш DonateCase'
 list-of-cases: '&e%num. &6%casename &3- &r%casetitle'
 number-format-exception: "&cСтрока %string не являється числом"
+player-not-found: "&cГравця %player не знайдено!"
 help:
   - '&9/%cmd help &3- &2Допомога по плагіну'
   - '&9/%cmd keys &7(&aГравець&7)&3- &2Показати ключі'

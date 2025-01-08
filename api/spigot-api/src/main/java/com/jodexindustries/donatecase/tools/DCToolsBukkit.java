@@ -31,6 +31,8 @@ public interface DCToolsBukkit extends DCTools {
 
     ArmorStandCreator createArmorStand(Location location);
 
+    boolean isValidPlayerName(String player);
+
     /**
      * Gets PlaceholderAPI support class
      * @since 2.0.2.2

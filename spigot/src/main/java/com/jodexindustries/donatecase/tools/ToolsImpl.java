@@ -6,11 +6,7 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.BukkitArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.PacketArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +14,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class ToolsImpl implements DCToolsBukkit {
@@ -35,6 +32,16 @@ public class ToolsImpl implements DCToolsBukkit {
         } else {
             return new BukkitArmorStandCreator(location);
         }
+    }
+
+    @Override
+    public boolean isValidPlayerName(String player) {
+        if(instance.api.getConfig().getConfig().getBoolean("DonateCase.CheckPlayerName")) {
+            return Arrays.stream(Bukkit.getOfflinePlayers())
+                    .map(OfflinePlayer::getName)
+                    .anyMatch(name -> name != null && name.equals(player.trim()));
+        }
+        return true;
     }
 
     @Override

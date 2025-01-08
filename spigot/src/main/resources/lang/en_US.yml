@@ -37,6 +37,7 @@ config-reloaded: '&aConfig reloaded!'
 config-cache-reloaded: '&aReloaded all DonateCase Cache'
 list-of-cases: '&e%num. &6%casename &3- &r%casetitle'
 number-format-exception: "&cThe string %string is not a number"
+player-not-found: "&cPlayer %player not found!"
 help:
   - '&9/%cmd help &3- &2Help for the plugin'
   - '&9/%cmd keys &7(&aPlayer&7) &3- &2Show keys'

@@ -37,6 +37,7 @@ config-reloaded: '&a¡Configuración recargada!'
 config-cache-reloaded: '&aTodo el caché de DonateCase ha sido recargado'
 list-of-cases: '&e%num. &6%casename &3- &r%casetitle'
 number-format-exception: "&cLa cadena %string no es un número"
+player-not-found: "&cJugador %player no encontrado!"
 help:
   - '&9/%cmd help &3- &2Ayuda para el plugin'
   - '&9/%cmd keys &7(&aJugador&7) &3- &2Mostrar llaves'
