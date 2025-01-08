@@ -8,6 +8,7 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
+import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -104,6 +105,9 @@ public abstract class DCAPIBukkit implements DCAPI<Player, JavaAnimationBukkit, 
      */
     @NotNull
     public abstract Plugin getDonateCase();
+
+    @Nullable
+    public abstract HologramManager getHologramManager();
 
     @Override
     public @NotNull Addon getAddon() {

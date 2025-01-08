@@ -1,7 +1,7 @@
-package com.jodexindustries.donatecase.api.holograms.types;
+package com.jodexindustries.donatecase.impl.holograms;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.holograms.HologramManager;
+import com.jodexindustries.donatecase.api.manager.HologramManager;
 import de.oliver.fancyholograms.api.FancyHologramsPlugin;
 import de.oliver.fancyholograms.api.data.*;
 import de.oliver.fancyholograms.api.hologram.Hologram;
@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import static com.jodexindustries.donatecase.DonateCase.instance;
 
-public class FancyHologramsSupport extends HologramManager {
+public class FancyHologramsImpl extends HologramManager {
 
     private final de.oliver.fancyholograms.api.HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
     private final HashMap<Block, Hologram> holograms = new HashMap<>();

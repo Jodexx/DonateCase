@@ -1,10 +1,10 @@
-package com.jodexindustries.donatecase.api.holograms.types;
+package com.jodexindustries.donatecase.impl.holograms;
 
 import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Holograms.CMIHologram;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHologram;
-import com.jodexindustries.donatecase.api.holograms.HologramManager;
+import com.jodexindustries.donatecase.api.manager.HologramManager;
 import org.bukkit.block.Block;
 import net.Zrips.CMILib.Container.CMILocation;
 
@@ -14,7 +14,7 @@ import java.util.UUID;
 /**
  * Class for CMI Holograms implementation
  */
-public class CMIHologramsSupport extends HologramManager {
+public class CMIHologramsImpl extends HologramManager {
 
     private final HashMap<Block, CMIHologram> holograms = new HashMap<>();
 

@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api.holograms;
+package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import org.bukkit.block.Block;

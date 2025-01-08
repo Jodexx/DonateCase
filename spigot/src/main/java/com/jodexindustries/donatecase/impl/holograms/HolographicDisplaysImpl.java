@@ -1,8 +1,8 @@
-package com.jodexindustries.donatecase.api.holograms.types;
+package com.jodexindustries.donatecase.impl.holograms;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHologram;
-import com.jodexindustries.donatecase.api.holograms.HologramManager;
+import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 /**
  * Class for HolographicDisplays Holograms implementation
  */
-public class HolographicDisplaysSupport extends HologramManager {
+public class HolographicDisplaysImpl extends HologramManager {
 
 
     @NotNull

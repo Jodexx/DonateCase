@@ -22,6 +22,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DCAPIBukkitImpl extends DCAPIBukkit {
 
@@ -31,7 +32,7 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
     private final GUIManager<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> guiManager = new GUIManagerImpl(addon);
     private final GUITypedItemManager<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> guiTypedItemManager = new GUITypedItemManagerImpl(addon);
     private final MaterialManager<ItemStack> materialManager = new MaterialManagerImpl(addon);
-    private final SubCommandManager<CommandSender> subCommandManager = new SubCommandManagerImpl(addon);
+    private final SubCommandManager<CommandSender> subCommandManager = new SubCommandManagerImpl(this);
 
     private static final CaseKeyManager caseKeyManager = new CaseKeyManagerImpl();
     private static final CaseOpenManager caseOpenManager = new CaseOpenManagerImpl();
@@ -114,6 +115,11 @@ public class DCAPIBukkitImpl extends DCAPIBukkit {
     @Override
     public @NotNull Plugin getDonateCase() {
         return DonateCase.instance;
+    }
+
+    @Override
+    public @Nullable HologramManager getHologramManager() {
+        return DonateCase.instance.hologramManager;
     }
 
 }

@@ -1,8 +1,8 @@
-package com.jodexindustries.donatecase.api.holograms.types;
+package com.jodexindustries.donatecase.impl.holograms;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataHologram;
-import com.jodexindustries.donatecase.api.holograms.HologramManager;
+import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
@@ -14,7 +14,7 @@ import java.util.UUID;
 /**
  * Class for Decent Holograms implementation
  */
-public class DecentHologramsSupport extends HologramManager {
+public class DecentHologramsImpl extends HologramManager {
 
     private final HashMap<Block, Hologram> holograms = new HashMap<>();
 
