@@ -33,7 +33,7 @@ import com.jodexindustries.donatecase.impl.materials.*;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.tools.Logger;
 import com.jodexindustries.donatecase.tools.Metrics;
-import com.jodexindustries.donatecase.tools.UpdateChecker;
+import com.jodexindustries.donatecase.tools.updater.UpdateChecker;
 import com.jodexindustries.donatecase.tools.support.*;
 import net.luckperms.api.LuckPerms;
 import net.milkbowl.vault.permission.Permission;
@@ -68,6 +68,7 @@ public class DonateCase extends JavaPlugin {
     public HeadDatabaseSupport headDatabaseSupport = null;
     public CustomHeadsSupport customHeadsSupport = null;
     public PacketEventsSupport packetEventsSupport;
+    public UpdateChecker updateChecker;
 
     public DCAPIBukkit api;
 
@@ -219,11 +220,13 @@ public class DonateCase extends JavaPlugin {
     }
 
     private void loadUpdater() {
+        this.updateChecker = new UpdateChecker(getLogger());
+
         if (config.getConfig().getBoolean("DonateCase.UpdateChecker")) {
-            new UpdateChecker(this, 106701).getVersion((version) -> {
-                if (DCTools.getPluginVersion(getDescription().getVersion()) < DCTools.getPluginVersion(version)) {
-                    Logger.log(ChatColor.GREEN + "There is a new update " + version + " available.");
-                    Logger.log(ChatColor.GREEN + "Download - https://www.spigotmc.org/resources/donatecase.106701/");
+            updateChecker.getVersion().thenAcceptAsync(version -> {
+                if(DCTools.getPluginVersion(getDescription().getVersion()) < DCTools.getPluginVersion(version.getVersionNumber())) {
+                    Logger.log(ChatColor.GREEN + "There is a new update " + version.getVersionNumber() + " available.");
+                    Logger.log(ChatColor.GREEN + "Download - https://modrinth.com/plugin/donatecase");
                 }
             });
         }

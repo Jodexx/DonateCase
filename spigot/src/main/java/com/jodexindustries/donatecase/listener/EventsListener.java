@@ -1,28 +1,31 @@
 package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
-import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
-import com.jodexindustries.donatecase.tools.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -47,10 +50,10 @@ public class EventsListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onAdminJoined(PlayerJoinEvent event) {
         Player p = event.getPlayer();
-        if (instance.api.getConfig().getConfig().getBoolean("DonateCase.UpdateChecker")) {
-            if (p.hasPermission("donatecase.admin")) {
-                new UpdateChecker(Case.getInstance(), 106701).getVersion((version) -> {
-                    if (DCTools.getPluginVersion(Case.getInstance().getDescription().getVersion()) < DCTools.getPluginVersion(version)) {
+        if (p.hasPermission("donatecase.admin")) {
+            if (instance.api.getConfig().getConfig().getBoolean("DonateCase.UpdateChecker")) {
+                instance.updateChecker.getVersion().thenAcceptAsync(version -> {
+                    if(DCTools.getPluginVersion(instance.getDescription().getVersion()) < DCTools.getPluginVersion(version.getVersionNumber())) {
                         instance.api.getTools().msg(p, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("new-update"), "%version:" + version));
                     }
                 });
@@ -64,7 +67,7 @@ public class EventsListener implements Listener {
         if (instance.api.getGUIManager().getPlayersGUI().containsKey(uuid)) {
             e.setCancelled(true);
 
-            CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui =instance.api.getGUIManager().getPlayersGUI().get(uuid);
+            CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui = instance.api.getGUIManager().getPlayersGUI().get(uuid);
             CaseDataBukkit caseData = gui.getCaseData();
             String itemType = caseData.getGui().getItemTypeBySlot(e.getRawSlot());
             CaseGuiClickEvent caseGuiClickEvent = new CaseGuiClickEvent(e.getView(), e.getSlotType(),
