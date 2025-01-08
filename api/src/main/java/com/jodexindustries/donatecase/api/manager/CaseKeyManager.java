@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
-import com.jodexindustries.donatecase.api.caching.entry.InfoEntry;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 
 import java.util.Map;
