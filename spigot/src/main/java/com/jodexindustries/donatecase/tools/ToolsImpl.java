@@ -23,16 +23,16 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class ToolsImpl implements DCToolsBukkit {
-    
+
     private final DonateCase instance;
-    
+
     public ToolsImpl(DonateCase instance) {
         this.instance = instance;
     }
 
     @Override
     public ArmorStandCreator createArmorStand(Location location) {
-        if(instance.usePackets) {
+        if (instance.usePackets) {
             return new PacketArmorStandCreator(location);
         } else {
             return new BukkitArmorStandCreator(location);
@@ -41,7 +41,7 @@ public class ToolsImpl implements DCToolsBukkit {
 
     @Override
     public boolean isValidPlayerName(String player) {
-        if(instance.api.getConfig().getConfig().getBoolean("DonateCase.CheckPlayerName")) {
+        if (instance.api.getConfig().getConfig().getBoolean("DonateCase.CheckPlayerName")) {
             return Arrays.stream(Bukkit.getOfflinePlayers())
                     .map(OfflinePlayer::getName)
                     .anyMatch(name -> name != null && name.equals(player.trim()));
@@ -80,20 +80,19 @@ public class ToolsImpl implements DCToolsBukkit {
     public ItemStack loadCaseItem(String id) {
         ItemStack itemStack = null;
 
-        if(id != null && Material.getMaterial(id) == null) {
+        if (id != null && Material.getMaterial(id) == null) {
             String temp = instance.api.getMaterialManager().getByStart(id);
-
 
             if (temp != null) {
                 CaseMaterial<ItemStack> caseMaterial = instance.api.getMaterialManager().getRegisteredMaterial(temp);
                 if (caseMaterial != null) {
                     String context = id.replace(temp, "").replaceFirst(":", "").trim();
-                    itemStack = caseMaterial.getMaterialHandler().handle(context);
+                    itemStack = caseMaterial.handle(context);
                 }
             }
         }
 
-        if(itemStack == null) itemStack = DCToolsBukkit.createItem(id);
+        if (itemStack == null) itemStack = DCToolsBukkit.createItem(id);
 
         return itemStack;
     }
@@ -102,7 +101,7 @@ public class ToolsImpl implements DCToolsBukkit {
     public void launchFirework(Location location) {
         Random r = new Random();
         World world = location.getWorld();
-        if(world == null) return;
+        if (world == null) return;
 
         Firework firework = world.spawn(location.subtract(new Vector(0.0, 0.5, 0.0)), Firework.class);
         FireworkMeta meta = firework.getFireworkMeta();
@@ -112,7 +111,7 @@ public class ToolsImpl implements DCToolsBukkit {
         firework.setMetadata("case", new FixedMetadataValue(Case.getInstance(), "case"));
         firework.detonate();
     }
-    
+
     @Override
     public void msg(CommandSender s, String msg) {
         if (s != null) {

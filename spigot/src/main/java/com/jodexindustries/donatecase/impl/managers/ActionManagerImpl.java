@@ -90,7 +90,7 @@ public class ActionManagerImpl implements ActionManager<Player> {
         CaseAction<Player> caseAction = instance.api.getActionManager().getRegisteredAction(temp);
         if(caseAction == null) return;
 
-        caseAction.getExecutor().execute(player.getPlayer(), context, cooldown);
+        caseAction.execute(player.getPlayer(), context, cooldown);
     }
 
     @Override
