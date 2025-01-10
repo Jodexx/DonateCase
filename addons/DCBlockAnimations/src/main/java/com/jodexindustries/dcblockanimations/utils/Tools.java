@@ -3,8 +3,8 @@ package com.jodexindustries.dcblockanimations.utils;
 import com.jodexindustries.dcblockanimations.bootstrap.Main;
 import com.jodexindustries.dcblockanimations.config.Config;
 import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
+import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
 import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
-import com.jodexindustries.donatecase.api.events.OpenCaseEvent;
 import org.bukkit.block.Block;
 import org.bukkit.block.Lidded;
 import org.bukkit.event.EventHandler;
@@ -39,7 +39,7 @@ public class Tools implements Listener {
     }
 
     @EventHandler
-    public void onCaseOpen(OpenCaseEvent e) {
+    public void onCaseOpen(AnimationStartEvent e) {
         if(main.getDCAPI().getAnimationManager().getActiveCasesByBlock().containsKey(e.getBlock())) return;
 
         String caseType = e.getCaseData().getCaseType();
