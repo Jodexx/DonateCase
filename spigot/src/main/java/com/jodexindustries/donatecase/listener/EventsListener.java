@@ -1,7 +1,9 @@
 package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
@@ -108,20 +110,24 @@ public class EventsListener implements Listener {
             Location blockLocation = block.getLocation();
             String caseType = Case.getCaseTypeByLocation(blockLocation);
             if (caseType == null) return;
+
             e.setCancelled(true);
-            CaseInteractEvent event = new CaseInteractEvent(p, block, caseType, e.getAction());
+
+            CaseDataBukkit caseData = instance.api.getCaseManager().getCase(caseType);
+            if (caseData == null) {
+                instance.api.getTools().msg(p, "&cSomething wrong! Contact with server administrator!");
+                Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
+                return;
+            }
+
+            ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = instance.api.getAnimationManager().getActiveCaseByBlock(block);
+
+            CaseInteractEvent event = new CaseInteractEvent(p, block, caseData, e.getAction(), activeCase);
             Bukkit.getServer().getPluginManager().callEvent(event);
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (!event.isCancelled()) {
-                    if (instance.api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
+                    if (event.isLocked()) {
                         instance.api.getTools().msg(p, instance.api.getConfig().getLang().getString("case-opens"));
-                        return;
-                    }
-
-                    CaseDataBukkit caseData = instance.api.getCaseManager().getCase(caseType);
-                    if (caseData == null) {
-                        instance.api.getTools().msg(p, "&cSomething wrong! Contact with server administrator!");
-                        Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
                         return;
                     }
 

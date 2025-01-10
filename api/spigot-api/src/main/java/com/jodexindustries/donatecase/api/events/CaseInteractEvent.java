@@ -1,5 +1,9 @@
 package com.jodexindustries.donatecase.api.events;
 
+import com.jodexindustries.donatecase.api.data.ActiveCase;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -7,6 +11,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Called when the player interacts with the case block on the mouse's right button
@@ -18,23 +23,27 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
      */
     protected boolean cancel;
     private final Block block;
-    private final String caseType;
+    private final CaseDataBukkit caseData;
     private final Action action;
+    private final ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase;
 
     /**
      * Default constructor
      *
      * @param who      Player who interact
      * @param block    Block to interact
-     * @param caseType Case type
+     * @param caseData Case data
      * @param action   Interact action
      */
-    public CaseInteractEvent(@NotNull final Player who, @NotNull final Block block, @NotNull final String caseType, @NotNull final Action action) {
+    public CaseInteractEvent(@NotNull final Player who, @NotNull final Block block,
+                             @NotNull final CaseDataBukkit caseData, @NotNull final Action action,
+                             @Nullable final ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase) {
         super(who);
         this.block = block;
-        this.caseType = caseType;
+        this.caseData = caseData;
         this.cancel = false;
         this.action = action;
+        this.activeCase = activeCase;
     }
 
     /**
@@ -58,13 +67,24 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
+     * Gets case data
+     * @return case data
+     * @since 2.0.2.5
+     */
+    public CaseDataBukkit getCaseData() {
+        return caseData;
+    }
+
+    /**
      * Get case type
      *
      * @return case type
+     * @deprecated Use instead {@link #getCaseData()}
      */
     @NotNull
+    @Deprecated
     public String getCaseType() {
-        return caseType;
+        return caseData.getCaseType();
     }
 
     @NotNull
@@ -92,4 +112,22 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
         this.cancel = cancel;
     }
 
+    /**
+     * Gets active case
+     * @return might be null, if not active
+     * @since 2.0.2.5
+     */
+    @Nullable
+    public ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> getActiveCase() {
+        return activeCase;
+    }
+
+    /**
+     * Is case locked
+     * @since 2.0.2.5
+     * @return true if case locked
+     */
+    public boolean isLocked() {
+        return activeCase != null && activeCase.isLocked();
+    }
 }

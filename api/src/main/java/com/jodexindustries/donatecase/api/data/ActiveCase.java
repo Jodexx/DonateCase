@@ -14,6 +14,7 @@ public class ActiveCase<B, P, I> {
     private final P player;
     private final I winItem;
     private final String caseType;
+    private boolean isLocked;
 
     private boolean keyRemoved;
 
@@ -75,5 +76,13 @@ public class ActiveCase<B, P, I> {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.isLocked = locked;
     }
 }

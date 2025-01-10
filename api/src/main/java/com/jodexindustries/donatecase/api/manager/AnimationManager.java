@@ -176,4 +176,28 @@ public interface AnimationManager<A, M, P, L, B, C> {
      * @return A map where keys are blocks and values are UUIDs of the active cases.
      */
     Map<B, UUID> getActiveCasesByBlock();
+
+    /**
+     * Gets active case by block
+     * @since 2.0.2.5
+     * @param block Block to check
+     * @return active case by block
+     */
+    default ActiveCase<B, P, CaseDataItem<M>> getActiveCaseByBlock(B block) {
+        UUID uuid = getActiveCasesByBlock().get(block);
+        if(uuid == null) return null;
+
+        return getActiveCases().get(uuid);
+    }
+
+    /**
+     * Check if block locked
+     * @since 2.0.2.5
+     * @param block Block to check
+     * @return true if block is locked by DonateCase
+     */
+    default boolean isLocked(B block) {
+        ActiveCase<B, P, CaseDataItem<M>> activeCase = getActiveCaseByBlock(block);
+        return activeCase != null && activeCase.isLocked();
+    }
 }

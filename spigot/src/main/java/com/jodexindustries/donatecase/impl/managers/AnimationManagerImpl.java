@@ -135,13 +135,12 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
 
         UUID uuid = UUID.randomUUID();
         ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = new ActiveCase<>(uuid, block, player, winItem, caseData.getCaseType());
-
+        activeCase.setLocked(caseAnimation.isRequireBlock());
 
         CompletableFuture<UUID> animationCompletion = new CompletableFuture<>();
         Location caseLocation = location;
 
         if(caseAnimation.isRequireBlock()) {
-            activeCasesByBlock.put(block, uuid);
             if (instance.hologramManager != null && caseData.getHologram().isEnabled()) {
                 instance.hologramManager.removeHologram(block);
             }
@@ -186,6 +185,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         }
 
         activeCases.put(uuid, activeCase);
+        activeCasesByBlock.put(block, uuid);
 
         // AnimationStart event
         AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, block, winItem, uuid);
@@ -266,9 +266,9 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
 
         Block block = activeCase.getBlock();
         activeCases.remove(activeCase.getUuid());
+        activeCasesByBlock.remove(block);
 
         if(caseAnimation.isRequireBlock()) {
-            activeCasesByBlock.remove(block);
             if (instance.hologramManager != null && caseData.getHologram().isEnabled()) {
                 instance.hologramManager.createHologram(block, caseData);
             }
@@ -310,10 +310,15 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
             return false;
         }
 
-        if (animation.isRequireBlock() && activeCasesByBlock.containsKey(block)) {
-            addon.getLogger().log(Level.WARNING, "Player " + player.getName() +
-                    " trying to start animation while another animation is running in case: " + caseData.getCaseType());
-            return false;
+        UUID uuid = activeCasesByBlock.get(block);
+
+        if(uuid != null) {
+            ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = activeCases.get(uuid);
+            if (activeCase != null && activeCase.isLocked()) {
+                addon.getLogger().log(Level.WARNING, "Player " + player.getName() +
+                        " trying to start animation while another animation is running in case: " + caseData.getCaseType());
+                return false;
+            }
         }
 
         if (animation.isRequireSettings() && settings == null) {

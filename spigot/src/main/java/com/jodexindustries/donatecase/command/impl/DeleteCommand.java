@@ -38,7 +38,7 @@ public class DeleteCommand extends SubCommand<CommandSender> {
                     return;
                 }
 
-                if(api.getAnimationManager().getActiveCasesByBlock().containsKey(block)) {
+                if(api.getAnimationManager().isLocked(block)) {
                     api.getTools().msg(sender, api.getConfig().getLang().getString("case-opens"));
                     return;
                 }
@@ -52,7 +52,7 @@ public class DeleteCommand extends SubCommand<CommandSender> {
             Location location = Case.getCaseLocationByCustomName(name);
             if (location != null) {
                 if(location.getWorld() != null) {
-                    if(api.getAnimationManager().getActiveCasesByBlock().containsKey(location.getBlock())) {
+                    if(api.getAnimationManager().isLocked(location.getBlock())) {
                         api.getTools().msg(sender, api.getConfig().getLang().getString("case-opens"));
                         return;
                     }
