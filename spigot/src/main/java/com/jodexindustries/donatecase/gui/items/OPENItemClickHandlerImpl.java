@@ -7,6 +7,7 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
+import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.events.OpenCaseEvent;
 import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
@@ -65,7 +66,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
         PreOpenCaseEvent event = new PreOpenCaseEvent(player, caseData, location.getBlock());
         Bukkit.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            if (checkKeys(event)) {
+            if (event.isIgnoreKeys() || checkKeys(caseData.getCaseType(), player.getName())) {
                 OpenCaseEvent openEvent = new OpenCaseEvent(player, caseData, location.getBlock());
                 Bukkit.getServer().getPluginManager().callEvent(openEvent);
 
@@ -82,7 +83,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
                 ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = Case.getInstance().api.getAnimationManager().getActiveCases().get(uuid);
                 if(!ignoreKeys) {
                     Case.getInstance().api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1).thenAcceptAsync(status -> {
-                        activeCase.setKeyRemoved(true);
+                        if(status == DatabaseStatus.COMPLETE) activeCase.setKeyRemoved(true);
                     });
                 } else {
                     activeCase.setKeyRemoved(true);
@@ -91,8 +92,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
         });
     }
 
-    private static boolean checkKeys(PreOpenCaseEvent event) {
-        if (event.isIgnoreKeys()) return true;
-        return Case.getInstance().api.getCaseKeyManager().getKeys(event.getCaseType(), event.getPlayer().getName()) >= 1;
+    private static boolean checkKeys(String caseType, String player) {
+        return Case.getInstance().api.getCaseKeyManager().getKeys(caseType, player) >= 1;
     }
 }
