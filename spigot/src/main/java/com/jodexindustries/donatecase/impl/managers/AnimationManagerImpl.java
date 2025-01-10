@@ -51,7 +51,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
     /**
      * Active cases, but by location
      */
-    private final static Map<Block, UUID> activeCasesByBlock = new HashMap<>();
+    private final static Map<Block, List<UUID>> activeCasesByBlock = new HashMap<>();
 
     private final DCAPIBukkit api;
     private final Addon addon;
@@ -185,7 +185,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
         }
 
         activeCases.put(uuid, activeCase);
-        activeCasesByBlock.put(block, uuid);
+        activeCasesByBlock.computeIfAbsent(block, k -> new ArrayList<>()).add(uuid);
 
         // AnimationStart event
         AnimationStartEvent startEvent = new AnimationStartEvent(player, animation, caseData, block, winItem, uuid);
@@ -299,7 +299,7 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
     }
 
     @Override
-    public Map<Block, UUID> getActiveCasesByBlock() {
+    public Map<Block, List<UUID>> getActiveCasesByBlock() {
         return activeCasesByBlock;
     }
 
@@ -310,16 +310,11 @@ public class AnimationManagerImpl implements AnimationManager<JavaAnimationBukki
             return false;
         }
 
-        UUID uuid = activeCasesByBlock.get(block);
-
-        if(uuid != null) {
-            ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = activeCases.get(uuid);
-            if (activeCase != null && activeCase.isLocked()) {
+            if (isLocked(block)) {
                 addon.getLogger().log(Level.WARNING, "Player " + player.getName() +
                         " trying to start animation while another animation is running in case: " + caseData.getCaseType());
                 return false;
             }
-        }
 
         if (animation.isRequireSettings() && settings == null) {
             addon.getLogger().log(Level.WARNING, "Animation " + animation + " requires settings for starting!");
