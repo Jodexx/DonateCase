@@ -1,9 +1,7 @@
 package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
@@ -120,9 +118,7 @@ public class EventsListener implements Listener {
                 return;
             }
 
-            ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = instance.api.getAnimationManager().getActiveCaseByBlock(block);
-
-            CaseInteractEvent event = new CaseInteractEvent(p, block, caseData, e.getAction(), activeCase);
+            CaseInteractEvent event = new CaseInteractEvent(p, block, caseData, e.getAction(), instance.api.getAnimationManager().getActiveCasesByBlock(block));
             Bukkit.getServer().getPluginManager().callEvent(event);
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (!event.isCancelled()) {

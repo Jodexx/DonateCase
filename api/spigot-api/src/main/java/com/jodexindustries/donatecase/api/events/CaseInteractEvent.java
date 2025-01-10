@@ -13,6 +13,8 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * Called when the player interacts with the case block on the mouse's right button
  */
@@ -25,7 +27,7 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
     private final Block block;
     private final CaseDataBukkit caseData;
     private final Action action;
-    private final ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase;
+    private final List<ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>>> activeCases;
 
     /**
      * Default constructor
@@ -37,13 +39,13 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
      */
     public CaseInteractEvent(@NotNull final Player who, @NotNull final Block block,
                              @NotNull final CaseDataBukkit caseData, @NotNull final Action action,
-                             @Nullable final ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase) {
+                             @Nullable final List<ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>>> activeCases) {
         super(who);
         this.block = block;
         this.caseData = caseData;
         this.cancel = false;
         this.action = action;
-        this.activeCase = activeCase;
+        this.activeCases = activeCases;
     }
 
     /**
@@ -113,13 +115,13 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Gets active case
-     * @return might be null, if not active
+     * Gets active cases
+     * @return list of the active cases by this block
      * @since 2.0.2.5
      */
     @Nullable
-    public ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> getActiveCase() {
-        return activeCase;
+    public List<ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>>> getActiveCases() {
+        return activeCases;
     }
 
     /**
@@ -128,6 +130,6 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
      * @return true if case locked
      */
     public boolean isLocked() {
-        return activeCase != null && activeCase.isLocked();
+        return activeCases != null && activeCases.stream().anyMatch(ActiveCase::isLocked);
     }
 }
