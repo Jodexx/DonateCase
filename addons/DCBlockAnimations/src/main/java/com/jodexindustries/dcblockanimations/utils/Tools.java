@@ -40,7 +40,9 @@ public class Tools implements Listener {
 
     @EventHandler
     public void onCaseOpen(OpenCaseEvent e) {
-        String caseType = e.getCaseType();
+        if(main.getDCAPI().getAnimationManager().getActiveCasesByBlock().containsKey(e.getBlock())) return;
+
+        String caseType = e.getCaseData().getCaseType();
         if (!config.getConfig().getStringList("enabled-types").contains(caseType)) return;
 
         openBlock(e.getBlock());

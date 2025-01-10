@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.jodexindustries"
-version = "1.0.2"
+version = "1.0.3"
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
