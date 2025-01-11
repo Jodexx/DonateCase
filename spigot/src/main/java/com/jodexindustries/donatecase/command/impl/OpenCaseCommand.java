@@ -40,21 +40,21 @@ public class OpenCaseCommand extends SubCommand<CommandSender> {
                     CaseAnimation<JavaAnimationBukkit> animation = api.getAnimationManager().getRegisteredAnimation(data.getAnimation());
                     if (animation == null) return;
 
-                    if (animation.isRequireBlock()) {
-                        api.getCaseKeyManager().getKeysAsync(caseName, playerName).thenAccept((keys) -> {
-                            if (keys >= 1) {
-                                api.getCaseKeyManager().removeKeys(caseName, playerName, 1).thenAccept(status -> {
-                                    if (status == DatabaseStatus.COMPLETE) {
+                    api.getCaseKeyManager().getKeysAsync(caseName, playerName).thenAccept((keys) -> {
+                        if (keys >= 1) {
+                            api.getCaseKeyManager().removeKeys(caseName, playerName, 1).thenAccept(status -> {
+                                if (status == DatabaseStatus.COMPLETE) {
+                                    if (animation.isRequireBlock()) {
                                         api.getAnimationManager().animationPreEnd(data, player, player.getLocation(), data.getRandomItem());
+                                    } else {
+                                        api.getAnimationManager().startAnimation(player, player.getLocation(), data);
                                     }
-                                });
-                            } else {
-                                api.getTools().msg(player, api.getConfig().getLang().getString("no-keys"));
-                            }
-                        });
-                    } else {
-                        api.getAnimationManager().startAnimation(player, player.getLocation(), data);
-                    }
+                                }
+                            });
+                        } else {
+                            api.getTools().msg(player, api.getConfig().getLang().getString("no-keys"));
+                        }
+                    });
 
                 } else {
                     api.getTools().msg(sender, DCToolsBukkit.rt(api.getConfig().getLang().getString("case-does-not-exist"), "%case:" + caseName));
@@ -73,5 +73,4 @@ public class OpenCaseCommand extends SubCommand<CommandSender> {
         }
         return list;
     }
-
 }
