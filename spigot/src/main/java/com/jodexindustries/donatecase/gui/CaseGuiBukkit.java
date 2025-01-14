@@ -50,9 +50,11 @@ public class CaseGuiBukkit implements CaseGui<Inventory, Location, Player, CaseD
 
         String title = caseData.getCaseTitle();
         inventory = Bukkit.createInventory(null, tempGUI.getSize(), DCToolsBukkit.rc(setPlaceholders(title)));
-        load();
-        player.openInventory(inventory);
-        startUpdateTask();
+
+        load().thenAccept((unused) -> {
+            Bukkit.getScheduler().runTask(Case.getInstance(), () -> player.openInventory(inventory));
+            startUpdateTask();
+        });
     }
 
     /**
@@ -62,9 +64,7 @@ public class CaseGuiBukkit implements CaseGui<Inventory, Location, Player, CaseD
      */
     @Override
     public CompletableFuture<Void> load() {
-        CompletableFuture<Void> future = new CompletableFuture<>();
-
-        Bukkit.getScheduler().runTaskAsynchronously(Case.getInstance(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             globalHistoryData = DCTools.sortHistoryDataByDate(instance.database.getHistoryDataCache());
             for (GUI.Item<CaseDataMaterialBukkit> item : tempGUI.getItems().values()) {
                 try {
@@ -74,9 +74,8 @@ public class CaseGuiBukkit implements CaseGui<Inventory, Location, Player, CaseD
                             "Error occurred while loading item " + item.getItemName() + ":", e);
                 }
             }
-            future.complete(null);
+            return null;
         });
-        return future;
     }
 
     private void updateMeta(GUI.Item<CaseDataMaterialBukkit> temp) {
