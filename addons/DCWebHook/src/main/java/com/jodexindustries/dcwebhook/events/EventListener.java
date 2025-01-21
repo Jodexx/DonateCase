@@ -31,7 +31,7 @@ public class EventListener implements Listener {
         String animation = e.getAnimation();
         String caseType = e.getCaseData().getCaseType();
         String winGroup = e.getWinItem().getGroup();
-        String caseTitle = ChatColor.stripColor(e.getCaseData().getCaseTitle());
+        String caseTitle = ChatColor.stripColor(e.getCaseData().getCaseGui().getTitle());
         Bukkit.getScheduler().runTaskAsynchronously(t.getMain().getDCAPI().getDonateCase(), () -> {
             String webhook = t.getConfig().getConfig().getString("Webhook");
             if (webhook != null && !webhook.isEmpty()) {

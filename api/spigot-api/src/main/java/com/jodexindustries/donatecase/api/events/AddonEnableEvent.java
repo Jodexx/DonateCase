@@ -13,18 +13,15 @@ import org.jetbrains.annotations.NotNull;
 public class AddonEnableEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private final InternalAddon addon;
-    private final Addon caused;
     private final PowerReason reason;
 
     /**
      * Default constructor
      *
      * @param addon  Internal DonateCase addon
-     * @param caused Which addon caused the enabling
      */
-    public AddonEnableEvent(InternalAddon addon, Addon caused) {
+    public AddonEnableEvent(InternalAddon addon) {
         this.addon = addon;
-        this.caused = caused;
         this.reason = PowerReason.DONATE_CASE;
     }
 
@@ -32,12 +29,10 @@ public class AddonEnableEvent extends Event {
      * Constructor with power reason
      *
      * @param addon  Internal DonateCase addon
-     * @param caused Which addon caused the enabling
      * @param reason Power reason
      */
-    public AddonEnableEvent(InternalAddon addon, Addon caused, PowerReason reason) {
+    public AddonEnableEvent(InternalAddon addon, PowerReason reason) {
         this.addon = addon;
-        this.caused = caused;
         this.reason = reason;
     }
 
@@ -72,14 +67,5 @@ public class AddonEnableEvent extends Event {
      */
     public PowerReason getReason() {
         return reason;
-    }
-
-    /**
-     * Get the addon that caused the enabling
-     *
-     * @return Caused addon
-     */
-    public Addon getCaused() {
-        return caused;
     }
 }

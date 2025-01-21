@@ -2,10 +2,10 @@ package com.jodexindustries.donatecase.impl.holograms;
 
 import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Holograms.CMIHologram;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataHologram;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.manager.HologramManager;
-import org.bukkit.block.Block;
+import com.jodexindustries.donatecase.tools.BukkitUtils;
 import net.Zrips.CMILib.Container.CMILocation;
 
 import java.util.HashMap;
@@ -14,19 +14,19 @@ import java.util.UUID;
 /**
  * Class for CMI Holograms implementation
  */
-public class CMIHologramsImpl extends HologramManager {
+public class CMIHologramsImpl implements HologramManager {
 
-    private final HashMap<Block, CMIHologram> holograms = new HashMap<>();
+    private final HashMap<CaseLocation, CMIHologram> holograms = new HashMap<>();
 
     @Override
-    public void createHologram(Block block, CaseDataBukkit caseData) {
-        CaseDataHologram caseHologram = caseData.getHologram();
+    public void createHologram(CaseLocation block, CaseData caseData) {
+        CaseData.CaseDataHologram caseHologram = caseData.getHologram();
 
         if (!caseHologram.isEnabled()) return;
 
         double height = caseHologram.getHeight();
 
-        CMILocation location = new CMILocation(block.getLocation().add(0.5, height, 0.5));
+        CMILocation location = new CMILocation(BukkitUtils.toBukkit(block.add(0.5, height, 0.5)));
 
         CMIHologram hologram = new CMIHologram("DonateCase-" + UUID.randomUUID(), location);
 
@@ -42,7 +42,7 @@ public class CMIHologramsImpl extends HologramManager {
     }
 
     @Override
-    public void removeHologram(Block block) {
+    public void removeHologram(CaseLocation block) {
         if (!this.holograms.containsKey(block)) return;
 
         CMIHologram hologram = this.holograms.get(block);

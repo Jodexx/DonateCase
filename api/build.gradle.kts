@@ -9,9 +9,11 @@ version = properties["api"].toString()
 
 
 dependencies {
-    compileOnly("org.jetbrains:annotations:24.1.0")
-    compileOnly("org.yaml:snakeyaml:1.27")
-    compileOnly("com.google.guava:guava:33.3.1-jre")
+    api("org.jetbrains:annotations:24.1.0")
+    api("com.google.guava:guava:33.3.1-jre")
+    api("org.projectlombok:lombok:1.18.36")
+    api("org.spongepowered:configurate-yaml:4.1.2")
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
 }
 
 java {

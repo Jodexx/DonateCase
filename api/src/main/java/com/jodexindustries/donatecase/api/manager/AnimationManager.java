@@ -3,7 +3,10 @@ package com.jodexindustries.donatecase.api.manager;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,33 +20,16 @@ import java.util.stream.Collectors;
 /**
  * Interface to manage animations within the DonateCase API.
  * Provides methods for creating, registering, managing custom animations, and handling active cases.
- *
- * @param <A> The type of JavaAnimation associated with the manager.
- * @param <M> The type of CaseDataMaterial used in the animations.
- * @param <L> The type representing the location in the game world.
- * @param <B> The type representing a block in the game world.
- * @param <C> The type representing case data for animations.
- * @param <P> The type of Player interacting with animations.
  */
-public interface AnimationManager<A, M, P, L, B, C> {
-
-    /**
-     * Creates a builder for defining and constructing a new custom animation.
-     *
-     * @param name The name of the animation to be created.
-     * @return A {@link CaseAnimation.Builder} instance for building the animation.
-     */
-    @NotNull
-    CaseAnimation.Builder<A> builder(@NotNull String name);
+public interface AnimationManager {
 
     /**
      * Registers a custom animation to the system.
      *
      * @param animation The {@link CaseAnimation} object to register.
      * @return True if the registration was successful, false otherwise.
-     * @see #builder(String)
      */
-    boolean registerAnimation(CaseAnimation<A> animation);
+    boolean registerAnimation(CaseAnimation animation);
 
     /**
      * Unregisters a specific animation from the system by its name.
@@ -53,7 +39,7 @@ public interface AnimationManager<A, M, P, L, B, C> {
     void unregisterAnimation(@NotNull String name);
 
     default void unregisterAnimations(Addon addon) {
-        List<CaseAnimation<A>> list = new ArrayList<>(getRegisteredAnimations(addon));
+        List<CaseAnimation> list = new ArrayList<>(getRegisteredAnimations(addon));
         list.stream().map(CaseAnimation::getName).forEach(this::unregisterAnimation);
     }
 
@@ -70,7 +56,7 @@ public interface AnimationManager<A, M, P, L, B, C> {
      * @param caseData The case data associated with the animation.
      * @return A {@link CompletableFuture} that completes when the animation starts.
      */
-    CompletableFuture<UUID> startAnimation(@NotNull P player, @NotNull L location, @NotNull C caseData);
+    CompletableFuture<UUID> startAnimation(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData);
 
     /**
      * Starts an animation at a specified location after a delay.
@@ -81,7 +67,7 @@ public interface AnimationManager<A, M, P, L, B, C> {
      * @param delay    The delay in ticks before starting the animation.
      * @return A {@link CompletableFuture} that completes when the animation starts.
      */
-    CompletableFuture<UUID> startAnimation(@NotNull P player, @NotNull L location, @NotNull C caseData, int delay);
+    CompletableFuture<UUID> startAnimation(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay);
 
     /**
      * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
@@ -94,21 +80,10 @@ public interface AnimationManager<A, M, P, L, B, C> {
      *
      * @param caseData The case data associated with the animation.
      * @param player   The player interacting with the animation (can be offline).
-     * @param uuid     The unique ID of the active case.
-     * @param item     The item data associated with the animation's result.
-     */
-    @Deprecated
-    void animationPreEnd(C caseData, P player, UUID uuid, CaseDataItem<M> item);
-
-    /**
-     * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
-     *
-     * @param caseData The case data associated with the animation.
-     * @param player   The player interacting with the animation (can be offline).
      * @param location The location of the active case block.
      * @param item     The item data associated with the animation's result.
      */
-    void animationPreEnd(C caseData, P player, L location, CaseDataItem<M> item);
+    void animationPreEnd(CaseData caseData, DCPlayer player, CaseLocation location, CaseDataItem item);
 
     /**
      * Completes the animation process and performs cleanup tasks.
@@ -116,17 +91,6 @@ public interface AnimationManager<A, M, P, L, B, C> {
      * @param uuid The unique ID of the active case.
      */
     void animationEnd(UUID uuid);
-
-    /**
-     * Completes the animation process and performs cleanup tasks.
-     *
-     * @param caseData The case data associated with the animation.
-     * @param player   The player interacting with the animation (can be offline).
-     * @param uuid     The unique ID of the active case.
-     * @param item     The item data associated with the animation's result.
-     */
-    @Deprecated
-    void animationEnd(C caseData, P player, UUID uuid, CaseDataItem<M> item);
 
     /**
      * Checks whether an animation with the specified name is registered.
@@ -143,15 +107,14 @@ public interface AnimationManager<A, M, P, L, B, C> {
      * @return The {@link CaseAnimation} instance if registered, or null if not found.
      */
     @Nullable
-    CaseAnimation<A> getRegisteredAnimation(String animation);
+    CaseAnimation getRegisteredAnimation(String animation);
 
     /**
      * Retrieves all registered animations by addon.
      * @param addon The addon instance
      * @return List of animations
-     * @since 2.0.2.3
      */
-    default List<CaseAnimation<A>> getRegisteredAnimations(Addon addon) {
+    default List<CaseAnimation> getRegisteredAnimations(Addon addon) {
         return getRegisteredAnimations().values().stream().filter(animation ->
                 animation.getAddon().equals(addon)).collect(Collectors.toList());
     }
@@ -161,30 +124,29 @@ public interface AnimationManager<A, M, P, L, B, C> {
      *
      * @return A map where keys are animation names and values are {@link CaseAnimation} instances.
      */
-    Map<String, CaseAnimation<A>> getRegisteredAnimations();
+    Map<String, CaseAnimation> getRegisteredAnimations();
 
     /**
      * Retrieves a map of all active cases currently running in the system.
      *
      * @return A map where keys are UUIDs and values are {@link ActiveCase} instances associated with blocks.
      */
-    Map<UUID, ActiveCase<B, P, CaseDataItem<M>>> getActiveCases();
+    Map<UUID, ActiveCase> getActiveCases();
 
     /**
      * Retrieves a map of active cases by their associated blocks.
      *
      * @return A map where keys are blocks and values are UUIDs of the active cases.
      */
-    Map<B, List<UUID>> getActiveCasesByBlock();
+    Map<Object, List<UUID>> getActiveCasesByBlock();
 
     /**
      * Gets active case by block
-     * @since 2.0.2.5
      * @param block Block to check
      * @return active case by block
      */
-    default List<ActiveCase<B, P, CaseDataItem<M>>> getActiveCasesByBlock(B block) {
-        List<ActiveCase<B, P, CaseDataItem<M>>> activeCases = new ArrayList<>();
+    default List<ActiveCase> getActiveCasesByBlock(Object block) {
+        List<ActiveCase> activeCases = new ArrayList<>();
 
         List<UUID> uuids = getActiveCasesByBlock().get(block);
         if(uuids == null) return activeCases;
@@ -196,11 +158,10 @@ public interface AnimationManager<A, M, P, L, B, C> {
 
     /**
      * Check if block locked
-     * @since 2.0.2.5
      * @param block Block to check
      * @return true if block is locked by DonateCase
      */
-    default boolean isLocked(B block) {
+    default boolean isLocked(Object block) {
         return getActiveCasesByBlock(block).stream().anyMatch(ActiveCase::isLocked);
     }
 }

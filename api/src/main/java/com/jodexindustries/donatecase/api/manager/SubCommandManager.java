@@ -14,9 +14,8 @@ import java.util.stream.Collectors;
  * Interface for managing subcommands, providing methods to register, unregister, and retrieve
  * subcommands as well as handle tab completions.
  *
- * @param <S> the sender type, representing the source of the command (e.g., player)
  */
-public interface SubCommandManager<S> {
+public interface SubCommandManager {
 
     /**
      * Provides a builder for creating a new subcommand with the specified name.
@@ -26,16 +25,16 @@ public interface SubCommandManager<S> {
      * @see #registerSubCommand(SubCommand)
      */
     @NotNull
-    SubCommand.Builder<S> builder(@NotNull String name);
+    SubCommand.Builder builder(@NotNull String name, @NotNull Addon addon);
 
     /**
      * Registers a subcommand to the manager.
      *
      * @param subCommand the SubCommand object to register
      * @return true if the registration was successful, false otherwise
-     * @see #builder(String)
+     * @see #builder(String, Addon)
      */
-    boolean registerSubCommand(SubCommand<S> subCommand);
+    boolean registerSubCommand(SubCommand subCommand);
 
     /**
      * Unregisters a subcommand from the manager by its name.
@@ -45,7 +44,7 @@ public interface SubCommandManager<S> {
     void unregisterSubCommand(String commandName);
 
     default void unregisterSubCommands(Addon addon) {
-        List<SubCommand<S>> list = new ArrayList<>(getRegisteredSubCommands(addon));
+        List<SubCommand> list = new ArrayList<>(getRegisteredSubCommands(addon));
         list.stream().map(SubCommand::getName).forEach(this::unregisterSubCommand);
     }
 
@@ -55,15 +54,15 @@ public interface SubCommandManager<S> {
     void unregisterSubCommands();
 
     @Nullable
-    SubCommand<S> getRegisteredSubCommand(String commandName);
+    SubCommand getRegisteredSubCommand(String commandName);
 
-    default List<SubCommand<S>> getRegisteredSubCommands(Addon addon) {
+    default List<SubCommand> getRegisteredSubCommands(Addon addon) {
         return getRegisteredSubCommands().values().stream().filter(subCommand ->
                 subCommand.getAddon().equals(addon)).collect(Collectors.toList());
     }
 
     @NotNull
-    Map<String, SubCommand<S>> getRegisteredSubCommands();
+    Map<String, SubCommand> getRegisteredSubCommands();
 
     void registerDefaultSubCommands();
 }

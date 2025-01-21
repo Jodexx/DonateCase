@@ -1,6 +1,9 @@
 package com.jodexindustries.donatecase.api.data.subcommand;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.platform.DCCommandSender;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -8,17 +11,24 @@ import java.util.List;
 /**
  * Represents a subcommand with execution and tab-completion capabilities.
  *
- * @param <S> The type of the command sender.
  */
-public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabCompleter<S> {
+public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
+    @Getter
     private final Addon addon;
+    @Getter
     private final String name;
 
-    private SubCommandExecutor<S> executor;
-    private SubCommandTabCompleter<S> tabCompleter;
+    private SubCommandExecutor executor;
+    private SubCommandTabCompleter tabCompleter;
 
+    @Setter
+    @Getter
     private String description;
+    @Setter
+    @Getter
     private String permission;
+    @Setter
+    @Getter
     private String[] args;
 
     /**
@@ -32,84 +42,26 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
         this.name = name;
     }
 
-    /**
-     * Gets the name of the subcommand.
-     *
-     * @return The name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Gets the description of the subcommand.
-     *
-     * @return The description.
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Gets the arguments for the subcommand.
-     *
-     * @return The arguments.
-     */
-    public String[] getArgs() {
-        return args;
-    }
-
-    /**
-     * Gets the permission required to execute the subcommand.
-     *
-     * @return The permission.
-     */
-    public String getPermission() {
-        return permission;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-
-    public void setArgs(String[] args) {
-        this.args = args;
-    }
-
-    /**
-     * Gets the addon associated with this subcommand.
-     *
-     * @return The associated addon.
-     */
-    public Addon getAddon() {
-        return addon;
+    @Override
+    public boolean execute(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) {
+        return executor.execute(sender, label, args);
     }
 
     @Override
-    public void execute(@NotNull S sender, @NotNull String label, @NotNull String[] args) {
-        executor.execute(sender, label, args);
-    }
-
-    @Override
-    public List<String> getTabCompletions(@NotNull S sender, @NotNull String label, @NotNull String[] args) {
+    public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) {
         return tabCompleter.getTabCompletions(sender, label, args);
     }
 
     /**
      * Builder class for creating or modifying subcommands.
      *
-     * @param <S> The type of the command sender.
      */
-    public static class Builder<S> {
+    public static class Builder {
         private final Addon addon;
         private final String name;
 
-        private SubCommandExecutor<S> executor;
-        private SubCommandTabCompleter<S> tabCompleter;
+        private SubCommandExecutor executor;
+        private SubCommandTabCompleter tabCompleter;
         private String description;
         private String[] args;
         private String permission;
@@ -131,7 +83,7 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
          * @param executor The executor.
          * @return The builder instance.
          */
-        public Builder<S> executor(SubCommandExecutor<S> executor) {
+        public Builder executor(SubCommandExecutor executor) {
             this.executor = executor;
             return this;
         }
@@ -142,7 +94,7 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
          * @param tabCompleter The tab completer.
          * @return The builder instance.
          */
-        public Builder<S> tabCompleter(SubCommandTabCompleter<S> tabCompleter) {
+        public Builder tabCompleter(SubCommandTabCompleter tabCompleter) {
             this.tabCompleter = tabCompleter;
             return this;
         }
@@ -153,7 +105,7 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
          * @param description The description.
          * @return The builder instance.
          */
-        public Builder<S> description(String description) {
+        public Builder description(String description) {
             this.description = description;
             return this;
         }
@@ -164,7 +116,7 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
          * @param args The arguments.
          * @return The builder instance.
          */
-        public Builder<S> args(String[] args) {
+        public Builder args(String[] args) {
             this.args = args;
             return this;
         }
@@ -175,7 +127,7 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
          * @param permission The permission.
          * @return The builder instance.
          */
-        public Builder<S> permission(String permission) {
+        public Builder permission(String permission) {
             this.permission = permission;
             return this;
         }
@@ -185,8 +137,8 @@ public class SubCommand<S> implements SubCommandExecutor<S>, SubCommandTabComple
          *
          * @return The constructed subcommand.
          */
-        public SubCommand<S> build() {
-            SubCommand<S> subCommand = new SubCommand<>(name, addon);
+        public SubCommand build() {
+            SubCommand subCommand = new SubCommand(name, addon);
             subCommand.executor = executor;
             subCommand.tabCompleter = tabCompleter;
             subCommand.description = description;

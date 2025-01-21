@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.addon.internal;
 
-import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.platform.Platform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +22,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
     private File file;
     private InternalAddonClassLoader urlClassLoader;
     private InternalAddonDescription description;
-    private Addon donateCase;
+    private Platform platform;
 
     public InternalJavaAddon() {
         ClassLoader classLoader = this.getClass().getClassLoader();
@@ -33,12 +33,12 @@ public abstract class InternalJavaAddon implements InternalAddon {
         }
     }
 
-    void init(InternalAddonDescription description, File file, InternalAddonClassLoader loader, Addon donateCase) {
+    void init(InternalAddonDescription description, File file, InternalAddonClassLoader loader, Platform platform) {
         this.description = description;
         this.file = file;
         this.classLoader = this.getClass().getClassLoader();
         this.urlClassLoader = loader;
-        this.donateCase = donateCase;
+        this.platform = platform;
         this.internalAddonLogger = new InternalAddonLogger(this);
     }
 
@@ -78,10 +78,8 @@ public abstract class InternalJavaAddon implements InternalAddon {
 
     @Override
     public final @NotNull File getDataFolder() {
-        File data = new File(getDonateCase().getDataFolder(), "addons/" + getDescription().getName());
-        if (!data.exists()) {
-            data.mkdir();
-        }
+        File data = new File(getPlatform().getDataFolder(), "addons/" + getDescription().getName());
+        if (!data.exists()) data.mkdir();
         return data;
     }
 
@@ -170,7 +168,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
     }
 
     @Override
-    public final @NotNull Addon getDonateCase() {
-        return donateCase;
+    public final @NotNull Platform getPlatform() {
+        return platform;
     }
 }

@@ -1,22 +1,25 @@
 package com.jodexindustries.donatecase.impl.materials;
 
-import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
-import com.jodexindustries.donatecase.tools.Logger;
+import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class IAMaterialHandlerImpl implements MaterialHandler<ItemStack> {
+import java.util.logging.Level;
+
+public class IAMaterialHandlerImpl implements MaterialHandler {
 
     @Override
     public @NotNull ItemStack handle(@NotNull String context) {
         ItemStack item = new ItemStack(Material.STONE);
-
-        if (DonateCase.instance.itemsAdderSupport != null) {
-            item = DonateCase.instance.itemsAdderSupport.getItem(context);
-        } else {
-            Logger.log("&eYou're using an item from ItemsAdder, but it's not loaded on the server! Context: " + context);
+        try {
+            CustomStack stack = CustomStack.getInstance(context);
+            item = stack.getItemStack();
+        } catch (Exception e) {
+            DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING,
+                    "Could not find the item you were looking for by ItemsAdder support. Namespace: ", e);
         }
         return item;
     }

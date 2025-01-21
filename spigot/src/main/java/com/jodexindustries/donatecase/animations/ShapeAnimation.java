@@ -1,11 +1,8 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
@@ -15,26 +12,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public class ShapeAnimation extends JavaAnimationBukkit {
-
-    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, Player, Location, Block, CaseDataBukkit> manager) {
-        CaseAnimation<JavaAnimationBukkit> caseAnimation = manager.builder("SHAPE")
-                .animation(ShapeAnimation.class)
-                .description("Items flip through and a shape appears")
-                .requireSettings(true)
-                .requireBlock(true)
-                .build();
-
-        manager.registerAnimation(caseAnimation);
-    }
+public class ShapeAnimation extends JavaAnimation {
 
     @Override
     public void start() {
@@ -45,7 +29,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
         getLocation().add(x, y, z);
 
         final ArmorStandEulerAngle armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
-        final ArmorStandCreator as = getApi().getTools().createArmorStand(getLocation());
+        final ArmorStandCreator as = getApi().getPlatform().getTools().createArmorStand(getLocation());
 
         boolean small = getSettings().getBoolean("Shape.SmallArmorStand", true);
         as.setAngle(armorStandEulerAngle);
@@ -141,7 +125,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
                         as.setEquipment(itemSlot, item.getMaterial().getItemStack());
                     }
 
-                    String winGroupDisplayName = DCToolsBukkit.rc(getApi().getTools().getPAPI().setPlaceholders(getPlayer(),
+                    String winGroupDisplayName = DCToolsBukkit.rc(getApi().getPlatform().getTools().getPAPI().setPlaceholders(getPlayer(),
                             item.getMaterial().getDisplayName()));
                     if (item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty()) {
                         as.setCustomNameVisible(true);
@@ -158,7 +142,7 @@ public class ShapeAnimation extends JavaAnimationBukkit {
                 }
                 as.setCustomName(getWinItem().getMaterial().getDisplayName());
                 as.updateMeta();
-                getApi().getTools().launchFirework(as.getLocation().add(0, 0.5, 0));
+                getApi().getPlatform().getTools().launchFirework(as.getLocation().add(0, 0.5, 0));
                 preEnd();
             }
 

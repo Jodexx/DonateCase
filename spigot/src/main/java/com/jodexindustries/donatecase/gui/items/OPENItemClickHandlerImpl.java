@@ -1,88 +1,74 @@
 package com.jodexindustries.donatecase.gui.items;
 
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.event.GUIClickEvent;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
-import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
-import com.jodexindustries.donatecase.api.events.OpenCaseEvent;
-import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
-import com.jodexindustries.donatecase.api.gui.CaseGui;
-import com.jodexindustries.donatecase.api.manager.GUITypedItemManager;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiClickEvent> {
+public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
 
-    public static void register(GUITypedItemManager<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> manager) {
-        OPENItemClickHandlerImpl handler = new OPENItemClickHandlerImpl();
-
-        GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> item = manager.builder("OPEN")
-                .description("Type to open the case")
-                .click(handler)
-                .setUpdateMeta(true)
-                .setLoadOnCase(true)
-                .build();
-
-        manager.registerItem(item);
-    }
 
     @Override
-    public void onClick(@NotNull CaseGuiClickEvent e) {
-        CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui = e.getGui();
-        Location location = gui.getLocation();
+    public void onClick(@NotNull GUIClickEvent e) {
+        CaseGuiWrapper gui = e.getCaseGUI();
+        CaseLocation location = gui.getLocation();
         String itemType = e.getItemType();
-        Player p = (Player) e.getWhoClicked();
-        CaseDataBukkit caseData = gui.getCaseData();
+        CaseData caseData = gui.getCaseData();
         String caseType = caseData.getCaseType();
 
         if (itemType.contains("_")) {
             String[] parts = itemType.split("_");
             if (parts.length >= 2) {
                 caseType = parts[1];
-                caseData = Case.getInstance().api.getCaseManager().getCase(caseType);
+                caseData = DCAPI.getInstance().getCaseManager().getCase(caseType);
             }
         }
 
 
         if (caseData != null) {
-            executeOpen(caseData, p, location);
+            executeOpen(caseData, e.getPlayer(), location);
+            e.getPlayer().closeInventory();
         } else {
-            Case.getInstance().getLogger().warning("CaseData " + caseType + " not found. ");
+            DCAPI.getInstance().getPlatform().getLogger().warning("CaseData " + caseType + " not found. ");
         }
 
-        p.closeInventory();
     }
 
-    public static void executeOpen(@NotNull CaseDataBukkit caseData, @NotNull Player player, @NotNull Location location) {
-        PreOpenCaseEvent event = new PreOpenCaseEvent(player, caseData, location.getBlock());
-        Bukkit.getServer().getPluginManager().callEvent(event);
-        if (!event.isCancelled()) {
-            if (event.isIgnoreKeys() || checkKeys(caseData.getCaseType(), player.getName())) {
-                OpenCaseEvent openEvent = new OpenCaseEvent(player, caseData, location.getBlock());
-                Bukkit.getServer().getPluginManager().callEvent(openEvent);
+    public static void executeOpen(@NotNull CaseData caseData, @NotNull DCPlayer player, @NotNull CaseLocation location) {
+        // TODO Events
+//        PreOpenCaseEvent event = new PreOpenCaseEvent(player, caseData, location.getBlock());
+//        Bukkit.getServer().getPluginManager().callEvent(event);
+//        if (!event.isCancelled()) {
+//            if (event.isIgnoreKeys() || checkKeys(caseData.getCaseType(), player.getName())) {
+//                OpenCaseEvent openEvent = new OpenCaseEvent(player, caseData, location.getBlock());
+//                Bukkit.getServer().getPluginManager().callEvent(openEvent);
+//
+//                if (!openEvent.isCancelled())
+//                    executeOpenWithoutEvent(player, location, caseData, event.isIgnoreKeys());
+//            } else {
+//                DCAPI.getInstance().getActionManager().executeActions(player, caseData.getNoKeyActions());
+//            }
+//        }
 
-                if (!openEvent.isCancelled()) executeOpenWithoutEvent(player, location, caseData, event.isIgnoreKeys());
+            if (checkKeys(caseData.getCaseType(), player.getName())) {
+                executeOpenWithoutEvent(player, location, caseData, false);
             } else {
-                Case.getInstance().api.getActionManager().executeActions(player, caseData.getNoKeyActions());
+                DCAPI.getInstance().getActionManager().executeActions(player, caseData.getNoKeyActions());
             }
-        }
     }
 
-    public static void executeOpenWithoutEvent(Player player, Location location, CaseDataBukkit caseData, boolean ignoreKeys) {
-        Case.getInstance().api.getAnimationManager().startAnimation(player, location, caseData).thenAcceptAsync(uuid -> {
+    public static void executeOpenWithoutEvent(DCPlayer player, CaseLocation location, CaseData caseData, boolean ignoreKeys) {
+        DCAPI.getInstance().getAnimationManager().startAnimation(player, location, caseData).thenAcceptAsync(uuid -> {
             if(uuid != null) {
-                ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>> activeCase = Case.getInstance().api.getAnimationManager().getActiveCases().get(uuid);
+                ActiveCase activeCase = DCAPI.getInstance().getAnimationManager().getActiveCases().get(uuid);
                 if(!ignoreKeys) {
-                    Case.getInstance().api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1).thenAcceptAsync(status -> {
+                    DCAPI.getInstance().getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1).thenAcceptAsync(status -> {
                         if(status == DatabaseStatus.COMPLETE) activeCase.setKeyRemoved(true);
                     });
                 } else {
@@ -93,6 +79,6 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler<CaseGuiCl
     }
 
     private static boolean checkKeys(String caseType, String player) {
-        return Case.getInstance().api.getCaseKeyManager().getKeys(caseType, player) >= 1;
+        return DCAPI.getInstance().getCaseKeyManager().getKeys(caseType, player) >= 1;
     }
 }

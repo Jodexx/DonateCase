@@ -1,21 +1,7 @@
 package com.jodexindustries.donatecase.api;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.addon.external.ExternalJavaAddon;
-import com.jodexindustries.donatecase.api.config.ConfigBukkit;
-import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
-import com.jodexindustries.donatecase.api.gui.CaseGui;
 import com.jodexindustries.donatecase.api.manager.HologramManager;
-import com.jodexindustries.donatecase.tools.DCToolsBukkit;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -27,22 +13,10 @@ import java.lang.reflect.InvocationTargetException;
  * Abstract class representing the API interface for the DonateCase system in a Bukkit environment.
  * This class provides methods for interacting with the various components of the plugin.
  */
-public abstract class DCAPIBukkit implements DCAPI<Player, JavaAnimationBukkit, CaseDataMaterialBukkit,
-        CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent,
-        ItemStack, CommandSender, Location, Block, CaseDataBukkit, Inventory, ConfigBukkit, DCToolsBukkit> {
+public abstract class DCAPIBukkit extends DCAPI {
 
     @Nullable
     private static Class<? extends DCAPIBukkit> clazz = null;
-    protected final Addon addon;
-
-
-    protected DCAPIBukkit(Addon addon) {
-        this.addon = addon;
-    }
-
-    protected DCAPIBukkit(Plugin plugin) {
-        this.addon = new ExternalJavaAddon(plugin);
-    }
 
     /**
      * Retrieves an instance of DCAPIBukkit using the provided Addon.
@@ -109,8 +83,4 @@ public abstract class DCAPIBukkit implements DCAPI<Player, JavaAnimationBukkit, 
     @Nullable
     public abstract HologramManager getHologramManager();
 
-    @Override
-    public @NotNull Addon getAddon() {
-        return addon;
-    }
 }

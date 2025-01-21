@@ -1,29 +1,27 @@
 package com.jodexindustries.donatecase.api.addon.internal;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.Yaml;
+import lombok.Getter;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+@Getter
 public class InternalAddonDescription {
 
     private final File file;
-    private final JarFile jar;
     private final String name;
     private final String mainClass;
     private final String version;
     private final String apiVersion;
     private final List<String> authors;
-    private final List<String> depend = new ArrayList<>();
-    private final List<String> softDepend = new ArrayList<>();
+    private final List<String> depend;
+    private final List<String> softDepend;
+
     /**
      * Constructor to load addon description from a JAR file.
      *
@@ -33,104 +31,35 @@ public class InternalAddonDescription {
      */
     public InternalAddonDescription(File file) throws IOException, InvalidAddonException {
         this.file = file;
-        this.jar = new JarFile(file);
+        JarFile jar = new JarFile(file);
 
         JarEntry entry = jar.getJarEntry("addon.yml");
         if (entry == null) {
             throw new InvalidAddonException("Addon " + file.getName() + " trying to load without addon.yml! Abort.");
         }
-        InputStream input = jar.getInputStream(entry);
-        Yaml yaml = new Yaml();
-        Map<String, Object> data = yaml.load(input);
-        name = String.valueOf(data.get("name"));
-        mainClass = String.valueOf(data.get("main"));
-        version = String.valueOf(data.get("version"));
 
-        Object api = data.get("api");
-        if(api == null) apiVersion = null;
-        else apiVersion = String.valueOf(api);
+        YamlConfigurationLoader loader = YamlConfigurationLoader.builder().source(() -> {
+            InputStream input = jar.getInputStream(entry);
+            InputStreamReader reader = new InputStreamReader(input);
+            return new BufferedReader(reader);
+        }).build();
 
-        authors = new ArrayList<>();
+        ConfigurationNode config = loader.load();
 
-        if (data.get("author") != null) authors.add(data.get("author").toString());
-        if (data.get("authors") != null) {
-            for (Object o : (Iterable<?>) data.get("authors")) {
-                authors.add(o.toString());
-            }
-        }
+        name = config.node("name").getString();
+        mainClass = config.node("main").getString();
+        version = config.node("version").getString();
+        apiVersion = config.node("api").getString();
 
-        if(data.get("softdepend") != null) {
-            for (Object o : (Iterable<?>) data.get("softdepend")) {
-                softDepend.add(o.toString());
-            }
-        }
+        authors = config.node("authors").getList(String.class, new ArrayList<>());
 
-        if(data.get("depend") != null) {
-            for (Object o : (Iterable<?>) data.get("depend")) {
-                depend.add(o.toString());
-            }
-        }
+        if (config.node("author") != null) authors.add(config.node("author").getString());
+
+        softDepend = config.node("softdepend").getList(String.class, new ArrayList<>());
+        depend = config.node("depend").getList(String.class, new ArrayList<>());
 
         jar.close();
 
-    }
-
-    /**
-     * @return The version of the addon.
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
-     * @return The fully qualified name of the main class of the addon.
-     */
-    public String getMainClass() {
-        return mainClass;
-    }
-
-    /**
-     * @return The name of the addon.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @return A list of authors of the addon.
-     */
-    public List<String> getAuthors() {
-        return authors;
-    }
-
-    /**
-     * @return The API version the addon is compatible with, or null if not specified.
-     */
-    @Nullable
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    /**
-     * @since 2.0.2
-     * @return List of addon dependencies
-     */
-    @NotNull
-    public List<String> getDepend() {
-        return depend;
-    }
-
-    /**
-     * @since 2.0.2
-     * @return List of addon soft dependencies
-     */
-    @NotNull
-    public List<String> getSoftDepend() {
-        return softDepend;
-    }
-
-    public File getFile() {
-        return file;
     }
 
 }

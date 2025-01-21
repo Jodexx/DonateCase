@@ -1,17 +1,39 @@
 package com.jodexindustries.donatecase.api.data.action;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Class for custom actions storage
- * @param <P> the type of Player
  */
-public class CaseAction<P> implements ActionExecutor<P> {
-    private final ActionExecutor<P> executor;
+public class CaseAction implements ActionExecutor {
+    private final ActionExecutor executor;
+    /**
+     * -- GETTER --
+     *  Gets addon which registered this action
+     *
+     * @return addon action
+     */
+    @Getter
     private final Addon addon;
+    /**
+     * -- GETTER --
+     *  Gets action name
+     *
+     * @return action name
+     */
+    @Getter
     private final String name;
+    /**
+     * -- GETTER --
+     *  Gets action description
+     *
+     * @return action description
+     */
+    @Getter
     private final String description;
 
     /**
@@ -22,42 +44,15 @@ public class CaseAction<P> implements ActionExecutor<P> {
      * @param name        Action name
      * @param description Action description
      */
-    public CaseAction(ActionExecutor<P> executor, Addon addon, String name, String description) {
+    public CaseAction(ActionExecutor executor, Addon addon, String name, String description) {
         this.executor = executor;
         this.addon = addon;
         this.name = name;
         this.description = description;
     }
 
-    /**
-     * Gets addon which registered this action
-     *
-     * @return addon action
-     */
-    public Addon getAddon() {
-        return addon;
-    }
-
-    /**
-     * Gets action description
-     *
-     * @return action description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Gets action name
-     *
-     * @return action name
-     */
-    public String getName() {
-        return name;
-    }
-
     @Override
-    public void execute(@Nullable P player, @NotNull String context, int cooldown) {
+    public void execute(@Nullable DCPlayer player, @NotNull String context, int cooldown) {
         executor.execute(player, context, cooldown);
     }
 }

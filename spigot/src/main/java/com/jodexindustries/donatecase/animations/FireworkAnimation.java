@@ -1,64 +1,58 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.api.manager.AnimationManager;
+import com.jodexindustries.donatecase.BukkitBackend;
+import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.animation.BukkitJavaAnimation;
+import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.tools.BukkitUtils;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
-import org.bukkit.*;
-import org.bukkit.block.Block;
+import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.World;
 import org.bukkit.entity.Firework;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
-public class FireworkAnimation extends JavaAnimationBukkit {
+public class FireworkAnimation extends BukkitJavaAnimation {
 
-    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, Player, Location, Block, CaseDataBukkit> manager) {
-        CaseAnimation<JavaAnimationBukkit> caseAnimation = manager.builder("FIREWORK")
-                .animation(FireworkAnimation.class)
-                .description("Fireworks fly to the skies and a prize appears")
-                .requireSettings(true)
-                .requireBlock(true)
-                .build();
-
-        manager.registerAnimation(caseAnimation);
-    }
-
+    @SneakyThrows
     @Override
     public void start() {
-        double x = getSettings().getDouble("StartPosition.X", 0.5);
-        double y = getSettings().getDouble("StartPosition.Y", 1);
-        double z = getSettings().getDouble("StartPosition.Z", 0.5);
+        double x = getSettings().node("StartPosition", "X").getDouble(0.5);
+        double y = getSettings().node("StartPosition", "Y").getDouble(1);
+        double z = getSettings().node("StartPosition", "Z").getDouble(0.5);
 
         getLocation().add(x, y, z);
 
-        final ArmorStandEulerAngle armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
-        final ArmorStandCreator as = getApi().getTools().createArmorStand(getLocation());
+        final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getLocation());
 
-        boolean small = getSettings().getBoolean("SmallArmorStand", true);
-        as.setAngle(armorStandEulerAngle);
+        boolean small = getSettings().node("SmallArmorStand").getBoolean(true);
+
+        final ArmorStandEulerAngle angle = getSettings().node("Pose").get(ArmorStandEulerAngle.class);
+        if(angle != null) as.setAngle(angle);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
         as.spawn();
 
-        long period = getSettings().getLong("Scroll.Period");
+        long period = getSettings().node("Scroll", "Period").getLong();
 
-        Bukkit.getScheduler().runTaskTimer(getApi().getDonateCase(), new Task(as), 0L, period);
+        Bukkit.getScheduler().runTaskTimer(((BukkitBackend) DCAPI.getInstance().getPlatform()).getPlugin(), new Task(as), 0L, period);
     }
 
     private class Task implements Consumer<BukkitTask> {
 
         private int tick;
 
-        private final Location location;
+        private final CaseLocation location;
         private final ArmorStandCreator as;
         private final World world;
 
@@ -69,32 +63,31 @@ public class FireworkAnimation extends JavaAnimationBukkit {
             this.as = as;
             this.location = as.getLocation();
 
-            this.itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD").toUpperCase());
-            this.yaw = (float) getSettings().getDouble("Scroll.Yaw", 20.0F);
+            this.itemSlot = EquipmentSlot.valueOf(getSettings().node("ItemSlot").getString("HEAD").toUpperCase());
+            this.yaw = getSettings().node("Scroll", "Yaw").getFloat( 20.0F);
 
-            world = location.getWorld() != null ? location.getWorld() : getPlayer().getWorld();
+            world = getPlayer().getWorld();
         }
 
+        @SneakyThrows
         @Override
         public void accept(BukkitTask task) {
             if (tick == 0) {
-                Firework firework = world.spawn(location, Firework.class);
+                Firework firework = world.spawn(BukkitUtils.toBukkit(location), Firework.class);
                 FireworkMeta data = firework.getFireworkMeta();
                 data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
-                for (String color : getSettings().getStringList("FireworkColors")) {
+                for (String color : getSettings().node("FireworkColors").getList(String.class, new ArrayList<>())) {
                     data.addEffect(FireworkEffect.builder().withColor(DCToolsBukkit.parseColor(color)).build());
                 }
-                data.setPower(getSettings().getInt("Power"));
+                data.setPower(getSettings().node("Power").getInt());
                 firework.setFireworkMeta(data);
             }
 
             if (tick == 10) {
-                if (getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
-                    as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
-                }
+                as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
                 if (getWinItem().getMaterial().getDisplayName() != null && !getWinItem().getMaterial().getDisplayName().isEmpty())
                     as.setCustomNameVisible(true);
-                as.setCustomName(getApi().getTools().getPAPI().setPlaceholders(getPlayer(), getWinItem().getMaterial().getDisplayName()));
+                as.setCustomName(DCAPI.getInstance().getPlatform().getTools().getPAPI().setPlaceholders(getPlayer(), getWinItem().getMaterial().getDisplayName()));
                 as.updateMeta();
                 preEnd();
             }

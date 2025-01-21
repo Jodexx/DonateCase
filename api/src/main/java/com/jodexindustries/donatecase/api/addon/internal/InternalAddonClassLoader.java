@@ -1,8 +1,9 @@
 package com.jodexindustries.donatecase.api.addon.internal;
 
 import com.google.common.io.ByteStreams;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.manager.AddonManager;
+import com.jodexindustries.donatecase.api.platform.Platform;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,19 +26,21 @@ public class InternalAddonClassLoader extends URLClassLoader {
 
     private final Map<String, Class<?>> classes = new ConcurrentHashMap<>();
     private final InternalAddonDescription description;
+    @Getter
     private final File file;
     private final JarFile jar;
     private final Manifest manifest;
     private final URL url;
     private final AddonManager manager;
+    @Getter
     private final InternalJavaAddon addon;
-    private final Addon donateCase;
+    private final Platform platform;
 
     static {
         ClassLoader.registerAsParallelCapable();
     }
 
-    public InternalAddonClassLoader(@Nullable ClassLoader parent, InternalAddonDescription description, AddonManager manager, Addon donateCase) throws IOException, InvalidAddonException, ClassNotFoundException {
+    public InternalAddonClassLoader(@Nullable ClassLoader parent, InternalAddonDescription description, AddonManager manager, Platform platform) throws IOException, InvalidAddonException, ClassNotFoundException {
         super(new URL[]{description.getFile().toURI().toURL()}, parent);
 
         this.description = description;
@@ -46,7 +49,7 @@ public class InternalAddonClassLoader extends URLClassLoader {
         this.manifest = jar.getManifest();
         this.url = file.toURI().toURL();
         this.manager = manager;
-        this.donateCase = donateCase;
+        this.platform = platform;
 
         try {
             Class<?> jarClass;
@@ -86,7 +89,7 @@ public class InternalAddonClassLoader extends URLClassLoader {
         if (module.getClass().getClassLoader() != this) {
             throw new IllegalArgumentException("Cannot initialize module outside of this class loader");
         }
-        module.init(description, file, this, donateCase);
+        module.init(description, file, this, platform);
     }
 
     @Override
@@ -162,14 +165,6 @@ public class InternalAddonClassLoader extends URLClassLoader {
         }
 
         return result;
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public InternalJavaAddon getAddon() {
-        return addon;
     }
 
     @Override

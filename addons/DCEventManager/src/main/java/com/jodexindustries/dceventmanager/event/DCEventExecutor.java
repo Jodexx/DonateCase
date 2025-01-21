@@ -4,7 +4,7 @@ import com.jodexindustries.dceventmanager.data.EventData;
 import com.jodexindustries.dceventmanager.data.Placeholder;
 import com.jodexindustries.dceventmanager.utils.Reflection;
 import com.jodexindustries.dceventmanager.utils.Tools;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -41,7 +41,7 @@ public class DCEventExecutor implements EventExecutor {
         Integer slot = Reflection.getVar(event, "getSlot", Integer.class);
 
         if (caseType == null) {
-            CaseDataBukkit caseData = Reflection.getVar(event, "getCaseData", CaseDataBukkit.class);
+            CaseData caseData = Reflection.getVar(event, "getCaseData", CaseData.class);
             if (caseData != null) {
                 caseType = caseData.getCaseType();
             }

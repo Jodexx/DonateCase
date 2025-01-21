@@ -1,17 +1,11 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -19,27 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class RainlyAnimation extends JavaAnimationBukkit {
+public class RainlyAnimation extends JavaAnimation {
 
     private EquipmentSlot itemSlot;
     private ArmorStandEulerAngle armorStandEulerAngle;
-
-    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, Player, Location, Block, CaseDataBukkit> manager) {
-        CaseAnimation<JavaAnimationBukkit> caseAnimation = manager.builder("RAINLY")
-                .animation(RainlyAnimation.class)
-                .description("Rain drips from the clouds")
-                .requireSettings(true)
-                .requireBlock(true)
-                .build();
-
-        manager.registerAnimation(caseAnimation);
-    }
 
     @Override
     public void start() {
         Particle particle = Particle.valueOf(getSettings().getString("FallingParticle"));
 
-        ArmorStandCreator as = getApi().getTools().createArmorStand(getLocation().clone().add(0.5, 1, 0.5));
+        ArmorStandCreator as = getApi().getPlatform().getTools().createArmorStand(getLocation().clone().add(0.5, 1, 0.5));
         as.setVisible(false);
         as.setGravity(false);
 
@@ -124,7 +107,7 @@ public class RainlyAnimation extends JavaAnimationBukkit {
                 as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
             }
 
-            String winGroupDisplayName = getApi().getTools().getPAPI().setPlaceholders(
+            String winGroupDisplayName = getApi().getPlatform().getTools().getPAPI().setPlaceholders(
                     getPlayer(), getWinItem().getMaterial().getDisplayName()
             );
             getWinItem().getMaterial().setDisplayName(winGroupDisplayName);
@@ -141,8 +124,8 @@ public class RainlyAnimation extends JavaAnimationBukkit {
         }
 
         private void updateRandomItem() {
-            CaseDataItem<CaseDataMaterialBukkit> item = getCaseData().getRandomItem();
-            String itemDisplayName = getApi().getTools().getPAPI().setPlaceholders(
+            CaseDataItem item = getCaseData().getRandomItem();
+            String itemDisplayName = getApi().getPlatform().getTools().getPAPI().setPlaceholders(
                     getPlayer(), item.getMaterial().getDisplayName()
             );
             item.getMaterial().setDisplayName(itemDisplayName);

@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.caching;
 
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -10,6 +11,7 @@ public class SimpleCache<K, V> {
 
     private final Map<K, CacheEntry<V>> cache;
 
+    @Setter
     private long maxAge; // Maximum time (ticks) to keep an entry
 
     /**
@@ -58,15 +60,6 @@ public class SimpleCache<K, V> {
      */
     public void put(K key, V value) {
         cache.put(key, new CacheEntry<>(value, System.currentTimeMillis()));
-    }
-
-    /**
-     * Setting max age of cache
-     *
-     * @param maxAge in ticks
-     */
-    public void setMaxAge(long maxAge) {
-        this.maxAge = maxAge;
     }
 
     private boolean isValid(CacheEntry<V> entry) {

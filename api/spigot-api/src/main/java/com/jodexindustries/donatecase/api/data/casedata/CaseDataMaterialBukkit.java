@@ -10,25 +10,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.List;
 
-/**
- * Represents material data for a case in Bukkit/Spigot implementation
- */
-public class CaseDataMaterialBukkit extends CaseDataMaterial<ItemStack> {
-
-    /**
-     * Default constructor
-     *
-     * @param id          Material id
-     * @param itemStack   Material ItemStack
-     * @param displayName Material display name
-     * @param enchanted   Is material enchanted
-     * @param lore        Material lore
-     * @param modelData   Material custom model data
-     * @param rgb         Material rgb
-     */
-    public CaseDataMaterialBukkit(String id, ItemStack itemStack, String displayName, boolean enchanted, List<String> lore, int modelData, String[] rgb) {
-        super(id, itemStack, displayName, enchanted, lore, modelData, rgb);
-    }
+public class CaseDataMaterialBukkit extends CaseDataMaterial {
 
     /**
      * Update {@link #getItemStack()} metadata
@@ -41,8 +23,9 @@ public class CaseDataMaterialBukkit extends CaseDataMaterial<ItemStack> {
      */
     public void updateMeta(String displayName, List<String> lore, int modelData,
                            boolean enchanted, String[] rgb) {
-        if (this.itemStack != null) {
-            ItemMeta meta = this.itemStack.getItemMeta();
+        if (getItemStack() != null) {
+            ItemStack itemStack = getItemStack();
+            ItemMeta meta = itemStack.getItemMeta();
             if (meta != null) {
                 if(displayName != null) meta.setDisplayName(displayName);
                 if(lore != null) meta.setLore(lore);
@@ -68,9 +51,14 @@ public class CaseDataMaterialBukkit extends CaseDataMaterial<ItemStack> {
     }
 
     @Override
+    public ItemStack getItemStack() {
+        return (ItemStack) super.getItemStack();
+    }
+
+    @Override
     public CaseDataMaterialBukkit clone() {
         CaseDataMaterialBukkit cloned = (CaseDataMaterialBukkit) super.clone();
-        if (cloned.itemStack != null) cloned.setItemStack(cloned.itemStack.clone());
+        if(getItemStack() != null) cloned.setItemStack(getItemStack().clone());
         return cloned;
     }
 

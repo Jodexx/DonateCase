@@ -14,4 +14,5 @@ public interface ExternalAddon extends Addon {
      * @return the plugin instance
      */
     Plugin getPlugin();
+
 }

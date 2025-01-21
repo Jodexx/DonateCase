@@ -1,7 +1,9 @@
 package com.jodexindustries.donatecase.tools.updater;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Getter;
 
+@Getter
 public class VersionInfo {
 
     @SerializedName("version_number")
@@ -28,30 +30,6 @@ public class VersionInfo {
         this.versionType = versionType;
         this.status = status;
         this.downloads = downloads;
-    }
-
-    public String getVersionNumber() {
-        return versionNumber;
-    }
-
-    public String getDatePublished() {
-        return datePublished;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getVersionType() {
-        return versionType;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public int getDownloads() {
-        return downloads;
     }
 
 }

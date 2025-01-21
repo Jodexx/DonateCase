@@ -1,14 +1,11 @@
 package com.jodexindustries.donatecase.api.data.casedata.gui;
 
-import com.jodexindustries.donatecase.api.data.casedata.CCloneable;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for handling item creating
- * @param <G> the type of {@link com.jodexindustries.donatecase.api.gui.CaseGui}
- * @param <M> the type of {@link com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial}
  */
-public interface TypedItemHandler<M extends CCloneable, G> {
+public interface TypedItemHandler {
 
     /**
      * Called when tried to handle item in GUI <br/>
@@ -19,5 +16,5 @@ public interface TypedItemHandler<M extends CCloneable, G> {
      * @return Completed GUI.Item
      */
     @NotNull
-    GUI.@NotNull Item<M> handle(@NotNull G caseGui, @NotNull GUI.Item<M> item);
+    CaseGui.@NotNull Item handle(@NotNull CaseGuiWrapper caseGui, @NotNull CaseGui.Item item);
 }

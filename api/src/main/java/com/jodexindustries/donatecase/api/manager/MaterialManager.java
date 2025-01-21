@@ -14,9 +14,8 @@ import java.util.stream.Collectors;
 /**
  * Interface for managing item materials, allowing registration, retrieval, and unregistration of case materials.
  *
- * @param <I> The type representing the material item within the material management context
  */
-public interface MaterialManager<I> {
+public interface MaterialManager{
 
     /**
      * Registers a new case material with a specified ID, handler, and description.
@@ -25,7 +24,7 @@ public interface MaterialManager<I> {
      * @param materialHandler the handler responsible for managing the material's properties and behavior
      * @param description     a description providing details about the material
      */
-    void registerMaterial(String id, MaterialHandler<I> materialHandler, String description);
+    void registerMaterial(String id, MaterialHandler materialHandler, String description, Addon addon);
 
     /**
      * Unregisters a case material by its ID.
@@ -35,7 +34,7 @@ public interface MaterialManager<I> {
     void unregisterMaterial(String id);
 
     default void unregisterMaterials(Addon addon) {
-        List<CaseMaterial<I>> list = new ArrayList<>(getRegisteredMaterials(addon));
+        List<CaseMaterial> list = new ArrayList<>(getRegisteredMaterials(addon));
         list.stream().map(CaseMaterial::getId).forEach(this::unregisterMaterial);
     }
 
@@ -59,15 +58,15 @@ public interface MaterialManager<I> {
      * @return the {@code CaseMaterial} instance if found, or null otherwise
      */
     @Nullable
-    CaseMaterial<I> getRegisteredMaterial(@NotNull String id);
+    CaseMaterial getRegisteredMaterial(@NotNull String id);
 
-    default List<CaseMaterial<I>> getRegisteredMaterials(Addon addon) {
+    default List<CaseMaterial> getRegisteredMaterials(Addon addon) {
         return getRegisteredMaterials().values().stream().filter(material ->
                 material.getAddon().equals(addon)).collect(Collectors.toList());
     }
 
     @NotNull
-    Map<String, CaseMaterial<I>> getRegisteredMaterials();
+    Map<String, CaseMaterial> getRegisteredMaterials();
 
     /**
      * Retrieves a registered material ID that matches the start of a given string.

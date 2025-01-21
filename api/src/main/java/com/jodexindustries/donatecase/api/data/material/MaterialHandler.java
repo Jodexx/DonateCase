@@ -4,9 +4,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for handling item initializing
- * @param <I> the type of ItemStack
  */
-public interface MaterialHandler<I> {
+public interface MaterialHandler {
 
     /**
      * Called when the item is initialized
@@ -15,5 +14,5 @@ public interface MaterialHandler<I> {
      * @return ItemStack of completed material
      */
     @NotNull
-    I handle(@NotNull String context);
+    Object handle(@NotNull String context);
 }

@@ -35,15 +35,6 @@ public interface AddonManager {
     void enableAddons(PowerReason reason);
 
     /**
-     * Enables a specific addon by name, with a specified reason.
-     *
-     * @param addon  the name of the addon to enable
-     * @param reason the reason for enabling the addon
-     * @return true if the addon was successfully enabled, false otherwise
-     */
-    boolean enableAddon(@NotNull String addon, PowerReason reason);
-
-    /**
      * Enables a specific addon by instance, with a specified reason.
      *
      * @param addon  the instance of the addon to enable
@@ -51,15 +42,6 @@ public interface AddonManager {
      * @return true if the addon was successfully enabled, false otherwise
      */
     boolean enableAddon(@NotNull InternalJavaAddon addon, PowerReason reason);
-
-    /**
-     * Disables a specific addon by name, with a specified reason.
-     *
-     * @param addon  the name of the addon to disable
-     * @param reason the reason for disabling the addon
-     * @return true if the addon was successfully disabled, false otherwise
-     */
-    boolean disableAddon(@NotNull String addon, PowerReason reason);
 
     /**
      * Disables a specific addon by instance, with a specified reason.
@@ -76,15 +58,6 @@ public interface AddonManager {
      * @param reason the reason for unloading the addons
      */
     void unloadAddons(PowerReason reason);
-
-    /**
-     * Unloads a specific addon by name, with a specified reason.
-     *
-     * @param addon  the name of the addon to unload
-     * @param reason the reason for unloading the addon
-     * @return true if the addon was successfully unloaded, false otherwise
-     */
-    boolean unloadAddon(@NotNull String addon, PowerReason reason);
 
     /**
      * Unloads a specific addon by instance, with a specified reason.
@@ -108,7 +81,7 @@ public interface AddonManager {
     Map<String, InternalJavaAddon> getAddons();
 
     @NotNull
-    File getAddonsFolder();
+    File getFolder();
 
     /**
      * Retrieves the main class of an addon by its binary name.

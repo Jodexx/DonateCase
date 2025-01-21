@@ -2,9 +2,9 @@ package com.jodexindustries.donatecase.tools.support;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
-import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.tools.Logger;
+import com.jodexindustries.donatecase.BukkitBackend;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
+import lombok.Getter;
 import me.tofaa.entitylib.APIConfig;
 import me.tofaa.entitylib.EntityLib;
 import me.tofaa.entitylib.spigot.SpigotEntityLibPlatform;
@@ -12,29 +12,38 @@ import org.bukkit.Bukkit;
 
 public class PacketEventsSupport {
 
-    public PacketEventsSupport(DonateCase plugin) {
+    private final BukkitBackend backend;
 
-        boolean usePackets = plugin.config.getConfig().getBoolean("DonateCase.UsePackets");
+    @Getter
+    private boolean usePackets;
+
+    public PacketEventsSupport(BukkitBackend backend) {
+        this.backend = backend;
+        this.usePackets = backend.getAPI().getConfig().getConfig().node("DonateCase", "UsePackets").getBoolean();
+    }
+
+    public void load() {
         if (usePackets) {
             ServerVersion version = getServerVersion();
-            Logger.log("&aLoading &bpacketevents &ahooking...");
-            Logger.log("&aServer version: &b" + version.getReleaseName());
-            Logger.log("&aServer protocol version: &b" + version.getProtocolVersion());
+            backend.getLogger().info("Loading packetevents hooking...");
+            backend.getLogger().info("Server version: " + version.getReleaseName());
+            backend.getLogger().info("Server protocol version: " + version.getProtocolVersion());
             if (getServerVersion().isOlderThan(ServerVersion.V_1_18)) {
-                DonateCase.instance.usePackets = false;
-                plugin.getLogger().warning("Server version older than V_1_18. PacketEvents hooking disabled!");
+                backend.getLogger().warning("Server version older than V_1_18. PacketEvents hooking disabled!");
                 return;
             }
-            PacketEvents.setAPI(SpigotPacketEventsBuilder.build(plugin));
-            SpigotEntityLibPlatform platform = new SpigotEntityLibPlatform(plugin);
+            PacketEvents.setAPI(SpigotPacketEventsBuilder.build(backend.getPlugin()));
+            SpigotEntityLibPlatform platform = new SpigotEntityLibPlatform(backend.getPlugin());
             APIConfig settings = new APIConfig(PacketEvents.getAPI())
                     .tickTickables()
                     .trackPlatformEntities();
             EntityLib.init(platform, settings);
 
             if (PacketEvents.getAPI().isLoaded()) {
-                Logger.log("&aHooked to &bpacketevents");
-                DonateCase.instance.usePackets = true;
+                backend.getLogger().info("Hooked to packetevents");
+                usePackets = true;
+            } else {
+                usePackets = false;
             }
         }
     }

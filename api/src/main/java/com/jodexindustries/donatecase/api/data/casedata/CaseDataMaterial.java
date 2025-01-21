@@ -1,10 +1,11 @@
 package com.jodexindustries.donatecase.api.data.casedata;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.jodexindustries.donatecase.api.DCAPI;
+import lombok.Getter;
+import lombok.Setter;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -12,215 +13,37 @@ import java.util.List;
  * enchantment status, lore, custom model data, and RGB values.
  * This class provides methods to get and set each attribute, allowing flexible
  * modification and retrieval of material details.
- * @param <I> the type of ItemStack
  */
-public abstract class CaseDataMaterial<I> implements CCloneable, MetaUpdatable {
+@Setter
+@Getter
+@ConfigSerializable
+public abstract class CaseDataMaterial implements MetaUpdatable, Cloneable {
 
-    /**
-     * the unique identifier for the material
-     */
-    protected String id;
-    /**
-     * the display name of the material
-     */
-    protected String displayName;
-    /**
-     * whether the material is enchanted
-     */
-    protected boolean enchanted;
-    /**
-     * the lore associated with the material; if null, an empty list is assigned
-     */
-    protected List<String> lore;
-    /**
-     * the custom model data for the material
-     */
-    protected int modelData;
-    /**
-     * the RGB color values for the material
-     */
-    protected String[] rgb;
-    /**
-     * the itemstack of the material
-     */
-    protected I itemStack;
-
-    /**
-     * Constructs a new CaseDataMaterial with specified attributes.
-     *
-     * @param id          the unique identifier for the material, such as HDB:1234 or RED_WOOL
-     * @param itemStack   the itemstack of the material
-     * @param displayName the display name of the material
-     * @param enchanted   whether the material is enchanted
-     * @param lore        the lore associated with the material; if null, an empty list is assigned
-     * @param modelData   the custom model data for the material
-     * @param rgb         the RGB color values for the material
-     */
-    public CaseDataMaterial(String id, I itemStack, String displayName, boolean enchanted,
-                            List<String> lore, int modelData, String[] rgb) {
-        this.id = id;
-        this.displayName = displayName;
-        this.itemStack = itemStack;
-        this.enchanted = enchanted;
-        this.lore = lore == null ? new ArrayList<>() : lore;
-        this.modelData = modelData;
-        this.rgb = rgb;
-    }
-
-    /**
-     * Gets the display name of the material.
-     *
-     * @return the display name, or null if not set
-     */
-    @Nullable
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    /**
-     * Sets the display name of the material.
-     *
-     * @param displayName the new display name for the material
-     */
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    /**
-     * Checks if the material is enchanted.
-     *
-     * @return true if the material is enchanted, false otherwise
-     */
-    public boolean isEnchanted() {
-        return enchanted;
-    }
-
-    /**
-     * Sets the enchanted status of the material.
-     *
-     * @param enchanted true to enchant the material, false to remove enchantment
-     */
-    public void setEnchanted(boolean enchanted) {
-        this.enchanted = enchanted;
-    }
-
-    /**
-     * Gets the unique identifier for the material.
-     *
-     * @return the material id, or null if not set
-     */
-    @Nullable
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the unique identifier for the material.
-     *
-     * @param id the new material id
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * Gets the lore associated with the material.
-     *
-     * @return a list of lore strings; an empty list if lore is not set
-     */
-    @NotNull
-    public List<String> getLore() {
-        return lore;
-    }
-
-    /**
-     * Sets the lore associated with the material.
-     *
-     * @param lore a list of lore strings; if null, an empty list is assigned
-     */
-    public void setLore(List<String> lore) {
-        this.lore = lore == null ? new ArrayList<>() : lore;
-    }
-
-    /**
-     * Gets the custom model data for the material.
-     *
-     * @return the custom model data as an integer
-     */
-    public int getModelData() {
-        return modelData;
-    }
-
-    /**
-     * Sets the custom model data for the material.
-     *
-     * @param modelData the new custom model data
-     */
-    public void setModelData(int modelData) {
-        this.modelData = modelData;
-    }
-
-    /**
-     * Gets the RGB color values for the material.
-     *
-     * @return an array of RGB strings representing the color values
-     */
-    public String[] getRgb() {
-        return rgb;
-    }
-
-    /**
-     * Sets the RGB color values for the material.
-     *
-     * @param rgb an array of RGB color values
-     */
-    public void setRgb(String[] rgb) {
-        this.rgb = rgb;
-    }
-
-    /**
-     * Get win item itemStack
-     *
-     * @return itemStack
-     */
-    public I getItemStack() {
-        return itemStack;
-    }
-
-    /**
-     * Set itemStack for win item
-     *
-     * @param itemStack itemStack
-     */
-    public void setItemStack(I itemStack) {
-        this.itemStack = itemStack;
-        updateMeta();
-    }
+    @Setting("ID")
+    private String id;
+    @Setting("DisplayName")
+    private String displayName;
+    @Setting("Enchanted")
+    private boolean enchanted;
+    @Setting("Lore")
+    private List<String> lore;
+    @Setting("ModelData")
+    private int modelData;
+    @Setting("Rgb")
+    private String[] rgb;
+    private transient Object itemStack = DCAPI.getInstance().getPlatform().getTools().loadCaseItem(id);
 
     @Override
     public void updateMeta() {
         updateMeta(getDisplayName(), getLore(), getModelData(), isEnchanted(), getRgb());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public CaseDataMaterial<I> clone() {
+    public CaseDataMaterial clone() {
         try {
-            return (CaseDataMaterial<I>) super.clone();
+            return (CaseDataMaterial) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Material{" +
-                "id='" + id + '\'' +
-                ", displayName='" + displayName + '\'' +
-                ", enchanted=" + enchanted +
-                ", modelData=" + modelData +
-                ", rgb=" + Arrays.toString(rgb) +
-                ", lore=" + lore +
-                '}';
     }
 }

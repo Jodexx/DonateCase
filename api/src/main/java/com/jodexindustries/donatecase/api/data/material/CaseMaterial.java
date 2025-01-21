@@ -5,10 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Class for custom material storage
- * @param <I> the type of ItemStack
  */
-public class CaseMaterial<I> implements MaterialHandler<I> {
-    private final MaterialHandler<I> materialHandler;
+public class CaseMaterial implements MaterialHandler {
+    private final MaterialHandler materialHandler;
     private final Addon addon;
     private final String id;
     private final String description;
@@ -21,7 +20,7 @@ public class CaseMaterial<I> implements MaterialHandler<I> {
      * @param id              Material id
      * @param description     Material description
      */
-    public CaseMaterial(MaterialHandler<I> materialHandler, Addon addon, String id, String description) {
+    public CaseMaterial(MaterialHandler materialHandler, Addon addon, String id, String description) {
         this.materialHandler = materialHandler;
         this.addon = addon;
         this.id = id;
@@ -60,12 +59,12 @@ public class CaseMaterial<I> implements MaterialHandler<I> {
      *
      * @return material handler
      */
-    public MaterialHandler<I> getMaterialHandler() {
+    public MaterialHandler getMaterialHandler() {
         return materialHandler;
     }
 
     @Override
-    public @NotNull I handle(@NotNull String context) {
+    public @NotNull Object handle(@NotNull String context) {
         return materialHandler.handle(context);
     }
 }

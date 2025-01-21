@@ -1,10 +1,21 @@
 package com.jodexindustries.donatecase.api.tools;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
+import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
+import com.jodexindustries.donatecase.api.chat.rgb.RGBUtils;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
+import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.manager.MaterialManager;
+import com.jodexindustries.donatecase.api.platform.DCCommandSender;
+import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -13,6 +24,118 @@ import java.util.stream.Collectors;
  * Utility interface for the DonateCase system, providing tools for parsing, validation, and manipulation.
  */
 public interface DCTools {
+
+    ArmorStandCreator createArmorStand(CaseLocation location);
+
+    PAPI getPAPI();
+
+    Object loadCaseItem(String id);
+
+    static boolean isValidPlayerName(String player) {
+        if (DCAPI.getInstance().getConfig().getConfig().node("DonateCase", "CheckPlayerName").getBoolean()) {
+            return Arrays.stream(DCAPI.getInstance().getPlatform().getOfflinePlayers())
+                    .map(DCOfflinePlayer::getName)
+                    .anyMatch(name -> name != null && name.equals(player.trim()));
+        }
+        return true;
+    }
+
+    static @NotNull List<String> resolveSDGCompletions(String[] args) {
+        List<String> value = new ArrayList<>(DCAPI.getInstance().getConfig().getConfigCases().getMap().keySet());
+        List<String> list = new ArrayList<>();
+        if (args.length == 1) {
+            list.addAll(
+                    Arrays.stream(DCAPI.getInstance().getPlatform().getOnlinePlayers())
+                    .map(DCPlayer::getName)
+                    .filter(px -> px.startsWith(args[0]))
+                    .collect(Collectors.toList())
+            );
+            return list;
+        } else if (args.length >= 3) {
+            if (args.length == 4) {
+                list.add("-s");
+                return list;
+            }
+            return new ArrayList<>();
+        }
+        if (args[args.length - 1].isEmpty()) {
+            list = value;
+        } else {
+            list.addAll(
+                    value.stream()
+                    .filter(tmp -> tmp.startsWith(args[args.length - 1]))
+                    .collect(Collectors.toList())
+            );
+        }
+        return list;
+    }
+
+    @Nullable
+    static Object getItemFromManager(@NotNull String id) {
+        MaterialManager manager = DCAPI.getInstance().getMaterialManager();
+
+        String temp = manager.getByStart(id);
+
+        if (temp != null) {
+            CaseMaterial caseMaterial = manager.getRegisteredMaterial(temp);
+            if (caseMaterial != null) {
+                String context = id.replace(temp, "").replaceFirst(":", "").trim();
+                return caseMaterial.handle(context);
+            }
+        }
+        return null;
+    }
+
+    static String prefix(String text) {
+        return rc(DCAPI.getInstance().getConfig().getMessages().getString("prefix") + text);
+    }
+
+    static String rc(@NotNull String text) {
+        return RGBUtils.getInstance().applyFormats(text);
+    }
+
+    static String rt(String text, String... repl) {
+        if (text != null) {
+            for (String s : repl) {
+                if (s != null) {
+                    int l = s.split(":")[0].length();
+                    text = text.replace(s.substring(0, l), s.substring(l + 1));
+                }
+            }
+
+            text = rc(text);
+        }
+        return text;
+    }
+
+    static List<String> rt(List<String> text, String... repl) {
+        return text.stream().map(t -> rt(t, repl)).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+
+    static List<String> rc(List<String> t) {
+        return t.stream().map(DCTools::rc).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    static boolean isHasCommandForSender(DCCommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, String addon) {
+        List<Map<String, SubCommand>> commands = addonsMap.get(addon);
+        return isHasCommandForSender(sender, commands);
+    }
+
+    static boolean isHasCommandForSender(DCCommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
+        return addonsMap.keySet().stream().map(addonsMap::get).anyMatch(commands -> isHasCommandForSender(sender, commands));
+    }
+
+    /**
+     * Check sender for permission to executing commands
+     * Checks only if sender has permission for one or more commands, not all
+     * @param sender Player or Console
+     * @param commands List of commands, that loaded in DonateCase
+     * @return true, if sender has permission
+     */
+    static boolean isHasCommandForSender(DCCommandSender sender, List<Map<String, SubCommand>> commands) {
+        return commands.stream().flatMap(command -> command.values().stream()).map(SubCommand::getPermission).anyMatch(permission -> permission == null || sender.hasPermission(permission));
+    }
 
     /**
      * Extracts the local placeholder from a string, delimited by `%`.
@@ -71,25 +194,42 @@ public interface DCTools {
     /**
      * Sorts and filters case history data based on a specific case type.
      *
-     * @param historyData the list of {@link CaseDataHistory} objects to sort and filter.
+     * @param historyData the list of {@link CaseData.CaseDataHistory} objects to sort and filter.
      * @param caseType    the type of case to filter by.
-     * @return a sorted list of {@link CaseDataHistory}, filtered by the specified case type,
+     * @return a sorted list of {@link CaseData.CaseDataHistory}, filtered by the specified case type,
      * sorted in descending order of time.
      */
-    static List<CaseDataHistory> sortHistoryDataByCase(List<CaseDataHistory> historyData, String caseType) {
+    static List<CaseData.CaseDataHistory> sortHistoryDataByCase(List<CaseData.CaseDataHistory> historyData, String caseType) {
         return historyData.stream()
                 .filter(Objects::nonNull)
                 .filter(data -> data.getCaseType().equals(caseType))
-                .sorted(Comparator.comparingLong(CaseDataHistory::getTime).reversed())
+                .sorted(Comparator.comparingLong(CaseData.CaseDataHistory::getTime).reversed())
                 .collect(Collectors.toList());
     }
 
-    static List<CaseDataHistory> sortHistoryDataByDate(List<CaseDataHistory> list) {
+    static List<CaseData.CaseDataHistory> sortHistoryDataByDate(List<CaseData.CaseDataHistory> list) {
         return list.stream()
                 .filter(Objects::nonNull)
-                .sorted(Comparator.comparingLong(CaseDataHistory::getTime)
+                .sorted(Comparator.comparingLong(CaseData.CaseDataHistory::getTime)
                         .reversed())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Sort case items by index
+     * @param items Map with Case items
+     * @return New map with sorted items
+     */
+    static Map<String, CaseDataItem> sortItemsByIndex(Map<String, CaseDataItem> items) {
+        return items.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(CaseDataItem::getIndex)))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 
     static boolean isValidGuiSize(int size) {

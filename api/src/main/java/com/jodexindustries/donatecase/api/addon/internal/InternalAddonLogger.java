@@ -15,9 +15,9 @@ public class InternalAddonLogger extends Logger {
      * @param context A reference to the addon
      */
     public InternalAddonLogger(@NotNull InternalAddon context) {
-        super(context.getDonateCase().getName(), null);
+        super(context.getPlatform().getName(), null);
         addonName = "[" + context.getName() + "] ";
-        setParent(context.getDonateCase().getLogger());
+        setParent(context.getPlatform().getLogger());
         setLevel(Level.ALL);
     }
 

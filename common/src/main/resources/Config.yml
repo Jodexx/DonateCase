@@ -1,0 +1,34 @@
+config: '2.5' #DON'T CHANGE THIS PLEASE
+
+DonateCase:
+  #Do I need to check for plugin updates?
+  UpdateChecker: true
+  #MySQL Settings
+  MySql:
+    Enabled: false
+    Host: 'localhost'
+    Port: 3306
+    DataBase: 'nameDataBase'
+    User: 'root'
+    Password: 'password'
+  # en_US, es_ES, ru_RU, ua_UA
+  Languages: en_US
+  HologramDriver: DecentHolograms # CMI, DecentHolograms, HolographicDisplays or FancyHolograms
+  LevelGroup: false # Don't enable if you use "parent add" in LuckPerms
+  LevelGroups:
+    legend: 4
+    deluxe: 3
+    vipplus: 2
+    vip: 1
+    default: 0
+  DateFormat: "dd.MM HH:mm:ss"
+  AddonsHelp: true # Show help list for addons commands?
+  UsePackets: false # 1.18+ for using packets, you need to install packetevents plugin
+  # Caching for getting number of keys, case opens and history data
+  # Used only if MySQL enabled
+  # Actually used in placeholders (GUI and PlaceholderAPI)
+  Caching: 20 # in ticks
+  # Set spawn-protection to 0 in server.properties
+  DisableSpawnProtection: true
+  # If true, checks whether the player with the nickname exists on the server.
+  CheckPlayerName: true

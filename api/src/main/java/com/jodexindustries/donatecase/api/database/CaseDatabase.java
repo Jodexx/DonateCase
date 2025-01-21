@@ -1,13 +1,16 @@
 package com.jodexindustries.donatecase.api.database;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
+import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public interface CaseDatabase {
+
+    void connect();
 
     /**
      * Connect via SQLITE
@@ -55,9 +58,9 @@ public interface CaseDatabase {
      */
     CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count);
 
-    void setHistoryData(CaseDataHistory[] historyData);
+    void setHistoryData(CaseData.CaseDataHistory[] historyData);
 
-    CompletableFuture<DatabaseStatus> setHistoryData(String caseType, CaseDataHistory data);
+    CompletableFuture<DatabaseStatus> setHistoryData(String caseType, CaseData.CaseDataHistory data);
 
     /**
      * Sets history data for specific case type and index
@@ -66,23 +69,25 @@ public interface CaseDatabase {
      * @param data History data, if null - deletes
      * @return Future of DatabaseStatus
      */
-    CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseDataHistory data);
+    CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseData.CaseDataHistory data);
 
     CompletableFuture<DatabaseStatus> removeHistoryData(String caseType);
 
     CompletableFuture<DatabaseStatus> removeHistoryData(String caseType, int index);
 
-    CompletableFuture<List<CaseDataHistory>> getHistoryData();
+    CompletableFuture<List<CaseData.CaseDataHistory>> getHistoryData();
 
-    CompletableFuture<List<CaseDataHistory>> getHistoryData(String caseType);
+    CompletableFuture<List<CaseData.CaseDataHistory>> getHistoryData(String caseType);
 
     /**
      * Returns no-cached, if mysql disabled
      * @return list of all history data
      */
-    List<CaseDataHistory> getHistoryDataCache();
+    List<CaseData.CaseDataHistory> getCache();
 
-    List<CaseDataHistory> getHistoryDataCache(String caseType);
+    List<CaseData.CaseDataHistory> getCache(String caseType);
 
     void close();
+
+    DatabaseType getType();
 }

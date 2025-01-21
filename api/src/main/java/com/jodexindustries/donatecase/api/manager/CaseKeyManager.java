@@ -67,15 +67,18 @@ public interface CaseKeyManager {
      * @param player Player name
      * @return Number of keys
      */
-    int getKeys(String caseType, String player);
+    default int getKeys(String caseType, String player) {
+        return getKeysAsync(caseType, player).join();
+    }
 
     /**
      * Get the map of all player's keys
      * @param player Player name
      * @return Map of the keys. Key - Case type, Value - Number of keys
-     * @since 2.0.2.2
      */
-    Map<String, Integer> getKeys(String player);
+    default Map<String, Integer> getKeys(String player) {
+        return getKeysAsync(player).join();
+    }
 
     /**
      * Get the keys to a certain player's case
@@ -88,7 +91,6 @@ public interface CaseKeyManager {
     /**
      * Get the map of all player's keys
      * @param player Player name
-     * @since 2.0.2.2
      * @return Map of the keys. Key - Case type, Value - Number of keys
      */
     CompletableFuture<Map<String, Integer>> getKeysAsync(String player);

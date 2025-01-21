@@ -1,73 +1,59 @@
 package com.jodexindustries.donatecase.gui.items;
 
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.*;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemHandler;
-import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
-import com.jodexindustries.donatecase.api.gui.CaseGui;
-import com.jodexindustries.donatecase.api.manager.GUITypedItemManager;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
-import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
 
-public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>> {
-
-    public static void register(GUITypedItemManager<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> manager) {
-        TypedItemHandler<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>> handler = new HISTORYItemHandlerImpl();
-
-        GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> item = manager.builder("HISTORY")
-                .description("Type for displaying the history of case openings")
-                .handler(handler)
-                .build();
-
-        manager.registerItem(item);
-    }
+public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
     @NotNull
     @Override
-    public GUI.Item<CaseDataMaterialBukkit> handle(@NotNull CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> caseGui, GUI.@NotNull Item<CaseDataMaterialBukkit> item) {
-        CaseDataBukkit caseData = caseGui.getCaseData();
+    public CaseGui.Item handle(@NotNull CaseGuiWrapper caseGui, CaseGui.@NotNull Item item) {
+        CaseData caseData = caseGui.getCaseData();
 
         boolean handled = handleHistoryItem(caseData, item, caseGui.getGlobalHistoryData());
 
-        CaseDataMaterial<ItemStack> material = item.getMaterial();
+        CaseDataMaterial material = item.getMaterial();
 
         if (!handled) {
-            YamlConfiguration config = instance.api.getConfig().getConfigCases().getCase(caseData.getCaseType()).getSecond();
-            String path = "case.Gui.Items." + item.getItemName() + ".HistoryNotFound";
-            ConfigurationSection section = config.getConfigurationSection(path);
-            if (section != null) {
-                material.setId(section.getString("Material"));
-                material.setDisplayName(section.getString("DisplayName"));
-                material.setLore(section.getStringList("Lore"));
-                material.setEnchanted(section.getBoolean("Enchanted"));
-                material.setRgb(DCToolsBukkit.parseRGB(section.getString("Rgb", "")));
-                material.setModelData(section.getInt("ModelData", -1));
-            } else {
-                material.setId("AIR");
+            ConfigurationNode config =  DCAPI.getInstance().getConfig().getConfigCases().getCase(caseData.getCaseType());
+            if(config != null) {
+                ConfigurationNode section = config.node("case", "Gui", "Items", item.getItemName(), "HistoryNotFound");
+                if (section != null) {
+                    material.setId(section.node("Material").getString());
+                    material.setDisplayName(section.node("DisplayName").getString());
+
+                    try {
+                        material.setLore(section.node("Lore").getList(String.class));
+                    } catch (SerializationException ignored) {}
+
+                    material.setEnchanted(section.node("Enchanted").getBoolean());
+                    material.setRgb(DCToolsBukkit.parseRGB(section.node("Rgb").getString("")));
+                    material.setModelData(section.node("ModelData").getInt(-1));
+                } else {
+                    material.setId("AIR");
+                }
             }
         }
 
         return item;
     }
 
-    private boolean handleHistoryItem(CaseDataBukkit caseData, GUI.Item<CaseDataMaterialBukkit> item, List<CaseDataHistory> globalHistoryData) {
-        CaseDataMaterialBukkit itemMaterial = item.getMaterial();
+    private boolean handleHistoryItem(CaseData caseData, CaseGui.Item item, List<CaseData.CaseDataHistory> globalHistoryData) {
+        CaseDataMaterial itemMaterial = item.getMaterial();
 
         String caseType = caseData.getCaseType();
 
@@ -76,21 +62,21 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
         caseType = (typeArgs.length >= 3) ? typeArgs[2] : caseType;
         boolean isGlobal = caseType.equalsIgnoreCase("GLOBAL");
 
-        CaseDataBukkit historyCaseData = isGlobal ? null : instance.api.getCaseManager().getCase(caseType);
+        CaseData historyCaseData = isGlobal ? null : DCAPI.getInstance().getCaseManager().getCase(caseType);
         if (historyCaseData == null && !isGlobal) {
-            Case.getInstance().getLogger().warning("Case " + caseType + " HistoryData is null!");
+            DCAPI.getInstance().getPlatform().getLogger().warning("Case " + caseType + " HistoryData is null!");
             return false;
         }
 
         if (!isGlobal) historyCaseData = historyCaseData.clone();
 
-        CaseDataHistory data = getHistoryData(caseType, isGlobal, globalHistoryData, index);
+        CaseData.CaseDataHistory data = getHistoryData(caseType, isGlobal, globalHistoryData, index);
         if (data == null) return false;
 
-        if (isGlobal) historyCaseData = instance.api.getCaseManager().getCase(data.getCaseType());
+        if (isGlobal) historyCaseData =  DCAPI.getInstance().getCaseManager().getCase(data.getCaseType());
         if (historyCaseData == null) return false;
 
-        CaseDataItem<CaseDataMaterialBukkit> historyItem = historyCaseData.getItem(data.getItem());
+        CaseDataItem historyItem = historyCaseData.getItem(data.getItem());
         if (historyItem == null) return false;
         String material = item.getMaterial().getId();
         if (material == null) material = "HEAD:" + data.getPlayerName();
@@ -99,8 +85,8 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
 
         String[] template = getTemplate(historyCaseData, data, historyItem);
 
-        String displayName = DCToolsBukkit.rt(item.getMaterial().getDisplayName(), template);
-        List<String> lore = DCToolsBukkit.rt(item.getMaterial().getLore(), template);
+        String displayName = DCTools.rt(item.getMaterial().getDisplayName(), template);
+        List<String> lore = DCTools.rt(item.getMaterial().getLore(), template);
 
         itemMaterial.setId(material);
         itemMaterial.setDisplayName(displayName);
@@ -109,9 +95,9 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
         return true;
     }
 
-    private String[] getTemplate(CaseDataBukkit historyCaseData, CaseDataHistory data, CaseDataItem<CaseDataMaterialBukkit> historyItem) {
+    private String[] getTemplate(CaseData historyCaseData, CaseData.CaseDataHistory data, CaseDataItem historyItem) {
 
-        DateFormat formatter = new SimpleDateFormat(instance.api.getConfig().getConfig().getString("DonateCase.DateFormat", "dd.MM HH:mm:ss"));
+        DateFormat formatter = new SimpleDateFormat(DCAPI.getInstance().getConfig().getConfig().node("DonateCase.DateFormat").getString("dd.MM HH:mm:ss"));
         String dateFormatted = formatter.format(new Date(data.getTime()));
         String group = data.getGroup();
         String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "group_not_found";
@@ -124,7 +110,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
                 "%actiondisplayname%:" + randomActionDisplayName,
                 "%casedisplayname%:" + historyCaseData.getCaseDisplayName(),
                 "%casename%:" + data.getCaseType(),
-                "%casetitle%:" + historyCaseData.getCaseTitle(),
+                "%casetitle%:" + historyCaseData.getCaseGui().getTitle(),
                 "%time%:" + dateFormatted,
                 "%group%:" + group,
                 "%player%:" + data.getPlayerName(),
@@ -132,10 +118,10 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
         };
     }
 
-    public static String getActionDisplayName(String action, String groupDisplayName, CaseDataItem<CaseDataMaterialBukkit> historyItem) {
+    public static String getActionDisplayName(String action, String groupDisplayName, CaseDataItem historyItem) {
         String randomActionDisplayName = "random_action_not_found";
         if (action != null && !action.isEmpty()) {
-            CaseDataItem.RandomAction randomAction = historyItem.getRandomAction(action);
+            CaseDataItem.RandomAction randomAction = historyItem.getRandomActions().get(action);
             if (randomAction != null) {
                 randomActionDisplayName = randomAction.getDisplayName();
             }
@@ -146,13 +132,13 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler<CaseDataMaterial
         return randomActionDisplayName;
     }
 
-    private CaseDataHistory getHistoryData(String caseType, boolean isGlobal, List<CaseDataHistory> globalHistoryData, int index) {
-        CaseDataHistory data = null;
+    private CaseData.CaseDataHistory getHistoryData(String caseType, boolean isGlobal, List<CaseData.CaseDataHistory> globalHistoryData, int index) {
+        CaseData.CaseDataHistory data = null;
         if (isGlobal) {
             if (globalHistoryData.size() <= index) return null;
             data = globalHistoryData.get(index);
         } else {
-            List<CaseDataHistory> dbData = DCTools.sortHistoryDataByCase(globalHistoryData, caseType);
+            List<CaseData.CaseDataHistory> dbData = DCTools.sortHistoryDataByCase(globalHistoryData, caseType);
             if (!dbData.isEmpty() && dbData.size() > index) {
                 data = dbData.get(index);
             }

@@ -1,47 +1,49 @@
 package com.jodexindustries.donatecase.impl.holograms;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataHologram;
+import com.jodexindustries.donatecase.BukkitBackend;
+import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.manager.HologramManager;
-import com.jodexindustries.donatecase.DonateCase;
-import com.jodexindustries.donatecase.tools.DCToolsBukkit;
+import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.tools.BukkitUtils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import me.filoghost.holographicdisplays.api.hologram.PlaceholderSetting;
 import org.jetbrains.annotations.NotNull;
-import org.bukkit.block.Block;
+
 import java.util.HashMap;
 
 /**
  * Class for HolographicDisplays Holograms implementation
  */
-public class HolographicDisplaysImpl extends HologramManager {
+public class HolographicDisplaysImpl implements HologramManager {
 
 
     @NotNull
-    private final HolographicDisplaysAPI api = HolographicDisplaysAPI.get(DonateCase.instance);
+    private final HolographicDisplaysAPI api = HolographicDisplaysAPI.get(((BukkitBackend) DCAPI.getInstance().getPlatform()).getPlugin());
 
-    private final HashMap<Block, Hologram> holograms = new HashMap<>();
+    private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void createHologram(Block block, CaseDataBukkit caseData) {
-        CaseDataHologram crateHologram = caseData.getHologram();
+    public void createHologram(CaseLocation block, CaseData caseData) {
+        CaseData.CaseDataHologram crateHologram = caseData.getHologram();
 
         if (!crateHologram.isEnabled()) return;
 
         double height = crateHologram.getHeight();
 
-        Hologram hologram = this.api.createHologram(block.getLocation().add(.5, height, .5));
+        Hologram hologram = this.api.createHologram(BukkitUtils.toBukkit(block.add(.5, height, .5)));
         hologram.setPlaceholderSetting(PlaceholderSetting.DEFAULT);
         crateHologram.getMessages().forEach(line -> hologram.getLines().appendText(
-                DCToolsBukkit.rc((line))
+                DCTools.rc((line))
         ));
 
         this.holograms.put(block, hologram);
     }
 
     @Override
-    public void removeHologram(Block block) {
+    public void removeHologram(CaseLocation block) {
         if (!this.holograms.containsKey(block)) return;
 
         Hologram hologram = this.holograms.get(block);

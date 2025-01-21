@@ -1,22 +1,17 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
-import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
+import com.jodexindustries.donatecase.api.data.animation.JavaAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
+import com.jodexindustries.donatecase.tools.BukkitUtils;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
@@ -28,7 +23,7 @@ import java.util.Random;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-public class WheelAnimation extends JavaAnimationBukkit {
+public class WheelAnimation extends JavaAnimation {
 
     private final List<ArmorStandCreator> armorStands = new ArrayList<>();
     private EquipmentSlot itemSlot;
@@ -49,20 +44,9 @@ public class WheelAnimation extends JavaAnimationBukkit {
         }
     }
 
-    public static void register(AnimationManager<JavaAnimationBukkit, CaseDataMaterialBukkit, Player, Location, Block, CaseDataBukkit> manager) {
-        CaseAnimation<JavaAnimationBukkit> caseAnimation = manager.builder("WHEEL")
-                .animation(WheelAnimation.class)
-                .description("Items resolve around the case")
-                .requireSettings(true)
-                .requireBlock(true)
-                .build();
-
-        manager.registerAnimation(caseAnimation);
-    }
-
     @Override
     public void start() {
-        wheelType = WheelType.getType(getSettings().getString("Type", "RANDOM"));
+        wheelType = WheelType.getType(getSettings().node("Type").getString("RANDOM"));
         armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
         itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD").toUpperCase());
         Bukkit.getScheduler().runTaskTimer(getApi().getDonateCase(), new Task(), 0L, 0L);
@@ -70,7 +54,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
 
     private class Task implements Consumer<BukkitTask> {
 
-        private final Location loc = getLocation().clone().add(0.5, 0, 0.5);
+        private final Location loc = BukkitUtils.toBukkit(getLocation().clone()).add(0.5, 0, 0.5);
         private final World world;
 
         private final int itemsCount = getSettings().getInt("ItemsCount");
@@ -136,14 +120,14 @@ public class WheelAnimation extends JavaAnimationBukkit {
 
             if (wheelType == WheelType.FULL) {
                 // FULL logic - unique items
-                List<CaseDataItem<CaseDataMaterialBukkit>> uniqueItems = new ArrayList<>(getCaseData().getItems().values());
+                List<CaseDataItem> uniqueItems = new ArrayList<>(getCaseData().getItems().values());
 
                 if (getSettings().getBoolean("Shuffle", true)) {
                     Collections.shuffle(uniqueItems);
                 }
 
                 int additionalSteps = 0;
-                for (CaseDataItem<CaseDataMaterialBukkit> uniqueItem : uniqueItems) {
+                for (CaseDataItem uniqueItem : uniqueItems) {
                     if (uniqueItem.getItemName().equals(getWinItem().getItemName())) {
                         additionalSteps = uniqueItems.size() - armorStands.size();
                         armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
@@ -158,7 +142,7 @@ public class WheelAnimation extends JavaAnimationBukkit {
                 // RANDOM logic - random items with duplicates
                 armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
                 for (int i = 1; i < itemsCount; i++) {
-                    CaseDataItem<CaseDataMaterialBukkit> randomItem = getCaseData().getRandomItem();
+                    CaseDataItem randomItem = getCaseData().getRandomItem();
                     armorStands.add(spawnArmorStand(getLocation(), randomItem, small));
                 }
                 int rand = new Random().nextInt(armorStands.size());
@@ -218,18 +202,19 @@ public class WheelAnimation extends JavaAnimationBukkit {
         }
     }
 
-    private ArmorStandCreator spawnArmorStand(Location location, CaseDataItem<CaseDataMaterialBukkit> item, boolean small) {
-        ArmorStandCreator as = getApi().getTools().createArmorStand(location);
+    private ArmorStandCreator spawnArmorStand(Location location, CaseDataItem item, boolean small) {
+        CaseDataMaterial material = item.getMaterial();
+
+        ArmorStandCreator as = getApi().getPlatform().getTools().createArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
         as.setAngle(armorStandEulerAngle);
-        as.setCustomName(getApi().getTools().getPAPI().setPlaceholders(getPlayer(), item.getMaterial().getDisplayName()));
+        as.setCustomName(getApi().getPlatform().getTools().getPAPI().setPlaceholders(getPlayer(), item.getMaterial().getDisplayName()));
         as.setCustomNameVisible(item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty());
         as.spawn();
-        if (item.getMaterial().getItemStack().getType() != Material.AIR) {
-            as.setEquipment(itemSlot, item.getMaterial().getItemStack());
-        }
+
+        as.setEquipment(itemSlot, material.getItemStack());
         return as;
     }
 }

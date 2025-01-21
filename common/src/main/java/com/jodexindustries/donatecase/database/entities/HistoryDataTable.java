@@ -3,8 +3,12 @@ package com.jodexindustries.donatecase.database.entities;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @DatabaseTable(tableName = "history_data")
 public class HistoryDataTable {
 
@@ -32,15 +36,15 @@ public class HistoryDataTable {
     public HistoryDataTable() {
     }
 
-    public HistoryDataTable(CaseDataHistory historyData) {
+    public HistoryDataTable(CaseData.CaseDataHistory historyData) {
         update(historyData);
     }
 
-    public CaseDataHistory toHistoryData() {
-        return new CaseDataHistory(item, caseType, playerName, time, group, action);
+    public CaseData.CaseDataHistory toHistoryData() {
+        return new CaseData.CaseDataHistory(item, caseType, playerName, time, group, action);
     }
 
-    public void update(CaseDataHistory historyData) {
+    public void update(CaseData.CaseDataHistory historyData) {
         this.caseType = historyData.getCaseType();
         this.id = historyData.getId();
         this.item = historyData.getItem();
@@ -50,59 +54,4 @@ public class HistoryDataTable {
         this.action = historyData.getAction();
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getItem() {
-        return item;
-    }
-
-    public void setItem(String item) {
-        this.item = item;
-    }
-
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
-
-    public long getTime() {
-        return time;
-    }
-
-    public void setTime(long time) {
-        this.time = time;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
-    public String getCaseType() {
-        return caseType;
-    }
-
-    public void setCaseType(String caseType) {
-        this.caseType = caseType;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
 }

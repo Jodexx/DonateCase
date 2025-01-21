@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.addon.internal;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.platform.Platform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,6 +12,8 @@ import java.io.InputStream;
  * lifecycle methods and resource management utilities.
  */
 public interface InternalAddon extends Addon {
+
+    boolean isEnabled();
 
     /**
      * Called when this plugin is disabled
@@ -64,5 +67,5 @@ public interface InternalAddon extends Addon {
     InternalAddonDescription getDescription();
 
     @NotNull
-    Addon getDonateCase();
+    Platform getPlatform();
 }

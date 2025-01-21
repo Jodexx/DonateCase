@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.impl.materials;
 
-import com.jodexindustries.donatecase.DonateCase;
+import com.jodexindustries.donatecase.BukkitDonateCase;
 import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
 import com.jodexindustries.donatecase.tools.skull.SkullCreator;
 import org.bukkit.Material;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
-public class BASE64MaterialHandlerImpl implements MaterialHandler<ItemStack> {
+public class BASE64MaterialHandlerImpl implements MaterialHandler {
 
     @Override
     public @NotNull ItemStack handle(@NotNull String context) {
@@ -18,7 +18,7 @@ public class BASE64MaterialHandlerImpl implements MaterialHandler<ItemStack> {
             return SkullCreator.itemFromBase64(context);
         } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
-            DonateCase.instance.getLogger().log(Level.WARNING, "Error with handling item: " + context, e);
+            BukkitDonateCase.instance.getLogger().log(Level.WARNING, "Error with handling item: " + context, e);
         }
 
         return new ItemStack(Material.AIR);

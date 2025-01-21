@@ -1,11 +1,12 @@
 package com.jodexindustries.dcprizepreview.gui;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -13,17 +14,17 @@ import java.util.stream.Collectors;
 
 public class PreviewGUI {
 
-    public static Inventory loadGUI(CaseDataBukkit caseData) {
-        Collection<CaseDataItem<CaseDataMaterialBukkit>> items = caseData.getItems().values();
-        GUI<CaseDataMaterialBukkit> gui = caseData.getGui();
-        if(gui == null) return null;
+    public static Inventory loadGUI(CaseData caseData) {
+        Collection<CaseDataItem> items = caseData.getItems().values();
+        CaseGui caseGui = caseData.getCaseGui();
+        if(caseGui == null) return null;
 
-        Inventory inventory = Bukkit.createInventory(null, getSize(items.size()), gui.getTitle());
+        Inventory inventory = Bukkit.createInventory(null, getSize(items.size()), caseGui.getTitle());
         items = items.stream().sorted(Comparator.comparingInt(CaseDataItem::getIndex)).collect(Collectors.toList());
-        for (CaseDataItem<CaseDataMaterialBukkit>item : items) {
-            CaseDataMaterialBukkit material = item.getMaterial();
+        for (CaseDataItem item : items) {
+            CaseDataMaterial material = item.getMaterial();
             material.updateMeta();
-            inventory.addItem(material.getItemStack());
+            inventory.addItem((ItemStack) material.getItemStack());
         }
         return inventory;
     }

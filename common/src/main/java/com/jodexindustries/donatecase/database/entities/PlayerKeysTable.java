@@ -2,7 +2,11 @@ package com.jodexindustries.donatecase.database.entities;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @DatabaseTable(tableName = "player_keys")
 public class PlayerKeysTable {
     @DatabaseField(canBeNull = false)
@@ -11,29 +15,5 @@ public class PlayerKeysTable {
     private String caseType;
     @DatabaseField(canBeNull = false, defaultValue = "0")
     private int keys;
-
-    public String getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(String player) {
-        this.player = player;
-    }
-
-    public String getCaseType() {
-        return caseType;
-    }
-
-    public void setCaseType(String caseType) {
-        this.caseType = caseType;
-    }
-
-    public int getKeys() {
-        return keys;
-    }
-
-    public void setKeys(int keys) {
-        this.keys = keys;
-    }
 
 }

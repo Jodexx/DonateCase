@@ -1,15 +1,18 @@
 package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.Case;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
+import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
+import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
+import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
-import com.jodexindustries.donatecase.api.gui.CaseGui;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
+import com.jodexindustries.donatecase.tools.BukkitUtils;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,12 +33,11 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.Inventory;
 
 import java.util.UUID;
 import java.util.logging.Level;
 
-import static com.jodexindustries.donatecase.DonateCase.instance;
+import static com.jodexindustries.donatecase.BukkitDonateCase.instance;
 
 
 public class EventsListener implements Listener {
@@ -51,10 +53,11 @@ public class EventsListener implements Listener {
     public void onAdminJoined(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         if (p.hasPermission("donatecase.admin")) {
+            // TODO update checker (move to event manager)
             if (instance.api.getConfig().getConfig().getBoolean("DonateCase.UpdateChecker")) {
                 instance.updateChecker.getVersion().thenAcceptAsync(version -> {
                     if(DCTools.getPluginVersion(instance.getDescription().getVersion()) < DCTools.getPluginVersion(version.getVersionNumber())) {
-                        instance.api.getTools().msg(p, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("new-update"), "%version:" + version));
+                        instance.api.getPlatform().getTools().msg(p, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("new-update"), "%version:" + version));
                     }
                 });
             }
@@ -67,9 +70,9 @@ public class EventsListener implements Listener {
         if (instance.api.getGUIManager().getPlayersGUI().containsKey(uuid)) {
             e.setCancelled(true);
 
-            CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui = instance.api.getGUIManager().getPlayersGUI().get(uuid);
-            CaseDataBukkit caseData = gui.getCaseData();
-            String itemType = caseData.getGui().getItemTypeBySlot(e.getRawSlot());
+            CaseGuiWrapper gui = instance.api.getGUIManager().getPlayersGUI().get(uuid);
+            CaseData caseData = gui.getCaseData();
+            String itemType = caseData.getCaseGui().getItemTypeBySlot(e.getRawSlot());
             CaseGuiClickEvent caseGuiClickEvent = new CaseGuiClickEvent(e.getView(), e.getSlotType(),
                     e.getSlot(), e.getClick(), e.getAction(), gui, itemType);
             Bukkit.getServer().getPluginManager().callEvent(caseGuiClickEvent);
@@ -78,10 +81,10 @@ public class EventsListener implements Listener {
 
             if (!caseGuiClickEvent.isCancelled()) {
 
-                GUITypedItem<CaseDataMaterialBukkit, CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit>, CaseGuiClickEvent> typedItem = instance.api.getGuiTypedItemManager().getFromString(itemType);
+                GuiTypedItem typedItem = instance.api.getGuiTypedItemManager().getFromString(itemType);
                 if (typedItem == null) return;
 
-                TypedItemClickHandler<CaseGuiClickEvent> handler = typedItem.getItemClickHandler();
+                TypedItemClickHandler handler = typedItem.getItemClickHandler();
                 if (handler == null) return;
 
                 handler.onClick(caseGuiClickEvent);
@@ -106,14 +109,16 @@ public class EventsListener implements Listener {
         Block block = e.getClickedBlock();
         if (block != null) {
             Location blockLocation = block.getLocation();
-            String caseType = Case.getCaseTypeByLocation(blockLocation);
-            if (caseType == null) return;
+            CaseInfo caseInfo = DCAPI.getInstance().getConfig().getCaseStorage().get(BukkitUtils.fromBukkit(blockLocation));
+            if (caseInfo == null) return;
+
+            String caseType = caseInfo.getType();
 
             e.setCancelled(true);
 
-            CaseDataBukkit caseData = instance.api.getCaseManager().getCase(caseType);
+            CaseData caseData = instance.api.getCaseManager().getCase(caseType);
             if (caseData == null) {
-                instance.api.getTools().msg(p, "&cSomething wrong! Contact with server administrator!");
+                instance.api.getPlatform().getTools().msg(p, "&cSomething wrong! Contact with server administrator!");
                 Case.getInstance().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
                 return;
             }
@@ -123,7 +128,7 @@ public class EventsListener implements Listener {
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (!event.isCancelled()) {
                     if (event.isLocked()) {
-                        instance.api.getTools().msg(p, instance.api.getConfig().getLang().getString("case-opens"));
+                        instance.api.getPlatform().getTools().msg(p, instance.api.getConfig().getLang().getString("case-opens"));
                         return;
                     }
 
@@ -147,10 +152,10 @@ public class EventsListener implements Listener {
 
     @EventHandler
     public void BlockBreak(BlockBreakEvent e) {
-        Location loc = e.getBlock().getLocation();
-        if (Case.hasCaseByLocation(loc)) {
+        CaseLocation location = BukkitUtils.fromBukkit(e.getBlock().getLocation());
+        if (DCAPI.getInstance().getConfig().getCaseStorage().has(location)) {
             e.setCancelled(true);
-            instance.api.getTools().msg(e.getPlayer(), instance.api.getConfig().getLang().getString("case-destroy-disallow"));
+            instance.api.getPlatform().getTools().msg(e.getPlayer(), instance.api.getConfig().getLang().getString("case-destroy-disallow"));
         }
 
     }

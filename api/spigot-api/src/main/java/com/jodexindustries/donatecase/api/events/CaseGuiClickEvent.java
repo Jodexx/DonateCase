@@ -1,25 +1,21 @@
 package com.jodexindustries.donatecase.api.events;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
-import com.jodexindustries.donatecase.api.gui.CaseGui;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import com.jodexindustries.donatecase.api.event.GUIClickEvent;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Called when the player clicks on the case gui
  */
-public class CaseGuiClickEvent extends InventoryClickEvent {
+public class CaseGuiClickEvent extends InventoryClickEvent implements GUIClickEvent {
     private static final HandlerList handlers = new HandlerList();
-    private final CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui;
+    private final CaseGuiWrapper gui;
     private final String itemType;
     private boolean cancel;
 
@@ -36,7 +32,7 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
      */
     public CaseGuiClickEvent(@NotNull InventoryView view, @NotNull InventoryType.SlotType type,
                              int slot, @NotNull ClickType click, @NotNull InventoryAction action,
-                             @NotNull CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> gui, String itemType) {
+                             @NotNull CaseGuiWrapper gui, String itemType) {
         super(view, type, slot, click, action);
         this.gui = gui;
         this.itemType = itemType;
@@ -57,34 +53,19 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
         return handlers;
     }
 
+    @Override
+    public @NotNull Object getPlayer() {
+        return getWhoClicked();
+    }
+
     /**
      * Get opened gui
      *
      * @return gui
      */
-    @NotNull
-    public CaseGui<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialBukkit> getGui() {
+    @Override
+    public @NotNull CaseGuiWrapper getCaseGUI() {
         return gui;
-    }
-
-    /**
-     * Get case location
-     *
-     * @return Case location
-     */
-    @Deprecated
-    public Location getLocation() {
-        return gui.getLocation();
-    }
-
-    /**
-     * Get case data
-     *
-     * @return case data
-     */
-    @Deprecated
-    public CaseDataBukkit getCaseData() {
-        return gui.getCaseData();
     }
 
     /**
@@ -92,7 +73,8 @@ public class CaseGuiClickEvent extends InventoryClickEvent {
      *
      * @return item type
      */
-    public String getItemType() {
+    @Override
+    public @NotNull String getItemType() {
         return itemType;
     }
 

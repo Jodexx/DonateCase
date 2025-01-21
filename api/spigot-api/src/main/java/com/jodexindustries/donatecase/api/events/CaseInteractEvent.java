@@ -1,9 +1,8 @@
 package com.jodexindustries.donatecase.api.events;
 
 import com.jodexindustries.donatecase.api.data.ActiveCase;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import lombok.Getter;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -24,10 +23,10 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
      * true if you wish to cancel this event
      */
     protected boolean cancel;
-    private final Block block;
-    private final CaseDataBukkit caseData;
-    private final Action action;
-    private final List<ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>>> activeCases;
+    @Getter private final Block block;
+    @Getter private final CaseData caseData;
+    @Getter private final Action action;
+    @Getter private final List<ActiveCase> activeCases;
 
     /**
      * Default constructor
@@ -38,55 +37,14 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
      * @param action   Interact action
      */
     public CaseInteractEvent(@NotNull final Player who, @NotNull final Block block,
-                             @NotNull final CaseDataBukkit caseData, @NotNull final Action action,
-                             @Nullable final List<ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>>> activeCases) {
+                             @NotNull final CaseData caseData, @NotNull final Action action,
+                             @Nullable final List<ActiveCase> activeCases) {
         super(who);
         this.block = block;
         this.caseData = caseData;
         this.cancel = false;
         this.action = action;
         this.activeCases = activeCases;
-    }
-
-    /**
-     * Can be only LEFT_CLICK_BLOCK and RIGHT_CLICK_BLOCK
-     *
-     * @return click block action
-     */
-    @NotNull
-    public Action getAction() {
-        return action;
-    }
-
-    /**
-     * Get clicked block
-     *
-     * @return block
-     */
-    @NotNull
-    public Block getClickedBlock() {
-        return block;
-    }
-
-    /**
-     * Gets case data
-     * @return case data
-     * @since 2.0.2.5
-     */
-    public CaseDataBukkit getCaseData() {
-        return caseData;
-    }
-
-    /**
-     * Get case type
-     *
-     * @return case type
-     * @deprecated Use instead {@link #getCaseData()}
-     */
-    @NotNull
-    @Deprecated
-    public String getCaseType() {
-        return caseData.getCaseType();
     }
 
     @NotNull
@@ -115,18 +73,7 @@ public class CaseInteractEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Gets active cases
-     * @return list of the active cases by this block
-     * @since 2.0.2.5
-     */
-    @Nullable
-    public List<ActiveCase<Block, Player, CaseDataItem<CaseDataMaterialBukkit>>> getActiveCases() {
-        return activeCases;
-    }
-
-    /**
      * Is case locked
-     * @since 2.0.2.5
      * @return true if case locked
      */
     public boolean isLocked() {

@@ -1,6 +1,9 @@
 package com.jodexindustries.donatecase.api.armorstand;
 
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import com.github.retrooper.packetevents.util.Vector3f;
+import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.tools.BukkitUtils;
 import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import me.tofaa.entitylib.meta.other.ArmorStandMeta;
@@ -9,24 +12,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.UUID;
 
 public class PacketArmorStandCreator implements ArmorStandCreator {
-    private Location location;
+    private CaseLocation location;
     private final WrapperLivingEntity entity;
     private final ArmorStandMeta meta;
-    private final EntityMetadataStore metadataStore;
 
-    public PacketArmorStandCreator(Location location) {
-        metadataStore = new EntityMetadataStore();
+    public PacketArmorStandCreator(CaseLocation location) {
         entity = new WrapperLivingEntity(EntityTypes.ARMOR_STAND);
         entity.getEquipment().setNotifyChanges(true);
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -39,13 +35,8 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
     }
 
     @Override
-    public void setHelmet(ItemStack item) {
-        setEquipment(EquipmentSlot.HEAD, item);
-    }
-
-    @Override
-    public void setEquipment(EquipmentSlot equipmentSlot, ItemStack item) {
-        com.github.retrooper.packetevents.protocol.item.ItemStack itemStack = SpigotReflectionUtil.decodeBukkitItemStack(item);
+    public void setEquipment(EquipmentSlot equipmentSlot, Object item) {
+        com.github.retrooper.packetevents.protocol.item.ItemStack itemStack = SpigotReflectionUtil.decodeBukkitItemStack((ItemStack) item);
         switch (equipmentSlot) {
             case LEGS:
                 entity.getEquipment().setLeggings(itemStack);
@@ -70,45 +61,46 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void setAngle(ArmorStandEulerAngle angle) {
-        meta.setHeadRotation(meta.getHeadRotation().add((float) angle.getHead().getX(),
+        meta.setHeadRotation(new Vector3f(
+                (float) angle.getHead().getX(),
                 (float) angle.getHead().getY(),
-                (float) angle.getHead().getZ()));
+                (float) angle.getHead().getZ())
+        );
 
-        meta.setLeftArmRotation(meta.getLeftArmRotation().add(
+        meta.setLeftArmRotation(new Vector3f(
                 (float) angle.getLeftArm().getX(),
                 (float) angle.getLeftArm().getY(),
-                (float) angle.getLeftArm().getZ()));
+                (float) angle.getLeftArm().getZ())
+        );
 
-        meta.setRightArmRotation(meta.getRightArmRotation().add(
+        meta.setRightArmRotation(new Vector3f(
                 (float) angle.getRightArm().getX(),
                 (float) angle.getRightArm().getY(),
-                (float) angle.getRightArm().getZ()));
+                (float) angle.getRightArm().getZ())
+        );
 
-        meta.setBodyRotation(meta.getBodyRotation().add((float) angle.getBody().getX(),
+        meta.setBodyRotation(new Vector3f(
+                (float) angle.getBody().getX(),
                 (float) angle.getBody().getY(),
-                (float) angle.getBody().getZ()));
+                (float) angle.getBody().getZ())
+        );
 
-        meta.setLeftLegRotation(meta.getLeftLegRotation().add(
+        meta.setLeftLegRotation(new Vector3f(
                 (float) angle.getLeftLeg().getX(),
                 (float) angle.getLeftLeg().getY(),
-                (float) angle.getLeftLeg().getZ()));
+                (float) angle.getLeftLeg().getZ())
+        );
 
-        meta.setRightLegRotation(meta.getRightLegRotation().add(
+        meta.setRightLegRotation(new Vector3f(
                 (float) angle.getRightLeg().getX(),
                 (float) angle.getRightLeg().getY(),
-                (float) angle.getRightLeg().getZ()));
+                (float) angle.getRightLeg().getZ())
+        );
     }
 
     @Override
     public void setRotation(float yaw, float pitch) {
         entity.rotateHead(yaw, pitch);
-    }
-
-    @Override
-    public void setHeadPose(EulerAngle eulerAngle) {
-        meta.setHeadRotation(meta.getHeadRotation().add((float) eulerAngle.getX(),
-                (float) eulerAngle.getY(),
-                (float) eulerAngle.getZ()));
     }
 
     @Override
@@ -151,28 +143,7 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
     }
 
     @Override
-    public void setMetadata(@NotNull String metadata, @NotNull MetadataValue value) {
-        metadataStore.setMetadata(entity.getUuid(), metadata, value);
-    }
-
-    @NotNull
-    @Override
-    public List<MetadataValue> getMetadata(@NotNull String metadataKey) {
-        return metadataStore.getMetadata(entity.getUuid(), metadataKey);
-    }
-
-    @Override
-    public boolean hasMetadata(@NotNull String metadataKey) {
-        return metadataStore.hasMetadata(entity.getUuid(), metadataKey);
-    }
-
-    @Override
-    public void removeMetadata(@NotNull String metadataKey, @NotNull Plugin owningPlugin) {
-        metadataStore.removeMetadata(entity.getUuid(), metadataKey, owningPlugin);
-    }
-
-    @Override
-    public Location getLocation() {
+    public CaseLocation getLocation() {
         return location;
     }
 
@@ -182,18 +153,15 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
     }
 
     @Override
-    public boolean isPacket() {
-        return true;
-    }
-
-    @Override
     public ArmorStand getArmorStand() {
         return null;
     }
 
     @Override
-    public void teleport(Location location) {
-        entity.teleport(fromBukkitLocation(location));
+    public void teleport(CaseLocation location) {
+        entity.teleport(
+                fromBukkitLocation(BukkitUtils.toBukkit(location))
+        );
         this.location = location;
     }
 
@@ -204,7 +172,9 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void spawn() {
-        entity.spawn(fromBukkitLocation(location));
+        entity.spawn(
+                fromBukkitLocation(BukkitUtils.toBukkit(location))
+        );
     }
 
     @Override

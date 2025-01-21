@@ -29,11 +29,6 @@ public class ExternalJavaAddon implements ExternalAddon {
     }
 
     @Override
-    public boolean isEnabled() {
-        return plugin.isEnabled();
-    }
-
-    @Override
     public Logger getLogger() {
         return plugin.getLogger();
     }
