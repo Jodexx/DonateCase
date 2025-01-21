@@ -92,8 +92,6 @@ public abstract class DCAPI {
      */
     public abstract @NotNull SubCommandManager getSubCommandManager();
 
-    public abstract HologramManager getHologramManager();
-
     /**
      * Retrieves the {@link CaseDatabase}, which provides access to the database for storing case-related data.
      *

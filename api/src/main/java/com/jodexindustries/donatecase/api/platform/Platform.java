@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api.platform;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.Addon;
+import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.PAPI;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,8 @@ public interface Platform extends Addon {
     DCTools getTools();
 
     PAPI getPAPI();
+
+    HologramManager getHologramManager();
 
     DCAPI getAPI();
 

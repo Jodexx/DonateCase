@@ -118,6 +118,11 @@ public class BukkitBackend extends BackendPlatform {
     }
 
     @Override
+    public HologramManager getHologramManager() {
+        return hologramManager;
+    }
+
+    @Override
     public CaseGuiWrapper createGui(DCPlayer player, CaseData caseData, CaseLocation location) {
         return new CaseGuiWrapperBukkit(this, player, caseData, location);
     }

@@ -138,11 +138,6 @@ public class DonateCase extends DCAPI {
     }
 
     @Override
-    public HologramManager getHologramManager() {
-        return null;
-    }
-
-    @Override
     public @NotNull CaseDatabase getDatabase() {
         return database;
     }
