@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.chat.rgb.RGBUtils;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
+import com.jodexindustries.donatecase.api.data.material.CaseMaterialException;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.manager.MaterialManager;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -77,10 +79,14 @@ public interface DCTools {
         String temp = manager.getByStart(id);
 
         if (temp != null) {
-            CaseMaterial caseMaterial = manager.getRegisteredMaterial(temp);
+            CaseMaterial caseMaterial = manager.get(temp);
             if (caseMaterial != null) {
                 String context = id.replace(temp, "").replaceFirst(":", "").trim();
-                return caseMaterial.handle(context);
+                try {
+                    return caseMaterial.handle(context);
+                } catch (CaseMaterialException e) {
+                    DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Error with handling material " + context, e);
+                }
             }
         }
         return null;
@@ -103,7 +109,6 @@ public interface DCTools {
                 }
             }
 
-            text = rc(text);
         }
         return text;
     }
@@ -194,23 +199,23 @@ public interface DCTools {
     /**
      * Sorts and filters case history data based on a specific case type.
      *
-     * @param historyData the list of {@link CaseData.CaseDataHistory} objects to sort and filter.
+     * @param historyData the list of {@link CaseData.History} objects to sort and filter.
      * @param caseType    the type of case to filter by.
-     * @return a sorted list of {@link CaseData.CaseDataHistory}, filtered by the specified case type,
+     * @return a sorted list of {@link CaseData.History}, filtered by the specified case type,
      * sorted in descending order of time.
      */
-    static List<CaseData.CaseDataHistory> sortHistoryDataByCase(List<CaseData.CaseDataHistory> historyData, String caseType) {
+    static List<CaseData.History> sortHistoryDataByCase(List<CaseData.History> historyData, String caseType) {
         return historyData.stream()
                 .filter(Objects::nonNull)
                 .filter(data -> data.getCaseType().equals(caseType))
-                .sorted(Comparator.comparingLong(CaseData.CaseDataHistory::getTime).reversed())
+                .sorted(Comparator.comparingLong(CaseData.History::getTime).reversed())
                 .collect(Collectors.toList());
     }
 
-    static List<CaseData.CaseDataHistory> sortHistoryDataByDate(List<CaseData.CaseDataHistory> list) {
+    static List<CaseData.History> sortHistoryDataByDate(List<CaseData.History> list) {
         return list.stream()
                 .filter(Objects::nonNull)
-                .sorted(Comparator.comparingLong(CaseData.CaseDataHistory::getTime)
+                .sorted(Comparator.comparingLong(CaseData.History::getTime)
                         .reversed())
                 .collect(Collectors.toList());
     }

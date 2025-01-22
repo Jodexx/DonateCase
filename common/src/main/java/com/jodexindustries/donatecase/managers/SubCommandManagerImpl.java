@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.managers;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.manager.SubCommandManager;
 import com.jodexindustries.donatecase.api.platform.Platform;
@@ -14,7 +13,7 @@ import java.util.logging.Level;
 
 public class SubCommandManagerImpl implements SubCommandManager {
 
-    private static final List<? extends Class<? extends SubCommand>> defaultCommands = Arrays.asList(
+    private static final List<? extends Class<? extends SubCommand.SubCommandBuilder>> defaultCommands = Arrays.asList(
             AddonCommand.class,
             AddonsCommand.class,
             CasesCommand.class,
@@ -33,21 +32,15 @@ public class SubCommandManagerImpl implements SubCommandManager {
     private static final Map<String, SubCommand> registeredSubCommands = new HashMap<>();
 
     private final DCAPI api;
-    private final Platform platform ;
+    private final Platform platform;
 
     public SubCommandManagerImpl(DCAPI api) {
         this.api = api;
         this.platform = api.getPlatform();
     }
 
-    @NotNull
     @Override
-    public SubCommand.Builder builder(@NotNull String name, @NotNull Addon addon) {
-        return new SubCommand.Builder(name, addon);
-    }
-
-    @Override
-    public boolean registerSubCommand(SubCommand subCommand) {
+    public boolean register(SubCommand subCommand) {
         String name = subCommand.getName();
         if (registeredSubCommands.get(name.toLowerCase()) == null) {
             registeredSubCommands.put(name.toLowerCase(), subCommand);
@@ -59,8 +52,8 @@ public class SubCommandManagerImpl implements SubCommandManager {
     }
 
     @Override
-    public void unregisterSubCommand(String commandName) {
-        if(registeredSubCommands.get(commandName.toLowerCase()) != null) {
+    public void unregister(String commandName) {
+        if (registeredSubCommands.get(commandName.toLowerCase()) != null) {
             registeredSubCommands.remove(commandName.toLowerCase());
         } else {
             platform.getLogger().warning("Sub command " + commandName + " already unregistered!");
@@ -68,27 +61,27 @@ public class SubCommandManagerImpl implements SubCommandManager {
     }
 
     @Override
-    public void unregisterSubCommands() {
+    public void unregister() {
         List<String> list = new ArrayList<>(registeredSubCommands.keySet());
-        list.forEach(this::unregisterSubCommand);
+        list.forEach(this::unregister);
     }
 
     @Override
-    public @Nullable SubCommand getRegisteredSubCommand(String commandName) {
+    public @Nullable SubCommand get(String commandName) {
         return registeredSubCommands.get(commandName);
     }
 
     @Override
-    public @NotNull Map<String, SubCommand> getRegisteredSubCommands() {
+    public @NotNull Map<String, SubCommand> getMap() {
         return registeredSubCommands;
     }
 
     @Override
-    public void registerDefaultSubCommands() {
+    public void registerDefault() {
         defaultCommands.forEach(commandClass -> {
             try {
-                SubCommand command = commandClass.getDeclaredConstructor(DCAPI.class).newInstance(api);
-                registerSubCommand(command);
+                SubCommand.SubCommandBuilder command = commandClass.getDeclaredConstructor(DCAPI.class).newInstance(api);
+                register(command.build());
             } catch (Exception e) {
                 platform.getLogger().log(Level.WARNING, "Failed to register command: " + commandClass.getSimpleName(), e);
             }

@@ -56,35 +56,30 @@ public class DonateCase extends DCAPI {
 
     public void load() {
         long time = System.currentTimeMillis();
-        addonManager.loadAddons();
+        addonManager.load();
 
         config.load();
         caseLoader.load();
         updateChecker.check();
         database.connect();
-        addonManager.enableAddons(PowerReason.DONATE_CASE);
+        addonManager.enable(PowerReason.DONATE_CASE);
 
         platform.getLogger().info("Enabled in " + (System.currentTimeMillis() - time) + "ms");
     }
 
     public void unload() {
-        addonManager.unloadAddons(PowerReason.DONATE_CASE);
-        animationmanager.unregisterAnimations();
-        subCommandManager.unregisterSubCommands();
-        actionManager.unregisterActions();
-        materialManager.unregisterMaterials();
-        guiTypedItemManager.unregisterItems();
+        addonManager.unload(PowerReason.DONATE_CASE);
+        animationmanager.unregister();
+        subCommandManager.unregister();
+        actionManager.unregister();
+        materialManager.unregister();
+        guiTypedItemManager.unregister();
 
         database.close();
 
-        guiManager.getPlayersGUI().values().parallelStream().forEach(gui -> gui.getPlayer().closeInventory());
+        guiManager.getMap().values().parallelStream().forEach(gui -> gui.getPlayer().closeInventory());
 
-        caseManager.getMap().clear();
-        animationmanager.getActiveCases().clear();
-        animationmanager.getActiveCasesByBlock().clear();
-        caseOpenManager.getCache().clear();
-        caseKeyManager.getCache().clear();
-        database.getCache().clear();
+        clear();
     }
 
     @Override

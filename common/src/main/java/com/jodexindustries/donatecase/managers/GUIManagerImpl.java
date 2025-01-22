@@ -40,7 +40,7 @@ public class GUIManagerImpl implements GUIManager {
     }
 
     @Override
-    public Map<UUID, CaseGuiWrapper> getPlayersGUI() {
+    public Map<UUID, CaseGuiWrapper> getMap() {
         return playersGui;
     }
 }

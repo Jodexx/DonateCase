@@ -19,8 +19,8 @@ public class CMIHologramsImpl implements HologramManager {
     private final HashMap<CaseLocation, CMIHologram> holograms = new HashMap<>();
 
     @Override
-    public void createHologram(CaseLocation block, CaseData caseData) {
-        CaseData.CaseDataHologram caseHologram = caseData.getHologram();
+    public void create(CaseLocation block, CaseData caseData) {
+        CaseData.Hologram caseHologram = caseData.getHologram();
 
         if (!caseHologram.isEnabled()) return;
 
@@ -42,7 +42,7 @@ public class CMIHologramsImpl implements HologramManager {
     }
 
     @Override
-    public void removeHologram(CaseLocation block) {
+    public void remove(CaseLocation block) {
         if (!this.holograms.containsKey(block)) return;
 
         CMIHologram hologram = this.holograms.get(block);
@@ -53,7 +53,7 @@ public class CMIHologramsImpl implements HologramManager {
     }
 
     @Override
-    public void removeAllHolograms() {
+    public void remove() {
         this.holograms.values().forEach(CMIHologram::remove);
         this.holograms.clear();
     }

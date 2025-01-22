@@ -13,12 +13,12 @@ public class CaseManagerImpl implements CaseManager {
     private final static Map<String, CaseData> caseData = new HashMap<>();
 
     @Override
-    public boolean hasCaseByType(@NotNull String type) {
+    public boolean hasByType(@NotNull String type) {
         return !caseData.isEmpty() && caseData.containsKey(type);
     }
 
     @Override
-    public @Nullable CaseData getCase(@NotNull String type) {
+    public @Nullable CaseData get(@NotNull String type) {
         return caseData.get(type);
     }
 

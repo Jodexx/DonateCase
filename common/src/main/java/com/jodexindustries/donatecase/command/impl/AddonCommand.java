@@ -5,6 +5,8 @@ import com.jodexindustries.donatecase.api.addon.PowerReason;
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -17,13 +19,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AddonCommand extends SubCommand {
+public class AddonCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
 
     private final DCAPI api;
 
     public AddonCommand(DCAPI api) {
-        super("addon", api.getPlatform());
-        setPermission(SubCommandType.ADMIN.permission);
+        super();
+        name("addon");
+        addon(api.getPlatform());
+        permission(SubCommandType.ADMIN.permission);
+        executor(this);
+        tabCompleter(this);
         this.api = api;
     }
 
@@ -76,7 +82,7 @@ public class AddonCommand extends SubCommand {
     }
 
     private void handleEnableCommand(DCCommandSender sender, String addonName) {
-        InternalJavaAddon addon = api.getAddonManager().getAddon(addonName);
+        InternalJavaAddon addon = api.getAddonManager().get(addonName);
         if (addon == null) {
             sender.sendMessage(DCTools.prefix("&cAddon &6" + addonName + " &cnot loaded!"));
             return;
@@ -85,7 +91,7 @@ public class AddonCommand extends SubCommand {
             sender.sendMessage(DCTools.prefix("&cAddon &6" + addonName + " &calready enabled!"));
             return;
         }
-        if (api.getAddonManager().enableAddon(addon, PowerReason.DONATE_CASE)) {
+        if (api.getAddonManager().enable(addon, PowerReason.DONATE_CASE)) {
             handleAddonSuccess(sender, addonName, "enabled");
         } else {
             handleAddonError(sender, addonName, "enabling");
@@ -93,7 +99,7 @@ public class AddonCommand extends SubCommand {
     }
 
     private void handleDisableCommand(DCCommandSender sender, String addonName) {
-        InternalJavaAddon addon = api.getAddonManager().getAddon(addonName);
+        InternalJavaAddon addon = api.getAddonManager().get(addonName);
         if (addon == null) {
             sender.sendMessage(DCTools.prefix("&cAddon &6" + addonName + " &cnot loaded!"));
             return;
@@ -102,7 +108,7 @@ public class AddonCommand extends SubCommand {
             sender.sendMessage(DCTools.prefix("&cAddon &6" + addonName + "&calready disabled!"));
             return;
         }
-        api.getAddonManager().disableAddon(addon, PowerReason.DONATE_CASE);
+        api.getAddonManager().disable(addon, PowerReason.DONATE_CASE);
         handleAddonSuccess(sender, addonName, "disabled");
     }
 
@@ -118,14 +124,14 @@ public class AddonCommand extends SubCommand {
             sender.sendMessage(DCTools.prefix("&cAddon &6" + addonName + " &calready loaded!"));
             return;
         }
-        if (api.getAddonManager().loadAddon(addonFile)) {
+        if (api.getAddonManager().load(addonFile)) {
             loader = AddonManagerImpl.getAddonClassLoader(addonFile);
             if (loader == null) {
                 handleAddonError(sender, addonName, "loading");
                 return;
             }
             InternalJavaAddon addon = loader.getAddon();
-            if (api.getAddonManager().enableAddon(addon, PowerReason.DONATE_CASE)) {
+            if (api.getAddonManager().enable(addon, PowerReason.DONATE_CASE)) {
                 handleAddonSuccess(sender, addonName, "loaded");
             } else {
                 handleAddonError(sender, addonName, "enabling");
@@ -136,12 +142,12 @@ public class AddonCommand extends SubCommand {
     }
 
     private void handleUnloadCommand(DCCommandSender sender, String addonName) {
-        InternalJavaAddon addon = api.getAddonManager().getAddon(addonName);
+        InternalJavaAddon addon = api.getAddonManager().get(addonName);
         if (addon == null) {
             sender.sendMessage(DCTools.prefix("&cAddon &6" + addonName + " &calready unloaded!"));
             return;
         }
-        if (api.getAddonManager().unloadAddon(addon, PowerReason.DONATE_CASE)) {
+        if (api.getAddonManager().unload(addon, PowerReason.DONATE_CASE)) {
             handleAddonSuccess(sender, addonName, "unloaded");
         } else {
             handleAddonError(sender, addonName, "unloading");
@@ -157,15 +163,15 @@ public class AddonCommand extends SubCommand {
     }
 
     private List<String> getAddons() {
-        return api.getAddonManager().getAddons().values().stream().map(InternalJavaAddon::getName).collect(Collectors.toList());
+        return api.getAddonManager().getMap().values().stream().map(InternalJavaAddon::getName).collect(Collectors.toList());
     }
 
     private List<String> getDisabledAddons() {
-        return api.getAddonManager().getAddons().values().stream().filter(internalJavaAddon -> !internalJavaAddon.isEnabled()).map(InternalJavaAddon::getName).collect(Collectors.toList());
+        return api.getAddonManager().getMap().values().stream().filter(internalJavaAddon -> !internalJavaAddon.isEnabled()).map(InternalJavaAddon::getName).collect(Collectors.toList());
     }
 
     private List<String> getEnabledAddons() {
-        return api.getAddonManager().getAddons().values().stream().filter(InternalJavaAddon::isEnabled).map(InternalJavaAddon::getName).collect(Collectors.toList());
+        return api.getAddonManager().getMap().values().stream().filter(InternalJavaAddon::isEnabled).map(InternalJavaAddon::getName).collect(Collectors.toList());
     }
 
     private List<String> getAddonsFiles() {

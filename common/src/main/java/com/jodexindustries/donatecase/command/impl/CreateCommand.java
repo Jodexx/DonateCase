@@ -4,6 +4,8 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
@@ -15,13 +17,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-public class CreateCommand extends SubCommand {
+public class CreateCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
     
     private final DCAPI api;
     
     public CreateCommand(DCAPI api) {
-        super("create", api.getPlatform());
-        setPermission(SubCommandType.ADMIN.permission);
+        super();
+        name("create");
+        addon(api.getPlatform());
+        permission(SubCommandType.ADMIN.permission);
+        executor(this);
+        tabCompleter(this);
         this.api = api;
     }
 
@@ -37,9 +43,9 @@ public class CreateCommand extends SubCommand {
             String caseType = args[0];
             String caseName = args[1];
 
-            if(!api.getCaseManager().hasCaseByType(caseType)) {
-                sender.sendMessage(DCTools.rt(api.getConfig().getMessages().getString("case-does-not-exist"),
-                        "%case:" + caseType));
+            if(!api.getCaseManager().hasByType(caseType)) {
+                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-does-not-exist"),
+                        "%case:" + caseType)));
                 return true;
             }
 
@@ -49,8 +55,8 @@ public class CreateCommand extends SubCommand {
             }
 
             if(api.getConfig().getCaseStorage().has(caseName)) {
-                sender.sendMessage(DCTools.rt(api.getConfig().getMessages().getString("case-already-exist"),
-                        "%casename:" + caseName));
+                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-already-exist"),
+                        "%casename:" + caseName)));
                 return true;
             }
 
@@ -58,8 +64,8 @@ public class CreateCommand extends SubCommand {
 
             try {
                 api.getConfig().getCaseStorage().save(caseInfo);
-                sender.sendMessage(DCTools.rt(api.getConfig().getMessages().getString("case-added"),
-                        "%casename:" + caseName, "%casetype:" + caseType));
+                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-added"),
+                        "%casename:" + caseName, "%casetype:" + caseType)));
             } catch (ConfigurateException e) {
                 api.getPlatform().getLogger().log(Level.WARNING, "Error with saving case: " + caseName, e);
             }

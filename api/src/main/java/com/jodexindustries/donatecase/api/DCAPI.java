@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.api.platform.Platform;
 import lombok.Getter;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -114,4 +115,14 @@ public abstract class DCAPI {
      * @return The DonateCase platform instance.
      */
     public abstract @NotNull Platform getPlatform();
+
+    @ApiStatus.Experimental
+    public void clear() {
+        getCaseManager().getMap().clear();
+        getAnimationManager().getActiveCases().clear();
+        getAnimationManager().getActiveCasesByBlock().clear();
+        getCaseOpenManager().getCache().clear();
+        getCaseKeyManager().getCache().clear();
+        getDatabase().getCache().clear();
+    }
 }

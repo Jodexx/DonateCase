@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class MainCommand implements SubCommandExecutor {
+public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
     private final CaseDatabase database;
     private final DCAPIBukkit api;
@@ -46,7 +47,7 @@ public class MainCommand implements SubCommandExecutor {
             String action = args[0].toLowerCase();
             String caseType = args[1];
 
-            CaseDataBukkit caseData = api.getCaseManager().getCase(caseType);
+            CaseDataBukkit caseData = api.getCaseManager().get(caseType);
 
             if(caseData == null) {
                 sender.sendMessage(DCToolsBukkit.rc("&cCase with type: " + caseType + " not found!"));
@@ -99,7 +100,7 @@ public class MainCommand implements SubCommandExecutor {
         if(arg.equalsIgnoreCase("all") ) {
             database.removeHistoryData(caseData.getCaseType()).thenAccept(status -> {
                 removeInform(sender, status);
-                if(status == DatabaseStatus.COMPLETE) caseData.setHistoryData(new CaseData.CaseDataHistory[caseData.getHistoryData().length]);
+                if(status == DatabaseStatus.COMPLETE) caseData.setHistoryData(new CaseData.History[caseData.getHistoryData().length]);
             });
         } else {
             int index = getIndex(sender, arg);
@@ -131,9 +132,9 @@ public class MainCommand implements SubCommandExecutor {
             return;
         }
 
-        CaseData.CaseDataHistory tempHistory = getHistoryData(caseData.getCaseType(), index);
+        CaseData.History tempHistory = getHistoryData(caseData.getCaseType(), index);
 
-        CaseData.CaseDataHistory history = tempHistory == null ? new CaseData.CaseDataHistory(null, caseData.getCaseType(), null, index, null, null) : tempHistory;
+        CaseData.History history = tempHistory == null ? new CaseData.History(null, caseData.getCaseType(), null, index, null, null) : tempHistory;
 
         switch (param) {
             case "item": {
@@ -172,8 +173,8 @@ public class MainCommand implements SubCommandExecutor {
         });
     }
 
-    private CaseData.CaseDataHistory getHistoryData(String caseType, int index) {
-        List<CaseData.CaseDataHistory> histories = database.getHistoryData(caseType).join();
+    private CaseData.History getHistoryData(String caseType, int index) {
+        List<CaseData.History> histories = database.getHistoryData(caseType).join();
 
         return histories.stream().filter(history -> history.getId() == index).findFirst().orElse(null);
     }

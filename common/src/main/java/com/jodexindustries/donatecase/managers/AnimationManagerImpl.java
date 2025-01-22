@@ -49,12 +49,11 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     @Override
-    public boolean registerAnimation(CaseAnimation caseAnimation) {
-        String name = caseAnimation.getName();
-        if(name == null) return false;
+    public boolean register(CaseAnimation animation) {
+        String name = animation.getName();
 
         if(!isRegistered(name)) {
-            registeredAnimations.put(name, caseAnimation);
+            registeredAnimations.put(name, animation);
             return true;
         } else {
             platform.getLogger().warning("Animation " + name + " already registered!");
@@ -63,7 +62,7 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     @Override
-    public void unregisterAnimation(@NotNull String name) {
+    public void unregister(@NotNull String name) {
         if (isRegistered(name)) {
             registeredAnimations.remove(name);
         } else {
@@ -72,20 +71,20 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     @Override
-    public void unregisterAnimations() {
+    public void unregister() {
         List<String> list = new ArrayList<>(registeredAnimations.keySet());
-        list.forEach(this::unregisterAnimation);
+        list.forEach(this::unregister);
     }
 
     @Override
-    public CompletableFuture<UUID> startAnimation(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData) {
-        return startAnimation(player, location, caseData, 0);
+    public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData) {
+        return start(player, location, caseData, 0);
     }
 
     @Override
-    public CompletableFuture<UUID> startAnimation(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay) {
+    public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay) {
         String animation = caseData.getAnimation();
-        CaseAnimation caseAnimation = getRegisteredAnimation(animation);
+        CaseAnimation caseAnimation = get(animation);
 
         ConfigurationNode settings = caseData.getAnimationSettings() != null ? caseData.getAnimationSettings() : api.getConfig().getAnimations().node(animation);
 
@@ -113,7 +112,7 @@ public class AnimationManagerImpl implements AnimationManager {
 
         CompletableFuture<UUID> animationCompletion = new CompletableFuture<>();
 
-        if(caseAnimation.isRequireBlock()) {
+        if (caseAnimation.isRequireBlock()) {
 //            if (BukkitDonateCase.instance.hologramManager != null && caseData.getHologram().isEnabled()) {
 //                BukkitDonateCase.instance.hologramManager.removeHologram(block);
 //            }
@@ -121,7 +120,7 @@ public class AnimationManagerImpl implements AnimationManager {
 //            Location tempLocation = Case.getCaseLocationByBlockLocation(block.getLocation());
 //            if (tempLocation != null) caseLocation = tempLocation;
 
-            for (CaseGuiWrapper gui : api.getGUIManager().getPlayersGUI().values()) {
+            for (CaseGuiWrapper gui : api.getGUIManager().getMap().values()) {
                 if (gui.getLocation().equals(location)) {
                     gui.getPlayer().closeInventory();
                 }
@@ -132,29 +131,24 @@ public class AnimationManagerImpl implements AnimationManager {
 
         try {
 
-            if (animationClass != null) {
-                Animation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
-                javaAnimation.init(player, location, uuid, caseData, winItem, settings);
+            Animation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
+            javaAnimation.init(player, location, uuid, caseData, winItem, settings);
 
 
-                api.getPlatform().runSync(() -> {
-                    try {
-                        javaAnimation.start();
-                        animationCompletion.complete(uuid);
-                    } catch (Throwable t) {
-                        platform.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
-                        if(caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
-                        animationCompletion.complete(null);
-                    }
-                });
-
-            } else {
-                throw new IllegalArgumentException("Animation executable class does not exist!");
-            }
+            api.getPlatform().runSync(() -> {
+                try {
+                    javaAnimation.start();
+                    animationCompletion.complete(uuid);
+                } catch (Throwable t) {
+                    platform.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
+                    if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
+                    animationCompletion.complete(null);
+                }
+            });
 
         } catch (Throwable t) {
             platform.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
-            if(caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
+            if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
             animationCompletion.complete(null);
         }
 
@@ -164,21 +158,21 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     @Override
-    public void animationPreEnd(UUID uuid) {
+    public void preEnd(UUID uuid) {
         ActiveCase activeCase = activeCases.get(uuid);
         if(activeCase == null) {
             platform.getLogger().warning("Animation with uuid: " + uuid + " not found!");
             return;
         }
 
-        CaseData caseData = api.getCaseManager().getCase(activeCase.getCaseType());
+        CaseData caseData = api.getCaseManager().get(activeCase.getCaseType());
         if (caseData != null) {
-            animationPreEnd(caseData, activeCase.getPlayer(), activeCase.getBlock(), activeCase.getWinItem());
+            preEnd(caseData, activeCase.getPlayer(), activeCase.getBlock(), activeCase.getWinItem());
         }
     }
 
     @Override
-    public void animationPreEnd(CaseData caseData, DCPlayer player, CaseLocation location, CaseDataItem item) {
+    public void preEnd(CaseData caseData, DCPlayer player, CaseLocation location, CaseDataItem item) {
         String choice = "";
         Map<String, Integer> levelGroups = getDefaultLevelGroup();
         if(!caseData.getLevelGroups().isEmpty()) levelGroups = caseData.getLevelGroups();
@@ -199,7 +193,7 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     @Override
-    public void animationEnd(UUID uuid) {
+    public void end(UUID uuid) {
         ActiveCase activeCase = activeCases.get(uuid);
         if(activeCase == null) {
             platform.getLogger().warning("Animation with uuid: " + uuid + " not found!");
@@ -210,16 +204,16 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     private void animationEnd(@NotNull ActiveCase activeCase) {
-        CaseData caseData = api.getCaseManager().getCase(activeCase.getCaseType());
+        CaseData caseData = api.getCaseManager().get(activeCase.getCaseType());
         if(caseData == null) return;
 
-        CaseAnimation caseAnimation = getRegisteredAnimation(caseData.getAnimation());
+        CaseAnimation caseAnimation = get(caseData.getAnimation());
         if(caseAnimation == null) return;
 
 //        CaseDataItem item = activeCase.getWinItem();
         DCPlayer player = activeCase.getPlayer();
 
-        if(!activeCase.isKeyRemoved()) api.getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1);
+        if(!activeCase.isKeyRemoved()) api.getCaseKeyManager().remove(caseData.getCaseType(), player.getName(), 1);
 
         CaseLocation location = activeCase.getBlock();
         activeCases.remove(activeCase.getUuid());
@@ -243,12 +237,12 @@ public class AnimationManagerImpl implements AnimationManager {
 
     @Nullable
     @Override
-    public CaseAnimation getRegisteredAnimation(String animation) {
+    public CaseAnimation get(String animation) {
         return registeredAnimations.get(animation);
     }
 
     @Override
-    public Map<String, CaseAnimation> getRegisteredAnimations() {
+    public Map<String, CaseAnimation> getMap() {
         return registeredAnimations;
     }
 
@@ -298,28 +292,28 @@ public class AnimationManagerImpl implements AnimationManager {
     private void saveOpenInfo(CaseData caseData, DCPlayer player, CaseDataItem item, String choice) {
         CompletableFuture.runAsync(() -> {
 
-            CaseData.CaseDataHistory data = new CaseData.CaseDataHistory(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
-            CaseData.CaseDataHistory[] historyData = caseData.getHistoryData();
+            CaseData.History data = new CaseData.History(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
+            CaseData.History[] historyData = caseData.getHistoryData();
 
             if (historyData.length > 0) {
-                List<CaseData.CaseDataHistory> databaseData = api.getDatabase().getHistoryData(caseData.getCaseType()).join();
+                List<CaseData.History> databaseData = api.getDatabase().getHistoryData(caseData.getCaseType()).join();
                 if (!databaseData.isEmpty())
-                    historyData = databaseData.toArray(new CaseData.CaseDataHistory[historyData.length]);
+                    historyData = databaseData.toArray(new CaseData.History[historyData.length]);
 
                 System.arraycopy(historyData, 0, historyData, 1, historyData.length - 1);
                 historyData[0] = data;
 
                 for (int i = 0; i < historyData.length; i++) {
-                    CaseData.CaseDataHistory tempData = historyData[i];
+                    CaseData.History tempData = historyData[i];
                     if (tempData != null) {
                         api.getDatabase().setHistoryData(caseData.getCaseType(), i, tempData);
                     }
                 }
 
                 // Set history data in memory
-                Objects.requireNonNull(api.getCaseManager().getCase(caseData.getCaseType())).setHistoryData(historyData);
+                Objects.requireNonNull(api.getCaseManager().get(caseData.getCaseType())).setHistoryData(historyData);
             }
-            api.getCaseOpenManager().addOpenCount(caseData.getCaseType(), player.getName(), 1);
+            api.getCaseOpenManager().add(caseData.getCaseType(), player.getName(), 1);
         });
     }
 
@@ -358,7 +352,7 @@ public class AnimationManagerImpl implements AnimationManager {
 
         List<String> actions = DCTools.rt(getActionsBasedOnChoice(item, choice, alternative), replacementRegex);
 
-        api.getActionManager().executeActions(player, actions);
+        api.getActionManager().execute(player, actions);
     }
 
     /**

@@ -49,7 +49,7 @@ public class DonateCaseExpansion extends PlaceholderExpansion {
     private String processKeys(@NotNull String params, OfflinePlayer player) {
         if (params.startsWith("keys")) {
             String[] parts = params.split("_", 2);
-            Map<String, Integer> map = backend.getAPI().getCaseKeyManager().getKeysCache(player.getName());
+            Map<String, Integer> map = backend.getAPI().getCaseKeyManager().getCache(player.getName());
             int keys = map.values().stream().mapToInt(key -> key).sum();
 
             if (parts.length == 1) {
@@ -61,7 +61,7 @@ public class DonateCaseExpansion extends PlaceholderExpansion {
 
         if (params.startsWith("keys_")) {
             String[] parts = params.split("_", 3);
-            int keys = backend.getAPI().getCaseKeyManager().getKeysCache(parts[1], player.getName());
+            int keys = backend.getAPI().getCaseKeyManager().getCache(parts[1], player.getName());
             if (parts.length == 2) {
                 return String.valueOf(keys);
             } else if (parts[2].equalsIgnoreCase("format")) {
@@ -76,7 +76,7 @@ public class DonateCaseExpansion extends PlaceholderExpansion {
     private String processOpenCount(@NotNull String params, OfflinePlayer player) {
         if (params.startsWith("open_count")) {
             String[] parts = params.split("_", 3);
-            Map<String, Integer> map = backend.getAPI().getCaseOpenManager().getOpenCountCache(player.getName());
+            Map<String, Integer> map = backend.getAPI().getCaseOpenManager().getCache(player.getName());
             int count = map.values().stream().mapToInt(c -> c).sum();
 
             if (parts.length == 2) {
@@ -90,7 +90,7 @@ public class DonateCaseExpansion extends PlaceholderExpansion {
 
         if (params.startsWith("open_count_")) {
             String[] parts = params.split("_", 4);
-            int count = backend.getAPI().getCaseOpenManager().getOpenCountCache(parts[2], player.getName());
+            int count = backend.getAPI().getCaseOpenManager().getCache(parts[2], player.getName());
             if (parts.length == 3) {
                 return String.valueOf(count);
             } else if (parts[3].equalsIgnoreCase("format")) {
@@ -108,9 +108,9 @@ public class DonateCaseExpansion extends PlaceholderExpansion {
             String caseType = parts[0];
             int index = parseInt(parts[1]);
             if(index >= 0) {
-                List<CaseData.CaseDataHistory> list = backend.getAPI().getDatabase().getCache(caseType);
+                List<CaseData.History> list = backend.getAPI().getDatabase().getCache(caseType);
                 if(list.size() > index) {
-                    CaseData.CaseDataHistory history = list.get(index);
+                    CaseData.History history = list.get(index);
                     String type = parts[2].toLowerCase();
 
                     switch (type) {

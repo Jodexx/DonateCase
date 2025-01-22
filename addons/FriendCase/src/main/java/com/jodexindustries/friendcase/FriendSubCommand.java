@@ -54,14 +54,14 @@ public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubC
                 return;
             }
 
-            CaseDataBukkit caseData = t.getDCAPI().getCaseManager().getCase(caseType);
+            CaseDataBukkit caseData = t.getDCAPI().getCaseManager().get(caseType);
 
             if (caseData == null) {
                 sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.CaseNotFound", "")));
                 return;
             }
 
-            int playerKeys = t.getDCAPI().getCaseKeyManager().getKeys(caseType, p.getName());
+            int playerKeys = t.getDCAPI().getCaseKeyManager().get(caseType, p.getName());
 
             if (playerKeys < 1 || playerKeys < keys) {
                 sender.sendMessage(rc(
@@ -82,13 +82,13 @@ public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubC
                 return;
             }
 
-            t.getDCAPI().getCaseKeyManager().removeKeys(caseType, p.getName(), keys).thenAcceptAsync(status -> {
+            t.getDCAPI().getCaseKeyManager().remove(caseType, p.getName(), keys).thenAcceptAsync(status -> {
 
                 if (status != DatabaseStatus.COMPLETE) {
                     return;
                 }
 
-                t.getDCAPI().getCaseKeyManager().addKeys(caseType, target.getName(), keys).thenAcceptAsync(nextStatus -> {
+                t.getDCAPI().getCaseKeyManager().add(caseType, target.getName(), keys).thenAcceptAsync(nextStatus -> {
 
                     if (nextStatus != DatabaseStatus.COMPLETE) {
                         return;

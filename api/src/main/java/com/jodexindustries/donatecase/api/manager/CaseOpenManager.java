@@ -20,9 +20,9 @@ public interface CaseOpenManager {
      * @param player Player, who opened
      * @return opened count
      */
-    int getOpenCount(String caseType, String player);
+    int get(String caseType, String player);
 
-    Map<String, Integer> getOpenCount(String player);
+    Map<String, Integer> get(String player);
 
     /**
      * Get count of opened cases by player
@@ -30,9 +30,9 @@ public interface CaseOpenManager {
      * @param player Player, who opened
      * @return CompletableFuture of open count
      */
-    CompletableFuture<Integer> getOpenCountAsync(String caseType, String player);
+    CompletableFuture<Integer> getAsync(String caseType, String player);
 
-    CompletableFuture<Map<String, Integer>> getOpenCountAsync(String player);
+    CompletableFuture<Map<String, Integer>> getAsync(String player);
 
     /**
      * Get count of opened cases by player from cache <br/>
@@ -41,9 +41,9 @@ public interface CaseOpenManager {
      * @param player Player, who opened
      * @return opened count
      */
-    int getOpenCountCache(String caseType, String player);
+    int getCache(String caseType, String player);
 
-    Map<String, Integer> getOpenCountCache(String player);
+    Map<String, Integer> getCache(String player);
 
     /**
      * Set case keys to a specific player (async)
@@ -53,7 +53,7 @@ public interface CaseOpenManager {
      * @param openCount Opened count
      * @return Completable future of completes
      */
-    CompletableFuture<DatabaseStatus> setOpenCount(String caseType, String player, int openCount);
+    CompletableFuture<DatabaseStatus> set(String caseType, String player, int openCount);
 
     /**
      * Add count of opened cases by player (async)
@@ -63,7 +63,7 @@ public interface CaseOpenManager {
      * @param openCount Opened count
      * @return Completable future of completes
      */
-    CompletableFuture<DatabaseStatus> addOpenCount(String caseType, String player, int openCount);
+    CompletableFuture<DatabaseStatus> add(String caseType, String player, int openCount);
 
     SimpleCache<String, Map<String, Integer>> getCache();
 }

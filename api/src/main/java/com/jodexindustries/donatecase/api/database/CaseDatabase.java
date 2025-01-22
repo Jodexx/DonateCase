@@ -58,9 +58,9 @@ public interface CaseDatabase {
      */
     CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count);
 
-    void setHistoryData(CaseData.CaseDataHistory[] historyData);
+    void setHistoryData(CaseData.History[] historyData);
 
-    CompletableFuture<DatabaseStatus> setHistoryData(String caseType, CaseData.CaseDataHistory data);
+    CompletableFuture<DatabaseStatus> setHistoryData(String caseType, CaseData.History data);
 
     /**
      * Sets history data for specific case type and index
@@ -69,23 +69,23 @@ public interface CaseDatabase {
      * @param data History data, if null - deletes
      * @return Future of DatabaseStatus
      */
-    CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseData.CaseDataHistory data);
+    CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseData.History data);
 
     CompletableFuture<DatabaseStatus> removeHistoryData(String caseType);
 
     CompletableFuture<DatabaseStatus> removeHistoryData(String caseType, int index);
 
-    CompletableFuture<List<CaseData.CaseDataHistory>> getHistoryData();
+    CompletableFuture<List<CaseData.History>> getHistoryData();
 
-    CompletableFuture<List<CaseData.CaseDataHistory>> getHistoryData(String caseType);
+    CompletableFuture<List<CaseData.History>> getHistoryData(String caseType);
 
     /**
      * Returns no-cached, if mysql disabled
      * @return list of all history data
      */
-    List<CaseData.CaseDataHistory> getCache();
+    List<CaseData.History> getCache();
 
-    List<CaseData.CaseDataHistory> getCache(String caseType);
+    List<CaseData.History> getCache(String caseType);
 
     void close();
 

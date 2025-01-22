@@ -12,7 +12,7 @@ public class BukkitPlayer extends BukkitCommandSender implements DCPlayer {
 
     private final Player player;
 
-    public BukkitPlayer(Player player) {
+    public BukkitPlayer(@NotNull Player player) {
         super(player);
         this.player = player;
     }
@@ -25,6 +25,11 @@ public class BukkitPlayer extends BukkitCommandSender implements DCPlayer {
     @Override
     public @NotNull UUID getUniqueId() {
         return player.getUniqueId();
+    }
+
+    @Override
+    public CaseLocation getLocation() {
+        return BukkitUtils.fromBukkit(player.getLocation());
     }
 
     @Override

@@ -44,50 +44,50 @@ public class CaseKeyManagerImpl implements CaseKeyManager {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> setKeys(String caseType, String player, int keys) {
-        return getKeysAsync(caseType, player).thenComposeAsync(before -> setKeysWithEvent(caseType, player, keys, before));
+    public CompletableFuture<DatabaseStatus> set(String caseType, String player, int keys) {
+        return getAsync(caseType, player).thenComposeAsync(before -> setKeysWithEvent(caseType, player, keys, before));
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> modifyKeys(String caseType, String player, int keys) {
-        return getKeysAsync(caseType, player)
+    public CompletableFuture<DatabaseStatus> modify(String caseType, String player, int keys) {
+        return getAsync(caseType, player)
                 .thenComposeAsync(before -> setKeysWithEvent(caseType, player, before + keys, before));
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> removeAllKeys() {
+    public CompletableFuture<DatabaseStatus> delete() {
         return api.getDatabase().delAllKeys();
     }
 
     @Override
-    public CompletableFuture<Integer> getKeysAsync(String caseType, String player) {
+    public CompletableFuture<Integer> getAsync(String caseType, String player) {
         return api.getDatabase().getKeys(caseType, player);
     }
 
     @Override
-    public CompletableFuture<Map<String, Integer>> getKeysAsync(String player) {
+    public CompletableFuture<Map<String, Integer>> getAsync(String player) {
         return api.getDatabase().getKeys(player);
     }
 
     @Override
-    public int getKeysCache(String caseType, String player) {
-        Integer keys = getKeysCache(player).get(caseType);
+    public int getCache(String caseType, String player) {
+        Integer keys = getCache(player).get(caseType);
         if(keys == null) return 0;
         return keys;
     }
 
     @Override
-    public Map<String, Integer> getKeysCache(String player) {
-        if(api.getDatabase().getType() == DatabaseType.SQLITE) return getKeys(player);
+    public Map<String, Integer> getCache(String player) {
+        if(api.getDatabase().getType() == DatabaseType.SQLITE) return get(player);
 
         Map<String, Integer> keys;
         Map<String, Integer> cachedKeys = keysCache.get(player);
         if(cachedKeys == null) {
             // Get previous, if current is null
             Map<String, Integer> previous = keysCache.getPrevious(player);
-            keys = previous != null ? previous : getKeys(player);
+            keys = previous != null ? previous : get(player);
 
-            getKeysAsync(player).thenAcceptAsync(map -> keysCache.put(player, map));
+            getAsync(player).thenAcceptAsync(map -> keysCache.put(player, map));
         } else {
             keys = cachedKeys;
         }

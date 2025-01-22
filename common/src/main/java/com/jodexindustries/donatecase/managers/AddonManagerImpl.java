@@ -39,7 +39,7 @@ public class AddonManagerImpl implements AddonManager {
     }
 
     @Override
-    public void loadAddons() {
+    public void load() {
         File addonsDir = folder;
         if (!addonsDir.exists()) {
             if(!addonsDir.mkdir()) return;
@@ -187,7 +187,7 @@ public class AddonManagerImpl implements AddonManager {
     }
 
     @Override
-    public boolean loadAddon(File file) {
+    public boolean load(File file) {
         if (file.isFile() && file.getName().endsWith(".jar")) {
             InternalAddonDescription description;
             try {
@@ -202,15 +202,15 @@ public class AddonManagerImpl implements AddonManager {
     }
 
     @Override
-    public void enableAddons(PowerReason reason) {
+    public void enable(PowerReason reason) {
         Collection<InternalJavaAddon> list = addons.values();
         for (InternalJavaAddon internalJavaAddon : list) {
-            enableAddon(internalJavaAddon, reason);
+            enable(internalJavaAddon, reason);
         }
     }
 
     @Override
-    public boolean enableAddon(@NotNull InternalJavaAddon addon, PowerReason reason) {
+    public boolean enable(@NotNull InternalJavaAddon addon, PowerReason reason) {
         try {
             if (!addon.isEnabled()) {
                 platform.getLogger().info("Enabling " + addon.getName() + " addon v" + addon.getVersion());
@@ -226,16 +226,16 @@ public class AddonManagerImpl implements AddonManager {
     }
 
     @Override
-    public boolean disableAddon(@NotNull InternalJavaAddon addon, PowerReason reason) {
+    public boolean disable(@NotNull InternalJavaAddon addon, PowerReason reason) {
         try {
             if (addon.isEnabled()) {
                 platform.getLogger().info("Disabling " + addon.getName() + " addon v" + addon.getVersion());
                 addon.setEnabled(false);
-                api.getActionManager().unregisterActions(addon);
-                api.getAnimationManager().unregisterAnimations(addon);
-                api.getGuiTypedItemManager().unregisterItems(addon);
-                api.getMaterialManager().unregisterMaterials(addon);
-                api.getSubCommandManager().unregisterSubCommands(addon);
+                api.getActionManager().unregister(addon);
+                api.getAnimationManager().unregister(addon);
+                api.getGuiTypedItemManager().unregister(addon);
+                api.getMaterialManager().unregister(addon);
+                api.getSubCommandManager().unregister(addon);
                 return true;
             }
         } catch (Throwable t) {
@@ -246,10 +246,10 @@ public class AddonManagerImpl implements AddonManager {
     }
 
     @Override
-    public void unloadAddons(PowerReason reason) {
+    public void unload(PowerReason reason) {
         List<InternalJavaAddon> list = new ArrayList<>(addons.values());
         for (InternalJavaAddon internalJavaAddon : list) {
-            unloadAddon(internalJavaAddon, reason);
+            unload(internalJavaAddon, reason);
         }
         dependencyGraph = GraphBuilder.directed().build();
         addons.clear();
@@ -257,9 +257,9 @@ public class AddonManagerImpl implements AddonManager {
     }
 
     @Override
-    public boolean unloadAddon(@NotNull InternalJavaAddon addon, PowerReason reason) {
+    public boolean unload(@NotNull InternalJavaAddon addon, PowerReason reason) {
         try {
-            disableAddon(addon, reason);
+            disable(addon, reason);
             addons.remove(addon.getName());
             loaders.remove(addon.getUrlClassLoader());
             addon.getUrlClassLoader().close();
@@ -272,12 +272,12 @@ public class AddonManagerImpl implements AddonManager {
 
     @Nullable
     @Override
-    public InternalJavaAddon getAddon(String addon) {
+    public InternalJavaAddon get(String addon) {
         return addons.get(addon);
     }
 
     @Override
-    public @NotNull Map<String, InternalJavaAddon> getAddons() {
+    public @NotNull Map<String, InternalJavaAddon> getMap() {
         return addons;
     }
 

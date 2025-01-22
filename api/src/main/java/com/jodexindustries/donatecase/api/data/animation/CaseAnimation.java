@@ -3,27 +3,21 @@ package com.jodexindustries.donatecase.api.data.animation;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * Class for custom animation storage
+ * Class for case animation storage
  */
 @Builder
 @Getter
-@Setter
 public class CaseAnimation {
-    private final Addon addon;
-    private final String name;
-
-    private Class<? extends Animation> animation;
-    private String description;
-    private boolean requireBlock = true;
-    private boolean requireSettings;
-    private boolean removeKeyAtStart;
-
-    public CaseAnimation(String name, Addon addon) {
-        this.addon = addon;
-        this.name = name;
-    }
+    @NotNull private final Addon addon;
+    @NotNull private final String name;
+    @NotNull private final Class<? extends Animation> animation;
+    @Nullable private final String description;
+    private final boolean requireBlock;
+    private final boolean requireSettings;
+    private final boolean removeKeyAtStart;
 
 }

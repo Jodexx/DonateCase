@@ -44,7 +44,7 @@ public class ItemManager {
                 continue;
             }
 
-            if (!bootstrap.getPlugin().getDCAPI().getCaseManager().hasCaseByType(caseType)) {
+            if (!bootstrap.getPlugin().getDCAPI().getCaseManager().hasByType(caseType)) {
                 bootstrap.getPlugin().getLogger().warning("Key " + key + ": Case type \"" + caseType + "\" not found. Skipping this key.");
                 continue;
             }

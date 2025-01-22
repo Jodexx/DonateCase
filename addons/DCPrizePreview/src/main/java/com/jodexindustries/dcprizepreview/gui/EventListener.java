@@ -45,7 +45,7 @@ public class EventListener implements Listener {
 
             switch (casePreview.type()) {
                 case AUTO: {
-                    CaseData caseData = api.getCaseManager().getCase(caseType);
+                    CaseData caseData = api.getCaseManager().get(caseType);
                     if (caseData != null) {
                         Inventory inventory = PreviewGUI.loadGUI(caseData);
                         if (inventory == null) return;

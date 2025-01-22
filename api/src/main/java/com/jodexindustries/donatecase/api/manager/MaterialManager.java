@@ -2,7 +2,7 @@ package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
-import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,30 +18,27 @@ import java.util.stream.Collectors;
 public interface MaterialManager{
 
     /**
-     * Registers a new case material with a specified ID, handler, and description.
      *
-     * @param id              the unique identifier for the material, e.g., "BASE64"
-     * @param materialHandler the handler responsible for managing the material's properties and behavior
-     * @param description     a description providing details about the material
+     * @param material
      */
-    void registerMaterial(String id, MaterialHandler materialHandler, String description, Addon addon);
+    void register(CaseMaterial material);
 
     /**
      * Unregisters a case material by its ID.
      *
      * @param id the unique identifier of the material to unregister
      */
-    void unregisterMaterial(String id);
+    void unregister(String id);
 
-    default void unregisterMaterials(Addon addon) {
-        List<CaseMaterial> list = new ArrayList<>(getRegisteredMaterials(addon));
-        list.stream().map(CaseMaterial::getId).forEach(this::unregisterMaterial);
+    default void unregister(Addon addon) {
+        List<CaseMaterial> list = new ArrayList<>(get(addon));
+        list.stream().map(CaseMaterial::getId).forEach(this::unregister);
     }
 
     /**
      * Unregisters all registered case materials.
      */
-    void unregisterMaterials();
+    void unregister();
 
     /**
      * Checks if a case material is registered by ID.
@@ -58,15 +55,15 @@ public interface MaterialManager{
      * @return the {@code CaseMaterial} instance if found, or null otherwise
      */
     @Nullable
-    CaseMaterial getRegisteredMaterial(@NotNull String id);
+    CaseMaterial get(@NotNull String id);
 
-    default List<CaseMaterial> getRegisteredMaterials(Addon addon) {
-        return getRegisteredMaterials().values().stream().filter(material ->
+    default List<CaseMaterial> get(Addon addon) {
+        return getMap().values().stream().filter(material ->
                 material.getAddon().equals(addon)).collect(Collectors.toList());
     }
 
     @NotNull
-    Map<String, CaseMaterial> getRegisteredMaterials();
+    Map<String, CaseMaterial> getMap();
 
     /**
      * Retrieves a registered material ID that matches the start of a given string.

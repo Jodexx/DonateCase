@@ -3,6 +3,8 @@ package com.jodexindustries.donatecase.command.impl;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -12,19 +14,23 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class AddonsCommand extends SubCommand {
+public class AddonsCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
 
     private final DCAPI api;
 
     public AddonsCommand(DCAPI api) {
-        super("addons", api.getPlatform());
-        setPermission(SubCommandType.ADMIN.permission);
+        super();
+        name("addons");
+        addon(api.getPlatform());
+        permission(SubCommandType.ADMIN.permission);
+        executor(this);
+        tabCompleter(this);
         this.api = api;
     }
 
     @Override
     public boolean execute(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
-        List<InternalJavaAddon> addons = new ArrayList<>(api.getAddonManager().getAddons().values());
+        List<InternalJavaAddon> addons = new ArrayList<>(api.getAddonManager().getMap().values());
         addons.sort(Comparator.comparing(InternalJavaAddon::getName));
         sender.sendMessage(DCTools.prefix("&7Currently loaded addons in DonateCase (&a" + addons.size() + "&7): " + compileAddons(addons)));
         return true;

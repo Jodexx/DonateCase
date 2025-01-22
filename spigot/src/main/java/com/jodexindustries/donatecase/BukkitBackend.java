@@ -4,14 +4,15 @@ import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.jodexindustries.donatecase.animations.*;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
+import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
-import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
+import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
+import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.api.platform.BukkitOfflinePlayer;
-import com.jodexindustries.donatecase.api.platform.BukkitPlayer;
 import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -27,6 +28,7 @@ import com.jodexindustries.donatecase.impl.holograms.HolographicDisplaysImpl;
 import com.jodexindustries.donatecase.impl.materials.*;
 import com.jodexindustries.donatecase.listener.EventsListener;
 import com.jodexindustries.donatecase.platform.BackendPlatform;
+import com.jodexindustries.donatecase.tools.BukkitUtils;
 import com.jodexindustries.donatecase.tools.Metrics;
 import com.jodexindustries.donatecase.tools.ToolsImpl;
 import com.jodexindustries.donatecase.tools.support.PacketEventsSupport;
@@ -34,16 +36,15 @@ import com.jodexindustries.donatecase.tools.support.papi.PAPISupport;
 import lombok.Getter;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -91,14 +92,14 @@ public class BukkitBackend extends BackendPlatform {
         // after config load
         loadMetrics();
         loadHologramManager();
-        loadHolograms();
+        if (hologramManager != null) hologramManager.load();
         disableSpawnProtection();
     }
 
     @Override
     public void unload() {
         api.unload();
-        if (hologramManager != null) hologramManager.removeAllHolograms();
+        if (hologramManager != null) hologramManager.remove();
         if (packetEventsSupport != null) packetEventsSupport.unload();
 
         Bukkit.getWorlds().stream()
@@ -168,13 +169,26 @@ public class BukkitBackend extends BackendPlatform {
     }
 
     @Override
+    public DCPlayer getPlayer(String name) {
+        Player player = Bukkit.getPlayerExact(name);
+        if (player == null) return null;
+
+        return BukkitUtils.fromBukkit(player);
+    }
+
+    @Override
     public DCPlayer[] getOnlinePlayers() {
-        return Bukkit.getOnlinePlayers().stream().map(BukkitPlayer::new).toArray(DCPlayer[]::new);
+        return Bukkit.getOnlinePlayers().stream().map(BukkitUtils::fromBukkit).toArray(DCPlayer[]::new);
     }
 
     @Override
     public DCOfflinePlayer[] getOfflinePlayers() {
         return Arrays.stream(Bukkit.getOfflinePlayers()).map(BukkitOfflinePlayer::new).toArray(DCOfflinePlayer[]::new);
+    }
+
+    @Override
+    public boolean isWorldLoaded(String world) {
+        return Bukkit.getWorld(world) != null;
     }
 
     private void registerDefaultCommand() {
@@ -188,38 +202,42 @@ public class BukkitBackend extends BackendPlatform {
 
     private void registerDefaultSubCommands() {
         SubCommandManager manager = api.getSubCommandManager();
-        manager.registerDefaultSubCommands();
+        manager.registerDefault();
 
-        getLogger().info("Registered " + manager.getRegisteredSubCommands().size() + " commands");
+        getLogger().info("Registered " + manager.getMap().size() + " commands");
     }
 
     private void registerDefaultGUITypedItems() {
         GUITypedItemManager manager = api.getGuiTypedItemManager();
 
-        manager.registerItem(
-                manager.builder("HISTORY", this)
+        manager.register(
+                GuiTypedItem.builder()
+                        .id("HISTORY")
+                        .addon(this)
                         .description("Type for displaying the history of case openings")
                         .handler(new HISTORYItemHandlerImpl())
                         .build()
         );
 
-        manager.registerItem(
-                manager.builder("OPEN", this)
+        manager.register(
+                GuiTypedItem.builder()
+                        .id("OPEN")
+                        .addon(this)
                         .description("Type to open the case")
                         .click(new OPENItemClickHandlerImpl())
-                        .setUpdateMeta(true)
-                        .setLoadOnCase(true)
+                        .updateMeta(true)
+                        .loadOnCase(true)
                         .build()
         );
 
-        getLogger().info("Registered " + manager.getRegisteredItems().size() + " gui typed items");
+        getLogger().info("Registered " + manager.getMap().size() + " gui typed items");
     }
 
 
     private void registerDefaultAnimations() {
         AnimationManager manager = api.getAnimationManager();
 
-        manager.registerAnimation(
+        manager.register(
                 CaseAnimation.builder()
                         .name("SHAPE")
                         .addon(this)
@@ -230,7 +248,7 @@ public class BukkitBackend extends BackendPlatform {
                         .build()
         );
 
-        manager.registerAnimation(
+        manager.register(
                 CaseAnimation.builder()
                         .name("RAINLY")
                         .addon(this)
@@ -241,7 +259,7 @@ public class BukkitBackend extends BackendPlatform {
                         .build()
         );
 
-        manager.registerAnimation(
+        manager.register(
                 CaseAnimation.builder()
                         .name("FIREWORK")
                         .addon(this)
@@ -252,7 +270,7 @@ public class BukkitBackend extends BackendPlatform {
                         .build()
         );
 
-        manager.registerAnimation(
+        manager.register(
                 CaseAnimation.builder()
                         .name("WHEEL")
                         .addon(this)
@@ -263,7 +281,7 @@ public class BukkitBackend extends BackendPlatform {
                         .build()
         );
 
-        manager.registerAnimation(
+        manager.register(
                 CaseAnimation.builder()
                         .name("RANDOM")
                         .addon(this)
@@ -274,51 +292,131 @@ public class BukkitBackend extends BackendPlatform {
                         .build()
         );
 
-        getLogger().info("Registered " + manager.getRegisteredAnimations().size() + " animations");
+        getLogger().info("Registered " + manager.getMap().size() + " animations");
     }
 
     private void registerDefaultActions() {
         ActionManager manager = api.getActionManager();
-        manager.registerAction("[command]", new CommandActionExecutorImpl(),
-                "Sends a command to the console", this);
-        manager.registerAction("[message]", new MessageActionExecutorImpl(),
-                "Sends a message in the player's chat", this);
-        manager.registerAction("[title]", new TitleActionExecutorImpl(),
-                "Sends a title to the player", this);
-        manager.registerAction("[broadcast]", new BroadcastActionExecutorImpl(),
-                "Sends a broadcast to the players", this);
-        manager.registerAction("[sound]", new SoundActionExecutorImpl(),
-                "Sends a sound to the player", this);
-        getLogger().info("Registered " + manager.getRegisteredActions().size() + " actions");
+
+        manager.register(
+                CaseAction.builder()
+                        .name("[command]")
+                        .addon(this)
+                        .executor(new CommandActionExecutorImpl())
+                        .description("Sends a command to the console")
+                        .build()
+        );
+
+        manager.register(
+                CaseAction.builder()
+                        .name("[message]")
+                        .addon(this)
+                        .executor(new MessageActionExecutorImpl())
+                        .description("Sends a message in the player's chat")
+                        .build()
+        );
+
+        manager.register(
+                CaseAction.builder()
+                        .name("[title]")
+                        .addon(this)
+                        .executor(new TitleActionExecutorImpl())
+                        .description("Sends a title to the player")
+                        .build()
+        );
+        manager.register(
+                CaseAction.builder()
+                        .name("[broadcast]")
+                        .addon(this)
+                        .executor(new BroadcastActionExecutorImpl())
+                        .description("Sends a broadcast to the players")
+                        .build()
+        );
+
+        manager.register(
+                CaseAction.builder()
+                        .name("[sound]")
+                        .addon(this)
+                        .executor(new SoundActionExecutorImpl())
+                        .description("Sends a sound to the player")
+                        .build()
+        );
+
+        getLogger().info("Registered " + manager.getMap().size() + " actions");
     }
 
     private void registerDefaultMaterials() {
         MaterialManager manager = api.getMaterialManager();
-        manager.registerMaterial("BASE64", new BASE64MaterialHandlerImpl(),
-                "Heads from Minecraft-heads by BASE64 value", this);
-        manager.registerMaterial("MCURL", new MCURLMaterialHandlerImpl(),
-                "Heads from Minecraft-heads by Minecrat-URL", this);
-        manager.registerMaterial("HEAD", new HEADMaterialHandlerImpl(),
-                "Default Minecraft heads by nickname", this);
+
+        manager.register(
+                CaseMaterial.builder()
+                        .id("BASE64")
+                        .addon(this)
+                        .handler(new BASE64MaterialHandlerImpl())
+                        .description("Heads from Minecraft-heads by BASE64 value")
+                        .build()
+        );
+
+        manager.register(
+                CaseMaterial.builder()
+                        .id("MCURL")
+                        .addon(this)
+                        .handler(new MCURLMaterialHandlerImpl())
+                        .description("Heads from Minecraft-heads by Minecrat-URL")
+                        .build()
+        );
+
+        manager.register(
+                CaseMaterial.builder()
+                        .id("HEAD")
+                        .addon(this)
+                        .handler(new HEADMaterialHandlerImpl())
+                        .description("Default Minecraft heads by nickname")
+                        .build()
+        );
 
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
-            manager.registerMaterial("IA", new IAMaterialHandlerImpl(),
-                    "Items from ItemsAdder plugin", this);
+            manager.register(
+                    CaseMaterial.builder()
+                            .id("IA")
+                            .addon(this)
+                            .handler(new IAMaterialHandlerImpl())
+                            .description("Items from ItemsAdder plugin")
+                            .build()
+            );
         }
 
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("Oraxen")) {
-            manager.registerMaterial("ORAXEN", new OraxenMaterialHandlerImpl(),
-                    "Items from Oraxen plugin", this);
+            manager.register(
+                    CaseMaterial.builder()
+                            .id("ORAXEN")
+                            .addon(this)
+                            .handler(new OraxenMaterialHandlerImpl())
+                            .description("Items from Oraxen plugin")
+                            .build()
+            );
         }
 
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-            manager.registerMaterial("CH", new CHMaterialHandlerImpl(),
-                    "Heads from CustomHeads plugin", this);
+            manager.register(
+                    CaseMaterial.builder()
+                            .id("CH")
+                            .addon(this)
+                            .handler(new CHMaterialHandlerImpl())
+                            .description("Heads from CustomHeads plugin")
+                            .build()
+            );
         }
 
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("HeadDatabase")) {
-            manager.registerMaterial("HDB", new HDBMaterialHandlerImpl(),
-                    "Heads from HeadDatabase plugin", this);
+            manager.register(
+                    CaseMaterial.builder()
+                            .id("HDB")
+                            .addon(this)
+                            .handler(new HDBMaterialHandlerImpl())
+                            .description("Heads from HeadDatabase plugin")
+                            .build()
+            );
         }
     }
 
@@ -361,38 +459,12 @@ public class BukkitBackend extends BackendPlatform {
                 }
                 break;
             case fancyholograms:
-                if(Bukkit.getServer().getPluginManager().isPluginEnabled("FancyHolograms")) {
+                if (Bukkit.getServer().getPluginManager().isPluginEnabled("FancyHolograms")) {
                     hologramManager = new FancyHologramsImpl();
                     return true;
                 }
         }
         return false;
-    }
-
-    public void loadHolograms() {
-        if(hologramManager == null) return;
-
-        hologramManager.removeAllHolograms();
-        for (Map.Entry<String, CaseInfo> entry : api.getConfig().getCaseStorage().get().entrySet()) {
-            CaseInfo info = entry.getValue();
-
-            String caseType = info.getType();
-
-            CaseData caseData = api.getCaseManager().getCase(caseType);
-
-            if(caseData == null || !caseData.getHologram().isEnabled()) continue;
-
-            CaseLocation location = info.getLocation();
-
-            World world = Bukkit.getWorld(location.getWorld());
-
-            if(world == null) {
-                getLogger().warning("Hologram creation error. World " + location.getWorld() + " is null for case name: " + entry.getKey());
-                continue;
-            }
-
-            hologramManager.createHologram(location, caseData);
-        }
     }
 
     private void loadPacketEventsAPI() {

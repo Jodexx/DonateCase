@@ -29,24 +29,24 @@ public interface AnimationManager {
      * @param animation The {@link CaseAnimation} object to register.
      * @return True if the registration was successful, false otherwise.
      */
-    boolean registerAnimation(CaseAnimation animation);
+    boolean register(CaseAnimation animation);
 
     /**
      * Unregisters a specific animation from the system by its name.
      *
      * @param name The name of the animation to unregister.
      */
-    void unregisterAnimation(@NotNull String name);
+    void unregister(@NotNull String name);
 
-    default void unregisterAnimations(Addon addon) {
-        List<CaseAnimation> list = new ArrayList<>(getRegisteredAnimations(addon));
-        list.stream().map(CaseAnimation::getName).forEach(this::unregisterAnimation);
+    default void unregister(Addon addon) {
+        List<CaseAnimation> list = new ArrayList<>(get(addon));
+        list.stream().map(CaseAnimation::getName).forEach(this::unregister);
     }
 
     /**
      * Unregisters all animations currently registered in the system.
      */
-    void unregisterAnimations();
+    void unregister();
 
     /**
      * Starts an animation at a specified location.
@@ -56,7 +56,7 @@ public interface AnimationManager {
      * @param caseData The case data associated with the animation.
      * @return A {@link CompletableFuture} that completes when the animation starts.
      */
-    CompletableFuture<UUID> startAnimation(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData);
+    CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData);
 
     /**
      * Starts an animation at a specified location after a delay.
@@ -67,13 +67,13 @@ public interface AnimationManager {
      * @param delay    The delay in ticks before starting the animation.
      * @return A {@link CompletableFuture} that completes when the animation starts.
      */
-    CompletableFuture<UUID> startAnimation(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay);
+    CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay);
 
     /**
      * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
      * @param uuid The unique ID of the active case.
      */
-    void animationPreEnd(UUID uuid);
+    void preEnd(UUID uuid);
 
     /**
      * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
@@ -83,14 +83,14 @@ public interface AnimationManager {
      * @param location The location of the active case block.
      * @param item     The item data associated with the animation's result.
      */
-    void animationPreEnd(CaseData caseData, DCPlayer player, CaseLocation location, CaseDataItem item);
+    void preEnd(CaseData caseData, DCPlayer player, CaseLocation location, CaseDataItem item);
 
     /**
      * Completes the animation process and performs cleanup tasks.
      *
      * @param uuid The unique ID of the active case.
      */
-    void animationEnd(UUID uuid);
+    void end(UUID uuid);
 
     /**
      * Checks whether an animation with the specified name is registered.
@@ -107,15 +107,15 @@ public interface AnimationManager {
      * @return The {@link CaseAnimation} instance if registered, or null if not found.
      */
     @Nullable
-    CaseAnimation getRegisteredAnimation(String animation);
+    CaseAnimation get(String animation);
 
     /**
      * Retrieves all registered animations by addon.
      * @param addon The addon instance
      * @return List of animations
      */
-    default List<CaseAnimation> getRegisteredAnimations(Addon addon) {
-        return getRegisteredAnimations().values().stream().filter(animation ->
+    default List<CaseAnimation> get(Addon addon) {
+        return getMap().values().stream().filter(animation ->
                 animation.getAddon().equals(addon)).collect(Collectors.toList());
     }
 
@@ -124,7 +124,7 @@ public interface AnimationManager {
      *
      * @return A map where keys are animation names and values are {@link CaseAnimation} instances.
      */
-    Map<String, CaseAnimation> getRegisteredAnimations();
+    Map<String, CaseAnimation> getMap();
 
     /**
      * Retrieves a map of all active cases currently running in the system.

@@ -42,10 +42,10 @@ public abstract class Animation {
     }
 
     public final void preEnd() {
-        DCAPI.getInstance().getAnimationManager().animationPreEnd(getUuid());
+        DCAPI.getInstance().getAnimationManager().preEnd(getUuid());
     }
 
     public final void end() {
-        DCAPI.getInstance().getAnimationManager().animationEnd(getUuid());
+        DCAPI.getInstance().getAnimationManager().end(getUuid());
     }
 }

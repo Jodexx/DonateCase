@@ -23,43 +23,43 @@ public class CaseOpenManagerImpl implements CaseOpenManager {
     }
 
     @Override
-    public int getOpenCount(String caseType, String player) {
-        return getOpenCountAsync(caseType, player).join();
+    public int get(String caseType, String player) {
+        return getAsync(caseType, player).join();
     }
 
     @Override
-    public Map<String, Integer> getOpenCount(String player) {
-        return getOpenCountAsync(player).join();
+    public Map<String, Integer> get(String player) {
+        return getAsync(player).join();
     }
 
     @Override
-    public CompletableFuture<Integer> getOpenCountAsync(String caseType, String player) {
+    public CompletableFuture<Integer> getAsync(String caseType, String player) {
         return api.getDatabase().getOpenCount(player, caseType);
     }
 
     @Override
-    public CompletableFuture<Map<String, Integer>> getOpenCountAsync(String player) {
+    public CompletableFuture<Map<String, Integer>> getAsync(String player) {
         return api.getDatabase().getOpenCount(player);
     }
 
     @Override
-    public int getOpenCountCache(String caseType, String player) {
-        Integer count = getOpenCountCache(player).get(caseType);
+    public int getCache(String caseType, String player) {
+        Integer count = getCache(player).get(caseType);
         if (count == null) return 0;
         return count;
     }
 
     @Override
-    public Map<String, Integer> getOpenCountCache(String player) {
-        if (api.getDatabase().getType() == DatabaseType.SQLITE) return getOpenCount(player);
+    public Map<String, Integer> getCache(String player) {
+        if (api.getDatabase().getType() == DatabaseType.SQLITE) return get(player);
 
         Map<String, Integer> count;
         Map<String, Integer> cachedCount = openCache.get(player);
         if (cachedCount == null) {
             Map<String, Integer> previous = openCache.getPrevious(player);
-            count = previous != null ? previous : getOpenCount(player);
+            count = previous != null ? previous : get(player);
 
-            getOpenCountAsync(player).thenAcceptAsync(map -> openCache.put(player, map));
+            getAsync(player).thenAcceptAsync(map -> openCache.put(player, map));
         } else {
             count = cachedCount;
         }
@@ -68,13 +68,13 @@ public class CaseOpenManagerImpl implements CaseOpenManager {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> setOpenCount(String caseType, String player, int openCount) {
+    public CompletableFuture<DatabaseStatus> set(String caseType, String player, int openCount) {
         return api.getDatabase().setCount(caseType, player, openCount);
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> addOpenCount(String caseType, String player, int openCount) {
-        return getOpenCountAsync(caseType, player).thenComposeAsync(integer -> setOpenCount(caseType, player, integer + openCount));
+    public CompletableFuture<DatabaseStatus> add(String caseType, String player, int openCount) {
+        return getAsync(caseType, player).thenComposeAsync(integer -> set(caseType, player, integer + openCount));
     }
 
     @Override

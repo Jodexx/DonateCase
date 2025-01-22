@@ -58,7 +58,7 @@ public abstract class CaseGuiWrapper {
     }
 
     /**
-     * Gets GUI CaseData. Can be modified, cause this is clone of original {@link com.jodexindustries.donatecase.api.manager.CaseManager#getCase(String)}
+     * Gets GUI CaseData. Can be modified, cause this is clone of original {@link com.jodexindustries.donatecase.api.manager.CaseManager#get(String)}
      *
      * @return data
      */
@@ -83,5 +83,5 @@ public abstract class CaseGuiWrapper {
      * @return global history data
      */
     @NotNull
-    public abstract List<CaseData.CaseDataHistory> getGlobalHistoryData();
+    public abstract List<CaseData.History> getGlobalHistoryData();
 }

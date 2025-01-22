@@ -48,13 +48,13 @@ public class Tools {
                 .description(rc(getConfig().getConfig().getString("Api.Description")))
                 .build();
 
-        main.getDCAPI().getSubCommandManager().registerSubCommand(subCommand);
+        main.getDCAPI().getSubCommandManager().register(subCommand);
 
         Bukkit.getPluginManager().registerEvents(eventListener, main.getDCAPI().getDonateCase());
     }
 
     public void unload() {
-        main.getDCAPI().getSubCommandManager().unregisterSubCommand("gift");
+        main.getDCAPI().getSubCommandManager().unregister("gift");
         HandlerList.unregisterAll(eventListener);
     }
 

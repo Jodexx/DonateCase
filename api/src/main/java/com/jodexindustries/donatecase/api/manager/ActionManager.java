@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
+import com.jodexindustries.donatecase.api.data.action.ActionException;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -19,32 +19,24 @@ import java.util.stream.Collectors;
  */
 public interface ActionManager {
 
-    /**
-     * Registers an action with the specified name, executor, and description.
-     *
-     * @param name           the unique name of the action (e.g., "[command]")
-     * @param actionExecutor the executor responsible for the logic of the action
-     * @param description    a textual description of the action's functionality
-     * @return True if the registration was successful, false otherwise.
-     */
-    boolean registerAction(@NotNull String name, @NotNull ActionExecutor actionExecutor, @NotNull String description, @NotNull Addon addon);
+    void register(CaseAction action) throws ActionException;
 
     /**
      * Unregisters an action by its name.
      *
      * @param name the unique name of the action to unregister
      */
-    void unregisterAction(@NotNull String name);
+    void unregister(@NotNull String name);
 
-    default void unregisterActions(Addon addon) {
-        List<CaseAction> list = new ArrayList<>(getRegisteredActions(addon));
-        list.stream().map(CaseAction::getName).forEach(this::unregisterAction);
+    default void unregister(Addon addon) {
+        List<CaseAction> list = new ArrayList<>(get(addon));
+        list.stream().map(CaseAction::getName).forEach(this::unregister);
     }
 
     /**
      * Unregisters all currently registered actions.
      */
-    void unregisterActions();
+    void unregister();
 
     /**
      * Checks whether an action with the specified name is registered.
@@ -61,15 +53,15 @@ public interface ActionManager {
      * @return the {@code CaseAction} instance if found, or {@code null} if not found
      */
     @Nullable
-    CaseAction getRegisteredAction(@NotNull String name);
+    CaseAction get(@NotNull String name);
 
     /**
      * Retrieves all registered actions by addon.
      * @param addon The addon instance
      * @return List of actions
      */
-    default List<CaseAction> getRegisteredActions(Addon addon) {
-        return getRegisteredActions().values().stream().filter(action ->
+    default List<CaseAction> get(Addon addon) {
+        return getMap().values().stream().filter(action ->
                 action.getAddon().equals(addon)).collect(Collectors.toList());
     }
 
@@ -79,7 +71,7 @@ public interface ActionManager {
      * @return a map of action names to their respective {@code CaseAction} instances
      */
     @NotNull
-    Map<String, CaseAction> getRegisteredActions();
+    Map<String, CaseAction> getMap();
 
     /**
      * Retrieves the name of a registered action that matches the beginning of a given string.
@@ -97,7 +89,7 @@ public interface ActionManager {
      * @param action   the name of the action to execute
      * @param cooldown the cooldown duration in seconds
      */
-    void executeAction(@NotNull DCPlayer player, @NotNull String action, int cooldown);
+    void execute(@NotNull DCPlayer player, @NotNull String action, int cooldown);
 
     /**
      * Executes a list of actions for a player.
@@ -105,5 +97,5 @@ public interface ActionManager {
      * @param player  the player for whom the actions are executed
      * @param actions the list of action names to execute
      */
-    void executeActions(@NotNull DCPlayer player, @NotNull List<String> actions);
+    void execute(@NotNull DCPlayer player, @NotNull List<String> actions);
 }

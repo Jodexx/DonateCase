@@ -85,7 +85,7 @@ public class DCEventExecutor implements EventExecutor {
         }
 
         // DonateCase actions
-        tools.getMain().getDCAPI().getActionManager().executeActions(player, actions);
+        tools.getMain().getDCAPI().getActionManager().execute(player, actions);
 
         // DCEventManager actions
         List<String> oldActions = actions.stream().filter(action -> action.startsWith("[invoke]")).collect(Collectors.toList());

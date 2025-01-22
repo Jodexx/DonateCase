@@ -27,7 +27,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
             sendHelp(sender, label);
         } else {
             String subCommandName = args[0];
-            SubCommand subCommand = backend.getAPI().getSubCommandManager().getRegisteredSubCommand(subCommandName);
+            SubCommand subCommand = backend.getAPI().getSubCommandManager().get(subCommandName);
 
             if (subCommand == null) {
                 sendHelp(sender, label);
@@ -77,7 +77,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
 
     private Map<String, List<Map<String, SubCommand>>> buildAddonsMap() {
         Map<String, List<Map<String, SubCommand>>> addonsMap = new HashMap<>();
-        backend.getAPI().getSubCommandManager().getRegisteredSubCommands().forEach((subCommandName, subCommand) -> {
+        backend.getAPI().getSubCommandManager().getMap().forEach((subCommandName, subCommand) -> {
             Addon addon = subCommand.getAddon();
             addonsMap.computeIfAbsent(addon.getName(), k -> new ArrayList<>())
                     .add(Collections.singletonMap(subCommandName, subCommand));
@@ -129,7 +129,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
         List<String> value = new ArrayList<>();
 
         if (args.length == 1) {
-            Map<String, SubCommand> subCommands = backend.getAPI().getSubCommandManager().getRegisteredSubCommands();
+            Map<String, SubCommand> subCommands = backend.getAPI().getSubCommandManager().getMap();
 
             for (Map.Entry<String, SubCommand> entry : subCommands.entrySet()) {
                 String subCommandName = entry.getKey();
@@ -141,7 +141,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
                 }
             }
         } else {
-            SubCommand subCommand = backend.getAPI().getSubCommandManager().getRegisteredSubCommand(args[0].toLowerCase());
+            SubCommand subCommand = backend.getAPI().getSubCommandManager().get(args[0].toLowerCase());
             if(subCommand == null) return new ArrayList<>();
 
             return subCommand.getTabCompletions(sender, label, Arrays.copyOfRange(args, 1, args.length));

@@ -14,7 +14,6 @@ public interface ActionExecutor {
      *
      * @param player   Player for executing
      * @param context  Executing context
-     * @param cooldown Action cooldown
      */
-    void execute(@Nullable DCPlayer player, @NotNull String context, int cooldown);
+    void execute(@Nullable DCPlayer player, @NotNull String context) throws ActionException;
 }

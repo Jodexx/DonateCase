@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.PAPI;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.logging.Logger;
 
@@ -23,13 +24,17 @@ public interface Platform extends Addon {
 
     PAPI getPAPI();
 
-    HologramManager getHologramManager();
+    @Nullable HologramManager getHologramManager();
 
     DCAPI getAPI();
 
     void runSync(@NotNull Runnable task);
 
+    @Nullable DCPlayer getPlayer(String name);
+
     DCPlayer[] getOnlinePlayers();
 
     DCOfflinePlayer[] getOfflinePlayers();
+
+    boolean isWorldLoaded(String world);
 }

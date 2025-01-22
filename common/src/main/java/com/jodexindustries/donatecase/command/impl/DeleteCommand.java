@@ -3,6 +3,8 @@ package com.jodexindustries.donatecase.command.impl;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
@@ -14,13 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class DeleteCommand extends SubCommand {
+public class DeleteCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
     
     private final DCAPI api;
     
     public DeleteCommand(DCAPI api) {
-        super("delete", api.getPlatform());
-        setPermission(SubCommandType.ADMIN.permission);
+        super();
+        name("delete");
+        addon(api.getPlatform());
+        permission(SubCommandType.ADMIN.permission);
+        executor(this);
+        tabCompleter(this);
         this.api = api;
     }
 

@@ -16,13 +16,4 @@ public class OpenInfoTable {
     @DatabaseField(defaultValue = "0")
     private int count;
 
-    @Override
-    public String toString() {
-        return "OpenInfoTable{" +
-                "player='" + player + '\'' +
-                ", caseType='" + caseType + '\'' +
-                ", count=" + count +
-                '}';
-    }
-
 }

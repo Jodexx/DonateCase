@@ -14,5 +14,5 @@ public interface MaterialHandler {
      * @return ItemStack of completed material
      */
     @NotNull
-    Object handle(@NotNull String context);
+    Object handle(@NotNull String context) throws CaseMaterialException;
 }

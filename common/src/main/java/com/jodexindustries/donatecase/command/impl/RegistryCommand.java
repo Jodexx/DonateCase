@@ -3,43 +3,36 @@ package com.jodexindustries.donatecase.command.impl;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
-import com.jodexindustries.donatecase.api.data.animation.JavaAnimationBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialImpl;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
-import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
-import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
-import com.jodexindustries.donatecase.tools.DCToolsBukkit;
-import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import com.jodexindustries.donatecase.api.tools.DCTools;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RegistryCommand extends SubCommand {
+public class RegistryCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
 
     private final DCAPI api;
 
     public RegistryCommand(DCAPI api) {
-        super("registry", api.getPlatform());
-        setPermission(SubCommandType.ADMIN.permission);
+        super();
+        name("registry");
+        addon(api.getPlatform());
+        permission(SubCommandType.ADMIN.permission);
+        executor(this);
+        tabCompleter(this);
         this.api = api;
     }
 
     @Override
     public boolean execute(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) {
-        if (args.length == 0) {
-            DCToolsBukkit.msgRaw(sender, "&c/" + label + " registry (animations|materials|actions|guitypeditems)");
-            return;
-        }
+        if (args.length == 0) return false;
 
         switch (args[0].toLowerCase()) {
             case "animations":
@@ -55,9 +48,10 @@ public class RegistryCommand extends SubCommand {
                 executeGuiTypedItems(sender);
                 break;
             default:
-                DCToolsBukkit.msgRaw(sender, "&c/" + label + " registry (animations|materials|actions|guitypeditems)");
-                break;
+                return false;
         }
+
+        return true;
     }
 
     @Override
@@ -81,22 +75,26 @@ public class RegistryCommand extends SubCommand {
                 .collect(Collectors.toList());
     }
 
-    private void executeAnimations(CommandSender sender) {
-        Map<String, List<CaseAnimation<JavaAnimationBukkit>>> animationsMap = buildAnimationsMap();
-        for (Map.Entry<String, List<CaseAnimation<JavaAnimationBukkit>>> entry : animationsMap.entrySet()) {
-            DCToolsBukkit.msgRaw(sender, "&6" + entry.getKey());
-            for (CaseAnimation<JavaAnimationBukkit> animation : entry.getValue()) {
-                DCToolsBukkit.msgRaw(sender, "&9- &a" + animation.getName() + " &3- &2" + animation.getDescription());
+    private void executeAnimations(DCCommandSender sender) {
+        Map<String, List<CaseAnimation>> animationsMap = buildAnimationsMap();
+        for (Map.Entry<String, List<CaseAnimation>> entry : animationsMap.entrySet()) {
+            sender.sendMessage(
+                    DCTools.rc("&6" + entry.getKey())
+            );
+            for (CaseAnimation animation : entry.getValue()) {
+                sender.sendMessage(
+                        DCTools.rc( "&9- &a" + animation.getName() + " &3- &2" + animation.getDescription())
+                );
             }
         }
     }
 
-    private Map<String, List<CaseAnimation<JavaAnimationBukkit>>> buildAnimationsMap() {
-        Map<String, List<CaseAnimation<JavaAnimationBukkit>>> animationsMap = new HashMap<>();
-        api.getAnimationManager().getRegisteredAnimations().forEach((animationName, caseAnimation) -> {
+    private Map<String, List<CaseAnimation>> buildAnimationsMap() {
+        Map<String, List<CaseAnimation>> animationsMap = new HashMap<>();
+        api.getAnimationManager().getMap().forEach((animationName, caseAnimation) -> {
             String addon = caseAnimation.getAddon().getName();
 
-            List<CaseAnimation<JavaAnimationBukkit>> animations = animationsMap.getOrDefault(addon, new ArrayList<>());
+            List<CaseAnimation> animations = animationsMap.getOrDefault(addon, new ArrayList<>());
             animations.add(caseAnimation);
 
             animationsMap.put(addon, animations);
@@ -104,26 +102,26 @@ public class RegistryCommand extends SubCommand {
         return animationsMap;
     }
 
-    private void executeMaterials(CommandSender sender) {
-        Map<String, List<CaseMaterial<ItemStack>>> materialsMap = buildMaterialsMap();
-        for (Map.Entry<String, List<CaseMaterial<ItemStack>>> entry : materialsMap.entrySet()) {
-            DCToolsBukkit.msgRaw(sender, "&6" + entry.getKey());
-            for (CaseMaterial<ItemStack> material : entry.getValue()) {
-                DCToolsBukkit.msgRaw(sender, "&9- &a" + material.getId() + " &3- &2" + material.getDescription());
+    private void executeMaterials(DCCommandSender sender) {
+        Map<String, List<CaseMaterial>> materialsMap = buildMaterialsMap();
+        for (Map.Entry<String, List<CaseMaterial>> entry : materialsMap.entrySet()) {
+            sender.sendMessage(
+                    DCTools.rc("&6" + entry.getKey())
+            );
+            for (CaseMaterial material : entry.getValue()) {
+                sender.sendMessage(
+                        DCTools.rc("&9- &a" + material.getId() + " &3- &2" + material.getDescription())
+                );
             }
         }
     }
 
-    /**
-     * Key - Addon name
-     * Value - list of CaseMaterial
-     */
-    private Map<String, List<CaseMaterial<ItemStack>>> buildMaterialsMap() {
-        Map<String, List<CaseMaterial<ItemStack>>> materialsMap = new HashMap<>();
-        api.getMaterialManager().getRegisteredMaterials().forEach((name, caseMaterial) -> {
+    private Map<String, List<CaseMaterial>> buildMaterialsMap() {
+        Map<String, List<CaseMaterial>> materialsMap = new HashMap<>();
+        api.getMaterialManager().getMap().forEach((name, caseMaterial) -> {
             String addon = caseMaterial.getAddon().getName();
 
-            List<CaseMaterial<ItemStack>> materials = materialsMap.getOrDefault(addon, new ArrayList<>());
+            List<CaseMaterial> materials = materialsMap.getOrDefault(addon, new ArrayList<>());
             materials.add(caseMaterial);
 
             materialsMap.put(addon, materials);
@@ -132,26 +130,26 @@ public class RegistryCommand extends SubCommand {
         return materialsMap;
     }
 
-    private void executeActions(CommandSender sender) {
-        Map<String, List<CaseAction<Player>>> actionsMap = buildActionsMap();
-        for (Map.Entry<String, List<CaseAction<Player>>> entry : actionsMap.entrySet()) {
-            DCToolsBukkit.msgRaw(sender, "&6" + entry.getKey());
-            for (CaseAction<Player> action : entry.getValue()) {
-                DCToolsBukkit.msgRaw(sender, "&9- &a" + action.getName() + " &3- &2" + action.getDescription());
+    private void executeActions(DCCommandSender sender) {
+        Map<String, List<CaseAction>> actionsMap = buildActionsMap();
+        for (Map.Entry<String, List<CaseAction>> entry : actionsMap.entrySet()) {
+            sender.sendMessage(
+                    DCTools.rc("&6" + entry.getKey())
+            );
+            for (CaseAction action : entry.getValue()) {
+                sender.sendMessage(
+                        DCTools.rc("&9- &a" + action.getName() + " &3- &2" + action.getDescription())
+                );
             }
         }
     }
 
-    /**
-     * Key - Addon name
-     * Value - list of CaseAction
-     */
-    private Map<String, List<CaseAction<Player>>> buildActionsMap() {
-        Map<String, List<CaseAction<Player>>> actionsMap = new HashMap<>();
-        api.getActionManager().getRegisteredActions().forEach((name, caseAction) -> {
+    private Map<String, List<CaseAction>> buildActionsMap() {
+        Map<String, List<CaseAction>> actionsMap = new HashMap<>();
+        api.getActionManager().getMap().forEach((name, caseAction) -> {
             String addon = caseAction.getAddon().getName();
 
-            List<CaseAction<Player>> actions = actionsMap.getOrDefault(addon, new ArrayList<>());
+            List<CaseAction> actions = actionsMap.getOrDefault(addon, new ArrayList<>());
             actions.add(caseAction);
 
             actionsMap.put(addon, actions);
@@ -160,26 +158,26 @@ public class RegistryCommand extends SubCommand {
         return actionsMap;
     }
 
-    private void executeGuiTypedItems(CommandSender sender) {
-        Map<String, List<GuiTypedItem<CaseDataMaterialImpl, CaseGuiWrapper<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialImpl>, CaseGuiClickEvent>>> guitypeditemsMap = buildGuiTypedItemsMap();
-        for (Map.Entry<String, List<GuiTypedItem<CaseDataMaterialImpl, CaseGuiWrapper<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialImpl>, CaseGuiClickEvent>>> entry : guitypeditemsMap.entrySet()) {
-            DCToolsBukkit.msgRaw(sender, "&6" + entry.getKey());
-            for (GuiTypedItem<CaseDataMaterialImpl, CaseGuiWrapper<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialImpl>, CaseGuiClickEvent> guiTypedItem : entry.getValue()) {
-                DCToolsBukkit.msgRaw(sender, "&9- &a" + guiTypedItem.getId() + " &3- &2" + guiTypedItem.getDescription());
+    private void executeGuiTypedItems(DCCommandSender sender) {
+        Map<String, List<GuiTypedItem>> guitypeditemsMap = buildGuiTypedItemsMap();
+        for (Map.Entry<String, List<GuiTypedItem>> entry : guitypeditemsMap.entrySet()) {
+            sender.sendMessage(
+                    DCTools.rc("&6" + entry.getKey())
+            );
+            for (GuiTypedItem guiTypedItem : entry.getValue()) {
+                sender.sendMessage(
+                        DCTools.rc("&9- &a" + guiTypedItem.getId() + " &3- &2" + guiTypedItem.getDescription())
+                );
             }
         }
     }
 
-    /**
-     * Key - Addon name
-     * Value - list of GUITypedItem
-     */
-    private Map<String, List<GuiTypedItem<CaseDataMaterialImpl, CaseGuiWrapper<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialImpl>, CaseGuiClickEvent>>> buildGuiTypedItemsMap() {
-        Map<String, List<GuiTypedItem<CaseDataMaterialImpl, CaseGuiWrapper<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialImpl>, CaseGuiClickEvent>>> guiTypedItemsMap = new HashMap<>();
-        api.getGuiTypedItemManager().getRegisteredItems().forEach((name, guiTypedItem) -> {
+    private Map<String, List<GuiTypedItem>> buildGuiTypedItemsMap() {
+        Map<String, List<GuiTypedItem>> guiTypedItemsMap = new HashMap<>();
+        api.getGuiTypedItemManager().getMap().forEach((name, guiTypedItem) -> {
             String addon = guiTypedItem.getAddon().getName();
 
-            List<GuiTypedItem<CaseDataMaterialImpl, CaseGuiWrapper<Inventory, Location, Player, CaseDataBukkit, CaseDataMaterialImpl>, CaseGuiClickEvent>> actions = guiTypedItemsMap.getOrDefault(addon, new ArrayList<>());
+            List<GuiTypedItem> actions = guiTypedItemsMap.getOrDefault(addon, new ArrayList<>());
             actions.add(guiTypedItem);
 
             guiTypedItemsMap.put(addon, actions);

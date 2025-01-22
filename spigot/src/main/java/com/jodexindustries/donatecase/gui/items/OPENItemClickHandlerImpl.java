@@ -26,7 +26,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
             String[] parts = itemType.split("_");
             if (parts.length >= 2) {
                 caseType = parts[1];
-                caseData = DCAPI.getInstance().getCaseManager().getCase(caseType);
+                caseData = DCAPI.getInstance().getCaseManager().get(caseType);
             }
         }
 
@@ -59,16 +59,16 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
             if (checkKeys(caseData.getCaseType(), player.getName())) {
                 executeOpenWithoutEvent(player, location, caseData, false);
             } else {
-                DCAPI.getInstance().getActionManager().executeActions(player, caseData.getNoKeyActions());
+                DCAPI.getInstance().getActionManager().execute(player, caseData.getNoKeyActions());
             }
     }
 
     public static void executeOpenWithoutEvent(DCPlayer player, CaseLocation location, CaseData caseData, boolean ignoreKeys) {
-        DCAPI.getInstance().getAnimationManager().startAnimation(player, location, caseData).thenAcceptAsync(uuid -> {
+        DCAPI.getInstance().getAnimationManager().start(player, location, caseData).thenAcceptAsync(uuid -> {
             if(uuid != null) {
                 ActiveCase activeCase = DCAPI.getInstance().getAnimationManager().getActiveCases().get(uuid);
                 if(!ignoreKeys) {
-                    DCAPI.getInstance().getCaseKeyManager().removeKeys(caseData.getCaseType(), player.getName(), 1).thenAcceptAsync(status -> {
+                    DCAPI.getInstance().getCaseKeyManager().remove(caseData.getCaseType(), player.getName(), 1).thenAcceptAsync(status -> {
                         if(status == DatabaseStatus.COMPLETE) activeCase.setKeyRemoved(true);
                     });
                 } else {
@@ -79,6 +79,6 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
     }
 
     private static boolean checkKeys(String caseType, String player) {
-        return DCAPI.getInstance().getCaseKeyManager().getKeys(caseType, player) >= 1;
+        return DCAPI.getInstance().getCaseKeyManager().get(caseType, player) >= 1;
     }
 }

@@ -30,6 +30,14 @@ public class MessagesImpl implements Messages {
     }
 
     @Override
+    public @NotNull String getString(@NotNull String path, @NotNull String def) {
+        String value = getString(path);
+        if(value.equals(path)) return def;
+
+        return value;
+    }
+
+    @Override
     public List<String> getStringList(@NotNull String path) {
         try {
             return node.node(path).getList(String.class, new ArrayList<>());

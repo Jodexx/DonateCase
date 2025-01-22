@@ -26,8 +26,8 @@ public class HolographicDisplaysImpl implements HologramManager {
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void createHologram(CaseLocation block, CaseData caseData) {
-        CaseData.CaseDataHologram crateHologram = caseData.getHologram();
+    public void create(CaseLocation block, CaseData caseData) {
+        CaseData.Hologram crateHologram = caseData.getHologram();
 
         if (!crateHologram.isEnabled()) return;
 
@@ -43,7 +43,7 @@ public class HolographicDisplaysImpl implements HologramManager {
     }
 
     @Override
-    public void removeHologram(CaseLocation block) {
+    public void remove(CaseLocation block) {
         if (!this.holograms.containsKey(block)) return;
 
         Hologram hologram = this.holograms.get(block);
@@ -53,8 +53,8 @@ public class HolographicDisplaysImpl implements HologramManager {
     }
 
     @Override
-    public void removeAllHolograms() {
-        this.holograms.values().forEach(Hologram::delete);
+    public void remove() {
+        this.holograms.values().forEach(me.filoghost.holographicdisplays.api.hologram.Hologram::delete);
         this.holograms.clear();
     }
 }

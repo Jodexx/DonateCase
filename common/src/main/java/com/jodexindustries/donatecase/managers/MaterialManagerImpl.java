@@ -1,9 +1,8 @@
 package com.jodexindustries.donatecase.managers;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
-import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
+import com.jodexindustries.donatecase.api.data.material.CaseMaterialException;
 import com.jodexindustries.donatecase.api.manager.MaterialManager;
 import com.jodexindustries.donatecase.api.platform.Platform;
 import org.jetbrains.annotations.NotNull;
@@ -27,17 +26,14 @@ public class MaterialManagerImpl implements MaterialManager {
     }
 
     @Override
-    public void registerMaterial(String id, MaterialHandler materialHandler, String description, Addon addon) {
-        if (!isRegistered(id)) {
-            CaseMaterial caseMaterial = new CaseMaterial(materialHandler, addon, id, description);
-            registeredMaterials.put(id, caseMaterial);
-        } else {
-            platform.getLogger().warning("CaseMaterial with id " + id + " already registered");
-        }
+    public void register(CaseMaterial material) throws CaseMaterialException {
+        if(isRegistered(material.getId())) throw new CaseMaterialException("Material with id " + material.getId() + " already registered!");
+
+        registeredMaterials.put(material.getId(), material);
     }
 
     @Override
-    public void unregisterMaterial(String id) {
+    public void unregister(String id) {
         if (isRegistered(id)) {
             registeredMaterials.remove(id);
         } else {
@@ -46,9 +42,9 @@ public class MaterialManagerImpl implements MaterialManager {
     }
 
     @Override
-    public void unregisterMaterials() {
+    public void unregister() {
         List<String> list = new ArrayList<>(registeredMaterials.keySet());
-        list.forEach(this::unregisterMaterial);
+        list.forEach(this::unregister);
     }
 
     @Override
@@ -58,12 +54,12 @@ public class MaterialManagerImpl implements MaterialManager {
 
     @Nullable
     @Override
-    public CaseMaterial getRegisteredMaterial(@NotNull String id) {
+    public CaseMaterial get(@NotNull String id) {
         return registeredMaterials.get(id);
     }
 
     @Override
-    public @NotNull Map<String, CaseMaterial> getRegisteredMaterials() {
+    public @NotNull Map<String, CaseMaterial> getMap() {
         return registeredMaterials;
     }
 

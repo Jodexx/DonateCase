@@ -30,7 +30,7 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
     private final BukkitBackend backend;
 
     private final Inventory inventory;
-    private List<CaseData.CaseDataHistory> globalHistoryData;
+    private List<CaseData.History> globalHistoryData;
 
     /**
      * Default constructor
@@ -91,7 +91,7 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
         if (updateRate >= 0) {
             Bukkit.getScheduler().runTaskTimerAsynchronously(backend.getPlugin(),
                     (task) -> {
-                        if (!backend.getAPI().getGUIManager().getPlayersGUI().containsKey(player.getUniqueId())) task.cancel();
+                        if (!backend.getAPI().getGUIManager().getMap().containsKey(player.getUniqueId())) task.cancel();
                         load();
                     }, updateRate, updateRate);
         }
@@ -106,7 +106,7 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
         if (!itemType.equalsIgnoreCase("DEFAULT")) {
             GuiTypedItem typedItem = backend.getAPI().getGuiTypedItemManager().getFromString(itemType);
             if (typedItem != null) {
-                TypedItemHandler handler = typedItem.getItemHandler();
+                TypedItemHandler handler = typedItem.getHandler();
                 if (handler != null) item = handler.handle(this, item);
                 if (typedItem.isUpdateMeta()) updateMeta(item);
             }
@@ -148,7 +148,7 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
             }
 
             line = line.replace("%" + placeholder + "%",
-                    String.valueOf(backend.getAPI().getCaseKeyManager().getKeysCache(caseType, p.getName())));
+                    String.valueOf(backend.getAPI().getCaseKeyManager().getCache(caseType, p.getName())));
         }
 
         return line;
@@ -171,7 +171,7 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
      * @return global history data
      */
     @NotNull
-    public List<CaseData.CaseDataHistory> getGlobalHistoryData() {
+    public List<CaseData.History> getGlobalHistoryData() {
         return globalHistoryData;
     }
 }

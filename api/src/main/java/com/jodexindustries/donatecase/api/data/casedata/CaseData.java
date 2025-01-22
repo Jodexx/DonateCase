@@ -1,5 +1,7 @@
 package com.jodexindustries.donatecase.api.data.casedata;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import lombok.Getter;
@@ -31,9 +33,9 @@ public class CaseData {
     @Setting("Items")
     private Map<String, CaseDataItem> items;
     @Setting("HistoryData")
-    private CaseDataHistory[] historyData;
+    private History[] historyData;
     @Setting("Hologram")
-    private CaseDataHologram hologram;
+    private Hologram hologram;
     @Setting("LevelGroups")
     private Map<String, Integer> levelGroups;
     @Setting("Gui")
@@ -102,8 +104,8 @@ public class CaseData {
     /**
      * Clone method for CaseData deep clone
      */
-    protected static CaseDataHistory[] cloneCaseDataHistoryArray(CaseDataHistory[] originalArray) {
-        CaseDataHistory[] newArray = new CaseDataHistory[originalArray.length];
+    protected static History[] cloneCaseDataHistoryArray(History[] originalArray) {
+        History[] newArray = new History[originalArray.length];
         for (int i = 0; i < originalArray.length; i++) {
             if (originalArray[i] != null) {
                 newArray[i] = originalArray[i].clone();
@@ -128,14 +130,15 @@ public class CaseData {
      */
     @Setter
     @Getter
-    public static class CaseDataHistory {
-        private int id;
-        private String item;
-        private String playerName;
-        private long time;
-        private String group;
-        private String caseType;
-        private String action;
+    @DatabaseTable(tableName = "history_data")
+    public static class History {
+        @DatabaseField(columnName = "id") private int id;
+        @DatabaseField(columnName = "item") private String item;
+        @DatabaseField(columnName = "player_name") private String playerName;
+        @DatabaseField(columnName = "time") private long time;
+        @DatabaseField(columnName = "group") private String group;
+        @DatabaseField(columnName = "case_type") private String caseType;
+        @DatabaseField(columnName = "action") private String action;
 
         /**
          * Default constructor
@@ -147,7 +150,7 @@ public class CaseData {
          * @param group      Group name
          * @param action     Action name
          */
-        public CaseDataHistory(String item, String caseType, String playerName, long time, String group, String action) {
+        public History(String item, String caseType, String playerName, long time, String group, String action) {
             this.item = item;
             this.playerName = playerName;
             this.time = time;
@@ -157,9 +160,9 @@ public class CaseData {
         }
 
         @Override
-        public CaseDataHistory clone() {
+        public History clone() {
             try {
-                return (CaseDataHistory) super.clone();
+                return (History) super.clone();
             } catch (CloneNotSupportedException e) {
                 throw new AssertionError(e);
             }
@@ -172,7 +175,7 @@ public class CaseData {
      */
     @Getter
     @ConfigSerializable
-    public static class CaseDataHologram {
+    public static class Hologram {
         private final boolean enabled;
         private final double height;
         private final int range;
@@ -181,7 +184,7 @@ public class CaseData {
         /**
          * Empty constructor
          */
-        public CaseDataHologram() {
+        public Hologram() {
             this.enabled = false;
             this.height = 0.0;
             this.range = 8;
@@ -196,7 +199,7 @@ public class CaseData {
          * @param range    the range, when player will see hologram
          * @param messages the hologram will display
          */
-        public CaseDataHologram(boolean enabled, double height, int range, List<String> messages) {
+        public Hologram(boolean enabled, double height, int range, List<String> messages) {
             this.enabled = enabled;
             this.height = height;
             this.range = range;

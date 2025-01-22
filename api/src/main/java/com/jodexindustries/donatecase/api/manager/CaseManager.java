@@ -9,14 +9,14 @@ import java.util.Map;
 /**
  * Interface for implement case management
  */
-public interface CaseManager{
+public interface CaseManager {
 
     /**
      * Is there a case with a type?
      * @param type Case type
      * @return true - if case found in memory
      */
-    boolean hasCaseByType(@NotNull String type);
+    boolean hasByType(@NotNull String type);
 
     /**
      * Get a casedata by type
@@ -25,7 +25,7 @@ public interface CaseManager{
      * @return Case data
      */
     @Nullable
-    CaseData getCase(@NotNull String type);
+    CaseData get(@NotNull String type);
 
     /**
      * Gets casedata map

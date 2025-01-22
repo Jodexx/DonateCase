@@ -19,8 +19,8 @@ public class DecentHologramsImpl implements HologramManager {
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void createHologram(CaseLocation block, CaseData caseData) {
-        CaseData.CaseDataHologram caseHologram = caseData.getHologram();
+    public void create(CaseLocation block, CaseData caseData) {
+        CaseData.Hologram caseHologram = caseData.getHologram();
 
         if (!caseHologram.isEnabled()) return;
 
@@ -35,7 +35,7 @@ public class DecentHologramsImpl implements HologramManager {
     }
 
     @Override
-    public void removeHologram(CaseLocation block) {
+    public void remove(CaseLocation block) {
         if (!this.holograms.containsKey(block)) return;
 
         Hologram hologram = this.holograms.get(block);
@@ -44,8 +44,8 @@ public class DecentHologramsImpl implements HologramManager {
     }
 
     @Override
-    public void removeAllHolograms() {
-        this.holograms.values().forEach(Hologram::delete);
+    public void remove() {
+        this.holograms.values().forEach(eu.decentsoftware.holograms.api.holograms.Hologram::delete);
         this.holograms.clear();
     }
 }

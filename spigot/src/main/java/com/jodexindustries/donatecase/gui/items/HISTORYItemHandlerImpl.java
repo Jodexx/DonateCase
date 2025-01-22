@@ -52,7 +52,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         return item;
     }
 
-    private boolean handleHistoryItem(CaseData caseData, CaseGui.Item item, List<CaseData.CaseDataHistory> globalHistoryData) {
+    private boolean handleHistoryItem(CaseData caseData, CaseGui.Item item, List<CaseData.History> globalHistoryData) {
         CaseDataMaterial itemMaterial = item.getMaterial();
 
         String caseType = caseData.getCaseType();
@@ -62,7 +62,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         caseType = (typeArgs.length >= 3) ? typeArgs[2] : caseType;
         boolean isGlobal = caseType.equalsIgnoreCase("GLOBAL");
 
-        CaseData historyCaseData = isGlobal ? null : DCAPI.getInstance().getCaseManager().getCase(caseType);
+        CaseData historyCaseData = isGlobal ? null : DCAPI.getInstance().getCaseManager().get(caseType);
         if (historyCaseData == null && !isGlobal) {
             DCAPI.getInstance().getPlatform().getLogger().warning("Case " + caseType + " HistoryData is null!");
             return false;
@@ -70,10 +70,10 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
         if (!isGlobal) historyCaseData = historyCaseData.clone();
 
-        CaseData.CaseDataHistory data = getHistoryData(caseType, isGlobal, globalHistoryData, index);
+        CaseData.History data = getHistoryData(caseType, isGlobal, globalHistoryData, index);
         if (data == null) return false;
 
-        if (isGlobal) historyCaseData =  DCAPI.getInstance().getCaseManager().getCase(data.getCaseType());
+        if (isGlobal) historyCaseData =  DCAPI.getInstance().getCaseManager().get(data.getCaseType());
         if (historyCaseData == null) return false;
 
         CaseDataItem historyItem = historyCaseData.getItem(data.getItem());
@@ -95,7 +95,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         return true;
     }
 
-    private String[] getTemplate(CaseData historyCaseData, CaseData.CaseDataHistory data, CaseDataItem historyItem) {
+    private String[] getTemplate(CaseData historyCaseData, CaseData.History data, CaseDataItem historyItem) {
 
         DateFormat formatter = new SimpleDateFormat(DCAPI.getInstance().getConfig().getConfig().node("DonateCase.DateFormat").getString("dd.MM HH:mm:ss"));
         String dateFormatted = formatter.format(new Date(data.getTime()));
@@ -132,13 +132,13 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         return randomActionDisplayName;
     }
 
-    private CaseData.CaseDataHistory getHistoryData(String caseType, boolean isGlobal, List<CaseData.CaseDataHistory> globalHistoryData, int index) {
-        CaseData.CaseDataHistory data = null;
+    private CaseData.History getHistoryData(String caseType, boolean isGlobal, List<CaseData.History> globalHistoryData, int index) {
+        CaseData.History data = null;
         if (isGlobal) {
             if (globalHistoryData.size() <= index) return null;
             data = globalHistoryData.get(index);
         } else {
-            List<CaseData.CaseDataHistory> dbData = DCTools.sortHistoryDataByCase(globalHistoryData, caseType);
+            List<CaseData.History> dbData = DCTools.sortHistoryDataByCase(globalHistoryData, caseType);
             if (!dbData.isEmpty() && dbData.size() > index) {
                 data = dbData.get(index);
             }

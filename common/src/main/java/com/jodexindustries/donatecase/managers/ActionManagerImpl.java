@@ -1,8 +1,7 @@
 package com.jodexindustries.donatecase.managers;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
+import com.jodexindustries.donatecase.api.data.action.ActionException;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.manager.ActionManager;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class ActionManagerImpl implements ActionManager {
 
@@ -28,19 +28,14 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public boolean registerAction(@NotNull String name, @NotNull ActionExecutor actionExecutor, @NotNull String description, @NotNull Addon addon) {
-        if (!isRegistered(name)) {
-            CaseAction caseAction = new CaseAction(actionExecutor, addon, name, description);
-            registeredActions.put(name, caseAction);
-            return true;
-        } else {
-            platform.getLogger().warning("CaseAction with name " + name + " already registered!");
-        }
-        return false;
+    public void register(CaseAction action) throws ActionException {
+        if(isRegistered(action.getName())) throw new ActionException("Action with name " + action.getName() + " already registered!");
+
+        registeredActions.put(action.getName(), action);
     }
 
     @Override
-    public void unregisterAction(@NotNull String name) {
+    public void unregister(@NotNull String name) {
         if (isRegistered(name)) {
             registeredActions.remove(name);
         } else {
@@ -49,9 +44,9 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public void unregisterActions() {
+    public void unregister() {
         List<String> list = new ArrayList<>(registeredActions.keySet());
-        list.forEach(this::unregisterAction);
+        list.forEach(this::unregister);
     }
 
     @Override
@@ -61,12 +56,12 @@ public class ActionManagerImpl implements ActionManager {
 
     @Nullable
     @Override
-    public CaseAction getRegisteredAction(@NotNull String action) {
+    public CaseAction get(@NotNull String action) {
         return registeredActions.get(action);
     }
 
     @Override
-    public @NotNull Map<String, CaseAction> getRegisteredActions() {
+    public @NotNull Map<String, CaseAction> getMap() {
         return registeredActions;
     }
 
@@ -76,27 +71,33 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public void executeAction(@NotNull DCPlayer player, @NotNull String action, int cooldown) {
+    public void execute(@NotNull DCPlayer player, @NotNull String action, int cooldown) {
         String temp = getByStart(action);
         if(temp == null) return;
 
         String context = action.replace(temp, "").trim();
 
-        CaseAction caseAction = getRegisteredAction(temp);
+        CaseAction caseAction = get(temp);
         if(caseAction == null) return;
 
-        caseAction.execute(player, context, cooldown);
+        // TODO cooldown implement with scheduler
+
+        try {
+            caseAction.execute(player, context);
+        } catch (ActionException e) {
+            platform.getLogger().log(Level.WARNING, "Error with executing action: " + context, e);
+        }
     }
 
     @Override
-    public void executeActions(@NotNull DCPlayer player, @NotNull List<String> actions) {
+    public void execute(@NotNull DCPlayer player, @NotNull List<String> actions) {
         for (String action : actions) {
 
             action = DCTools.rc(api.getPlatform().getTools().getPAPI().setPlaceholders(player, action));
             int cooldown = DCTools.extractCooldown(action);
             action = action.replaceFirst("\\[cooldown:(.*?)]", "");
 
-            executeAction(player, action, cooldown);
+            execute(player, action, cooldown);
         }
     }
 }

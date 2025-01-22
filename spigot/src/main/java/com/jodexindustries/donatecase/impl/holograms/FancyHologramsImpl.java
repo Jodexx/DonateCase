@@ -22,7 +22,7 @@ public class FancyHologramsImpl implements HologramManager {
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void createHologram(CaseLocation block, CaseData caseData) {
+    public void create(CaseLocation block, CaseData caseData) {
         ConfigurationNode config = DCAPI.getInstance().getConfig().getConfigCases().getCase(caseData.getCaseType());
         if(config == null)  return;
 
@@ -61,7 +61,7 @@ public class FancyHologramsImpl implements HologramManager {
     }
 
     @Override
-    public void removeHologram(CaseLocation block) {
+    public void remove(CaseLocation block) {
         if (!this.holograms.containsKey(block)) return;
 
         Hologram hologram = this.holograms.get(block);
@@ -70,7 +70,7 @@ public class FancyHologramsImpl implements HologramManager {
     }
 
     @Override
-    public void removeAllHolograms() {
+    public void remove() {
         for (Hologram hologram : this.holograms.values()) {
             manager.removeHologram(hologram);
         }

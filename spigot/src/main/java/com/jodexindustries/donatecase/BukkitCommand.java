@@ -1,9 +1,8 @@
 package com.jodexindustries.donatecase;
 
-import com.jodexindustries.donatecase.api.platform.BukkitCommandSender;
-import com.jodexindustries.donatecase.api.platform.BukkitPlayer;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.command.GlobalCommand;
+import com.jodexindustries.donatecase.tools.BukkitUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,23 +23,15 @@ public class BukkitCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] strings) {
-        DCCommandSender commandSender;
-        if (sender instanceof Player) {
-            commandSender = new BukkitPlayer((Player) sender);
-        } else {
-            commandSender = new BukkitCommandSender(sender);
-        }
-        return command.execute(commandSender, s, strings);
+        return command.execute(get(sender), s, strings);
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] strings) {
-        DCCommandSender commandSender;
-        if (sender instanceof Player) {
-            commandSender = new BukkitPlayer((Player) sender);
-        } else {
-            commandSender = new BukkitCommandSender(sender);
-        }
-        return command.getTabCompletions(commandSender, s, strings);
+        return command.getTabCompletions(get(sender), s, strings);
+    }
+
+    private static DCCommandSender get(CommandSender sender) {
+        return sender instanceof Player ? BukkitUtils.fromBukkit((Player) sender) : BukkitUtils.fromBukkit(sender);
     }
 }

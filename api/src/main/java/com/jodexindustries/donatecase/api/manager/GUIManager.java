@@ -26,7 +26,9 @@ public interface GUIManager {
 
     /**
      * Gets map of case gui
+     *
      * @return map of case gui
      */
-    Map<UUID, CaseGuiWrapper> getPlayersGUI();
+    Map<UUID, CaseGuiWrapper> getMap();
+
 }

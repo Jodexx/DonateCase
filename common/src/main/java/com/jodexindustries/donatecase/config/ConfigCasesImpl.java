@@ -62,6 +62,8 @@ public class ConfigCasesImpl implements ConfigCases {
 
     @Override
     public void load() throws ConfigurateException {
+        cases.clear();
+
         if (getCasesInFolder().isEmpty()) platform.saveResource("cases/case.yml", false);
 
         for (File file : getCasesInFolder()) {

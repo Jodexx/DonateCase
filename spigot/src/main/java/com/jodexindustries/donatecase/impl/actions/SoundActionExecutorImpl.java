@@ -1,49 +1,41 @@
 package com.jodexindustries.donatecase.impl.actions;
 
-import com.jodexindustries.donatecase.api.Case;
+import com.jodexindustries.donatecase.api.data.action.ActionException;
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
-import org.bukkit.Bukkit;
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import com.jodexindustries.donatecase.tools.BukkitUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SoundActionExecutorImpl implements ActionExecutor<Player> {
-    /**
-     * Player sound for player with specific cooldown<br>
-     * {@code - "[sound] (sound) (volume) (pitch)"}
-     *
-     * @param player The player to whom the sound will be played
-     * @param context Sound context
-     * @param cooldown Cooldown in seconds
-     */
+public class SoundActionExecutorImpl implements ActionExecutor {
+
     @Override
-    public void execute(@Nullable Player player, @NotNull String context, int cooldown) {
+    public void execute(@Nullable DCPlayer player, @NotNull String context) throws ActionException {
+        if (player == null) return;
+
+        Player bukkitPlayer = BukkitUtils.toBukkit(player);
+
         String[] args = context.split(" ");
         Sound sound;
         try {
-            if(args.length >= 1) {
+            if (args.length >= 1) {
                 sound = Sound.valueOf(args[0].toUpperCase());
             } else {
-                Case.getInstance().getLogger().warning("Sound not found!");
-                return;
+                throw new ActionException("Sound not found!");
             }
         } catch (IllegalArgumentException e) {
-            Case.getInstance().getLogger().warning("Invalid sound: " + context.toUpperCase());
-            return;
+            throw new ActionException("Invalid sound: " + context.toUpperCase(), e);
         }
 
         try {
             float volume = args.length > 1 ? Float.parseFloat(args[1]) : 1;
             float pitch = args.length > 2 ? Float.parseFloat(args[2]) : 1;
 
-            Bukkit.getScheduler().runTaskLater(Case.getInstance(), () -> {
-                if (player != null) {
-                    player.playSound(player.getLocation(), sound, volume, pitch);
-                }
-            }, 20L * cooldown);
+            bukkitPlayer.playSound(bukkitPlayer.getLocation(), sound, volume, pitch);
         } catch (NumberFormatException e) {
-            Case.getInstance().getLogger().warning("Invalid number format: " + context);
+            throw new ActionException("Invalid number format: " + context, e);
         }
     }
 }

@@ -14,7 +14,6 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
-import com.jodexindustries.donatecase.database.entities.HistoryDataTable;
 import com.jodexindustries.donatecase.database.entities.OpenInfoTable;
 import com.jodexindustries.donatecase.database.entities.PlayerKeysTable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -28,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 public class CaseDatabaseImpl implements CaseDatabase {
-    private Dao<HistoryDataTable, String> historyDataTables;
+    private Dao<CaseData.History, String> historyDataTables;
     private Dao<PlayerKeysTable, String> playerKeysTables;
     private Dao<OpenInfoTable, String> openInfoTables;
     private JdbcConnectionSource connectionSource;
@@ -40,7 +39,7 @@ public class CaseDatabaseImpl implements CaseDatabase {
     /**
      * Cache map for storing cases histories
      */
-    public final static SimpleCache<String, List<CaseData.CaseDataHistory>> historyCache = new SimpleCache<>(20);
+    public final static SimpleCache<String, List<CaseData.History>> historyCache = new SimpleCache<>(20);
 
     public CaseDatabaseImpl(DonateCase api) {
         this.api = api;
@@ -98,10 +97,10 @@ public class CaseDatabaseImpl implements CaseDatabase {
     private void init() throws SQLException {
         com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
 
-        TableUtils.createTableIfNotExists(connectionSource, HistoryDataTable.class);
+        TableUtils.createTableIfNotExists(connectionSource, CaseData.History.class);
         TableUtils.createTableIfNotExists(connectionSource, PlayerKeysTable.class);
         TableUtils.createTableIfNotExists(connectionSource, OpenInfoTable.class);
-        historyDataTables = DaoManager.createDao(connectionSource, HistoryDataTable.class);
+        historyDataTables = DaoManager.createDao(connectionSource, CaseData.History.class);
         playerKeysTables = DaoManager.createDao(connectionSource, PlayerKeysTable.class);
         openInfoTables = DaoManager.createDao(connectionSource, OpenInfoTable.class);
     }
@@ -253,9 +252,9 @@ public class CaseDatabaseImpl implements CaseDatabase {
     }
 
     @Override
-    public void setHistoryData(CaseData.CaseDataHistory[] historyData) {
+    public void setHistoryData(CaseData.History[] historyData) {
         for (int index = 0; index < historyData.length; index++) {
-            CaseData.CaseDataHistory data = historyData[index];
+            CaseData.History data = historyData[index];
             if (data == null) continue;
 
             setHistoryData(data.getCaseType(), index, data);
@@ -263,15 +262,15 @@ public class CaseDatabaseImpl implements CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> setHistoryData(String caseType, CaseData.CaseDataHistory data) {
+    public CompletableFuture<DatabaseStatus> setHistoryData(String caseType, CaseData.History data) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                QueryBuilder<HistoryDataTable, String> queryBuilder = historyDataTables.queryBuilder();
+                QueryBuilder<CaseData.History, String> queryBuilder = historyDataTables.queryBuilder();
                 queryBuilder.where().eq("case_type", caseType);
 
-                List<HistoryDataTable> results = queryBuilder.query();
+                List<CaseData.History> results = queryBuilder.query();
 
-                for (HistoryDataTable historyDataTable : results) {
+                for (CaseData.History historyDataTable : results) {
                     setHistoryDataTable(historyDataTable, historyDataTable.getId(), data);
                 }
 
@@ -284,12 +283,12 @@ public class CaseDatabaseImpl implements CaseDatabase {
 
     }
 
-    private void setHistoryDataTable(HistoryDataTable historyDataTable, int index, CaseData.CaseDataHistory data) throws SQLException {
+    private void setHistoryDataTable(CaseData.History historyDataTable, int index, CaseData.History data) throws SQLException {
         if (historyDataTable == null) {
             data.setId(index);
-            historyDataTables.create(new HistoryDataTable(data));
+            historyDataTables.create(data);
         } else {
-            UpdateBuilder<HistoryDataTable, String> updateBuilder = historyDataTables.updateBuilder();
+            UpdateBuilder<CaseData.History, String> updateBuilder = historyDataTables.updateBuilder();
             updateBuilder.updateColumnValue("item", data.getItem());
             updateBuilder.updateColumnValue("player_name", data.getPlayerName());
             updateBuilder.updateColumnValue("time", data.getTime());
@@ -301,14 +300,14 @@ public class CaseDatabaseImpl implements CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseData.CaseDataHistory data) {
+    public CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseData.History data) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                QueryBuilder<HistoryDataTable, String> queryBuilder = historyDataTables.queryBuilder();
+                QueryBuilder<CaseData.History, String> queryBuilder = historyDataTables.queryBuilder();
                 queryBuilder.where().eq("case_type", caseType).and().eq("id", index);
 
-                List<HistoryDataTable> results = queryBuilder.query();
-                HistoryDataTable historyDataTable = results.isEmpty() ? null : results.get(0);
+                List<CaseData.History> results = queryBuilder.query();
+                CaseData.History historyDataTable = results.isEmpty() ? null : results.get(0);
                 setHistoryDataTable(historyDataTable, index, data);
             } catch (SQLException e) {
                 logger.warning(e.getMessage());
@@ -322,7 +321,7 @@ public class CaseDatabaseImpl implements CaseDatabase {
     public CompletableFuture<DatabaseStatus> removeHistoryData(String caseType) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                DeleteBuilder<HistoryDataTable, String> deleteBuilder = historyDataTables.deleteBuilder();
+                DeleteBuilder<CaseData.History, String> deleteBuilder = historyDataTables.deleteBuilder();
                 deleteBuilder.where().eq("case_type", caseType);
                 deleteBuilder.delete();
                 return DatabaseStatus.COMPLETE;
@@ -337,7 +336,7 @@ public class CaseDatabaseImpl implements CaseDatabase {
     public CompletableFuture<DatabaseStatus> removeHistoryData(String caseType, int index) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                DeleteBuilder<HistoryDataTable, String> deleteBuilder = historyDataTables.deleteBuilder();
+                DeleteBuilder<CaseData.History, String> deleteBuilder = historyDataTables.deleteBuilder();
                 deleteBuilder.where().eq("case_type", caseType).and().eq("id", index);
                 deleteBuilder.delete();
                 return DatabaseStatus.COMPLETE;
@@ -349,14 +348,11 @@ public class CaseDatabaseImpl implements CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<List<CaseData.CaseDataHistory>> getHistoryData() {
-        List<CaseData.CaseDataHistory> result = new ArrayList<>();
+    public CompletableFuture<List<CaseData.History>> getHistoryData() {
+        List<CaseData.History> result = new ArrayList<>();
         return CompletableFuture.supplyAsync(() -> {
             try {
-                for (HistoryDataTable historyDataTable : historyDataTables.queryForAll()) {
-                    CaseData.CaseDataHistory historyData = historyDataTable.toHistoryData();
-                    result.add(historyData);
-                }
+                result.addAll(historyDataTables.queryForAll());
             } catch (SQLException e) {
                 logger.warning(e.getMessage());
             }
@@ -365,16 +361,14 @@ public class CaseDatabaseImpl implements CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<List<CaseData.CaseDataHistory>> getHistoryData(String caseType) {
-        List<CaseData.CaseDataHistory> result = new ArrayList<>();
+    public CompletableFuture<List<CaseData.History>> getHistoryData(String caseType) {
+        List<CaseData.History> result = new ArrayList<>();
         return CompletableFuture.supplyAsync(() -> {
             try {
-                for (HistoryDataTable historyDataTable : historyDataTables.queryBuilder()
+                result.addAll(historyDataTables.queryBuilder()
                         .where()
                         .eq("case_type", caseType)
-                        .query()) {
-                    result.add(historyDataTable.toHistoryData());
-                }
+                        .query());
             } catch (SQLException e) {
                 logger.warning(e.getMessage());
             }
@@ -384,16 +378,16 @@ public class CaseDatabaseImpl implements CaseDatabase {
 
 
     @Override
-    public List<CaseData.CaseDataHistory> getCache() {
+    public List<CaseData.History> getCache() {
         if (databaseType == DatabaseType.SQLITE) return getHistoryData().join();
 
-        List<CaseData.CaseDataHistory> cachedList = historyCache.get("all!");
+        List<CaseData.History> cachedList = historyCache.get("all!");
 
         if (cachedList != null) {
             return cachedList;
         }
 
-        List<CaseData.CaseDataHistory> previousList = historyCache.getPrevious("all!");
+        List<CaseData.History> previousList = historyCache.getPrevious("all!");
 
         getHistoryData().thenAcceptAsync(historyData -> historyCache.put("all!", historyData));
 
@@ -401,16 +395,16 @@ public class CaseDatabaseImpl implements CaseDatabase {
     }
 
     @Override
-    public List<CaseData.CaseDataHistory> getCache(String caseType) {
+    public List<CaseData.History> getCache(String caseType) {
         if (databaseType == DatabaseType.SQLITE) return getHistoryData(caseType).join();
 
-        List<CaseData.CaseDataHistory> cachedList = historyCache.get(caseType);
+        List<CaseData.History> cachedList = historyCache.get(caseType);
 
         if (cachedList != null) {
             return cachedList;
         }
 
-        List<CaseData.CaseDataHistory> previousList = historyCache.getPrevious(caseType);
+        List<CaseData.History> previousList = historyCache.getPrevious(caseType);
 
         getHistoryData(caseType).thenAcceptAsync(historyData -> historyCache.put(caseType, historyData));
 

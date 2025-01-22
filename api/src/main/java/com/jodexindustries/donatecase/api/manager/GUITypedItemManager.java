@@ -15,43 +15,32 @@ import java.util.stream.Collectors;
  * registration, retrieval, and management of GUI elements.
  *
  */
-public interface GUITypedItemManager{
-
-    /**
-     * Provides a builder for creating a new GUI typed item with a specified ID.
-     *
-     * @param id the unique identifier for the GUI typed item to create
-     * @return a {@code GUITypedItem.Builder} instance for creating the typed item
-     * @see #registerItem(GuiTypedItem)
-     */
-    @NotNull
-    GuiTypedItem.Builder builder(String id, Addon addon);
+public interface GUITypedItemManager {
 
     /**
      * Registers a GUI typed item.
      *
      * @param item the {@code GUITypedItem} object to register
      * @return true if the registration is successful, false otherwise
-     * @see #builder(String, Addon)
      */
-    boolean registerItem(GuiTypedItem item);
+    boolean register(GuiTypedItem item);
 
     /**
      * Unregisters a GUI typed item by its ID.
      *
      * @param id the unique identifier of the GUI typed item to unregister
      */
-    void unregisterItem(String id);
+    void unregister(String id);
 
-    default void unregisterItems(Addon addon) {
-        List<GuiTypedItem> list = new ArrayList<>(getRegisteredItems(addon));
-        list.stream().map(GuiTypedItem::getId).forEach(this::unregisterItem);
+    default void unregister(Addon addon) {
+        List<GuiTypedItem> list = new ArrayList<>(get(addon));
+        list.stream().map(GuiTypedItem::getId).forEach(this::unregister);
     }
 
     /**
      * Unregisters all registered GUI typed items.
      */
-    void unregisterItems();
+    void unregister();
 
     /**
      * Retrieves a registered GUI typed item by its ID.
@@ -60,15 +49,15 @@ public interface GUITypedItemManager{
      * @return the {@code GUITypedItem} object if found, or null otherwise
      */
     @Nullable
-    GuiTypedItem getRegisteredItem(@NotNull String id);
+    GuiTypedItem get(@NotNull String id);
 
-    default List<GuiTypedItem> getRegisteredItems(Addon addon) {
-        return getRegisteredItems().values().stream().filter(item ->
+    default List<GuiTypedItem> get(Addon addon) {
+        return getMap().values().stream().filter(item ->
                 item.getAddon().equals(addon)).collect(Collectors.toList());
     }
 
     @NotNull
-    Map<String, GuiTypedItem> getRegisteredItems();
+    Map<String, GuiTypedItem> getMap();
 
 
     /**
@@ -88,4 +77,5 @@ public interface GUITypedItemManager{
      */
     @Nullable
     GuiTypedItem getFromString(@NotNull final String string);
+
 }

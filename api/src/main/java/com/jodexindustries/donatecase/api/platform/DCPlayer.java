@@ -3,9 +3,11 @@ package com.jodexindustries.donatecase.api.platform;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import org.jetbrains.annotations.NotNull;
 
-public interface DCPlayer extends DCOfflinePlayer {
+public interface DCPlayer extends DCCommandSender, DCOfflinePlayer {
 
     @NotNull String getName();
+
+    CaseLocation getLocation();
 
     CaseLocation getTargetBlock(int maxDistance);
 

@@ -43,11 +43,11 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
                 .executor(this)
                 .tabCompleter(this)
                 .build();
-        manager.registerSubCommand(subCommand);
+        manager.register(subCommand);
     }
 
     public void unregister() {
-        if(commandName != null) manager.unregisterSubCommand(commandName);
+        if(commandName != null) manager.unregister(commandName);
     }
 
     @Override

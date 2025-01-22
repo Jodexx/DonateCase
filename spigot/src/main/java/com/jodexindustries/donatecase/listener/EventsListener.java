@@ -84,7 +84,7 @@ public class EventsListener implements Listener {
                 GuiTypedItem typedItem = instance.api.getGuiTypedItemManager().getFromString(itemType);
                 if (typedItem == null) return;
 
-                TypedItemClickHandler handler = typedItem.getItemClickHandler();
+                TypedItemClickHandler handler = typedItem.getClick();
                 if (handler == null) return;
 
                 handler.onClick(caseGuiClickEvent);

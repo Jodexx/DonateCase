@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.managers;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
 import com.jodexindustries.donatecase.api.manager.GUITypedItemManager;
 import com.jodexindustries.donatecase.api.platform.Platform;
@@ -23,14 +22,8 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager {
         this.platform = api.getPlatform();
     }
 
-    @NotNull
     @Override
-    public GuiTypedItem.Builder builder(String id, Addon addon) {
-        return new GuiTypedItem.Builder(id, addon);
-    }
-
-    @Override
-    public boolean registerItem(GuiTypedItem item) {
+    public boolean register(GuiTypedItem item) {
         String id = item.getId().toLowerCase();
         if (registeredItems.get(id) == null) {
             registeredItems.put(id, item);
@@ -43,7 +36,7 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager {
     }
 
     @Override
-    public void unregisterItem(String id) {
+    public void unregister(String id) {
         if (registeredItems.get(id) != null) {
             registeredItems.remove(id);
         } else {
@@ -52,19 +45,19 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager {
     }
 
     @Override
-    public void unregisterItems() {
+    public void unregister() {
         List<String> items = new ArrayList<>(registeredItems.keySet());
-        items.forEach(this::unregisterItem);
+        items.forEach(this::unregister);
     }
 
     @Nullable
     @Override
-    public GuiTypedItem getRegisteredItem(@NotNull String id) {
+    public GuiTypedItem get(@NotNull String id) {
         return registeredItems.get(id.toLowerCase());
     }
 
     @Override
-    public @NotNull Map<String, GuiTypedItem> getRegisteredItems() {
+    public @NotNull Map<String, GuiTypedItem> getMap() {
         return registeredItems;
     }
 
@@ -78,6 +71,7 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager {
     @Override
     public GuiTypedItem getFromString(@NotNull final String string) {
         String temp = getByStart(string);
-        return temp != null ? getRegisteredItem(temp) : null;
+        return temp != null ? get(temp) : null;
     }
+
 }

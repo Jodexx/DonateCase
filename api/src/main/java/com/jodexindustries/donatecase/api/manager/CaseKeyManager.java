@@ -21,7 +21,7 @@ public interface CaseKeyManager {
      * @param keys     Number of keys
      * @return CompletableFuture of completion status
      */
-    CompletableFuture<DatabaseStatus> setKeys(String caseType, String player, int keys);
+    CompletableFuture<DatabaseStatus> set(String caseType, String player, int keys);
 
     /**
      * Modify case keys for a specific player
@@ -31,7 +31,7 @@ public interface CaseKeyManager {
      * @param keys     Number of keys to modify (positive to add, negative to remove)
      * @return Completable future of completion status
      */
-    CompletableFuture<DatabaseStatus> modifyKeys(String caseType, String player, int keys);
+    CompletableFuture<DatabaseStatus> modify(String caseType, String player, int keys);
 
     /**
      * Add case keys to a specific player (async)
@@ -40,10 +40,10 @@ public interface CaseKeyManager {
      * @param player   Player name
      * @param keys     Number of keys
      * @return Completable future of completes
-     * @see #modifyKeys(String, String, int)
+     * @see #modify(String, String, int)
      */
-    default CompletableFuture<DatabaseStatus> addKeys(String caseType, String player, int keys) {
-        return modifyKeys(caseType, player, keys);
+    default CompletableFuture<DatabaseStatus> add(String caseType, String player, int keys) {
+        return modify(caseType, player, keys);
     }
 
     /**
@@ -53,13 +53,13 @@ public interface CaseKeyManager {
      * @param player   Player name
      * @param keys     Number of keys
      * @return Completable future of completes
-     * @see #modifyKeys(String, String, int)
+     * @see #modify(String, String, int)
      */
-    default CompletableFuture<DatabaseStatus> removeKeys(String caseType, String player, int keys) {
-        return modifyKeys(caseType, player, -keys);
+    default CompletableFuture<DatabaseStatus> remove(String caseType, String player, int keys) {
+        return modify(caseType, player, -keys);
     }
 
-    CompletableFuture<DatabaseStatus> removeAllKeys();
+    CompletableFuture<DatabaseStatus> delete();
 
     /**
      * Get the keys to a certain player's case
@@ -67,8 +67,8 @@ public interface CaseKeyManager {
      * @param player Player name
      * @return Number of keys
      */
-    default int getKeys(String caseType, String player) {
-        return getKeysAsync(caseType, player).join();
+    default int get(String caseType, String player) {
+        return getAsync(caseType, player).join();
     }
 
     /**
@@ -76,8 +76,8 @@ public interface CaseKeyManager {
      * @param player Player name
      * @return Map of the keys. Key - Case type, Value - Number of keys
      */
-    default Map<String, Integer> getKeys(String player) {
-        return getKeysAsync(player).join();
+    default Map<String, Integer> get(String player) {
+        return getAsync(player).join();
     }
 
     /**
@@ -86,14 +86,14 @@ public interface CaseKeyManager {
      * @param player Player name
      * @return CompletableFuture of keys
      */
-    CompletableFuture<Integer> getKeysAsync(String caseType, String player);
+    CompletableFuture<Integer> getAsync(String caseType, String player);
 
     /**
      * Get the map of all player's keys
      * @param player Player name
      * @return Map of the keys. Key - Case type, Value - Number of keys
      */
-    CompletableFuture<Map<String, Integer>> getKeysAsync(String player);
+    CompletableFuture<Map<String, Integer>> getAsync(String player);
 
     /**
      * Get the keys to a certain player's case from cache <br/>
@@ -102,9 +102,9 @@ public interface CaseKeyManager {
      * @param player Player name
      * @return Number of keys
      */
-    int getKeysCache(String caseType, String player);
+    int getCache(String caseType, String player);
 
-    Map<String, Integer> getKeysCache(String player);
+    Map<String, Integer> getCache(String player);
 
     SimpleCache<String, Map<String, Integer>> getCache();
 }

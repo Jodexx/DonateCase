@@ -3,6 +3,8 @@ package com.jodexindustries.donatecase.command.impl;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
+import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -11,13 +13,17 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CasesCommand extends SubCommand {
+public class CasesCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
 
     private final DCAPI api;
 
     public CasesCommand(DCAPI api) {
-        super("cases", api.getPlatform());
-        setPermission(SubCommandType.MODER.permission);
+        super();
+        name("cases");
+        addon(api.getPlatform());
+        permission(SubCommandType.MODER.permission);
+        executor(this);
+        tabCompleter(this);
         this.api = api;
     }
 
@@ -26,10 +32,10 @@ public class CasesCommand extends SubCommand {
         int num = 0;
         for (CaseData data : api.getCaseManager().getMap().values()) {
             num++;
-            sender.sendMessage(DCTools.rt(api.getConfig().getMessages().getString("list-of-cases"),
+            sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("list-of-cases"),
                     "%casename:" + data.getCaseType(), "%num:" + num,
                     "%casedisplayname:" + data.getCaseDisplayName(),
-                    "%casetitle:" + data.getCaseGui().getTitle()));
+                    "%casetitle:" + data.getCaseGui().getTitle())));
         }
         return true;
     }
