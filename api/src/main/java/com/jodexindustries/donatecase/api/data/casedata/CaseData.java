@@ -159,6 +159,8 @@ public class CaseData {
             this.action = action;
         }
 
+        public History() {}
+
         @Override
         public History clone() {
             try {

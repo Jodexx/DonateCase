@@ -62,6 +62,7 @@ public class ConfigImpl implements Config {
 
         try {
             messages.load(getConfig().node("DonateCase", "Languages").getString("en_US"));
+            caseStorage.load();
             configCases.load();
         } catch (ConfigurateException e) {
             platform.getLogger().log(Level.WARNING, "Error with loading configuration: ", e);
@@ -136,7 +137,8 @@ public class ConfigImpl implements Config {
 
     private void createFiles() {
         for (String fileName : defaultFiles) {
-            if (!(new File(platform.getDataFolder(), fileName)).exists()) platform.saveResource(fileName, false);
+            File file = new File(platform.getDataFolder(), fileName);
+            if (!file.exists()) platform.saveResource(fileName, false);
         }
     }
 

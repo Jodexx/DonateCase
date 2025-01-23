@@ -9,10 +9,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,16 +24,6 @@ public class ConfigCasesImpl implements ConfigCases {
     }
 
     /**
-     * Check is file with .yml format
-     *
-     * @param file File for checking
-     * @return result
-     */
-    private static boolean isYamlFile(File file) {
-        return file.getName().endsWith(".yml") || file.getName().endsWith(".yaml");
-    }
-
-    /**
      * Get file name without file format
      *
      * @param file File for checking
@@ -47,37 +34,31 @@ public class ConfigCasesImpl implements ConfigCases {
         return fileName.lastIndexOf(".") == -1 ? fileName : fileName.substring(0, fileName.lastIndexOf("."));
     }
 
-    /**
-     * Get list of files in cases folder
-     *
-     * @return list of files
-     */
-    private List<File> getCasesInFolder() {
-        List<File> files = new ArrayList<>();
+    @NotNull
+    private File[] getCasesInFolder() {
         File directory = new File(platform.getDataFolder(), "cases");
-        File[] array = directory.listFiles();
-        if (array != null) Collections.addAll(files, array);
-        return files;
+        File[] files = directory.listFiles();
+        return files != null ? files : new File[0];
     }
 
     @Override
     public void load() throws ConfigurateException {
         cases.clear();
 
-        if (getCasesInFolder().isEmpty()) platform.saveResource("cases/case.yml", false);
+        if (getCasesInFolder().length == 0) {
+            platform.saveResource("cases/case.yml", false);
+        }
 
         for (File file : getCasesInFolder()) {
-            if (isYamlFile(file)) {
-                String name = getFileNameWithoutExtension(file);
-                YamlConfigurationLoader loader = YamlConfigurationLoader.builder().file(file).build();
+            String name = getFileNameWithoutExtension(file);
+            YamlConfigurationLoader loader = YamlConfigurationLoader.builder().file(file).build();
 
-                ConfigurationNode node = loader.load();
+            ConfigurationNode node = loader.load();
 
-                if (node.hasChild("case")) {
-                    cases.put(name, node);
-                } else {
-                    platform.getLogger().warning("Case " + name + " has a broken case section, skipped.");
-                }
+            if (node.hasChild("case")) {
+                cases.put(name, node);
+            } else {
+                platform.getLogger().warning("Case " + name + " has a broken case section, skipped.");
             }
         }
     }

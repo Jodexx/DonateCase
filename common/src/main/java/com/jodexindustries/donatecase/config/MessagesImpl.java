@@ -47,8 +47,9 @@ public class MessagesImpl implements Messages {
     }
 
     public void load(@NotNull String language) throws ConfigurateException {
-        String langFilePath = "lang/" + language + ".yml";
-        if (platform.getResource(langFilePath) != null) platform.saveResource(langFilePath, false);
+        String path = "lang/" + language + ".yml";
+        if (platform.getResource(path) != null && !(new File(folder, language + ".yml").exists()))
+            platform.saveResource(path, false);
 
         File file = selectFile(language);
 
