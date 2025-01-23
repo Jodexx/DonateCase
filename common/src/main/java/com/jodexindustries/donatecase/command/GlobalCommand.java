@@ -37,16 +37,15 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
 
             String permission = subCommand.getPermission();
 
-            if (permission == null || sender.hasPermission(permission))
+            if (permission == null || sender.hasPermission(permission)) {
                 try {
-                    if (subCommand.execute(sender, label, Arrays.copyOfRange(args, 1, args.length))) {
-                        sender.sendMessage(DCTools.prefix(backend.getAPI().getConfig().getMessages().getString("no-permission")));
-                    } else {
-                        sendHelp(sender, label);
-                    }
+                    if (!subCommand.execute(sender, label, Arrays.copyOfRange(args, 1, args.length))) sendHelp(sender, label);
                 } catch (Exception e) {
                     backend.getLogger().log(Level.WARNING, "Error with executing subcommand: " + subCommandName, e);
                 }
+            } else {
+                sender.sendMessage(DCTools.prefix(backend.getAPI().getConfig().getMessages().getString("no-permission")));
+            }
         }
 
         return true;
