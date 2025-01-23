@@ -4,12 +4,10 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
 import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
 import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.command.DefaultCommand;
 import com.jodexindustries.donatecase.managers.AddonManagerImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,17 +17,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AddonCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
+public class AddonCommand extends DefaultCommand {
 
     private final DCAPI api;
 
     public AddonCommand(DCAPI api) {
-        super();
-        name("addon");
-        addon(api.getPlatform());
-        permission(SubCommandType.ADMIN.permission);
-        executor(this);
-        tabCompleter(this);
+        super(api, "addon", SubCommandType.ADMIN);
         this.api = api;
     }
 

@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @Getter
 @ConfigSerializable
-public abstract class CaseDataMaterial implements MetaUpdatable, Cloneable {
+public class CaseDataMaterial implements MetaUpdater, Cloneable {
 
     @Setting("ID")
     private String id;
@@ -33,17 +33,37 @@ public abstract class CaseDataMaterial implements MetaUpdatable, Cloneable {
     private String[] rgb;
     private transient Object itemStack = DCAPI.getInstance().getPlatform().getTools().loadCaseItem(id);
 
-    @Override
     public void updateMeta() {
-        updateMeta(getDisplayName(), getLore(), getModelData(), isEnchanted(), getRgb());
+        updateMeta(getItemStack(), getDisplayName(), getLore(), getModelData(), isEnchanted(), getRgb());
+    }
+
+    @Override
+    public void updateMeta(Object itemStack, String displayName, List<String> lore, int modelData, boolean enchanted, String[] rgb) {
+        DCAPI.getInstance().getPlatform().getMetaUpdater().updateMeta(itemStack, displayName, lore, modelData, enchanted, rgb);
     }
 
     @Override
     public CaseDataMaterial clone() {
         try {
-            return (CaseDataMaterial) super.clone();
+            CaseDataMaterial cloned = (CaseDataMaterial) super.clone();
+
+            if (itemStack instanceof Cloneable) {
+                cloned.itemStack = cloneItemStack(itemStack);
+            } else {
+                cloned.itemStack = itemStack;
+            }
+
+            return cloned;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
+        }
+    }
+
+    private Object cloneItemStack(Object itemStack) {
+        try {
+            return itemStack.getClass().getMethod("clone").invoke(itemStack);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to clone itemStack", e);
         }
     }
 }

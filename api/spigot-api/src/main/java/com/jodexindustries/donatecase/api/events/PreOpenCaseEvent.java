@@ -1,5 +1,8 @@
 package com.jodexindustries.donatecase.api.events;
 
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -15,8 +18,28 @@ import org.jetbrains.annotations.NotNull;
 public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancel;
-    private final CaseDataBukkit caseData;
+    private final CaseData caseData;
+    /**
+     * -- GETTER --
+     *  Get case block
+     *
+     * @return Case block
+     */
+    @Getter
     private final Block block;
+    /**
+     * -- GETTER --
+     *  Determines whether the player's keys should be ignored.
+     *
+     *
+     * -- SETTER --
+     *  Sets whether the player's keys should be ignored.
+     *
+     @return {@code true} if the keys should be ignored, {@code false} otherwise.
+      * @param ignoreKeys {@code true} to ignore the player's keys, {@code false} otherwise.
+     */
+    @Setter
+    @Getter
     private boolean ignoreKeys;
 
     /**
@@ -26,7 +49,7 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
      * @param caseData Case data
      * @param block    Case block
      */
-    public PreOpenCaseEvent(@NotNull final Player who, @NotNull final CaseDataBukkit caseData, Block block) {
+    public PreOpenCaseEvent(@NotNull final Player who, @NotNull final CaseData caseData, Block block) {
         super(who);
         this.caseData = caseData;
         this.block = block;
@@ -48,17 +71,8 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
      * @return case data
      */
     @NotNull
-    public CaseDataBukkit getCaseData() {
+    public CaseData getCaseData() {
         return caseData;
-    }
-
-    /**
-     * Get case block
-     *
-     * @return Case block
-     */
-    public Block getBlock() {
-        return block;
     }
 
     @NotNull
@@ -84,24 +98,6 @@ public class PreOpenCaseEvent extends PlayerEvent implements Cancellable {
     @Override
     public void setCancelled(boolean cancel) {
         this.cancel = cancel;
-    }
-
-    /**
-     * Determines whether the player's keys should be ignored.
-     *
-     * @return {@code true} if the keys should be ignored, {@code false} otherwise.
-     */
-    public boolean isIgnoreKeys() {
-        return ignoreKeys;
-    }
-
-    /**
-     * Sets whether the player's keys should be ignored.
-     *
-     * @param ignoreKeys {@code true} to ignore the player's keys, {@code false} otherwise.
-     */
-    public void setIgnoreKeys(boolean ignoreKeys) {
-        this.ignoreKeys = ignoreKeys;
     }
 
 }

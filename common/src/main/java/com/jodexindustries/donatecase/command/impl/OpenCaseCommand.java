@@ -4,30 +4,23 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.command.DefaultCommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class OpenCaseCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
+public class OpenCaseCommand extends DefaultCommand {
 
     private final DCAPI api;
 
     public OpenCaseCommand(DCAPI api) {
-        super();
-        name("opencase");
-        addon(api.getPlatform());
-        permission(SubCommandType.PLAYER.permission);
-        executor(this);
-        tabCompleter(this);
+        super(api, "opencase", SubCommandType.PLAYER);
         this.api = api;
     }
 

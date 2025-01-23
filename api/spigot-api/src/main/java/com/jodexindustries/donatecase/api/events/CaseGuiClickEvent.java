@@ -2,6 +2,9 @@ package com.jodexindustries.donatecase.api.events;
 
 import com.jodexindustries.donatecase.api.event.GUIClickEvent;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import com.jodexindustries.donatecase.tools.BukkitUtils;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
@@ -54,8 +57,8 @@ public class CaseGuiClickEvent extends InventoryClickEvent implements GUIClickEv
     }
 
     @Override
-    public @NotNull Object getPlayer() {
-        return getWhoClicked();
+    public @NotNull DCPlayer getPlayer() {
+        return BukkitUtils.fromBukkit((Player) getWhoClicked());
     }
 
     /**

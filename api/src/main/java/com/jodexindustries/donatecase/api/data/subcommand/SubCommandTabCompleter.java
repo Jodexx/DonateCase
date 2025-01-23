@@ -18,5 +18,5 @@ public interface SubCommandTabCompleter {
      * @param args   The current arguments input by the sender.
      * @return A list of tab-completion suggestions.
      */
-    List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args);
+    List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) throws SubCommandException;
 }

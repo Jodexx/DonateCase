@@ -7,6 +7,7 @@ import com.jodexindustries.donatecase.api.data.HologramDriver;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
@@ -50,18 +51,17 @@ import java.util.logging.Logger;
 
 public class BukkitBackend extends BackendPlatform {
 
-    @Getter
-    private final BukkitDonateCase plugin;
+    @Getter private final BukkitDonateCase plugin;
 
     private final DonateCase api;
     private final DCTools tools;
 
     private PAPI papi;
-    @Getter
-    private PacketEventsSupport packetEventsSupport;
+    @Getter private PacketEventsSupport packetEventsSupport;
     private LuckPerms luckPerms;
-    public HologramDriver hologramDriver = null;
-    public HologramManager hologramManager = null;
+    private MetaUpdater metaUpdater;
+
+    private HologramManager hologramManager = null;
 
     public BukkitBackend(BukkitDonateCase plugin) {
         this.plugin = plugin;
@@ -76,6 +76,9 @@ public class BukkitBackend extends BackendPlatform {
     public void load() {
         this.papi = new PAPISupport(this);
         papi.register();
+
+        this.metaUpdater = new BukkitMetaUpdater();
+
         registerDefaultCommand();
         registerDefaultSubCommands();
         registerDefaultGUITypedItems();
@@ -121,6 +124,11 @@ public class BukkitBackend extends BackendPlatform {
     @Override
     public HologramManager getHologramManager() {
         return hologramManager;
+    }
+
+    @Override
+    public MetaUpdater getMetaUpdater() {
+        return metaUpdater;
     }
 
     @Override
@@ -422,7 +430,7 @@ public class BukkitBackend extends BackendPlatform {
 
     private void loadHologramManager() {
         String driverName = api.getConfig().getConfig().node("DonateCase", "HologramDriver").getString("decentholograms");
-        hologramDriver = HologramDriver.getDriver(driverName);
+        HologramDriver hologramDriver = HologramDriver.getDriver(driverName);
 
         tryInitializeHologramManager(hologramDriver);
 

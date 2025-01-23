@@ -5,28 +5,21 @@ import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.command.DefaultCommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RegistryCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
+public class RegistryCommand extends DefaultCommand {
 
     private final DCAPI api;
 
     public RegistryCommand(DCAPI api) {
-        super();
-        name("registry");
-        addon(api.getPlatform());
-        permission(SubCommandType.ADMIN.permission);
-        executor(this);
-        tabCompleter(this);
+        super(api, "registry", SubCommandType.ADMIN);
         this.api = api;
     }
 

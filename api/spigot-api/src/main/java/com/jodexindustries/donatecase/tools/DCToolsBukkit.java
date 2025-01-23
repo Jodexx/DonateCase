@@ -10,8 +10,6 @@ import java.lang.reflect.Modifier;
 
 public interface DCToolsBukkit extends DCTools {
 
-    void launchFirework(Location location);
-
     static Color parseColor(String s) {
         Color color = fromRGBString(s, null);
         if (color == null) color = getColor(s);

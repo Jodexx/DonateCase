@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.impl.materials;
 
-import com.jodexindustries.donatecase.BukkitDonateCase;
+import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
 import com.jodexindustries.donatecase.tools.skull.SkullCreator;
 import org.bukkit.Material;
@@ -18,7 +18,7 @@ public class BASE64MaterialHandlerImpl implements MaterialHandler {
             return SkullCreator.itemFromBase64(context);
         } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
-            BukkitDonateCase.instance.getLogger().log(Level.WARNING, "Error with handling item: " + context, e);
+            DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Error with handling item: " + context, e);
         }
 
         return new ItemStack(Material.AIR);

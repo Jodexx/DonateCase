@@ -44,7 +44,9 @@ public interface ActionManager {
      * @param name the name of the action to check
      * @return {@code true} if the action is registered, {@code false} otherwise
      */
-    boolean isRegistered(@NotNull String name);
+    default boolean isRegistered(@NotNull String name) {
+        return getMap().containsKey(name);
+    }
 
     /**
      * Retrieves a registered action by its name.

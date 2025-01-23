@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.api.events;
 
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -16,10 +16,10 @@ import java.util.UUID;
  */
 public class AnimationStartEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-    private final CaseDataBukkit caseData;
+    private final CaseData caseData;
     private final Block block;
     private final String animation;
-    private final CaseDataItem<CaseDataMaterialBukkit> winItem;
+    private final CaseDataItem winItem;
     private final UUID uuid;
 
     /**
@@ -32,8 +32,8 @@ public class AnimationStartEvent extends PlayerEvent {
      * @param winItem   Win item
      * @param uuid Animation UUID
      */
-    public AnimationStartEvent(@NotNull Player who, @NotNull String animation, @NotNull CaseDataBukkit caseData,
-                               @NotNull Block block, @NotNull CaseDataItem<CaseDataMaterialBukkit> winItem, @NotNull UUID uuid) {
+    public AnimationStartEvent(@NotNull Player who, @NotNull String animation, @NotNull CaseData caseData,
+                               @NotNull Block block, @NotNull CaseDataItem winItem, @NotNull UUID uuid) {
         super(who);
         this.caseData = caseData;
         this.block = block;
@@ -68,7 +68,7 @@ public class AnimationStartEvent extends PlayerEvent {
      * @return case data
      */
     @NotNull
-    public CaseDataBukkit getCaseData() {
+    public CaseData getCaseData() {
         return caseData;
     }
 
@@ -88,7 +88,7 @@ public class AnimationStartEvent extends PlayerEvent {
      * @return win item
      */
     @NotNull
-    public CaseDataItem<CaseDataMaterialBukkit> getWinItem() {
+    public CaseDataItem getWinItem() {
         return winItem;
     }
 

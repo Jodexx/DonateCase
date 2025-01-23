@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Builder
 @Getter
-public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
+public final class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
     @NotNull private Addon addon;
     @NotNull private String name;
     @Nullable private SubCommandExecutor executor;
@@ -26,13 +26,13 @@ public class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
     @Nullable private String[] args;
 
     @Override
-    public boolean execute(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) {
+    public boolean execute(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) throws SubCommandException {
         if(executor == null) return false;
         return executor.execute(sender, label, args);
     }
 
     @Override
-    public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) {
+    public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) throws SubCommandException {
         if(tabCompleter == null) return new ArrayList<>();
         return tabCompleter.getTabCompletions(sender, label, args);
     }

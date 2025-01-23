@@ -9,12 +9,11 @@ version = properties["api"].toString()
 
 
 dependencies {
-    api("com.j256.ormlite:ormlite-jdbc:6.1")
-    api("org.jetbrains:annotations:24.1.0")
-    api("com.google.guava:guava:33.3.1-jre")
-    api("org.projectlombok:lombok:1.18.36")
-    api("org.spongepowered:configurate-yaml:4.1.2")
-    annotationProcessor("org.projectlombok:lombok:1.18.36")
+    compileOnlyApi("com.j256.ormlite:ormlite-jdbc:6.1")
+    compileOnlyApi("org.jetbrains:annotations:24.1.0")
+    compileOnlyApi("com.google.guava:guava:33.3.1-jre")
+    compileOnlyApi("org.projectlombok:lombok:1.18.36")
+    compileOnlyApi("org.spongepowered:configurate-yaml:4.1.2")
 }
 
 java {

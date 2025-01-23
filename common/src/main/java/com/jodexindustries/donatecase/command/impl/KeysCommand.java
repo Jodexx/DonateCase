@@ -1,13 +1,11 @@
 package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.command.DefaultCommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
@@ -17,17 +15,12 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-public class KeysCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
+public class KeysCommand extends DefaultCommand {
 
     private final DCAPI api;
 
     public KeysCommand(DCAPI api) {
-        super();
-        name("keys");
-        addon(api.getPlatform());
-        permission(SubCommandType.PLAYER.permission);
-        executor(this);
-        tabCompleter(this);
+        super(api, "keys", SubCommandType.PLAYER);
         this.api = api;
     }
 

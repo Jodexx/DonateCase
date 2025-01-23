@@ -2,27 +2,20 @@ package com.jodexindustries.donatecase.command.impl;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.command.DefaultCommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class DelKeyCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
+public class DelKeyCommand extends DefaultCommand {
     
     private final DCAPI api;
     
     public DelKeyCommand(DCAPI api) {
-        super();
-        name("delkey");
-        addon(api.getPlatform());
-        permission(SubCommandType.ADMIN.permission);
-        executor(this);
-        tabCompleter(this);
+        super(api, "delkey", SubCommandType.ADMIN);
         this.api = api;
     }
 

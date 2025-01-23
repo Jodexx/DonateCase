@@ -2,11 +2,9 @@ package com.jodexindustries.donatecase.api.data.casedata;
 
 import java.util.List;
 
-public interface MetaUpdatable {
+public interface MetaUpdater {
 
-    void updateMeta();
-
-    void updateMeta(String displayName, List<String> lore, int modelData,
+    void updateMeta(Object itemStack, String displayName, List<String> lore, int modelData,
                     boolean enchanted, String[] rgb);
 
 }

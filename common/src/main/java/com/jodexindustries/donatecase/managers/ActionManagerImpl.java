@@ -35,23 +35,16 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public void unregister(@NotNull String name) {
-        if (isRegistered(name)) {
-            registeredActions.remove(name);
-        } else {
-            platform.getLogger().warning("CaseAction with name " + name + " already unregistered!");
-        }
+    public void unregister(@NotNull String name) throws ActionException {
+        if (!isRegistered(name)) throw new ActionException("Action with name " + name + " already unregistered!");
+
+        registeredActions.remove(name);
     }
 
     @Override
     public void unregister() {
         List<String> list = new ArrayList<>(registeredActions.keySet());
         list.forEach(this::unregister);
-    }
-
-    @Override
-    public boolean isRegistered(@NotNull String name) {
-        return registeredActions.containsKey(name);
     }
 
     @Nullable

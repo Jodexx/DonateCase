@@ -1,52 +1,57 @@
 package com.jodexindustries.donatecase.animations;
 
+import com.jodexindustries.donatecase.BukkitBackend;
+import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.animation.JavaAnimation;
+import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterialBukkit;
+import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.tools.BukkitUtils;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
-import org.bukkit.inventory.EquipmentSlot;
+import lombok.SneakyThrows;
+import org.bukkit.*;
+import org.bukkit.entity.Firework;
+import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
 import java.util.function.Consumer;
 
-public class ShapeAnimation extends JavaAnimation {
+public class ShapeAnimation extends BukkitJavaAnimation {
 
+    @SneakyThrows
     @Override
     public void start() {
-        double x = getSettings().getDouble("StartPosition.X", 0.5);
-        double y = getSettings().getDouble("StartPosition.Y", -0.1);
-        double z = getSettings().getDouble("StartPosition.Z", 0.5);
+        double x = getSettings().node("StartPosition", "X").getDouble(0.5);
+        double y = getSettings().node("StartPosition", "Y").getDouble(-0.1);
+        double z = getSettings().node("StartPosition", "Z").getDouble(0.5);
 
         getLocation().add(x, y, z);
 
-        final ArmorStandEulerAngle armorStandEulerAngle = DCToolsBukkit.getArmorStandEulerAngle(getSettings().getConfigurationSection("Pose"));
-        final ArmorStandCreator as = getApi().getPlatform().getTools().createArmorStand(getLocation());
+        final ArmorStandEulerAngle armorStandEulerAngle = getSettings().node("Pose").get(ArmorStandEulerAngle.class);
+        final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getLocation());
 
-        boolean small = getSettings().getBoolean("Shape.SmallArmorStand", true);
+        boolean small = getSettings().node("Shape", "SmallArmorStand").getBoolean(true);
         as.setAngle(armorStandEulerAngle);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
         as.spawn();
 
-        final String orangeRgbString = getSettings().getString("Shape.Particle.Orange.Rgb");
-        final String whiteRgbString = getSettings().getString("Shape.Particle.White.Rgb");
+        final String orangeRgbString = getSettings().node("Shape", "Particle", "Orange", "Rgb").getString();
+        final String whiteRgbString = getSettings().node("Shape", "Particle", "White", "Rgb").getString();
 
         final Color orangeColor = DCToolsBukkit.fromRGBString(orangeRgbString, Color.ORANGE);
         final Color whiteColor = DCToolsBukkit.fromRGBString(whiteRgbString, Color.WHITE);
 
-        long period = getSettings().getLong("Scroll.Period");
+        long period = getSettings().node("Scroll", "Period").getLong();
 
-        Bukkit.getScheduler().runTaskTimer(getApi().getDonateCase(),
+        Bukkit.getScheduler().runTaskTimer(((BukkitBackend) DCAPI.getInstance().getPlatform()).getPlugin(),
                 new Task(as, orangeColor, whiteColor),
                 0L, period);
     }
@@ -61,7 +66,8 @@ public class ShapeAnimation extends JavaAnimation {
         private final EquipmentSlot itemSlot;
 
         private final ArmorStandCreator as;
-        private final Location location;
+        private final CaseLocation location;
+        private final Location bukkitLocation;
 
         private final float whiteSize;
         private final float orangeSize;
@@ -82,25 +88,26 @@ public class ShapeAnimation extends JavaAnimation {
         public Task(final ArmorStandCreator as, final Color orangeColor, final Color whiteColor) {
             this.as = as;
             this.location = as.getLocation();
-            this.whiteSize = (float) getSettings().getDouble("Particle.White.Size");
-            this.orangeSize = (float) getSettings().getDouble("Particle.Orange.Size");
+            this.bukkitLocation = BukkitUtils.toBukkit(location);
+            this.whiteSize = getSettings().node("Particle", "White", "Size").getFloat();
+            this.orangeSize = getSettings().node("Particle", "Orange", "Size").getFloat();
             this.orangeColor = orangeColor;
             this.whiteColor = whiteColor;
 
-            double height = getSettings().getDouble("Scroll.Height", 1.5);
+            double height = getSettings().node("Scroll", "Height").getDouble(1.5);
 
-            this.tailRadius = getSettings().getDouble("Tail.Radius", 0.5);
+            this.tailRadius = getSettings().node("Tail", "Radius").getDouble(0.5);
             this.currentTail = tailRadius;
 
-            this.scrollTime = getSettings().getInt("Scroll.Time", 40);
-            this.scrollInterval = getSettings().getInt("Scroll.Interval", 1);
-            this.endTime = getSettings().getInt("End.Time", 40);
+            this.scrollTime = getSettings().node("Scroll", "Time").getInt(40);
+            this.scrollInterval = getSettings().node("Scroll", "Interval").getInt(1);
+            this.endTime = getSettings().node("End", "Time").getInt(40);
             this.blockPerTick = height / scrollTime;
-            this.yaw = (float) getSettings().getDouble("Scroll.Yaw", 20.0F);
+            this.yaw = getSettings().node("Scroll", "Yaw").getFloat(20.0F);
 
-            this.itemSlot = EquipmentSlot.valueOf(getSettings().getString("ItemSlot", "HEAD")
+            this.itemSlot = EquipmentSlot.valueOf(getSettings().node("ItemSlot").getString("HEAD")
                     .toUpperCase());
-            world = as.getLocation().getWorld() != null ? as.getLocation().getWorld() : getPlayer().getWorld();
+            world = getPlayer().getWorld();
         }
 
         @Override
@@ -108,10 +115,12 @@ public class ShapeAnimation extends JavaAnimation {
 
             if (tick <= scrollTime) {
                 location.setYaw(location.getYaw() + yaw);
+                bukkitLocation.setYaw(bukkitLocation.getYaw() + yaw);
                 location.add(0.0, blockPerTick, 0.0);
+                bukkitLocation.add(0.0, blockPerTick, 0.0);
 
                 Particle.DustOptions dustOptions = new Particle.DustOptions(orangeColor, orangeSize);
-                world.spawnParticle(particle, as.getLocation().clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
+                world.spawnParticle(particle, bukkitLocation.clone().add(0.0, 0.4, 0.0), 5, 0.3, 0.3, 0.3, 0.0, dustOptions);
                 as.teleport(location);
             }
 
@@ -120,13 +129,12 @@ public class ShapeAnimation extends JavaAnimation {
                 handleTail();
 
                 if (tick % scrollInterval == 0) {
-                    CaseDataItem<CaseDataMaterialBukkit> item = getCaseData().getRandomItem();
-                    if (item.getMaterial().getItemStack().getType() != Material.AIR) {
-                        as.setEquipment(itemSlot, item.getMaterial().getItemStack());
-                    }
+                    CaseDataItem item = getCaseData().getRandomItem();
+                    as.setEquipment(itemSlot, item.getMaterial().getItemStack());
 
-                    String winGroupDisplayName = DCToolsBukkit.rc(getApi().getPlatform().getTools().getPAPI().setPlaceholders(getPlayer(),
-                            item.getMaterial().getDisplayName()));
+                    String winGroupDisplayName = DCAPI.getInstance().getPlatform().getTools().getPAPI().setPlaceholders(getPlayer(),
+                            item.getMaterial().getDisplayName());
+
                     if (item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty()) {
                         as.setCustomNameVisible(true);
                     }
@@ -137,12 +145,10 @@ public class ShapeAnimation extends JavaAnimation {
             }
 
             if (tick == scrollTime + 1) {
-                if (getWinItem().getMaterial().getItemStack().getType() != Material.AIR) {
-                    as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
-                }
+                as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
                 as.setCustomName(getWinItem().getMaterial().getDisplayName());
                 as.updateMeta();
-                getApi().getPlatform().getTools().launchFirework(as.getLocation().add(0, 0.5, 0));
+                launchFirework(bukkitLocation.add(0, 0.5, 0));
                 preEnd();
             }
 
@@ -157,7 +163,7 @@ public class ShapeAnimation extends JavaAnimation {
 
         private void handleTail() {
             currentTail -= tailRadius / scrollTime;
-            Location loc = as.getLocation().clone().add(0.0, blockPerTick, 0.0);
+            Location loc = bukkitLocation.clone().add(0.0, blockPerTick, 0.0);
 
             double c = 2 * Math.PI * 0.5;
             double angle = c / 10;
@@ -184,6 +190,20 @@ public class ShapeAnimation extends JavaAnimation {
             } catch (IllegalArgumentException e) {
                 return Particle.valueOf("DUST");
             }
+        }
+
+        public void launchFirework(Location location) {
+            Random r = new Random();
+            World world = location.getWorld();
+            if (world == null) return;
+
+            Firework firework = world.spawn(location.subtract(new Vector(0.0, 0.5, 0.0)), Firework.class);
+            FireworkMeta meta = firework.getFireworkMeta();
+            Color[] color = new Color[]{Color.RED, Color.AQUA, Color.GREEN, Color.ORANGE, Color.LIME, Color.BLUE, Color.MAROON, Color.WHITE};
+            meta.addEffect(FireworkEffect.builder().flicker(false).with(FireworkEffect.Type.BALL).trail(false).withColor(color[r.nextInt(color.length)], color[r.nextInt(color.length)], color[r.nextInt(color.length)]).build());
+            firework.setFireworkMeta(meta);
+            firework.setMetadata("case", new FixedMetadataValue(((BukkitBackend) DCAPI.getInstance().getPlatform()).getPlugin(), "case"));
+            firework.detonate();
         }
 
     }

@@ -21,9 +21,8 @@ public interface SubCommandManager {
      * Registers a subcommand to the manager.
      *
      * @param subCommand the SubCommand object to register
-     * @return true if the registration was successful, false otherwise
      */
-    boolean register(SubCommand subCommand);
+    void register(SubCommand subCommand);
 
     /**
      * Unregisters a subcommand from the manager by its name.
@@ -41,6 +40,10 @@ public interface SubCommandManager {
      * Unregisters all subcommands currently managed by this instance.
      */
     void unregister();
+
+    default boolean isRegistered(@NotNull String name) {
+        return getMap().containsKey(name);
+    }
 
     @Nullable
     SubCommand get(String commandName);

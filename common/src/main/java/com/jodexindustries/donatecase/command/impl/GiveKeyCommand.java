@@ -3,28 +3,21 @@ package com.jodexindustries.donatecase.command.impl;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.command.DefaultCommand;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class GiveKeyCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
+public class GiveKeyCommand extends DefaultCommand {
 
     private final DCAPI api;
 
     public GiveKeyCommand(DCAPI api) {
-        super();
-        name("givekey");
-        addon(api.getPlatform());
-        permission(SubCommandType.MODER.permission);
-        executor(this);
-        tabCompleter(this);
+        super(api, "givekey", SubCommandType.MODER);
         this.api = api;
     }
 

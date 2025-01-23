@@ -3,13 +3,11 @@ package com.jodexindustries.donatecase.command.impl;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.command.DefaultCommand;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurateException;
 
@@ -17,17 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-public class CreateCommand extends SubCommand.SubCommandBuilder implements SubCommandExecutor, SubCommandTabCompleter {
+public class CreateCommand extends DefaultCommand {
     
     private final DCAPI api;
     
     public CreateCommand(DCAPI api) {
-        super();
-        name("create");
-        addon(api.getPlatform());
-        permission(SubCommandType.ADMIN.permission);
-        executor(this);
-        tabCompleter(this);
+        super(api, "create", SubCommandType.ADMIN);
         this.api = api;
     }
 
