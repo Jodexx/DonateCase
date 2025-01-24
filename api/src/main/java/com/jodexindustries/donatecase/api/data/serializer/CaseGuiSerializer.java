@@ -19,29 +19,32 @@ public class CaseGuiSerializer extends CaseSerializer<CaseGui> {
 
     @Override
     public CaseGui deserialize(Type type, ConfigurationNode source) throws SerializationException {
-        CaseGui caseGui = source.get(CaseGui.class);
-        if(caseGui != null) {
-            int size = caseGui.getSize();
-            if (!DCTools.isValidGuiSize(size)) {
-                caseGui.setSize(54);
-                DCAPI.getInstance().getPlatform().getLogger().warning("Wrong GUI size: " + size);
-            }
+        CaseGui caseGui = new CaseGui();
+        String title = source.node("Title").getString();
+        int updateRate = source.node("UpdateRate").getInt();
+        int size = source.node("Size").getInt();
+        caseGui.setTitle(title);
+        caseGui.setUpdateRate(updateRate);
 
-            Map<String, CaseGui.Item> itemMap = new HashMap<>();
-
-            ConfigurationNode itemsNode = source.node("Items");
-
-            Set<Integer> slots = new HashSet<>();
-
-            if(itemsNode != null) {
-                for (Map.Entry<Object, ? extends ConfigurationNode> entry : itemsNode.childrenMap().entrySet()) {
-                    CaseGui.Item item = loadGUIItem(String.valueOf(entry.getKey()), entry.getValue(), slots);
-                    if(item != null) itemMap.put(item.getItemName(), item);
-                }
-            }
-
-            caseGui.setItems(itemMap);
+        if (!DCTools.isValidGuiSize(size)) {
+            caseGui.setSize(54);
+            DCAPI.getInstance().getPlatform().getLogger().warning("Wrong GUI size: " + size);
         }
+
+        Map<String, CaseGui.Item> itemMap = new HashMap<>();
+
+        ConfigurationNode itemsNode = source.node("Items");
+
+        Set<Integer> slots = new HashSet<>();
+
+        if (itemsNode != null) {
+            for (Map.Entry<Object, ? extends ConfigurationNode> entry : itemsNode.childrenMap().entrySet()) {
+                CaseGui.Item item = loadGUIItem(String.valueOf(entry.getKey()), entry.getValue(), slots);
+                if (item != null) itemMap.put((String) item.getNode().key(), item);
+            }
+        }
+
+        caseGui.setItems(itemMap);
         return caseGui;
     }
 
@@ -52,9 +55,9 @@ public class CaseGuiSerializer extends CaseSerializer<CaseGui> {
 
     private CaseGui.Item loadGUIItem(String i, @NotNull ConfigurationNode itemSection, Set<Integer> currentSlots) throws SerializationException {
         CaseGui.Item item = itemSection.get(CaseGui.Item.class);
-        if(item == null) return null;
+        if (item == null) return null;
 
-        if(item.getSlots().isEmpty()) {
+        if (item.getSlots().isEmpty()) {
             DCAPI.getInstance().getPlatform().getLogger().warning("Item " + i + " has no specified slots");
             return null;
         }
@@ -65,12 +68,12 @@ public class CaseGuiSerializer extends CaseSerializer<CaseGui> {
         currentSlots.addAll(item.getSlots());
 
         CaseDataMaterial material = itemSection.get(CaseDataMaterial.class);
-        if(material == null) return null;
+        if (material == null) return null;
 
-        if(!item.getType().equalsIgnoreCase("DEFAULT")) {
+        if (!item.getType().equalsIgnoreCase("DEFAULT")) {
             GuiTypedItem typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(item.getType());
             if (typedItem != null) {
-                if(typedItem.isLoadOnCase())  {
+                if (typedItem.isLoadOnCase()) {
                     material.setItemStack(DCAPI.getInstance().getPlatform().getTools().loadCaseItem(item.getMaterial().getId()));
                 }
             }
@@ -83,8 +86,13 @@ public class CaseGuiSerializer extends CaseSerializer<CaseGui> {
 
         @Override
         public CaseGui.Item deserialize(Type type, ConfigurationNode source) throws SerializationException {
-            CaseGui.Item item = source.get(CaseGui.Item.class);
-            if(item == null) return null;
+            CaseGui.Item item = new CaseGui.Item();
+
+            String itemType = source.node("Type").getString();
+            CaseDataMaterial material = source.node("Material").get(CaseDataMaterial.class);
+            item.setType(itemType);
+            item.setMaterial(material);
+            item.setNode(source);
 
             item.setSlots(getItemSlots(source));
             return item;
@@ -124,7 +132,7 @@ public class CaseGuiSerializer extends CaseSerializer<CaseGui> {
         private List<Integer> getItemSlotsRanged(ConfigurationNode itemSection) {
             String slots = itemSection.node("Slots").getString();
 
-            if(slots == null || slots.isEmpty()) return new ArrayList<>();
+            if (slots == null || slots.isEmpty()) return new ArrayList<>();
 
             String[] slotArgs = slots.split("-");
             int range1 = Integer.parseInt(slotArgs[0]);

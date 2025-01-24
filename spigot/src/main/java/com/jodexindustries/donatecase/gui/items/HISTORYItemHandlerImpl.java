@@ -6,9 +6,7 @@ import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
 import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemHandler;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.tools.DCTools;
-import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.text.DateFormat;
@@ -29,24 +27,14 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         CaseDataMaterial material = item.getMaterial();
 
         if (!handled) {
-            ConfigurationNode config =  DCAPI.getInstance().getConfig().getConfigCases().getCase(caseData.getCaseType());
-            if(config != null) {
-                ConfigurationNode section = config.node("case", "Gui", "Items", item.getItemName(), "HistoryNotFound");
-                if (section != null) {
-                    material.setId(section.node("Material").getString());
-                    material.setDisplayName(section.node("DisplayName").getString());
-
-                    try {
-                        material.setLore(section.node("Lore").getList(String.class));
-                    } catch (SerializationException ignored) {}
-
-                    material.setEnchanted(section.node("Enchanted").getBoolean());
-                    material.setRgb(DCToolsBukkit.parseRGB(section.node("Rgb").getString("")));
-                    material.setModelData(section.node("ModelData").getInt(-1));
+            try {
+                CaseDataMaterial notFoundMaterial = item.getNode().node("HistoryNotFound").get(CaseDataMaterial.class);
+                if (notFoundMaterial != null) {
+                    item.setMaterial(notFoundMaterial);
                 } else {
                     material.setId("AIR");
                 }
-            }
+            } catch (SerializationException ignored) {}
         }
 
         return item;

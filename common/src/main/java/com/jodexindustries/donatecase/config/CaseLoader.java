@@ -39,6 +39,8 @@ public class CaseLoader implements Loadable {
                     api.getPlatform().getLogger().warning("Something wrong with case \"" + caseType + "\" loading!");
                     continue;
                 }
+                caseData.setCaseType(caseType);
+
                 api.getCaseManager().getMap().put(caseType, caseData);
                 count++;
             } catch (SerializationException e) {

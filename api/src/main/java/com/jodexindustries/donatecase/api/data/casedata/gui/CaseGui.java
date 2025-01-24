@@ -3,8 +3,8 @@ package com.jodexindustries.donatecase.api.data.casedata.gui;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
@@ -16,9 +16,13 @@ import java.util.Map;
 @Getter
 @ConfigSerializable
 public class CaseGui {
+    @Setting("Title")
     private String title;
+    @Setting("Size")
     private int size;
+    @Setting("UpdateRate")
     private int updateRate;
+    @Setting("Items")
     private transient Map<String, Item> items;
 
     @Nullable
@@ -52,23 +56,15 @@ public class CaseGui {
         }
     }
 
-    @NotNull
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(@NotNull String title) {
-        this.title = title;
-    }
-
-
     @Getter
     @Setter
     @ConfigSerializable
     public static class Item {
         @Setting(nodeFromParent = true)
-        private String itemName;
+        private ConfigurationNode node;
+        @Setting("Type")
         private String type;
+        @Setting("Material")
         private CaseDataMaterial material;
         private transient List<Integer> slots;
 

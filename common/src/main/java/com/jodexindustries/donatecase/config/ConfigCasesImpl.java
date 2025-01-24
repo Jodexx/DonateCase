@@ -1,11 +1,14 @@
 package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.api.config.ConfigCases;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
+import com.jodexindustries.donatecase.api.data.serializer.CaseGuiSerializer;
 import com.jodexindustries.donatecase.platform.BackendPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
@@ -19,8 +22,14 @@ public class ConfigCasesImpl implements ConfigCases {
     private final Map<String, ConfigurationNode> cases = new HashMap<>();
     private final BackendPlatform platform;
 
+    private final TypeSerializerCollection serializerCollection = TypeSerializerCollection.builder()
+                .register(CaseGui.class, new CaseGuiSerializer())
+                .register(CaseGui.Item.class, new CaseGuiSerializer.Item())
+                .build();
+
     public ConfigCasesImpl(BackendPlatform platform) {
         this.platform = platform;
+
     }
 
     /**
@@ -51,7 +60,11 @@ public class ConfigCasesImpl implements ConfigCases {
 
         for (File file : getCasesInFolder()) {
             String name = getFileNameWithoutExtension(file);
-            YamlConfigurationLoader loader = YamlConfigurationLoader.builder().file(file).build();
+            YamlConfigurationLoader loader = YamlConfigurationLoader
+                    .builder()
+                    .defaultOptions(opts -> opts.serializers(build -> build.registerAll(serializerCollection)))
+                    .file(file)
+                    .build();
 
             ConfigurationNode node = loader.load();
 

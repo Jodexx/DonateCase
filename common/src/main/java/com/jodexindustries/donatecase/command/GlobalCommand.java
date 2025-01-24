@@ -57,7 +57,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
             return;
         }
 
-        sender.sendMessage(DCTools.prefix("&aDonateCase &7v&6" + backend.getVersion() + " &7(&eAPI &7v&6" + BuildConstants.api + "&7) by &c_Jodex__"));
+        sender.sendMessage(DCTools.rc("&aDonateCase &7v&6" + backend.getVersion() + " &7(&eAPI &7v&6" + BuildConstants.api + "&7) by &c_Jodex__"));
 
         if (!sender.hasPermission("donatecase.mod")) {
             sendHelpMessages(sender, "help-player", label);
@@ -75,7 +75,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
 
     private void sendHelpMessages(DCCommandSender sender, String path, String label) {
         for (String string : backend.getAPI().getConfig().getMessages().getStringList(path)) {
-            sender.sendMessage(DCTools.rt(string, "%cmd:" + label));
+            sender.sendMessage(DCTools.rc(DCTools.rt(string, "%cmd:" + label)));
         }
     }
 
@@ -94,7 +94,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
             if (!addon.equalsIgnoreCase("DonateCase") && DCTools.isHasCommandForSender(sender, addonsMap, addon)) {
                 String addonNameFormat = backend.getAPI().getConfig().getMessages().getString("help-addons.format.name");
                 if (!addonNameFormat.isEmpty() && !addonNameFormat.equals("help-addons.format.name")) {
-                    sender.sendMessage(DCTools.rt(addonNameFormat, "%addon:" + addon));
+                    sender.sendMessage(DCTools.rc(DCTools.rt(addonNameFormat, "%addon:" + addon)));
                 }
 
                 commands.forEach(command -> command.forEach((commandName, subCommand) -> {
@@ -105,11 +105,11 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
                     String permission = subCommand.getPermission();
 
                     if (permission == null || sender.hasPermission(permission)) {
-                        sender.sendMessage(DCTools.rt(backend.getAPI().getConfig().getMessages().getString("help-addons.format.command"),
+                        sender.sendMessage(DCTools.rc(DCTools.rt(backend.getAPI().getConfig().getMessages().getString("help-addons.format.command"),
                                 "%cmd:" + commandName,
                                 "%args:" + argsBuilder,
                                 "%description:" + description
-                        ));
+                        )));
                     }
                 }));
             }
