@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api.tools;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
+import com.jodexindustries.donatecase.api.chat.EnumChatFormat;
 import com.jodexindustries.donatecase.api.chat.rgb.RGBUtils;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
@@ -97,7 +98,7 @@ public interface DCTools {
     }
 
     static String rc(@NotNull String text) {
-        return RGBUtils.getInstance().applyFormats(text);
+        return EnumChatFormat.color(RGBUtils.getInstance().applyFormats(text));
     }
 
     static String rt(String text, String... repl) {
