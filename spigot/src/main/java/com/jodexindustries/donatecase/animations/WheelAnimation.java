@@ -20,10 +20,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Collections;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class WheelAnimation extends BukkitJavaAnimation {
@@ -132,7 +129,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
 
                 int additionalSteps = 0;
                 for (CaseDataItem uniqueItem : uniqueItems) {
-                    if (uniqueItem.getItemName().equals(getWinItem().getItemName())) {
+                    if (Objects.equals(uniqueItem.getNode().key(), getWinItem().getNode().key())) {
                         additionalSteps = uniqueItems.size() - armorStands.size();
                         armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
                     }

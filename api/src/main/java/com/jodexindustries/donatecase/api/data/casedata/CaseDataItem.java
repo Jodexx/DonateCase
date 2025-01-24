@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api.data.casedata;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
@@ -17,7 +18,7 @@ import java.util.Map;
 @ConfigSerializable
 public class CaseDataItem {
     @Setting(nodeFromParent = true)
-    private String itemName;
+    private ConfigurationNode node;
     @Setting("Group")
     private String group;
     @Setting("Chance")
@@ -48,20 +49,6 @@ public class CaseDataItem {
         private List<String> actions;
         @Setting("DisplayName")
         private String displayName;
-
-        /**
-         * Default constructor
-         *
-         * @param chance      action chance
-         * @param actions     list of actions
-         * @param displayName action display name
-         */
-        public RandomAction(double chance, List<String> actions, String displayName) {
-            this.chance = chance;
-            this.actions = actions;
-            this.displayName = displayName;
-        }
-
 
         @Override
         public RandomAction clone() {

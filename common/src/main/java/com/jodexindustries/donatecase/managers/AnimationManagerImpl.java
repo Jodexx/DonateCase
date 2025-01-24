@@ -292,7 +292,7 @@ public class AnimationManagerImpl implements AnimationManager {
     private void saveOpenInfo(CaseData caseData, DCPlayer player, CaseDataItem item, String choice) {
         CompletableFuture.runAsync(() -> {
 
-            CaseData.History data = new CaseData.History(item.getItemName(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
+            CaseData.History data = new CaseData.History((String) item.getNode().key(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
             CaseData.History[] historyData = caseData.getHistoryData();
 
             if (historyData.length > 0) {

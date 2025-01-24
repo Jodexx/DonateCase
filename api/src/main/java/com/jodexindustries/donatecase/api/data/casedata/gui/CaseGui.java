@@ -21,13 +21,6 @@ public class CaseGui {
     private int updateRate;
     private transient Map<String, Item> items;
 
-    public CaseGui(String title, int size, Map<String, Item> items, int updateRate) {
-        this.title = title;
-        this.size = size;
-        this.updateRate = updateRate;
-        this.items = items;
-    }
-
     @Nullable
     public String getItemTypeBySlot(int slot) {
         for (Item item : items.values()) {
@@ -78,14 +71,6 @@ public class CaseGui {
         private String type;
         private CaseDataMaterial material;
         private transient List<Integer> slots;
-
-
-        public Item(String itemName, String type, CaseDataMaterial material, List<Integer> slots) {
-            this.itemName = itemName;
-            this.type = type;
-            this.material = material;
-            this.slots = slots;
-        }
 
         @Override
         public Item clone() {

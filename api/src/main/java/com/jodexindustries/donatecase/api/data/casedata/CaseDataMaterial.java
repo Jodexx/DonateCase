@@ -31,7 +31,12 @@ public class CaseDataMaterial implements MetaUpdater, Cloneable {
     private int modelData;
     @Setting("Rgb")
     private String[] rgb;
-    private transient Object itemStack = DCAPI.getInstance().getPlatform().getTools().loadCaseItem(id);
+    private transient Object itemStack;
+
+    public CaseDataMaterial() {
+        DCAPI api = DCAPI.getInstance();
+        if(api != null) itemStack = api.getPlatform().getTools().loadCaseItem(id);
+    }
 
     public void updateMeta() {
         updateMeta(getItemStack(), getDisplayName(), getLore(), getModelData(), isEnchanted(), getRgb());

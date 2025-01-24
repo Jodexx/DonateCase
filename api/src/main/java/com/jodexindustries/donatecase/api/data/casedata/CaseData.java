@@ -22,6 +22,7 @@ import java.util.Map;
  */
 @Getter
 @Setter
+@ConfigSerializable
 public class CaseData {
 
     private transient String caseType;
@@ -32,8 +33,7 @@ public class CaseData {
     private String animation;
     @Setting("Items")
     private Map<String, CaseDataItem> items;
-    @Setting("HistoryData")
-    private History[] historyData;
+    private transient History[] historyData;
     @Setting("Hologram")
     private Hologram hologram;
     @Setting("LevelGroups")
@@ -178,9 +178,13 @@ public class CaseData {
     @Getter
     @ConfigSerializable
     public static class Hologram {
+        @Setting("Toggle")
         private final boolean enabled;
+        @Setting("Height")
         private final double height;
+        @Setting("Range")
         private final int range;
+        @Setting("Message")
         private final List<String> messages;
 
         /**
