@@ -33,16 +33,18 @@ public class CaseLoader implements Loadable {
                 continue;
             }
 
-            CaseData caseData;
             try {
-                caseData = caseSection.get(CaseData.class);
+                CaseData caseData = caseSection.get(CaseData.class);
+                if(caseData == null) {
+                    api.getPlatform().getLogger().warning("Something wrong with case \"" + caseType + "\" loading!");
+                    continue;
+                }
+                api.getCaseManager().getMap().put(caseType, caseData);
+                count++;
             } catch (SerializationException e) {
                 api.getPlatform().getLogger().log(Level.WARNING, "Error with loading case \"" + caseType + "\"", e);
-                continue;
             }
 
-            api.getCaseManager().getMap().put(caseType, caseData);
-            count++;
         }
 
         api.getPlatform().getLogger().info("Loaded " + count + " cases!");
