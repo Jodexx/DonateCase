@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api.addon.internal;
+package com.jodexindustries.donatecase.api.addon;
 
 import com.google.common.io.ByteStreams;
 import com.jodexindustries.donatecase.api.manager.AddonManager;

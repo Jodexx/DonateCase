@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api.addon.internal;
+package com.jodexindustries.donatecase.api.addon;
 
 import lombok.Getter;
 import org.spongepowered.configurate.ConfigurationNode;

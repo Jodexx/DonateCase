@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api.addon.internal;
+package com.jodexindustries.donatecase.api.addon;
 
 import com.jodexindustries.donatecase.api.platform.Platform;
 import org.jetbrains.annotations.NotNull;

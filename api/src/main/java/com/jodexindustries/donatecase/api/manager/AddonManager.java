@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.addon.PowerReason;
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
+import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

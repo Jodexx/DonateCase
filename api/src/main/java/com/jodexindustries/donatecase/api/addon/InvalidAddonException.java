@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api.addon.internal;
+package com.jodexindustries.donatecase.api.addon;
 
 public class InvalidAddonException extends Exception {
     public InvalidAddonException(String message) {

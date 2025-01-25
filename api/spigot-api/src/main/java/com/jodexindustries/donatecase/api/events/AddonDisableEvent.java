@@ -2,7 +2,7 @@ package com.jodexindustries.donatecase.api.events;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
-import com.jodexindustries.donatecase.api.addon.internal.InternalAddon;
+import com.jodexindustries.donatecase.api.addon.InternalAddon;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;

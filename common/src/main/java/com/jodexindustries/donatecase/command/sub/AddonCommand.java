@@ -2,8 +2,8 @@ package com.jodexindustries.donatecase.command.sub;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
-import com.jodexindustries.donatecase.api.addon.internal.InternalAddonClassLoader;
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
+import com.jodexindustries.donatecase.api.addon.InternalAddonClassLoader;
+import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.tools.DCTools;
