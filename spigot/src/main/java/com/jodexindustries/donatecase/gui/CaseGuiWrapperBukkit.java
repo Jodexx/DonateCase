@@ -65,7 +65,7 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
                     processItem(item);
                 } catch (Throwable e) {
                     backend.getLogger().log(Level.WARNING,
-                            "Error occurred while loading item " + item.getNode() + ":", e);
+                            "Error occurred while loading item " + item.getNode().key() + ":", e);
                 }
             }
             return null;
@@ -119,6 +119,9 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
         if (material.getItemStack() == null) material.setItemStack(backend.getTools().loadCaseItem(material.getId()));
 
         colorize(material);
+
+        // TODO fix item stack creating (CaseDataMaterial itemstack)
+        System.out.println(item.getMaterial().getItemStack());
 
         for (Integer slot : item.getSlots()) {
             inventory.setItem(slot, (ItemStack) item.getMaterial().getItemStack());
