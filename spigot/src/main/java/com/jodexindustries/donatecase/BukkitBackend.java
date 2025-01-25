@@ -1,8 +1,6 @@
 package com.jodexindustries.donatecase;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
-import com.jodexindustries.donatecase.actions.BroadcastActionExecutorImpl;
-import com.jodexindustries.donatecase.actions.MessageActionExecutorImpl;
 import com.jodexindustries.donatecase.animations.*;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
@@ -82,7 +80,6 @@ public class BukkitBackend extends BackendPlatform {
         this.metaUpdater = new BukkitMetaUpdater();
 
         registerDefaultCommand();
-        registerDefaultSubCommands();
         registerDefaultGUITypedItems();
         registerDefaultAnimations();
         registerDefaultActions();
@@ -210,13 +207,6 @@ public class BukkitBackend extends BackendPlatform {
         }
     }
 
-    private void registerDefaultSubCommands() {
-        SubCommandManager manager = api.getSubCommandManager();
-        manager.registerDefault();
-
-        getLogger().info("Registered " + manager.getMap().size() + " commands");
-    }
-
     private void registerDefaultGUITypedItems() {
         GUITypedItemManager manager = api.getGuiTypedItemManager();
 
@@ -319,27 +309,10 @@ public class BukkitBackend extends BackendPlatform {
 
         manager.register(
                 CaseAction.builder()
-                        .name("[message]")
-                        .addon(this)
-                        .executor(new MessageActionExecutorImpl())
-                        .description("Sends a message in the player's chat")
-                        .build()
-        );
-
-        manager.register(
-                CaseAction.builder()
                         .name("[title]")
                         .addon(this)
                         .executor(new TitleActionExecutorImpl())
                         .description("Sends a title to the player")
-                        .build()
-        );
-        manager.register(
-                CaseAction.builder()
-                        .name("[broadcast]")
-                        .addon(this)
-                        .executor(new BroadcastActionExecutorImpl())
-                        .description("Sends a broadcast to the players")
                         .build()
         );
 

@@ -39,6 +39,8 @@ public class SubCommandManagerImpl implements SubCommandManager {
     public SubCommandManagerImpl(DCAPI api) {
         this.api = api;
         this.platform = api.getPlatform();
+
+        registerDefault();
     }
 
     @Override
@@ -72,8 +74,7 @@ public class SubCommandManagerImpl implements SubCommandManager {
         return registeredSubCommands;
     }
 
-    @Override
-    public void registerDefault() {
+    private void registerDefault() {
         defaultCommands.forEach(commandClass -> {
             try {
                 DefaultCommand command = commandClass.getDeclaredConstructor(DCAPI.class).newInstance(api);

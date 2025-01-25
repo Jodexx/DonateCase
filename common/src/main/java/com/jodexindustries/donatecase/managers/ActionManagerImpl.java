@@ -1,5 +1,7 @@
 package com.jodexindustries.donatecase.managers;
 
+import com.jodexindustries.donatecase.actions.BroadcastActionExecutorImpl;
+import com.jodexindustries.donatecase.actions.MessageActionExecutorImpl;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.action.ActionException;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
@@ -10,10 +12,7 @@ import com.jodexindustries.donatecase.api.tools.DCTools;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 public class ActionManagerImpl implements ActionManager {
@@ -25,6 +24,23 @@ public class ActionManagerImpl implements ActionManager {
     public ActionManagerImpl(DCAPI api) {
         this.api = api;
         this.platform = api.getPlatform();
+
+        List<? extends CaseAction> defaultActions = Arrays.asList(
+                CaseAction.builder()
+                        .name("[message]")
+                        .addon(platform)
+                        .executor(new MessageActionExecutorImpl())
+                        .description("Sends a message in the player's chat")
+                        .build(),
+                CaseAction.builder()
+                        .name("[broadcast]")
+                        .addon(platform)
+                        .executor(new BroadcastActionExecutorImpl())
+                        .description("Sends a broadcast to the players")
+                        .build()
+        );
+
+        defaultActions.forEach(this::register);
     }
 
     @Override

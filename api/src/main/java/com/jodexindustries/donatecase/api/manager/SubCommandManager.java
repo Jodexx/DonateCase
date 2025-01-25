@@ -56,5 +56,4 @@ public interface SubCommandManager {
     @NotNull
     Map<String, SubCommand> getMap();
 
-    void registerDefault();
 }
