@@ -16,7 +16,7 @@ import java.util.Map;
 @Getter
 @Setter
 @ConfigSerializable
-public class CaseDataItem {
+public class CaseDataItem implements Cloneable {
     @Setting(nodeFromParent = true)
     private ConfigurationNode node;
     @Setting("Group")
@@ -42,7 +42,7 @@ public class CaseDataItem {
     @Setter
     @Getter
     @ConfigSerializable
-    public static class RandomAction {
+    public static class RandomAction implements Cloneable {
         @Setting("Chance")
         private double chance;
         @Setting("Actions")

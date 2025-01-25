@@ -23,8 +23,7 @@ import java.util.Map;
 @Getter
 @Setter
 @ConfigSerializable
-public class CaseData {
-
+public class CaseData implements Cloneable {
     private transient String caseType;
     @Setting("DisplayName")
     private String caseDisplayName;
@@ -87,13 +86,9 @@ public class CaseData {
         try {
             CaseData clonedCaseData = (CaseData) super.clone();
 
-            // Deep clone the map of items
-            clonedCaseData.items = cloneItemsMap(this.items);
-
-            clonedCaseData.caseGui = this.caseGui.clone();
-
-            // Deep clone the array of historyData
-            clonedCaseData.historyData = cloneCaseDataHistoryArray(this.historyData);
+            if(this.items != null) clonedCaseData.items = cloneItemsMap(this.items);
+            if(this.caseGui != null) clonedCaseData.caseGui = this.caseGui.clone();
+            if(this.historyData != null) clonedCaseData.historyData = cloneCaseDataHistoryArray(this.historyData);
 
             return clonedCaseData;
         } catch (CloneNotSupportedException e) {

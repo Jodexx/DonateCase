@@ -15,7 +15,7 @@ import java.util.Map;
 @Setter
 @Getter
 @ConfigSerializable
-public class CaseGui {
+public class CaseGui implements Cloneable {
     @Setting("Title")
     private String title;
     @Setting("Size")
@@ -59,7 +59,7 @@ public class CaseGui {
     @Getter
     @Setter
     @ConfigSerializable
-    public static class Item {
+    public static class Item implements Cloneable {
         @Setting(nodeFromParent = true)
         private ConfigurationNode node;
         @Setting("Type")
