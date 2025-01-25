@@ -401,6 +401,8 @@ public class BukkitBackend extends BackendPlatform {
                             .build()
             );
         }
+
+        getLogger().info("Registered " + manager.getMap().size() + " materials");
     }
 
     private void loadHologramManager() {
