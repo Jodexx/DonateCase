@@ -10,9 +10,11 @@ import java.util.Map;
 
 public interface CaseStorage extends Loadable {
 
-    void save(@NotNull CaseInfo caseInfo) throws ConfigurateException;
+    void save(@NotNull String name, @NotNull CaseInfo caseInfo) throws ConfigurateException;
 
     void delete(String name);
+
+    boolean delete(CaseLocation location);
 
     @Nullable
     CaseInfo get(String name);
