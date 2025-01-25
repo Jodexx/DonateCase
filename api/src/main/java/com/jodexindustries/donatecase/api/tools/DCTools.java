@@ -95,7 +95,8 @@ public abstract class DCTools {
         return rc(DCAPI.getInstance().getConfig().getMessages().getString("prefix") + text);
     }
 
-    public static String rc(@NotNull String text) {
+    public static String rc(String text) {
+        if(text == null) return null;
         return EnumChatFormat.color(RGBUtils.getInstance().applyFormats(text));
     }
 
