@@ -2,21 +2,20 @@ package com.jodexindustries.donatecase.tools;
 
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import org.bukkit.Color;
-import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-public interface DCToolsBukkit extends DCTools {
+public abstract class DCToolsBukkit extends DCTools {
 
-    static Color parseColor(String s) {
+    public static Color parseColor(String s) {
         Color color = fromRGBString(s, null);
         if (color == null) color = getColor(s);
         return color;
     }
 
-    static Color getColor(String color) {
+    public static Color getColor(String color) {
         Field[] fields = Color.class.getFields();
         for (Field field : fields) {
             if (Modifier.isStatic(field.getModifiers())
@@ -35,11 +34,11 @@ public interface DCToolsBukkit extends DCTools {
         return null;
     }
 
-    static String[] parseRGB(@NotNull String string) {
+    public static String[] parseRGB(@NotNull String string) {
         return string.replaceAll(" ", "").split(",");
     }
 
-    static Color fromRGBString(String[] rgb, Color def) {
+    public static Color fromRGBString(String[] rgb, Color def) {
         if (rgb.length >= 3) {
             try {
                 int red = Integer.parseInt(rgb[0]);
@@ -52,7 +51,7 @@ public interface DCToolsBukkit extends DCTools {
         return def;
     }
 
-    static Color fromRGBString(String string, Color def) {
+    public static Color fromRGBString(String string, Color def) {
         if (string != null) def = fromRGBString(parseRGB(string), def);
         return def;
     }

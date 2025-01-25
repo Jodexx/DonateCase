@@ -102,7 +102,7 @@ public class ActionManagerImpl implements ActionManager {
     public void execute(@NotNull DCPlayer player, @NotNull List<String> actions) {
         for (String action : actions) {
 
-            action = DCTools.rc(api.getPlatform().getTools().getPAPI().setPlaceholders(player, action));
+            action = DCTools.rc(api.getPlatform().getPAPI().setPlaceholders(player, action));
             int cooldown = DCTools.extractCooldown(action);
             action = action.replaceFirst("\\[cooldown:(.*?)]", "");
 

@@ -111,7 +111,7 @@ public class RainlyAnimation extends BukkitJavaAnimation {
         private void handleWinningItem() {
             as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
 
-            String winGroupDisplayName = DCAPI.getInstance().getPlatform().getTools().getPAPI().setPlaceholders(
+            String winGroupDisplayName = DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(
                     getPlayer(), getWinItem().getMaterial().getDisplayName()
             );
             getWinItem().getMaterial().setDisplayName(winGroupDisplayName);
@@ -129,7 +129,7 @@ public class RainlyAnimation extends BukkitJavaAnimation {
 
         private void updateRandomItem() {
             CaseDataItem item = getCaseData().getRandomItem();
-            String itemDisplayName = DCAPI.getInstance().getPlatform().getTools().getPAPI().setPlaceholders(
+            String itemDisplayName = DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(
                     getPlayer(), item.getMaterial().getDisplayName()
             );
             item.getMaterial().setDisplayName(itemDisplayName);

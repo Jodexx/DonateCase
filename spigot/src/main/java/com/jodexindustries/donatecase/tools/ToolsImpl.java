@@ -6,21 +6,10 @@ import com.jodexindustries.donatecase.api.armorstand.EntityArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.PacketArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.tools.DCTools;
-import com.jodexindustries.donatecase.api.tools.PAPI;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.entity.Firework;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.util.Vector;
 
-import java.util.Random;
-
-public class ToolsImpl implements DCToolsBukkit {
+public class ToolsImpl extends DCToolsBukkit {
 
     private final BukkitBackend backend;
 
@@ -35,11 +24,6 @@ public class ToolsImpl implements DCToolsBukkit {
         } else {
             return new EntityArmorStandCreator(BukkitUtils.toBukkit(location));
         }
-    }
-
-    @Override
-    public PAPI getPAPI() {
-        return backend.getPAPI();
     }
 
     @Override

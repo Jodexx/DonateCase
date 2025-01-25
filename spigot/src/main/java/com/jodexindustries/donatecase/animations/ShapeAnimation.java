@@ -132,7 +132,7 @@ public class ShapeAnimation extends BukkitJavaAnimation {
                     CaseDataItem item = getCaseData().getRandomItem();
                     as.setEquipment(itemSlot, item.getMaterial().getItemStack());
 
-                    String winGroupDisplayName = DCAPI.getInstance().getPlatform().getTools().getPAPI().setPlaceholders(getPlayer(),
+                    String winGroupDisplayName = DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(),
                             item.getMaterial().getDisplayName());
 
                     if (item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty()) {

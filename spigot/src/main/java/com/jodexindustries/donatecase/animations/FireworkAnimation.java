@@ -87,7 +87,7 @@ public class FireworkAnimation extends BukkitJavaAnimation {
                 as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
                 if (getWinItem().getMaterial().getDisplayName() != null && !getWinItem().getMaterial().getDisplayName().isEmpty())
                     as.setCustomNameVisible(true);
-                as.setCustomName(DCAPI.getInstance().getPlatform().getTools().getPAPI().setPlaceholders(getPlayer(), getWinItem().getMaterial().getDisplayName()));
+                as.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), getWinItem().getMaterial().getDisplayName()));
                 as.updateMeta();
                 preEnd();
             }

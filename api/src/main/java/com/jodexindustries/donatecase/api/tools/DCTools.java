@@ -24,17 +24,15 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Utility interface for the DonateCase system, providing tools for parsing, validation, and manipulation.
+ * Utility class for the DonateCase system, providing tools for parsing, validation, and manipulation.
  */
-public interface DCTools {
+public abstract class DCTools {
 
-    ArmorStandCreator createArmorStand(CaseLocation location);
+    public abstract ArmorStandCreator createArmorStand(CaseLocation location);
 
-    PAPI getPAPI();
+    public abstract Object loadCaseItem(String id);
 
-    Object loadCaseItem(String id);
-
-    static boolean isValidPlayerName(String player) {
+    public static boolean isValidPlayerName(String player) {
         if (DCAPI.getInstance().getConfig().getConfig().node("DonateCase", "CheckPlayerName").getBoolean()) {
             return Arrays.stream(DCAPI.getInstance().getPlatform().getOfflinePlayers())
                     .map(DCOfflinePlayer::getName)
@@ -43,7 +41,7 @@ public interface DCTools {
         return true;
     }
 
-    static @NotNull List<String> resolveSDGCompletions(String[] args) {
+    public static @NotNull List<String> resolveSDGCompletions(String[] args) {
         List<String> value = new ArrayList<>(DCAPI.getInstance().getConfig().getConfigCases().getMap().keySet());
         List<String> list = new ArrayList<>();
         if (args.length == 1) {
@@ -74,7 +72,7 @@ public interface DCTools {
     }
 
     @Nullable
-    static Object getItemFromManager(@NotNull String id) {
+    public static Object getItemFromManager(@NotNull String id) {
         MaterialManager manager = DCAPI.getInstance().getMaterialManager();
 
         String temp = manager.getByStart(id);
@@ -93,15 +91,15 @@ public interface DCTools {
         return null;
     }
 
-    static String prefix(String text) {
+    public static String prefix(String text) {
         return rc(DCAPI.getInstance().getConfig().getMessages().getString("prefix") + text);
     }
 
-    static String rc(@NotNull String text) {
+    public static String rc(@NotNull String text) {
         return EnumChatFormat.color(RGBUtils.getInstance().applyFormats(text));
     }
 
-    static String rt(String text, String... repl) {
+    public static String rt(String text, String... repl) {
         if (text != null) {
             for (String s : repl) {
                 if (s != null) {
@@ -114,21 +112,21 @@ public interface DCTools {
         return text;
     }
 
-    static List<String> rt(List<String> text, String... repl) {
+    public static List<String> rt(List<String> text, String... repl) {
         return text.stream().map(t -> rt(t, repl)).collect(Collectors.toCollection(ArrayList::new));
     }
 
 
-    static List<String> rc(List<String> t) {
+    public static List<String> rc(List<String> t) {
         return t.stream().map(DCTools::rc).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    static boolean isHasCommandForSender(DCCommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, String addon) {
+    public static boolean isHasCommandForSender(DCCommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, String addon) {
         List<Map<String, SubCommand>> commands = addonsMap.get(addon);
         return isHasCommandForSender(sender, commands);
     }
 
-    static boolean isHasCommandForSender(DCCommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
+    public static boolean isHasCommandForSender(DCCommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
         return addonsMap.keySet().stream().map(addonsMap::get).anyMatch(commands -> isHasCommandForSender(sender, commands));
     }
 
@@ -139,7 +137,7 @@ public interface DCTools {
      * @param commands List of commands, that loaded in DonateCase
      * @return true, if sender has permission
      */
-    static boolean isHasCommandForSender(DCCommandSender sender, List<Map<String, SubCommand>> commands) {
+    public static boolean isHasCommandForSender(DCCommandSender sender, List<Map<String, SubCommand>> commands) {
         return commands.stream().flatMap(command -> command.values().stream()).map(SubCommand::getPermission).anyMatch(permission -> permission == null || sender.hasPermission(permission));
     }
 
@@ -149,7 +147,7 @@ public interface DCTools {
      * @param string the input string containing placeholders in the format `%placeholder%`.
      * @return the extracted placeholder without `%` symbols, or "null" if no placeholder is found.
      */
-    static String getLocalPlaceholder(String string) {
+    public static String getLocalPlaceholder(String string) {
         Pattern pattern = Pattern.compile("%(.*?)%");
         Matcher matcher = pattern.matcher(string);
         if (matcher.find()) {
@@ -173,7 +171,7 @@ public interface DCTools {
      *     <li>Input: <code>"2.2.2.2"</code> → Output: <code>2222</code></li>
      * </ul>
      */
-    static int getPluginVersion(String version) {
+    public static int getPluginVersion(String version) {
         version = version.replaceAll("\\.", "");
         if (version.length() == 4) {
             return Integer.parseInt(version);
@@ -188,7 +186,7 @@ public interface DCTools {
      * @param action the action string containing a cooldown in the format <code>[cooldown:int]</code>.
      * @return the cooldown value, or 0 if no cooldown is specified.
      */
-    static int extractCooldown(String action) {
+    public static int extractCooldown(String action) {
         Pattern pattern = Pattern.compile("\\[cooldown:(.*?)]");
         Matcher matcher = pattern.matcher(action);
         if (matcher.find()) {
@@ -205,7 +203,7 @@ public interface DCTools {
      * @return a sorted list of {@link CaseData.History}, filtered by the specified case type,
      * sorted in descending order of time.
      */
-    static List<CaseData.History> sortHistoryDataByCase(List<CaseData.History> historyData, String caseType) {
+    public static List<CaseData.History> sortHistoryDataByCase(List<CaseData.History> historyData, String caseType) {
         return historyData.stream()
                 .filter(Objects::nonNull)
                 .filter(data -> data.getCaseType().equals(caseType))
@@ -213,7 +211,7 @@ public interface DCTools {
                 .collect(Collectors.toList());
     }
 
-    static List<CaseData.History> sortHistoryDataByDate(List<CaseData.History> list) {
+    public static List<CaseData.History> sortHistoryDataByDate(List<CaseData.History> list) {
         return list.stream()
                 .filter(Objects::nonNull)
                 .sorted(Comparator.comparingLong(CaseData.History::getTime)
@@ -226,7 +224,7 @@ public interface DCTools {
      * @param items Map with Case items
      * @return New map with sorted items
      */
-    static Map<String, CaseDataItem> sortItemsByIndex(Map<String, CaseDataItem> items) {
+    public static Map<String, CaseDataItem> sortItemsByIndex(Map<String, CaseDataItem> items) {
         return items.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(CaseDataItem::getIndex)))
@@ -238,7 +236,8 @@ public interface DCTools {
                 ));
     }
 
-    static boolean isValidGuiSize(int size) {
+   public static boolean isValidGuiSize(int size) {
         return size >= 9 && size <= 54 && size % 9 == 0;
     }
+
 }

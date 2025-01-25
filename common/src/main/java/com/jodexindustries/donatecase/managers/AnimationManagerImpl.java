@@ -100,7 +100,7 @@ public class AnimationManagerImpl implements AnimationManager {
 
 
         CaseDataItem winItem = caseData.getRandomItem();
-        winItem.getMaterial().setDisplayName(api.getPlatform().getTools().getPAPI().setPlaceholders(player, winItem.getMaterial().getDisplayName()));
+        winItem.getMaterial().setDisplayName(api.getPlatform().getPAPI().setPlaceholders(player, winItem.getMaterial().getDisplayName()));
 //        AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, caseData, block, winItem);
 //        Bukkit.getPluginManager().callEvent(preStartEvent);
 //
