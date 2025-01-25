@@ -25,7 +25,7 @@ public class DecentHologramsImpl implements HologramManager {
         if (!caseHologram.isEnabled()) return;
 
         double height = caseHologram.getHeight();
-        Hologram hologram = DHAPI.createHologram("DonateCase-" + UUID.randomUUID(), BukkitUtils.toBukkit(block.add(.5, height, .5)));
+        Hologram hologram = DHAPI.createHologram("DonateCase-" + UUID.randomUUID(), BukkitUtils.toBukkit(block).add(.5, height, .5));
 
         hologram.setDisplayRange(caseHologram.getRange());
 

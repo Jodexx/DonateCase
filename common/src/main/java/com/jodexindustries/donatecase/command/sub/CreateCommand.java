@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
+import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -32,7 +33,10 @@ public class CreateCommand extends DefaultCommand {
 
         if (sender instanceof DCPlayer) {
             DCPlayer player = (DCPlayer) sender;
-            CaseLocation location = player.getTargetBlock(5);
+
+            CaseLocation playerLocation = player.getLocation();
+            CaseLocation block = player.getTargetBlock(5);
+
             String caseType = args[0];
             String caseName = args[1];
 
@@ -42,7 +46,7 @@ public class CreateCommand extends DefaultCommand {
                 return true;
             }
 
-            if(api.getConfig().getCaseStorage().has(location)) {
+            if(api.getConfig().getCaseStorage().has(block)) {
                 sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("case-already-created")));
                 return true;
             }
@@ -53,10 +57,18 @@ public class CreateCommand extends DefaultCommand {
                 return true;
             }
 
-            CaseInfo caseInfo = new CaseInfo(caseName, caseType, location);
+            CaseLocation toSave = block.clone();
+
+            toSave.setYaw(((int) playerLocation.getYaw()));
+            toSave.setPitch(((int) playerLocation.getPitch()));
+
+            CaseInfo caseInfo = new CaseInfo(caseType, toSave);
 
             try {
-                api.getConfig().getCaseStorage().save(caseInfo);
+                api.getConfig().getCaseStorage().save(caseName, caseInfo);
+                HologramManager manager = api.getPlatform().getHologramManager();
+                if (manager != null) manager.create(block, api.getCaseManager().get(caseType));
+
                 sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-added"),
                         "%casename:" + caseName, "%casetype:" + caseType)));
             } catch (ConfigurateException e) {

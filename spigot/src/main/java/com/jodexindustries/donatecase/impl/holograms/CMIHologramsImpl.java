@@ -26,7 +26,7 @@ public class CMIHologramsImpl implements HologramManager {
 
         double height = caseHologram.getHeight();
 
-        CMILocation location = new CMILocation(BukkitUtils.toBukkit(block.add(0.5, height, 0.5)));
+        CMILocation location = new CMILocation(BukkitUtils.toBukkit(block).add(0.5, height, 0.5));
 
         CMIHologram hologram = new CMIHologram("DonateCase-" + UUID.randomUUID(), location);
 

@@ -33,7 +33,7 @@ public class HolographicDisplaysImpl implements HologramManager {
 
         double height = crateHologram.getHeight();
 
-        Hologram hologram = this.api.createHologram(BukkitUtils.toBukkit(block.add(.5, height, .5)));
+        Hologram hologram = this.api.createHologram(BukkitUtils.toBukkit(block).add(.5, height, .5));
         hologram.setPlaceholderSetting(PlaceholderSetting.DEFAULT);
         crateHologram.getMessages().forEach(line -> hologram.getLines().appendText(
                 DCTools.rc((line))
