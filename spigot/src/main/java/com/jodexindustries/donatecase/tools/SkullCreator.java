@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.tools.skull;
+package com.jodexindustries.donatecase.tools;
 
 
 import com.mojang.authlib.GameProfile;

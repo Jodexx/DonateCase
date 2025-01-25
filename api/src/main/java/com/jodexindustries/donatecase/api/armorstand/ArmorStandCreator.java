@@ -41,13 +41,6 @@ public interface ArmorStandCreator {
     @NotNull
     UUID getUniqueId();
 
-    /**
-     * Only for LivingEntity (not packet)
-     *
-     * @return ArmorStand object
-     */
-    Object getArmorStand();
-
     default void spawn() {
     }
 

@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.tools.support.papi;
+package com.jodexindustries.donatecase.hook.papi;
 
 import com.jodexindustries.donatecase.BukkitBackend;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;

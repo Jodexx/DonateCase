@@ -6,7 +6,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandException;
 import com.jodexindustries.donatecase.api.manager.SubCommandManager;
 import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.command.DefaultCommand;
-import com.jodexindustries.donatecase.command.impl.*;
+import com.jodexindustries.donatecase.command.sub.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

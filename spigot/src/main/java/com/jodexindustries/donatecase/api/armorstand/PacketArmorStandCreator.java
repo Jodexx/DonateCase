@@ -10,7 +10,6 @@ import me.tofaa.entitylib.meta.other.ArmorStandMeta;
 import me.tofaa.entitylib.wrapper.WrapperLivingEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -150,11 +149,6 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
     @Override
     public @NotNull UUID getUniqueId() {
         return entity.getUuid();
-    }
-
-    @Override
-    public ArmorStand getArmorStand() {
-        return null;
     }
 
     @Override

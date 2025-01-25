@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.tools.support;
+package com.jodexindustries.donatecase.hook;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
@@ -20,6 +20,7 @@ public class PacketEventsSupport {
     public PacketEventsSupport(BukkitBackend backend) {
         this.backend = backend;
         this.usePackets = backend.getAPI().getConfig().getConfig().node("DonateCase", "UsePackets").getBoolean();
+        load();
     }
 
     public void load() {

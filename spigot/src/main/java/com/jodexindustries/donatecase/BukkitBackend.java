@@ -1,6 +1,8 @@
 package com.jodexindustries.donatecase;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
+import com.jodexindustries.donatecase.actions.BroadcastActionExecutorImpl;
+import com.jodexindustries.donatecase.actions.MessageActionExecutorImpl;
 import com.jodexindustries.donatecase.animations.*;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.HologramDriver;
@@ -32,8 +34,8 @@ import com.jodexindustries.donatecase.platform.BackendPlatform;
 import com.jodexindustries.donatecase.tools.BukkitUtils;
 import com.jodexindustries.donatecase.tools.Metrics;
 import com.jodexindustries.donatecase.tools.ToolsImpl;
-import com.jodexindustries.donatecase.tools.support.PacketEventsSupport;
-import com.jodexindustries.donatecase.tools.support.papi.PAPISupport;
+import com.jodexindustries.donatecase.hook.PacketEventsSupport;
+import com.jodexindustries.donatecase.hook.papi.PAPISupport;
 import lombok.Getter;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;

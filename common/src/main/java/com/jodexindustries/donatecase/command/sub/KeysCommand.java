@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.command.impl;
+package com.jodexindustries.donatecase.command.sub;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;

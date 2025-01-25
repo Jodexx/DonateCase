@@ -1,14 +1,17 @@
-package com.jodexindustries.donatecase.impl.actions;
+package com.jodexindustries.donatecase.actions;
 
+import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MessageActionExecutorImpl implements ActionExecutor {
+public class BroadcastActionExecutorImpl implements ActionExecutor {
 
     @Override
     public void execute(@Nullable DCPlayer player, @NotNull String context) {
-        if (player != null) player.sendMessage(context);
+            for (DCPlayer p : DCAPI.getInstance().getPlatform().getOnlinePlayers()) {
+                p.sendMessage(context);
+            }
     }
 }

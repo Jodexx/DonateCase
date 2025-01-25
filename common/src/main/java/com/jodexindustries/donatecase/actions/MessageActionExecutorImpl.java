@@ -1,18 +1,14 @@
-package com.jodexindustries.donatecase.impl.actions;
+package com.jodexindustries.donatecase.actions;
 
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BroadcastActionExecutorImpl implements ActionExecutor {
+public class MessageActionExecutorImpl implements ActionExecutor {
 
     @Override
     public void execute(@Nullable DCPlayer player, @NotNull String context) {
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                p.sendMessage(context);
-            }
+        if (player != null) player.sendMessage(context);
     }
 }
