@@ -19,6 +19,8 @@ public class CaseLocation implements Cloneable {
     private float pitch;
     private float yaw;
 
+    public CaseLocation() {}
+
     public CaseLocation(String world, double x, double y, double z) {
         this.world = world;
         this.x = x;
@@ -62,5 +64,17 @@ public class CaseLocation implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "CaseLocation{" +
+                "world='" + world + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                ", pitch=" + pitch +
+                ", yaw=" + yaw +
+                '}';
     }
 }

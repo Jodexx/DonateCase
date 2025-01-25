@@ -2,19 +2,16 @@ package com.jodexindustries.donatecase.api.data.storage;
 
 import lombok.Getter;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 @Getter
 @ConfigSerializable
 public class CaseInfo {
+    private String type;
+    private CaseLocation location;
 
-    @Setting(nodeFromParent = true)
-    private final String name;
-    private final String type;
-    private final CaseLocation location;
+    public CaseInfo() {}
 
-    public CaseInfo(String name, String type, CaseLocation location) {
-        this.name = name;
+    public CaseInfo(String type, CaseLocation location) {
         this.type = type;
         this.location = location;
     }
