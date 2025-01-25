@@ -20,11 +20,14 @@ public class CaseGuiSerializer extends CaseSerializer<CaseGui> {
     @Override
     public CaseGui deserialize(Type type, ConfigurationNode source) throws SerializationException {
         CaseGui caseGui = new CaseGui();
+
         String title = source.node("Title").getString();
         int updateRate = source.node("UpdateRate").getInt();
         int size = source.node("Size").getInt();
+
         caseGui.setTitle(title);
         caseGui.setUpdateRate(updateRate);
+        caseGui.setSize(size);
 
         if (!DCTools.isValidGuiSize(size)) {
             caseGui.setSize(54);
