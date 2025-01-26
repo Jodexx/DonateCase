@@ -89,13 +89,13 @@ public class ActionManagerImpl implements ActionManager {
         CaseAction caseAction = get(temp);
         if(caseAction == null) return;
 
-        // TODO cooldown implement with scheduler
-
-        try {
-            caseAction.execute(player, context);
-        } catch (ActionException e) {
-            platform.getLogger().log(Level.WARNING, "Error with executing action: " + context, e);
-        }
+        platform.getScheduler().run(platform, () -> {
+            try {
+                caseAction.execute(player, context);
+            } catch (ActionException e) {
+                platform.getLogger().log(Level.WARNING, "Error with executing action: " + context, e);
+            }
+        }, cooldown);
     }
 
     @Override
