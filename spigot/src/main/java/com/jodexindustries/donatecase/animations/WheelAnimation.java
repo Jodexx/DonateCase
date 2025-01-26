@@ -18,7 +18,8 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -26,54 +27,120 @@ import java.util.function.Consumer;
 public class WheelAnimation extends BukkitJavaAnimation {
 
     private final List<ArmorStandCreator> armorStands = new ArrayList<>();
-    private EquipmentSlot itemSlot;
-    private ArmorStandEulerAngle armorStandEulerAngle;
-    private WheelType wheelType;
+
+    private Settings settings;
 
     private enum WheelType {
         FULL,  // No duplicates, all unique items
         RANDOM; // Can have duplicates, random items
-
-        @NotNull
-        public static WheelType getType(String string) {
-            try {
-                return valueOf(string);
-            } catch (IllegalArgumentException e) {
-                return RANDOM;
-            }
-        }
     }
 
     @SneakyThrows
     @Override
     public void start() {
-        wheelType = WheelType.getType(getSettings().node("Type").getString("RANDOM"));
-        armorStandEulerAngle = getSettings().node("Pose").get(ArmorStandEulerAngle.class);
-        itemSlot = EquipmentSlot.valueOf(getSettings().node("ItemSlot").getString("HEAD").toUpperCase());
+        this.settings = getSettings().get(Settings.class);
+
         Bukkit.getScheduler().runTaskTimer(((BukkitBackend) DCAPI.getInstance().getPlatform()).getPlugin(), new Task(), 0L, 0L);
+    }
+
+    @ConfigSerializable
+    private static class Settings {
+
+        @Setting("CircleRadius")
+        private double radius;
+
+        @Setting("Scroll")
+        private Scroll scroll;
+
+        @Setting("Flame")
+        private Flame flame;
+
+        @Setting("ItemsCount")
+        private int itemsCount;
+
+        @Setting("ItemSlot")
+        private String itemSlot;
+
+        @Setting("Pose")
+        private ArmorStandEulerAngle armorStandEulerAngle;
+
+        @Setting("Type")
+        private String wheelType;
+
+        public EquipmentSlot getItemSlot() {
+            if (itemSlot == null) return EquipmentSlot.HEAD;
+            try {
+                return EquipmentSlot.valueOf(itemSlot);
+            } catch (IllegalArgumentException e) {
+                return EquipmentSlot.HEAD;
+            }
+        }
+
+        /**
+         * Safely parse the wheel type.
+         */
+        public WheelType getWheelType() {
+            if (wheelType == null) return WheelType.RANDOM;
+            try {
+                return WheelType.valueOf(wheelType);
+            } catch (IllegalArgumentException e) {
+                return WheelType.RANDOM;
+            }
+        }
+
+        @ConfigSerializable
+        private static class Scroll {
+
+            @Setting("Time")
+            private int time = 100;
+
+            @Setting("Count")
+            private int count = 1;
+
+            @Setting("EaseAmount")
+            private double easeAmount = 2.5;
+
+            @Setting("Sound")
+            private String sound;
+
+            @Setting("Volume")
+            private float volume;
+
+            @Setting("Pitch")
+            private float pitch;
+
+            private Sound getSound() {
+                if (sound == null) return null;
+                try {
+                    return Sound.valueOf(sound);
+                } catch (IllegalArgumentException e) {
+                    return null;
+                }
+            }
+        }
+
+        @ConfigSerializable
+        private static class Flame {
+
+            @Setting("Enabled")
+            private boolean enabled;
+
+            @Setting("Particle")
+            private Particle particle = Particle.FLAME;
+        }
     }
 
     private class Task implements Consumer<BukkitTask> {
 
-        private final Location loc = BukkitUtils.toBukkit(getLocation().clone()).add(0.5, 0, 0.5);
-        private final World world;
-
-        private final int itemsCount = getSettings().node("ItemsCount").getInt();
-        private final int animationTime = getSettings().node("Scroll.Time").getInt(100);
-        private final int scrollCount = getSettings().node("Scroll.Count").getInt(1);
-        private final double easeAmount = getSettings().node("Scroll.EaseAmount").getDouble(2.5);
-        private final Location flocation = loc.clone().add(0 + getSettings().node("LiftingAlongX").getDouble(),
+        private final Location location = BukkitUtils.toBukkit(getLocation().clone())
+                .add(0.5, 0, 0.5)
+                .add(0 + getSettings().node("LiftingAlongX").getDouble(),
                 -1 + getSettings().node("LiftingAlongY").getDouble(),
                 0 + getSettings().node("LiftingAlongZ").getDouble());
-        private final boolean needSound = getSettings().node("Scroll.Sound") != null;
-        private final Sound sound = Sound.valueOf(getSettings().node("Scroll.Sound").getString());
-        private final float volume = getSettings().node("Scroll.Volume").getFloat();
-        private final float vpitch = getSettings().node("Scroll.Pitch").getFloat();
-        private final double radius = getSettings().node("CircleRadius").getDouble();
-        private final boolean useFlame = getSettings().node("Flame.Enabled").getBoolean();
-        private final Particle flameParticle = Particle.valueOf(getSettings().node("Flame.Particle").getString("FLAME"));
 
-        private final double baseAngle = loc.clone().getDirection().angle(new Vector(0, 0, 1));
+        private final World world;
+
+        private final double baseAngle;
         private double lastCompletedRotation = 0.0;
         private int ticks;
         private double targetAngle;
@@ -81,10 +148,13 @@ public class WheelAnimation extends BukkitJavaAnimation {
         private final double offset;
 
         public Task() {
-            float pitch = Math.round(getLocation().getPitch() / 90.0f) * 90.0f;
-            float yaw = Math.round(getLocation().getYaw() / 90.0f) * 90.0f;
-            loc.setPitch(pitch);
-            loc.setYaw(yaw);
+            float pitch = Math.round(getLocation().getPitch() / 45.0f) * 45.0f;
+            float yaw = Math.round(getLocation().getYaw() / 45.0f) * 45.0f;
+
+            location.setPitch(pitch);
+            location.setYaw(yaw);
+
+            this.baseAngle = location.clone().getDirection().angle(new Vector(0, 0, 1));
 
             initializeItems();
 
@@ -98,20 +168,20 @@ public class WheelAnimation extends BukkitJavaAnimation {
         public void accept(BukkitTask task) {
             ticks++;
 
-            double progress = Math.min(ticks / (double) animationTime, 1.0); // Progress from 0 to 1
-            double easedProgress = 1 - Math.pow(1 - progress, easeAmount); // ease-out
+            double progress = Math.min(ticks / (double) settings.scroll.time, 1.0); // Progress from 0 to 1
+            double easedProgress = 1 - Math.pow(1 - progress, settings.scroll.easeAmount); // ease-out
             double currentAngle = easedProgress * targetAngle;
 
-            if (ticks <= animationTime) {
+            if (ticks <= settings.scroll.time) {
                 handleFlameEffects();
                 moveArmorStands(currentAngle);
             }
 
-            if (ticks == animationTime) {
+            if (ticks == settings.scroll.time) {
                 preEnd();
             }
 
-            if (ticks >= animationTime + 20) {
+            if (ticks >= settings.scroll.time + 20) {
                 endAnimation(task);
             }
         }
@@ -119,7 +189,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
         private void initializeItems() {
             boolean small = getSettings().node("SmallArmorStand").getBoolean(true);
 
-            if (wheelType == WheelType.FULL) {
+            if (settings.getWheelType() == WheelType.FULL) {
                 // FULL logic - unique items
                 List<CaseDataItem> uniqueItems = new ArrayList<>(getCaseData().getItems().values());
 
@@ -137,30 +207,30 @@ public class WheelAnimation extends BukkitJavaAnimation {
                 }
 
                 double additionalAngle = additionalSteps * (2 * Math.PI / armorStands.size());
-                targetAngle = 2 * Math.PI * scrollCount + additionalAngle;
+                targetAngle = 2 * Math.PI * settings.scroll.count + additionalAngle;
             }
             else {
                 // RANDOM logic - random items with duplicates
                 armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
-                for (int i = 1; i < itemsCount; i++) {
+                for (int i = 1; i < settings.itemsCount; i++) {
                     CaseDataItem randomItem = getCaseData().getRandomItem();
                     armorStands.add(spawnArmorStand(getLocation(), randomItem, small));
                 }
                 int rand = new Random().nextInt(armorStands.size());
                 int additionalSteps = armorStands.size() - rand;
                 double additionalAngle = additionalSteps * (2 * Math.PI / armorStands.size());
-                targetAngle = 2 * Math.PI * scrollCount + additionalAngle;
+                targetAngle = 2 * Math.PI * settings.scroll.count + additionalAngle;
                 Collections.swap(armorStands, 0, rand);
             }
         }
 
         private void handleFlameEffects() {
-            if (useFlame) {
-                double progress = Math.min(ticks / (double) animationTime * 0.9, 1); // progress from 0 to 1
-                double easedProgress = 1 - Math.pow(1 - progress, easeAmount); // ease-out
+            if (settings.flame.enabled) {
+                double progress = Math.min(ticks / (double) settings.scroll.time * 0.9, 1); // progress from 0 to 1
+                double easedProgress = 1 - Math.pow(1 - progress, settings.scroll.easeAmount); // ease-out
 
-                double deltaX = Math.max((1 - easedProgress) * radius, 0.4);
-                double deltaY = easedProgress * radius + 0.7;
+                double deltaX = Math.max((1 - easedProgress) * settings.radius, 0.4);
+                double deltaY = easedProgress * settings.radius + 0.7;
 
                 double theta = ticks / (20.0 / 3);
                 spawnFlameEffect(deltaX, deltaY, theta);
@@ -171,24 +241,26 @@ public class WheelAnimation extends BukkitJavaAnimation {
         private void spawnFlameEffect(double deltaX, double deltaY, double theta) {
             double dx = deltaX * Math.sin(theta);
             double dz = deltaX * Math.cos(theta);
-            Location particleLocation = flocation.clone().add(dx, deltaY, dz);
-            world.spawnParticle(flameParticle, particleLocation, 1, 0, 0, 0, 0, null);
+            Location particleLocation = location.clone().add(dx, deltaY, dz);
+            world.spawnParticle(settings.flame.particle, particleLocation, 1, 0, 0, 0, 0, null);
         }
 
         private void moveArmorStands(double angle) {
             for (ArmorStandCreator entity : armorStands) {
-                double x = radius * Math.sin(angle);
-                double y = radius * Math.cos(angle);
+                double x = settings.radius * Math.sin(angle);
+                double y = settings.radius * Math.cos(angle);
 
-                Vector rotationAxis = loc.getDirection().crossProduct(new Vector(0, 1, 0)).normalize();
-                Location newLoc = flocation.clone().add(rotationAxis.multiply(x).add(loc.getDirection().multiply(y)));
+                Vector rotationAxis = location.getDirection().crossProduct(new Vector(0, 1, 0)).normalize();
+                Location newLoc = location.clone().add(rotationAxis.multiply(x).add(location.getDirection().multiply(y)));
                 entity.teleport(BukkitUtils.fromBukkit(newLoc));
                 angle += offset;
 
                 double currentAngle = angle - baseAngle;
-                if (currentAngle - lastCompletedRotation >= rotationThreshold && needSound) {
-                    world.playSound(flocation, sound, volume, vpitch);
-                    lastCompletedRotation = currentAngle;
+                if (currentAngle - lastCompletedRotation >= rotationThreshold) {
+                    if(settings.scroll.getSound() != null) {
+                        world.playSound(location, settings.scroll.getSound(), settings.scroll.volume, settings.scroll.pitch);
+                        lastCompletedRotation = currentAngle;
+                    }
                 }
             }
         }
@@ -210,12 +282,12 @@ public class WheelAnimation extends BukkitJavaAnimation {
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
-        as.setAngle(armorStandEulerAngle);
+        as.setAngle(settings.armorStandEulerAngle);
         as.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), item.getMaterial().getDisplayName()));
         as.setCustomNameVisible(item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty());
         as.spawn();
 
-        as.setEquipment(itemSlot, material.getItemStack());
+        as.setEquipment(settings.getItemSlot(), material.getItemStack());
         return as;
     }
 }
