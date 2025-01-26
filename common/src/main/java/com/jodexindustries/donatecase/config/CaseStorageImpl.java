@@ -31,7 +31,6 @@ public class CaseStorageImpl implements CaseStorage {
 
     @Override
     public void save(@NotNull String name, @NotNull CaseInfo caseInfo) throws ConfigurateException {
-        // TODO Hologram manager support
         ConfigurationNode current = node.node("DonateCase", "Cases", name);
         current.set(CaseInfo.class, caseInfo);
         config.save("Cases.yml");
