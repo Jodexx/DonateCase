@@ -3,7 +3,7 @@ package com.jodexindustries.donatecase.command.sub;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
@@ -152,25 +152,25 @@ public class RegistryCommand extends DefaultCommand {
     }
 
     private void executeGuiTypedItems(DCCommandSender sender) {
-        Map<String, List<GuiTypedItem>> guitypeditemsMap = buildGuiTypedItemsMap();
-        for (Map.Entry<String, List<GuiTypedItem>> entry : guitypeditemsMap.entrySet()) {
+        Map<String, List<TypedItem>> guitypeditemsMap = buildGuiTypedItemsMap();
+        for (Map.Entry<String, List<TypedItem>> entry : guitypeditemsMap.entrySet()) {
             sender.sendMessage(
                     DCTools.rc("&6" + entry.getKey())
             );
-            for (GuiTypedItem guiTypedItem : entry.getValue()) {
+            for (TypedItem typedItem : entry.getValue()) {
                 sender.sendMessage(
-                        DCTools.rc("&9- &a" + guiTypedItem.getId() + " &3- &2" + guiTypedItem.getDescription())
+                        DCTools.rc("&9- &a" + typedItem.getId() + " &3- &2" + typedItem.getDescription())
                 );
             }
         }
     }
 
-    private Map<String, List<GuiTypedItem>> buildGuiTypedItemsMap() {
-        Map<String, List<GuiTypedItem>> guiTypedItemsMap = new HashMap<>();
+    private Map<String, List<TypedItem>> buildGuiTypedItemsMap() {
+        Map<String, List<TypedItem>> guiTypedItemsMap = new HashMap<>();
         api.getGuiTypedItemManager().getMap().forEach((name, guiTypedItem) -> {
             String addon = guiTypedItem.getAddon().getName();
 
-            List<GuiTypedItem> actions = guiTypedItemsMap.getOrDefault(addon, new ArrayList<>());
+            List<TypedItem> actions = guiTypedItemsMap.getOrDefault(addon, new ArrayList<>());
             actions.add(guiTypedItem);
 
             guiTypedItemsMap.put(addon, actions);

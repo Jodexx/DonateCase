@@ -12,7 +12,7 @@ import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.manager.*;
@@ -216,7 +216,7 @@ public class BukkitBackend extends BackendPlatform {
         GUITypedItemManager manager = api.getGuiTypedItemManager();
 
         manager.register(
-                GuiTypedItem.builder()
+                TypedItem.builder()
                         .id("HISTORY")
                         .addon(this)
                         .description("Type for displaying the history of case openings")
@@ -225,7 +225,7 @@ public class BukkitBackend extends BackendPlatform {
         );
 
         manager.register(
-                GuiTypedItem.builder()
+                TypedItem.builder()
                         .id("OPEN")
                         .addon(this)
                         .description("Type to open the case")

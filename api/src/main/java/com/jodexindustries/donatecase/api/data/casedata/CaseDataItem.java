@@ -25,7 +25,7 @@ public class CaseDataItem implements Cloneable {
     private double chance;
     @Setting("Index")
     private int index;
-    @Setting("Item")
+    @Setting("Material")
     private CaseDataMaterial material;
     @Setting("GiveType")
     private String giveType = "ONE";
@@ -35,6 +35,10 @@ public class CaseDataItem implements Cloneable {
     private List<String> alternativeActions;
     @Setting("RandomActions")
     private Map<String, RandomAction> randomActions;
+
+    public String getName() {
+        return String.valueOf(node.key());
+    }
 
     /**
      * Class to implement a random action
@@ -59,6 +63,14 @@ public class CaseDataItem implements Cloneable {
             }
         }
 
+        @Override
+        public String toString() {
+            return "RandomAction{" +
+                    "chance=" + chance +
+                    ", actions=" + actions +
+                    ", displayName='" + displayName + '\'' +
+                    '}';
+        }
     }
 
     @Override
@@ -74,6 +86,20 @@ public class CaseDataItem implements Cloneable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "CaseDataItem{" +
+                "node=" + node +
+                ", group='" + group + '\'' +
+                ", chance=" + chance +
+                ", index=" + index +
+                ", material=" + material +
+                ", giveType='" + giveType + '\'' +
+                ", actions=" + actions +
+                ", alternativeActions=" + alternativeActions +
+                ", randomActions=" + randomActions +
+                '}';
+    }
 
     /**
      * Clone method for CaseData deep clone

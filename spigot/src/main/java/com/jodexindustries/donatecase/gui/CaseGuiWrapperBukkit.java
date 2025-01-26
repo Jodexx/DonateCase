@@ -4,8 +4,9 @@ import com.jodexindustries.donatecase.BukkitBackend;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
-import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemHandler;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemException;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemHandler;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
@@ -45,31 +46,29 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
         String title = getTemporary().getTitle();
         inventory = Bukkit.createInventory(null, temporary.getSize(), DCTools.rc(setPlaceholders(title)));
 
-        load().thenAccept((unused) -> {
+        load().thenAccept((loaded) -> {
             Bukkit.getScheduler().runTask(backend.getPlugin(), () -> player.openInventory(inventory));
             startUpdateTask();
         });
     }
 
-    /**
-     * Loads all items asynchronously
-     *
-     * @return Void future
-     */
-    @Override
-    public CompletableFuture<Void> load() {
-        return CompletableFuture.supplyAsync(() -> {
+    private CompletableFuture<Void> load() {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        backend.getScheduler().async(backend, () -> {
             globalHistoryData = DCTools.sortHistoryDataByDate(backend.getAPI().getDatabase().getCache());
             for (CaseGui.Item item : temporary.getItems().values()) {
                 try {
                     processItem(item);
-                } catch (Throwable e) {
+                } catch (TypedItemException e) {
                     backend.getLogger().log(Level.WARNING,
-                            "Error occurred while loading item " + item.getNode().key() + ":", e);
+                            "Error occurred while loading item: " + item.getNode().key(), e);
                 }
             }
-            return null;
-        });
+            future.complete(null);
+        }, 0L);
+
+        return future;
     }
 
     private void updateMeta(CaseGui.Item temp) {
@@ -101,10 +100,10 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
         return caseData.getCaseGui().getItems().get(itemName).getMaterial();
     }
 
-    private void processItem(CaseGui.Item item) {
+    private void processItem(CaseGui.Item item) throws TypedItemException {
         String itemType = item.getType();
         if (!itemType.equalsIgnoreCase("DEFAULT")) {
-            GuiTypedItem typedItem = backend.getAPI().getGuiTypedItemManager().getFromString(itemType);
+            TypedItem typedItem = backend.getAPI().getGuiTypedItemManager().getFromString(itemType);
             if (typedItem != null) {
                 TypedItemHandler handler = typedItem.getHandler();
                 if (handler != null) item = handler.handle(this, item);

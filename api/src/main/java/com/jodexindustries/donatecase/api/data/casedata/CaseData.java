@@ -12,10 +12,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Required;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class for implementing cases that are loaded into the plugin's memory.
@@ -24,25 +21,34 @@ import java.util.Map;
 @Setter
 @ConfigSerializable
 public class CaseData implements Cloneable {
+
     private transient String caseType;
+
     @Setting("DisplayName")
     private String caseDisplayName;
+
     @Setting("Animation")
     @Required
     private String animation;
+
     @Setting("Items")
     private Map<String, CaseDataItem> items;
-    private transient History[] historyData;
+
     @Setting("Hologram")
     private Hologram hologram;
+
     @Setting("LevelGroups")
     private Map<String, Integer> levelGroups;
+
     @Setting("Gui")
     private CaseGui caseGui;
+
     @Setting("NoKeyActions")
     private List<String> noKeyActions;
+
     @Setting("OpenType")
     private OpenType openType = OpenType.GUI;
+
     @Setting("AnimationSettings")
     private ConfigurationNode animationSettings;
 
@@ -88,7 +94,6 @@ public class CaseData implements Cloneable {
 
             if(this.items != null) clonedCaseData.items = cloneItemsMap(this.items);
             if(this.caseGui != null) clonedCaseData.caseGui = this.caseGui.clone();
-            if(this.historyData != null) clonedCaseData.historyData = cloneCaseDataHistoryArray(this.historyData);
 
             return clonedCaseData;
         } catch (CloneNotSupportedException e) {
@@ -96,17 +101,20 @@ public class CaseData implements Cloneable {
         }
     }
 
-    /**
-     * Clone method for CaseData deep clone
-     */
-    protected static History[] cloneCaseDataHistoryArray(History[] originalArray) {
-        History[] newArray = new History[originalArray.length];
-        for (int i = 0; i < originalArray.length; i++) {
-            if (originalArray[i] != null) {
-                newArray[i] = originalArray[i].clone();
-            }
-        }
-        return newArray;
+    @Override
+    public String toString() {
+        return "CaseData{" +
+                "caseType='" + caseType + '\'' +
+                ", caseDisplayName='" + caseDisplayName + '\'' +
+                ", animation='" + animation + '\'' +
+                ", items=" + items +
+                ", hologram=" + hologram +
+                ", levelGroups=" + levelGroups +
+                ", caseGui=" + caseGui +
+                ", noKeyActions=" + noKeyActions +
+                ", openType=" + openType +
+                ", animationSettings=" + animationSettings +
+                '}';
     }
 
     /**
@@ -174,38 +182,13 @@ public class CaseData implements Cloneable {
     @ConfigSerializable
     public static class Hologram {
         @Setting("Toggle")
-        private final boolean enabled;
+        private boolean enabled;
         @Setting("Height")
-        private final double height;
+        private double height;
         @Setting("Range")
-        private final int range;
+        private int range;
         @Setting("Message")
-        private final List<String> messages;
-
-        /**
-         * Empty constructor
-         */
-        public Hologram() {
-            this.enabled = false;
-            this.height = 0.0;
-            this.range = 8;
-            this.messages = new ArrayList<>();
-        }
-
-        /**
-         * A secondary constructor to build a hologram.
-         *
-         * @param enabled  if the hologram enabled or not
-         * @param height   of the hologram from the ground
-         * @param range    the range, when player will see hologram
-         * @param messages the hologram will display
-         */
-        public Hologram(boolean enabled, double height, int range, List<String> messages) {
-            this.enabled = enabled;
-            this.height = height;
-            this.range = range;
-            this.messages = messages;
-        }
+        private List<String> messages;
 
     }
 }

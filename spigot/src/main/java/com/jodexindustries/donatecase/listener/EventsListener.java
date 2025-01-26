@@ -2,8 +2,8 @@ package com.jodexindustries.donatecase.listener;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
-import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandler;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
@@ -78,7 +78,7 @@ public class EventsListener implements Listener {
 
             if (!caseGuiClickEvent.isCancelled()) {
 
-                GuiTypedItem typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(itemType);
+                TypedItem typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(itemType);
                 if (typedItem == null) return;
 
                 TypedItemClickHandler handler = typedItem.getClick();

@@ -3,10 +3,12 @@ package com.jodexindustries.donatecase.gui.items;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.*;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
-import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemHandler;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemException;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemHandler;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.text.DateFormat;
@@ -19,22 +21,22 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
     @NotNull
     @Override
-    public CaseGui.Item handle(@NotNull CaseGuiWrapper caseGui, CaseGui.@NotNull Item item) {
+    public CaseGui.Item handle(@NotNull CaseGuiWrapper caseGui, CaseGui.@NotNull Item item) throws TypedItemException {
         CaseData caseData = caseGui.getCaseData();
 
         boolean handled = handleHistoryItem(caseData, item, caseGui.getGlobalHistoryData());
 
-        CaseDataMaterial material = item.getMaterial();
-
         if (!handled) {
             try {
-                CaseDataMaterial notFoundMaterial = item.getNode().node("HistoryNotFound").get(CaseDataMaterial.class);
-                if (notFoundMaterial != null) {
-                    item.setMaterial(notFoundMaterial);
+                ConfigurationNode notFoundNode = item.getNode().node("HistoryNotFound");
+                if (!notFoundNode.isNull()) {
+                    item.setMaterial(notFoundNode.get(CaseDataMaterial.class));
                 } else {
-                    material.setId("AIR");
+                    item.getMaterial().setId("AIR");
                 }
-            } catch (SerializationException ignored) {}
+            } catch (SerializationException e) {
+                throw new TypedItemException("Error with serialization HistoryNotFound material", e);
+            }
         }
 
         return item;
@@ -52,7 +54,6 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
         CaseData historyCaseData = isGlobal ? null : DCAPI.getInstance().getCaseManager().get(caseType);
         if (historyCaseData == null && !isGlobal) {
-            DCAPI.getInstance().getPlatform().getLogger().warning("Case " + caseType + " HistoryData is null!");
             return false;
         }
 
@@ -66,15 +67,16 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
         CaseDataItem historyItem = historyCaseData.getItem(data.getItem());
         if (historyItem == null) return false;
-        String material = item.getMaterial().getId();
+
+        String material = itemMaterial.getId();
         if (material == null) material = "HEAD:" + data.getPlayerName();
 
         if (material.equalsIgnoreCase("DEFAULT")) material = historyItem.getMaterial().getId();
 
         String[] template = getTemplate(historyCaseData, data, historyItem);
 
-        String displayName = DCTools.rt(item.getMaterial().getDisplayName(), template);
-        List<String> lore = DCTools.rt(item.getMaterial().getLore(), template);
+        String displayName = DCTools.rt(itemMaterial.getDisplayName(), template);
+        List<String> lore = DCTools.rt(itemMaterial.getLore(), template);
 
         itemMaterial.setId(material);
         itemMaterial.setDisplayName(displayName);

@@ -114,6 +114,7 @@ public abstract class DCTools {
     }
 
     public static List<String> rt(List<String> text, String... repl) {
+        if(text == null) return null;
         return text.stream().map(t -> rt(t, repl)).collect(Collectors.toCollection(ArrayList::new));
     }
 

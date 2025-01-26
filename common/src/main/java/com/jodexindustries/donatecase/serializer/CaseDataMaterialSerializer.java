@@ -3,7 +3,9 @@ package com.jodexindustries.donatecase.serializer;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 
@@ -40,5 +42,10 @@ public class CaseDataMaterialSerializer implements TypeSerializer<CaseDataMateri
 //        node.node("Lore").set(obj.getLore());
 //        node.node("ModelData").set(obj.getModelData());
 //        node.node("Rgb").set(obj.getRgb());
+    }
+
+    @Override
+    public @Nullable CaseDataMaterial emptyValue(Type specificType, ConfigurationOptions options) {
+        return new CaseDataMaterial();
     }
 }

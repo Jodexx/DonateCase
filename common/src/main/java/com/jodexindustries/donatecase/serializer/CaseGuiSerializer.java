@@ -3,7 +3,7 @@ package com.jodexindustries.donatecase.serializer;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +53,7 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
     }
 
     @Override
-    public void serialize(Type type, @Nullable CaseGui obj, ConfigurationNode target) throws SerializationException {
+    public void serialize(Type type, @Nullable CaseGui obj, ConfigurationNode target) {
 
     }
 
@@ -75,7 +75,7 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
         if (material == null) return null;
 
         if (!item.getType().equalsIgnoreCase("DEFAULT")) {
-            GuiTypedItem typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(item.getType());
+            TypedItem typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(item.getType());
             if (typedItem != null) {
                 if (typedItem.isLoadOnCase()) {
                     material.setItemStack(DCAPI.getInstance().getPlatform().getTools().loadCaseItem(item.getMaterial().getId()));
@@ -93,6 +93,7 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
             CaseGui.Item item = new CaseGui.Item();
 
             String itemType = source.node("Type").getString();
+
             CaseDataMaterial material = source.node("Material").get(CaseDataMaterial.class);
             item.setType(itemType);
             item.setMaterial(material);

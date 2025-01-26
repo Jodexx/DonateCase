@@ -6,7 +6,6 @@ import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public abstract class CaseGuiWrapper {
 
@@ -21,13 +20,6 @@ public abstract class CaseGuiWrapper {
         this.location = location;
         this.temporary = caseData.getCaseGui().clone();
     }
-
-    /**
-     * Loads all items asynchronously
-     *
-     * @return Void future
-     */
-    public abstract CompletableFuture<Void> load();
 
     /**
      * Gets GUI Inventory

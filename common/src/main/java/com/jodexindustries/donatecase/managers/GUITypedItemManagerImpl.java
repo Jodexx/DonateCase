@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.managers;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.manager.GUITypedItemManager;
 import com.jodexindustries.donatecase.api.platform.Platform;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class GUITypedItemManagerImpl implements GUITypedItemManager {
 
-    private final static Map<String, GuiTypedItem> registeredItems = new HashMap<>();
+    private final static Map<String, TypedItem> registeredItems = new HashMap<>();
 
     private final Platform platform;
 
@@ -23,7 +23,7 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager {
     }
 
     @Override
-    public boolean register(GuiTypedItem item) {
+    public boolean register(TypedItem item) {
         String id = item.getId().toLowerCase();
         if (registeredItems.get(id) == null) {
             registeredItems.put(id, item);
@@ -52,12 +52,12 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager {
 
     @Nullable
     @Override
-    public GuiTypedItem get(@NotNull String id) {
+    public TypedItem get(@NotNull String id) {
         return registeredItems.get(id.toLowerCase());
     }
 
     @Override
-    public @NotNull Map<String, GuiTypedItem> getMap() {
+    public @NotNull Map<String, TypedItem> getMap() {
         return registeredItems;
     }
 
@@ -69,7 +69,7 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager {
 
     @Nullable
     @Override
-    public GuiTypedItem getFromString(@NotNull final String string) {
+    public TypedItem getFromString(@NotNull final String string) {
         String temp = getByStart(string);
         return temp != null ? get(temp) : null;
     }

@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GuiTypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +23,7 @@ public interface GUITypedItemManager {
      * @param item the {@code GUITypedItem} object to register
      * @return true if the registration is successful, false otherwise
      */
-    boolean register(GuiTypedItem item);
+    boolean register(TypedItem item);
 
     /**
      * Unregisters a GUI typed item by its ID.
@@ -33,8 +33,8 @@ public interface GUITypedItemManager {
     void unregister(String id);
 
     default void unregister(Addon addon) {
-        List<GuiTypedItem> list = new ArrayList<>(get(addon));
-        list.stream().map(GuiTypedItem::getId).forEach(this::unregister);
+        List<TypedItem> list = new ArrayList<>(get(addon));
+        list.stream().map(TypedItem::getId).forEach(this::unregister);
     }
 
     /**
@@ -49,15 +49,15 @@ public interface GUITypedItemManager {
      * @return the {@code GUITypedItem} object if found, or null otherwise
      */
     @Nullable
-    GuiTypedItem get(@NotNull String id);
+    TypedItem get(@NotNull String id);
 
-    default List<GuiTypedItem> get(Addon addon) {
+    default List<TypedItem> get(Addon addon) {
         return getMap().values().stream().filter(item ->
                 item.getAddon().equals(addon)).collect(Collectors.toList());
     }
 
     @NotNull
-    Map<String, GuiTypedItem> getMap();
+    Map<String, TypedItem> getMap();
 
 
     /**
@@ -76,6 +76,6 @@ public interface GUITypedItemManager {
      * @return the {@code GUITypedItem} object if found, or null otherwise
      */
     @Nullable
-    GuiTypedItem getFromString(@NotNull final String string);
+    TypedItem getFromString(@NotNull final String string);
 
 }

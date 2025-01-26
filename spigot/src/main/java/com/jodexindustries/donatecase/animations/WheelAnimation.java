@@ -199,7 +199,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
 
                 int additionalSteps = 0;
                 for (CaseDataItem uniqueItem : uniqueItems) {
-                    if (Objects.equals(uniqueItem.getNode().key(), getWinItem().getNode().key())) {
+                    if (uniqueItem.getName().equals(getWinItem().getName())) {
                         additionalSteps = uniqueItems.size() - armorStands.size();
                         armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
                     }

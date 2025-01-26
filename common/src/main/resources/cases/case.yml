@@ -1,4 +1,4 @@
-config: 1.2
+config: 1.3
 case:
   Animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/animations
 #  AnimationSettings:
@@ -89,7 +89,7 @@ case:
     Vip:
       Group: vip
       Chance: 30
-      Item:
+      Material:
         ID: YELLOW_WOOL # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
         DisplayName: '&7[&eVIP&7]'
         Enchanted: false
@@ -116,7 +116,7 @@ case:
     VipPlus:
       Group: vipplus
       Chance: 25
-      Item:
+      Material:
         ID: LIGHT_BLUE_WOOL # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
         DisplayName: '&7[&bVIP&6+&7]'
         Enchanted: false
@@ -143,7 +143,7 @@ case:
     Premium:
       Group: premium
       Chance: 20
-      Item:
+      Material:
         ID: CYAN_WOOL
         DisplayName: '&7[&3Premium&7]'
       Index: 2
@@ -170,7 +170,7 @@ case:
     Deluxe:
       Group: deluxe
       Chance: 15
-      Item:
+      Material:
         ID: PURPLE_WOOL # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
         DisplayName: '&7[&5Deluxe&7]'
         Enchanted: false
@@ -196,7 +196,7 @@ case:
     Legend:
       Group: legend
       Chance: 10
-      Item:
+      Material:
         ID: PINK_WOOL # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
         DisplayName: '&7[&dLegend&7]'
         Enchanted: false
@@ -222,7 +222,7 @@ case:
     Ultra:
       Group: ultra
       Chance: 5
-      Item:
+      Material:
         ID: RED_WOOL
         DisplayName: '&7[&cUltra&7]'
         Enchanted: true

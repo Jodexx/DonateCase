@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,15 +12,11 @@ import java.util.Map;
 
 @Setter
 @Getter
-@ConfigSerializable
 public class CaseGui implements Cloneable {
-    @Setting("Title")
+
     private String title;
-    @Setting("Size")
     private int size;
-    @Setting("UpdateRate")
     private int updateRate;
-    @Setting("Items")
     private transient Map<String, Item> items;
 
     @Nullable
@@ -48,7 +42,7 @@ public class CaseGui implements Cloneable {
     public CaseGui clone() {
         try {
             CaseGui clone = (CaseGui) super.clone();
-            clone.items = cloneItemsMap(this.items);
+            if (this.items != null) clone.items = cloneItemsMap(this.items);
 
             return clone;
         } catch (CloneNotSupportedException e) {
@@ -56,15 +50,22 @@ public class CaseGui implements Cloneable {
         }
     }
 
+    @Override
+    public String toString() {
+        return "CaseGui{" +
+                "title='" + title + '\'' +
+                ", size=" + size +
+                ", updateRate=" + updateRate +
+                ", items=" + items +
+                '}';
+    }
+
     @Getter
     @Setter
-    @ConfigSerializable
     public static class Item implements Cloneable {
-        @Setting(nodeFromParent = true)
+
         private ConfigurationNode node;
-        @Setting("Type")
         private String type;
-        @Setting("Material")
         private CaseDataMaterial material;
         private transient List<Integer> slots;
 
@@ -79,5 +80,14 @@ public class CaseGui implements Cloneable {
             }
         }
 
+        @Override
+        public String toString() {
+            return "Item{" +
+                    "node=" + node +
+                    ", type='" + type + '\'' +
+                    ", material=" + material +
+                    ", slots=" + slots +
+                    '}';
+        }
     }
 }

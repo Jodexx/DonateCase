@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api.data.casedata.gui;
+package com.jodexindustries.donatecase.api.data.casedata.gui.typeditem;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
  */
 @Getter
 @Builder
-public class GuiTypedItem {
+public class TypedItem {
     @NotNull private final String id;
     @NotNull private final Addon addon;
     @Nullable private final String description;
