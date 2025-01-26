@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.impl.holograms;
+package com.jodexindustries.donatecase.holograms;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;

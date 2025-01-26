@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.api.data.serializer;
+package com.jodexindustries.donatecase.serializer;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
@@ -9,13 +9,14 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class CaseGuiSerializer extends CaseSerializer<CaseGui> {
+public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
 
     @Override
     public CaseGui deserialize(Type type, ConfigurationNode source) throws SerializationException {
@@ -85,7 +86,7 @@ public class CaseGuiSerializer extends CaseSerializer<CaseGui> {
         return item;
     }
 
-    public static class Item extends CaseSerializer<CaseGui.Item> {
+    public static class Item implements TypeSerializer<CaseGui.Item> {
 
         @Override
         public CaseGui.Item deserialize(Type type, ConfigurationNode source) throws SerializationException {

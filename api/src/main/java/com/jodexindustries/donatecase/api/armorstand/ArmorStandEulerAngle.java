@@ -9,6 +9,7 @@ import org.spongepowered.configurate.objectmapping.meta.Setting;
 @Getter
 @ConfigSerializable
 public class ArmorStandEulerAngle {
+
     @Setting("Head")
     private EulerAngle head;
     @Setting("Body")
@@ -29,6 +30,20 @@ public class ArmorStandEulerAngle {
         this.leftArm = leftArm;
         this.rightLeg = rightLeg;
         this.leftLeg = leftLeg;
+    }
+
+    public ArmorStandEulerAngle() {}
+
+    @Override
+    public String toString() {
+        return "ArmorStandEulerAngle{" +
+                "head=" + head +
+                ", body=" + body +
+                ", rightArm=" + rightArm +
+                ", leftArm=" + leftArm +
+                ", rightLeg=" + rightLeg +
+                ", leftLeg=" + leftLeg +
+                '}';
     }
 
 }

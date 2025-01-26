@@ -55,9 +55,9 @@ public class RainlyAnimation extends BukkitJavaAnimation {
         private final ArmorStandCreator as;
         private final World world;
 
-        private final Sound endSound = Sound.valueOf(getSettings().node("End.Sound").getString("ENTITY_GENERIC_EXPLODE"));
-        private final float endVolume = getSettings().node("End.Volume").getFloat();
-        private final float endPitch = getSettings().node("End.Pitch").getFloat();
+        private final Sound endSound = Sound.valueOf(getSettings().node("End", "Sound").getString("ENTITY_GENERIC_EXPLODE"));
+        private final float endVolume = getSettings().node("End", "Volume").getFloat();
+        private final float endPitch = getSettings().node("End", "Pitch").getFloat();
 
         private final Sound scrollSound = Sound.valueOf(getSettings().node("Scroll", "Sound").getString("ENTITY_EXPERIENCE_ORB_PICKUP"));
         private final float scrollVolume = getSettings().node("Scroll", "Volume").getFloat();

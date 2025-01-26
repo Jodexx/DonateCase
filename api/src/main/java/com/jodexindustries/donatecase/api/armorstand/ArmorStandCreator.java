@@ -15,7 +15,7 @@ public interface ArmorStandCreator {
 
     void setEquipment(EquipmentSlot equipmentSlot, Object item);
 
-    void setAngle(ArmorStandEulerAngle angle);
+    void setAngle(@NotNull ArmorStandEulerAngle angle);
 
     void setRotation(float yaw, float pitch);
 

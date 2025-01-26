@@ -59,7 +59,7 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
     }
 
     @Override
-    public void setAngle(ArmorStandEulerAngle angle) {
+    public void setAngle(@NotNull ArmorStandEulerAngle angle) {
         meta.setHeadRotation(new Vector3f(
                 (float) angle.getHead().getX(),
                 (float) angle.getHead().getY(),

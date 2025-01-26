@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.impl.holograms;
+package com.jodexindustries.donatecase.holograms;
 
 import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Holograms.CMIHologram;

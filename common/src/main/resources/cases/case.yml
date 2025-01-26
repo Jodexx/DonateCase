@@ -1,6 +1,6 @@
 config: 1.2
 case:
-  Animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL see: https://wiki.jodexindustries.xyz/docs/DonateCase/animations
+  Animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/animations
 #  AnimationSettings:
 #    Type: FULL # or RANDOM
 #    ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
@@ -19,7 +19,7 @@ case:
 #      Sound: UI_BUTTON_CLICK
 #      Volume: 10
 #      Pitch: 1
-  Hologram: # see: https://wiki.jodexindustries.xyz/docs/DonateCase/holograms
+  Hologram: # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/holograms
     # Toggle on and off the holograms for the crates.
     Toggle: true
     # The height of the hologram above the crate.
@@ -33,7 +33,7 @@ case:
   OpenType: GUI # or BLOCK
 
   NoKeyActions:
-    - "[message] &cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.com"
+    - "[message] &cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.xyz"
     - "[sound] ENTITY_ENDERMAN_TELEPORT"
 
   HistoryDataSize: 10 # 0 if you want to disable history data
@@ -48,47 +48,49 @@ case:
     default: 0
 
   DisplayName: "&c&lDonate-&a&lCase" # Name for placeholders
-  Gui: # see more about items configuring -> https://wiki.jodexindustries.xyz/docs/DonateCase/items-settings
+  Gui: # see more about items configuring -> https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/items-settings
     Title: "&c&lDonate-&a&lCase"
     Size: 45
     UpdateRate: 20 # in ticks, set -1 to disable updating
     Items:
       "1":
-        DisplayName: "&cJodexIndustries.xyz"
-        Enchanted: false
-        Lore:
-          - ""
+        Material:
+          ID: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
+          DisplayName: "&cJodexIndustries.xyz"
+          Enchanted: false
+          Lore:
+            - ""
         Slots: # or Slots: 0-10 (range)
           - 0
           - 8
-        Material: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.xyz/docs/DonateCase/materials
         Type: DEFAULT
       Open:
-        DisplayName: "&bOpen Case"
-        Enchanted: false
-        Lore:
-        - '&6The case can be bought on the website: &cJodexIndustries.xyz'
-        - ''
-        - '&7Keys: &e%keys%'
-        - ''
-        - '&6Drops:'
-        - '&7[&eVIP&7] - &b&n30%'
-        - '&7[&bVIP&6+&7] - &b&n25%'
-        - '&7[&3Premium&7] - &b&n20%'
-        - '&7[&5Deluxe&7] - &b&n15%'
-        - '&7[&dLegend&7] - &b&n10%'
-        - '&7[&cUltra&7] - &b&n5%'
-        - ''
+        Material:
+          ID: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
+          DisplayName: "&bOpen Case"
+          Enchanted: false
+          Lore:
+            - '&6The case can be bought on the website: &cJodexIndustries.xyz'
+            - ''
+            - '&7Keys: &e%keys%'
+            - ''
+            - '&6Drops:'
+            - '&7[&eVIP&7] - &b&n30%'
+            - '&7[&bVIP&6+&7] - &b&n25%'
+            - '&7[&3Premium&7] - &b&n20%'
+            - '&7[&5Deluxe&7] - &b&n15%'
+            - '&7[&dLegend&7] - &b&n10%'
+            - '&7[&cUltra&7] - &b&n5%'
+            - ''
         Slots: # or Slots: 0-10 (range)
           - 22
-        Material: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.xyz/docs/DonateCase/materials
-        Type: OPEN # or you can use OPEN_<anotherCaseName> for opening another case 
+        Type: OPEN # or you can use OPEN_<anotherCaseName> for opening another case
   Items:
     Vip:
       Group: vip
       Chance: 30
       Item:
-        ID: YELLOW_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/materials
+        ID: YELLOW_WOOL # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
         DisplayName: '&7[&eVIP&7]'
         Enchanted: false
       Index: 0
@@ -115,7 +117,7 @@ case:
       Group: vipplus
       Chance: 25
       Item:
-        ID: LIGHT_BLUE_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/materials
+        ID: LIGHT_BLUE_WOOL # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
         DisplayName: '&7[&bVIP&6+&7]'
         Enchanted: false
       Index: 1
@@ -169,7 +171,7 @@ case:
       Group: deluxe
       Chance: 15
       Item:
-        ID: PURPLE_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/materials
+        ID: PURPLE_WOOL # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
         DisplayName: '&7[&5Deluxe&7]'
         Enchanted: false
       Index: 3
@@ -195,7 +197,7 @@ case:
       Group: legend
       Chance: 10
       Item:
-        ID: PINK_WOOL # see: https://wiki.jodexindustries.xyz/docs/DonateCase/materials
+        ID: PINK_WOOL # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
         DisplayName: '&7[&dLegend&7]'
         Enchanted: false
       Index: 4

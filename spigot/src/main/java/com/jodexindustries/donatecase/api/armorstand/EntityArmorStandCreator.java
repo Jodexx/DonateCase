@@ -78,7 +78,7 @@ public class EntityArmorStandCreator implements ArmorStandCreator {
     }
 
     @Override
-    public void setAngle(ArmorStandEulerAngle angle) {
+    public void setAngle(@NotNull ArmorStandEulerAngle angle) {
         entity.setHeadPose(
                 BukkitUtils.toBukkit(angle.getHead())
         );

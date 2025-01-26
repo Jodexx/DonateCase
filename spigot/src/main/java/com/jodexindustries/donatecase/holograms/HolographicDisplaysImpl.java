@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.impl.holograms;
+package com.jodexindustries.donatecase.holograms;
 
 import com.jodexindustries.donatecase.BukkitBackend;
 import com.jodexindustries.donatecase.api.DCAPI;

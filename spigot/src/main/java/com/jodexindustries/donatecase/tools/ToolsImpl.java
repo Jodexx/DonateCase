@@ -19,7 +19,7 @@ public class ToolsImpl extends DCToolsBukkit {
 
     @Override
     public ArmorStandCreator createArmorStand(CaseLocation location) {
-        if (backend.getPacketEventsSupport().isUsePackets()) {
+        if (backend.getPacketEventsSupport() != null && backend.getPacketEventsSupport().isUsePackets()) {
             return new PacketArmorStandCreator(location);
         } else {
             return new EntityArmorStandCreator(BukkitUtils.toBukkit(location));

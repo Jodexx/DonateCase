@@ -3,9 +3,8 @@ package com.jodexindustries.donatecase.api.data.casedata;
 import com.jodexindustries.donatecase.api.DCAPI;
 import lombok.Getter;
 import lombok.Setter;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,27 +15,15 @@ import java.util.List;
  */
 @Setter
 @Getter
-@ConfigSerializable
 public class CaseDataMaterial implements MetaUpdater, Cloneable {
 
-    @Setting("ID")
     private String id;
-    @Setting("DisplayName")
     private String displayName;
-    @Setting("Enchanted")
     private boolean enchanted;
-    @Setting("Lore")
     private List<String> lore;
-    @Setting("ModelData")
     private int modelData;
-    @Setting("Rgb")
     private String[] rgb;
-    private transient Object itemStack;
-
-    public CaseDataMaterial() {
-        DCAPI api = DCAPI.getInstance();
-        if(api != null) itemStack = api.getPlatform().getTools().loadCaseItem(id);
-    }
+    private Object itemStack;
 
     public void updateMeta() {
         updateMeta(getItemStack(), getDisplayName(), getLore(), getModelData(), isEnchanted(), getRgb());
@@ -70,5 +57,18 @@ public class CaseDataMaterial implements MetaUpdater, Cloneable {
         } catch (Exception e) {
             throw new IllegalStateException("Failed to clone itemStack", e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "CaseDataMaterial{" +
+                "id='" + id + '\'' +
+                ", displayName='" + displayName + '\'' +
+                ", enchanted=" + enchanted +
+                ", lore=" + lore +
+                ", modelData=" + modelData +
+                ", rgb=" + Arrays.toString(rgb) +
+                ", itemStack=" + itemStack +
+                '}';
     }
 }

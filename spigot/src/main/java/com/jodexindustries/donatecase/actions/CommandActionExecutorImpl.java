@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.impl.actions;
+package com.jodexindustries.donatecase.actions;
 
 import com.jodexindustries.donatecase.api.data.action.ActionExecutor;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;

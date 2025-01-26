@@ -1,8 +1,10 @@
 package com.jodexindustries.donatecase.config;
 
 import com.jodexindustries.donatecase.api.config.ConfigCases;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
-import com.jodexindustries.donatecase.api.data.serializer.CaseGuiSerializer;
+import com.jodexindustries.donatecase.serializer.CaseDataMaterialSerializer;
+import com.jodexindustries.donatecase.serializer.CaseGuiSerializer;
 import com.jodexindustries.donatecase.platform.BackendPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,9 +25,10 @@ public class ConfigCasesImpl implements ConfigCases {
     private final BackendPlatform platform;
 
     private final TypeSerializerCollection serializerCollection = TypeSerializerCollection.builder()
-                .register(CaseGui.class, new CaseGuiSerializer())
-                .register(CaseGui.Item.class, new CaseGuiSerializer.Item())
-                .build();
+            .register(CaseGui.class, new CaseGuiSerializer())
+            .register(CaseGui.Item.class, new CaseGuiSerializer.Item())
+            .register(CaseDataMaterial.class, new CaseDataMaterialSerializer())
+            .build();
 
     public ConfigCasesImpl(BackendPlatform platform) {
         this.platform = platform;

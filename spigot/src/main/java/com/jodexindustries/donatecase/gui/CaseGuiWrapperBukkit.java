@@ -120,9 +120,6 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
 
         colorize(material);
 
-        // TODO fix item stack creating (CaseDataMaterial itemstack)
-        System.out.println(item.getMaterial().getItemStack());
-
         for (Integer slot : item.getSlots()) {
             inventory.setItem(slot, (ItemStack) item.getMaterial().getItemStack());
         }

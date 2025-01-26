@@ -17,27 +17,13 @@ public class EulerAngle {
      */
     public static final EulerAngle ZERO = new EulerAngle(0, 0, 0);
 
-    /**
-     * -- GETTER --
-     *  Returns the angle on the x axis in radians
-     *
-     */
     private final double x;
-    /**
-     * -- GETTER --
-     *  Returns the angle on the y axis in radians
-     *
-     */
     private final double y;
-    /**
-     * -- GETTER --
-     *  Returns the angle on the z axis in radians
-     *
-     */
+
     private final double z;
 
     /**
-     * Creates a EularAngle with each axis set to the
+     * Creates a EulerAngle with each axis set to the
      * passed angle in radians
      *
      * @param x the angle for the x axis in radians
@@ -48,6 +34,12 @@ public class EulerAngle {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public EulerAngle() {
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
     }
 
     /**
@@ -138,5 +130,14 @@ public class EulerAngle {
         result = 31 * result + Double.hashCode(y);
         result = 31 * result + Double.hashCode(z);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "EulerAngle{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
     }
 }
