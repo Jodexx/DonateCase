@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
 import com.jodexindustries.donatecase.api.manager.HologramManager;
+import com.jodexindustries.donatecase.api.scheduler.Scheduler;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.PAPI;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ public interface Platform extends Addon {
 
     DCAPI getAPI();
 
-    void runSync(@NotNull Runnable task);
+    @NotNull Scheduler getScheduler();
 
     @Nullable DCPlayer getPlayer(String name);
 

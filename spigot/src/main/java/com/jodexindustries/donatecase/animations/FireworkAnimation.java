@@ -1,27 +1,27 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.BukkitBackend;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.tools.BukkitUtils;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.World;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class FireworkAnimation extends BukkitJavaAnimation {
+
+    private final static DCAPI api = DCAPI.getInstance();
 
     @SneakyThrows
     @Override
@@ -45,10 +45,10 @@ public class FireworkAnimation extends BukkitJavaAnimation {
 
         long period = getSettings().node("Scroll", "Period").getLong();
 
-        Bukkit.getScheduler().runTaskTimer(((BukkitBackend) DCAPI.getInstance().getPlatform()).getPlugin(), new Task(as), 0L, period);
+        api.getPlatform().getScheduler().run(api.getPlatform(), new Task(as), 0L, period);
     }
 
-    private class Task implements Consumer<BukkitTask> {
+    private class Task implements Consumer<SchedulerTask> {
 
         private int tick;
 
@@ -71,7 +71,7 @@ public class FireworkAnimation extends BukkitJavaAnimation {
 
         @SneakyThrows
         @Override
-        public void accept(BukkitTask task) {
+        public void accept(SchedulerTask task) {
             if (tick == 0) {
                 Firework firework = world.spawn(BukkitUtils.toBukkit(location), Firework.class);
                 FireworkMeta data = firework.getFireworkMeta();

@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.managers;
 
+import com.jodexindustries.donatecase.animations.RandomAnimation;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.data.animation.Animation;
@@ -48,6 +49,19 @@ public class AnimationManagerImpl implements AnimationManager {
     public AnimationManagerImpl(DCAPI api) {
         this.api = api;
         this.platform = (BackendPlatform) api.getPlatform();
+
+        List<? extends CaseAnimation> defaultAnimations = Arrays.asList(
+                CaseAnimation.builder()
+                        .name("RANDOM")
+                        .addon(platform)
+                        .animation(RandomAnimation.class)
+                        .description("Selects the random animation from config")
+                        .requireSettings(true)
+                        .requireBlock(true)
+                        .build()
+        );
+
+        defaultAnimations.forEach(this::register);
     }
 
     @Override
@@ -116,7 +130,7 @@ public class AnimationManagerImpl implements AnimationManager {
 
         if (caseAnimation.isRequireBlock()) {
             CaseData.Hologram hologram = caseData.getHologram();
-            if(hologram != null && hologram.isEnabled()) {
+            if (hologram != null && hologram.isEnabled()) {
                 HologramManager hologramManager = api.getPlatform().getHologramManager();
                 if (hologramManager != null) {
                     hologramManager.remove(location);
@@ -124,7 +138,7 @@ public class AnimationManagerImpl implements AnimationManager {
             }
 
             CaseInfo info = api.getConfig().getCaseStorage().get(location);
-            if(info != null) {
+            if (info != null) {
                 CaseLocation temp = info.getLocation();
                 location.setPitch(temp.getPitch());
                 location.setYaw(temp.getYaw());
@@ -142,19 +156,19 @@ public class AnimationManagerImpl implements AnimationManager {
         try {
 
             Animation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
-            javaAnimation.init(player, location, uuid, caseData, winItem, settings);
+            javaAnimation.init(player, location.clone(), uuid, caseData, winItem, settings);
 
 
-            api.getScheduler().run(platform, () -> api.getPlatform().runSync(() -> {
-            try {
-                javaAnimation.start();
-                animationCompletion.complete(uuid);
-            } catch (Throwable t) {
-                platform.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
-                if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
-                animationCompletion.complete(null);
-            }
-            }), delay);
+            api.getPlatform().getScheduler().run(platform, () -> {
+                try {
+                    javaAnimation.start();
+                    animationCompletion.complete(uuid);
+                } catch (Throwable t) {
+                    platform.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
+                    if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
+                    animationCompletion.complete(null);
+                }
+            }, delay);
 
         } catch (Throwable t) {
             platform.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
@@ -177,12 +191,12 @@ public class AnimationManagerImpl implements AnimationManager {
 
         CaseData caseData = api.getCaseManager().get(activeCase.getCaseType());
         if (caseData != null) {
-            preEnd(caseData, activeCase.getPlayer(), activeCase.getBlock(), activeCase.getWinItem());
+            preEnd(caseData, activeCase.getPlayer(), activeCase.getWinItem());
         }
     }
 
     @Override
-    public void preEnd(CaseData caseData, DCPlayer player, CaseLocation location, CaseDataItem item) {
+    public void preEnd(CaseData caseData, DCPlayer player, CaseDataItem item) {
         String choice = "";
         Map<String, Integer> levelGroups = getDefaultLevelGroup();
         if(!caseData.getLevelGroups().isEmpty()) levelGroups = caseData.getLevelGroups();

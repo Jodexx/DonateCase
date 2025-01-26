@@ -110,8 +110,6 @@ public abstract class DCAPI {
 
     public abstract @NotNull Loadable getCaseLoader();
 
-    public abstract @NotNull Scheduler getScheduler();
-
     /**
      * Should return the DonateCase platform instance
      *

@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.BukkitBackend;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -9,14 +8,13 @@ import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.tools.BukkitUtils;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
@@ -25,6 +23,8 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class WheelAnimation extends BukkitJavaAnimation {
+
+    private final static DCAPI api = DCAPI.getInstance();
 
     private final List<ArmorStandCreator> armorStands = new ArrayList<>();
 
@@ -40,7 +40,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
     public void start() {
         this.settings = getSettings().get(Settings.class);
 
-        Bukkit.getScheduler().runTaskTimer(((BukkitBackend) DCAPI.getInstance().getPlatform()).getPlugin(), new Task(), 0L, 0L);
+        api.getPlatform().getScheduler().run(api.getPlatform(), new Task(), 0L, 0L);
     }
 
     @ConfigSerializable
@@ -130,7 +130,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
         }
     }
 
-    private class Task implements Consumer<BukkitTask> {
+    private class Task implements Consumer<SchedulerTask> {
 
         private final Location location = BukkitUtils.toBukkit(getLocation().clone())
                 .add(0.5, 0, 0.5)
@@ -165,7 +165,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
         }
 
         @Override
-        public void accept(BukkitTask task) {
+        public void accept(SchedulerTask task) {
             ticks++;
 
             double progress = Math.min(ticks / (double) settings.scroll.time, 1.0); // Progress from 0 to 1
@@ -265,7 +265,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
             }
         }
 
-        private void endAnimation(BukkitTask task) {
+        private void endAnimation(SchedulerTask task) {
             task.cancel();
             for (ArmorStandCreator stand : armorStands) {
                 stand.remove();

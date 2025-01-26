@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.animations;
 
-import com.jodexindustries.donatecase.BukkitBackend;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
@@ -8,10 +7,13 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.tools.BukkitUtils;
 import lombok.SneakyThrows;
-import org.bukkit.*;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,19 +21,21 @@ import java.util.function.Consumer;
 
 public class RainlyAnimation extends BukkitJavaAnimation {
 
+    private final static DCAPI api = DCAPI.getInstance();
+
     private EquipmentSlot itemSlot;
-    private ArmorStandEulerAngle armorStandEulerAngle;
 
     @SneakyThrows
     @Override
     public void start() {
-        Particle particle = Particle.valueOf(getSettings().getString("FallingParticle"));
+        Particle particle = Particle.valueOf(getSettings().node("FallingParticle").getString());
 
         ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getLocation().clone().add(0.5, 1, 0.5));
+        ArmorStandEulerAngle armorStandEulerAngle = getSettings().node("Pose").get(ArmorStandEulerAngle.class);
+        if(armorStandEulerAngle != null) as.setAngle(armorStandEulerAngle);
+        as.setCustomNameVisible(true);
         as.setVisible(false);
         as.setGravity(false);
-
-        armorStandEulerAngle = getSettings().node("Pose").get(ArmorStandEulerAngle.class);
 
         itemSlot = EquipmentSlot.valueOf(
                 getSettings().node("ItemSlot").getString("HEAD").toUpperCase()
@@ -41,14 +45,13 @@ public class RainlyAnimation extends BukkitJavaAnimation {
         as.setSmall(small);
         as.spawn();
 
-        Bukkit.getScheduler().runTaskTimer(((BukkitBackend) DCAPI.getInstance().getPlatform()).getPlugin(), new Task(as, particle), 0L, 2L);
+        api.getPlatform().getScheduler().run(api.getPlatform(), new Task(as, particle), 0L, 2L);
     }
 
-    private class Task implements Consumer<BukkitTask> {
+    private class Task implements Consumer<SchedulerTask> {
 
-        private int i = 0;  // tick counter
-        private double t = 0; // time variable for firework effect
-        private final List<Location> rains = new ArrayList<>();
+        private int i = 0;
+        private final List<Location> clouds = new ArrayList<>();
         private final Location bukkitLocation;
         private final CaseLocation location;
         private final Particle particle;
@@ -70,42 +73,42 @@ public class RainlyAnimation extends BukkitJavaAnimation {
             this.bukkitLocation = BukkitUtils.toBukkit(location);
             this.particle = particle;
 
-            rains.add(bukkitLocation.clone().add(-2, 3,2 ));
-            rains.add(bukkitLocation.clone().add(-2, 3, -2));
-            rains.add(bukkitLocation.clone().add(2, 3, 2));
-            rains.add(bukkitLocation.clone().add(2, 3, -2));
+            clouds.add(bukkitLocation.clone().add(-2, 3,2 ));
+            clouds.add(bukkitLocation.clone().add(-2, 3, -2));
+            clouds.add(bukkitLocation.clone().add(2, 3, 2));
+            clouds.add(bukkitLocation.clone().add(2, 3, -2));
             world = bukkitLocation.getWorld() != null ? bukkitLocation.getWorld() : getPlayer().getWorld();
         }
 
         @Override
-        public void accept(BukkitTask task) {
-            // Spawn rain and cloud particles
-            for (Location rain : rains) {
-                world.spawnParticle(particle, rain, 1);
-                world.spawnParticle(Particle.CLOUD, rain.clone().add(0, 0.5, 0), 0);
+        public void accept(SchedulerTask task) {
+            for (Location cloud : clouds) {
+                world.spawnParticle(particle, cloud, 1);
+                world.spawnParticle(Particle.CLOUD, cloud.clone().add(0, 0.5, 0), 0);
             }
 
-            location.setYaw(location.getYaw() + 20.0F); // Rotate the armor stand
-            as.teleport(location);
 
             if (i == 32) {
                 handleWinningItem();
             }
 
-            // Change random item every 2 ticks before tick 30
-            if (i <= 30 && (i % 2 == 0)) {
-                updateRandomItem();
-                playFireworkParticles();
+            if (i < 32) {
+                location.setYaw(location.getYaw() + 20.0F);
+                as.teleport(location);
+
+                if(i % 2 == 0) {
+                    updateRandomItem();
+                    world.spawnParticle(getParticle("fireworks"), bukkitLocation.clone().add(0.0, 0.4, 0.0), 9, 0.1, 0.1, 0.1, 0.0);
+                }
             }
 
-            // End the animation after 70 ticks
             if (i >= 70) {
                 as.remove();
                 task.cancel();
                 end();
             }
 
-            i++; // Increment tick counter
+            i++;
         }
 
         private void handleWinningItem() {
@@ -116,8 +119,6 @@ public class RainlyAnimation extends BukkitJavaAnimation {
             );
             getWinItem().getMaterial().setDisplayName(winGroupDisplayName);
 
-            as.setAngle(armorStandEulerAngle);
-            as.setCustomNameVisible(true);
             as.setCustomName(winGroupDisplayName);
             as.updateMeta();
 
@@ -136,34 +137,12 @@ public class RainlyAnimation extends BukkitJavaAnimation {
 
             as.setEquipment(itemSlot, item.getMaterial().getItemStack());
 
-            as.setAngle(armorStandEulerAngle);
-
             if (item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty()) {
-                as.setCustomNameVisible(true);
                 as.setCustomName(item.getMaterial().getDisplayName());
             }
 
             as.updateMeta();
             world.playSound(bukkitLocation, scrollSound, scrollVolume, scrollPitch);
-        }
-
-        private void playFireworkParticles() {
-            // Firework particle effect logic
-            t += 0.25;
-            Location particleLocation = bukkitLocation.clone().add(0.0, 0.6, 0.0);
-
-            for (double phi = 0.0; phi <= 9; ++phi) {
-                double x = 0.09 * (9 - t * 2.5) * Math.cos(t + phi);
-                double z = 0.09 * (9 - t * 2.5) * Math.sin(t + phi);
-                particleLocation.add(x, 0.0, z);
-                world.spawnParticle(getParticle("fireworks"), bukkitLocation.clone().add(0.0, 0.4, 0.0), 1, 0.1, 0.1, 0.1, 0.0);
-                particleLocation.subtract(x, 0.0, z);
-
-                if (t >= 22) {
-                    particleLocation.add(x, 0.0, z);
-                    t = 0.0;
-                }
-            }
         }
 
         private Particle getParticle(String name) {

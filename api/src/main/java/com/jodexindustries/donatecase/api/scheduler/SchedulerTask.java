@@ -5,7 +5,7 @@ import com.jodexindustries.donatecase.api.addon.Addon;
 public interface SchedulerTask extends Runnable {
     int getTaskId();
 
-    boolean isAsync();
+    boolean isSync();
 
     boolean isCancelled();
 

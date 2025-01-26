@@ -44,7 +44,7 @@ public class OpenCaseCommand extends DefaultCommand {
                         api.getCaseKeyManager().remove(caseName, playerName, 1).thenAccept(status -> {
                             if (status == DatabaseStatus.COMPLETE) {
                                 if (animation.isRequireBlock()) {
-                                    api.getAnimationManager().preEnd(data, player, player.getLocation(), data.getRandomItem());
+                                    api.getAnimationManager().preEnd(data, player, data.getRandomItem());
                                 } else {
                                     api.getAnimationManager().start(player, player.getLocation(), data);
                                 }

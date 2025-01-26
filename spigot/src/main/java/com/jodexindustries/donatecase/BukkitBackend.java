@@ -19,6 +19,7 @@ import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.api.platform.BukkitOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import com.jodexindustries.donatecase.api.scheduler.Scheduler;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.PAPI;
 import com.jodexindustries.donatecase.gui.CaseGuiWrapperBukkit;
@@ -57,6 +58,7 @@ public class BukkitBackend extends BackendPlatform {
 
     private final DonateCase api;
     private final DCTools tools;
+    private final BukkitScheduler scheduler;
 
     private PAPI papi;
     @Getter private PacketEventsSupport packetEventsSupport;
@@ -69,6 +71,7 @@ public class BukkitBackend extends BackendPlatform {
         this.plugin = plugin;
         this.api = new DonateCase(this);
         this.tools = new ToolsImpl(this);
+        this.scheduler = new BukkitScheduler(this);
 
         DCAPI.setInstance(api);
     }
@@ -173,8 +176,8 @@ public class BukkitBackend extends BackendPlatform {
     }
 
     @Override
-    public void runSync(@NotNull Runnable task) {
-        Bukkit.getScheduler().runTask(plugin, task);
+    public @NotNull Scheduler getScheduler() {
+        return scheduler;
     }
 
     @Override
@@ -278,17 +281,6 @@ public class BukkitBackend extends BackendPlatform {
                         .addon(this)
                         .animation(WheelAnimation.class)
                         .description("Items resolve around the case")
-                        .requireSettings(true)
-                        .requireBlock(true)
-                        .build()
-        );
-
-        manager.register(
-                CaseAnimation.builder()
-                        .name("RANDOM")
-                        .addon(this)
-                        .animation(RandomAnimation.class)
-                        .description("Selects the random animation from config")
                         .requireSettings(true)
                         .requireBlock(true)
                         .build()

@@ -7,7 +7,6 @@ import com.jodexindustries.donatecase.api.data.casedata.gui.TypedItemClickHandle
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
-import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -121,11 +120,12 @@ public class EventsListener implements Listener {
                 return;
             }
 
-            CaseInteractEvent event = new CaseInteractEvent(p, block, caseData, e.getAction(), DCAPI.getInstance().getAnimationManager().getActiveCasesByBlock(block));
-            Bukkit.getServer().getPluginManager().callEvent(event);
+            // TODO CaseInteractEvent
+//            CaseInteractEvent event = new CaseInteractEvent(p, block, caseData, e.getAction(), DCAPI.getInstance().getAnimationManager().getActiveCasesByBlock(block));
+//            Bukkit.getServer().getPluginManager().callEvent(event);
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                if (!event.isCancelled()) {
-                    if (event.isLocked()) {
+//                if (!event.isCancelled()) {
+                    if (DCAPI.getInstance().getAnimationManager().isLocked(caseInfo.getLocation())) {
                         p.sendMessage(DCTools.prefix(DCAPI.getInstance().getConfig().getMessages().getString("case-opens")));
                         return;
                     }
@@ -140,7 +140,7 @@ public class EventsListener implements Listener {
                             OPENItemClickHandlerImpl.executeOpen(caseData, player, caseInfo.getLocation());
                             break;
                     }
-                }
+//                }
             }
         }
     }

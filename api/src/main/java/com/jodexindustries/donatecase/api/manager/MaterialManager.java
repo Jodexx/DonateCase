@@ -2,7 +2,6 @@ package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,12 +14,8 @@ import java.util.stream.Collectors;
  * Interface for managing item materials, allowing registration, retrieval, and unregistration of case materials.
  *
  */
-public interface MaterialManager{
+public interface MaterialManager {
 
-    /**
-     *
-     * @param material
-     */
     void register(CaseMaterial material);
 
     /**

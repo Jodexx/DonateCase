@@ -8,6 +8,7 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.tools.BukkitUtils;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import lombok.SneakyThrows;
@@ -15,7 +16,6 @@ import org.bukkit.*;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +23,8 @@ import java.util.Random;
 import java.util.function.Consumer;
 
 public class ShapeAnimation extends BukkitJavaAnimation {
+
+    private final static DCAPI api = DCAPI.getInstance();
 
     @SneakyThrows
     @Override
@@ -37,7 +39,7 @@ public class ShapeAnimation extends BukkitJavaAnimation {
         final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getLocation());
 
         boolean small = getSettings().node("Shape", "SmallArmorStand").getBoolean(true);
-        as.setAngle(armorStandEulerAngle);
+        if(armorStandEulerAngle != null) as.setAngle(armorStandEulerAngle);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
@@ -51,12 +53,10 @@ public class ShapeAnimation extends BukkitJavaAnimation {
 
         long period = getSettings().node("Scroll", "Period").getLong();
 
-        Bukkit.getScheduler().runTaskTimer(((BukkitBackend) DCAPI.getInstance().getPlatform()).getPlugin(),
-                new Task(as, orangeColor, whiteColor),
-                0L, period);
+        api.getPlatform().getScheduler().run(api.getPlatform(), new Task(as, orangeColor, whiteColor), 0L, period);
     }
 
-    private class Task implements Consumer<BukkitTask> {
+    private class Task implements Consumer<SchedulerTask> {
 
         private int tick;
 
@@ -111,7 +111,7 @@ public class ShapeAnimation extends BukkitJavaAnimation {
         }
 
         @Override
-        public void accept(BukkitTask task) {
+        public void accept(SchedulerTask task) {
 
             if (tick <= scrollTime) {
                 location.setYaw(location.getYaw() + yaw);

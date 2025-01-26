@@ -80,10 +80,9 @@ public interface AnimationManager {
      *
      * @param caseData The case data associated with the animation.
      * @param player   The player interacting with the animation (can be offline).
-     * @param location The location of the active case block.
      * @param item     The item data associated with the animation's result.
      */
-    void preEnd(CaseData caseData, DCPlayer player, CaseLocation location, CaseDataItem item);
+    void preEnd(CaseData caseData, DCPlayer player, CaseDataItem item);
 
     /**
      * Completes the animation process and performs cleanup tasks.
