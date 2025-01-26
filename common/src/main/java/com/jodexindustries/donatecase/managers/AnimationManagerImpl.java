@@ -316,31 +316,36 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     private void saveOpenInfo(CaseData caseData, DCPlayer player, CaseDataItem item, String choice) {
-        CompletableFuture.runAsync(() -> {
+        api.getPlatform().getScheduler().async(platform, () -> {
 
-            CaseData.History data = new CaseData.History((String) item.getNode().key(), caseData.getCaseType(), player.getName(), System.currentTimeMillis(), item.getGroup(), choice);
-            CaseData.History[] historyData = caseData.getHistoryData();
+            CaseData.History data = new CaseData.History(
+                    item.getName(),
+                    caseData.getCaseType(),
+                    player.getName(),
+                    System.currentTimeMillis(),
+                    item.getGroup(),
+                    choice
+            );
 
-            if (historyData.length > 0) {
-                List<CaseData.History> databaseData = api.getDatabase().getHistoryData(caseData.getCaseType()).join();
-                if (!databaseData.isEmpty())
-                    historyData = databaseData.toArray(new CaseData.History[historyData.length]);
+            List<CaseData.History> databaseData = api.getDatabase().getHistoryData(caseData.getCaseType()).join();
+            if (!databaseData.isEmpty()) {
+                CaseData.History[] historyData = new CaseData.History[databaseData.size()];
 
-                System.arraycopy(historyData, 0, historyData, 1, historyData.length - 1);
+                System.arraycopy(databaseData.toArray(new CaseData.History[0]), 0, historyData, 1, databaseData.size() - 1);
+
                 historyData[0] = data;
 
                 for (int i = 0; i < historyData.length; i++) {
-                    CaseData.History tempData = historyData[i];
-                    if (tempData != null) {
-                        api.getDatabase().setHistoryData(caseData.getCaseType(), i, tempData);
+                    if (historyData[i] != null) {
+                        api.getDatabase().setHistoryData(caseData.getCaseType(), i, historyData[i]);
                     }
                 }
-
-                // Set history data in memory
-                Objects.requireNonNull(api.getCaseManager().get(caseData.getCaseType())).setHistoryData(historyData);
+            } else {
+                api.getDatabase().setHistoryData(caseData.getCaseType(), 0, data);
             }
+
             api.getCaseOpenManager().add(caseData.getCaseType(), player.getName(), 1);
-        });
+        }, 0L);
     }
 
     /**
