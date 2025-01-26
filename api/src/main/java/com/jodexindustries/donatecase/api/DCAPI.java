@@ -5,6 +5,7 @@ import com.jodexindustries.donatecase.api.config.Loadable;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.api.platform.Platform;
+import com.jodexindustries.donatecase.api.scheduler.Scheduler;
 import lombok.Getter;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -108,6 +109,8 @@ public abstract class DCAPI {
     public abstract @NotNull Config getConfig();
 
     public abstract @NotNull Loadable getCaseLoader();
+
+    public abstract @NotNull Scheduler getScheduler();
 
     /**
      * Should return the DonateCase platform instance
