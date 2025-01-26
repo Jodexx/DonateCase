@@ -5,9 +5,11 @@ import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.data.animation.Animation;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.*;
+import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
+import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
@@ -86,7 +88,7 @@ public class AnimationManagerImpl implements AnimationManager {
         String animation = caseData.getAnimation();
         CaseAnimation caseAnimation = get(animation);
 
-        ConfigurationNode settings = caseData.getAnimationSettings() != null ? caseData.getAnimationSettings() : api.getConfig().getAnimations().node(animation);
+        ConfigurationNode settings = caseData.getAnimationSettings().isNull() ? api.getConfig().getAnimations().node(animation) : caseData.getAnimationSettings();
 
 
         if (!validateStartConditions(caseData, caseAnimation, settings, location, player)) {
@@ -113,12 +115,20 @@ public class AnimationManagerImpl implements AnimationManager {
         CompletableFuture<UUID> animationCompletion = new CompletableFuture<>();
 
         if (caseAnimation.isRequireBlock()) {
-//            if (BukkitDonateCase.instance.hologramManager != null && caseData.getHologram().isEnabled()) {
-//                BukkitDonateCase.instance.hologramManager.removeHologram(block);
-//            }
+            CaseData.Hologram hologram = caseData.getHologram();
+            if(hologram != null && hologram.isEnabled()) {
+                HologramManager hologramManager = api.getPlatform().getHologramManager();
+                if (hologramManager != null) {
+                    hologramManager.remove(location);
+                }
+            }
 
-//            Location tempLocation = Case.getCaseLocationByBlockLocation(block.getLocation());
-//            if (tempLocation != null) caseLocation = tempLocation;
+            CaseInfo info = api.getConfig().getCaseStorage().get(location);
+            if(info != null) {
+                CaseLocation temp = info.getLocation();
+                location.setPitch(temp.getPitch());
+                location.setYaw(temp.getYaw());
+            }
 
             for (CaseGuiWrapper gui : api.getGUIManager().getMap().values()) {
                 if (gui.getLocation().equals(location)) {
@@ -135,16 +145,16 @@ public class AnimationManagerImpl implements AnimationManager {
             javaAnimation.init(player, location, uuid, caseData, winItem, settings);
 
 
-            api.getPlatform().runSync(() -> {
-                try {
-                    javaAnimation.start();
-                    animationCompletion.complete(uuid);
-                } catch (Throwable t) {
-                    platform.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
-                    if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
-                    animationCompletion.complete(null);
-                }
-            });
+            api.getScheduler().run(platform, () -> api.getPlatform().runSync(() -> {
+            try {
+                javaAnimation.start();
+                animationCompletion.complete(uuid);
+            } catch (Throwable t) {
+                platform.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
+                if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
+                animationCompletion.complete(null);
+            }
+            }), delay);
 
         } catch (Throwable t) {
             platform.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
@@ -210,24 +220,26 @@ public class AnimationManagerImpl implements AnimationManager {
         CaseAnimation caseAnimation = get(caseData.getAnimation());
         if(caseAnimation == null) return;
 
-//        CaseDataItem item = activeCase.getWinItem();
         DCPlayer player = activeCase.getPlayer();
 
         if(!activeCase.isKeyRemoved()) api.getCaseKeyManager().remove(caseData.getCaseType(), player.getName(), 1);
 
-        CaseLocation location = activeCase.getBlock();
+        CaseLocation block = activeCase.getBlock();
         activeCases.remove(activeCase.getUuid());
-        activeCasesByBlock.remove(location);
+        activeCasesByBlock.remove(block);
 
-        // TODO Hologram creating
-//        if(caseAnimation.isRequireBlock()) {
-//            if (BukkitDonateCase.instance.hologramManager != null && caseData.getHologram().isEnabled()) {
-//                BukkitDonateCase.instance.hologramManager.createHologram(block, caseData);
-//            }
-//        }
+        if(caseAnimation.isRequireBlock()) {
+            CaseData.Hologram hologram = caseData.getHologram();
+            if (hologram != null && hologram.isEnabled()) {
+                HologramManager hologramManager = api.getPlatform().getHologramManager();
+                if (hologramManager != null) {
+                    hologramManager.create(block, caseData);
+                }
+            }
+        }
+
+
         // TODO AnimationEndEvent
-//        AnimationEndEvent animationEndEvent = new AnimationEndEvent(player, caseData, block, item);
-//        Bukkit.getScheduler().runTask(api.getDonateCase(), () -> Bukkit.getServer().getPluginManager().callEvent(animationEndEvent));
     }
 
     @Override
