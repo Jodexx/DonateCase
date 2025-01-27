@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @Builder
 public class CaseAction implements ActionExecutor {
+
     @NotNull private final Addon addon;
     @NotNull private final String name;
     @NotNull private final ActionExecutor executor;

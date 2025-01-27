@@ -12,10 +12,12 @@ import org.jetbrains.annotations.Nullable;
 @Builder
 @Getter
 public class CaseAnimation {
+
     @NotNull private final Addon addon;
     @NotNull private final String name;
     @NotNull private final Class<? extends Animation> animation;
     @Nullable private final String description;
+
     private final boolean requireBlock;
     private final boolean requireSettings;
     private final boolean removeKeyAtStart;

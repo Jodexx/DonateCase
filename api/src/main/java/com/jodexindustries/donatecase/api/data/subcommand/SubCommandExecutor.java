@@ -16,4 +16,5 @@ public interface SubCommandExecutor {
      * @param args   Passed command arguments
      */
     boolean execute(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) throws SubCommandException;
+
 }

@@ -14,9 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MaterialManagerImpl implements MaterialManager {
-    /**
-     * Map of all registered materials
-     */
+
     private static final Map<String, CaseMaterial> registeredMaterials = new HashMap<>();
 
     private final Platform platform;

@@ -6,6 +6,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @Getter
 @ConfigSerializable
 public class CaseInfo {
+
     private String type;
     private CaseLocation location;
 

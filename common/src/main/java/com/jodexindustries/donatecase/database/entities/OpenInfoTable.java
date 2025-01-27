@@ -9,10 +9,13 @@ import lombok.Setter;
 @Getter
 @DatabaseTable(tableName = "open_info")
 public class OpenInfoTable {
+
     @DatabaseField(canBeNull = false)
     private String player;
+
     @DatabaseField(columnName = "case_type")
     private String caseType;
+
     @DatabaseField(defaultValue = "0")
     private int count;
 

@@ -9,4 +9,5 @@ public class SubCommandException extends RuntimeException {
     public SubCommandException(String message) {
         super(message);
     }
+
 }

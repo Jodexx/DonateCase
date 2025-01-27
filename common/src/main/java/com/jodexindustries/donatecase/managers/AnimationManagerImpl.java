@@ -24,23 +24,10 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
-/**
- * Animation control class, registration, playing
- */
 public class AnimationManagerImpl implements AnimationManager {
-    /**
-     * Map of registered animations
-     */
+
     private final static Map<String, CaseAnimation> registeredAnimations = new HashMap<>();
-
-    /**
-     * Map of active cases
-     */
     private final static Map<UUID, ActiveCase> activeCases = new HashMap<>();
-
-    /**
-     * Active cases, but by location
-     */
     private final static Map<Object, List<UUID>> activeCasesByBlock = new HashMap<>();
 
     private final DCAPI api;

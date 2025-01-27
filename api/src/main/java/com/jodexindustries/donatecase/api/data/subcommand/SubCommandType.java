@@ -5,6 +5,7 @@ package com.jodexindustries.donatecase.api.data.subcommand;
  */
 
 public enum SubCommandType {
+
     /**
      * User with player rights can use, and see this command in tab completer (donatecase.player)
      */

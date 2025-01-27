@@ -9,6 +9,7 @@ public interface PAPI {
      * Registers placeholder expansion
      */
     void register();
+
     /**
      * Unregisters placeholder expansion
      */

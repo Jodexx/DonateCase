@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * Called when addon disabled
  */
 public class AddonDisableEvent extends Event {
+
     private static final HandlerList handlers = new HandlerList();
     private final InternalAddon addon;
     private final Addon caused;

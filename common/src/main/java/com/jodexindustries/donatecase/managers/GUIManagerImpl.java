@@ -15,9 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GUIManagerImpl implements GUIManager {
 
-    /**
-     * Players, who opened cases (open gui)
-     */
     private final static Map<UUID, CaseGuiWrapper> playersGui = new ConcurrentHashMap<>();
 
     private final BackendPlatform platform;

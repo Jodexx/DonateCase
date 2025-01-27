@@ -14,11 +14,13 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @Builder
 public class TypedItem {
+
     @NotNull private final String id;
     @NotNull private final Addon addon;
     @Nullable private final String description;
     @Nullable private final TypedItemHandler handler;
     @Nullable private final TypedItemClickHandler click;
+
     private final boolean updateMeta;
     private final boolean loadOnCase;
 

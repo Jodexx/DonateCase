@@ -17,6 +17,7 @@ import java.util.List;
 @Builder
 @Getter
 public final class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {
+
     @NotNull private Addon addon;
     @NotNull private String name;
     @Nullable private SubCommandExecutor executor;

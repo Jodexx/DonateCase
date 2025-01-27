@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * Called when the animation ends
  */
 public class AnimationEndEvent extends Event {
+
     private static final HandlerList handlers = new HandlerList();
     private final CaseData caseData;
     private final Block block;

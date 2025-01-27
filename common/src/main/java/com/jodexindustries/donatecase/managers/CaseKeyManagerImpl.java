@@ -13,9 +13,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class CaseKeyManagerImpl implements CaseKeyManager {
 
-    /**
-     * Cache map for storing number of player's keys
-     */
     public final static SimpleCache<String, Map<String, Integer>> keysCache = new SimpleCache<>(20);
 
     private final DCAPI api;

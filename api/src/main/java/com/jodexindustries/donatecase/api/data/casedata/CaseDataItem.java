@@ -17,22 +17,31 @@ import java.util.Map;
 @Setter
 @ConfigSerializable
 public class CaseDataItem implements Cloneable {
+
     @Setting(nodeFromParent = true)
     private ConfigurationNode node;
+
     @Setting("Group")
     private String group;
+
     @Setting("Chance")
     private double chance;
+
     @Setting("Index")
     private int index;
+
     @Setting("Material")
     private CaseDataMaterial material;
+
     @Setting("GiveType")
     private String giveType = "ONE";
+
     @Setting("Actions")
     private List<String> actions;
+
     @Setting("AlternativeActions")
     private List<String> alternativeActions;
+
     @Setting("RandomActions")
     private Map<String, RandomAction> randomActions;
 

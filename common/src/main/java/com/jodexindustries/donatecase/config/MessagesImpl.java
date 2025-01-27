@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessagesImpl implements Messages {
+
     private final BackendPlatform platform;
     private final File folder;
 

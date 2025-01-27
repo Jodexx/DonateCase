@@ -11,9 +11,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class CaseOpenManagerImpl implements CaseOpenManager {
 
-    /**
-     * Cache map for storing number of player's cases opens
-     */
     public final static SimpleCache<String, Map<String, Integer>> openCache = new SimpleCache<>(20);
     
     private final DCAPI api;

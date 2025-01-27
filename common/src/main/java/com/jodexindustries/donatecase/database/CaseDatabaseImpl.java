@@ -27,6 +27,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 public class CaseDatabaseImpl implements CaseDatabase {
+
     private Dao<CaseData.History, String> historyDataTables;
     private Dao<PlayerKeysTable, String> playerKeysTables;
     private Dao<OpenInfoTable, String> openInfoTables;

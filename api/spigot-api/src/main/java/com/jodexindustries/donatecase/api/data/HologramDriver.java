@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api.data;
 import org.jetbrains.annotations.NotNull;
 
 public enum HologramDriver {
+
     decentholograms,
     holographicdisplays,
     cmi,

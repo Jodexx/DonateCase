@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 @Getter
 @Builder
 public class CaseMaterial implements MaterialHandler {
+
     @NotNull private final MaterialHandler handler;
     @NotNull private final Addon addon;
     @NotNull private final String id;

@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * Called when addon enabled
  */
 public class AddonEnableEvent extends Event {
+
     private static final HandlerList handlers = new HandlerList();
     private final InternalAddon addon;
     private final PowerReason reason;

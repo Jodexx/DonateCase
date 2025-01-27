@@ -21,6 +21,7 @@ import java.util.Map;
  * Class for loading cases configurations
  */
 public class ConfigCasesImpl implements ConfigCases {
+
     private final Map<String, ConfigurationNode> cases = new HashMap<>();
     private final BackendPlatform platform;
 

@@ -14,11 +14,13 @@ import java.util.UUID;
 @Getter
 @Setter
 public class ActiveCase {
+
     private final UUID uuid;
     private final CaseLocation block;
     private final DCPlayer player;
     private final CaseDataItem winItem;
     private final String caseType;
+
     private boolean locked;
     private boolean keyRemoved;
 

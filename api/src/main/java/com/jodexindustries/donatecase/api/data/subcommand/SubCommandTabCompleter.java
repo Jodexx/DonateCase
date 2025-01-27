@@ -19,4 +19,5 @@ public interface SubCommandTabCompleter {
      * @return A list of tab-completion suggestions.
      */
     List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) throws SubCommandException;
+
 }
