@@ -93,7 +93,7 @@ public class BukkitBackend extends BackendPlatform {
         loadPacketEventsAPI();
         loadLuckPerms();
 
-        Bukkit.getServer().getPluginManager().registerEvents(new EventsListener(), plugin);
+        Bukkit.getServer().getPluginManager().registerEvents(new EventsListener(this), plugin);
 
         api.load();
         // after config load
@@ -171,7 +171,7 @@ public class BukkitBackend extends BackendPlatform {
     }
 
     @Override
-    public DCAPI getAPI() {
+    public DonateCase getAPI() {
         return api;
     }
 

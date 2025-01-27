@@ -3,8 +3,9 @@ package com.jodexindustries.donatecase.api.event;
 /**
  * An event that may be fired by DonateCase when something occurs.
  *
- * <p>This is a marker interface. All events <strong>must</strong> implement this
- * interface.
+ * <p>This is a marker class. All events <strong>must</strong> extend this
+ * class.
  */
-public interface DCEvent {
+public abstract class DCEvent {
+
 }

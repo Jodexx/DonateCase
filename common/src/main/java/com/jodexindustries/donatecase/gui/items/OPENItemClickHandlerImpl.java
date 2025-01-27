@@ -4,7 +4,7 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
-import com.jodexindustries.donatecase.api.event.GUIClickEvent;
+import com.jodexindustries.donatecase.api.event.player.GuiClickEvent;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
@@ -15,8 +15,8 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
 
 
     @Override
-    public void onClick(@NotNull GUIClickEvent e) {
-        CaseGuiWrapper gui = e.getCaseGUI();
+    public void onClick(@NotNull GuiClickEvent e) {
+        CaseGuiWrapper gui = e.getGuiWrapper();
         CaseLocation location = gui.getLocation();
         String itemType = e.getItemType();
         CaseData caseData = gui.getCaseData();

@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api.data.casedata.gui.typeditem;
 
-import com.jodexindustries.donatecase.api.event.GUIClickEvent;
+import com.jodexindustries.donatecase.api.event.player.GuiClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -13,5 +13,5 @@ public interface TypedItemClickHandler {
      *
      * @param event called event
      */
-    void onClick(@NotNull GUIClickEvent event) throws TypedItemException;
+    void onClick(@NotNull GuiClickEvent event) throws TypedItemException;
 }

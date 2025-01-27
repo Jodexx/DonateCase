@@ -1,22 +1,17 @@
 package com.jodexindustries.donatecase.event;
 
-import java.lang.reflect.Method;
-import java.util.logging.Level;
+import java.util.function.Predicate;
 
-import com.jodexindustries.donatecase.api.DCAPI;
+import com.google.common.collect.SetMultimap;
 import com.jodexindustries.donatecase.api.event.DCEvent;
 import com.jodexindustries.donatecase.api.event.EventBus;
-import com.jodexindustries.donatecase.api.event.EventHandler;
-import com.jodexindustries.donatecase.api.event.Subscribe;
-import lombok.AllArgsConstructor;
 import net.kyori.event.EventSubscriber;
-import net.kyori.event.PostOrders;
 import net.kyori.event.PostResult;
 import net.kyori.event.SimpleEventBus;
 import net.kyori.event.method.MethodHandleEventExecutorFactory;
-import net.kyori.event.method.MethodScanner;
 import net.kyori.event.method.MethodSubscriptionAdapter;
 import net.kyori.event.method.SimpleMethodSubscriptionAdapter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 public class EventBusImpl implements EventBus {
@@ -25,74 +20,58 @@ public class EventBusImpl implements EventBus {
     private final MethodSubscriptionAdapter<Object> methodAdapter;
 
     public EventBusImpl() {
-        bus = new SimpleEventBus<DCEvent>(DCEvent.class) {
-
-            @Override
-            protected boolean shouldPost(@NotNull DCEvent event, @NotNull EventSubscriber<?> subscriber) {
-                return true;
-            }
-        };
-        methodAdapter = new SimpleMethodSubscriptionAdapter<>(bus, new MethodHandleEventExecutorFactory<>(), new TabMethodScanner());
-    }
-
-    public <E extends DCEvent> void fire(E event) {
-        if (!bus.hasSubscribers(event.getClass())) return;
-        PostResult result = bus.post(event);
-        if (result.exceptions().isEmpty()) return;
-
-        DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Some errors occurred whilst trying to fire event " + event);
-        int i = 0;
-        for (Throwable exception : result.exceptions().values()) {
-            DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "#" + i++ + ": \n", exception);
-        }
+        bus = new SimpleEventBus<>(DCEvent.class);
+        methodAdapter = new SimpleMethodSubscriptionAdapter<>(bus, new MethodHandleEventExecutorFactory<>());
     }
 
     @Override
-    public void register(@lombok.NonNull Object listener) {
+    public @NonNull Class<DCEvent> eventType() {
+        return bus.eventType();
+    }
+
+    @Override
+    public @NonNull PostResult post(@NonNull DCEvent event) {
+        return bus.post(event);
+    }
+
+    @Override
+    public void register(@NotNull Object listener) {
         methodAdapter.register(listener);
     }
 
     @Override
-    public <E extends DCEvent> void register(@lombok.NonNull Class<E> type, @lombok.NonNull EventHandler<E> handler) {
-        bus.register(type, new HandlerWrapper<>(handler));
+    public <T extends DCEvent> void register(@NonNull Class<T> clazz, @NonNull EventSubscriber<? super T> subscriber) {
+        bus.register(clazz, subscriber);
     }
 
     @Override
-    public void unregister(@lombok.NonNull Object listener) {
+    public void unregister(@NotNull Object listener) {
         methodAdapter.unregister(listener);
     }
 
     @Override
-    public <E extends DCEvent> void unregister(@lombok.NonNull EventHandler<E> handler) {
-        bus.unregister(subscriber -> subscriber instanceof HandlerWrapper && ((HandlerWrapper<?>) subscriber).handler == handler);
+    public void unregister(@NonNull EventSubscriber<?> subscriber) {
+        bus.unregister(subscriber);
     }
 
-    private static class TabMethodScanner implements MethodScanner<Object> {
-
-        @Override
-        public boolean shouldRegister(@NotNull Object listener, @NotNull Method method) {
-            return method.isAnnotationPresent(Subscribe.class);
-        }
-
-        @Override
-        public int postOrder(@NotNull Object listener, @NotNull Method method) {
-            return PostOrders.NORMAL;
-        }
-
-        @Override
-        public boolean consumeCancelledEvents(@NotNull Object listener, @NotNull Method method) {
-            return true;
-        }
+    @Override
+    public void unregister(@NonNull Predicate<EventSubscriber<?>> predicate) {
+        bus.unregister(predicate);
     }
 
-    @AllArgsConstructor
-    private static class HandlerWrapper<E> implements EventSubscriber<E> {
-
-        private final EventHandler<E> handler;
-
-        @Override
-        public void invoke(@NotNull E event) {
-            handler.handle(event);
-        }
+    @Override
+    public void unregisterAll() {
+        bus.unregisterAll();
     }
+
+    @Override
+    public <T extends DCEvent> boolean hasSubscribers(@NonNull Class<T> clazz) {
+        return bus.hasSubscribers(clazz);
+    }
+
+    @Override
+    public @NonNull SetMultimap<Class<?>, EventSubscriber<?>> subscribers() {
+        return bus.subscribers();
+    }
+
 }

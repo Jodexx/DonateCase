@@ -1,19 +1,14 @@
 package com.jodexindustries.donatecase.api.event;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * The event bus. This is used to register event listeners/handlers for
- * handling events that may be fired by DonateCase.
- */
-@SuppressWarnings("unused") // API class
-public interface EventBus {
+public interface EventBus extends net.kyori.event.EventBus<DCEvent> {
 
     /**
      * Scans the given listener for any method that is annotated with
-     * {@link Subscribe} and registers it as a listener to this event bus.
+     * {@link net.kyori.event.method.annotation.Subscribe} and registers it as a listener to this event bus.
      *
-     * <p>All methods in this class that are annotated with {@link Subscribe}
+     * <p>All methods in this class that are annotated with {@link net.kyori.event.method.annotation.Subscribe}
      * must meet the following criteria:
      * <ul>
      *     <li>It must be <strong>public</strong>.</li>
@@ -27,30 +22,13 @@ public interface EventBus {
      * @param listener the listener to register
      * @throws RuntimeException if a method does not meet the criteria
      */
-    void register(@NonNull Object listener);
-
-    /**
-     * Registers the given handler to this event bus.
-     *
-     * @param type the class type of the event
-     * @param handler the handler to register
-     * @param <E> the type of the event
-     */
-    <E extends DCEvent> void register(@NonNull Class<E> type, @NonNull EventHandler<E> handler);
+    void register(@NotNull Object listener);
 
     /**
      * Scans the given listener for any method that is annotated with
-     * {@link Subscribe} and unregisters it from this event bus.
+     * {@link net.kyori.event.method.annotation.Subscribe} and unregisters it from this event bus.
      *
      * @param listener the listener to unregister
      */
-    void unregister(@NonNull Object listener);
-
-    /**
-     * Unregisters the given handler from this event bus.
-     *
-     * @param handler the handler to unregister
-     * @param <E> the type of the event
-     */
-    <E extends DCEvent> void unregister(@NonNull EventHandler<E> handler);
+    void unregister(@NotNull Object listener);
 }

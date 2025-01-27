@@ -1,19 +1,15 @@
 package com.jodexindustries.donatecase.listener;
 
+import com.jodexindustries.donatecase.BukkitBackend;
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
-import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
-import com.jodexindustries.donatecase.api.events.CaseGuiClickEvent;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
+import com.jodexindustries.donatecase.api.event.player.CaseInteractEvent;
+import com.jodexindustries.donatecase.api.event.player.GuiClickEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
-import com.jodexindustries.donatecase.gui.items.OPENItemClickHandlerImpl;
 import com.jodexindustries.donatecase.tools.BukkitUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -22,7 +18,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -32,12 +27,13 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-import java.util.UUID;
-import java.util.logging.Level;
-
-
-
 public class EventsListener implements Listener {
+
+    private final BukkitBackend backend;
+
+    public EventsListener(BukkitBackend backend) {
+        this.backend = backend;
+    }
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
@@ -46,50 +42,32 @@ public class EventsListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler
     public void onAdminJoined(PlayerJoinEvent event) {
-        Player p = event.getPlayer();
-        if (p.hasPermission("donatecase.admin")) {
-            // TODO update checker (move to event manager)
-//            if (instance.api.getConfig().getConfig().getBoolean("DonateCase.UpdateChecker")) {
-//                instance.updateChecker.getVersion().thenAcceptAsync(version -> {
-//                    if(DCTools.getPluginVersion(instance.getDescription().getVersion()) < DCTools.getPluginVersion(version.getVersionNumber())) {
-//                        instance.api.getPlatform().getTools().msg(p, DCToolsBukkit.rt(instance.api.getConfig().getLang().getString("new-update"), "%version:" + version));
-//                    }
-//                });
-//            }
-        }
+            backend.getAPI().getEventBus().post(new com.jodexindustries.donatecase.api.event.player.PlayerJoinEvent(BukkitUtils.fromBukkit(event.getPlayer())));
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void InventoryClick(InventoryClickEvent e) {
-        UUID uuid = e.getWhoClicked().getUniqueId();
-        if (DCAPI.getInstance().getGUIManager().getMap().containsKey(uuid)) {
+        Player player = (Player) e.getWhoClicked();
+        CaseGuiWrapper gui = DCAPI.getInstance().getGUIManager().getMap().get(player.getUniqueId());
+        if (gui != null) {
             e.setCancelled(true);
 
-            CaseGuiWrapper gui = DCAPI.getInstance().getGUIManager().getMap().get(uuid);
-            CaseData caseData = gui.getCaseData();
-            String itemType = caseData.getCaseGui().getItemTypeBySlot(e.getRawSlot());
-            CaseGuiClickEvent caseGuiClickEvent = new CaseGuiClickEvent(e.getView(), e.getSlotType(),
-                    e.getSlot(), e.getClick(), e.getAction(), gui, itemType);
-            Bukkit.getServer().getPluginManager().callEvent(caseGuiClickEvent);
-
+            String itemType = gui.getCaseData().getCaseGui().getItemTypeBySlot(e.getRawSlot());
             if (itemType == null) return;
 
-            if (!caseGuiClickEvent.isCancelled()) {
-
-                TypedItem typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(itemType);
-                if (typedItem == null) return;
-
-                TypedItemClickHandler handler = typedItem.getClick();
-                if (handler == null) return;
-
-                handler.onClick(caseGuiClickEvent);
-            }
+            backend.getAPI().getEventBus().post(
+                    new GuiClickEvent(
+                            BukkitUtils.fromBukkit(player),
+                            gui,
+                            itemType
+                    )
+            );
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void PlayerInteractEntity(PlayerInteractAtEntityEvent e) {
         Entity entity = e.getRightClicked();
         if (entity instanceof ArmorStand) {
@@ -99,50 +77,36 @@ public class EventsListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler
     public void PlayerInteract(PlayerInteractEvent e) {
         if (e.getHand() == EquipmentSlot.OFF_HAND) return;
-        Player p = e.getPlayer();
+
         Block block = e.getClickedBlock();
-        if (block != null) {
-            Location blockLocation = block.getLocation();
-            CaseInfo caseInfo = DCAPI.getInstance().getConfig().getCaseStorage().get(BukkitUtils.fromBukkit(blockLocation));
-            if (caseInfo == null) return;
+        if (block == null) return;
 
-            String caseType = caseInfo.getType();
+        CaseInfo caseInfo = DCAPI.getInstance().getConfig().getCaseStorage().get(BukkitUtils.fromBukkit(block.getLocation()));
+        if (caseInfo == null) return;
 
-            e.setCancelled(true);
+        CaseInteractEvent.Action action;
 
-            CaseData caseData = DCAPI.getInstance().getCaseManager().get(caseType);
-            if (caseData == null) {
-                p.sendMessage(DCTools.prefix("&cSomething wrong! Contact with server administrator!"));
-                DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
-                return;
-            }
-
-            // TODO CaseInteractEvent
-//            CaseInteractEvent event = new CaseInteractEvent(p, block, caseData, e.getAction(), DCAPI.getInstance().getAnimationManager().getActiveCasesByBlock(block));
-//            Bukkit.getServer().getPluginManager().callEvent(event);
-            if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-//                if (!event.isCancelled()) {
-                    if (DCAPI.getInstance().getAnimationManager().isLocked(caseInfo.getLocation())) {
-                        p.sendMessage(DCTools.prefix(DCAPI.getInstance().getConfig().getMessages().getString("case-opens")));
-                        return;
-                    }
-
-                    DCPlayer player = BukkitUtils.fromBukkit(p);
-
-                    switch (caseData.getOpenType()) {
-                        case GUI:
-                            DCAPI.getInstance().getGUIManager().open(player, caseData, caseInfo.getLocation());
-                            break;
-                        case BLOCK:
-                            OPENItemClickHandlerImpl.executeOpen(caseData, player, caseInfo.getLocation());
-                            break;
-                    }
-//                }
-            }
+        switch (e.getAction()) {
+            case RIGHT_CLICK_BLOCK:
+                action = CaseInteractEvent.Action.RIGHT;
+                break;
+            case LEFT_CLICK_BLOCK:
+                action = CaseInteractEvent.Action.LEFT;
+                break;
+            default:
+                action = null;
         }
+
+        if (action == null) return;
+
+        e.setCancelled(true);
+
+        DCPlayer player = BukkitUtils.fromBukkit(e.getPlayer());
+
+        backend.getAPI().getEventBus().post(new CaseInteractEvent(player, caseInfo, action));
     }
 
     @EventHandler

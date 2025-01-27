@@ -5,15 +5,16 @@ import com.jodexindustries.donatecase.api.addon.PowerReason;
 import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.config.Loadable;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
-import com.jodexindustries.donatecase.api.event.EventBus;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.config.CaseLoader;
 import com.jodexindustries.donatecase.config.ConfigImpl;
 import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.event.EventBusImpl;
+import com.jodexindustries.donatecase.event.EventListener;
 import com.jodexindustries.donatecase.managers.*;
 import com.jodexindustries.donatecase.platform.BackendPlatform;
 import com.jodexindustries.donatecase.tools.updater.UpdateChecker;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class DonateCase extends DCAPI {
@@ -32,8 +33,10 @@ public class DonateCase extends DCAPI {
     private final CaseDatabase database;
     private final Config config;
     private final CaseLoader caseLoader;
+    @Getter
     private final UpdateChecker updateChecker;
-    private final EventBus eventBus;
+    private final EventBusImpl eventBus;
+    private final EventListener eventListener;
 
     private final BackendPlatform platform;
 
@@ -56,6 +59,7 @@ public class DonateCase extends DCAPI {
         this.caseLoader = new CaseLoader(this);
         this.updateChecker = new UpdateChecker(this);
         this.eventBus = new EventBusImpl();
+        this.eventListener = new EventListener(this);
     }
 
     public void load() {
@@ -66,12 +70,15 @@ public class DonateCase extends DCAPI {
         caseLoader.load();
         updateChecker.check();
         database.connect();
+        eventBus.register(eventListener);
         addonManager.enable(PowerReason.DONATE_CASE);
 
         platform.getLogger().info("Enabled in " + (System.currentTimeMillis() - time) + "ms");
     }
 
     public void unload() {
+        eventBus.unregisterAll();
+
         addonManager.unload(PowerReason.DONATE_CASE);
         animationmanager.unregister();
         subCommandManager.unregister();
@@ -152,7 +159,7 @@ public class DonateCase extends DCAPI {
     }
 
     @Override
-    public @NotNull EventBus getEventBus() {
+    public @NotNull EventBusImpl getEventBus() {
         return eventBus;
     }
 

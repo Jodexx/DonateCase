@@ -23,39 +23,38 @@ public class UpdateChecker {
     }
 
     public void check() {
-        if (api.getConfig().getConfig().node("DonateCase", "UpdateChecker").getBoolean()) {
-            getVersion().thenAcceptAsync(version -> {
-                if(DCTools.getPluginVersion(api.getPlatform().getVersion()) < DCTools.getPluginVersion(version.getVersionNumber())) {
-                    api.getPlatform().getLogger().info("There is a new update " + version.getVersionNumber() + " available.");
-                    api.getPlatform().getLogger().info("Download - https://modrinth.com/plugin/donatecase");
-                }
-            });
-        }
-    }
-
-    private CompletableFuture<VersionInfo> getVersion() {
-        return CompletableFuture.supplyAsync(() -> {
-
-            try {
-                URL url = new URL("https://api.modrinth.com/v2/project/donatecase/version");
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                connection.setRequestProperty("Accept", "application/json");
-
-                if (connection.getResponseCode() == 200) {
-                    return getLatest(connection);
-                } else {
-                    api.getPlatform().getLogger().warning("Unable to check for updates. HTTP response code: " + connection.getResponseCode());
-                }
-
-            } catch (Exception exception) {
-                api.getPlatform().getLogger().warning("Unable to check for updates: " + exception.getMessage());
+        getVersion().thenAcceptAsync(version -> {
+            if (version.isNew()) {
+                api.getPlatform().getLogger().info("There is a new update " + version.getVersionNumber() + " available.");
+                api.getPlatform().getLogger().info("Download - https://modrinth.com/plugin/donatecase");
             }
-            return null;
         });
     }
 
-    private static VersionInfo getLatest(HttpURLConnection connection) throws IOException {
+    public CompletableFuture<VersionInfo> getVersion() {
+        return !api.getConfig().getConfig().node("DonateCase", "UpdateChecker").getBoolean() ? CompletableFuture.completedFuture(new VersionInfo()) :
+                CompletableFuture.supplyAsync(() -> {
+
+                    try {
+                        URL url = new URL("https://api.modrinth.com/v2/project/donatecase/version");
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.setRequestProperty("Accept", "application/json");
+
+                        if (connection.getResponseCode() == 200) {
+                            return getLatest(connection);
+                        } else {
+                            api.getPlatform().getLogger().warning("Unable to check for updates. HTTP response code: " + connection.getResponseCode());
+                        }
+
+                    } catch (Exception exception) {
+                        api.getPlatform().getLogger().warning("Unable to check for updates: " + exception.getMessage());
+                    }
+                    return null;
+                });
+    }
+
+    private VersionInfo getLatest(HttpURLConnection connection) throws IOException {
         Gson gson = new Gson();
         JsonArray versions;
 
@@ -72,6 +71,12 @@ public class UpdateChecker {
 
             if (latestVersionInfo == null || versionInfo.getDatePublished().compareTo(latestVersionInfo.getDatePublished()) > 0) {
                 latestVersionInfo = versionInfo;
+            }
+        }
+
+        if(latestVersionInfo != null) {
+            if (DCTools.getPluginVersion(api.getPlatform().getVersion()) < DCTools.getPluginVersion(latestVersionInfo.getVersionNumber())) {
+                latestVersionInfo.setNew(true);
             }
         }
 
