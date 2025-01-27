@@ -5,10 +5,12 @@ import com.jodexindustries.donatecase.api.addon.PowerReason;
 import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.config.Loadable;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
+import com.jodexindustries.donatecase.api.event.EventBus;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.config.CaseLoader;
 import com.jodexindustries.donatecase.config.ConfigImpl;
 import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
+import com.jodexindustries.donatecase.event.EventBusImpl;
 import com.jodexindustries.donatecase.managers.*;
 import com.jodexindustries.donatecase.platform.BackendPlatform;
 import com.jodexindustries.donatecase.tools.updater.UpdateChecker;
@@ -31,6 +33,7 @@ public class DonateCase extends DCAPI {
     private final Config config;
     private final CaseLoader caseLoader;
     private final UpdateChecker updateChecker;
+    private final EventBus eventBus;
 
     private final BackendPlatform platform;
 
@@ -52,6 +55,7 @@ public class DonateCase extends DCAPI {
         this.config = new ConfigImpl(platform);
         this.caseLoader = new CaseLoader(this);
         this.updateChecker = new UpdateChecker(this);
+        this.eventBus = new EventBusImpl();
     }
 
     public void load() {
@@ -145,6 +149,11 @@ public class DonateCase extends DCAPI {
     @Override
     public @NotNull Loadable getCaseLoader() {
         return caseLoader;
+    }
+
+    @Override
+    public @NotNull EventBus getEventBus() {
+        return eventBus;
     }
 
     @Override
