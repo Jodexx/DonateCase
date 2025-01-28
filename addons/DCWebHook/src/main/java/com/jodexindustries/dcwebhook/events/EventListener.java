@@ -2,8 +2,8 @@ package com.jodexindustries.dcwebhook.events;
 
 import com.jodexindustries.dcwebhook.tools.DiscordWebhook;
 import com.jodexindustries.dcwebhook.tools.Tools;
-import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
-import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.event.AnimationEndEvent;
+import com.jodexindustries.donatecase.api.event.DonateCaseReloadEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;

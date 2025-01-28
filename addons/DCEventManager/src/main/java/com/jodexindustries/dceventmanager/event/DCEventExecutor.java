@@ -5,7 +5,7 @@ import com.jodexindustries.dceventmanager.data.Placeholder;
 import com.jodexindustries.dceventmanager.utils.Reflection;
 import com.jodexindustries.dceventmanager.utils.Tools;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.event.DonateCaseReloadEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

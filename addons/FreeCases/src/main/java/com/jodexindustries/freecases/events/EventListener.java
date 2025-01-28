@@ -1,6 +1,6 @@
 package com.jodexindustries.freecases.events;
 
-import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.event.DonateCaseReloadEvent;
 import com.jodexindustries.freecases.utils.CooldownManager;
 import com.jodexindustries.freecases.utils.Tools;
 import org.bukkit.entity.Player;

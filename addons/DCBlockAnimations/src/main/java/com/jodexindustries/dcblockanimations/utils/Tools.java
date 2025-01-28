@@ -2,9 +2,9 @@ package com.jodexindustries.dcblockanimations.utils;
 
 import com.jodexindustries.dcblockanimations.bootstrap.Main;
 import com.jodexindustries.dcblockanimations.config.Config;
-import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
-import com.jodexindustries.donatecase.api.events.AnimationStartEvent;
-import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.event.AnimationEndEvent;
+import com.jodexindustries.donatecase.api.event.AnimationStartEvent;
+import com.jodexindustries.donatecase.api.event.DonateCaseReloadEvent;
 import org.bukkit.block.Block;
 import org.bukkit.block.Lidded;
 import org.bukkit.event.EventHandler;

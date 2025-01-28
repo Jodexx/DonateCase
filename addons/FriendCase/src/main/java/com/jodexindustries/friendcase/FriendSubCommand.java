@@ -1,137 +1,135 @@
 package com.jodexindustries.friendcase;
 
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
-import com.jodexindustries.donatecase.api.events.CaseGiftEvent;
-import com.jodexindustries.friendcase.utils.Tools;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
+import com.jodexindustries.donatecase.api.event.CaseGiftEvent;
+import com.jodexindustries.donatecase.api.platform.DCCommandSender;
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.jodexindustries.donatecase.tools.DCToolsBukkit.rc;
+import static com.jodexindustries.donatecase.api.tools.DCTools.rc;
 
-public class FriendSubCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
-    private final Tools t;
+public class FriendSubCommand implements SubCommandExecutor, SubCommandTabCompleter {
+    private final MainAddon addon;
 
-    public FriendSubCommand(Tools t) {
-        this.t = t;
+    public FriendSubCommand(MainAddon addon) {
+        this.addon = addon;
     }
 
     @Override
-    public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.OnlyPlayers", "")));
-            return;
+    public boolean execute(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
+        if (!(sender instanceof DCPlayer)) {
+            sender.sendMessage(rc(addon.config.getString("Messages", "OnlyPlayers")));
+            return true;
         }
-        Player p = (Player) sender;
+        DCPlayer p = (DCPlayer) sender;
         if (args.length == 0) {
             sendHelp(sender);
         } else {
             if (args.length < 3) {
                 sendHelp(sender);
-                return;
+                return true;
             }
 
-            Player target = Bukkit.getPlayerExact(args[0]);
+            DCPlayer target = addon.api.getPlatform().getPlayer(args[0]);
             String caseType = args[1];
             int keys;
             try {
                 keys = Math.abs(Integer.parseInt(args[2]));
             } catch (NumberFormatException e) {
-                sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.NumberFormat", "")));
-                return;
+                sender.sendMessage(rc(addon.config.getString("Messages", "NumberFormat")));
+                return true;
             }
 
-            if (t.getConfig().getConfig().getStringList("BlackList").contains(caseType)) {
-                sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.CaseInBlackList", "")));
-                return;
+            if (addon.config.getList("BlackList").contains(caseType)) {
+                sender.sendMessage(rc(addon.config.getString("Messages", "CaseInBlackList")));
+                return true;
             }
 
-            CaseDataBukkit caseData = t.getDCAPI().getCaseManager().get(caseType);
+            CaseData caseData = addon.api.getCaseManager().get(caseType);
 
             if (caseData == null) {
-                sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.CaseNotFound", "")));
-                return;
+                sender.sendMessage(rc(addon.config.getString("Messages", "CaseNotFound")));
+                return true;
             }
 
-            int playerKeys = t.getDCAPI().getCaseKeyManager().get(caseType, p.getName());
+            int playerKeys = addon.api.getCaseKeyManager().get(caseType, p.getName());
 
             if (playerKeys < 1 || playerKeys < keys) {
                 sender.sendMessage(rc(
-                        t.getConfig().getConfig().getString("Messages.MinNumber", "")
+                        addon.config.getString("Messages", "MinNumber")
                                 .replace("%required%", keys + "")
                 ));
-                return;
+                return true;
             }
 
 
             if (target == null) {
-                sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.PlayerNotFound", "")));
-                return;
+                sender.sendMessage(rc(addon.config.getString("Messages", "PlayerNotFound")));
+                return true;
             }
 
             if (target == p) {
-                sender.sendMessage(rc(t.getConfig().getConfig().getString("Messages.GiftYourself", "")));
-                return;
+                sender.sendMessage(rc(addon.config.getString("Messages", "GiftYourself")));
+                return true;
             }
 
-            t.getDCAPI().getCaseKeyManager().remove(caseType, p.getName(), keys).thenAcceptAsync(status -> {
+            addon.api.getCaseKeyManager().remove(caseType, p.getName(), keys).thenAcceptAsync(status -> {
 
                 if (status != DatabaseStatus.COMPLETE) {
                     return;
                 }
 
-                t.getDCAPI().getCaseKeyManager().add(caseType, target.getName(), keys).thenAcceptAsync(nextStatus -> {
+                addon.api.getCaseKeyManager().add(caseType, target.getName(), keys).thenAcceptAsync(nextStatus -> {
 
                     if (nextStatus != DatabaseStatus.COMPLETE) {
                         return;
                     }
 
                     target.sendMessage(rc(
-                            t.getConfig().getConfig().getString("Messages.YouReceivedGift", "")
+                            addon.config.getString("Messages", "YouReceivedGift")
                                     .replace("%sender%", sender.getName())
                                     .replace("%target%", target.getName())
                                     .replace("%keys%", keys + "")
                                     .replace("%case%", caseType)
                     ));
                     sender.sendMessage(rc(
-                            t.getConfig().getConfig().getString("Messages.YouSendGift", "")
+                            addon.config.getString("Messages", "YouSendGift")
                                     .replace("%target%", target.getName())
                                     .replace("%sender%", sender.getName())
                                     .replace("%keys%", keys + "")
                                     .replace("%case%", caseType)
                     ));
 
-                    Bukkit.getScheduler().runTask(t.getDCAPI().getDonateCase(), () -> {
-                        CaseGiftEvent event = new CaseGiftEvent(p, target, caseData, keys);
-                        Bukkit.getPluginManager().callEvent(event);
-                    });
+                    addon.api.getEventBus().post(new CaseGiftEvent(p, target, caseData, keys));
                 });
             });
 
         }
+
+        return true;
     }
 
-    private void sendHelp(CommandSender sender) {
-        for (String msg : t.getConfig().getConfig().getStringList("Messages.Help")) {
+    private void sendHelp(DCCommandSender sender) {
+        for (String msg : addon.config.getList("Messages", "Help")) {
             sender.sendMessage(rc(msg));
         }
     }
 
     @Override
-    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
+    public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
         List<String> strings = new ArrayList<>();
         if (args.length == 1) {
-            strings.addAll(Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList()));
+            strings.addAll(Arrays.stream(addon.api.getPlatform().getOnlinePlayers()).map(DCPlayer::getName).collect(Collectors.toList()));
         } else if (args.length == 2) {
-            strings.addAll(t.getDCAPI().getCaseManager().getMap().keySet());
+            strings.addAll(addon.api.getCaseManager().getMap().keySet());
         }
         return strings;
     }
