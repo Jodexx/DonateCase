@@ -233,10 +233,8 @@ public class AnimationManagerImpl implements AnimationManager {
         if(caseAnimation.isRequireBlock()) {
             CaseData.Hologram hologram = caseData.getHologram();
             if (hologram != null && hologram.isEnabled()) {
-                HologramManager hologramManager = api.getPlatform().getHologramManager();
-                if (hologramManager != null) {
-                    hologramManager.create(block, caseData);
-                }
+                HologramManager hologramManager = backend.getHologramManager();
+                if (hologramManager != null) hologramManager.create(block, hologram);
             }
         }
 
@@ -303,7 +301,7 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     private void saveOpenInfo(CaseData caseData, DCPlayer player, CaseDataItem item, String choice) {
-        api.getPlatform().getScheduler().async(backend, () -> {
+        backend.getScheduler().async(backend, () -> {
 
             CaseData.History data = new CaseData.History(
                     item.getName(),

@@ -29,16 +29,16 @@ public interface HologramManager {
                 continue;
             }
 
-            create(location, caseData);
+            create(location, caseData.getHologram());
         }
     }
 
     /**
      * Creates the hologram
      * @param block Block, where hologram will be created
-     * @param caseData Hooked CaseData
+     * @param caseHologram Hooked CaseData Hologram
      */
-    void create(CaseLocation block, CaseData caseData);
+    void create(CaseLocation block, CaseData.Hologram caseHologram);
 
     /**
      * Removes the hologram

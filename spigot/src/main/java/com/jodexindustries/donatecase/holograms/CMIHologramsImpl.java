@@ -19,9 +19,7 @@ public class CMIHologramsImpl implements HologramManager {
     private final HashMap<CaseLocation, CMIHologram> holograms = new HashMap<>();
 
     @Override
-    public void create(CaseLocation block, CaseData caseData) {
-        CaseData.Hologram caseHologram = caseData.getHologram();
-
+    public void create(CaseLocation block, CaseData.Hologram caseHologram) {
         if (!caseHologram.isEnabled()) return;
 
         double height = caseHologram.getHeight();

@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.holograms;
 
-import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.manager.HologramManager;
@@ -22,8 +21,9 @@ public class FancyHologramsImpl implements HologramManager {
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void create(CaseLocation block, CaseData caseData) {
-        ConfigurationNode config = DCAPI.getInstance().getConfig().getConfigCases().getCase(caseData.getCaseType());
+    public void create(CaseLocation block, CaseData.Hologram caseHologram) {
+        ConfigurationNode config = null;
+        // TODO Hologram info
         if(config == null)  return;
 
         ConfigurationNode section = config.node("case", "Hologram", "FancyHolograms");

@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.command.sub;
 
 import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
@@ -40,7 +41,9 @@ public class CreateCommand extends DefaultCommand {
             String caseType = args[0];
             String caseName = args[1];
 
-            if(!api.getCaseManager().hasByType(caseType)) {
+            CaseData caseData = api.getCaseManager().get(caseType);
+
+            if(caseData == null) {
                 sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-does-not-exist"),
                         "%case:" + caseType)));
                 return true;
@@ -67,7 +70,7 @@ public class CreateCommand extends DefaultCommand {
             try {
                 api.getConfig().getCaseStorage().save(caseName, caseInfo);
                 HologramManager manager = api.getPlatform().getHologramManager();
-                if (manager != null) manager.create(block, api.getCaseManager().get(caseType));
+                if (manager != null) manager.create(block, caseData.getHologram());
 
                 sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-added"),
                         "%casename:" + caseName, "%casetype:" + caseType)));

@@ -26,16 +26,14 @@ public class HolographicDisplaysImpl implements HologramManager {
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void create(CaseLocation block, CaseData caseData) {
-        CaseData.Hologram crateHologram = caseData.getHologram();
+    public void create(CaseLocation block, CaseData.Hologram caseHologram) {
+        if (!caseHologram.isEnabled()) return;
 
-        if (!crateHologram.isEnabled()) return;
-
-        double height = crateHologram.getHeight();
+        double height = caseHologram.getHeight();
 
         Hologram hologram = this.api.createHologram(BukkitUtils.toBukkit(block).add(.5, height, .5));
         hologram.setPlaceholderSetting(PlaceholderSetting.DEFAULT);
-        crateHologram.getMessages().forEach(line -> hologram.getLines().appendText(
+        caseHologram.getMessages().forEach(line -> hologram.getLines().appendText(
                 DCTools.rc((line))
         ));
 
