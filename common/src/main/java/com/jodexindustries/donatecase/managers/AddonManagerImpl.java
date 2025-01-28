@@ -154,36 +154,30 @@ public class AddonManagerImpl implements AddonManager {
         if (description.getApiVersion() != null) {
             int addonVersion = DCTools.getPluginVersion(description.getApiVersion());
             int pluginVersion = DCTools.getPluginVersion(BuildConstants.api);
+            int supportedVersion = DCTools.getPluginVersion(BuildConstants.supported);
 
-            if (pluginVersion < addonVersion) {
+            if (pluginVersion < addonVersion || addonVersion < supportedVersion) {
                 platform.getLogger().warning("Addon " + description.getName() + " API version (" + description.getApiVersion()
                         + ") incompatible with current API version (" + BuildConstants.api + ")! Abort.");
                 return false;
             }
         }
 
-        InternalAddonClassLoader loader;
-        try {
-            loader = new InternalAddonClassLoader(platform.getClass().getClassLoader(), description, this, platform);
-        } catch (Throwable t) {
-            platform.getLogger().log(Level.SEVERE,
-                    "Error occurred while loading addon " + description.getName() + " v" + description.getVersion(), t);
+        if (!description.isSupport(platform.getIdentifier())) {
+            platform.getLogger().warning("Addon " + description.getName() + " does not support " + platform.getIdentifier() + " platform!");
             return false;
         }
+
         try {
+            InternalAddonClassLoader loader = new InternalAddonClassLoader(platform.getClass().getClassLoader(), description, this, platform);
             InternalJavaAddon addon = loader.getAddon();
             addon.onLoad();
             addons.put(description.getName(), addon);
             loaders.add(loader);
             return true;
         } catch (Throwable e) {
-            try {
-                loader.close();
-            } catch (IOException ex) {
-                platform.getLogger().log(Level.SEVERE, e.getLocalizedMessage(), e.getCause());
-            }
             platform.getLogger().log(Level.SEVERE,
-                    "Error occurred while enabling addon " + description.getName() + " v" + description.getVersion(), e);
+                    "Error occurred while loading addon " + description.getName() + " v" + description.getVersion(), e);
         }
         return false;
     }

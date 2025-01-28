@@ -21,6 +21,7 @@ public class InternalAddonDescription {
     private final List<String> authors;
     private final List<String> depend;
     private final List<String> softDepend;
+    private final List<String> platforms;
 
     /**
      * Constructor to load addon description from a JAR file.
@@ -57,9 +58,20 @@ public class InternalAddonDescription {
 
         softDepend = config.node("softdepend").getList(String.class, new ArrayList<>());
         depend = config.node("depend").getList(String.class, new ArrayList<>());
+        platforms = config.node("platforms").getList(String.class, new ArrayList<>());
 
         jar.close();
 
+    }
+
+    public boolean isSupport(String platform) {
+        if(platform.isEmpty()) return true;
+
+        for (String current : platforms) {
+            if(current.equalsIgnoreCase(platform)) return true;
+        }
+
+        return false;
     }
 
 }
