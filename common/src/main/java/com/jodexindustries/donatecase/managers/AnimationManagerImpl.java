@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.managers;
 
+import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.animations.RandomAnimation;
-import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.*;
 import com.jodexindustries.donatecase.api.data.animation.Animation;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
@@ -9,6 +9,7 @@ import com.jodexindustries.donatecase.api.data.casedata.*;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
+import com.jodexindustries.donatecase.api.event.animation.AnimationEndEvent;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
@@ -30,17 +31,17 @@ public class AnimationManagerImpl implements AnimationManager {
     private final static Map<UUID, ActiveCase> activeCases = new HashMap<>();
     private final static Map<Object, List<UUID>> activeCasesByBlock = new HashMap<>();
 
-    private final DCAPI api;
-    private final BackendPlatform platform;
+    private final DonateCase api;
+    private final BackendPlatform backend;
 
-    public AnimationManagerImpl(DCAPI api) {
+    public AnimationManagerImpl(DonateCase api) {
         this.api = api;
-        this.platform = (BackendPlatform) api.getPlatform();
+        this.backend = api.getPlatform();
 
         List<? extends CaseAnimation> defaultAnimations = Arrays.asList(
                 CaseAnimation.builder()
                         .name("RANDOM")
-                        .addon(platform)
+                        .addon(backend)
                         .animation(RandomAnimation.class)
                         .description("Selects the random animation from config")
                         .requireSettings(true)
@@ -59,7 +60,7 @@ public class AnimationManagerImpl implements AnimationManager {
             registeredAnimations.put(name, animation);
             return true;
         } else {
-            platform.getLogger().warning("Animation " + name + " already registered!");
+            backend.getLogger().warning("Animation " + name + " already registered!");
         }
         return false;
     }
@@ -69,7 +70,7 @@ public class AnimationManagerImpl implements AnimationManager {
         if (isRegistered(name)) {
             registeredAnimations.remove(name);
         } else {
-            platform.getLogger().warning("Animation with name " + name + " already unregistered!");
+            backend.getLogger().warning("Animation with name " + name + " already unregistered!");
         }
     }
 
@@ -146,19 +147,19 @@ public class AnimationManagerImpl implements AnimationManager {
             javaAnimation.init(player, location.clone(), uuid, caseData, winItem, settings);
 
 
-            api.getPlatform().getScheduler().run(platform, () -> {
+            api.getPlatform().getScheduler().run(backend, () -> {
                 try {
                     javaAnimation.start();
                     animationCompletion.complete(uuid);
                 } catch (Throwable t) {
-                    platform.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
+                    backend.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
                     if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
                     animationCompletion.complete(null);
                 }
             }, delay);
 
         } catch (Throwable t) {
-            platform.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
+            backend.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
             if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
             animationCompletion.complete(null);
         }
@@ -172,7 +173,7 @@ public class AnimationManagerImpl implements AnimationManager {
     public void preEnd(UUID uuid) {
         ActiveCase activeCase = activeCases.get(uuid);
         if(activeCase == null) {
-            platform.getLogger().warning("Animation with uuid: " + uuid + " not found!");
+            backend.getLogger().warning("Animation with uuid: " + uuid + " not found!");
             return;
         }
 
@@ -207,7 +208,7 @@ public class AnimationManagerImpl implements AnimationManager {
     public void end(UUID uuid) {
         ActiveCase activeCase = activeCases.get(uuid);
         if(activeCase == null) {
-            platform.getLogger().warning("Animation with uuid: " + uuid + " not found!");
+            backend.getLogger().warning("Animation with uuid: " + uuid + " not found!");
             return;
         }
 
@@ -239,8 +240,7 @@ public class AnimationManagerImpl implements AnimationManager {
             }
         }
 
-
-        // TODO AnimationEndEvent
+        api.getEventBus().post(new AnimationEndEvent(player, activeCase));
     }
 
     @Override
@@ -272,29 +272,29 @@ public class AnimationManagerImpl implements AnimationManager {
     private boolean validateStartConditions(CaseData caseData, CaseAnimation animation,
                                             ConfigurationNode settings, CaseLocation location, DCPlayer player) {
         if (animation == null) {
-            platform.getLogger().log(Level.WARNING, "Case animation " + caseData.getAnimation() + " does not exist!");
+            backend.getLogger().log(Level.WARNING, "Case animation " + caseData.getAnimation() + " does not exist!");
             return false;
         }
 
             if (isLocked(location)) {
-                platform.getLogger().log(Level.WARNING, "Player " + player.getName() +
+                backend.getLogger().log(Level.WARNING, "Player " + player.getName() +
                         " trying to start animation while another animation is running in case: " + caseData.getCaseType());
                 return false;
             }
 
         if (animation.isRequireSettings() && settings == null) {
-            platform.getLogger().log(Level.WARNING, "Animation " + animation + " requires settings for starting!");
+            backend.getLogger().log(Level.WARNING, "Animation " + animation + " requires settings for starting!");
             return false;
         }
 
         if (caseData.getItems().isEmpty()) {
-            platform.getLogger().log(Level.WARNING, "Player " + player.getName() +
+            backend.getLogger().log(Level.WARNING, "Player " + player.getName() +
                             " trying to start animation without items in case: " + caseData.getCaseType());
             return false;
         }
 
         if(!caseData.hasRealItems()) {
-            platform.getLogger().log(Level.WARNING, "Player " + player.getName() +
+            backend.getLogger().log(Level.WARNING, "Player " + player.getName() +
                             " trying to start animation without real (chance > 0) items in case: " + caseData.getCaseType());
             return false;
         }
@@ -303,7 +303,7 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     private void saveOpenInfo(CaseData caseData, DCPlayer player, CaseDataItem item, String choice) {
-        api.getPlatform().getScheduler().async(platform, () -> {
+        api.getPlatform().getScheduler().async(backend, () -> {
 
             CaseData.History data = new CaseData.History(
                     item.getName(),
@@ -380,8 +380,8 @@ public class AnimationManagerImpl implements AnimationManager {
      */
     public String getPlayerGroup(DCPlayer player) {
         String group = null;
-        if(platform.getLuckPerms() != null) {
-            User user = platform.getLuckPerms().getUserManager().getUser(player.getUniqueId());
+        if(backend.getLuckPerms() != null) {
+            User user = backend.getLuckPerms().getUserManager().getUser(player.getUniqueId());
             if(user != null) group = user.getPrimaryGroup();
         }
         return group;
