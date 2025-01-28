@@ -10,6 +10,7 @@ import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.event.animation.AnimationEndEvent;
+import com.jodexindustries.donatecase.api.event.animation.AnimationStartEvent;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
@@ -151,6 +152,7 @@ public class AnimationManagerImpl implements AnimationManager {
                 try {
                     javaAnimation.start();
                     animationCompletion.complete(uuid);
+                    api.getEventBus().post(new AnimationStartEvent(player, activeCase));
                 } catch (Throwable t) {
                     backend.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
                     if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
