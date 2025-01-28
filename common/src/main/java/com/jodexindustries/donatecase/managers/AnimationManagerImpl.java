@@ -10,6 +10,7 @@ import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.event.animation.AnimationEndEvent;
+import com.jodexindustries.donatecase.api.event.animation.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.event.animation.AnimationStartEvent;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.manager.HologramManager;
@@ -106,10 +107,11 @@ public class AnimationManagerImpl implements AnimationManager {
 
         CaseDataItem winItem = caseData.getRandomItem();
         winItem.getMaterial().setDisplayName(api.getPlatform().getPAPI().setPlaceholders(player, winItem.getMaterial().getDisplayName()));
-//        AnimationPreStartEvent preStartEvent = new AnimationPreStartEvent(player, caseData, block, winItem);
-//        Bukkit.getPluginManager().callEvent(preStartEvent);
-//
-//        winItem = preStartEvent.getWinItem();
+
+        AnimationPreStartEvent event = new AnimationPreStartEvent(player, caseData, location, winItem);
+        api.getEventBus().post(event);
+
+        winItem = event.getWinItem();
 
         UUID uuid = UUID.randomUUID();
         ActiveCase activeCase = new ActiveCase(uuid, location, player, winItem, caseData.getCaseType());
