@@ -181,12 +181,19 @@ public class CaseData implements Cloneable {
     @Getter
     @ConfigSerializable
     public static class Hologram {
+
+        @Setting(nodeFromParent = true)
+        private ConfigurationNode node;
+
         @Setting("Toggle")
         private boolean enabled;
+
         @Setting("Height")
         private double height;
+
         @Setting("Range")
         private int range;
+
         @Setting("Message")
         private List<String> messages;
 
