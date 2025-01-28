@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
+import com.jodexindustries.donatecase.api.event.plugin.KeysTransactionEvent;
 import com.jodexindustries.donatecase.api.manager.CaseKeyManager;
 
 import java.util.Map;
@@ -31,13 +32,12 @@ public class CaseKeyManagerImpl implements CaseKeyManager {
      * @return CompletableFuture of the operation's status
      */
     private CompletableFuture<DatabaseStatus> setKeysWithEvent(String caseType, String player, int newKeys, int before) {
-//        KeysTransactionEvent event = new KeysTransactionEvent(caseType, player, newKeys, before);
-//        Bukkit.getPluginManager().callEvent(event);
-//
-//        return !event.isCancelled()
-//                ? api.getDatabase().setKeys(caseType, player, event.after())
-//                : CompletableFuture.completedFuture(DatabaseStatus.CANCELLED);
-        return api.getDatabase().setKeys(caseType, player, newKeys);
+        KeysTransactionEvent event = new KeysTransactionEvent(caseType, player, newKeys, before);
+        api.getEventBus().post(event);
+
+        return !event.isCancelled()
+                ? api.getDatabase().setKeys(caseType, player, event.getAfter())
+                : CompletableFuture.completedFuture(DatabaseStatus.CANCELLED);
     }
 
     @Override

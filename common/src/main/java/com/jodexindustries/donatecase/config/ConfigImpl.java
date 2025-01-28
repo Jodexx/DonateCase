@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.config.CaseStorage;
 import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.config.ConfigCases;
 import com.jodexindustries.donatecase.api.config.Messages;
+import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.managers.CaseKeyManagerImpl;
 import com.jodexindustries.donatecase.managers.CaseOpenManagerImpl;
@@ -75,6 +76,7 @@ public class ConfigImpl implements Config {
             CaseDatabaseImpl.historyCache.setMaxAge(caching);
         }
 
+        platform.getAPI().getEventBus().post(new DonateCaseReloadEvent(DonateCaseReloadEvent.Type.CONFIG));
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.config;
 import com.jodexindustries.donatecase.DonateCase;
 import com.jodexindustries.donatecase.api.config.Loadable;
 import com.jodexindustries.donatecase.api.data.casedata.*;
+import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -49,6 +50,7 @@ public class CaseLoader implements Loadable {
 
         }
 
+        api.getEventBus().post(new DonateCaseReloadEvent(DonateCaseReloadEvent.Type.CASES));
         api.getPlatform().getLogger().info("Loaded " + count + " cases!");
     }
 

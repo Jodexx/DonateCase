@@ -9,6 +9,8 @@ import com.jodexindustries.donatecase.api.addon.InternalAddonClassLoader;
 import com.jodexindustries.donatecase.api.addon.InternalAddonDescription;
 import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.addon.InvalidAddonException;
+import com.jodexindustries.donatecase.api.event.addon.AddonDisableEvent;
+import com.jodexindustries.donatecase.api.event.addon.AddonEnableEvent;
 import com.jodexindustries.donatecase.api.manager.AddonManager;
 import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -215,6 +217,7 @@ public class AddonManagerImpl implements AddonManager {
             if (!addon.isEnabled()) {
                 platform.getLogger().info("Enabling " + addon.getName() + " addon v" + addon.getVersion());
                 addon.setEnabled(true);
+                api.getEventBus().post(new AddonEnableEvent(addon, reason));
 
                 return true;
             }
@@ -236,6 +239,8 @@ public class AddonManagerImpl implements AddonManager {
                 api.getGuiTypedItemManager().unregister(addon);
                 api.getMaterialManager().unregister(addon);
                 api.getSubCommandManager().unregister(addon);
+                api.getEventBus().post(new AddonDisableEvent(addon, reason));
+
                 return true;
             }
         } catch (Throwable t) {
