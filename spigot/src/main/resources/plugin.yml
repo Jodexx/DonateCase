@@ -1,5 +1,5 @@
 name: DonateCase
-main: com.jodexindustries.donatecase.BukkitDonateCase
+main: com.jodexindustries.donatecase.spigot.BukkitDonateCase
 author: _Jodex__
 version: '${version}'
 website: "https://jodexindustries.xyz/"
