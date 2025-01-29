@@ -57,12 +57,6 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
                 DCAPI.getInstance().getActionManager().execute(player, caseData.getNoKeyActions());
             }
         }
-
-        if (checkKeys(caseData.getCaseType(), player.getName())) {
-            executeOpenWithoutEvent(player, location, caseData, false);
-        } else {
-            DCAPI.getInstance().getActionManager().execute(player, caseData.getNoKeyActions());
-        }
     }
 
     public static void executeOpenWithoutEvent(DCPlayer player, CaseLocation location, CaseData caseData, boolean ignoreKeys) {

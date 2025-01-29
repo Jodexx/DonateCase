@@ -149,6 +149,8 @@ public class AnimationManagerImpl implements AnimationManager {
             Animation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
             javaAnimation.init(player, location.clone(), uuid, caseData, winItem, settings);
 
+            activeCases.put(uuid, activeCase);
+            activeCasesByBlock.computeIfAbsent(location, k -> new ArrayList<>()).add(uuid);
 
             api.getPlatform().getScheduler().run(backend, () -> {
                 try {
@@ -158,6 +160,7 @@ public class AnimationManagerImpl implements AnimationManager {
                 } catch (Throwable t) {
                     backend.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
                     if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
+                    activeCases.remove(uuid);
                     animationCompletion.complete(null);
                 }
             }, delay);
@@ -168,8 +171,6 @@ public class AnimationManagerImpl implements AnimationManager {
             animationCompletion.complete(null);
         }
 
-        activeCases.put(uuid, activeCase);
-        activeCasesByBlock.computeIfAbsent(location, k -> new ArrayList<>()).add(uuid);
         return animationCompletion;
     }
 
