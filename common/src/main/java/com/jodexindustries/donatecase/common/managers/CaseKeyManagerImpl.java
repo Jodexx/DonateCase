@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.common.managers;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.caching.SimpleCache;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.event.plugin.KeysTransactionEvent;
@@ -12,9 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 
 
-public class CaseKeyManagerImpl implements CaseKeyManager {
-
-    public final static SimpleCache<String, Map<String, Integer>> keysCache = new SimpleCache<>(20);
+public class CaseKeyManagerImpl extends CaseKeyManager {
 
     private final DCAPI api;
 
@@ -78,13 +75,13 @@ public class CaseKeyManagerImpl implements CaseKeyManager {
         if(api.getDatabase().getType() == DatabaseType.SQLITE) return get(player);
 
         Map<String, Integer> keys;
-        Map<String, Integer> cachedKeys = keysCache.get(player);
+        Map<String, Integer> cachedKeys = cache.get(player);
         if(cachedKeys == null) {
             // Get previous, if current is null
-            Map<String, Integer> previous = keysCache.getPrevious(player);
+            Map<String, Integer> previous = cache.getPrevious(player);
             keys = previous != null ? previous : get(player);
 
-            getAsync(player).thenAcceptAsync(map -> keysCache.put(player, map));
+            getAsync(player).thenAcceptAsync(map -> cache.put(player, map));
         } else {
             keys = cachedKeys;
         }
@@ -92,8 +89,4 @@ public class CaseKeyManagerImpl implements CaseKeyManager {
         return keys;
     }
 
-    @Override
-    public SimpleCache<String, Map<String, Integer>> getCache() {
-        return keysCache;
-    }
 }

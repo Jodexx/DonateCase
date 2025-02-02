@@ -29,6 +29,7 @@ public class DonateCase extends DCAPI {
     private final CaseKeyManager caseKeyManager;
     private final CaseOpenManager caseOpenManager;
     private final CaseManager caseManager;
+    private final HologramManager hologramManager;
 
     private final CaseDatabase database;
     private final Config config;
@@ -53,6 +54,7 @@ public class DonateCase extends DCAPI {
         this.caseKeyManager = new CaseKeyManagerImpl(this);
         this.caseOpenManager = new CaseOpenManagerImpl(this);
         this.caseManager = new CaseManagerImpl();
+        this.hologramManager = new HologramManagerImpl(this);
 
         this.database = new CaseDatabaseImpl(this);
         this.config = new ConfigImpl(platform);
@@ -68,6 +70,7 @@ public class DonateCase extends DCAPI {
 
         config.load();
         caseLoader.load();
+        hologramManager.load();
         updateChecker.check();
         database.connect();
         eventBus.register(eventListener);
@@ -85,6 +88,7 @@ public class DonateCase extends DCAPI {
         actionManager.unregister();
         materialManager.unregister();
         guiTypedItemManager.unregister();
+        hologramManager.remove();
 
         database.close();
 
@@ -141,6 +145,11 @@ public class DonateCase extends DCAPI {
     @Override
     public @NotNull SubCommandManager getSubCommandManager() {
         return subCommandManager;
+    }
+
+    @Override
+    public @NotNull HologramManager getHologramManager() {
+        return hologramManager;
     }
 
     @Override

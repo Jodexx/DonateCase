@@ -1,51 +1,27 @@
 package com.jodexindustries.donatecase.api.manager;
 
-import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
-import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-public interface HologramManager {
+public interface HologramManager extends HologramDriver {
 
-    default void load() {
-        DCAPI api = DCAPI.getInstance();
+    void register(@NotNull String name, @NotNull HologramDriver driver);
 
-        remove();
-        for (Map.Entry<String, CaseInfo> entry : api.getConfig().getCaseStorage().get().entrySet()) {
-            CaseInfo info = entry.getValue();
+    void unregister(@NotNull String name);
 
-            String caseType = info.getType();
-
-            CaseData caseData = api.getCaseManager().get(caseType);
-
-            if(caseData == null || !caseData.getHologram().isEnabled()) continue;
-
-            CaseLocation location = info.getLocation();
-
-            if(!api.getPlatform().isWorldLoaded(location.getWorld())) {
-                api.getPlatform().getLogger().warning("Hologram creation error. World " + location.getWorld() + " is null for case name: " + entry.getKey());
-                continue;
-            }
-
-            create(location, caseData.getHologram());
-        }
+    default void unregister() {
+        List<String> list = new ArrayList<>(get().keySet());
+        list.forEach(this::unregister);
     }
 
-    /**
-     * Creates the hologram
-     * @param block Block, where hologram will be created
-     * @param caseHologram Hooked CaseData Hologram
-     */
-    void create(CaseLocation block, CaseData.Hologram caseHologram);
+    Map<String, HologramDriver> get();
 
-    /**
-     * Removes the hologram
-     * @param block Block, where hologram will be deleted
-     */
-    void remove(CaseLocation block);
+    void set(@NotNull String name);
 
-    void remove();
+    void load();
 
 }

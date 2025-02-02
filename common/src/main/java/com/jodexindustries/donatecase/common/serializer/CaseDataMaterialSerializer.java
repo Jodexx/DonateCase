@@ -33,7 +33,7 @@ public class CaseDataMaterialSerializer implements TypeSerializer<CaseDataMateri
     }
 
     @Override
-    public void serialize(Type type, CaseDataMaterial obj, ConfigurationNode node) throws SerializationException {
+    public void serialize(Type type, CaseDataMaterial obj, ConfigurationNode node) {
 //        if(obj == null) return;
 //
 //        node.node("ID").set(obj.getId());

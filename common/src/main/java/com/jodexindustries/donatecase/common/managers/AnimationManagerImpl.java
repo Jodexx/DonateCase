@@ -13,7 +13,6 @@ import com.jodexindustries.donatecase.api.event.animation.AnimationEndEvent;
 import com.jodexindustries.donatecase.api.event.animation.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.event.animation.AnimationStartEvent;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
-import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
@@ -121,12 +120,7 @@ public class AnimationManagerImpl implements AnimationManager {
 
         if (caseAnimation.isRequireBlock()) {
             CaseData.Hologram hologram = caseData.getHologram();
-            if (hologram != null && hologram.isEnabled()) {
-                HologramManager hologramManager = api.getPlatform().getHologramManager();
-                if (hologramManager != null) {
-                    hologramManager.remove(location);
-                }
-            }
+            if (hologram != null && hologram.isEnabled()) api.getHologramManager().remove(location);
 
             CaseInfo info = api.getConfig().getCaseStorage().get(location);
             if (info != null) {
@@ -237,10 +231,7 @@ public class AnimationManagerImpl implements AnimationManager {
 
         if(caseAnimation.isRequireBlock()) {
             CaseData.Hologram hologram = caseData.getHologram();
-            if (hologram != null && hologram.isEnabled()) {
-                HologramManager hologramManager = backend.getHologramManager();
-                if (hologramManager != null) hologramManager.create(block, hologram);
-            }
+            if (hologram != null && hologram.isEnabled()) api.getHologramManager().create(block, hologram);
         }
 
         api.getEventBus().post(new AnimationEndEvent(player, activeCase));

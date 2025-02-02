@@ -1,10 +1,10 @@
 package com.jodexindustries.donatecase.spigot.holograms;
 
+import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.spigot.BukkitBackend;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
-import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 /**
  * Class for HolographicDisplays Holograms implementation
  */
-public class HolographicDisplaysImpl implements HologramManager {
+public class HolographicDisplaysImpl implements HologramDriver {
 
 
     @NotNull

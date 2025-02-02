@@ -26,8 +26,6 @@ public interface Platform extends Addon {
 
     PAPI getPAPI();
 
-    @Nullable HologramManager getHologramManager();
-
     MetaUpdater getMetaUpdater();
 
     DCAPI getAPI();

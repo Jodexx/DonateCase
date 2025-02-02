@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.common.managers;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.caching.SimpleCache;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.manager.CaseOpenManager;
@@ -9,10 +8,8 @@ import com.jodexindustries.donatecase.api.manager.CaseOpenManager;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class CaseOpenManagerImpl implements CaseOpenManager {
+public class CaseOpenManagerImpl extends CaseOpenManager {
 
-    public final static SimpleCache<String, Map<String, Integer>> openCache = new SimpleCache<>(20);
-    
     private final DCAPI api;
 
     public CaseOpenManagerImpl(DCAPI api) {
@@ -51,12 +48,12 @@ public class CaseOpenManagerImpl implements CaseOpenManager {
         if (api.getDatabase().getType() == DatabaseType.SQLITE) return get(player);
 
         Map<String, Integer> count;
-        Map<String, Integer> cachedCount = openCache.get(player);
+        Map<String, Integer> cachedCount = cache.get(player);
         if (cachedCount == null) {
-            Map<String, Integer> previous = openCache.getPrevious(player);
+            Map<String, Integer> previous = cache.getPrevious(player);
             count = previous != null ? previous : get(player);
 
-            getAsync(player).thenAcceptAsync(map -> openCache.put(player, map));
+            getAsync(player).thenAcceptAsync(map -> cache.put(player, map));
         } else {
             count = cachedCount;
         }
@@ -74,8 +71,4 @@ public class CaseOpenManagerImpl implements CaseOpenManager {
         return getAsync(caseType, player).thenComposeAsync(integer -> set(caseType, player, integer + openCount));
     }
 
-    @Override
-    public SimpleCache<String, Map<String, Integer>> getCache() {
-        return openCache;
-    }
 }

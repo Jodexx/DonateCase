@@ -4,7 +4,6 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
-import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -37,9 +36,7 @@ public class DeleteCommand extends DefaultCommand {
                 }
 
                 if (api.getConfig().getCaseStorage().delete(location)) {
-                    HologramManager manager = api.getPlatform().getHologramManager();
-                    if (manager != null) manager.remove(location);
-
+                    api.getHologramManager().remove(location);
                     sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("case-removed")));
                 } else {
                     sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("block-is-not-case")));
@@ -56,10 +53,7 @@ public class DeleteCommand extends DefaultCommand {
                 }
 
                 api.getConfig().getCaseStorage().delete(name);
-
-                HologramManager manager = api.getPlatform().getHologramManager();
-                if (manager != null) manager.remove(caseInfo.getLocation());
-
+                api.getHologramManager().remove(caseInfo.getLocation());
                 sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("case-removed")));
             } else {
                 sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-does-not-exist"), "%case:" + name)));

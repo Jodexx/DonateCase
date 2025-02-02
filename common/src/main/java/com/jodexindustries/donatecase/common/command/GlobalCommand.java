@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
-    public BackendPlatform backend;
+    private final BackendPlatform backend;
 
     public GlobalCommand(BackendPlatform backend) {
         this.backend = backend;

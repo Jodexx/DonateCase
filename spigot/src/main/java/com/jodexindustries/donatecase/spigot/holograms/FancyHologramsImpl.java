@@ -1,11 +1,13 @@
 package com.jodexindustries.donatecase.spigot.holograms;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
-import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import de.oliver.fancyholograms.api.FancyHologramsPlugin;
+import de.oliver.fancyholograms.api.HologramManager;
 import de.oliver.fancyholograms.api.data.*;
+import de.oliver.fancyholograms.api.data.property.Visibility;
 import de.oliver.fancyholograms.api.hologram.Hologram;
 import de.oliver.fancyholograms.api.hologram.HologramType;
 import org.bukkit.Location;
@@ -13,11 +15,12 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
-public class FancyHologramsImpl implements HologramManager {
+public class FancyHologramsImpl implements HologramDriver {
 
-    private final de.oliver.fancyholograms.api.HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
+    private final HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
@@ -77,7 +80,17 @@ public class FancyHologramsImpl implements HologramManager {
     }
 
     private static void read(DisplayHologramData data, ConfigurationNode node) {
-        // TODO Read hologram data
+        // HologramData
+        data.setVisibilityDistance(node.node("visibility_distance").getInt(HologramData.DEFAULT_VISIBILITY_DISTANCE));
+        data.setVisibility(Optional.ofNullable(node.node("visibility").getString())
+                .flatMap(Visibility::byString)
+                .orElseGet(() -> {
+                    final boolean visibleByDefault = node.node("visible_by_default").getBoolean(DisplayHologramData.DEFAULT_IS_VISIBLE);
+                    return visibleByDefault ? Visibility.ALL : Visibility.PERMISSION_REQUIRED;
+                }));
+        data.setLinkedNpcName(node.node("lickedNpc").getString());
+
+
     }
 
 }

@@ -12,7 +12,9 @@ import java.util.concurrent.CompletableFuture;
  * and synchronously, with support for caching and database operations.
  * It is used to track case openings, modify the count, and interact with persistent storage.
  */
-public interface CaseOpenManager {
+public abstract class CaseOpenManager {
+
+    public final static SimpleCache<String, Map<String, Integer>> cache = new SimpleCache<>(20);
 
     /**
      * Get count of opened cases by player
@@ -20,9 +22,9 @@ public interface CaseOpenManager {
      * @param player Player, who opened
      * @return opened count
      */
-    int get(String caseType, String player);
+    public abstract int get(String caseType, String player);
 
-    Map<String, Integer> get(String player);
+    public abstract Map<String, Integer> get(String player);
 
     /**
      * Get count of opened cases by player
@@ -30,9 +32,9 @@ public interface CaseOpenManager {
      * @param player Player, who opened
      * @return CompletableFuture of open count
      */
-    CompletableFuture<Integer> getAsync(String caseType, String player);
+    public abstract CompletableFuture<Integer> getAsync(String caseType, String player);
 
-    CompletableFuture<Map<String, Integer>> getAsync(String player);
+    public abstract CompletableFuture<Map<String, Integer>> getAsync(String player);
 
     /**
      * Get count of opened cases by player from cache <br/>
@@ -41,9 +43,9 @@ public interface CaseOpenManager {
      * @param player Player, who opened
      * @return opened count
      */
-    int getCache(String caseType, String player);
+    public abstract int getCache(String caseType, String player);
 
-    Map<String, Integer> getCache(String player);
+    public abstract Map<String, Integer> getCache(String player);
 
     /**
      * Set case keys to a specific player (async)
@@ -53,7 +55,7 @@ public interface CaseOpenManager {
      * @param openCount Opened count
      * @return Completable future of completes
      */
-    CompletableFuture<DatabaseStatus> set(String caseType, String player, int openCount);
+    public abstract CompletableFuture<DatabaseStatus> set(String caseType, String player, int openCount);
 
     /**
      * Add count of opened cases by player (async)
@@ -63,7 +65,6 @@ public interface CaseOpenManager {
      * @param openCount Opened count
      * @return Completable future of completes
      */
-    CompletableFuture<DatabaseStatus> add(String caseType, String player, int openCount);
+    public abstract CompletableFuture<DatabaseStatus> add(String caseType, String player, int openCount);
 
-    SimpleCache<String, Map<String, Integer>> getCache();
 }

@@ -1,12 +1,12 @@
 package com.jodexindustries.donatecase.spigot;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
+import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.spigot.actions.CommandActionExecutorImpl;
 import com.jodexindustries.donatecase.spigot.actions.SoundActionExecutorImpl;
 import com.jodexindustries.donatecase.spigot.actions.TitleActionExecutorImpl;
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.spigot.api.data.HologramDriver;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
@@ -48,11 +48,15 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -68,8 +72,6 @@ public class BukkitBackend extends BackendPlatform {
     @Getter private PacketEventsSupport packetEventsSupport;
     private LuckPerms luckPerms;
     private MetaUpdater metaUpdater;
-
-    private HologramManager hologramManager = null;
 
     public BukkitBackend(BukkitDonateCase plugin) {
         this.plugin = plugin;
@@ -96,21 +98,19 @@ public class BukkitBackend extends BackendPlatform {
 
         loadPacketEventsAPI();
         loadLuckPerms();
+        loadHologramDrivers();
 
         Bukkit.getServer().getPluginManager().registerEvents(new EventListener(this), plugin);
 
         api.load();
         // after config load
         loadMetrics();
-        loadHologramManager();
-        if (hologramManager != null) hologramManager.load();
         disableSpawnProtection();
     }
 
     @Override
     public void unload() {
         api.unload();
-        if (hologramManager != null) hologramManager.remove();
         if (packetEventsSupport != null) packetEventsSupport.unload();
 
         Bukkit.getWorlds().stream()
@@ -127,11 +127,6 @@ public class BukkitBackend extends BackendPlatform {
     @Override
     public PAPI getPAPI() {
         return papi;
-    }
-
-    @Override
-    public HologramManager getHologramManager() {
-        return hologramManager;
     }
 
     @Override
@@ -403,51 +398,28 @@ public class BukkitBackend extends BackendPlatform {
         getLogger().info("Registered " + manager.getMap().size() + " materials");
     }
 
-    private void loadHologramManager() {
-        String driverName = api.getConfig().getConfig().node("DonateCase", "HologramDriver").getString("decentholograms");
-        HologramDriver hologramDriver = HologramDriver.getDriver(driverName);
+    private void loadHologramDrivers() {
+        HologramManager manager = api.getHologramManager();
+        PluginManager pluginManager = Bukkit.getServer().getPluginManager();
 
-        tryInitializeHologramManager(hologramDriver);
+        Map<String, Supplier<Class<? extends HologramDriver>>> drivers = new HashMap<>();
+        drivers.put("CMI", () -> CMIModule.holograms.isEnabled() ? CMIHologramsImpl.class : null);
+        drivers.put("DecentHolograms", () -> DecentHologramsImpl.class);
+        drivers.put("HolographicDisplays", () -> HolographicDisplaysImpl.class);
+        drivers.put("FancyHolograms", () -> FancyHologramsImpl.class);
 
-        if (hologramManager == null) {
-            for (HologramDriver fallbackDriver : HologramDriver.values()) {
-                if (tryInitializeHologramManager(fallbackDriver)) {
-                    hologramDriver = fallbackDriver;
-                    break;
+        drivers.forEach((plugin, provider) -> {
+            if (pluginManager.isPluginEnabled(plugin)) {
+                Class<? extends HologramDriver> driver = provider.get();
+                if (driver != null) {
+                    try {
+                        manager.register(plugin.toLowerCase(), driver.newInstance());
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        getLogger().log(Level.WARNING, "Error with loading " + plugin + " hologram driver: ", e);
+                    }
                 }
             }
-        }
-
-        if (hologramManager != null) getLogger().info("Using " + hologramDriver + " as hologram driver");
-    }
-
-    private boolean tryInitializeHologramManager(HologramDriver driver) {
-        switch (driver) {
-            case cmi:
-                if (Bukkit.getServer().getPluginManager().isPluginEnabled("CMI") && CMIModule.holograms.isEnabled()) {
-                    hologramManager = new CMIHologramsImpl();
-                    return true;
-                }
-                break;
-            case decentholograms:
-                if (Bukkit.getServer().getPluginManager().isPluginEnabled("DecentHolograms")) {
-                    hologramManager = new DecentHologramsImpl();
-                    return true;
-                }
-                break;
-            case holographicdisplays:
-                if (Bukkit.getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
-                    hologramManager = new HolographicDisplaysImpl();
-                    return true;
-                }
-                break;
-            case fancyholograms:
-                if (Bukkit.getServer().getPluginManager().isPluginEnabled("FancyHolograms")) {
-                    hologramManager = new FancyHologramsImpl();
-                    return true;
-                }
-        }
-        return false;
+        });
     }
 
     private void loadPacketEventsAPI() {

@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.spigot.holograms;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
-import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import eu.decentsoftware.holograms.api.DHAPI;
@@ -14,7 +14,7 @@ import java.util.UUID;
 /**
  * Class for Decent Holograms implementation
  */
-public class DecentHologramsImpl implements HologramManager {
+public class DecentHologramsImpl implements HologramDriver {
 
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 

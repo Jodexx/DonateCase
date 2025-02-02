@@ -9,7 +9,6 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.TableUtils;
 import com.jodexindustries.donatecase.common.DonateCase;
-import com.jodexindustries.donatecase.api.caching.SimpleCache;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
@@ -26,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
-public class CaseDatabaseImpl implements CaseDatabase {
+public class CaseDatabaseImpl extends CaseDatabase {
 
     private Dao<CaseData.History, String> historyDataTables;
     private Dao<PlayerKeysTable, String> playerKeysTables;
@@ -36,11 +35,6 @@ public class CaseDatabaseImpl implements CaseDatabase {
     private final DonateCase api;
     private final Logger logger;
     private DatabaseType databaseType;
-
-    /**
-     * Cache map for storing cases histories
-     */
-    public final static SimpleCache<String, List<CaseData.History>> historyCache = new SimpleCache<>(20);
 
     public CaseDatabaseImpl(DonateCase api) {
         this.api = api;
@@ -382,15 +376,15 @@ public class CaseDatabaseImpl implements CaseDatabase {
     public List<CaseData.History> getCache() {
         if (databaseType == DatabaseType.SQLITE) return getHistoryData().join();
 
-        List<CaseData.History> cachedList = historyCache.get("all!");
+        List<CaseData.History> cachedList = cache.get("all!");
 
         if (cachedList != null) {
             return cachedList;
         }
 
-        List<CaseData.History> previousList = historyCache.getPrevious("all!");
+        List<CaseData.History> previousList = cache.getPrevious("all!");
 
-        getHistoryData().thenAcceptAsync(historyData -> historyCache.put("all!", historyData));
+        getHistoryData().thenAcceptAsync(historyData -> cache.put("all!", historyData));
 
         return (previousList != null) ? previousList : getHistoryData().join();
     }
@@ -399,15 +393,15 @@ public class CaseDatabaseImpl implements CaseDatabase {
     public List<CaseData.History> getCache(String caseType) {
         if (databaseType == DatabaseType.SQLITE) return getHistoryData(caseType).join();
 
-        List<CaseData.History> cachedList = historyCache.get(caseType);
+        List<CaseData.History> cachedList = cache.get(caseType);
 
         if (cachedList != null) {
             return cachedList;
         }
 
-        List<CaseData.History> previousList = historyCache.getPrevious(caseType);
+        List<CaseData.History> previousList = cache.getPrevious(caseType);
 
-        getHistoryData(caseType).thenAcceptAsync(historyData -> historyCache.put(caseType, historyData));
+        getHistoryData(caseType).thenAcceptAsync(historyData -> cache.put(caseType, historyData));
 
         return (previousList != null) ? previousList : getHistoryData(caseType).join();
     }

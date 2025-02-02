@@ -102,7 +102,7 @@ public class AddonManagerImpl implements AddonManager {
         Set<String> visiting = new HashSet<>();
 
         for (String addon : dependencyGraph.nodes()) {
-            if (!visited.contains(addon) && !topologicalSort(addon, sorted, visited, visiting)) {
+            if (!visited.contains(addon) && topologicalSort(addon, sorted, visited, visiting)) {
                 return null;
             }
         }
@@ -121,23 +121,23 @@ public class AddonManagerImpl implements AddonManager {
      */
     private boolean topologicalSort(String addon, List<String> sorted, Set<String> visited, Set<String> visiting) {
         if (visiting.contains(addon)) {
-            return false; // Cycle detected
+            return true; // Cycle detected
         }
         if (visited.contains(addon)) {
-            return true; // Already processed
+            return false; // Already processed
         }
 
         visiting.add(addon);
         for (String dependency : dependencyGraph.successors(addon)) {
-            if (!topologicalSort(dependency, sorted, visited, visiting)) {
-                return false;
+            if (topologicalSort(dependency, sorted, visited, visiting)) {
+                return true;
             }
         }
         visiting.remove(addon);
         visited.add(addon);
         sorted.add(addon);
 
-        return true;
+        return false;
     }
 
     private boolean loadAddon(InternalAddonDescription description) {

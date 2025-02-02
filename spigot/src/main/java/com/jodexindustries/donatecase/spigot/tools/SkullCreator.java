@@ -68,7 +68,7 @@ public class SkullCreator {
      * @param url The Mojang URL.
      * @return The head of the Player.
      */
-    public static ItemStack itemFromUrl(String url) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+    public static ItemStack itemFromUrl(String url) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
         return itemWithUrl(createSkull(), url);
     }
 
@@ -78,7 +78,7 @@ public class SkullCreator {
      * @param base64 The Base64 string.
      * @return The head of the Player.
      */
-    public static ItemStack itemFromBase64(String base64) throws NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+    public static ItemStack itemFromBase64(String base64) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
         return itemWithBase64(createSkull(), base64);
     }
 

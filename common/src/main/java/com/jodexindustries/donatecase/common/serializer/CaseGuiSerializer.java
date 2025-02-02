@@ -104,7 +104,7 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
         }
 
         @Override
-        public void serialize(Type type, CaseGui.@Nullable Item obj, ConfigurationNode target) throws SerializationException {
+        public void serialize(Type type, CaseGui.@Nullable Item obj, ConfigurationNode target) {
 
         }
 

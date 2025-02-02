@@ -3,8 +3,8 @@ package com.jodexindustries.donatecase.spigot.holograms;
 import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Holograms.CMIHologram;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
-import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import net.Zrips.CMILib.Container.CMILocation;
 
@@ -14,7 +14,7 @@ import java.util.UUID;
 /**
  * Class for CMI Holograms implementation
  */
-public class CMIHologramsImpl implements HologramManager {
+public class CMIHologramsImpl implements HologramDriver {
 
     private final HashMap<CaseLocation, CMIHologram> holograms = new HashMap<>();
 

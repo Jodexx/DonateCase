@@ -95,6 +95,8 @@ public abstract class DCAPI {
      */
     public abstract @NotNull SubCommandManager getSubCommandManager();
 
+    public abstract @NotNull HologramManager getHologramManager();
+
     /**
      * Retrieves the {@link CaseDatabase}, which provides access to the database for storing case-related data.
      *
@@ -125,8 +127,8 @@ public abstract class DCAPI {
         getCaseManager().getMap().clear();
         getAnimationManager().getActiveCases().clear();
         getAnimationManager().getActiveCasesByBlock().clear();
-        getCaseOpenManager().getCache().clear();
-        getCaseKeyManager().getCache().clear();
-        getDatabase().getCache().clear();
+        CaseOpenManager.cache.clear();
+        CaseKeyManager.cache.clear();
+        CaseDatabase.cache.clear();
     }
 }

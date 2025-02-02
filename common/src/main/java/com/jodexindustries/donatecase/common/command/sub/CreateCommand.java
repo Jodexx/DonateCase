@@ -5,7 +5,6 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
-import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -69,8 +68,7 @@ public class CreateCommand extends DefaultCommand {
 
             try {
                 api.getConfig().getCaseStorage().save(caseName, caseInfo);
-                HologramManager manager = api.getPlatform().getHologramManager();
-                if (manager != null) manager.create(block, caseData.getHologram());
+                api.getHologramManager().create(block, caseData.getHologram());
 
                 sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-added"),
                         "%casename:" + caseName, "%casetype:" + caseType)));

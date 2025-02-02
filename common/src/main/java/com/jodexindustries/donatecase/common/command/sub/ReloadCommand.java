@@ -50,7 +50,7 @@ public class ReloadCommand extends DefaultCommand {
     private void load() {
         api.getConfig().load();
         api.getCaseLoader().load();
-        if(api.getPlatform().getHologramManager() != null) api.getPlatform().getHologramManager().load();
+        api.getHologramManager().load();
     }
 
 }

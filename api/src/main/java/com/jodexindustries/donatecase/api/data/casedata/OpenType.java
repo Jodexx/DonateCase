@@ -12,5 +12,5 @@ public enum OpenType {
     /**
      * Case will be opened from BLOCK click
      */
-    BLOCK;
+    BLOCK
 }

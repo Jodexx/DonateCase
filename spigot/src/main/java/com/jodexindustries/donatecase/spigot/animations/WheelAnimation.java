@@ -32,7 +32,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
 
     private enum WheelType {
         FULL,  // No duplicates, all unique items
-        RANDOM; // Can have duplicates, random items
+        RANDOM // Can have duplicates, random items
     }
 
     @SneakyThrows

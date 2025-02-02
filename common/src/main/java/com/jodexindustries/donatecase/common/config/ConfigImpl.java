@@ -71,9 +71,9 @@ public class ConfigImpl implements Config {
 
         long caching = getConfig().node("DonateCase", "Caching").getLong();
         if (caching >= 0) {
-            CaseOpenManagerImpl.openCache.setMaxAge(caching);
-            CaseKeyManagerImpl.keysCache.setMaxAge(caching);
-            CaseDatabaseImpl.historyCache.setMaxAge(caching);
+            CaseOpenManagerImpl.cache.setMaxAge(caching);
+            CaseKeyManagerImpl.cache.setMaxAge(caching);
+            CaseDatabaseImpl.cache.setMaxAge(caching);
         }
 
         platform.getAPI().getEventBus().post(new DonateCaseReloadEvent(DonateCaseReloadEvent.Type.CONFIG));
