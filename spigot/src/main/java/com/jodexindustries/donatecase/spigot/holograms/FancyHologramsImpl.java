@@ -3,11 +3,11 @@ package com.jodexindustries.donatecase.spigot.holograms;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.spigot.serializer.ConfigurationSectionImpl;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import de.oliver.fancyholograms.api.FancyHologramsPlugin;
 import de.oliver.fancyholograms.api.HologramManager;
 import de.oliver.fancyholograms.api.data.*;
-import de.oliver.fancyholograms.api.data.property.Visibility;
 import de.oliver.fancyholograms.api.hologram.Hologram;
 import de.oliver.fancyholograms.api.hologram.HologramType;
 import org.bukkit.Location;
@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.UUID;
 
 public class FancyHologramsImpl implements HologramDriver {
@@ -27,14 +26,15 @@ public class FancyHologramsImpl implements HologramDriver {
     public void create(CaseLocation block, CaseData.Hologram caseHologram) {
         ConfigurationNode node = caseHologram.getNode();
 
-        HologramType type = HologramType.getByName(node.getString("type"));
+        HologramType type = HologramType.getByName(node.node("type").getString());
         if (type == null) return;
 
         Location location = BukkitUtils.toBukkit(block).add(.5, caseHologram.getHeight(), .5);
 
         String name = "DonateCase-" + UUID.randomUUID();
         DisplayHologramData hologramData = getData(type, name, location);
-        read(hologramData, node);
+        hologramData.read(new ConfigurationSectionImpl(node), name);
+        hologramData.setLocation(location);
 
         Hologram hologram = manager.create(hologramData);
         manager.addHologram(hologram);
@@ -77,20 +77,6 @@ public class FancyHologramsImpl implements HologramDriver {
         }
 
         return hologramData;
-    }
-
-    private static void read(DisplayHologramData data, ConfigurationNode node) {
-        // HologramData
-        data.setVisibilityDistance(node.node("visibility_distance").getInt(HologramData.DEFAULT_VISIBILITY_DISTANCE));
-        data.setVisibility(Optional.ofNullable(node.node("visibility").getString())
-                .flatMap(Visibility::byString)
-                .orElseGet(() -> {
-                    final boolean visibleByDefault = node.node("visible_by_default").getBoolean(DisplayHologramData.DEFAULT_IS_VISIBLE);
-                    return visibleByDefault ? Visibility.ALL : Visibility.PERMISSION_REQUIRED;
-                }));
-        data.setLinkedNpcName(node.node("lickedNpc").getString());
-
-
     }
 
 }

@@ -30,6 +30,23 @@ case:
     Message:
       - '&6DonateCase'
 
+  ## FancyHolograms
+  #    type: TEXT
+  #    visibility_distance: -1
+  #    visibility: ALL
+  #    persistent: true
+  #    scale_x: 1.5
+  #    scale_y: 1.5
+  #    scale_z: 1.5
+  #    shadow_radius: 1.0
+  #    shadow_strength: 1.0
+  #    text:
+  #      - "Test"
+  #    text_shadow: false
+  #    see_through: false
+  #    text_alignment: center
+  #    update_text_interval: -1
+
   OpenType: GUI # or BLOCK
 
   NoKeyActions:
