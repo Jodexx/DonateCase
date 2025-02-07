@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class HologramManagerImpl implements HologramManager {
 
@@ -52,7 +53,7 @@ public class HologramManagerImpl implements HologramManager {
 
         api.getPlatform().getLogger().info("Using " + name + " as hologram driver");
 
-        driver.remove();
+        remove();
 
         for (Map.Entry<String, CaseInfo> entry : api.getConfig().getCaseStorage().get().entrySet()) {
             CaseInfo info = entry.getValue();
@@ -70,13 +71,17 @@ public class HologramManagerImpl implements HologramManager {
                 continue;
             }
 
-            driver.create(location, caseData.getHologram());
+            create(location, caseData.getHologram());
         }
     }
 
     @Override
     public void create(CaseLocation block, CaseData.Hologram caseHologram) {
-        if (driver != null) driver.create(block, caseHologram);
+        try {
+            if (driver != null) driver.create(block, caseHologram);
+        } catch (Exception e) {
+            api.getPlatform().getLogger().log(Level.WARNING, "Error with creating hologram: ", e);
+        }
     }
 
     @Override
