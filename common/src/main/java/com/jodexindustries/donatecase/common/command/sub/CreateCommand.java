@@ -68,7 +68,7 @@ public class CreateCommand extends DefaultCommand {
 
             try {
                 api.getConfig().getCaseStorage().save(caseName, caseInfo);
-                api.getHologramManager().create(block, caseData.getHologram());
+                api.getHologramManager().create(toSave, caseData.getHologram());
 
                 sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-added"),
                         "%casename:" + caseName, "%casetype:" + caseType)));

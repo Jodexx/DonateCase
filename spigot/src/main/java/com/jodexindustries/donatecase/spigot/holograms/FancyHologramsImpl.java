@@ -37,8 +37,9 @@ public class FancyHologramsImpl implements HologramDriver {
         hologramData.setLocation(location);
 
         Hologram hologram = manager.create(hologramData);
-        manager.addHologram(hologram);
+
         this.holograms.put(block, hologram);
+        manager.addHologram(hologram);
     }
 
     @Override
