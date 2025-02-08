@@ -3,7 +3,7 @@ package com.jodexindustries.donatecase.api.platform;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
-import com.jodexindustries.donatecase.api.manager.HologramManager;
+import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.api.scheduler.Scheduler;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.PAPI;
@@ -38,5 +38,9 @@ public interface Platform extends Addon {
 
     DCOfflinePlayer[] getOfflinePlayers();
 
+    @Nullable CaseWorld getWorld(String world);
+
     boolean isWorldLoaded(String world);
+
+    int getSpawnRadius();
 }

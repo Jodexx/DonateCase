@@ -93,8 +93,9 @@ public class AnimationManagerImpl implements AnimationManager {
 
         ConfigurationNode settings = caseData.getAnimationSettings().isNull() ? api.getConfig().getAnimations().node(animation) : caseData.getAnimationSettings();
 
+        CaseLocation temp = location.clone();
 
-        if (!validateStartConditions(caseData, caseAnimation, settings, location, player)) {
+        if (!validateStartConditions(caseData, caseAnimation, settings, temp, player)) {
             return CompletableFuture.completedFuture(null);
         }
 
@@ -107,30 +108,30 @@ public class AnimationManagerImpl implements AnimationManager {
         CaseDataItem winItem = caseData.getRandomItem();
         winItem.getMaterial().setDisplayName(api.getPlatform().getPAPI().setPlaceholders(player, winItem.getMaterial().getDisplayName()));
 
-        AnimationPreStartEvent event = new AnimationPreStartEvent(player, caseData, location, winItem);
+        AnimationPreStartEvent event = new AnimationPreStartEvent(player, caseData, temp, winItem);
         api.getEventBus().post(event);
 
         winItem = event.getWinItem();
 
         UUID uuid = UUID.randomUUID();
-        ActiveCase activeCase = new ActiveCase(uuid, location, player, winItem, caseData.getCaseType());
+        ActiveCase activeCase = new ActiveCase(uuid, temp, player, winItem, caseData.getCaseType());
         activeCase.setLocked(caseAnimation.isRequireBlock());
 
         CompletableFuture<UUID> animationCompletion = new CompletableFuture<>();
 
         if (caseAnimation.isRequireBlock()) {
-            CaseData.Hologram hologram = caseData.getHologram();
-            if (hologram != null && hologram.isEnabled()) api.getHologramManager().remove(location);
-
-            CaseInfo info = api.getConfig().getCaseStorage().get(location);
+            CaseInfo info = api.getConfig().getCaseStorage().get(temp);
             if (info != null) {
-                CaseLocation temp = info.getLocation();
-                location.setPitch(temp.getPitch());
-                location.setYaw(temp.getYaw());
+                CaseLocation caseLocation = info.getLocation();
+                temp.setPitch(caseLocation.getPitch());
+                temp.setYaw(caseLocation.getYaw());
             }
 
+            CaseData.Hologram hologram = caseData.getHologram();
+            if (hologram != null && hologram.isEnabled()) api.getHologramManager().remove(temp);
+
             for (CaseGuiWrapper gui : api.getGUIManager().getMap().values()) {
-                if (gui.getLocation().equals(location)) {
+                if (gui.getLocation().equals(temp)) {
                     gui.getPlayer().closeInventory();
                 }
             }
@@ -141,10 +142,10 @@ public class AnimationManagerImpl implements AnimationManager {
         try {
 
             Animation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
-            javaAnimation.init(player, location.clone(), uuid, caseData, winItem, settings);
+            javaAnimation.init(player, temp.clone(), uuid, caseData, winItem, settings);
 
             activeCases.put(uuid, activeCase);
-            activeCasesByBlock.computeIfAbsent(location, k -> new ArrayList<>()).add(uuid);
+            activeCasesByBlock.computeIfAbsent(temp, k -> new ArrayList<>()).add(uuid);
 
             api.getPlatform().getScheduler().run(backend, () -> {
                 try {
@@ -153,7 +154,7 @@ public class AnimationManagerImpl implements AnimationManager {
                     api.getEventBus().post(new AnimationStartEvent(player, activeCase));
                 } catch (Throwable t) {
                     backend.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
-                    if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(location);
+                    if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(temp);
                     activeCases.remove(uuid);
                     animationCompletion.complete(null);
                 }

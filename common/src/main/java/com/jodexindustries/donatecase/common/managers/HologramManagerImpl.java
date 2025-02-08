@@ -5,6 +5,7 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.api.manager.HologramManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,9 +66,10 @@ public class HologramManagerImpl implements HologramManager {
             if (caseData == null || !caseData.getHologram().isEnabled()) continue;
 
             CaseLocation location = info.getLocation();
+            CaseWorld world = location.getWorld();
 
-            if (!api.getPlatform().isWorldLoaded(location.getWorld())) {
-                api.getPlatform().getLogger().warning("Hologram creation error. World " + location.getWorld() + " is null for case name: " + entry.getKey());
+            if (world == null || !api.getPlatform().isWorldLoaded(world.getName())) {
+                api.getPlatform().getLogger().warning("Hologram creation error. World is null for case name: " + entry.getKey());
                 continue;
             }
 

@@ -147,10 +147,14 @@ public interface AnimationManager {
     default List<ActiveCase> getActiveCasesByBlock(Object block) {
         List<ActiveCase> activeCases = new ArrayList<>();
 
-        List<UUID> uuids = getActiveCasesByBlock().get(block);
-        if(uuids == null) return activeCases;
+        List<UUID> uuidList = getActiveCasesByBlock()
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().equals(block)).findFirst().map(Map.Entry::getValue).orElse(null);
 
-        activeCases = uuids.stream().map(uuid -> getActiveCases().get(uuid)).collect(Collectors.toList());
+        if (uuidList == null) return activeCases;
+
+        activeCases = uuidList.stream().map(uuid -> getActiveCases().get(uuid)).collect(Collectors.toList());
 
         return activeCases;
     }

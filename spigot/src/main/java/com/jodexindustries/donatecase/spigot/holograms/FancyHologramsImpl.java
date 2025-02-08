@@ -43,9 +43,9 @@ public class FancyHologramsImpl implements HologramDriver {
 
     @Override
     public void remove(CaseLocation block) {
-        if (!this.holograms.containsKey(block)) return;
-
         Hologram hologram = this.holograms.get(block);
+        if(hologram == null) return;
+
         this.holograms.remove(block);
         manager.removeHologram(hologram);
     }

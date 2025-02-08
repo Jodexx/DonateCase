@@ -1,12 +1,14 @@
 package com.jodexindustries.donatecase.spigot.tools;
 
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitCommandSender;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitPlayer;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
@@ -14,10 +16,21 @@ import org.jetbrains.annotations.NotNull;
 
 public class BukkitUtils {
 
+    public static CaseWorld fromBukkit(World world) {
+        if (world == null) return null;
+        CaseLocation spawnLocation = fromBukkit(world.getSpawnLocation());
+        CaseWorld caseWorld = new CaseWorld(world.getName());
+        caseWorld.setSpawnLocation(spawnLocation);
+        return caseWorld;
+    }
+
     @NotNull
     public static CaseLocation fromBukkit(@NotNull Location location) {
-        String world = location.getWorld() == null ? "" : location.getWorld().getName();
-        return new CaseLocation(world, location.getX(), location.getY(), location.getZ(), location.getPitch(), location.getYaw());
+        return new CaseLocation(
+                location.getWorld() != null ? location.getWorld().getName() : null,
+                location.getX(), location.getY(), location.getZ(),
+                location.getPitch(), location.getYaw()
+        );
     }
 
     @NotNull
@@ -37,7 +50,11 @@ public class BukkitUtils {
 
     @NotNull
     public static Location toBukkit(@NotNull CaseLocation location) {
-        return new Location(Bukkit.getWorld(location.getWorld()), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        CaseWorld world = location.getWorld();
+        World bukkitWorld = null;
+        if (world != null) bukkitWorld = Bukkit.getWorld(world.getName());
+
+        return new Location(bukkitWorld, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
 
     @NotNull

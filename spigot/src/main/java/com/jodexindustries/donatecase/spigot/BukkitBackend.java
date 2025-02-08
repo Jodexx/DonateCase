@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.spigot;
 
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
+import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.spigot.actions.CommandActionExecutorImpl;
 import com.jodexindustries.donatecase.spigot.actions.SoundActionExecutorImpl;
@@ -51,6 +52,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Arrays;
@@ -105,7 +107,6 @@ public class BukkitBackend extends BackendPlatform {
         api.load();
         // after config load
         loadMetrics();
-        disableSpawnProtection();
     }
 
     @Override
@@ -198,8 +199,18 @@ public class BukkitBackend extends BackendPlatform {
     }
 
     @Override
+    public @Nullable CaseWorld getWorld(String world) {
+        return BukkitUtils.fromBukkit(Bukkit.getWorld(world));
+    }
+
+    @Override
     public boolean isWorldLoaded(String world) {
         return Bukkit.getWorld(world) != null;
+    }
+
+    @Override
+    public int getSpawnRadius() {
+        return Bukkit.getSpawnRadius();
     }
 
     private void registerDefaultCommand() {
@@ -444,15 +455,6 @@ public class BukkitBackend extends BackendPlatform {
     private void loadMetrics() {
         Metrics metrics = new Metrics(plugin, 18709);
         metrics.addCustomChart(new Metrics.SimplePie("language", () -> api.getConfig().getConfig().node("DonateCase", "Languages").getString()));
-    }
-
-    private void disableSpawnProtection() {
-        if (api.getConfig().getConfig().node("DonateCase", "DisableSpawnProtection").getBoolean()) {
-            if (Bukkit.getServer().getSpawnRadius() > 0) {
-                Bukkit.getServer().setSpawnRadius(0);
-                getLogger().info("Spawn protection disabled!");
-            }
-        }
     }
 
 }

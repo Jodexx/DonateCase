@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.spigot.api.platform;
 
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import org.bukkit.entity.Player;
@@ -26,6 +27,11 @@ public class BukkitPlayer extends BukkitCommandSender implements DCPlayer {
     @Override
     public @NotNull UUID getUniqueId() {
         return player.getUniqueId();
+    }
+
+    @Override
+    public CaseWorld getWorld() {
+        return BukkitUtils.fromBukkit(player.getWorld());
     }
 
     @Override

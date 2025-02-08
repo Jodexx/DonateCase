@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class CreateCommand extends DefaultCommand {
-    
+
     private final DCAPI api;
-    
+
     public CreateCommand(DCAPI api) {
         super(api, "create", SubCommandType.ADMIN);
         this.api = api;
@@ -42,18 +42,18 @@ public class CreateCommand extends DefaultCommand {
 
             CaseData caseData = api.getCaseManager().get(caseType);
 
-            if(caseData == null) {
+            if (caseData == null) {
                 sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-does-not-exist"),
                         "%case:" + caseType)));
                 return true;
             }
 
-            if(api.getConfig().getCaseStorage().has(block)) {
+            if (api.getConfig().getCaseStorage().has(block)) {
                 sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("case-already-created")));
                 return true;
             }
 
-            if(api.getConfig().getCaseStorage().has(caseName)) {
+            if (api.getConfig().getCaseStorage().has(caseName)) {
                 sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-already-exist"),
                         "%casename:" + caseName)));
                 return true;
@@ -72,6 +72,20 @@ public class CreateCommand extends DefaultCommand {
 
                 sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-added"),
                         "%casename:" + caseName, "%casetype:" + caseType)));
+
+                int spawnRadius = api.getPlatform().getSpawnRadius();
+                if (spawnRadius <= 0) return true;
+
+                if (block.distance(player.getWorld().getSpawnLocation()) <= spawnRadius) {
+                    sender.sendMessage(
+                            DCTools.prefix(
+                                    "&cWarning: " +
+                                            "The case cannot be opened by a regular player without an OP due to spawn-protection! " +
+                                            "Move the case away from the spawn or disable spawn-protection in server.properties."
+                            )
+                    );
+                }
+
             } catch (ConfigurateException e) {
                 api.getPlatform().getLogger().log(Level.WARNING, "Error with saving case: " + caseName, e);
             }

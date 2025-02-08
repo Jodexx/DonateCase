@@ -92,7 +92,9 @@ public class CaseStorageImpl implements CaseStorage {
         for (ConfigurationNode value : parent.childrenMap().values()) {
 
             CaseInfo caseInfo = get(value);
-            if (caseInfo != null) if (location.equals(caseInfo.getLocation())) return caseInfo;
+            if (caseInfo != null) {
+                if (location.equals(caseInfo.getLocation())) return caseInfo;
+            }
         }
 
         return null;

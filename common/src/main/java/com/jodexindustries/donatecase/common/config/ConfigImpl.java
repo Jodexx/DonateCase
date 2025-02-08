@@ -4,15 +4,22 @@ import com.jodexindustries.donatecase.api.config.CaseStorage;
 import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.config.ConfigCases;
 import com.jodexindustries.donatecase.api.config.Messages;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
+import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.common.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.common.managers.CaseKeyManagerImpl;
 import com.jodexindustries.donatecase.common.managers.CaseOpenManagerImpl;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
+import com.jodexindustries.donatecase.common.serializer.CaseDataMaterialSerializer;
+import com.jodexindustries.donatecase.common.serializer.CaseGuiSerializer;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.*;
@@ -21,6 +28,13 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class ConfigImpl implements Config {
+
+    public final TypeSerializerCollection serializerCollection = TypeSerializerCollection.builder()
+            .register(CaseGui.class, new CaseGuiSerializer())
+            .register(CaseGui.Item.class, new CaseGuiSerializer.Item())
+            .register(CaseDataMaterial.class, new CaseDataMaterialSerializer())
+            .register(CaseLocation.class, new CaseLocation())
+            .build();
 
     private final Messages messages;
     private final ConfigCases configCases;
@@ -35,13 +49,14 @@ public class ConfigImpl implements Config {
             "lang/en_US.yml",
     };
 
+    @Getter
     private final BackendPlatform platform;
 
     public ConfigImpl(BackendPlatform platform) {
         this.platform = platform;
         this.caseStorage = new CaseStorageImpl(this);
         this.messages = new MessagesImpl(platform);
-        this.configCases = new ConfigCasesImpl(platform);
+        this.configCases = new ConfigCasesImpl(this);
     }
 
     @Override
@@ -127,7 +142,11 @@ public class ConfigImpl implements Config {
     private void loadConfiguration(File file) {
         if(file.getName().endsWith(".yml") || file.getName().endsWith(".yaml")) {
             try {
-                YamlConfigurationLoader loader = YamlConfigurationLoader.builder().file(file).build();
+                YamlConfigurationLoader loader = YamlConfigurationLoader
+                        .builder()
+                        .defaultOptions(opts -> opts.serializers(build -> build.registerAll(serializerCollection)))
+                        .file(file)
+                        .build();
                 ConfigurationNode node = loader.load();
 
                 configurations.put(file, node);
