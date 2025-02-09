@@ -35,8 +35,10 @@ public class DeleteCommand extends DefaultCommand {
                     return true;
                 }
 
-                if (api.getConfigManager().getCaseStorage().delete(location)) {
-                    api.getHologramManager().remove(location);
+                CaseInfo caseInfo = api.getConfigManager().getCaseStorage().get(location);
+
+                if (caseInfo != null) {
+                    api.getHologramManager().remove(caseInfo.getLocation());
                     sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("case-removed")));
                 } else {
                     sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("block-is-not-case")));
