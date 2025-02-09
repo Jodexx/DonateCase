@@ -1,16 +1,16 @@
 package com.jodexindustries.donatecase.spigot.gui;
 
-import com.jodexindustries.donatecase.spigot.BukkitBackend;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemException;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemHandler;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
-import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.spigot.BukkitBackend;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -32,6 +32,9 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
 
     private final Inventory inventory;
     private List<CaseData.History> globalHistoryData;
+
+    private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(1);
+
 
     /**
      * Default constructor
@@ -49,7 +52,11 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
         load().thenAccept((loaded) -> {
             Bukkit.getScheduler().runTask(backend.getPlugin(), () -> player.openInventory(inventory));
             startUpdateTask();
-        });
+        }).exceptionally(ex -> {
+            backend.getLogger().log(Level.WARNING, "GUI loading failed: " + ex.getMessage());
+            player.sendMessage(DCTools.rc("&cFailed to load the GUI. Please try again later."));
+            return null;
+        });;
     }
 
     private CompletableFuture<Void> load() {
@@ -67,6 +74,12 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
             }
             future.complete(null);
         }, 0L);
+
+        SCHEDULER.schedule(() -> {
+            if (!future.isDone()) {
+                future.completeExceptionally(new TimeoutException("GUI loading timed out"));
+            }
+        }, 5, TimeUnit.SECONDS);
 
         return future;
     }
