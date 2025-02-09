@@ -1,12 +1,11 @@
 package com.jodexindustries.donatecase.common.config;
 
+import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.config.ConfigCases;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.util.HashMap;
@@ -17,13 +16,11 @@ import java.util.Map;
  */
 public class ConfigCasesImpl implements ConfigCases {
 
-    private final Map<String, ConfigurationNode> cases = new HashMap<>();
+    private final Map<String, Config> cases = new HashMap<>();
 
-    private final ConfigManagerImpl config;
     private final BackendPlatform platform;
 
     public ConfigCasesImpl(ConfigManagerImpl config) {
-        this.config = config;
         this.platform = config.getPlatform();
 
     }
@@ -56,29 +53,20 @@ public class ConfigCasesImpl implements ConfigCases {
 
         for (File file : getCasesInFolder()) {
             String name = getFileNameWithoutExtension(file);
-            YamlConfigurationLoader loader = YamlConfigurationLoader
-                    .builder()
-                    .defaultOptions(opts -> opts.serializers(build -> build.registerAll(config.serializerCollection)))
-                    .file(file)
-                    .build();
+            Config config = new ConfigImpl(file);
+            config.load();
 
-            ConfigurationNode node = loader.load();
-
-            if (node.hasChild("case")) {
-                cases.put(name, node);
-            } else {
-                platform.getLogger().warning("Case " + name + " has a broken case section, skipped.");
-            }
+            cases.put(name, config);
         }
     }
 
     @Override
-    public @Nullable ConfigurationNode getCase(@NotNull String name) {
+    public @Nullable Config get(@NotNull String name) {
         return cases.get(name);
     }
 
     @Override
-    public @NotNull Map<String, ConfigurationNode> getMap() {
+    public @NotNull Map<String, Config> getMap() {
         return cases;
     }
 }

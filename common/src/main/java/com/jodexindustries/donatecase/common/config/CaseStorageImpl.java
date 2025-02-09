@@ -2,7 +2,7 @@ package com.jodexindustries.donatecase.common.config;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.config.CaseStorage;
-import com.jodexindustries.donatecase.api.config.ConfigManager;
+import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import org.jetbrains.annotations.NotNull;
@@ -17,34 +17,38 @@ import java.util.logging.Level;
 
 public class CaseStorageImpl implements CaseStorage {
 
-    private final ConfigManager configManager;
-    private ConfigurationNode node;
+    private final ConfigManagerImpl configManager;
+    private Config config;
 
-    public CaseStorageImpl(ConfigManager configManager) {
+    public CaseStorageImpl(ConfigManagerImpl configManager) {
         this.configManager = configManager;
     }
 
     @Override
     public void load() {
-        node = configManager.get("Cases.yml");
+        config = configManager.getConfig("Cases.yml");
     }
 
     @Override
     public void save(@NotNull String name, @NotNull CaseInfo caseInfo) throws ConfigurateException {
-        ConfigurationNode current = node.node("DonateCase", "Cases", name);
+        ConfigurationNode current = config.node("DonateCase", "Cases", name);
         current.set(CaseInfo.class, caseInfo);
-        configManager.save("Cases.yml");
+        config.save();
     }
 
     @Override
     public void delete(String name) {
-        node.node("DonateCase", "Cases").removeChild(name);
-        configManager.save("Cases.yml");
+        config.node("DonateCase", "Cases").removeChild(name);
+        try {
+            config.save();
+        } catch (ConfigurateException e) {
+            configManager.getPlatform().getLogger().log(Level.WARNING, "Error with deleting case: " + name, e);
+        }
     }
 
     @Override
     public boolean delete(CaseLocation location) {
-        ConfigurationNode parent = node.node("DonateCase", "Cases");
+        ConfigurationNode parent = config.node("DonateCase", "Cases");
         for (Map.Entry<Object, ? extends ConfigurationNode> entry : parent.childrenMap().entrySet()) {
             try {
                 CaseInfo caseInfo = entry.getValue().get(CaseInfo.class);
@@ -52,10 +56,11 @@ public class CaseStorageImpl implements CaseStorage {
 
                 if (location.equals(caseInfo.getLocation())) {
                     parent.removeChild(entry.getKey());
-                    configManager.save("Cases.yml");
+                    config.save();
                     return true;
                 }
-            } catch (SerializationException ignored) {}
+            } catch (ConfigurateException ignored) {
+            }
 
         }
 
@@ -65,7 +70,7 @@ public class CaseStorageImpl implements CaseStorage {
     @Override
     public @NotNull Map<String, CaseInfo> get() {
         Map<String, CaseInfo> map = new HashMap<>();
-        ConfigurationNode parent = node.node("DonateCase", "Cases");
+        ConfigurationNode parent = config.node("DonateCase", "Cases");
         for (Map.Entry<Object, ? extends ConfigurationNode> entry : parent.childrenMap().entrySet()) {
             String name = String.valueOf(entry.getKey());
             CaseInfo caseInfo = get(entry.getValue());
@@ -78,17 +83,17 @@ public class CaseStorageImpl implements CaseStorage {
 
     @Override
     public boolean has(String name) {
-        return node.hasChild("DonateCase", "Cases", name);
+        return config.node().hasChild("DonateCase", "Cases", name);
     }
 
     @Override
     public CaseInfo get(String name) {
-        return get(node.node("DonateCase", "Cases", name));
+        return get(config.node("DonateCase", "Cases", name));
     }
 
     @Override
     public CaseInfo get(CaseLocation location) {
-        ConfigurationNode parent = node.node("DonateCase", "Cases");
+        ConfigurationNode parent = config.node("DonateCase", "Cases");
         for (ConfigurationNode value : parent.childrenMap().values()) {
 
             CaseInfo caseInfo = get(value);

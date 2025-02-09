@@ -1,9 +1,10 @@
 package com.jodexindustries.donatecase.common.config;
 
-import com.jodexindustries.donatecase.common.DonateCase;
+import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.config.Loadable;
-import com.jodexindustries.donatecase.api.data.casedata.*;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.common.DonateCase;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -23,13 +24,12 @@ public class CaseLoader implements Loadable {
         api.getCaseManager().getMap().clear();
         int count = 0;
 
-        for (Map.Entry<String, ConfigurationNode> entry : api.getConfigManager().getConfigCases().getMap().entrySet()) {
+        for (Map.Entry<String, Config> entry : api.getConfigManager().getConfigCases().getMap().entrySet()) {
             String caseType = entry.getKey();
-            ConfigurationNode node = entry.getValue();
 
-            ConfigurationNode caseSection = node.node("case");
+            ConfigurationNode caseSection = entry.getValue().node("case");
 
-            if (caseSection == null) {
+            if (caseSection == null || caseSection.isNull()) {
                 api.getPlatform().getLogger().warning("Case " + caseType + " has a broken case section, skipped.");
                 continue;
             }
