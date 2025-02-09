@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.common.config;
 
 import com.jodexindustries.donatecase.api.config.*;
 import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.common.config.converter.ConfigConverter;
 import com.jodexindustries.donatecase.common.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.common.managers.CaseKeyManagerImpl;
 import com.jodexindustries.donatecase.common.managers.CaseOpenManagerImpl;
@@ -22,6 +23,7 @@ public class ConfigManagerImpl implements ConfigManager {
     private final Messages messages;
     private final ConfigCases configCases;
     private final CaseStorage caseStorage;
+    private final ConfigConverter converter;
 
     private final Map<String, Config> configurations = new HashMap<>();
 
@@ -40,6 +42,7 @@ public class ConfigManagerImpl implements ConfigManager {
         this.caseStorage = new CaseStorageImpl(this);
         this.messages = new MessagesImpl(platform);
         this.configCases = new ConfigCasesImpl(this);
+        this.converter = new ConfigConverter(this);
     }
 
     @Override
@@ -66,6 +69,8 @@ public class ConfigManagerImpl implements ConfigManager {
         } catch (ConfigurateException e) {
             platform.getLogger().log(Level.WARNING, "Error with loading configuration: ", e);
         }
+
+        converter.convert();
 
         long caching = getConfig().node("DonateCase", "Caching").getLong();
         if (caching >= 0) {
