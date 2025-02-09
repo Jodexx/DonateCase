@@ -56,7 +56,7 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
             backend.getLogger().log(Level.WARNING, "GUI loading failed: " + ex.getMessage());
             player.sendMessage(DCTools.rc("&cFailed to load the GUI. Please try again later."));
             return null;
-        });;
+        });
     }
 
     private CompletableFuture<Void> load() {
