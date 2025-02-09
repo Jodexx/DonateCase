@@ -9,6 +9,7 @@ import com.jodexindustries.donatecase.common.serializer.CaseGuiSerializer;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
+import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
@@ -31,6 +32,7 @@ public class ConfigImpl implements Config {
         this.file = file;
         this.loader = YamlConfigurationLoader
                 .builder()
+                .nodeStyle(NodeStyle.BLOCK)
                 .defaultOptions(opts -> opts.serializers(build -> build.registerAll(SERIALIZER_COLLECTION)))
                 .file(file)
                 .build();
