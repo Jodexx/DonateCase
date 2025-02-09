@@ -1,10 +1,8 @@
-package com.jodexindustries.donatecase.spigot.animations;
+package com.jodexindustries.donatecase.spigot.animations.wheel;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
-import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
@@ -12,12 +10,8 @@ import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
-import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -28,106 +22,14 @@ public class WheelAnimation extends BukkitJavaAnimation {
 
     private final List<ArmorStandCreator> armorStands = new ArrayList<>();
 
-    private Settings settings;
-
-    private enum WheelType {
-        FULL,  // No duplicates, all unique items
-        RANDOM // Can have duplicates, random items
-    }
+    private WheelSettings settings;
 
     @SneakyThrows
     @Override
     public void start() {
-        this.settings = getSettings().get(Settings.class);
+        this.settings = getSettings().get(WheelSettings.class);
 
         api.getPlatform().getScheduler().run(api.getPlatform(), new Task(), 0L, 0L);
-    }
-
-    @ConfigSerializable
-    private static class Settings {
-
-        @Setting("CircleRadius")
-        private double radius;
-
-        @Setting("Scroll")
-        private Scroll scroll;
-
-        @Setting("Flame")
-        private Flame flame;
-
-        @Setting("ItemsCount")
-        private int itemsCount;
-
-        @Setting("ItemSlot")
-        private String itemSlot;
-
-        @Setting("Pose")
-        private ArmorStandEulerAngle armorStandEulerAngle;
-
-        @Setting("Type")
-        private String wheelType;
-
-        public EquipmentSlot getItemSlot() {
-            if (itemSlot == null) return EquipmentSlot.HEAD;
-            try {
-                return EquipmentSlot.valueOf(itemSlot);
-            } catch (IllegalArgumentException e) {
-                return EquipmentSlot.HEAD;
-            }
-        }
-
-        /**
-         * Safely parse the wheel type.
-         */
-        public WheelType getWheelType() {
-            if (wheelType == null) return WheelType.RANDOM;
-            try {
-                return WheelType.valueOf(wheelType);
-            } catch (IllegalArgumentException e) {
-                return WheelType.RANDOM;
-            }
-        }
-
-        @ConfigSerializable
-        private static class Scroll {
-
-            @Setting("Time")
-            private int time = 100;
-
-            @Setting("Count")
-            private int count = 1;
-
-            @Setting("EaseAmount")
-            private double easeAmount = 2.5;
-
-            @Setting("Sound")
-            private String sound;
-
-            @Setting("Volume")
-            private float volume;
-
-            @Setting("Pitch")
-            private float pitch;
-
-            private Sound getSound() {
-                if (sound == null) return null;
-                try {
-                    return Sound.valueOf(sound);
-                } catch (IllegalArgumentException e) {
-                    return null;
-                }
-            }
-        }
-
-        @ConfigSerializable
-        private static class Flame {
-
-            @Setting("Enabled")
-            private boolean enabled;
-
-            @Setting("Particle")
-            private Particle particle = Particle.FLAME;
-        }
     }
 
     private class Task implements Consumer<SchedulerTask> {
@@ -189,7 +91,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
         private void initializeItems() {
             boolean small = getSettings().node("SmallArmorStand").getBoolean(true);
 
-            if (settings.getWheelType() == WheelType.FULL) {
+            if (settings.getWheelType() == WheelSettings.WheelType.FULL) {
                 // FULL logic - unique items
                 List<CaseDataItem> uniqueItems = new ArrayList<>(getCaseData().getItems().values());
 

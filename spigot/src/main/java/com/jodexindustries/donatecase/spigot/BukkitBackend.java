@@ -26,7 +26,7 @@ import com.jodexindustries.donatecase.api.tools.PAPI;
 import com.jodexindustries.donatecase.spigot.animations.FireworkAnimation;
 import com.jodexindustries.donatecase.spigot.animations.RainlyAnimation;
 import com.jodexindustries.donatecase.spigot.animations.ShapeAnimation;
-import com.jodexindustries.donatecase.spigot.animations.WheelAnimation;
+import com.jodexindustries.donatecase.spigot.animations.wheel.WheelAnimation;
 import com.jodexindustries.donatecase.spigot.gui.CaseGuiWrapperBukkit;
 import com.jodexindustries.donatecase.common.gui.items.HISTORYItemHandlerImpl;
 import com.jodexindustries.donatecase.common.gui.items.OPENItemClickHandlerImpl;
