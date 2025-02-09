@@ -2,8 +2,8 @@ package com.jodexindustries.dcwebhook.events;
 
 import com.jodexindustries.dcwebhook.tools.DiscordWebhook;
 import com.jodexindustries.dcwebhook.tools.Tools;
-import com.jodexindustries.donatecase.api.events.AnimationEndEvent;
-import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.event.AnimationEndEvent;
+import com.jodexindustries.donatecase.api.event.DonateCaseReloadEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -31,7 +31,7 @@ public class EventListener implements Listener {
         String animation = e.getAnimation();
         String caseType = e.getCaseData().getCaseType();
         String winGroup = e.getWinItem().getGroup();
-        String caseTitle = ChatColor.stripColor(e.getCaseData().getCaseTitle());
+        String caseTitle = ChatColor.stripColor(e.getCaseData().getCaseGui().getTitle());
         Bukkit.getScheduler().runTaskAsynchronously(t.getMain().getDCAPI().getDonateCase(), () -> {
             String webhook = t.getConfig().getConfig().getString("Webhook");
             if (webhook != null && !webhook.isEmpty()) {

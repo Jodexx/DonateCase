@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.manager;
 
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -7,16 +8,15 @@ import java.util.Map;
 
 /**
  * Interface for implement case management
- * @param <C>        The type of case data structure.
  */
-public interface CaseManager<C> {
+public interface CaseManager {
 
     /**
      * Is there a case with a type?
      * @param type Case type
      * @return true - if case found in memory
      */
-    boolean hasCaseByType(@NotNull String type);
+    boolean hasByType(@NotNull String type);
 
     /**
      * Get a casedata by type
@@ -25,11 +25,11 @@ public interface CaseManager<C> {
      * @return Case data
      */
     @Nullable
-    C getCase(@NotNull String type);
+    CaseData get(@NotNull String type);
 
     /**
      * Gets casedata map
-     * @return Map of {@link C}
+     * @return Map of {@link CaseData}
      */
-    Map<String, C> getMap();
+    Map<String, CaseData> getMap();
 }

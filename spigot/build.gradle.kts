@@ -25,11 +25,18 @@ dependencies {
     compileOnly(fileTree("libs").include("*.jar"))
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
     compileOnly("de.oliver:FancyHolograms:2.3.3")
-    compileOnly("net.luckperms:api:5.4")
     compileOnly("com.github.retrooper:packetevents-spigot:2.6.0")
     implementation("me.tofaa.entitylib:spigot:2.4.11-SNAPSHOT")
     implementation(project(":api:spigot-api"))
     implementation(project(":common"))
+
+}
+
+tasks.test {
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 tasks.build {
@@ -57,5 +64,6 @@ tasks.shadowJar {
         exclude(dependency("org.jetbrains:annotations:.*"))
     }
 
+    relocate("net.kyori.event", "com.jodexindustries.donatecase.api.kyori.event")
     relocate("me.tofaa.entitylib", "com.jodexindustries.donatecase.entitylib")
 }

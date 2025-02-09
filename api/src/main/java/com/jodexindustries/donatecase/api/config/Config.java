@@ -1,23 +1,21 @@
 package com.jodexindustries.donatecase.api.config;
 
-import com.jodexindustries.donatecase.api.data.database.DatabaseType;
-import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.File;
 
 public interface Config {
 
-    void load();
+    ConfigurationNode node();
 
-    void delete(@NotNull File file);
+    default ConfigurationNode node(Object... path) {
+        return node().node(path);
+    }
 
-    void delete(@NotNull String name);
+    File file();
 
-    boolean save(String name);
+    void load() throws ConfigurateException;
 
-    boolean save(File file);
-
-    void saveLang();
-
-    DatabaseType getDatabaseType();
+    void save() throws ConfigurateException;
 }

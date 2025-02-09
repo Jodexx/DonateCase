@@ -9,11 +9,9 @@ plugins {
 }
 
 group = "com.jodexindustries"
-version = "1.1.2"
+version = "1.1.3"
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
-    compileOnly("org.jetbrains:annotations:24.1.0")
     compileOnly("me.clip:placeholderapi:2.11.5")
     compileOnly(project(":api:spigot-api"))
 }

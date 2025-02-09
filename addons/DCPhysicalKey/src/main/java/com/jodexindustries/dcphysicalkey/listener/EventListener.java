@@ -1,8 +1,8 @@
 package com.jodexindustries.dcphysicalkey.listener;
 
 import com.jodexindustries.dcphysicalkey.bootstrap.Bootstrap;
-import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
-import com.jodexindustries.donatecase.api.events.PreOpenCaseEvent;
+import com.jodexindustries.donatecase.api.event.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.event.PreOpenCaseEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

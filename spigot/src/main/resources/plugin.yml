@@ -1,12 +1,12 @@
 name: DonateCase
-main: com.jodexindustries.donatecase.DonateCase
+main: com.jodexindustries.donatecase.spigot.BukkitDonateCase
 author: _Jodex__
 version: '${version}'
 website: "https://jodexindustries.xyz/"
 libraries:
   - com.j256.ormlite:ormlite-jdbc:6.1
+  - org.spongepowered:configurate-yaml:4.1.2
 softdepend:
-  - Vault
   - LuckPerms
   - PlaceholderAPI
   - CustomHeads

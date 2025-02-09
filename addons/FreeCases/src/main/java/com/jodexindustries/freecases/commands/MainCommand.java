@@ -42,7 +42,7 @@ public class MainCommand implements SubCommandExecutor<CommandSender> {
         if (time <= 0) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
                     t.getConfig().getConfig().getString("Done", "")));
-            t.getMain().getDCAPI().getCaseKeyManager().addKeys(caseName, sender.getName(), 1);
+            t.getMain().getDCAPI().getCaseKeyManager().add(caseName, sender.getName(), 1);
             List<String> players = t.getConfig().getData().getStringList("Used");
             players.add(player.getName());
 

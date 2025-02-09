@@ -1,5 +1,8 @@
 package com.jodexindustries.donatecase.api.caching;
 
+import lombok.Getter;
+
+@Getter
 public class CacheEntry<V> {
 
     private final V value;
@@ -10,19 +13,4 @@ public class CacheEntry<V> {
         this.timestamp = timestamp;
     }
 
-    public V getValue() {
-        return value;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    @Override
-    public String toString() {
-        return "CacheEntry{" +
-                "value=" + value +
-                ", timestamp=" + timestamp +
-                '}';
-    }
 }

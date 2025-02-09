@@ -11,7 +11,9 @@ import java.util.concurrent.CompletableFuture;
  * to set, modify, add, and remove keys, with both synchronous and asynchronous options.
  * Supports direct interaction with persistent storage and caching mechanisms.
  */
-public interface CaseKeyManager {
+public abstract class CaseKeyManager {
+
+    public final static SimpleCache<String, Map<String, Integer>> cache = new SimpleCache<>(20);
 
     /**
      * Directly set case keys to a specific player (bypassing addition/subtraction)
@@ -21,7 +23,7 @@ public interface CaseKeyManager {
      * @param keys     Number of keys
      * @return CompletableFuture of completion status
      */
-    CompletableFuture<DatabaseStatus> setKeys(String caseType, String player, int keys);
+    public abstract CompletableFuture<DatabaseStatus> set(String caseType, String player, int keys);
 
     /**
      * Modify case keys for a specific player
@@ -31,7 +33,7 @@ public interface CaseKeyManager {
      * @param keys     Number of keys to modify (positive to add, negative to remove)
      * @return Completable future of completion status
      */
-    CompletableFuture<DatabaseStatus> modifyKeys(String caseType, String player, int keys);
+    public abstract CompletableFuture<DatabaseStatus> modify(String caseType, String player, int keys);
 
     /**
      * Add case keys to a specific player (async)
@@ -40,10 +42,10 @@ public interface CaseKeyManager {
      * @param player   Player name
      * @param keys     Number of keys
      * @return Completable future of completes
-     * @see #modifyKeys(String, String, int)
+     * @see #modify(String, String, int)
      */
-    default CompletableFuture<DatabaseStatus> addKeys(String caseType, String player, int keys) {
-        return modifyKeys(caseType, player, keys);
+    public CompletableFuture<DatabaseStatus> add(String caseType, String player, int keys) {
+        return modify(caseType, player, keys);
     }
 
     /**
@@ -53,13 +55,13 @@ public interface CaseKeyManager {
      * @param player   Player name
      * @param keys     Number of keys
      * @return Completable future of completes
-     * @see #modifyKeys(String, String, int)
+     * @see #modify(String, String, int)
      */
-    default CompletableFuture<DatabaseStatus> removeKeys(String caseType, String player, int keys) {
-        return modifyKeys(caseType, player, -keys);
+    public CompletableFuture<DatabaseStatus> remove(String caseType, String player, int keys) {
+        return modify(caseType, player, -keys);
     }
 
-    CompletableFuture<DatabaseStatus> removeAllKeys();
+    public abstract CompletableFuture<DatabaseStatus> delete();
 
     /**
      * Get the keys to a certain player's case
@@ -67,15 +69,18 @@ public interface CaseKeyManager {
      * @param player Player name
      * @return Number of keys
      */
-    int getKeys(String caseType, String player);
+    public int get(String caseType, String player) {
+        return getAsync(caseType, player).join();
+    }
 
     /**
      * Get the map of all player's keys
      * @param player Player name
      * @return Map of the keys. Key - Case type, Value - Number of keys
-     * @since 2.0.2.2
      */
-    Map<String, Integer> getKeys(String player);
+    public Map<String, Integer> get(String player) {
+        return getAsync(player).join();
+    }
 
     /**
      * Get the keys to a certain player's case
@@ -83,15 +88,14 @@ public interface CaseKeyManager {
      * @param player Player name
      * @return CompletableFuture of keys
      */
-    CompletableFuture<Integer> getKeysAsync(String caseType, String player);
+    public abstract CompletableFuture<Integer> getAsync(String caseType, String player);
 
     /**
      * Get the map of all player's keys
      * @param player Player name
-     * @since 2.0.2.2
      * @return Map of the keys. Key - Case type, Value - Number of keys
      */
-    CompletableFuture<Map<String, Integer>> getKeysAsync(String player);
+    public abstract CompletableFuture<Map<String, Integer>> getAsync(String player);
 
     /**
      * Get the keys to a certain player's case from cache <br/>
@@ -100,9 +104,8 @@ public interface CaseKeyManager {
      * @param player Player name
      * @return Number of keys
      */
-    int getKeysCache(String caseType, String player);
+    public abstract int getCache(String caseType, String player);
 
-    Map<String, Integer> getKeysCache(String player);
+    public abstract Map<String, Integer> getCache(String player);
 
-    SimpleCache<String, Map<String, Integer>> getCache();
 }

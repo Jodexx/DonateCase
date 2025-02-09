@@ -3,9 +3,9 @@ package com.jodexindustries.dcprizepreview.gui;
 import com.jodexindustries.dcprizepreview.config.CasePreview;
 import com.jodexindustries.dcprizepreview.config.Config;
 import com.jodexindustries.donatecase.api.DCAPIBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.events.CaseInteractEvent;
-import com.jodexindustries.donatecase.api.events.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.event.CaseInteractEvent;
+import com.jodexindustries.donatecase.api.event.DonateCaseReloadEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -45,7 +45,7 @@ public class EventListener implements Listener {
 
             switch (casePreview.type()) {
                 case AUTO: {
-                    CaseDataBukkit caseData = api.getCaseManager().getCase(caseType);
+                    CaseData caseData = api.getCaseManager().get(caseType);
                     if (caseData != null) {
                         Inventory inventory = PreviewGUI.loadGUI(caseData);
                         if (inventory == null) return;

@@ -21,6 +21,22 @@ java {
 }
 
 subprojects {
+    apply(plugin = "java")
+
+    repositories {
+        mavenCentral()
+        maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+        maven("https://repo.papermc.io/repository/maven-releases/")
+        maven("https://repo.fancyplugins.de/releases")
+        maven("https://repo.jodexindustries.xyz/releases/")
+        maven("https://repo.alessiodp.com/releases/")
+        maven("https://maven.evokegames.gg/snapshots")
+    }
+
+    dependencies {
+        annotationProcessor("org.projectlombok:lombok:1.18.36")
+    }
+
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
         options.release.set(8)

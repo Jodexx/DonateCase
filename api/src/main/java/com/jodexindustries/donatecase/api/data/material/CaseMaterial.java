@@ -1,71 +1,25 @@
 package com.jodexindustries.donatecase.api.data.material;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
+import lombok.Builder;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Class for custom material storage
- * @param <I> the type of ItemStack
  */
-public class CaseMaterial<I> implements MaterialHandler<I> {
-    private final MaterialHandler<I> materialHandler;
-    private final Addon addon;
-    private final String id;
-    private final String description;
+@Getter
+@Builder
+public class CaseMaterial implements MaterialHandler {
 
-    /**
-     * Default constructor
-     *
-     * @param materialHandler Handler for creating item
-     * @param addon           Material addon
-     * @param id              Material id
-     * @param description     Material description
-     */
-    public CaseMaterial(MaterialHandler<I> materialHandler, Addon addon, String id, String description) {
-        this.materialHandler = materialHandler;
-        this.addon = addon;
-        this.id = id;
-        this.description = description;
-    }
-
-    /**
-     * Gets addon which registered this material
-     *
-     * @return addon material
-     */
-    public Addon getAddon() {
-        return addon;
-    }
-
-    /**
-     * Gets material id, like: <code>BASE64</code>, <code>MCURL</code>
-     *
-     * @return material id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Gets material description
-     *
-     * @return material description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Gets material handler
-     *
-     * @return material handler
-     */
-    public MaterialHandler<I> getMaterialHandler() {
-        return materialHandler;
-    }
+    @NotNull private final MaterialHandler handler;
+    @NotNull private final Addon addon;
+    @NotNull private final String id;
+    @Nullable private final String description;
 
     @Override
-    public @NotNull I handle(@NotNull String context) {
-        return materialHandler.handle(context);
+    public @NotNull Object handle(@NotNull String context) throws CaseMaterialException {
+        return handler.handle(context);
     }
 }

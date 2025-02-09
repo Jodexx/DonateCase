@@ -1,20 +1,26 @@
 package com.jodexindustries.donatecase.api.database;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
+import com.jodexindustries.donatecase.api.caching.SimpleCache;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
+import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public interface CaseDatabase {
+public abstract class CaseDatabase {
+
+    public final static SimpleCache<String, List<CaseData.History>> cache = new SimpleCache<>(20);
+
+    public abstract void connect();
 
     /**
      * Connect via SQLITE
      *
      * @param path Database absolute path
      */
-    void connect(String path);
+    public abstract void connect(String path);
 
     /**
      * Connect via MySQL
@@ -25,15 +31,15 @@ public interface CaseDatabase {
      * @param user     Database user
      * @param password User password
      */
-    void connect(String database, String port, String host, String user, String password);
+    public abstract void connect(String database, String port, String host, String user, String password);
 
-    CompletableFuture<Map<String, Integer>> getKeys(String player);
+    public abstract CompletableFuture<Map<String, Integer>> getKeys(String player);
 
-    CompletableFuture<Integer> getKeys(String name, String player);
+    public abstract CompletableFuture<Integer> getKeys(String name, String player);
 
-    CompletableFuture<DatabaseStatus> setKeys(String name, String player, int keys);
+    public abstract CompletableFuture<DatabaseStatus> setKeys(String name, String player, int keys);
 
-    CompletableFuture<DatabaseStatus> delAllKeys();
+    public abstract CompletableFuture<DatabaseStatus> delAllKeys();
 
     /**
      * Get count of opened cases by player
@@ -42,9 +48,9 @@ public interface CaseDatabase {
      * @param caseType Case type
      * @return number of opened cases
      */
-    CompletableFuture<Integer> getOpenCount(String player, String caseType);
+    public abstract CompletableFuture<Integer> getOpenCount(String player, String caseType);
 
-    CompletableFuture<Map<String, Integer>> getOpenCount(String player);
+    public abstract CompletableFuture<Map<String, Integer>> getOpenCount(String player);
 
     /**
      * Set count of opened cases by player
@@ -53,11 +59,11 @@ public interface CaseDatabase {
      * @param player   Player, who opened
      * @param count    Number of opened cases
      */
-    CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count);
+    public abstract CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count);
 
-    void setHistoryData(CaseDataHistory[] historyData);
+    public abstract void setHistoryData(CaseData.History[] historyData);
 
-    CompletableFuture<DatabaseStatus> setHistoryData(String caseType, CaseDataHistory data);
+    public abstract CompletableFuture<DatabaseStatus> setHistoryData(String caseType, CaseData.History data);
 
     /**
      * Sets history data for specific case type and index
@@ -66,23 +72,25 @@ public interface CaseDatabase {
      * @param data History data, if null - deletes
      * @return Future of DatabaseStatus
      */
-    CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseDataHistory data);
+    public abstract CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseData.History data);
 
-    CompletableFuture<DatabaseStatus> removeHistoryData(String caseType);
+    public abstract CompletableFuture<DatabaseStatus> removeHistoryData(String caseType);
 
-    CompletableFuture<DatabaseStatus> removeHistoryData(String caseType, int index);
+    public abstract CompletableFuture<DatabaseStatus> removeHistoryData(String caseType, int index);
 
-    CompletableFuture<List<CaseDataHistory>> getHistoryData();
+    public abstract CompletableFuture<List<CaseData.History>> getHistoryData();
 
-    CompletableFuture<List<CaseDataHistory>> getHistoryData(String caseType);
+    public abstract CompletableFuture<List<CaseData.History>> getHistoryData(String caseType);
 
     /**
      * Returns no-cached, if mysql disabled
      * @return list of all history data
      */
-    List<CaseDataHistory> getHistoryDataCache();
+    public abstract List<CaseData.History> getCache();
 
-    List<CaseDataHistory> getHistoryDataCache(String caseType);
+    public abstract List<CaseData.History> getCache(String caseType);
 
-    void close();
+    public abstract void close();
+
+    public abstract DatabaseType getType();
 }

@@ -32,13 +32,13 @@ public class Tools {
                 .description("Get free case")
                 .build();
 
-        main.getDCAPI().getSubCommandManager().registerSubCommand(subCommand);
+        main.getDCAPI().getSubCommandManager().register(subCommand);
 
         if(placeholder != null) placeholder.register();
     }
 
     public void unload() {
-        main.getDCAPI().getSubCommandManager().unregisterSubCommand("free");
+        main.getDCAPI().getSubCommandManager().unregister("free");
 
         if(placeholder != null) placeholder.unregister();
     }

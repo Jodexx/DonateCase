@@ -1,12 +1,12 @@
 package com.jodexindustries.donatecase.api.data.subcommand;
 
+import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * Interface for implement subcommand executor
- * @param <S> the type of command sender
  */
-public interface SubCommandExecutor<S> {
+public interface SubCommandExecutor {
 
     /**
      * Executes the given sub command
@@ -15,5 +15,6 @@ public interface SubCommandExecutor<S> {
      * @param label  Command label
      * @param args   Passed command arguments
      */
-    void execute(@NotNull S sender, @NotNull String label, @NotNull String[] args);
+    boolean execute(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) throws SubCommandException;
+
 }

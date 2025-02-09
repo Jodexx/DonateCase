@@ -1,8 +1,7 @@
 package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.data.casedata.CCloneable;
-import com.jodexindustries.donatecase.api.data.casedata.gui.GUITypedItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,47 +14,33 @@ import java.util.stream.Collectors;
  * Interface for managing GUI-typed items associated with case data materials, enabling
  * registration, retrieval, and management of GUI elements.
  *
- * @param <M> The type extending {@code CaseDataMaterial} associated with GUI items in this manager
- * @param <G>        The type representing a GUI component for cases.
- * @param <E>        The type representing GUI click events.
  */
-public interface GUITypedItemManager<M extends CCloneable, G, E> {
-
-    /**
-     * Provides a builder for creating a new GUI typed item with a specified ID.
-     *
-     * @param id the unique identifier for the GUI typed item to create
-     * @return a {@code GUITypedItem.Builder} instance for creating the typed item
-     * @see #registerItem(GUITypedItem)
-     */
-    @NotNull
-    GUITypedItem.Builder<M, G, E> builder(String id);
+public interface GUITypedItemManager {
 
     /**
      * Registers a GUI typed item.
      *
      * @param item the {@code GUITypedItem} object to register
      * @return true if the registration is successful, false otherwise
-     * @see #builder(String)
      */
-    boolean registerItem(GUITypedItem<M, G, E> item);
+    boolean register(TypedItem item);
 
     /**
      * Unregisters a GUI typed item by its ID.
      *
      * @param id the unique identifier of the GUI typed item to unregister
      */
-    void unregisterItem(String id);
+    void unregister(String id);
 
-    default void unregisterItems(Addon addon) {
-        List<GUITypedItem<M, G, E>> list = new ArrayList<>(getRegisteredItems(addon));
-        list.stream().map(GUITypedItem::getId).forEach(this::unregisterItem);
+    default void unregister(Addon addon) {
+        List<TypedItem> list = new ArrayList<>(get(addon));
+        list.stream().map(TypedItem::getId).forEach(this::unregister);
     }
 
     /**
      * Unregisters all registered GUI typed items.
      */
-    void unregisterItems();
+    void unregister();
 
     /**
      * Retrieves a registered GUI typed item by its ID.
@@ -64,15 +49,15 @@ public interface GUITypedItemManager<M extends CCloneable, G, E> {
      * @return the {@code GUITypedItem} object if found, or null otherwise
      */
     @Nullable
-    GUITypedItem<M, G, E> getRegisteredItem(@NotNull String id);
+    TypedItem get(@NotNull String id);
 
-    default List<GUITypedItem<M, G, E>> getRegisteredItems(Addon addon) {
-        return getRegisteredItems().values().stream().filter(item ->
+    default List<TypedItem> get(Addon addon) {
+        return getMap().values().stream().filter(item ->
                 item.getAddon().equals(addon)).collect(Collectors.toList());
     }
 
     @NotNull
-    Map<String, GUITypedItem<M, G, E>> getRegisteredItems();
+    Map<String, TypedItem> getMap();
 
 
     /**
@@ -91,5 +76,6 @@ public interface GUITypedItemManager<M extends CCloneable, G, E> {
      * @return the {@code GUITypedItem} object if found, or null otherwise
      */
     @Nullable
-    GUITypedItem<M, G, E> getFromString(@NotNull final String string);
+    TypedItem getFromString(@NotNull final String string);
+
 }

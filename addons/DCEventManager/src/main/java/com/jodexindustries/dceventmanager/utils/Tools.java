@@ -136,7 +136,7 @@ public class Tools implements Listener {
             classes = Reflection.getClassesForPackage(getClass().getClassLoader().getParent(), pkg);
 
             // load classes from addons
-            for (InternalJavaAddon addon : main.getDCAPI().getAddonManager().getAddons().values()) {
+            for (InternalJavaAddon addon : main.getDCAPI().getAddonManager().getMap().values()) {
                 classes.addAll(Reflection.getClassesForPackage(addon.getUrlClassLoader(), pkg));
             }
 

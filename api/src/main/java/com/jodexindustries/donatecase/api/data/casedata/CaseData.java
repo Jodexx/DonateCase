@@ -1,91 +1,56 @@
 package com.jodexindustries.donatecase.api.data.casedata;
 
-import com.jodexindustries.donatecase.api.data.casedata.gui.GUI;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
-import org.jetbrains.annotations.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Required;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class for implementing cases that are loaded into the plugin's memory.
- * @param <M> the type of CaseDataMaterial
  */
-public class CaseData<M extends CCloneable> implements CCloneable {
-    private final String caseType;
+@Getter
+@Setter
+@ConfigSerializable
+public class CaseData implements Cloneable {
+
+    private transient String caseType;
+
+    @Setting("DisplayName")
     private String caseDisplayName;
+
+    @Setting("Animation")
+    @Required
     private String animation;
-    private Map<String, CaseDataItem<M>> items;
-    private CaseDataHistory[] historyData;
-    private CaseDataHologram hologram;
+
+    @Setting("Items")
+    private Map<String, CaseDataItem> items;
+
+    @Setting("Hologram")
+    private Hologram hologram;
+
+    @Setting("LevelGroups")
     private Map<String, Integer> levelGroups;
-    private GUI<M> gui;
+
+    @Setting("Gui")
+    private CaseGui caseGui;
+
+    @Setting("NoKeyActions")
     private List<String> noKeyActions;
-    private OpenType openType;
 
-    /**
-     * Default constructor
-     *
-     * @param caseType          Case type
-     * @param caseDisplayName   Case display name
-     * @param animation         Animation name
-     * @param items             Items list
-     * @param historyData       History data array
-     * @param hologram          Hologram object
-     * @param levelGroups       Map with level groups
-     * @param gui               GUI object
-     * @param noKeyActions      NoKeyActions
-     * @param openType          Open type
-     */
-    public CaseData(String caseType, String caseDisplayName, String animation, Map<String,
-            CaseDataItem<M>> items, CaseDataHistory[] historyData, CaseDataHologram hologram, Map<String, Integer> levelGroups, GUI<M> gui,
-                    List<String> noKeyActions, @NotNull OpenType openType) {
-        this.caseType = caseType;
-        this.caseDisplayName = caseDisplayName;
-        this.animation = animation;
-        this.items = items;
-        this.historyData = historyData;
-        this.hologram = hologram;
-        this.levelGroups = levelGroups;
-        this.gui = gui;
-        this.noKeyActions = noKeyActions;
-        this.openType = openType;
-    }
+    @Setting("OpenType")
+    private OpenType openType = OpenType.GUI;
 
-    @Override
-    public String toString() {
-        return "CaseData{" +
-                "caseType='" + caseType + '\'' +
-                ", caseDisplayName='" + caseDisplayName + '\'' +
-                ", animation='" + animation + '\'' +
-                ", items=" + items +
-                ", historyData=" + Arrays.toString(historyData) +
-                ", hologram=" + hologram +
-                ", levelGroups=" + levelGroups +
-                ", gui=" + gui +
-                '}';
-    }
-
-    /**
-     * Get case history data
-     *
-     * @return history data
-     */
-    public CaseDataHistory[] getHistoryData() {
-        return historyData;
-    }
-
-    /**
-     * Get case items
-     *
-     * @return items
-     */
-    public Map<String, CaseDataItem<M>> getItems() {
-        return items;
-    }
+    @Setting("AnimationSettings")
+    private ConfigurationNode animationSettings;
 
     /**
      * Get case item
@@ -94,7 +59,7 @@ public class CaseData<M extends CCloneable> implements CCloneable {
      * @return item
      */
     @Nullable
-    public CaseDataItem<M> getItem(String name) {
+    public CaseDataItem getItem(String name) {
         return items.getOrDefault(name, null);
     }
 
@@ -103,9 +68,9 @@ public class CaseData<M extends CCloneable> implements CCloneable {
      *
      * @return Random item
      */
-    public CaseDataItem<M> getRandomItem() {
-        ProbabilityCollection<CaseDataItem<M>> collection = new ProbabilityCollection<>();
-        for (CaseDataItem<M> item : items.values()) {
+    public CaseDataItem getRandomItem() {
+        ProbabilityCollection<CaseDataItem> collection = new ProbabilityCollection<>();
+        for (CaseDataItem item : items.values()) {
             double chance = item.getChance();
             if(chance > 0) collection.add(item, chance);
         }
@@ -122,86 +87,13 @@ public class CaseData<M extends CCloneable> implements CCloneable {
         return items.values().stream().anyMatch(item -> item.getChance() > 0);
     }
 
-    /**
-     * Set case history data
-     *
-     * @param historyData history data
-     */
-    public void setHistoryData(CaseDataHistory[] historyData) {
-        this.historyData = historyData;
-    }
-
-    /**
-     * Set case items
-     *
-     * @param items map of CaseData.Item items
-     */
-    public void setItems(Map<String, CaseDataItem<M>> items) {
-        this.items = items;
-    }
-
-    /**
-     * Get animation
-     *
-     * @return animation
-     */
-    @NotNull
-    public String getAnimation() {
-        return animation;
-    }
-
-    /**
-     * Set animation
-     *
-     * @param animation animation
-     */
-    public void setAnimation(String animation) {
-        this.animation = animation;
-    }
-
-    /**
-     * Get case title
-     *
-     * @return title
-     */
-    @NotNull
-    public String getCaseTitle() {
-        if (gui == null) return "";
-        return gui.getTitle();
-    }
-
-    /**
-     * Set case title
-     *
-     * @param caseTitle title
-     */
-    public void setCaseTitle(@NotNull String caseTitle) {
-        if (this.gui != null) this.gui.setTitle(caseTitle);
-    }
-
-    /**
-     * Get case type
-     *
-     * @return case type
-     */
-    @NotNull
-    public String getCaseType() {
-        return caseType;
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
-    public CaseData<M> clone() {
+    public CaseData clone() {
         try {
-            CaseData<M> clonedCaseData = (CaseData<M>) super.clone();
+            CaseData clonedCaseData = (CaseData) super.clone();
 
-            // Deep clone the map of items
-            clonedCaseData.items = cloneItemsMap(this.items);
-
-            clonedCaseData.gui = this.gui.clone();
-
-            // Deep clone the array of historyData
-            clonedCaseData.historyData = cloneCaseDataHistoryArray(this.historyData);
+            if(this.items != null) clonedCaseData.items = cloneItemsMap(this.items);
+            if(this.caseGui != null) clonedCaseData.caseGui = this.caseGui.clone();
 
             return clonedCaseData;
         } catch (CloneNotSupportedException e) {
@@ -209,139 +101,101 @@ public class CaseData<M extends CCloneable> implements CCloneable {
         }
     }
 
-    /**
-     * Clone method for CaseData deep clone
-     */
-    protected static CaseDataHistory[] cloneCaseDataHistoryArray(CaseDataHistory[] originalArray) {
-        CaseDataHistory[] newArray = new CaseDataHistory[originalArray.length];
-        for (int i = 0; i < originalArray.length; i++) {
-            if (originalArray[i] != null) {
-                newArray[i] = originalArray[i].clone();
-            }
-        }
-        return newArray;
+    @Override
+    public String toString() {
+        return "CaseData{" +
+                "caseType='" + caseType + '\'' +
+                ", caseDisplayName='" + caseDisplayName + '\'' +
+                ", animation='" + animation + '\'' +
+                ", items=" + items +
+                ", hologram=" + hologram +
+                ", levelGroups=" + levelGroups +
+                ", caseGui=" + caseGui +
+                ", noKeyActions=" + noKeyActions +
+                ", openType=" + openType +
+                ", animationSettings=" + animationSettings +
+                '}';
     }
 
     /**
      * Clone method for CaseData deep clone
      */
-    protected Map<String, CaseDataItem<M>> cloneItemsMap(Map<String, CaseDataItem<M>> originalMap) {
-        Map<String, CaseDataItem<M>> clonedMap = new HashMap<>();
-        for (Map.Entry<String, CaseDataItem<M>> entry : originalMap.entrySet()) {
+    protected static Map<String, CaseDataItem> cloneItemsMap(Map<String, CaseDataItem> originalMap) {
+        Map<String, CaseDataItem> clonedMap = new HashMap<>();
+        for (Map.Entry<String, CaseDataItem> entry : originalMap.entrySet()) {
             clonedMap.put(entry.getKey(), entry.getValue().clone());
         }
         return clonedMap;
     }
 
     /**
-     * Get case display name (case.DisplayName path in case config)
-     *
-     * @return case display name
+     * Class to implement information about case opening histories
      */
+    @Setter
+    @Getter
+    @DatabaseTable(tableName = "history_data")
+    public static class History {
+        @DatabaseField(columnName = "id") private int id;
+        @DatabaseField(columnName = "item") private String item;
+        @DatabaseField(columnName = "player_name") private String playerName;
+        @DatabaseField(columnName = "time") private long time;
+        @DatabaseField(columnName = "group") private String group;
+        @DatabaseField(columnName = "case_type") private String caseType;
+        @DatabaseField(columnName = "action") private String action;
 
-    public String getCaseDisplayName() {
-        return caseDisplayName;
+        /**
+         * Default constructor
+         *
+         * @param item       Item name
+         * @param caseType   Case type
+         * @param playerName Player name
+         * @param time       Timestamp
+         * @param group      Group name
+         * @param action     Action name
+         */
+        public History(String item, String caseType, String playerName, long time, String group, String action) {
+            this.item = item;
+            this.playerName = playerName;
+            this.time = time;
+            this.group = group;
+            this.caseType = caseType;
+            this.action = action;
+        }
+
+        public History() {}
+
+        @Override
+        public History clone() {
+            try {
+                return (History) super.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new AssertionError(e);
+            }
+        }
+
     }
 
     /**
-     * Set case display name (case.DisplayName path in case config)
-     *
-     * @param caseDisplayName new display name
+     * Class for the implementation of holograms of the case.
      */
+    @Getter
+    @ConfigSerializable
+    public static class Hologram {
 
-    public void setCaseDisplayName(String caseDisplayName) {
-        this.caseDisplayName = caseDisplayName;
+        @Setting(nodeFromParent = true)
+        private ConfigurationNode node;
+
+        @Setting("Toggle")
+        private boolean enabled;
+
+        @Setting("Height")
+        private double height;
+
+        @Setting("Range")
+        private int range;
+
+        @Setting("Message")
+        private List<String> messages;
+
     }
-
-    /**
-     * Get case hologram
-     *
-     * @return case hologram class
-     */
-    public CaseDataHologram getHologram() {
-        return hologram;
-    }
-
-    /**
-     * Set case hologram
-     *
-     * @param hologram case hologram class
-     */
-    public void setHologram(CaseDataHologram hologram) {
-        this.hologram = hologram;
-    }
-
-    /**
-     * Get case LevelGroups (optional setting for each case)
-     *
-     * @return map of LevelGroups
-     */
-    public Map<String, Integer> getLevelGroups() {
-        return levelGroups;
-    }
-
-    /**
-     * Set case LevelGroups (optional setting for each case)
-     *
-     * @param levelGroups map of LevelGroups
-     */
-    public void setLevelGroups(Map<String, Integer> levelGroups) {
-        this.levelGroups = levelGroups;
-    }
-
-    /**
-     * Gets GUI storage object
-     *
-     * @return GUI object
-     */
-    public GUI<M> getGui() {
-        return gui;
-    }
-
-    /**
-     * Set GUI storage object
-     *
-     * @param gui object
-     */
-    public void setGui(GUI<M> gui) {
-        this.gui = gui;
-    }
-
-    /**
-     * Gets actions to be performed if a player tries to open a case without keys
-     *
-     * @return List of actions
-     */
-    public List<String> getNoKeyActions() {
-        return noKeyActions;
-    }
-
-    /**
-     * Set actions to be performed if a player tries to open a case without keys
-     *
-     * @param noKeyActions List of actions
-     */
-    public void setNoKeyActions(List<String> noKeyActions) {
-        this.noKeyActions = noKeyActions;
-    }
-
-    /**
-     * Gets case open type
-     *
-     * @return open type
-     */
-    @NotNull
-    public OpenType getOpenType() {
-        return openType;
-    }
-
-    /**
-     * Set case open type
-     *
-     * @param openType open type
-     */
-    public void setOpenType(OpenType openType) {
-        this.openType = openType;
-    }
-
 }

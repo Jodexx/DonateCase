@@ -1,12 +1,12 @@
 package com.jodexindustries.dchistoryeditor.commands;
 
 import com.jodexindustries.donatecase.api.DCAPIBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataBukkit;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataHistory;
+import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
+import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.tools.DCToolsBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class MainCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
+public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
     private final CaseDatabase database;
     private final DCAPIBukkit api;
@@ -37,7 +37,7 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
     }
 
     @Override
-    public void execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    public void execute(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) {
         Bukkit.getScheduler().runTaskAsynchronously(api.getDonateCase(), () -> {
             if (args.length < 3) {
                 sender.sendMessage(DCToolsBukkit.rc("&c/dc historyeditor (remove/set) (casetype) (index/all) [param] [value]"));
@@ -47,7 +47,7 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
             String action = args[0].toLowerCase();
             String caseType = args[1];
 
-            CaseDataBukkit caseData = api.getCaseManager().getCase(caseType);
+            CaseDataBukkit caseData = api.getCaseManager().get(caseType);
 
             if(caseData == null) {
                 sender.sendMessage(DCToolsBukkit.rc("&cCase with type: " + caseType + " not found!"));
@@ -73,7 +73,7 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
     }
 
     @Override
-    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) {
         List<String> list = new ArrayList<>();
         if(args.length == 1) {
             list.add("remove");
@@ -100,7 +100,7 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
         if(arg.equalsIgnoreCase("all") ) {
             database.removeHistoryData(caseData.getCaseType()).thenAccept(status -> {
                 removeInform(sender, status);
-                if(status == DatabaseStatus.COMPLETE) caseData.setHistoryData(new CaseDataHistory[caseData.getHistoryData().length]);
+                if(status == DatabaseStatus.COMPLETE) caseData.setHistoryData(new CaseData.History[caseData.getHistoryData().length]);
             });
         } else {
             int index = getIndex(sender, arg);
@@ -113,7 +113,7 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
         }
     }
 
-    private void handleSet(CommandSender sender, CaseDataBukkit caseData, String[] args) {
+    private void handleSet(CommandSender sender, CaseData caseData, String[] args) {
         int index = getIndex(sender, args[2]);
         if(index == -1) return;
 
@@ -132,9 +132,9 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
             return;
         }
 
-        CaseDataHistory tempHistory = getHistoryData(caseData.getCaseType(), index);
+        CaseData.History tempHistory = getHistoryData(caseData.getCaseType(), index);
 
-        CaseDataHistory history = tempHistory == null ? new CaseDataHistory(null, caseData.getCaseType(), null, index, null, null) : tempHistory;
+        CaseData.History history = tempHistory == null ? new CaseData.History(null, caseData.getCaseType(), null, index, null, null) : tempHistory;
 
         switch (param) {
             case "item": {
@@ -173,8 +173,8 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
         });
     }
 
-    private CaseDataHistory getHistoryData(String caseType, int index) {
-        List<CaseDataHistory> histories = database.getHistoryData(caseType).join();
+    private CaseData.History getHistoryData(String caseType, int index) {
+        List<CaseData.History> histories = database.getHistoryData(caseType).join();
 
         return histories.stream().filter(history -> history.getId() == index).findFirst().orElse(null);
     }

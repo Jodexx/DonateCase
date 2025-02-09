@@ -1,14 +1,14 @@
 package com.jodexindustries.donatecase.api.data.subcommand;
 
+import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 /**
  * Interface for implement subcommand tab completer
- * @param <S> the type of command sender
  */
-public interface SubCommandTabCompleter<S> {
+public interface SubCommandTabCompleter {
 
     /**
      * Provides tab-completion suggestions for the subcommand.
@@ -18,5 +18,6 @@ public interface SubCommandTabCompleter<S> {
      * @param args   The current arguments input by the sender.
      * @return A list of tab-completion suggestions.
      */
-    List<String> getTabCompletions(@NotNull S sender, @NotNull String label, @NotNull String[] args);
+    List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) throws SubCommandException;
+
 }

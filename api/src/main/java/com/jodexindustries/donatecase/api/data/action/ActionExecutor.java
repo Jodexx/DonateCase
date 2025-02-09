@@ -1,20 +1,19 @@
 package com.jodexindustries.donatecase.api.data.action;
 
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Interface for registering case actions
- * @param <P> the type of Player
  */
-public interface ActionExecutor<P> {
+public interface ActionExecutor {
 
     /**
      * Called for executing custom action
      *
      * @param player   Player for executing
      * @param context  Executing context
-     * @param cooldown Action cooldown
      */
-    void execute(@Nullable P player, @NotNull String context, int cooldown);
+    void execute(@Nullable DCPlayer player, @NotNull String context) throws ActionException;
 }
