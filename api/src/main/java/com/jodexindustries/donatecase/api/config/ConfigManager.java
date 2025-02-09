@@ -6,7 +6,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.File;
 
-public interface Config extends Loadable {
+public interface ConfigManager extends Loadable {
 
     @Nullable
     ConfigurationNode get(@NotNull File file);

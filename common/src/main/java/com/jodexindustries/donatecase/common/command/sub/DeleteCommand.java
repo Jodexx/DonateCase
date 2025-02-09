@@ -31,32 +31,32 @@ public class DeleteCommand extends DefaultCommand {
                 CaseLocation location = player.getTargetBlock(5);
 
                 if (api.getAnimationManager().isLocked(location)) {
-                    sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("case-opens")));
+                    sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("case-opens")));
                     return true;
                 }
 
-                if (api.getConfig().getCaseStorage().delete(location)) {
+                if (api.getConfigManager().getCaseStorage().delete(location)) {
                     api.getHologramManager().remove(location);
-                    sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("case-removed")));
+                    sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("case-removed")));
                 } else {
-                    sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("block-is-not-case")));
+                    sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("block-is-not-case")));
                 }
             }
         } else if (args.length == 1) {
             String name = args[0];
 
-            CaseInfo caseInfo = api.getConfig().getCaseStorage().get(name);
+            CaseInfo caseInfo = api.getConfigManager().getCaseStorage().get(name);
             if (caseInfo != null) {
                 if (api.getAnimationManager().isLocked(caseInfo.getLocation())) {
-                    sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("case-opens")));
+                    sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("case-opens")));
                     return true;
                 }
 
-                api.getConfig().getCaseStorage().delete(name);
+                api.getConfigManager().getCaseStorage().delete(name);
                 api.getHologramManager().remove(caseInfo.getLocation());
-                sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("case-removed")));
+                sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("case-removed")));
             } else {
-                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-does-not-exist"), "%case:" + name)));
+                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"), "%case:" + name)));
             }
         }
         return true;
@@ -64,7 +64,7 @@ public class DeleteCommand extends DefaultCommand {
 
     @Override
     public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
-        return args.length == 1 ? new ArrayList<>(api.getConfig().getCaseStorage().get().keySet()) : new ArrayList<>();
+        return args.length == 1 ? new ArrayList<>(api.getConfigManager().getCaseStorage().get().keySet()) : new ArrayList<>();
     }
 
 }

@@ -34,7 +34,7 @@ public class EventListener {
                 if (version.isNew()) {
                     player.sendMessage(
                             DCTools.prefix(
-                                    DCTools.rt(api.getConfig().getMessages().getString("new-update"), "%version:" + version)
+                                    DCTools.rt(api.getConfigManager().getMessages().getString("new-update"), "%version:" + version)
                             )
                     );
                 }
@@ -71,7 +71,7 @@ public class EventListener {
         if (event.getAction() == CaseInteractEvent.Action.RIGHT) {
             if (!event.cancelled()) {
                 if (DCAPI.getInstance().getAnimationManager().isLocked(caseInfo.getLocation())) {
-                    player.sendMessage(DCTools.prefix(DCAPI.getInstance().getConfig().getMessages().getString("case-opens")));
+                    player.sendMessage(DCTools.prefix(DCAPI.getInstance().getConfigManager().getMessages().getString("case-opens")));
                     return;
                 }
 

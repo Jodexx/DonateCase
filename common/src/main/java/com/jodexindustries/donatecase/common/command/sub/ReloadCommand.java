@@ -24,13 +24,13 @@ public class ReloadCommand extends DefaultCommand {
         if (args.length == 0) {
             load();
             sender.sendMessage(
-                    DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("config-reloaded")))
+                    DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("config-reloaded")))
             );
         } else {
             if (args[0].equalsIgnoreCase("cache")) {
                 api.clear();
                 load();
-                sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("config-cache-reloaded",
+                sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("config-cache-reloaded",
                         "&aReloaded all DonateCase Cache")));
             }
             return false;
@@ -48,7 +48,7 @@ public class ReloadCommand extends DefaultCommand {
     }
 
     private void load() {
-        api.getConfig().load();
+        api.getConfigManager().load();
         api.getCaseLoader().load();
         api.getHologramManager().load();
     }

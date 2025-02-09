@@ -136,7 +136,7 @@ public class DonateCaseExpansion extends PlaceholderExpansion {
 
                         case "time" : {
                             DateFormat formatter = new SimpleDateFormat(
-                                    backend.getAPI().getConfig().getConfig().node("DonateCase", "DateFormat").getString("dd.MM HH:mm:ss"));
+                                    backend.getAPI().getConfigManager().getConfig().node("DonateCase", "DateFormat").getString("dd.MM HH:mm:ss"));
                             return formatter.format(new Date(history.getTime()));
                         }
                     }

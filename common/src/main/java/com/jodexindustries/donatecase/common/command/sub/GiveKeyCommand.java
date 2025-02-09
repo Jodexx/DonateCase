@@ -31,7 +31,7 @@ public class GiveKeyCommand extends DefaultCommand {
         String caseName = args[1];
         if (!DCTools.isValidPlayerName(playerName)) {
             sender.sendMessage(
-                    DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("player-not-found"), "%player:" + playerName))
+                    DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("player-not-found"), "%player:" + playerName))
             );
             return true;
         }
@@ -40,7 +40,7 @@ public class GiveKeyCommand extends DefaultCommand {
         try {
             keys = Integer.parseInt(args[2]);
         } catch (NumberFormatException e) {
-            DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("number-format-exception"), "%string:" + args[2]));
+            DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("number-format-exception"), "%string:" + args[2]));
             return true;
         }
         if (api.getCaseManager().hasByType(caseName)) {
@@ -48,21 +48,21 @@ public class GiveKeyCommand extends DefaultCommand {
             if (data == null) return true;
             api.getCaseKeyManager().add(caseName, playerName, keys).thenAcceptAsync(status -> {
                 if (status == DatabaseStatus.COMPLETE) {
-                    DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("keys-given"),
+                    DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("keys-given"),
                             "%player:" + playerName, "%key:" + keys, "%casetitle:" + data.getCaseGui().getTitle(),
                             "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
 
                     if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
                         DCPlayer target = api.getPlatform().getPlayer(playerName);
                         if (target != null)
-                            target.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("keys-given-target"),
+                            target.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("keys-given-target"),
                                     "%player:" + playerName, "%key:" + keys, "%casetitle:" + data.getCaseGui().getTitle(),
                                     "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName)));
                     }
                 }
             });
         } else {
-            DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-does-not-exist"), "%case:" + caseName));
+            DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"), "%case:" + caseName));
         }
 
         return true;

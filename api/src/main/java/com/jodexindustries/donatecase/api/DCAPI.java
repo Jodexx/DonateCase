@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.donatecase.api.config.Config;
+import com.jodexindustries.donatecase.api.config.ConfigManager;
 import com.jodexindustries.donatecase.api.config.Loadable;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.api.event.DCEvent;
@@ -109,7 +109,7 @@ public abstract class DCAPI {
      *
      * @return The configuration system instance.
      */
-    public abstract @NotNull Config getConfig();
+    public abstract @NotNull ConfigManager getConfigManager();
 
     public abstract @NotNull Loadable getCaseLoader();
 

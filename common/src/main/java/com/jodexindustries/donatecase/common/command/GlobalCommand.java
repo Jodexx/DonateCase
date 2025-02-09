@@ -44,7 +44,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
                     backend.getLogger().log(Level.WARNING, "Error with executing subcommand: " + subCommandName, e);
                 }
             } else {
-                sender.sendMessage(DCTools.prefix(backend.getAPI().getConfig().getMessages().getString("no-permission")));
+                sender.sendMessage(DCTools.prefix(backend.getAPI().getConfigManager().getMessages().getString("no-permission")));
             }
         }
 
@@ -53,7 +53,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
 
     public void sendHelp(DCCommandSender sender, String label) {
         if (!sender.hasPermission("donatecase.player")) {
-            sender.sendMessage(DCTools.prefix(backend.getAPI().getConfig().getMessages().getString("no-permission")));
+            sender.sendMessage(DCTools.prefix(backend.getAPI().getConfigManager().getMessages().getString("no-permission")));
             return;
         }
 
@@ -65,7 +65,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
             sendHelpMessages(sender, "help", label);
         }
 
-        if (backend.getAPI().getConfig().getConfig().node("DonateCase.AddonsHelp").getBoolean(true)) {
+        if (backend.getAPI().getConfigManager().getConfig().node("DonateCase.AddonsHelp").getBoolean(true)) {
             Map<String, List<Map<String, SubCommand>>> addonsMap = buildAddonsMap();
             if (DCTools.isHasCommandForSender(sender, addonsMap)) {
                 sendAddonHelpMessages(sender, addonsMap);
@@ -74,7 +74,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
     }
 
     private void sendHelpMessages(DCCommandSender sender, String path, String label) {
-        for (String string : backend.getAPI().getConfig().getMessages().getStringList(path)) {
+        for (String string : backend.getAPI().getConfigManager().getMessages().getStringList(path)) {
             sender.sendMessage(DCTools.rc(DCTools.rt(string, "%cmd:" + label)));
         }
     }
@@ -92,20 +92,20 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
     private void sendAddonHelpMessages(DCCommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
         addonsMap.forEach((addon, commands) -> {
             if (!addon.equalsIgnoreCase("DonateCase") && DCTools.isHasCommandForSender(sender, addonsMap, addon)) {
-                String addonNameFormat = backend.getAPI().getConfig().getMessages().getString("help-addons.format.name");
+                String addonNameFormat = backend.getAPI().getConfigManager().getMessages().getString("help-addons.format.name");
                 if (!addonNameFormat.isEmpty() && !addonNameFormat.equals("help-addons.format.name")) {
                     sender.sendMessage(DCTools.rc(DCTools.rt(addonNameFormat, "%addon:" + addon)));
                 }
 
                 commands.forEach(command -> command.forEach((commandName, subCommand) -> {
                     String description = subCommand.getDescription();
-                    description = (description != null) ? DCTools.rt(backend.getAPI().getConfig().getMessages().getString("help-addons.format.description"), "%description:" + description) : "";
+                    description = (description != null) ? DCTools.rt(backend.getAPI().getConfigManager().getMessages().getString("help-addons.format.description"), "%description:" + description) : "";
 
                     StringBuilder argsBuilder = compileSubCommandArgs(subCommand.getArgs());
                     String permission = subCommand.getPermission();
 
                     if (permission == null || sender.hasPermission(permission)) {
-                        sender.sendMessage(DCTools.rc(DCTools.rt(backend.getAPI().getConfig().getMessages().getString("help-addons.format.command"),
+                        sender.sendMessage(DCTools.rc(DCTools.rt(backend.getAPI().getConfigManager().getMessages().getString("help-addons.format.command"),
                                 "%cmd:" + commandName,
                                 "%args:" + argsBuilder,
                                 "%description:" + description

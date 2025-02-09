@@ -51,12 +51,12 @@ public class OpenCaseCommand extends DefaultCommand {
                             }
                         });
                     } else {
-                        sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("no-keys")));
+                        sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("no-keys")));
                     }
                 });
 
             } else {
-                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-does-not-exist"), "%case:" + caseName)));
+                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"), "%case:" + caseName)));
             }
         }
         return true;

@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.common.config;
 
 import com.jodexindustries.donatecase.api.config.CaseStorage;
-import com.jodexindustries.donatecase.api.config.Config;
+import com.jodexindustries.donatecase.api.config.ConfigManager;
 import com.jodexindustries.donatecase.api.config.ConfigCases;
 import com.jodexindustries.donatecase.api.config.Messages;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class ConfigImpl implements Config {
+public class ConfigManagerImpl implements ConfigManager {
 
     public final TypeSerializerCollection serializerCollection = TypeSerializerCollection.builder()
             .register(CaseGui.class, new CaseGuiSerializer())
@@ -52,7 +52,7 @@ public class ConfigImpl implements Config {
     @Getter
     private final BackendPlatform platform;
 
-    public ConfigImpl(BackendPlatform platform) {
+    public ConfigManagerImpl(BackendPlatform platform) {
         this.platform = platform;
         this.caseStorage = new CaseStorageImpl(this);
         this.messages = new MessagesImpl(platform);

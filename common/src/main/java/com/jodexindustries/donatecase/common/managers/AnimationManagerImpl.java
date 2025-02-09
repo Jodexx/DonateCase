@@ -91,7 +91,7 @@ public class AnimationManagerImpl implements AnimationManager {
         String animation = caseData.getAnimation();
         CaseAnimation caseAnimation = get(animation);
 
-        ConfigurationNode settings = caseData.getAnimationSettings().isNull() ? api.getConfig().getAnimations().node(animation) : caseData.getAnimationSettings();
+        ConfigurationNode settings = caseData.getAnimationSettings().isNull() ? api.getConfigManager().getAnimations().node(animation) : caseData.getAnimationSettings();
 
         CaseLocation temp = location.clone();
 
@@ -120,7 +120,7 @@ public class AnimationManagerImpl implements AnimationManager {
         CompletableFuture<UUID> animationCompletion = new CompletableFuture<>();
 
         if (caseAnimation.isRequireBlock()) {
-            CaseInfo info = api.getConfig().getCaseStorage().get(temp);
+            CaseInfo info = api.getConfigManager().getCaseStorage().get(temp);
             if (info != null) {
                 CaseLocation caseLocation = info.getLocation();
                 temp.setPitch(caseLocation.getPitch());
@@ -388,9 +388,9 @@ public class AnimationManagerImpl implements AnimationManager {
      */
     private Map<String, Integer> getDefaultLevelGroup() {
         Map<String, Integer> levelGroup = new HashMap<>();
-        boolean isEnabled = api.getConfig().getConfig().node("DonateCase", "LevelGroup").getBoolean();
+        boolean isEnabled = api.getConfigManager().getConfig().node("DonateCase", "LevelGroup").getBoolean();
         if(isEnabled) {
-            ConfigurationNode section = api.getConfig().getConfig().node("DonateCase", "LevelGroups");
+            ConfigurationNode section = api.getConfigManager().getConfig().node("DonateCase", "LevelGroups");
 
             if (section != null) {
                 for (Map.Entry<Object, ? extends ConfigurationNode> entry : section.childrenMap().entrySet()) {

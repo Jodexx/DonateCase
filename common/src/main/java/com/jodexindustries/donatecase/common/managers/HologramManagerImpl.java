@@ -48,7 +48,7 @@ public class HologramManagerImpl implements HologramManager {
 
     @Override
     public void load() {
-        String name = api.getConfig().getConfig().node("DonateCase", "HologramDriver").getString("decentholograms").toLowerCase();
+        String name = api.getConfigManager().getConfig().node("DonateCase", "HologramDriver").getString("decentholograms").toLowerCase();
         set(name);
         if (driver == null) return;
 
@@ -56,7 +56,7 @@ public class HologramManagerImpl implements HologramManager {
 
         remove();
 
-        for (Map.Entry<String, CaseInfo> entry : api.getConfig().getCaseStorage().get().entrySet()) {
+        for (Map.Entry<String, CaseInfo> entry : api.getConfigManager().getCaseStorage().get().entrySet()) {
             CaseInfo info = entry.getValue();
 
             String caseType = info.getType();

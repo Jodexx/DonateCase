@@ -41,23 +41,23 @@ public class KeysCommand extends DefaultCommand {
 
     private void handlePlayer(DCCommandSender sender, DCPlayer player) {
         if (sender.hasPermission("donatecase.player")) {
-            for (String message : api.getConfig().getMessages().getStringList("my-keys")) {
+            for (String message : api.getConfigManager().getMessages().getStringList("my-keys")) {
                 String formattedMessage = formatMessage(player.getName(), message);
                 sender.sendMessage(formattedMessage);
             }
         } else {
-            sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("no-permission")));
+            sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("no-permission")));
         }
     }
 
     private void handleMod(DCCommandSender sender, String target) {
         if (sender.hasPermission("donatecase.mod")) {
-            for (String message : api.getConfig().getMessages().getStringList("player-keys")) {
+            for (String message : api.getConfigManager().getMessages().getStringList("player-keys")) {
                 String formattedMessage = formatMessage(target, message);
                 sender.sendMessage(formattedMessage.replace("%player", target));
             }
         } else {
-            sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("no-permission")));
+            sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("no-permission")));
         }
     }
 

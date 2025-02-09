@@ -25,7 +25,7 @@ public class CasesCommand extends DefaultCommand {
         int num = 0;
         for (CaseData data : api.getCaseManager().getMap().values()) {
             num++;
-            sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("list-of-cases"),
+            sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("list-of-cases"),
                     "%casename:" + data.getCaseType(), "%num:" + num,
                     "%casedisplayname:" + data.getCaseDisplayName(),
                     "%casetitle:" + data.getCaseGui().getTitle())));

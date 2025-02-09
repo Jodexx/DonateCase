@@ -43,18 +43,18 @@ public class CreateCommand extends DefaultCommand {
             CaseData caseData = api.getCaseManager().get(caseType);
 
             if (caseData == null) {
-                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-does-not-exist"),
+                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"),
                         "%case:" + caseType)));
                 return true;
             }
 
-            if (api.getConfig().getCaseStorage().has(block)) {
-                sender.sendMessage(DCTools.prefix(api.getConfig().getMessages().getString("case-already-created")));
+            if (api.getConfigManager().getCaseStorage().has(block)) {
+                sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("case-already-created")));
                 return true;
             }
 
-            if (api.getConfig().getCaseStorage().has(caseName)) {
-                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-already-exist"),
+            if (api.getConfigManager().getCaseStorage().has(caseName)) {
+                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-already-exist"),
                         "%casename:" + caseName)));
                 return true;
             }
@@ -67,10 +67,10 @@ public class CreateCommand extends DefaultCommand {
             CaseInfo caseInfo = new CaseInfo(caseType, toSave);
 
             try {
-                api.getConfig().getCaseStorage().save(caseName, caseInfo);
+                api.getConfigManager().getCaseStorage().save(caseName, caseInfo);
                 api.getHologramManager().create(toSave, caseData.getHologram());
 
-                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfig().getMessages().getString("case-added"),
+                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-added"),
                         "%casename:" + caseName, "%casetype:" + caseType)));
 
                 int spawnRadius = api.getPlatform().getSpawnRadius();

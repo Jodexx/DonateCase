@@ -33,7 +33,7 @@ public abstract class DCTools {
     public abstract Object loadCaseItem(String id);
 
     public static boolean isValidPlayerName(String player) {
-        if (DCAPI.getInstance().getConfig().getConfig().node("DonateCase", "CheckPlayerName").getBoolean()) {
+        if (DCAPI.getInstance().getConfigManager().getConfig().node("DonateCase", "CheckPlayerName").getBoolean()) {
             return Arrays.stream(DCAPI.getInstance().getPlatform().getOfflinePlayers())
                     .map(DCOfflinePlayer::getName)
                     .anyMatch(name -> name != null && name.equals(player.trim()));
@@ -42,7 +42,7 @@ public abstract class DCTools {
     }
 
     public static @NotNull List<String> resolveSDGCompletions(String[] args) {
-        List<String> value = new ArrayList<>(DCAPI.getInstance().getConfig().getConfigCases().getMap().keySet());
+        List<String> value = new ArrayList<>(DCAPI.getInstance().getConfigManager().getConfigCases().getMap().keySet());
         List<String> list = new ArrayList<>();
         if (args.length == 1) {
             list.addAll(
@@ -92,7 +92,7 @@ public abstract class DCTools {
     }
 
     public static String prefix(String text) {
-        return rc(DCAPI.getInstance().getConfig().getMessages().getString("prefix") + text);
+        return rc(DCAPI.getInstance().getConfigManager().getMessages().getString("prefix") + text);
     }
 
     public static String rc(String text) {

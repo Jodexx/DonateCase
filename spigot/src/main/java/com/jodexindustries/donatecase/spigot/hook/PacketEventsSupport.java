@@ -19,7 +19,7 @@ public class PacketEventsSupport {
 
     public PacketEventsSupport(BukkitBackend backend) {
         this.backend = backend;
-        this.usePackets = backend.getAPI().getConfig().getConfig().node("DonateCase", "UsePackets").getBoolean();
+        this.usePackets = backend.getAPI().getConfigManager().getConfig().node("DonateCase", "UsePackets").getBoolean();
         load();
     }
 

@@ -2,12 +2,12 @@ package com.jodexindustries.donatecase.common;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
-import com.jodexindustries.donatecase.api.config.Config;
+import com.jodexindustries.donatecase.api.config.ConfigManager;
 import com.jodexindustries.donatecase.api.config.Loadable;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.common.config.CaseLoader;
-import com.jodexindustries.donatecase.common.config.ConfigImpl;
+import com.jodexindustries.donatecase.common.config.ConfigManagerImpl;
 import com.jodexindustries.donatecase.common.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.common.event.EventBusImpl;
 import com.jodexindustries.donatecase.common.event.EventListener;
@@ -32,7 +32,7 @@ public class DonateCase extends DCAPI {
     private final HologramManager hologramManager;
 
     private final CaseDatabase database;
-    private final Config config;
+    private final ConfigManager configManager;
     private final CaseLoader caseLoader;
     @Getter
     private final UpdateChecker updateChecker;
@@ -57,7 +57,7 @@ public class DonateCase extends DCAPI {
         this.hologramManager = new HologramManagerImpl(this);
 
         this.database = new CaseDatabaseImpl(this);
-        this.config = new ConfigImpl(platform);
+        this.configManager = new ConfigManagerImpl(platform);
         this.caseLoader = new CaseLoader(this);
         this.updateChecker = new UpdateChecker(this);
         this.eventBus = new EventBusImpl();
@@ -68,7 +68,7 @@ public class DonateCase extends DCAPI {
         long time = System.currentTimeMillis();
         addonManager.load();
 
-        config.load();
+        configManager.load();
         caseLoader.load();
         hologramManager.load();
         updateChecker.check();
@@ -157,9 +157,8 @@ public class DonateCase extends DCAPI {
         return database;
     }
 
-    @Override
-    public @NotNull Config getConfig() {
-        return config;
+    public @NotNull ConfigManager getConfigManager() {
+        return configManager;
     }
 
     @Override

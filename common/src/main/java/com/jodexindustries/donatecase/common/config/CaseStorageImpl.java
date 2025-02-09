@@ -2,7 +2,7 @@ package com.jodexindustries.donatecase.common.config;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.config.CaseStorage;
-import com.jodexindustries.donatecase.api.config.Config;
+import com.jodexindustries.donatecase.api.config.ConfigManager;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import org.jetbrains.annotations.NotNull;
@@ -17,29 +17,29 @@ import java.util.logging.Level;
 
 public class CaseStorageImpl implements CaseStorage {
 
-    private final Config config;
+    private final ConfigManager configManager;
     private ConfigurationNode node;
 
-    public CaseStorageImpl(Config config) {
-        this.config = config;
+    public CaseStorageImpl(ConfigManager configManager) {
+        this.configManager = configManager;
     }
 
     @Override
     public void load() {
-        node = config.get("Cases.yml");
+        node = configManager.get("Cases.yml");
     }
 
     @Override
     public void save(@NotNull String name, @NotNull CaseInfo caseInfo) throws ConfigurateException {
         ConfigurationNode current = node.node("DonateCase", "Cases", name);
         current.set(CaseInfo.class, caseInfo);
-        config.save("Cases.yml");
+        configManager.save("Cases.yml");
     }
 
     @Override
     public void delete(String name) {
         node.node("DonateCase", "Cases").removeChild(name);
-        config.save("Cases.yml");
+        configManager.save("Cases.yml");
     }
 
     @Override
@@ -52,7 +52,7 @@ public class CaseStorageImpl implements CaseStorage {
 
                 if (location.equals(caseInfo.getLocation())) {
                     parent.removeChild(entry.getKey());
-                    config.save("Cases.yml");
+                    configManager.save("Cases.yml");
                     return true;
                 }
             } catch (SerializationException ignored) {}

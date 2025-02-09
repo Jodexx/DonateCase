@@ -19,10 +19,10 @@ public class ConfigCasesImpl implements ConfigCases {
 
     private final Map<String, ConfigurationNode> cases = new HashMap<>();
 
-    private final ConfigImpl config;
+    private final ConfigManagerImpl config;
     private final BackendPlatform platform;
 
-    public ConfigCasesImpl(ConfigImpl config) {
+    public ConfigCasesImpl(ConfigManagerImpl config) {
         this.config = config;
         this.platform = config.getPlatform();
 

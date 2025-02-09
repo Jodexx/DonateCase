@@ -86,7 +86,7 @@ public class EventListener implements Listener {
         Block block = e.getClickedBlock();
         if (block == null) return;
 
-        CaseInfo caseInfo = DCAPI.getInstance().getConfig().getCaseStorage().get(BukkitUtils.fromBukkit(block.getLocation()));
+        CaseInfo caseInfo = DCAPI.getInstance().getConfigManager().getCaseStorage().get(BukkitUtils.fromBukkit(block.getLocation()));
         if (caseInfo == null) return;
 
         CaseInteractEvent.Action action = e.getAction() == Action.RIGHT_CLICK_BLOCK ? CaseInteractEvent.Action.RIGHT : CaseInteractEvent.Action.LEFT;
@@ -106,9 +106,9 @@ public class EventListener implements Listener {
     @EventHandler
     public void BlockBreak(BlockBreakEvent e) {
         CaseLocation location = BukkitUtils.fromBukkit(e.getBlock().getLocation());
-        if (DCAPI.getInstance().getConfig().getCaseStorage().has(location)) {
+        if (DCAPI.getInstance().getConfigManager().getCaseStorage().has(location)) {
             e.setCancelled(true);
-            e.getPlayer().sendMessage(DCTools.prefix(DCAPI.getInstance().getConfig().getMessages().getString("case-destroy-disallow")));
+            e.getPlayer().sendMessage(DCTools.prefix(DCAPI.getInstance().getConfigManager().getMessages().getString("case-destroy-disallow")));
         }
 
     }

@@ -68,7 +68,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     public void connect() {
-        ConfigurationNode node = api.getConfig().getConfig().node("DonateCase", "MySql");
+        ConfigurationNode node = api.getConfigManager().getConfig().node("DonateCase", "MySql");
         if(node == null || !node.node("Enabled").getBoolean()) {
             connect(api.getPlatform().getDataFolder().getAbsolutePath());
             return;

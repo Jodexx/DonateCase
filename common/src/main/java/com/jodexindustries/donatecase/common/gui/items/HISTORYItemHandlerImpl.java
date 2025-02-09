@@ -87,7 +87,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
     private String[] getTemplate(CaseData historyCaseData, CaseData.History data, CaseDataItem historyItem) {
 
-        DateFormat formatter = new SimpleDateFormat(DCAPI.getInstance().getConfig().getConfig().node("DonateCase.DateFormat").getString("dd.MM HH:mm:ss"));
+        DateFormat formatter = new SimpleDateFormat(DCAPI.getInstance().getConfigManager().getConfig().node("DonateCase.DateFormat").getString("dd.MM HH:mm:ss"));
         String dateFormatted = formatter.format(new Date(data.getTime()));
         String group = data.getGroup();
         String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "group_not_found";

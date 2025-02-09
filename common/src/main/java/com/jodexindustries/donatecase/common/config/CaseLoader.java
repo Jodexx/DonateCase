@@ -23,7 +23,7 @@ public class CaseLoader implements Loadable {
         api.getCaseManager().getMap().clear();
         int count = 0;
 
-        for (Map.Entry<String, ConfigurationNode> entry : api.getConfig().getConfigCases().getMap().entrySet()) {
+        for (Map.Entry<String, ConfigurationNode> entry : api.getConfigManager().getConfigCases().getMap().entrySet()) {
             String caseType = entry.getKey();
             ConfigurationNode node = entry.getValue();
 

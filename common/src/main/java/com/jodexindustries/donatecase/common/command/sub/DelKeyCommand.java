@@ -26,13 +26,13 @@ public class DelKeyCommand extends DefaultCommand {
             } else if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("all")) {
                     api.getCaseKeyManager().delete().thenAcceptAsync(status ->
-                            sender.sendMessage(DCTools.rt(api.getConfig().getMessages().getString("all-keys-cleared"))));
+                            sender.sendMessage(DCTools.rt(api.getConfigManager().getMessages().getString("all-keys-cleared"))));
                 }
             } else {
                 String playerName = args[0];
                 String caseType = args[1];
                 if(!DCTools.isValidPlayerName(playerName)) {
-                    sender.sendMessage(DCTools.rt(api.getConfig().getMessages().getString("player-not-found"), "%player:" + playerName));
+                    sender.sendMessage(DCTools.rt(api.getConfigManager().getMessages().getString("player-not-found"), "%player:" + playerName));
                     return true;
                 }
                 CaseData data = api.getCaseManager().get(caseType);
@@ -47,17 +47,17 @@ public class DelKeyCommand extends DefaultCommand {
                         try {
                             keys = Integer.parseInt(args[2]);
                         } catch (NumberFormatException e) {
-                            sender.sendMessage(DCTools.rt(api.getConfig().getMessages().getString("number-format-exception"), "%string:" + args[2]));
+                            sender.sendMessage(DCTools.rt(api.getConfigManager().getMessages().getString("number-format-exception"), "%string:" + args[2]));
                             return true;
                         }
 
                         api.getCaseKeyManager().remove(caseType, playerName, keys);
                     }
-                    sender.sendMessage(DCTools.rt(api.getConfig().getMessages().getString("keys-cleared"),
+                    sender.sendMessage(DCTools.rt(api.getConfigManager().getMessages().getString("keys-cleared"),
                             "%player:" + playerName, "%casetitle:" + data.getCaseGui().getTitle(),
                             "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseType, "%key:" + keys));
                 } else {
-                    sender.sendMessage(DCTools.rt(api.getConfig().getMessages().getString("case-does-not-exist"), "%case:" + caseType));
+                    sender.sendMessage(DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"), "%case:" + caseType));
                 }
             }
         return true;
