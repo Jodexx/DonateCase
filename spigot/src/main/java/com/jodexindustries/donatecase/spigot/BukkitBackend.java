@@ -10,12 +10,9 @@ import com.jodexindustries.donatecase.spigot.actions.TitleActionExecutorImpl;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
-import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
-import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
@@ -27,7 +24,6 @@ import com.jodexindustries.donatecase.spigot.animations.FireworkAnimation;
 import com.jodexindustries.donatecase.spigot.animations.RainlyAnimation;
 import com.jodexindustries.donatecase.spigot.animations.ShapeAnimation;
 import com.jodexindustries.donatecase.spigot.animations.wheel.WheelAnimation;
-import com.jodexindustries.donatecase.spigot.gui.CaseGuiWrapperBukkit;
 import com.jodexindustries.donatecase.common.gui.items.HISTORYItemHandlerImpl;
 import com.jodexindustries.donatecase.common.gui.items.OPENItemClickHandlerImpl;
 import com.jodexindustries.donatecase.spigot.holograms.CMIHologramsImpl;
@@ -133,11 +129,6 @@ public class BukkitBackend extends BackendPlatform {
     @Override
     public MetaUpdater getMetaUpdater() {
         return metaUpdater;
-    }
-
-    @Override
-    public CaseGuiWrapper createGui(DCPlayer player, CaseData caseData, CaseLocation location) {
-        return new CaseGuiWrapperBukkit(this, player, caseData, location);
     }
 
     @Override

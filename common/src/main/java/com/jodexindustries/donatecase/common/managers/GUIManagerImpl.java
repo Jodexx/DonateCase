@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.common.managers;
 
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.manager.GUIManager;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;

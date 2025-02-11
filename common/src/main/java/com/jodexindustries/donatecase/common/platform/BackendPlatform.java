@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.common.platform;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
+import com.jodexindustries.donatecase.common.gui.CaseGuiWrapperImpl;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.platform.Platform;
@@ -26,7 +26,9 @@ public abstract class BackendPlatform implements Platform {
 
     public abstract LuckPerms getLuckPerms();
 
-    public abstract CaseGuiWrapper createGui(DCPlayer player, CaseData caseData, CaseLocation location);
+    public CaseGuiWrapperImpl createGui(DCPlayer player, CaseData caseData, CaseLocation location) {
+        return new CaseGuiWrapperImpl(this, player, caseData, location);
+    }
 
     public final void saveResource(@NotNull String resourcePath, boolean replace) {
         if (resourcePath.isEmpty()) {

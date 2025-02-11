@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.chat.EnumChatFormat;
 import com.jodexindustries.donatecase.api.chat.rgb.RGBUtils;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseInventory;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterialException;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
@@ -27,6 +28,8 @@ import java.util.stream.Collectors;
  * Utility class for the DonateCase system, providing tools for parsing, validation, and manipulation.
  */
 public abstract class DCTools {
+
+    public abstract CaseInventory createInventory(int size, String title);
 
     public abstract ArmorStandCreator createArmorStand(CaseLocation location);
 

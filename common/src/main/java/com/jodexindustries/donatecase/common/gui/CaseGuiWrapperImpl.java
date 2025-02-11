@@ -1,19 +1,17 @@
-package com.jodexindustries.donatecase.spigot.gui;
+package com.jodexindustries.donatecase.common.gui;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseInventory;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemException;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemHandler;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.api.tools.DCTools;
-import com.jodexindustries.donatecase.spigot.BukkitBackend;
-import org.bukkit.Bukkit;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,38 +20,32 @@ import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-
-/**
- * Class for initializing case GUI
- */
-public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
-
-    private final BukkitBackend backend;
-
-    private final Inventory inventory;
-    private List<CaseData.History> globalHistoryData;
+public class CaseGuiWrapperImpl implements CaseGuiWrapper {
 
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(1);
 
+    protected final Platform platform;
+    protected final DCPlayer player;
+    protected final CaseData caseData;
+    protected final CaseLocation location;
+    protected final CaseGui temporary;
+    protected final CaseInventory inventory;
 
-    /**
-     * Default constructor
-     *
-     * @param player   Player object
-     * @param caseData CaseData object
-     */
-    public CaseGuiWrapperBukkit(BukkitBackend backend, @NotNull DCPlayer player, @NotNull CaseData caseData, @NotNull CaseLocation location) {
-        super(player, caseData, location);
-        this.backend = backend;
+    private List<CaseData.History> globalHistoryData;
 
-        String title = getTemporary().getTitle();
-        inventory = Bukkit.createInventory(null, temporary.getSize(), DCTools.rc(setPlaceholders(title)));
+    public CaseGuiWrapperImpl(@NotNull Platform platform, @NotNull DCPlayer player, @NotNull CaseData caseData, @NotNull CaseLocation location) {
+        this.platform = platform;
+        this.player = player;
+        this.caseData = caseData;
+        this.location = location;
+        this.temporary = caseData.getCaseGui().clone();
+        this.inventory = platform.getTools().createInventory(temporary.getSize(), DCTools.rc(setPlaceholders(temporary.getTitle())));
 
         load().thenAccept((loaded) -> {
-            Bukkit.getScheduler().runTask(backend.getPlugin(), () -> player.openInventory(inventory));
+            platform.getScheduler().run(platform, () -> player.openInventory(inventory.getInventory()), 0L);
             startUpdateTask();
         }).exceptionally(ex -> {
-            backend.getLogger().log(Level.WARNING, "GUI loading failed: " + ex.getMessage());
+            platform.getLogger().log(Level.WARNING, "GUI loading failed: " + ex.getMessage());
             player.sendMessage(DCTools.rc("&cFailed to load the GUI. Please try again later."));
             return null;
         });
@@ -62,13 +54,13 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
     private CompletableFuture<Void> load() {
         CompletableFuture<Void> future = new CompletableFuture<>();
 
-        backend.getScheduler().async(backend, () -> {
-            globalHistoryData = DCTools.sortHistoryDataByDate(backend.getAPI().getDatabase().getCache());
+        platform.getScheduler().async(platform, () -> {
+            globalHistoryData = DCTools.sortHistoryDataByDate(platform.getAPI().getDatabase().getCache());
             for (CaseGui.Item item : temporary.getItems().values()) {
                 try {
                     processItem(item);
                 } catch (TypedItemException e) {
-                    backend.getLogger().log(Level.WARNING,
+                    platform.getLogger().log(Level.WARNING,
                             "Error occurred while loading item: " + item.getNode().key(), e);
                 }
             }
@@ -101,9 +93,9 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
     private void startUpdateTask() {
         int updateRate = temporary.getUpdateRate();
         if (updateRate >= 0) {
-            Bukkit.getScheduler().runTaskTimerAsynchronously(backend.getPlugin(),
+            platform.getScheduler().async(platform,
                     (task) -> {
-                        if (!backend.getAPI().getGUIManager().getMap().containsKey(player.getUniqueId())) task.cancel();
+                        if (!platform.getAPI().getGUIManager().getMap().containsKey(player.getUniqueId())) task.cancel();
                         load();
                     }, updateRate, updateRate);
         }
@@ -116,7 +108,7 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
     private void processItem(CaseGui.Item item) throws TypedItemException {
         String itemType = item.getType();
         if (!itemType.equalsIgnoreCase("DEFAULT")) {
-            TypedItem typedItem = backend.getAPI().getGuiTypedItemManager().getFromString(itemType);
+            TypedItem typedItem = platform.getAPI().getGuiTypedItemManager().getFromString(itemType);
             if (typedItem != null) {
                 TypedItemHandler handler = typedItem.getHandler();
                 if (handler != null) item = handler.handle(this, item);
@@ -128,19 +120,19 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
 
         CaseDataMaterial material = item.getMaterial();
 
-        if (material.getItemStack() == null) material.setItemStack(backend.getTools().loadCaseItem(material.getId()));
+        if (material.getItemStack() == null) material.setItemStack(platform.getTools().loadCaseItem(material.getId()));
 
         colorize(material);
 
         for (Integer slot : item.getSlots()) {
-            inventory.setItem(slot, (ItemStack) item.getMaterial().getItemStack());
+            inventory.setItem(slot, item.getMaterial().getItemStack());
         }
     }
 
     private String setPlaceholders(@Nullable String text) {
         if (text == null) return null;
         String caseType = caseData.getCaseType();
-        return backend.getPAPI().setPlaceholders(player,
+        return platform.getPAPI().setPlaceholders(player,
                 processPlaceholders(text.replace("%case%", caseType), caseType, player));
     }
 
@@ -160,12 +152,11 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
             }
 
             line = line.replace("%" + placeholder + "%",
-                    String.valueOf(backend.getAPI().getCaseKeyManager().getCache(caseType, p.getName())));
+                    String.valueOf(platform.getAPI().getCaseKeyManager().getCache(caseType, p.getName())));
         }
 
         return line;
     }
-
 
     /**
      * Gets GUI Inventory
@@ -173,8 +164,53 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
      * @return inventory
      */
     @NotNull
-    public Inventory getInventory() {
+    @Override
+    public CaseInventory getInventory() {
         return inventory;
+    }
+
+    /**
+     * Gets location where GUI opened
+     *
+     * @return GUI location
+     */
+    @NotNull
+    @Override
+    public CaseLocation getLocation() {
+        return location;
+    }
+
+    /**
+     * Gets player who opened GUI
+     *
+     * @return player who opened
+     */
+    @NotNull
+    @Override
+    public DCPlayer getPlayer() {
+        return player;
+    }
+
+    /**
+     * Gets GUI CaseData. Can be modified, cause this is clone of original {@link com.jodexindustries.donatecase.api.manager.CaseManager#get(String)}
+     *
+     * @return data
+     */
+    @NotNull
+    @Override
+    public CaseData getCaseData() {
+        return caseData;
+    }
+
+    /**
+     * Gets temporary GUI. Used for updating placeholders, if UpdateRate enabled
+     *
+     * @return GUI
+     */
+    @NotNull
+    @Override
+    public CaseGui getTemporary() {
+        return temporary;
     }
 
     /**
@@ -183,6 +219,7 @@ public class CaseGuiWrapperBukkit extends CaseGuiWrapper {
      * @return global history data
      */
     @NotNull
+    @Override
     public List<CaseData.History> getGlobalHistoryData() {
         return globalHistoryData;
     }
