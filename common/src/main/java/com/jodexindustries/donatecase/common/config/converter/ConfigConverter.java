@@ -17,7 +17,7 @@ public class ConfigConverter {
     public void convert() {
         for (ConfigImpl config : this.configManager.get().values()) {
             try {
-                convert(config);
+                if (config.type() != ConfigType.UNKNOWN_CUSTOM) convert(config);
             } catch (ConfigurateException e) {
                 this.configManager.getPlatform().getLogger().log(Level.WARNING, "Error with converting configuration: " + config, e);
             }
@@ -28,15 +28,20 @@ public class ConfigConverter {
         int version = config.version();
         ConfigType type = config.type();
 
-        if (version == type.getLatestVersion()) return;
+        if (version == type.getLatestVersion() && !type.isPermanent()) return;
 
-        while (version < type.getLatestVersion()) {
+        while (version < type.getLatestVersion() || type.isPermanent()) {
             ConfigMigrator migrator = type.getMigrator(version);
             if (migrator == null) break;
 
             this.configManager.getPlatform().getLogger().info(config + " converting...");
-            migrator.migrate(config.node());
-            this.configManager.getPlatform().getLogger().info(config + " converted from " + version + " to " + version++);
+            migrator.migrate(config);
+            if(type.isPermanent()) {
+                this.configManager.getPlatform().getLogger().info(config + " converted permanently from UNKNOWN to " + config.type());
+                convert(config);
+                break;
+            }
+            this.configManager.getPlatform().getLogger().info(config + " converted from " + version + " to " + ++version);
         }
 
         config.save();

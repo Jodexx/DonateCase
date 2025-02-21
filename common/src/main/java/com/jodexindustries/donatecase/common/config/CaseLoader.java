@@ -8,10 +8,8 @@ import com.jodexindustries.donatecase.common.DonateCase;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.util.*;
 import java.util.logging.Level;
 
 public class CaseLoader implements Loadable {
@@ -60,21 +58,28 @@ public class CaseLoader implements Loadable {
     private Map<String, List<Config>> getCases() {
         Map<String, List<Config>> cases = new HashMap<>();
 
-        for (Map.Entry<String, ? extends Config> entry : api.getConfigManager().get().entrySet()) {
-            String path = entry.getKey();
+        for (ConfigImpl config : api.getConfigManager().get().values()) {
+            String path = config.path();
 
             // plugins/DonateCase/cases/case_type/another_files.yml
             String[] parts = path.split("/");
 
             if (parts.length >= 4) {
                 if (!parts[2].equals("cases")) continue;
-                String caseType = parts[3];
+                String caseType = parts[3].substring(0, parts[3].lastIndexOf(".yml"));
 
-                cases.computeIfAbsent(caseType, k -> new ArrayList<>()).add(entry.getValue());
+                cases.computeIfAbsent(caseType, k -> new ArrayList<>()).add(config);
             }
         }
 
+        if(cases.isEmpty()) cases.put("case", saveDefault());
+
         return cases;
+    }
+
+    private List<Config> saveDefault() {
+        api.getPlatform().saveResource("cases/case.yml", false);
+        return Collections.singletonList(api.getConfigManager().load(new File(api.getPlatform().getDataFolder(), "cases/case.yml")));
     }
 
 }

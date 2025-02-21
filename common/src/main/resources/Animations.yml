@@ -1,4 +1,7 @@
-config: "1.4"
+config:
+  version: 14
+  type: animations
+
 SHAPE:
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true

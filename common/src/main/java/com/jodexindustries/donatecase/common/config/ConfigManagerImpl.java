@@ -113,7 +113,7 @@ public class ConfigManagerImpl implements ConfigManager {
         Config exist = configurations.get(path);
         if (exist != null) return exist;
 
-        ConfigImpl config = new ConfigImpl(file);
+        ConfigImpl config = new ConfigImpl(path, file);
 
         try {
             config.load();

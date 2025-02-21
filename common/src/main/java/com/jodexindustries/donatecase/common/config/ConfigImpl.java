@@ -7,6 +7,9 @@ import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.common.config.converter.ConfigType;
 import com.jodexindustries.donatecase.common.serializer.CaseDataMaterialSerializer;
 import com.jodexindustries.donatecase.common.serializer.CaseGuiSerializer;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
@@ -15,6 +18,9 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 
+@Accessors(fluent = true, chain = false)
+@Getter
+@Setter
 public class ConfigImpl implements Config {
 
     public static final TypeSerializerCollection SERIALIZER_COLLECTION = TypeSerializerCollection.builder()
@@ -24,6 +30,7 @@ public class ConfigImpl implements Config {
             .register(CaseLocation.class, new CaseLocation())
             .build();
 
+    private final String path;
     private final File file;
     private final YamlConfigurationLoader loader;
 
@@ -31,7 +38,8 @@ public class ConfigImpl implements Config {
     private ConfigType type;
     private ConfigurationNode node;
 
-    public ConfigImpl(File file) {
+    public ConfigImpl(String path, File file) {
+        this.path = path;
         this.file = file;
         this.loader = YamlConfigurationLoader
                 .builder()
@@ -43,12 +51,11 @@ public class ConfigImpl implements Config {
 
     private void setMeta() {
         ConfigurationNode metaNode = node.node("config");
-        if (metaNode.hasChild()) {
+        if (metaNode.hasChild("version")) {
             this.version = parse(metaNode.node("version").getString());
             this.type = ConfigType.getType(metaNode.node("type").getString());
         } else {
-            int temp = metaNode.getInt();
-            this.version = temp != 0 ? temp : parse(metaNode.getString());
+            this.version = parse(metaNode.getString());
             this.type = node.hasChild("case") ? ConfigType.OLD_CASE : ConfigType.UNKNOWN;
         }
     }
@@ -57,14 +64,6 @@ public class ConfigImpl implements Config {
         if (string == null) return 0;
         if (string.contains(".")) string = string.replace(".", "");
         return Integer.parseInt(string);
-    }
-
-    public ConfigType type() {
-        return type;
-    }
-
-    public int version() {
-        return version;
     }
 
     @Override
@@ -90,7 +89,7 @@ public class ConfigImpl implements Config {
 
     @Override
     public String toString() {
-        return file.getPath();
+        return path;
     }
 
 }

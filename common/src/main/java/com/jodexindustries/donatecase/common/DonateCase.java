@@ -2,10 +2,6 @@ package com.jodexindustries.donatecase.common;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
-import com.jodexindustries.donatecase.api.config.ConfigManager;
-import com.jodexindustries.donatecase.api.config.Loadable;
-import com.jodexindustries.donatecase.api.database.CaseDatabase;
-import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.common.config.CaseLoader;
 import com.jodexindustries.donatecase.common.config.ConfigManagerImpl;
 import com.jodexindustries.donatecase.common.database.CaseDatabaseImpl;
@@ -19,20 +15,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class DonateCase extends DCAPI {
 
-    private final ActionManager actionManager;
-    private final AddonManager addonManager;
-    private final AnimationManager animationmanager;
-    private final GUIManager guiManager;
-    private final GUITypedItemManager guiTypedItemManager;
-    private final MaterialManager materialManager;
-    private final SubCommandManager subCommandManager;
-    private final CaseKeyManager caseKeyManager;
-    private final CaseOpenManager caseOpenManager;
-    private final CaseManager caseManager;
-    private final HologramManager hologramManager;
+    private final ActionManagerImpl actionManager;
+    private final AddonManagerImpl addonManager;
+    private final AnimationManagerImpl animationManager;
+    private final GUIManagerImpl guiManager;
+    private final GUITypedItemManagerImpl guiTypedItemManager;
+    private final MaterialManagerImpl materialManager;
+    private final SubCommandManagerImpl subCommandManager;
+    private final CaseKeyManagerImpl caseKeyManager;
+    private final CaseOpenManagerImpl caseOpenManager;
+    private final CaseManagerImpl caseManager;
+    private final HologramManagerImpl hologramManager;
 
-    private final CaseDatabase database;
-    private final ConfigManager configManager;
+    private final CaseDatabaseImpl database;
+    private final ConfigManagerImpl configManager;
     private final CaseLoader caseLoader;
     @Getter
     private final UpdateChecker updateChecker;
@@ -46,7 +42,7 @@ public class DonateCase extends DCAPI {
 
         this.actionManager = new ActionManagerImpl(this);
         this.addonManager = new AddonManagerImpl(this);
-        this.animationmanager = new AnimationManagerImpl(this);
+        this.animationManager = new AnimationManagerImpl(this);
         this.guiManager = new GUIManagerImpl(this);
         this.guiTypedItemManager = new GUITypedItemManagerImpl(this);
         this.materialManager = new MaterialManagerImpl(this);
@@ -83,7 +79,7 @@ public class DonateCase extends DCAPI {
         eventBus.unregisterAll();
 
         addonManager.unload(PowerReason.DONATE_CASE);
-        animationmanager.unregister();
+        animationManager.unregister();
         subCommandManager.unregister();
         actionManager.unregister();
         materialManager.unregister();
@@ -98,71 +94,71 @@ public class DonateCase extends DCAPI {
     }
 
     @Override
-    public @NotNull ActionManager getActionManager() {
+    public @NotNull ActionManagerImpl getActionManager() {
         return actionManager;
     }
 
     @Override
-    public @NotNull AddonManager getAddonManager() {
+    public @NotNull AddonManagerImpl getAddonManager() {
         return addonManager;
     }
 
     @Override
-    public @NotNull AnimationManager getAnimationManager() {
-        return animationmanager;
+    public @NotNull AnimationManagerImpl getAnimationManager() {
+        return animationManager;
     }
 
     @Override
-    public @NotNull CaseKeyManager getCaseKeyManager() {
+    public @NotNull CaseKeyManagerImpl getCaseKeyManager() {
         return caseKeyManager;
     }
 
     @Override
-    public @NotNull CaseManager getCaseManager() {
+    public @NotNull CaseManagerImpl getCaseManager() {
         return caseManager;
     }
 
     @Override
-    public @NotNull CaseOpenManager getCaseOpenManager() {
+    public @NotNull CaseOpenManagerImpl getCaseOpenManager() {
         return caseOpenManager;
     }
 
     @Override
-    public @NotNull GUIManager getGUIManager() {
+    public @NotNull GUIManagerImpl getGUIManager() {
         return guiManager;
     }
 
     @Override
-    public @NotNull GUITypedItemManager getGuiTypedItemManager() {
+    public @NotNull GUITypedItemManagerImpl getGuiTypedItemManager() {
         return guiTypedItemManager;
     }
 
     @Override
-    public @NotNull MaterialManager getMaterialManager() {
+    public @NotNull MaterialManagerImpl getMaterialManager() {
         return materialManager;
     }
 
     @Override
-    public @NotNull SubCommandManager getSubCommandManager() {
+    public @NotNull SubCommandManagerImpl getSubCommandManager() {
         return subCommandManager;
     }
 
     @Override
-    public @NotNull HologramManager getHologramManager() {
+    public @NotNull HologramManagerImpl getHologramManager() {
         return hologramManager;
     }
 
     @Override
-    public @NotNull CaseDatabase getDatabase() {
+    public @NotNull CaseDatabaseImpl getDatabase() {
         return database;
     }
 
-    public @NotNull ConfigManager getConfigManager() {
+    public @NotNull ConfigManagerImpl getConfigManager() {
         return configManager;
     }
 
     @Override
-    public @NotNull Loadable getCaseLoader() {
+    public @NotNull CaseLoader getCaseLoader() {
         return caseLoader;
     }
 

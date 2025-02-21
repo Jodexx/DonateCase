@@ -1,5 +1,5 @@
 config: # Please do not touch this section
-  version: 27
+  version: 26
   type: lang
 
 # Local Placeholders

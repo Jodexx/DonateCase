@@ -1,10 +1,10 @@
 package com.jodexindustries.donatecase.common.config.converter;
 
-import org.spongepowered.configurate.ConfigurationNode;
+import com.jodexindustries.donatecase.common.config.ConfigImpl;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 public interface ConfigMigrator {
 
-    void migrate(ConfigurationNode root) throws SerializationException;
+    void migrate(ConfigImpl config) throws SerializationException;
 
 }

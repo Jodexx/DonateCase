@@ -1,4 +1,6 @@
-config: '2.5' #DON'T CHANGE THIS PLEASE
+config:
+  version: 25
+  type: config
 
 DonateCase:
   #Do I need to check for plugin updates?

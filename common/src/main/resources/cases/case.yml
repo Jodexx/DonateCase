@@ -1,4 +1,6 @@
-config: 1.3
+config:
+  version: 13
+  type: old_case
 case:
   Animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/animations
 #  AnimationSettings:
