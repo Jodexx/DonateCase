@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.event.DCEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import net.kyori.event.Cancellable;
 
 /**
@@ -17,6 +18,7 @@ import net.kyori.event.Cancellable;
  * <p> Very similar with {@link com.jodexindustries.donatecase.api.event.animation.AnimationPreStartEvent}</p>
  */
 @EqualsAndHashCode(callSuper = true)
+@Accessors(fluent = true)
 @Data
 public class OpenCaseEvent extends DCEvent implements Cancellable {
 

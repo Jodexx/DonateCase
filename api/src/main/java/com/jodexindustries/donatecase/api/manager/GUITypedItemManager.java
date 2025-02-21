@@ -34,7 +34,7 @@ public interface GUITypedItemManager {
 
     default void unregister(Addon addon) {
         List<TypedItem> list = new ArrayList<>(get(addon));
-        list.stream().map(TypedItem::getId).forEach(this::unregister);
+        list.stream().map(TypedItem::id).forEach(this::unregister);
     }
 
     /**
@@ -53,7 +53,7 @@ public interface GUITypedItemManager {
 
     default List<TypedItem> get(Addon addon) {
         return getMap().values().stream().filter(item ->
-                item.getAddon().equals(addon)).collect(Collectors.toList());
+                item.addon().equals(addon)).collect(Collectors.toList());
     }
 
     @NotNull

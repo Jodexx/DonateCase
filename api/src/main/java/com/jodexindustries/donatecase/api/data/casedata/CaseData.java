@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -17,6 +18,7 @@ import java.util.*;
 /**
  * Class for implementing cases that are loaded into the plugin's memory.
  */
+@Accessors(fluent = true)
 @Getter
 @Setter
 @ConfigSerializable
@@ -71,7 +73,7 @@ public class CaseData implements Cloneable {
     public CaseDataItem getRandomItem() {
         ProbabilityCollection<CaseDataItem> collection = new ProbabilityCollection<>();
         for (CaseDataItem item : items.values()) {
-            double chance = item.getChance();
+            double chance = item.chance();
             if(chance > 0) collection.add(item, chance);
         }
         return collection.get();
@@ -84,7 +86,7 @@ public class CaseData implements Cloneable {
      * @return {@code true} if all items in the collection have a chance greater than 0, {@code false} otherwise.
      */
     public boolean hasRealItems() {
-        return items.values().stream().anyMatch(item -> item.getChance() > 0);
+        return items.values().stream().anyMatch(item -> item.chance() > 0);
     }
 
     @Override
@@ -131,17 +133,32 @@ public class CaseData implements Cloneable {
     /**
      * Class to implement information about case opening histories
      */
-    @Setter
+    @Accessors(fluent = true, chain = false)
     @Getter
+    @Setter
     @DatabaseTable(tableName = "history_data")
     public static class History {
-        @DatabaseField(columnName = "id") private int id;
-        @DatabaseField(columnName = "item") private String item;
-        @DatabaseField(columnName = "player_name") private String playerName;
-        @DatabaseField(columnName = "time") private long time;
-        @DatabaseField(columnName = "group") private String group;
-        @DatabaseField(columnName = "case_type") private String caseType;
-        @DatabaseField(columnName = "action") private String action;
+
+        @DatabaseField(columnName = "id")
+        private int id;
+
+        @DatabaseField(columnName = "item")
+        private String item;
+
+        @DatabaseField(columnName = "player_name")
+        private String playerName;
+
+        @DatabaseField(columnName = "time")
+        private long time;
+
+        @DatabaseField(columnName = "group")
+        private String group;
+
+        @DatabaseField(columnName = "case_type")
+        private String caseType;
+
+        @DatabaseField(columnName = "action")
+        private String action;
 
         /**
          * Default constructor
@@ -178,6 +195,7 @@ public class CaseData implements Cloneable {
     /**
      * Class for the implementation of holograms of the case.
      */
+    @Accessors(fluent = true)
     @Getter
     @ConfigSerializable
     public static class Hologram {

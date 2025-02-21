@@ -38,8 +38,8 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         this.player = player;
         this.caseData = caseData;
         this.location = location;
-        this.temporary = caseData.getCaseGui().clone();
-        this.inventory = platform.getTools().createInventory(temporary.getSize(), DCTools.rc(setPlaceholders(temporary.getTitle())));
+        this.temporary = caseData.caseGui().clone();
+        this.inventory = platform.getTools().createInventory(temporary.size(), DCTools.rc(setPlaceholders(temporary.title())));
 
         load().thenAccept((loaded) -> {
             platform.getScheduler().run(platform, () -> player.openInventory(inventory.getInventory()), 0L);
@@ -56,12 +56,12 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
 
         platform.getScheduler().async(platform, () -> {
             globalHistoryData = DCTools.sortHistoryDataByDate(platform.getAPI().getDatabase().getCache());
-            for (CaseGui.Item item : temporary.getItems().values()) {
+            for (CaseGui.Item item : temporary.items().values()) {
                 try {
                     processItem(item);
                 } catch (TypedItemException e) {
                     platform.getLogger().log(Level.WARNING,
-                            "Error occurred while loading item: " + item.getNode().key(), e);
+                            "Error occurred while loading item: " + item.node().key(), e);
                 }
             }
             future.complete(null);
@@ -77,21 +77,21 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
     }
 
     private void updateMeta(CaseGui.Item temp) {
-        CaseDataMaterial original = getOriginal((String) temp.getNode().key());
-        CaseDataMaterial material = temp.getMaterial();
-        material.setDisplayName(setPlaceholders(original.getDisplayName()));
-        material.setLore(setPlaceholders(original.getLore()));
+        CaseDataMaterial original = getOriginal((String) temp.node().key());
+        CaseDataMaterial material = temp.material();
+        material.displayName(setPlaceholders(original.displayName()));
+        material.lore(setPlaceholders(original.lore()));
         material.updateMeta();
     }
 
     private void colorize(CaseDataMaterial material) {
-        material.setDisplayName(DCTools.rc(material.getDisplayName()));
-        material.setLore(DCTools.rc(material.getLore()));
+        material.displayName(DCTools.rc(material.displayName()));
+        material.lore(DCTools.rc(material.lore()));
         material.updateMeta();
     }
 
     private void startUpdateTask() {
-        int updateRate = temporary.getUpdateRate();
+        int updateRate = temporary.updateRate();
         if (updateRate >= 0) {
             platform.getScheduler().async(platform,
                     (task) -> {
@@ -102,36 +102,36 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
     }
 
     private CaseDataMaterial getOriginal(String itemName) {
-        return caseData.getCaseGui().getItems().get(itemName).getMaterial();
+        return caseData.caseGui().items().get(itemName).material();
     }
 
     private void processItem(CaseGui.Item item) throws TypedItemException {
-        String itemType = item.getType();
+        String itemType = item.type();
         if (!itemType.equalsIgnoreCase("DEFAULT")) {
             TypedItem typedItem = platform.getAPI().getGuiTypedItemManager().getFromString(itemType);
             if (typedItem != null) {
-                TypedItemHandler handler = typedItem.getHandler();
+                TypedItemHandler handler = typedItem.handler();
                 if (handler != null) item = handler.handle(this, item);
-                if (typedItem.isUpdateMeta()) updateMeta(item);
+                if (typedItem.updateMeta()) updateMeta(item);
             }
         } else {
             updateMeta(item);
         }
 
-        CaseDataMaterial material = item.getMaterial();
+        CaseDataMaterial material = item.material();
 
-        if (material.getItemStack() == null) material.setItemStack(platform.getTools().loadCaseItem(material.getId()));
+        if (material.itemStack() == null) material.itemStack(platform.getTools().loadCaseItem(material.id()));
 
         colorize(material);
 
-        for (Integer slot : item.getSlots()) {
-            inventory.setItem(slot, item.getMaterial().getItemStack());
+        for (Integer slot : item.slots()) {
+            inventory.setItem(slot, item.material().itemStack());
         }
     }
 
     private String setPlaceholders(@Nullable String text) {
         if (text == null) return null;
-        String caseType = caseData.getCaseType();
+        String caseType = caseData.caseType();
         return platform.getPAPI().setPlaceholders(player,
                 processPlaceholders(text.replace("%case%", caseType), caseType, player));
     }

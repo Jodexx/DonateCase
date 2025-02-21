@@ -20,14 +20,14 @@ public class DecentHologramsImpl implements HologramDriver {
 
     @Override
     public void create(CaseLocation block, CaseData.Hologram caseHologram) {
-        if (!caseHologram.isEnabled()) return;
+        if (!caseHologram.enabled()) return;
 
-        double height = caseHologram.getHeight();
+        double height = caseHologram.height();
         Hologram hologram = DHAPI.createHologram("DonateCase-" + UUID.randomUUID(), BukkitUtils.toBukkit(block).add(.5, height, .5));
 
-        hologram.setDisplayRange(caseHologram.getRange());
+        hologram.setDisplayRange(caseHologram.range());
 
-        caseHologram.getMessages().forEach(line -> DHAPI.addHologramLine(hologram, DCTools.rc(line)));
+        caseHologram.messages().forEach(line -> DHAPI.addHologramLine(hologram, DCTools.rc(line)));
 
         this.holograms.put(block, hologram);
     }

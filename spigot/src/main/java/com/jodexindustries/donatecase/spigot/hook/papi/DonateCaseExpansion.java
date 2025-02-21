@@ -115,29 +115,29 @@ public class DonateCaseExpansion extends PlaceholderExpansion {
 
                     switch (type) {
                         case "player" : {
-                            return history.getPlayerName();
+                            return history.playerName();
                         }
 
                         case "casetype" : {
-                            return history.getCaseType();
+                            return history.caseType();
                         }
 
                         case "group" : {
-                            return history.getGroup();
+                            return history.group();
                         }
 
                         case "action" : {
-                            return history.getAction();
+                            return history.action();
                         }
 
                         case "item" : {
-                            return history.getItem();
+                            return history.item();
                         }
 
                         case "time" : {
                             DateFormat formatter = new SimpleDateFormat(
                                     backend.getAPI().getConfigManager().getConfig().node("DonateCase", "DateFormat").getString("dd.MM HH:mm:ss"));
-                            return formatter.format(new Date(history.getTime()));
+                            return formatter.format(new Date(history.time()));
                         }
                     }
                 }

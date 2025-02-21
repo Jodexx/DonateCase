@@ -28,11 +28,11 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
         if (!handled) {
             try {
-                ConfigurationNode notFoundNode = item.getNode().node("HistoryNotFound");
+                ConfigurationNode notFoundNode = item.node().node("HistoryNotFound");
                 if (!notFoundNode.isNull()) {
-                    item.setMaterial(notFoundNode.get(CaseDataMaterial.class));
+                    item.material(notFoundNode.get(CaseDataMaterial.class));
                 } else {
-                    item.getMaterial().setId("AIR");
+                    item.material().id("AIR");
                 }
             } catch (SerializationException e) {
                 throw new TypedItemException("Error with serialization HistoryNotFound material", e);
@@ -43,11 +43,11 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
     }
 
     private boolean handleHistoryItem(CaseData caseData, CaseGui.Item item, List<CaseData.History> globalHistoryData) {
-        CaseDataMaterial itemMaterial = item.getMaterial();
+        CaseDataMaterial itemMaterial = item.material();
 
-        String caseType = caseData.getCaseType();
+        String caseType = caseData.caseType();
 
-        String[] typeArgs = item.getType().split("-");
+        String[] typeArgs = item.type().split("-");
         int index = Integer.parseInt(typeArgs[1]);
         caseType = (typeArgs.length >= 3) ? typeArgs[2] : caseType;
         boolean isGlobal = caseType.equalsIgnoreCase("GLOBAL");
@@ -62,25 +62,25 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         CaseData.History data = getHistoryData(caseType, isGlobal, globalHistoryData, index);
         if (data == null) return false;
 
-        if (isGlobal) historyCaseData =  DCAPI.getInstance().getCaseManager().get(data.getCaseType());
+        if (isGlobal) historyCaseData =  DCAPI.getInstance().getCaseManager().get(data.caseType());
         if (historyCaseData == null) return false;
 
-        CaseDataItem historyItem = historyCaseData.getItem(data.getItem());
+        CaseDataItem historyItem = historyCaseData.getItem(data.item());
         if (historyItem == null) return false;
 
-        String material = itemMaterial.getId();
-        if (material == null) material = "HEAD:" + data.getPlayerName();
+        String material = itemMaterial.id();
+        if (material == null) material = "HEAD:" + data.playerName();
 
-        if (material.equalsIgnoreCase("DEFAULT")) material = historyItem.getMaterial().getId();
+        if (material.equalsIgnoreCase("DEFAULT")) material = historyItem.material().id();
 
         String[] template = getTemplate(historyCaseData, data, historyItem);
 
-        String displayName = DCTools.rt(itemMaterial.getDisplayName(), template);
-        List<String> lore = DCTools.rt(itemMaterial.getLore(), template);
+        String displayName = DCTools.rt(itemMaterial.displayName(), template);
+        List<String> lore = DCTools.rt(itemMaterial.lore(), template);
 
-        itemMaterial.setId(material);
-        itemMaterial.setDisplayName(displayName);
-        itemMaterial.setLore(lore);
+        itemMaterial.id(material);
+        itemMaterial.displayName(displayName);
+        itemMaterial.lore(lore);
 
         return true;
     }
@@ -88,22 +88,22 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
     private String[] getTemplate(CaseData historyCaseData, CaseData.History data, CaseDataItem historyItem) {
 
         DateFormat formatter = new SimpleDateFormat(DCAPI.getInstance().getConfigManager().getConfig().node("DonateCase.DateFormat").getString("dd.MM HH:mm:ss"));
-        String dateFormatted = formatter.format(new Date(data.getTime()));
-        String group = data.getGroup();
-        String groupDisplayName = data.getItem() != null ? historyItem.getMaterial().getDisplayName() : "group_not_found";
-        String action = data.getAction() != null ? data.getAction() : group;
+        String dateFormatted = formatter.format(new Date(data.time()));
+        String group = data.group();
+        String groupDisplayName = data.item() != null ? historyItem.material().displayName() : "group_not_found";
+        String action = data.action() != null ? data.action() : group;
 
         String randomActionDisplayName = getActionDisplayName(action, groupDisplayName, historyItem);
 
         return new String[]{
                 "%action%:" + action,
                 "%actiondisplayname%:" + randomActionDisplayName,
-                "%casedisplayname%:" + historyCaseData.getCaseDisplayName(),
-                "%casename%:" + data.getCaseType(),
-                "%casetitle%:" + historyCaseData.getCaseGui().getTitle(),
+                "%casedisplayname%:" + historyCaseData.caseType(),
+                "%casename%:" + data.caseType(),
+                "%casetitle%:" + historyCaseData.caseGui().title(),
                 "%time%:" + dateFormatted,
                 "%group%:" + group,
-                "%player%:" + data.getPlayerName(),
+                "%player%:" + data.playerName(),
                 "%groupdisplayname%:" + groupDisplayName
         };
     }
@@ -111,9 +111,9 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
     public static String getActionDisplayName(String action, String groupDisplayName, CaseDataItem historyItem) {
         String randomActionDisplayName = "random_action_not_found";
         if (action != null && !action.isEmpty()) {
-            CaseDataItem.RandomAction randomAction = historyItem.getRandomActions().get(action);
+            CaseDataItem.RandomAction randomAction = historyItem.randomActions().get(action);
             if (randomAction != null) {
-                randomActionDisplayName = randomAction.getDisplayName();
+                randomActionDisplayName = randomAction.displayName();
             }
         } else {
             randomActionDisplayName = groupDisplayName;

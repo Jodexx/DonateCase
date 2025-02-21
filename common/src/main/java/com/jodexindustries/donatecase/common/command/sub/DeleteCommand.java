@@ -38,7 +38,7 @@ public class DeleteCommand extends DefaultCommand {
                 CaseInfo caseInfo = api.getConfigManager().getCaseStorage().get(location);
 
                 if (caseInfo != null) {
-                    api.getHologramManager().remove(caseInfo.getLocation());
+                    api.getHologramManager().remove(caseInfo.location());
                     sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("case-removed")));
                 } else {
                     sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("block-is-not-case")));
@@ -49,13 +49,13 @@ public class DeleteCommand extends DefaultCommand {
 
             CaseInfo caseInfo = api.getConfigManager().getCaseStorage().get(name);
             if (caseInfo != null) {
-                if (api.getAnimationManager().isLocked(caseInfo.getLocation())) {
+                if (api.getAnimationManager().isLocked(caseInfo.location())) {
                     sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("case-opens")));
                     return true;
                 }
 
                 api.getConfigManager().getCaseStorage().delete(name);
-                api.getHologramManager().remove(caseInfo.getLocation());
+                api.getHologramManager().remove(caseInfo.location());
                 sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("case-removed")));
             } else {
                 sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"), "%case:" + name)));

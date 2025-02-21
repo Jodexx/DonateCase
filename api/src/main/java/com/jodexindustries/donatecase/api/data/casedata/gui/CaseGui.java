@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api.data.casedata.gui;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Accessors(fluent = true)
 @Setter
 @Getter
 public class CaseGui implements Cloneable {
@@ -22,7 +24,7 @@ public class CaseGui implements Cloneable {
     @Nullable
     public String getItemTypeBySlot(int slot) {
         for (Item item : items.values()) {
-            if (item.getSlots().contains(slot)) return item.getType();
+            if (item.slots.contains(slot)) return item.type;
         }
         return null;
     }
@@ -60,6 +62,7 @@ public class CaseGui implements Cloneable {
                 '}';
     }
 
+    @Accessors(fluent = true)
     @Getter
     @Setter
     public static class Item implements Cloneable {
@@ -73,7 +76,7 @@ public class CaseGui implements Cloneable {
         public Item clone() {
             try {
                 Item cloned = (Item) super.clone();
-                cloned.setMaterial(material.clone());
+                cloned.material(material.clone());
                 return cloned;
             } catch (CloneNotSupportedException e) {
                 throw new AssertionError();

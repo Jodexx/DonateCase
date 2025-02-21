@@ -1,20 +1,17 @@
 package com.jodexindustries.donatecase.api.data.storage;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Objects;
 
-@Setter
-@Getter
+
+@Accessors(fluent = true)
+@Data
 public class CaseWorld {
 
     private final String name;
     private CaseLocation spawnLocation;
-
-    public CaseWorld(String name) {
-        this.name = name;
-    }
 
     @Override
     public boolean equals(Object object) {

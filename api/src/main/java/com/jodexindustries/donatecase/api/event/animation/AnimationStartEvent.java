@@ -5,7 +5,9 @@ import com.jodexindustries.donatecase.api.event.DCEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
+@Accessors(fluent = true)
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class AnimationStartEvent extends DCEvent {

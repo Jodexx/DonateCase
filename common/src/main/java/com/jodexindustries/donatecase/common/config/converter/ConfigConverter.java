@@ -1,36 +1,32 @@
 package com.jodexindustries.donatecase.common.config.converter;
 
-import com.jodexindustries.donatecase.api.config.Config;
+import com.jodexindustries.donatecase.common.config.ConfigImpl;
 import com.jodexindustries.donatecase.common.config.ConfigManagerImpl;
 import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.ConfigurationNode;
 
-import java.util.Map;
 import java.util.logging.Level;
 
 public class ConfigConverter {
 
-    private final ConfigManagerImpl config;
+    private final ConfigManagerImpl configManager;
 
-    public ConfigConverter(ConfigManagerImpl config) {
-        this.config = config;
+    public ConfigConverter(ConfigManagerImpl configManager) {
+        this.configManager = configManager;
     }
 
     public void convert() {
-
-        // Convert cases
-        for (Map.Entry<String, Config> entry : config.getConfigCases().getMap().entrySet()) {
+        for (ConfigImpl config : this.configManager.get().values()) {
             try {
-                convert("Case: " + entry.getKey(), ConfigType.CASE, entry.getValue());
+                convert(config);
             } catch (ConfigurateException e) {
-                config.getPlatform().getLogger().log(Level.WARNING, "Error with converting case: " + entry.getKey(), e);
+                this.configManager.getPlatform().getLogger().log(Level.WARNING, "Error with converting configuration: " + config, e);
             }
         }
     }
 
-    private void convert(String name, ConfigType type, Config config) throws ConfigurateException, IllegalArgumentException {
-        ConfigurationNode versionNode = config.node("config");
-        int version = getVersion(versionNode);
+    private void convert(ConfigImpl config) throws ConfigurateException, IllegalArgumentException {
+        int version = config.version();
+        ConfigType type = config.type();
 
         if (version == type.getLatestVersion()) return;
 
@@ -38,20 +34,11 @@ public class ConfigConverter {
             ConfigMigrator migrator = type.getMigrator(version);
             if (migrator == null) break;
 
-            this.config.getPlatform().getLogger().info(name + " converting...");
+            this.configManager.getPlatform().getLogger().info(config + " converting...");
             migrator.migrate(config.node());
-            this.config.getPlatform().getLogger().info(name + " converted from " + version + " to " + version++);
+            this.configManager.getPlatform().getLogger().info(config + " converted from " + version + " to " + version++);
         }
 
-        versionNode.set(version);
         config.save();
-    }
-
-    private int getVersion(ConfigurationNode versionNode) {
-        String version = versionNode.getString();
-        if(version == null) return versionNode.getInt();
-
-        if(version.contains(".")) version = version.replace(".", "");
-        return Integer.parseInt(version);
     }
 }

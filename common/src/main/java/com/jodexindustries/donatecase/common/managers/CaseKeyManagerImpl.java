@@ -32,8 +32,8 @@ public class CaseKeyManagerImpl extends CaseKeyManager {
         KeysTransactionEvent event = new KeysTransactionEvent(caseType, player, newKeys, before);
         api.getEventBus().post(event);
 
-        return !event.isCancelled()
-                ? api.getDatabase().setKeys(caseType, player, event.getAfter())
+        return !event.cancelled()
+                ? api.getDatabase().setKeys(caseType, player, event.after())
                 : CompletableFuture.completedFuture(DatabaseStatus.CANCELLED);
     }
 

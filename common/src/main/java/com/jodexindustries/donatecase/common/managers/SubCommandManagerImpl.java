@@ -45,7 +45,7 @@ public class SubCommandManagerImpl implements SubCommandManager {
 
     @Override
     public void register(SubCommand subCommand) {
-        String name = subCommand.getName().toLowerCase();
+        String name = subCommand.name().toLowerCase();
         if(isRegistered(name)) throw new SubCommandException("Sub command with name " + name + " already registered!");
 
         registeredSubCommands.put(name, subCommand);

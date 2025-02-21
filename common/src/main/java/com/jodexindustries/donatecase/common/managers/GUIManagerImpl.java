@@ -25,14 +25,14 @@ public class GUIManagerImpl implements GUIManager {
 
     @Override
     public void open(@NotNull DCPlayer player, @NotNull CaseData caseData, @NotNull CaseLocation location) {
-        if (caseData.getCaseGui() != null) {
+        if (caseData.caseGui() != null) {
             if (!playersGui.containsKey(player.getUniqueId())) {
                 playersGui.put(player.getUniqueId(), platform.createGui(player, caseData.clone(), location));
             } else {
-                platform.getLogger().warning("Player " + player.getName() + " already opened case: " + caseData.getCaseType());
+                platform.getLogger().warning("Player " + player.getName() + " already opened case: " + caseData.caseType());
             }
         } else {
-            platform.getLogger().warning("Player " + player.getName() + " trying to open case: " + caseData.getCaseType() + " without GUI!");
+            platform.getLogger().warning("Player " + player.getName() + " trying to open case: " + caseData.caseType() + " without GUI!");
         }
     }
 

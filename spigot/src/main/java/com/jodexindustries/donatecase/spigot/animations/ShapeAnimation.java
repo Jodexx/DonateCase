@@ -114,7 +114,7 @@ public class ShapeAnimation extends BukkitJavaAnimation {
         public void accept(SchedulerTask task) {
 
             if (tick <= scrollTime) {
-                location.setYaw(location.getYaw() + yaw);
+                location.yaw(location.yaw() + yaw);
                 bukkitLocation.setYaw(bukkitLocation.getYaw() + yaw);
                 location.add(0.0, blockPerTick, 0.0);
                 bukkitLocation.add(0.0, blockPerTick, 0.0);
@@ -130,12 +130,12 @@ public class ShapeAnimation extends BukkitJavaAnimation {
 
                 if (tick % scrollInterval == 0) {
                     CaseDataItem item = getCaseData().getRandomItem();
-                    as.setEquipment(itemSlot, item.getMaterial().getItemStack());
+                    as.setEquipment(itemSlot, item.material().itemStack());
 
                     String winGroupDisplayName = DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(),
-                            item.getMaterial().getDisplayName());
+                            item.material().displayName());
 
-                    if (item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty()) {
+                    if (item.material().displayName() != null && !item.material().displayName().isEmpty()) {
                         as.setCustomNameVisible(true);
                     }
                     as.setCustomName(winGroupDisplayName);
@@ -145,8 +145,8 @@ public class ShapeAnimation extends BukkitJavaAnimation {
             }
 
             if (tick == scrollTime + 1) {
-                as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
-                as.setCustomName(getWinItem().getMaterial().getDisplayName());
+                as.setEquipment(itemSlot, getWinItem().material().itemStack());
+                as.setCustomName(getWinItem().material().displayName());
                 as.updateMeta();
                 launchFirework(bukkitLocation.add(0, 0.5, 0));
                 preEnd();

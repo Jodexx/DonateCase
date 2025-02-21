@@ -36,7 +36,7 @@ public class OpenCaseCommand extends DefaultCommand {
             CaseData data = api.getCaseManager().get(caseName);
 
             if (data != null) {
-                CaseAnimation animation = api.getAnimationManager().get(data.getAnimation());
+                CaseAnimation animation = api.getAnimationManager().get(data.animation());
                 if (animation == null) return true;
 
                 api.getCaseKeyManager().getAsync(caseName, playerName).thenAccept((keys) -> {

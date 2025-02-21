@@ -8,6 +8,9 @@ import java.util.List;
 public interface Messages {
 
     @NotNull
+    Config get();
+
+    @NotNull
     String getString(@NotNull String path);
 
     @NotNull

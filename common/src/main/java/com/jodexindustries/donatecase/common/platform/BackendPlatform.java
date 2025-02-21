@@ -35,7 +35,6 @@ public abstract class BackendPlatform implements Platform {
             throw new IllegalArgumentException("ResourcePath cannot be empty");
         }
 
-        resourcePath = resourcePath.replace('\\', '/');
         InputStream in = getResource(resourcePath);
         if (in == null) {
             throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found");
@@ -69,6 +68,7 @@ public abstract class BackendPlatform implements Platform {
 
     @Nullable
     public final InputStream getResource(@NotNull String filename) {
+        filename = filename.replace('\\', '/');
 
         try {
             URL url = getClass().getClassLoader().getResource(filename);

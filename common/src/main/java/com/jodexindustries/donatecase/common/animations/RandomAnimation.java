@@ -10,7 +10,7 @@ public class RandomAnimation extends JavaAnimation {
     public void start() {
         ProbabilityCollection<String> collection = new ProbabilityCollection<>();
         getSettings().childrenMap().forEach((key, value) -> collection.add((String) key, value.getInt()));
-        getCaseData().setAnimation(collection.get());
+        getCaseData().animation(collection.get());
         end();
         OPENItemClickHandlerImpl.executeOpenWithoutEvent(getPlayer(), getLocation(), getCaseData(), true);
     }

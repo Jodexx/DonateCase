@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.event.DCEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import net.kyori.event.Cancellable;
 
 /**
@@ -14,6 +15,7 @@ import net.kyori.event.Cancellable;
  * Key checks has not started yet
  */
 @EqualsAndHashCode(callSuper = true)
+@Accessors(fluent = true)
 @Data
 public class PreOpenCaseEvent extends DCEvent implements Cancellable {
 

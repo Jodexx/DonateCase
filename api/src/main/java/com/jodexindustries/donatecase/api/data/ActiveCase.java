@@ -5,12 +5,14 @@ import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.UUID;
 
 /**
  * Class for saving active cases data
  */
+@Accessors(fluent = true)
 @Getter
 @Setter
 public class ActiveCase {

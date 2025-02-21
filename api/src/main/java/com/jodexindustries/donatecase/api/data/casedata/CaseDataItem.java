@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api.data.casedata;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
@@ -13,6 +14,7 @@ import java.util.Map;
 /**
  * Class for the implementation of winning items from the case
  */
+@Accessors(fluent = true)
 @Getter
 @Setter
 @ConfigSerializable
@@ -52,6 +54,7 @@ public class CaseDataItem implements Cloneable {
     /**
      * Class to implement a random action
      */
+    @Accessors(fluent = true)
     @Setter
     @Getter
     @ConfigSerializable

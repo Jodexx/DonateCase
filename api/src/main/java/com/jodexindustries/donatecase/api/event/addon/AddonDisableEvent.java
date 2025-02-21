@@ -5,7 +5,9 @@ import com.jodexindustries.donatecase.api.addon.InternalAddon;
 import com.jodexindustries.donatecase.api.event.DCEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
+@Accessors(fluent = true)
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class AddonDisableEvent extends DCEvent {

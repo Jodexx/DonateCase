@@ -59,21 +59,21 @@ public class HologramManagerImpl implements HologramManager {
         for (Map.Entry<String, CaseInfo> entry : api.getConfigManager().getCaseStorage().get().entrySet()) {
             CaseInfo info = entry.getValue();
 
-            String caseType = info.getType();
+            String caseType = info.type();
 
             CaseData caseData = api.getCaseManager().get(caseType);
 
-            if (caseData == null || !caseData.getHologram().isEnabled()) continue;
+            if (caseData == null || !caseData.hologram().enabled()) continue;
 
-            CaseLocation location = info.getLocation();
+            CaseLocation location = info.location();
             CaseWorld world = location.getWorld();
 
-            if (world == null || !api.getPlatform().isWorldLoaded(world.getName())) {
+            if (world == null || !api.getPlatform().isWorldLoaded(world.name())) {
                 api.getPlatform().getLogger().warning("Hologram creation error. World is null for case name: " + entry.getKey());
                 continue;
             }
 
-            create(location, caseData.getHologram());
+            create(location, caseData.hologram());
         }
     }
 

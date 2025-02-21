@@ -18,11 +18,11 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
 
     @Override
     public void onClick(@NotNull GuiClickEvent e) {
-        CaseGuiWrapper gui = e.getGuiWrapper();
+        CaseGuiWrapper gui = e.guiWrapper();
         CaseLocation location = gui.getLocation();
-        String itemType = e.getItemType();
+        String itemType = e.itemType();
         CaseData caseData = gui.getCaseData();
-        String caseType = caseData.getCaseType();
+        String caseType = caseData.caseType();
 
         if (itemType.contains("_")) {
             String[] parts = itemType.split("_");
@@ -34,8 +34,8 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
 
 
         if (caseData != null) {
-            executeOpen(caseData, e.getPlayer(), location);
-            e.getPlayer().closeInventory();
+            executeOpen(caseData, e.player(), location);
+            e.player().closeInventory();
         } else {
             DCAPI.getInstance().getPlatform().getLogger().warning("CaseData " + caseType + " not found. ");
         }
@@ -46,15 +46,15 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
         PreOpenCaseEvent event = new PreOpenCaseEvent(player, caseData, location);
         DCAPI.getInstance().getEventBus().post(event);
 
-        if (!event.isCancelled()) {
-            if (event.isIgnoreKeys() || checkKeys(caseData.getCaseType(), player.getName())) {
+        if (!event.cancelled()) {
+            if (event.ignoreKeys() || checkKeys(caseData.caseType(), player.getName())) {
                 OpenCaseEvent openEvent = new OpenCaseEvent(player, caseData, location);
                 DCAPI.getInstance().getEventBus().post(openEvent);
 
-                if (!openEvent.isCancelled())
-                    executeOpenWithoutEvent(player, location, caseData, event.isIgnoreKeys());
+                if (!openEvent.cancelled())
+                    executeOpenWithoutEvent(player, location, caseData, event.ignoreKeys());
             } else {
-                DCAPI.getInstance().getActionManager().execute(player, caseData.getNoKeyActions());
+                DCAPI.getInstance().getActionManager().execute(player, caseData.noKeyActions());
             }
         }
     }
@@ -64,11 +64,11 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
             if (uuid != null) {
                 ActiveCase activeCase = DCAPI.getInstance().getAnimationManager().getActiveCases().get(uuid);
                 if (!ignoreKeys) {
-                    DCAPI.getInstance().getCaseKeyManager().remove(caseData.getCaseType(), player.getName(), 1).thenAcceptAsync(status -> {
-                        if (status == DatabaseStatus.COMPLETE) activeCase.setKeyRemoved(true);
+                    DCAPI.getInstance().getCaseKeyManager().remove(caseData.caseType(), player.getName(), 1).thenAcceptAsync(status -> {
+                        if (status == DatabaseStatus.COMPLETE) activeCase.keyRemoved(true);
                     });
                 } else {
-                    activeCase.setKeyRemoved(true);
+                    activeCase.keyRemoved(true);
                 }
             }
         });

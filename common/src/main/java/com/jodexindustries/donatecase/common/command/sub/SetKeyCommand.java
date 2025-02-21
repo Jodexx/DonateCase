@@ -51,7 +51,7 @@ public class SetKeyCommand extends DefaultCommand {
                     sender.sendMessage(
                             DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("keys-sets"),
                             "%player:" + playerName, "%key:" + keys,
-                            "%casetitle:" + data.getCaseGui().getTitle(), "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName))
+                            "%casetitle:" + data.caseGui().title(), "%casedisplayname:" + data.caseDisplayName(), "%case:" + caseName))
                     );
 
                     if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
@@ -59,7 +59,7 @@ public class SetKeyCommand extends DefaultCommand {
                         if(target != null) target.sendMessage(
                                 DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("keys-sets-target"),
                                 "%player:" + playerName, "%key:" + keys,
-                                "%casetitle:" + data.getCaseGui().getTitle(), "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName))
+                                "%casetitle:" + data.caseGui().title(), "%casedisplayname:" + data.caseDisplayName(), "%case:" + caseName))
                         );
                     }
                 }

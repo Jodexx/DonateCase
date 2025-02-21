@@ -89,10 +89,10 @@ public class AnimationManagerImpl implements AnimationManager {
 
     @Override
     public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay) {
-        String animation = caseData.getAnimation();
+        String animation = caseData.animation();
         CaseAnimation caseAnimation = get(animation);
 
-        ConfigurationNode settings = caseData.getAnimationSettings().isNull() ? api.getConfigManager().getAnimations().node(animation) : caseData.getAnimationSettings();
+        ConfigurationNode settings = caseData.animationSettings().isNull() ? api.getConfigManager().getAnimations().node(animation) : caseData.animationSettings();
 
         CaseLocation temp = location.clone();
 
@@ -103,33 +103,33 @@ public class AnimationManagerImpl implements AnimationManager {
         assert caseAnimation != null;
 
         caseData = caseData.clone();
-        caseData.setItems(DCTools.sortItemsByIndex(caseData.getItems()));
+        caseData.items(DCTools.sortItemsByIndex(caseData.items()));
 
 
         CaseDataItem winItem = caseData.getRandomItem();
-        winItem.getMaterial().setDisplayName(api.getPlatform().getPAPI().setPlaceholders(player, winItem.getMaterial().getDisplayName()));
+        winItem.material().displayName(api.getPlatform().getPAPI().setPlaceholders(player, winItem.material().displayName()));
 
         AnimationPreStartEvent event = new AnimationPreStartEvent(player, caseData, temp, winItem);
         api.getEventBus().post(event);
 
-        winItem = event.getWinItem();
+        winItem = event.winItem();
 
         UUID uuid = UUID.randomUUID();
-        ActiveCase activeCase = new ActiveCase(uuid, temp, player, winItem, caseData.getCaseType());
-        activeCase.setLocked(caseAnimation.isRequireBlock());
+        ActiveCase activeCase = new ActiveCase(uuid, temp, player, winItem, caseData.caseType());
+        activeCase.locked(caseAnimation.isRequireBlock());
 
         CompletableFuture<UUID> animationCompletion = new CompletableFuture<>();
 
         if (caseAnimation.isRequireBlock()) {
             CaseInfo info = api.getConfigManager().getCaseStorage().get(temp);
             if (info != null) {
-                CaseLocation caseLocation = info.getLocation();
-                temp.setPitch(caseLocation.getPitch());
-                temp.setYaw(caseLocation.getYaw());
+                CaseLocation caseLocation = info.location();
+                temp.pitch(caseLocation.pitch());
+                temp.yaw(caseLocation.yaw());
             }
 
-            CaseData.Hologram hologram = caseData.getHologram();
-            if (hologram != null && hologram.isEnabled()) api.getHologramManager().remove(temp);
+            CaseData.Hologram hologram = caseData.hologram();
+            if (hologram != null && hologram.enabled()) api.getHologramManager().remove(temp);
 
             for (CaseGuiWrapper gui : api.getGUIManager().getMap().values()) {
                 if (gui.getLocation().equals(temp)) {
@@ -178,9 +178,9 @@ public class AnimationManagerImpl implements AnimationManager {
             return;
         }
 
-        CaseData caseData = api.getCaseManager().get(activeCase.getCaseType());
+        CaseData caseData = api.getCaseManager().get(activeCase.caseType());
         if (caseData != null) {
-            preEnd(caseData, activeCase.getPlayer(), activeCase.getWinItem());
+            preEnd(caseData, activeCase.player(), activeCase.winItem());
         }
     }
 
@@ -188,13 +188,13 @@ public class AnimationManagerImpl implements AnimationManager {
     public void preEnd(CaseData caseData, DCPlayer player, CaseDataItem item) {
         String choice = "";
         Map<String, Integer> levelGroups = getDefaultLevelGroup();
-        if(!caseData.getLevelGroups().isEmpty()) levelGroups = caseData.getLevelGroups();
+        if(!caseData.levelGroups().isEmpty()) levelGroups = caseData.levelGroups();
 
         String playerGroup = getPlayerGroup(player);
-        if(isAlternative(levelGroups, playerGroup, item.getGroup())) {
+        if(isAlternative(levelGroups, playerGroup, item.group())) {
             executeActions(player, caseData, item, null, true);
         } else {
-            if (item.getGiveType().equalsIgnoreCase("ONE")) {
+            if (item.giveType().equalsIgnoreCase("ONE")) {
                 executeActions(player, caseData, item, null, false);
             } else {
                 choice = getRandomActionChoice(item);
@@ -217,23 +217,23 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     private void animationEnd(@NotNull ActiveCase activeCase) {
-        CaseData caseData = api.getCaseManager().get(activeCase.getCaseType());
+        CaseData caseData = api.getCaseManager().get(activeCase.caseType());
         if(caseData == null) return;
 
-        CaseAnimation caseAnimation = get(caseData.getAnimation());
+        CaseAnimation caseAnimation = get(caseData.animation());
         if(caseAnimation == null) return;
 
-        DCPlayer player = activeCase.getPlayer();
+        DCPlayer player = activeCase.player();
 
-        if(!activeCase.isKeyRemoved()) api.getCaseKeyManager().remove(caseData.getCaseType(), player.getName(), 1);
+        if(!activeCase.keyRemoved()) api.getCaseKeyManager().remove(caseData.caseType(), player.getName(), 1);
 
-        CaseLocation block = activeCase.getBlock();
-        activeCases.remove(activeCase.getUuid());
+        CaseLocation block = activeCase.block();
+        activeCases.remove(activeCase.uuid());
         activeCasesByBlock.remove(block);
 
         if(caseAnimation.isRequireBlock()) {
-            CaseData.Hologram hologram = caseData.getHologram();
-            if (hologram != null && hologram.isEnabled()) api.getHologramManager().create(block, hologram);
+            CaseData.Hologram hologram = caseData.hologram();
+            if (hologram != null && hologram.enabled()) api.getHologramManager().create(block, hologram);
         }
 
         api.getEventBus().post(new AnimationEndEvent(player, activeCase));
@@ -268,13 +268,13 @@ public class AnimationManagerImpl implements AnimationManager {
     private boolean validateStartConditions(CaseData caseData, CaseAnimation animation,
                                             ConfigurationNode settings, CaseLocation location, DCPlayer player) {
         if (animation == null) {
-            backend.getLogger().log(Level.WARNING, "Case animation " + caseData.getAnimation() + " does not exist!");
+            backend.getLogger().log(Level.WARNING, "Case animation " + caseData.animation() + " does not exist!");
             return false;
         }
 
             if (isLocked(location)) {
                 backend.getLogger().log(Level.WARNING, "Player " + player.getName() +
-                        " trying to start animation while another animation is running in case: " + caseData.getCaseType());
+                        " trying to start animation while another animation is running in case: " + caseData.caseType());
                 return false;
             }
 
@@ -283,15 +283,15 @@ public class AnimationManagerImpl implements AnimationManager {
             return false;
         }
 
-        if (caseData.getItems().isEmpty()) {
+        if (caseData.items().isEmpty()) {
             backend.getLogger().log(Level.WARNING, "Player " + player.getName() +
-                            " trying to start animation without items in case: " + caseData.getCaseType());
+                            " trying to start animation without items in case: " + caseData.caseType());
             return false;
         }
 
         if(!caseData.hasRealItems()) {
             backend.getLogger().log(Level.WARNING, "Player " + player.getName() +
-                            " trying to start animation without real (chance > 0) items in case: " + caseData.getCaseType());
+                            " trying to start animation without real (chance > 0) items in case: " + caseData.caseType());
             return false;
         }
 
@@ -303,14 +303,14 @@ public class AnimationManagerImpl implements AnimationManager {
 
             CaseData.History data = new CaseData.History(
                     item.getName(),
-                    caseData.getCaseType(),
+                    caseData.caseType(),
                     player.getName(),
                     System.currentTimeMillis(),
-                    item.getGroup(),
+                    item.group(),
                     choice
             );
 
-            List<CaseData.History> databaseData = api.getDatabase().getHistoryData(caseData.getCaseType()).join();
+            List<CaseData.History> databaseData = api.getDatabase().getHistoryData(caseData.caseType()).join();
             if (!databaseData.isEmpty()) {
                 CaseData.History[] historyData = new CaseData.History[databaseData.size()];
 
@@ -320,14 +320,14 @@ public class AnimationManagerImpl implements AnimationManager {
 
                 for (int i = 0; i < historyData.length; i++) {
                     if (historyData[i] != null) {
-                        api.getDatabase().setHistoryData(caseData.getCaseType(), i, historyData[i]);
+                        api.getDatabase().setHistoryData(caseData.caseType(), i, historyData[i]);
                     }
                 }
             } else {
-                api.getDatabase().setHistoryData(caseData.getCaseType(), 0, data);
+                api.getDatabase().setHistoryData(caseData.caseType(), 0, data);
             }
 
-            api.getCaseOpenManager().add(caseData.getCaseType(), player.getName(), 1);
+            api.getCaseOpenManager().add(caseData.caseType(), player.getName(), 1);
         }, 0L);
     }
 
@@ -338,10 +338,10 @@ public class AnimationManagerImpl implements AnimationManager {
      */
     public static String getRandomActionChoice(CaseDataItem item) {
         ProbabilityCollection<String> collection = new ProbabilityCollection<>();
-        for (String name : item.getRandomActions().keySet()) {
-            CaseDataItem.RandomAction randomAction = item.getRandomActions().get(name);
+        for (String name : item.randomActions().keySet()) {
+            CaseDataItem.RandomAction randomAction = item.randomActions().get(name);
             if(randomAction == null) continue;
-            collection.add(name, randomAction.getChance());
+            collection.add(name, randomAction.chance());
         }
         return collection.get();
     }
@@ -352,16 +352,16 @@ public class AnimationManagerImpl implements AnimationManager {
      * @param caseData Case that was opened
      * @param item The prize that was won
      * @param choice In fact, these are actions that were selected from the RandomActions section
-     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#getAlternativeActions()})
+     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#randomActions()})
      */
     public void executeActions(DCPlayer player, CaseData caseData, CaseDataItem item, String choice, boolean alternative) {
         final String[] replacementRegex = {
                 "%player%:" + player.getName(),
-                "%casename%:" + caseData.getCaseType(),
-                "%casedisplayname%:" + caseData.getCaseDisplayName(),
-                "%casetitle%:" + caseData.getCaseGui().getTitle(),
-                "%group%:" + item.getGroup(),
-                "%groupdisplayname%:" + item.getMaterial().getDisplayName()
+                "%casename%:" + caseData.caseType(),
+                "%casedisplayname%:" + caseData.caseDisplayName(),
+                "%casetitle%:" + caseData.caseGui().title(),
+                "%group%:" + item.group(),
+                "%groupdisplayname%:" + item.material().displayName()
         };
 
         List<String> actions = DCTools.rt(getActionsBasedOnChoice(item, choice, alternative), replacementRegex);
@@ -423,16 +423,16 @@ public class AnimationManagerImpl implements AnimationManager {
      * Get actions from case item
      * @param item Case item
      * @param choice In fact, these are actions that were selected from the RandomActions section
-     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#getAlternativeActions()})
+     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#alternativeActions()})
      * @return list of selected actions
      */
     public static List<String> getActionsBasedOnChoice(CaseDataItem item, String choice, boolean alternative) {
         if (choice != null) {
-            CaseDataItem.RandomAction randomAction = item.getRandomActions().get(choice);
+            CaseDataItem.RandomAction randomAction = item.randomActions().get(choice);
             if (randomAction != null) {
-                return randomAction.getActions();
+                return randomAction.actions();
             }
         }
-        return alternative ? item.getAlternativeActions() : item.getActions();
+        return alternative ? item.alternativeActions() : item.actions();
     }
 }

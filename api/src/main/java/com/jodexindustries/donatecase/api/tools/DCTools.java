@@ -45,7 +45,7 @@ public abstract class DCTools {
     }
 
     public static @NotNull List<String> resolveSDGCompletions(String[] args) {
-        List<String> value = new ArrayList<>(DCAPI.getInstance().getConfigManager().getConfigCases().getMap().keySet());
+        List<String> value = new ArrayList<>(DCAPI.getInstance().getCaseManager().getMap().keySet());
         List<String> list = new ArrayList<>();
         if (args.length == 1) {
             list.addAll(
@@ -144,7 +144,7 @@ public abstract class DCTools {
      * @return true, if sender has permission
      */
     public static boolean isHasCommandForSender(DCCommandSender sender, List<Map<String, SubCommand>> commands) {
-        return commands.stream().flatMap(command -> command.values().stream()).map(SubCommand::getPermission).anyMatch(permission -> permission == null || sender.hasPermission(permission));
+        return commands.stream().flatMap(command -> command.values().stream()).map(SubCommand::permission).anyMatch(permission -> permission == null || sender.hasPermission(permission));
     }
 
     /**
@@ -210,18 +210,23 @@ public abstract class DCTools {
      * sorted in descending order of time.
      */
     public static List<CaseData.History> sortHistoryDataByCase(List<CaseData.History> historyData, String caseType) {
-        return historyData.stream()
-                .filter(Objects::nonNull)
-                .filter(data -> data.getCaseType().equals(caseType))
-                .sorted(Comparator.comparingLong(CaseData.History::getTime).reversed())
-                .collect(Collectors.toList());
+        List<CaseData.History> list = new ArrayList<>();
+        for (CaseData.History data : historyData) {
+            if (data != null) {
+                if (data.caseType().equals(caseType)) {
+                    list.add(data);
+                }
+            }
+        }
+
+        list.sort(Comparator.comparingLong(object -> ((CaseData.History) object).time()).reversed());
+        return list;
     }
 
     public static List<CaseData.History> sortHistoryDataByDate(List<CaseData.History> list) {
         return list.stream()
                 .filter(Objects::nonNull)
-                .sorted(Comparator.comparingLong(CaseData.History::getTime)
-                        .reversed())
+                .sorted(Comparator.comparingLong(object -> ((CaseData.History) object).time()).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -233,7 +238,7 @@ public abstract class DCTools {
     public static Map<String, CaseDataItem> sortItemsByIndex(Map<String, CaseDataItem> items) {
         return items.entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(CaseDataItem::getIndex)))
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(CaseDataItem::index)))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,

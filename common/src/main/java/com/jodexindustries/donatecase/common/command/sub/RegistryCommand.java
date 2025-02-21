@@ -103,7 +103,7 @@ public class RegistryCommand extends DefaultCommand {
             );
             for (CaseMaterial material : entry.getValue()) {
                 sender.sendMessage(
-                        DCTools.rc("&9- &a" + material.getId() + " &3- &2" + material.getDescription())
+                        DCTools.rc("&9- &a" + material.id() + " &3- &2" + material.description())
                 );
             }
         }
@@ -112,7 +112,7 @@ public class RegistryCommand extends DefaultCommand {
     private Map<String, List<CaseMaterial>> buildMaterialsMap() {
         Map<String, List<CaseMaterial>> materialsMap = new HashMap<>();
         api.getMaterialManager().getMap().forEach((name, caseMaterial) -> {
-            String addon = caseMaterial.getAddon().getName();
+            String addon = caseMaterial.addon().getName();
 
             List<CaseMaterial> materials = materialsMap.getOrDefault(addon, new ArrayList<>());
             materials.add(caseMaterial);
@@ -131,7 +131,7 @@ public class RegistryCommand extends DefaultCommand {
             );
             for (CaseAction action : entry.getValue()) {
                 sender.sendMessage(
-                        DCTools.rc("&9- &a" + action.getName() + " &3- &2" + action.getDescription())
+                        DCTools.rc("&9- &a" + action.addon() + " &3- &2" + action.description())
                 );
             }
         }
@@ -140,7 +140,7 @@ public class RegistryCommand extends DefaultCommand {
     private Map<String, List<CaseAction>> buildActionsMap() {
         Map<String, List<CaseAction>> actionsMap = new HashMap<>();
         api.getActionManager().getMap().forEach((name, caseAction) -> {
-            String addon = caseAction.getAddon().getName();
+            String addon = caseAction.addon().getName();
 
             List<CaseAction> actions = actionsMap.getOrDefault(addon, new ArrayList<>());
             actions.add(caseAction);
@@ -159,7 +159,7 @@ public class RegistryCommand extends DefaultCommand {
             );
             for (TypedItem typedItem : entry.getValue()) {
                 sender.sendMessage(
-                        DCTools.rc("&9- &a" + typedItem.getId() + " &3- &2" + typedItem.getDescription())
+                        DCTools.rc("&9- &a" + typedItem.id() + " &3- &2" + typedItem.description())
                 );
             }
         }
@@ -168,7 +168,7 @@ public class RegistryCommand extends DefaultCommand {
     private Map<String, List<TypedItem>> buildGuiTypedItemsMap() {
         Map<String, List<TypedItem>> guiTypedItemsMap = new HashMap<>();
         api.getGuiTypedItemManager().getMap().forEach((name, guiTypedItem) -> {
-            String addon = guiTypedItem.getAddon().getName();
+            String addon = guiTypedItem.addon().getName();
 
             List<TypedItem> actions = guiTypedItemsMap.getOrDefault(addon, new ArrayList<>());
             actions.add(guiTypedItem);

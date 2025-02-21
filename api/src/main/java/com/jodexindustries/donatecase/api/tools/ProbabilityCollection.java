@@ -22,6 +22,8 @@ package com.jodexindustries.donatecase.api.tools;
  * SOFTWARE.
  */
 
+import lombok.Getter;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NavigableSet;
@@ -55,6 +57,12 @@ public final class ProbabilityCollection<E> {
     private final NavigableSet<ProbabilitySetElement<E>> collection;
     private final SplittableRandom random = new SplittableRandom();
 
+    /**
+     * -- GETTER --
+     *
+     * @return Sum of all element's probability
+     */
+    @Getter
     private double totalProbability;
 
     /**
@@ -186,13 +194,6 @@ public final class ProbabilityCollection<E> {
     }
 
     /**
-     * @return Sum of all element's probability
-     */
-    public double getTotalProbability() {
-        return this.totalProbability;
-    }
-
-    /**
      * Used internally to store information about a object's state in a collection.
      * Specifically, the probability and index within the collection.
      * <p>
@@ -204,7 +205,19 @@ public final class ProbabilityCollection<E> {
      * @param <T> Type of element
      */
     public final static class ProbabilitySetElement<T> {
+        /**
+         * -- GETTER --
+         *
+         * @return The actual object
+         */
+        @Getter
         private final T object;
+        /**
+         * -- GETTER --
+         *
+         * @return Probability share in this collection
+         */
+        @Getter
         private final double probability;
         private double index;
 
@@ -215,20 +228,6 @@ public final class ProbabilityCollection<E> {
         private ProbabilitySetElement(T object, double probability) {
             this.object = object;
             this.probability = probability;
-        }
-
-        /**
-         * @return The actual object
-         */
-        public T getObject() {
-            return this.object;
-        }
-
-        /**
-         * @return Probability share in this collection
-         */
-        public double getProbability() {
-            return this.probability;
         }
 
         // Used internally, see this class's documentation

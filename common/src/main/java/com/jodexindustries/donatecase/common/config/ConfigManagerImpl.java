@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 
-import java.io.*;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -21,17 +21,15 @@ import java.util.logging.Level;
 public class ConfigManagerImpl implements ConfigManager {
 
     private final Messages messages;
-    private final ConfigCases configCases;
     private final CaseStorage caseStorage;
     private final ConfigConverter converter;
 
-    private final Map<String, Config> configurations = new HashMap<>();
+    private final Map<String, ConfigImpl> configurations = new HashMap<>();
 
     private static final String[] defaultFiles = {
             "Config.yml",
             "Cases.yml",
             "Animations.yml",
-            "lang/en_US.yml",
     };
 
     @Getter
@@ -40,32 +38,36 @@ public class ConfigManagerImpl implements ConfigManager {
     public ConfigManagerImpl(BackendPlatform platform) {
         this.platform = platform;
         this.caseStorage = new CaseStorageImpl(this);
-        this.messages = new MessagesImpl(platform);
-        this.configCases = new ConfigCasesImpl(this);
+        this.messages = new MessagesImpl(this);
         this.converter = new ConfigConverter(this);
     }
 
     @Override
     public @Nullable Config getConfig(@NotNull String name) {
-        return configurations.get(name);
+        return configurations.get("plugins/DonateCase/" + name);
     }
 
     @Override
     @Nullable
     public ConfigurationNode get(@NotNull String name) {
-        Config config = configurations.get(name);
+        Config config = getConfig(name);
         return config != null ? config.node() : null;
     }
 
     @Override
+    public Map<String, ? extends ConfigImpl> get() {
+        return configurations;
+    }
+
+    @Override
     public void load() {
+        configurations.clear();
         createFiles();
-        loadConfigurations(platform.getDataFolder().listFiles());
+        loadConfigurations(platform.getDataFolder().listFiles(), false);
 
         try {
             messages.load(getConfig().node("DonateCase", "Languages").getString("en_US"));
             caseStorage.load();
-            configCases.load();
         } catch (ConfigurateException e) {
             platform.getLogger().log(Level.WARNING, "Error with loading configuration: ", e);
         }
@@ -82,26 +84,45 @@ public class ConfigManagerImpl implements ConfigManager {
         platform.getAPI().getEventBus().post(new DonateCaseReloadEvent(DonateCaseReloadEvent.Type.CONFIG));
     }
 
-    private void loadConfigurations(File[] files) {
+    private void loadConfigurations(File[] files, boolean deep) {
         if (files == null) return;
-        for (File file : files) {
-            if (!file.isFile()) continue;
 
-            loadConfiguration(file);
+        for (File file : files) {
+            if (file.isDirectory()) {
+                String dirName = file.getName().toLowerCase();
+                File[] subFiles = file.listFiles();
+
+                if (deep || "cases".equals(dirName)) {
+                    loadConfigurations(subFiles, true);
+                } else if ("lang".equals(dirName)) {
+                    loadConfigurations(subFiles, false);
+                }
+                continue;
+            }
+
+            String fileName = file.getName().toLowerCase();
+            if (fileName.endsWith(".yml") || fileName.endsWith(".yaml")) {
+                load(file);
+            }
         }
     }
 
-    private void loadConfiguration(File file) {
-        if (file.getName().endsWith(".yml") || file.getName().endsWith(".yaml")) {
-            try {
-                ConfigImpl config = new ConfigImpl(file);
-                config.load();
+    @Override
+    public Config load(@NotNull File file) {
+        String path = file.getPath().replace("\\", "/");
+        Config exist = configurations.get(path);
+        if (exist != null) return exist;
 
-                configurations.put(file.getName(), config);
-            } catch (ConfigurateException e) {
-                platform.getLogger().log(Level.WARNING, "Error with loading configuration: ", e);
-            }
+        ConfigImpl config = new ConfigImpl(file);
+
+        try {
+            config.load();
+            configurations.put(path, config);
+        } catch (ConfigurateException e) {
+            platform.getLogger().log(Level.WARNING, "Error with loading configuration: ", e);
         }
+
+        return config;
     }
 
     private void createFiles() {
@@ -114,11 +135,6 @@ public class ConfigManagerImpl implements ConfigManager {
     @Override
     public @NotNull Messages getMessages() {
         return messages;
-    }
-
-    @Override
-    public @NotNull ConfigCases getConfigCases() {
-        return configCases;
     }
 
     @Override

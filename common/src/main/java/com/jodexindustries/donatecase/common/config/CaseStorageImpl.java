@@ -54,7 +54,7 @@ public class CaseStorageImpl implements CaseStorage {
                 CaseInfo caseInfo = entry.getValue().get(CaseInfo.class);
                 if (caseInfo == null) continue;
 
-                if (location.equals(caseInfo.getLocation())) {
+                if (location.equals(caseInfo.location())) {
                     parent.removeChild(entry.getKey());
                     config.save();
                     return true;
@@ -98,7 +98,7 @@ public class CaseStorageImpl implements CaseStorage {
 
             CaseInfo caseInfo = get(value);
             if (caseInfo != null) {
-                if (location.equals(caseInfo.getLocation())) return caseInfo;
+                if (location.equals(caseInfo.location())) return caseInfo;
             }
         }
 

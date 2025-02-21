@@ -1,9 +1,13 @@
 package com.jodexindustries.donatecase.api.data.storage;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
-@Getter
+@Accessors(fluent = true)
+@Data
+@AllArgsConstructor
 @ConfigSerializable
 public class CaseInfo {
 
@@ -11,9 +15,4 @@ public class CaseInfo {
     private CaseLocation location;
 
     public CaseInfo() {}
-
-    public CaseInfo(String type, CaseLocation location) {
-        this.type = type;
-        this.location = location;
-    }
 }

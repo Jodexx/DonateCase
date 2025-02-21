@@ -4,12 +4,14 @@ import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Class for case actions storage
  */
+@Accessors(fluent = true)
 @Getter
 @Builder
 public class CaseAction implements ActionExecutor {

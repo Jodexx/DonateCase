@@ -54,8 +54,8 @@ public class DelKeyCommand extends DefaultCommand {
                         api.getCaseKeyManager().remove(caseType, playerName, keys);
                     }
                     sender.sendMessage(DCTools.rt(api.getConfigManager().getMessages().getString("keys-cleared"),
-                            "%player:" + playerName, "%casetitle:" + data.getCaseGui().getTitle(),
-                            "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseType, "%key:" + keys));
+                            "%player:" + playerName, "%casetitle:" + data.caseGui().title(),
+                            "%casedisplayname:" + data.caseDisplayName(), "%case:" + caseType, "%key:" + keys));
                 } else {
                     sender.sendMessage(DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"), "%case:" + caseType));
                 }

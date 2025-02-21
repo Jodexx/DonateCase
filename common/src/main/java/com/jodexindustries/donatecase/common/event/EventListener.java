@@ -28,7 +28,7 @@ public class EventListener {
 
     @Subscribe
     public void onPlayerJoin(JoinEvent event) {
-        DCPlayer player = event.getPlayer();
+        DCPlayer player = event.player();
         if (player.hasPermission("donatecase.admin")) {
             api.getUpdateChecker().getVersion().thenAcceptAsync(version -> {
                 if (version.isNew()) {
@@ -45,10 +45,10 @@ public class EventListener {
     @Subscribe
     @PostOrder(PostOrders.LAST)
     public void onGUIClick(GuiClickEvent event) {
-        TypedItem typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(event.getItemType());
+        TypedItem typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(event.itemType());
         if (typedItem == null) return;
 
-        TypedItemClickHandler handler = typedItem.getClick();
+        TypedItemClickHandler handler = typedItem.click();
         if (handler == null) return;
 
         handler.onClick(event);
@@ -57,9 +57,9 @@ public class EventListener {
     @Subscribe
     @PostOrder(PostOrders.LAST)
     public void onCaseInteract(CaseInteractEvent event) {
-        DCPlayer player = event.getPlayer();
-        CaseInfo caseInfo = event.getCaseInfo();
-        String caseType = caseInfo.getType();
+        DCPlayer player = event.player();
+        CaseInfo caseInfo = event.caseInfo();
+        String caseType = caseInfo.type();
 
         CaseData caseData = DCAPI.getInstance().getCaseManager().get(caseType);
         if (caseData == null) {
@@ -68,19 +68,19 @@ public class EventListener {
             return;
         }
 
-        if (event.getAction() == CaseInteractEvent.Action.RIGHT) {
+        if (event.action() == CaseInteractEvent.Action.RIGHT) {
             if (!event.cancelled()) {
-                if (DCAPI.getInstance().getAnimationManager().isLocked(caseInfo.getLocation())) {
+                if (DCAPI.getInstance().getAnimationManager().isLocked(caseInfo.location())) {
                     player.sendMessage(DCTools.prefix(DCAPI.getInstance().getConfigManager().getMessages().getString("case-opens")));
                     return;
                 }
 
-                switch (caseData.getOpenType()) {
+                switch (caseData.openType()) {
                     case GUI:
-                        DCAPI.getInstance().getGUIManager().open(player, caseData, caseInfo.getLocation());
+                        DCAPI.getInstance().getGUIManager().open(player, caseData, caseInfo.location());
                         break;
                     case BLOCK:
-                        OPENItemClickHandlerImpl.executeOpen(caseData, player, caseInfo.getLocation());
+                        OPENItemClickHandlerImpl.executeOpen(caseData, player, caseInfo.location());
                         break;
                 }
             }

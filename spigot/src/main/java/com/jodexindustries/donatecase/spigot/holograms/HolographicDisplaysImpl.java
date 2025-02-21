@@ -27,13 +27,13 @@ public class HolographicDisplaysImpl implements HologramDriver {
 
     @Override
     public void create(CaseLocation block, CaseData.Hologram caseHologram) {
-        if (!caseHologram.isEnabled()) return;
+        if (!caseHologram.enabled()) return;
 
-        double height = caseHologram.getHeight();
+        double height = caseHologram.height();
 
         Hologram hologram = this.api.createHologram(BukkitUtils.toBukkit(block).add(.5, height, .5));
         hologram.setPlaceholderSetting(PlaceholderSetting.DEFAULT);
-        caseHologram.getMessages().forEach(line -> hologram.getLines().appendText(
+        caseHologram.messages().forEach(line -> hologram.getLines().appendText(
                 DCTools.rc((line))
         ));
 

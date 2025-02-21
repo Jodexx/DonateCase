@@ -25,9 +25,9 @@ public class MaterialManagerImpl implements MaterialManager {
 
     @Override
     public void register(CaseMaterial material) throws CaseMaterialException {
-        if(isRegistered(material.getId())) throw new CaseMaterialException("Material with id " + material.getId() + " already registered!");
+        if(isRegistered(material.id())) throw new CaseMaterialException("Material with id " + material.id() + " already registered!");
 
-        registeredMaterials.put(material.getId(), material);
+        registeredMaterials.put(material.id(), material);
     }
 
     @Override

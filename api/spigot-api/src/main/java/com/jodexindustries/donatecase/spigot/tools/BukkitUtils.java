@@ -20,7 +20,7 @@ public class BukkitUtils {
         if (world == null) return null;
         CaseLocation spawnLocation = fromBukkit(world.getSpawnLocation());
         CaseWorld caseWorld = new CaseWorld(world.getName());
-        caseWorld.setSpawnLocation(spawnLocation);
+        caseWorld.spawnLocation(spawnLocation);
         return caseWorld;
     }
 
@@ -52,9 +52,9 @@ public class BukkitUtils {
     public static Location toBukkit(@NotNull CaseLocation location) {
         CaseWorld world = location.getWorld();
         World bukkitWorld = null;
-        if (world != null) bukkitWorld = Bukkit.getWorld(world.getName());
+        if (world != null) bukkitWorld = Bukkit.getWorld(world.name());
 
-        return new Location(bukkitWorld, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        return new Location(bukkitWorld, location.x(), location.y(), location.z(), location.yaw(), location.pitch());
     }
 
     @NotNull

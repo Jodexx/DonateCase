@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api.data.storage;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.tools.NumberUtils;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -13,6 +14,7 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
+@Accessors(fluent = true)
 @Data
 public class CaseLocation implements Cloneable, TypeSerializer<CaseLocation> {
 
@@ -143,7 +145,7 @@ public class CaseLocation implements Cloneable, TypeSerializer<CaseLocation> {
         node.node("yaw").set(obj.yaw);
 
         CaseWorld world = obj.getWorld();
-        if (world != null) node.node("world").set(world.getName());
+        if (world != null) node.node("world").set(world.name());
     }
 
     @Override

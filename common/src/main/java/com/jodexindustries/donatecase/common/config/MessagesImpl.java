@@ -1,12 +1,11 @@
 package com.jodexindustries.donatecase.common.config;
 
+import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.config.Messages;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,19 +13,26 @@ import java.util.List;
 
 public class MessagesImpl implements Messages {
 
+    private final static String DEFAULT_LANG = "lang/en_US.yml";
+
+    private final ConfigManagerImpl configManager;
     private final BackendPlatform platform;
-    private final File folder;
 
-    private ConfigurationNode node;
+    private Config config;
 
-    public MessagesImpl(BackendPlatform platform) {
-        this.platform = platform;
-        this.folder = new File(platform.getDataFolder(), "lang");
+    public MessagesImpl(ConfigManagerImpl configManager) {
+        this.configManager = configManager;
+        this.platform = configManager.getPlatform();
+    }
+
+    @Override
+    public @NotNull Config get() {
+        return config;
     }
 
     @Override
     public @NotNull String getString(@NotNull String path) {
-        String value = node.node(path).getString();
+        String value = config.node(path).getString();
         return value == null ? path : value;
     }
 
@@ -41,38 +47,39 @@ public class MessagesImpl implements Messages {
     @Override
     public List<String> getStringList(@NotNull String path) {
         try {
-            return node.node(path).getList(String.class, new ArrayList<>());
+            return config.node(path).getList(String.class, new ArrayList<>());
         } catch (SerializationException e) {
             return new ArrayList<>();
         }
     }
 
+    @Override
     public void load(@NotNull String language) throws ConfigurateException {
         String path = "lang/" + language + ".yml";
-        if (platform.getResource(path) != null && !(new File(folder, language + ".yml").exists()))
-            platform.saveResource(path, false);
+        Config config = this.configManager.getConfig(path);
 
-        File file = selectFile(language);
-
-        YamlConfigurationLoader loader = YamlConfigurationLoader.builder().file(file).build();
-        this.node = loader.load();
-    }
-
-    private File selectFile(String language) {
-        File[] listFiles = folder.listFiles();
-
-        File languageFile = new File(folder, "en_US.yml");
-
-        if (listFiles == null) return languageFile;
-
-        for (File file : listFiles) {
-            String fileName = file.getName().toLowerCase();
-            if (fileName.equals(language + ".yml") || fileName.split("_")[0].equals(language)) {
-                languageFile = file;
-                break;
+        if (config == null) {
+            if(platform.getResource(path) != null) {
+                platform.saveResource(path, false);
+                config = this.configManager.load(new File(platform.getDataFolder(), path));
+            } else {
+                config = loadDefault();
+                platform.getLogger().warning("Language file \"" + language + "\" was not found! Using the default \"en_US\"");
             }
         }
 
-        return languageFile;
+        if (config == null) {
+            throw new ConfigurateException("Failed to load messages configuration: " + path);
+        }
+
+        this.config = config;
     }
+
+    private Config loadDefault() {
+        File defaultLang = new File(platform.getDataFolder(), DEFAULT_LANG);
+        if(!defaultLang.exists()) platform.saveResource(DEFAULT_LANG, false);
+
+        return this.configManager.load(defaultLang);
+    }
+
 }

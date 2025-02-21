@@ -27,7 +27,7 @@ public interface MaterialManager {
 
     default void unregister(Addon addon) {
         List<CaseMaterial> list = new ArrayList<>(get(addon));
-        list.stream().map(CaseMaterial::getId).forEach(this::unregister);
+        list.stream().map(CaseMaterial::id).forEach(this::unregister);
     }
 
     /**
@@ -54,7 +54,7 @@ public interface MaterialManager {
 
     default List<CaseMaterial> get(Addon addon) {
         return getMap().values().stream().filter(material ->
-                material.getAddon().equals(addon)).collect(Collectors.toList());
+                material.addon().equals(addon)).collect(Collectors.toList());
     }
 
     @NotNull

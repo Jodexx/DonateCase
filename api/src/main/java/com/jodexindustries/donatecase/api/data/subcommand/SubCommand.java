@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * Represents a subcommand with execution and tab-completion capabilities.
  *
  */
+@Accessors(fluent = true)
 @Builder
 @Getter
 public final class SubCommand implements SubCommandExecutor, SubCommandTabCompleter {

@@ -93,7 +93,7 @@ public class RainlyAnimation extends BukkitJavaAnimation {
             }
 
             if (i < 32) {
-                location.setYaw(location.getYaw() + 20.0F);
+                location.yaw(location.yaw() + 20.0F);
                 as.teleport(location);
 
                 if(i % 2 == 0) {
@@ -112,12 +112,12 @@ public class RainlyAnimation extends BukkitJavaAnimation {
         }
 
         private void handleWinningItem() {
-            as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
+            as.setEquipment(itemSlot, getWinItem().material().itemStack());
 
             String winGroupDisplayName = DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(
-                    getPlayer(), getWinItem().getMaterial().getDisplayName()
+                    getPlayer(), getWinItem().material().displayName()
             );
-            getWinItem().getMaterial().setDisplayName(winGroupDisplayName);
+            getWinItem().material().displayName(winGroupDisplayName);
 
             as.setCustomName(winGroupDisplayName);
             as.updateMeta();
@@ -131,14 +131,14 @@ public class RainlyAnimation extends BukkitJavaAnimation {
         private void updateRandomItem() {
             CaseDataItem item = getCaseData().getRandomItem();
             String itemDisplayName = DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(
-                    getPlayer(), item.getMaterial().getDisplayName()
+                    getPlayer(), item.material().displayName()
             );
-            item.getMaterial().setDisplayName(itemDisplayName);
+            item.material().displayName(itemDisplayName);
 
-            as.setEquipment(itemSlot, item.getMaterial().getItemStack());
+            as.setEquipment(itemSlot, item.material().itemStack());
 
-            if (item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty()) {
-                as.setCustomName(item.getMaterial().getDisplayName());
+            if (item.material().displayName() != null && !item.material().displayName().isEmpty()) {
+                as.setCustomName(item.material().displayName());
             }
 
             as.updateMeta();

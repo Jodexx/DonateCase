@@ -48,5 +48,7 @@ public class CaseMigrator_1_2_to_1_3 implements ConfigMigrator {
             // set
             node.node("Material").set(itemNode);
         }
+
+        root.node("config").set("1.3");
     }
 }

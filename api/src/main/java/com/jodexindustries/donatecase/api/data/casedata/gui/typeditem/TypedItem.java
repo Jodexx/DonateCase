@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api.data.casedata.gui.typeditem;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
  * @see TypedItemHandler
  * @see TypedItemClickHandler
  */
+@Accessors(fluent = true)
 @Getter
 @Builder
 public class TypedItem {

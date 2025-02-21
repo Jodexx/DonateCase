@@ -30,7 +30,7 @@ public interface ActionManager {
 
     default void unregister(Addon addon) {
         List<CaseAction> list = new ArrayList<>(get(addon));
-        list.stream().map(CaseAction::getName).forEach(this::unregister);
+        list.stream().map(CaseAction::name).forEach(this::unregister);
     }
 
     /**
@@ -64,7 +64,7 @@ public interface ActionManager {
      */
     default List<CaseAction> get(Addon addon) {
         return getMap().values().stream().filter(action ->
-                action.getAddon().equals(addon)).collect(Collectors.toList());
+                action.addon().equals(addon)).collect(Collectors.toList());
     }
 
     /**

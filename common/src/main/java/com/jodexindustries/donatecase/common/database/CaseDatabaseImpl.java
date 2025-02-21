@@ -252,7 +252,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
             CaseData.History data = historyData[index];
             if (data == null) continue;
 
-            setHistoryData(data.getCaseType(), index, data);
+            setHistoryData(data.caseType(), index, data);
         }
     }
 
@@ -266,7 +266,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                 List<CaseData.History> results = queryBuilder.query();
 
                 for (CaseData.History historyDataTable : results) {
-                    setHistoryDataTable(historyDataTable, historyDataTable.getId(), data);
+                    setHistoryDataTable(historyDataTable, historyDataTable.id(), data);
                 }
 
             } catch (SQLException e) {
@@ -280,16 +280,16 @@ public class CaseDatabaseImpl extends CaseDatabase {
 
     private void setHistoryDataTable(CaseData.History historyDataTable, int index, CaseData.History data) throws SQLException {
         if (historyDataTable == null) {
-            data.setId(index);
+            data.id(index);
             historyDataTables.create(data);
         } else {
             UpdateBuilder<CaseData.History, String> updateBuilder = historyDataTables.updateBuilder();
-            updateBuilder.updateColumnValue("item", data.getItem());
-            updateBuilder.updateColumnValue("player_name", data.getPlayerName());
-            updateBuilder.updateColumnValue("time", data.getTime());
-            updateBuilder.updateColumnValue("group", data.getGroup());
-            updateBuilder.updateColumnValue("action", data.getAction());
-            updateBuilder.where().eq("id", index).and().eq("case_type", data.getCaseType());
+            updateBuilder.updateColumnValue("item", data.item());
+            updateBuilder.updateColumnValue("player_name", data.playerName());
+            updateBuilder.updateColumnValue("time", data.time());
+            updateBuilder.updateColumnValue("group", data.group());
+            updateBuilder.updateColumnValue("action", data.action());
+            updateBuilder.where().eq("id", index).and().eq("case_type", data.caseType());
             updateBuilder.update();
         }
     }

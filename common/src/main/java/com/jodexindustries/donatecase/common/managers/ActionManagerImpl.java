@@ -46,9 +46,9 @@ public class ActionManagerImpl implements ActionManager {
 
     @Override
     public void register(CaseAction action) throws ActionException {
-        if(isRegistered(action.getName())) throw new ActionException("Action with name " + action.getName() + " already registered!");
+        if(isRegistered(action.name())) throw new ActionException("Action with name " + action.name() + " already registered!");
 
-        registeredActions.put(action.getName(), action);
+        registeredActions.put(action.name(), action);
     }
 
     @Override

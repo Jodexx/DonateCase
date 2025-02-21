@@ -165,6 +165,6 @@ public interface AnimationManager {
      * @return true if block is locked by DonateCase
      */
     default boolean isLocked(Object block) {
-        return getActiveCasesByBlock(block).stream().anyMatch(ActiveCase::isLocked);
+        return getActiveCasesByBlock(block).stream().anyMatch(ActiveCase::locked);
     }
 }

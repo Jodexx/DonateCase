@@ -61,14 +61,14 @@ public class CreateCommand extends DefaultCommand {
 
             CaseLocation toSave = block.clone();
 
-            toSave.setYaw(((int) playerLocation.getYaw()));
-            toSave.setPitch(((int) playerLocation.getPitch()));
+            toSave.yaw(((int) playerLocation.pitch()));
+            toSave.pitch(((int) playerLocation.pitch()));
 
             CaseInfo caseInfo = new CaseInfo(caseType, toSave);
 
             try {
                 api.getConfigManager().getCaseStorage().save(caseName, caseInfo);
-                api.getHologramManager().create(toSave, caseData.getHologram());
+                api.getHologramManager().create(toSave, caseData.hologram());
 
                 sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-added"),
                         "%casename:" + caseName, "%casetype:" + caseType)));
@@ -76,7 +76,7 @@ public class CreateCommand extends DefaultCommand {
                 int spawnRadius = api.getPlatform().getSpawnRadius();
                 if (spawnRadius <= 0) return true;
 
-                if (block.distance(player.getWorld().getSpawnLocation()) <= spawnRadius) {
+                if (block.distance(player.getWorld().spawnLocation()) <= spawnRadius) {
                     sender.sendMessage(
                             DCTools.prefix(
                                     "&cWarning: " +

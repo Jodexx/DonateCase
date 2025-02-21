@@ -84,16 +84,16 @@ public class FireworkAnimation extends BukkitJavaAnimation {
             }
 
             if (tick == 10) {
-                as.setEquipment(itemSlot, getWinItem().getMaterial().getItemStack());
-                if (getWinItem().getMaterial().getDisplayName() != null && !getWinItem().getMaterial().getDisplayName().isEmpty())
+                as.setEquipment(itemSlot, getWinItem().material().itemStack());
+                if (getWinItem().material().displayName() != null && !getWinItem().material().displayName().isEmpty())
                     as.setCustomNameVisible(true);
-                as.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), getWinItem().getMaterial().getDisplayName()));
+                as.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), getWinItem().material().displayName()));
                 as.updateMeta();
                 preEnd();
             }
 
             if(tick >= 10 && tick <= 30) {
-                location.setYaw(location.getYaw() + yaw);
+                location.y(location.y() + yaw);
                 as.teleport(location);
             }
 

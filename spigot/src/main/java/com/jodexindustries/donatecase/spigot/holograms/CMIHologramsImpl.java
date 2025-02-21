@@ -20,17 +20,17 @@ public class CMIHologramsImpl implements HologramDriver {
 
     @Override
     public void create(CaseLocation block, CaseData.Hologram caseHologram) {
-        if (!caseHologram.isEnabled()) return;
+        if (!caseHologram.enabled()) return;
 
-        double height = caseHologram.getHeight();
+        double height = caseHologram.height();
 
         CMILocation location = new CMILocation(BukkitUtils.toBukkit(block).add(0.5, height, 0.5));
 
         CMIHologram hologram = new CMIHologram("DonateCase-" + UUID.randomUUID(), location);
 
-        hologram.setLines(caseHologram.getMessages());
+        hologram.setLines(caseHologram.messages());
 
-        hologram.setShowRange(caseHologram.getRange());
+        hologram.setShowRange(caseHologram.range());
 
         CMI.getInstance().getHologramManager().addHologram(hologram);
 

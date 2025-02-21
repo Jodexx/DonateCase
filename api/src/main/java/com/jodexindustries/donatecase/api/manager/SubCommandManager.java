@@ -33,7 +33,7 @@ public interface SubCommandManager {
 
     default void unregister(Addon addon) {
         List<SubCommand> list = new ArrayList<>(get(addon));
-        list.stream().map(SubCommand::getName).forEach(this::unregister);
+        list.stream().map(SubCommand::name).forEach(this::unregister);
     }
 
     /**
@@ -50,7 +50,7 @@ public interface SubCommandManager {
 
     default List<SubCommand> get(Addon addon) {
         return getMap().values().stream().filter(subCommand ->
-                subCommand.getAddon().equals(addon)).collect(Collectors.toList());
+                subCommand.addon().equals(addon)).collect(Collectors.toList());
     }
 
     @NotNull

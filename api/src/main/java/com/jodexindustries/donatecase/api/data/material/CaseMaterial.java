@@ -3,12 +3,14 @@ package com.jodexindustries.donatecase.api.data.material;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Class for custom material storage
  */
+@Accessors(fluent = true)
 @Getter
 @Builder
 public class CaseMaterial implements MaterialHandler {

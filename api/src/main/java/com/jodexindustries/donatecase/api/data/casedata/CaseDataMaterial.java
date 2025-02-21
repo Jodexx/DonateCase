@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api.data.casedata;
 import com.jodexindustries.donatecase.api.DCAPI;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  * This class provides methods to get and set each attribute, allowing flexible
  * modification and retrieval of material details.
  */
+@Accessors(fluent = true)
 @Setter
 @Getter
 public class CaseDataMaterial implements MetaUpdater, Cloneable {
@@ -26,7 +28,7 @@ public class CaseDataMaterial implements MetaUpdater, Cloneable {
     private Object itemStack;
 
     public void updateMeta() {
-        updateMeta(getItemStack(), getDisplayName(), getLore(), getModelData(), isEnchanted(), getRgb());
+        updateMeta(itemStack, displayName, lore, modelData, enchanted, rgb);
     }
 
     @Override

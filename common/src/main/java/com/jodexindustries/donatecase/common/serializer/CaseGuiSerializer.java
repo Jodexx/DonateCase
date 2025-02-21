@@ -26,12 +26,12 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
         int updateRate = source.node("UpdateRate").getInt();
         int size = source.node("Size").getInt();
 
-        caseGui.setTitle(title);
-        caseGui.setUpdateRate(updateRate);
-        caseGui.setSize(size);
+        caseGui.title(title);
+        caseGui.updateRate(updateRate);
+        caseGui.size(size);
 
         if (!DCTools.isValidGuiSize(size)) {
-            caseGui.setSize(54);
+            caseGui.size(54);
             DCAPI.getInstance().getPlatform().getLogger().warning("Wrong GUI size: " + size);
         }
 
@@ -44,11 +44,11 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
         if (itemsNode != null) {
             for (Map.Entry<Object, ? extends ConfigurationNode> entry : itemsNode.childrenMap().entrySet()) {
                 CaseGui.Item item = loadGUIItem(String.valueOf(entry.getKey()), entry.getValue(), slots);
-                if (item != null) itemMap.put((String) item.getNode().key(), item);
+                if (item != null) itemMap.put((String) item.node().key(), item);
             }
         }
 
-        caseGui.setItems(itemMap);
+        caseGui.items(itemMap);
         return caseGui;
     }
 
@@ -61,24 +61,24 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
         CaseGui.Item item = itemSection.get(CaseGui.Item.class);
         if (item == null) return null;
 
-        if (item.getSlots().isEmpty()) {
+        if (item.slots().isEmpty()) {
             DCAPI.getInstance().getPlatform().getLogger().warning("Item " + i + " has no specified slots");
             return null;
         }
 
-        if (item.getSlots().removeIf(currentSlots::contains))
+        if (item.slots().removeIf(currentSlots::contains))
             DCAPI.getInstance().getPlatform().getLogger().warning("Item " + i + " contains duplicated slots, removing..");
 
-        currentSlots.addAll(item.getSlots());
+        currentSlots.addAll(item.slots());
 
         CaseDataMaterial material = itemSection.get(CaseDataMaterial.class);
         if (material == null) return null;
 
-        if (!item.getType().equalsIgnoreCase("DEFAULT")) {
-            TypedItem typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(item.getType());
+        if (!item.type().equalsIgnoreCase("DEFAULT")) {
+            TypedItem typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(item.toString());
             if (typedItem != null) {
-                if (typedItem.isLoadOnCase()) {
-                    material.setItemStack(DCAPI.getInstance().getPlatform().getTools().loadCaseItem(item.getMaterial().getId()));
+                if (typedItem.loadOnCase()) {
+                    material.itemStack(DCAPI.getInstance().getPlatform().getTools().loadCaseItem(item.material().id()));
                 }
             }
         }
@@ -95,11 +95,11 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
             String itemType = source.node("Type").getString();
 
             CaseDataMaterial material = source.node("Material").get(CaseDataMaterial.class);
-            item.setType(itemType);
-            item.setMaterial(material);
-            item.setNode(source);
+            item.type(itemType);
+            item.material(material);
+            item.node(source);
 
-            item.setSlots(getItemSlots(source));
+            item.slots(getItemSlots(source));
             return item;
         }
 

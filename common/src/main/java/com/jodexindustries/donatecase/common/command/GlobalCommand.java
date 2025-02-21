@@ -35,7 +35,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
                 return false;
             }
 
-            String permission = subCommand.getPermission();
+            String permission = subCommand.permission();
 
             if (permission == null || sender.hasPermission(permission)) {
                 try {
@@ -82,7 +82,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
     private Map<String, List<Map<String, SubCommand>>> buildAddonsMap() {
         Map<String, List<Map<String, SubCommand>>> addonsMap = new HashMap<>();
         backend.getAPI().getSubCommandManager().getMap().forEach((subCommandName, subCommand) -> {
-            Addon addon = subCommand.getAddon();
+            Addon addon = subCommand.addon();
             addonsMap.computeIfAbsent(addon.getName(), k -> new ArrayList<>())
                     .add(Collections.singletonMap(subCommandName, subCommand));
         });
@@ -98,11 +98,11 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
                 }
 
                 commands.forEach(command -> command.forEach((commandName, subCommand) -> {
-                    String description = subCommand.getDescription();
+                    String description = subCommand.description();
                     description = (description != null) ? DCTools.rt(backend.getAPI().getConfigManager().getMessages().getString("help-addons.format.description"), "%description:" + description) : "";
 
-                    StringBuilder argsBuilder = compileSubCommandArgs(subCommand.getArgs());
-                    String permission = subCommand.getPermission();
+                    StringBuilder argsBuilder = compileSubCommandArgs(subCommand.args());
+                    String permission = subCommand.permission();
 
                     if (permission == null || sender.hasPermission(permission)) {
                         sender.sendMessage(DCTools.rc(DCTools.rt(backend.getAPI().getConfigManager().getMessages().getString("help-addons.format.command"),
@@ -138,7 +138,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
             for (Map.Entry<String, SubCommand> entry : subCommands.entrySet()) {
                 String subCommandName = entry.getKey();
                 SubCommand subCommand = entry.getValue();
-                String permission = subCommand.getPermission();
+                String permission = subCommand.permission();
 
                 if (permission == null || sender.hasPermission(permission)) {
                     value.add(subCommandName);

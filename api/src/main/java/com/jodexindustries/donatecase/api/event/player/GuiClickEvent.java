@@ -5,10 +5,12 @@ import com.jodexindustries.donatecase.api.event.DCEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import net.kyori.event.Cancellable;
 import org.jetbrains.annotations.NotNull;
 
 @EqualsAndHashCode(callSuper = true)
+@Accessors(fluent = true)
 @Data
 public class GuiClickEvent extends DCEvent implements Cancellable {
 

@@ -3,10 +3,12 @@ package com.jodexindustries.donatecase.api.event.plugin;
 import com.jodexindustries.donatecase.api.event.DCEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import net.kyori.event.Cancellable;
 import org.jetbrains.annotations.NotNull;
 
 @EqualsAndHashCode(callSuper = true)
+@Accessors(fluent = true)
 @Data
 public class KeysTransactionEvent extends DCEvent implements Cancellable {
 

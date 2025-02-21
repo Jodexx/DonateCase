@@ -5,7 +5,6 @@ import com.jodexindustries.donatecase.spigot.BukkitBackend;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
-import com.jodexindustries.donatecase.common.gui.CaseGuiWrapperImpl;
 import com.jodexindustries.donatecase.api.event.player.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.event.player.GuiClickEvent;
 import com.jodexindustries.donatecase.api.event.player.JoinEvent;
@@ -57,7 +56,7 @@ public class EventListener implements Listener {
         if (gui != null) {
             e.setCancelled(true);
 
-            String itemType = gui.getCaseData().getCaseGui().getItemTypeBySlot(e.getRawSlot());
+            String itemType = gui.getCaseData().caseGui().getItemTypeBySlot(e.getRawSlot());
             if (itemType == null) return;
 
             backend.getAPI().getEventBus().post(

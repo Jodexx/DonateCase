@@ -24,7 +24,7 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager {
 
     @Override
     public boolean register(TypedItem item) {
-        String id = item.getId().toLowerCase();
+        String id = item.id().toLowerCase();
         if (registeredItems.get(id) == null) {
             registeredItems.put(id, item);
             return true;

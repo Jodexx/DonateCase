@@ -49,15 +49,15 @@ public class GiveKeyCommand extends DefaultCommand {
             api.getCaseKeyManager().add(caseName, playerName, keys).thenAcceptAsync(status -> {
                 if (status == DatabaseStatus.COMPLETE) {
                     DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("keys-given"),
-                            "%player:" + playerName, "%key:" + keys, "%casetitle:" + data.getCaseGui().getTitle(),
-                            "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName));
+                            "%player:" + playerName, "%key:" + keys, "%casetitle:" + data.caseGui().title(),
+                            "%casedisplayname:" + data.caseDisplayName(), "%case:" + caseName));
 
                     if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
                         DCPlayer target = api.getPlatform().getPlayer(playerName);
                         if (target != null)
                             target.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("keys-given-target"),
-                                    "%player:" + playerName, "%key:" + keys, "%casetitle:" + data.getCaseGui().getTitle(),
-                                    "%casedisplayname:" + data.getCaseDisplayName(), "%case:" + caseName)));
+                                    "%player:" + playerName, "%key:" + keys, "%casetitle:" + data.caseGui().title(),
+                                    "%casedisplayname:" + data.caseDisplayName(), "%case:" + caseName)));
                     }
                 }
             });

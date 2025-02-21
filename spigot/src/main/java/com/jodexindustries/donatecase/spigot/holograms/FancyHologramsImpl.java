@@ -24,12 +24,12 @@ public class FancyHologramsImpl implements HologramDriver {
 
     @Override
     public void create(CaseLocation block, CaseData.Hologram caseHologram) {
-        ConfigurationNode node = caseHologram.getNode();
+        ConfigurationNode node = caseHologram.node();
 
         HologramType type = HologramType.getByName(node.node("type").getString());
         if (type == null) return;
 
-        Location location = BukkitUtils.toBukkit(block).add(.5, caseHologram.getHeight(), .5);
+        Location location = BukkitUtils.toBukkit(block).add(.5, caseHologram.height(), .5);
 
         String name = "DonateCase-" + UUID.randomUUID();
         DisplayHologramData hologramData = getData(type, name, location);

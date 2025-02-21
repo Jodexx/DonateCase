@@ -50,8 +50,8 @@ public class WheelAnimation extends BukkitJavaAnimation {
         private final double offset;
 
         public Task() {
-            float pitch = Math.round(getLocation().getPitch() / 45.0f) * 45.0f;
-            float yaw = Math.round(getLocation().getYaw() / 45.0f) * 45.0f;
+            float pitch = Math.round(getLocation().pitch() / 45.0f) * 45.0f;
+            float yaw = Math.round(getLocation().yaw() / 45.0f) * 45.0f;
 
             location.setPitch(pitch);
             location.setYaw(yaw);
@@ -93,7 +93,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
 
             if (settings.getWheelType() == WheelSettings.WheelType.FULL) {
                 // FULL logic - unique items
-                List<CaseDataItem> uniqueItems = new ArrayList<>(getCaseData().getItems().values());
+                List<CaseDataItem> uniqueItems = new ArrayList<>(getCaseData().items().values());
 
                 if (getSettings().node("Shuffle").getBoolean(true)) {
                     Collections.shuffle(uniqueItems);
@@ -178,18 +178,18 @@ public class WheelAnimation extends BukkitJavaAnimation {
     }
 
     private ArmorStandCreator spawnArmorStand(CaseLocation location, CaseDataItem item, boolean small) {
-        CaseDataMaterial material = item.getMaterial();
+        CaseDataMaterial material = item.material();
 
         ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(location);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
         as.setAngle(settings.armorStandEulerAngle);
-        as.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), item.getMaterial().getDisplayName()));
-        as.setCustomNameVisible(item.getMaterial().getDisplayName() != null && !item.getMaterial().getDisplayName().isEmpty());
+        as.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), item.material().displayName()));
+        as.setCustomNameVisible(item.material().displayName() != null && !item.material().displayName().isEmpty());
         as.spawn();
 
-        as.setEquipment(settings.getItemSlot(), material.getItemStack());
+        as.setEquipment(settings.getItemSlot(), material.itemStack());
         return as;
     }
 }
