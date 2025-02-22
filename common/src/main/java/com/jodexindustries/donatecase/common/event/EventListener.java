@@ -16,6 +16,7 @@ import net.kyori.event.PostOrders;
 import net.kyori.event.method.annotation.PostOrder;
 import net.kyori.event.method.annotation.Subscribe;
 
+import java.util.Optional;
 import java.util.logging.Level;
 
 public class EventListener {
@@ -45,10 +46,10 @@ public class EventListener {
     @Subscribe
     @PostOrder(PostOrders.LAST)
     public void onGUIClick(GuiClickEvent event) {
-        TypedItem typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(event.itemType());
-        if (typedItem == null) return;
+        Optional<TypedItem> typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(event.itemType());
+        if (!typedItem.isPresent()) return;
 
-        TypedItemClickHandler handler = typedItem.click();
+        TypedItemClickHandler handler = typedItem.get().click();
         if (handler == null) return;
 
         handler.onClick(event);

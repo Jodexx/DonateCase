@@ -25,7 +25,8 @@ public class MaterialManagerImpl implements MaterialManager {
 
     @Override
     public void register(CaseMaterial material) throws CaseMaterialException {
-        if(isRegistered(material.id())) throw new CaseMaterialException("Material with id " + material.id() + " already registered!");
+        if (isRegistered(material.id()))
+            throw new CaseMaterialException("Material with id " + material.id() + " already registered!");
 
         registeredMaterials.put(material.id(), material);
     }
@@ -61,9 +62,4 @@ public class MaterialManagerImpl implements MaterialManager {
         return registeredMaterials;
     }
 
-    @Nullable
-    @Override
-    public String getByStart(@NotNull final String string) {
-        return registeredMaterials.keySet().stream().filter(string::startsWith).findFirst().orElse(null);
-    }
 }

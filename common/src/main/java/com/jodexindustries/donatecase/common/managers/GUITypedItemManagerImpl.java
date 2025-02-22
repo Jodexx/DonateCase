@@ -7,10 +7,7 @@ import com.jodexindustries.donatecase.api.platform.Platform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GUITypedItemManagerImpl implements GUITypedItemManager {
 
@@ -63,15 +60,9 @@ public class GUITypedItemManagerImpl implements GUITypedItemManager {
 
     @Nullable
     @Override
-    public String getByStart(@NotNull final String string) {
-        return registeredItems.keySet().stream().filter(string.toLowerCase()::startsWith).findFirst().orElse(null);
-    }
-
-    @Nullable
-    @Override
-    public TypedItem getFromString(@NotNull final String string) {
-        String temp = getByStart(string);
-        return temp != null ? get(temp) : null;
+    public Optional<TypedItem> getFromString(@NotNull final String string) {
+        Optional<String> temp = getByStart(string);
+        return temp.map(this::get);
     }
 
 }

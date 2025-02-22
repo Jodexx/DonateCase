@@ -14,7 +14,7 @@ public class CaseManagerImpl implements CaseManager {
 
     @Override
     public boolean hasByType(@NotNull String type) {
-        return !caseData.isEmpty() && caseData.containsKey(type);
+        return caseData.containsKey(type);
     }
 
     @Override

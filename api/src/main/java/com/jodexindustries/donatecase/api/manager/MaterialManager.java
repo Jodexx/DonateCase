@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -66,6 +67,7 @@ public interface MaterialManager {
      * @param string the string to match against material IDs
      * @return the ID of the matched material if found, or null otherwise
      */
-    @Nullable
-    String getByStart(@NotNull final String string);
+    default Optional<String> getByStart(@NotNull final String string) {
+        return getMap().keySet().stream().filter(string::startsWith).findFirst();
+    }
 }

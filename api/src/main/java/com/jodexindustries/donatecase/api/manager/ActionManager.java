@@ -5,11 +5,11 @@ import com.jodexindustries.donatecase.api.data.action.ActionException;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -52,10 +52,11 @@ public interface ActionManager {
      * Retrieves a registered action by its name.
      *
      * @param name the name of the action to retrieve
-     * @return the {@code CaseAction} instance if found, or {@code null} if not found
+     * @return the {@code CaseAction} instance if found
      */
-    @Nullable
-    CaseAction get(@NotNull String name);
+    default Optional<CaseAction> get(@NotNull String name) {
+        return Optional.ofNullable(getMap().get(name));
+    }
 
     /**
      * Retrieves all registered actions by addon.
@@ -79,10 +80,14 @@ public interface ActionManager {
      * Retrieves the name of a registered action that matches the beginning of a given string.
      *
      * @param prefix the prefix string to match against action names
-     * @return the name of the matching action, or {@code null} if no match is found
+     * @return the name of the matching action
      */
-    @Nullable
-    String getByStart(@NotNull String prefix);
+    default Optional<String> getByStart(@NotNull String prefix) {
+        return getMap().keySet().stream()
+                .filter(prefix::startsWith)
+                .sorted()
+                .findFirst();
+    }
 
     /**
      * Executes a specific action for a player, applying a cooldown.

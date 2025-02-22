@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -64,18 +65,18 @@ public interface GUITypedItemManager {
      * Retrieves the ID of a registered GUI typed item that matches the start of a given string.
      *
      * @param string the prefix string to match against GUI typed item IDs
-     * @return the ID of the matched GUI typed item if found, or null otherwise
+     * @return the ID of the matched GUI typed item if found
      */
-    @Nullable
-    String getByStart(@NotNull final String string);
+    default Optional<String> getByStart(@NotNull final String string) {
+        return getMap().keySet().stream().filter(string.toLowerCase()::startsWith).findFirst();
+    }
 
     /**
      * Retrieves a registered GUI typed item by parsing a string.
      *
      * @param string the string to parse and match to a GUI typed item
-     * @return the {@code GUITypedItem} object if found, or null otherwise
+     * @return the {@code GUITypedItem} object if found
      */
-    @Nullable
-    TypedItem getFromString(@NotNull final String string);
+    Optional<TypedItem> getFromString(@NotNull final String string);
 
 }

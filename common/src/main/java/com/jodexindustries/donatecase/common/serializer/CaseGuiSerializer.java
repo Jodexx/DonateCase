@@ -75,9 +75,9 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
         if (material == null) return null;
 
         if (!item.type().equalsIgnoreCase("DEFAULT")) {
-            TypedItem typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(item.toString());
-            if (typedItem != null) {
-                if (typedItem.loadOnCase()) {
+            Optional<TypedItem> typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(item.toString());
+            if (typedItem.isPresent()) {
+                if (typedItem.get().loadOnCase()) {
                     material.itemStack(DCAPI.getInstance().getPlatform().getTools().loadCaseItem(item.material().id()));
                 }
             }

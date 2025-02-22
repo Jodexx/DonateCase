@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -108,11 +109,11 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
     private void processItem(CaseGui.Item item) throws TypedItemException {
         String itemType = item.type();
         if (!itemType.equalsIgnoreCase("DEFAULT")) {
-            TypedItem typedItem = platform.getAPI().getGuiTypedItemManager().getFromString(itemType);
-            if (typedItem != null) {
-                TypedItemHandler handler = typedItem.handler();
+            Optional<TypedItem> typedItem = platform.getAPI().getGuiTypedItemManager().getFromString(itemType);
+            if (typedItem.isPresent()) {
+                TypedItemHandler handler = typedItem.get().handler();
                 if (handler != null) item = handler.handle(this, item);
-                if (typedItem.updateMeta()) updateMeta(item);
+                if (typedItem.get().updateMeta()) updateMeta(item);
             }
         } else {
             updateMeta(item);

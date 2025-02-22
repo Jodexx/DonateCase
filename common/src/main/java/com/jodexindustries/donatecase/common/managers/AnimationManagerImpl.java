@@ -40,7 +40,7 @@ public class AnimationManagerImpl implements AnimationManager {
         this.api = api;
         this.backend = api.getPlatform();
 
-        List<? extends CaseAnimation> defaultAnimations = Arrays.asList(
+        List<? extends CaseAnimation> defaultAnimations = Collections.singletonList(
                 CaseAnimation.builder()
                         .name("RANDOM")
                         .addon(backend)

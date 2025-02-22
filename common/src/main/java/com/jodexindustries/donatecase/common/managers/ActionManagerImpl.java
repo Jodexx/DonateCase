@@ -10,7 +10,6 @@ import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -64,35 +63,24 @@ public class ActionManagerImpl implements ActionManager {
         list.forEach(this::unregister);
     }
 
-    @Nullable
-    @Override
-    public CaseAction get(@NotNull String action) {
-        return registeredActions.get(action);
-    }
-
     @Override
     public @NotNull Map<String, CaseAction> getMap() {
         return registeredActions;
     }
 
     @Override
-    public @Nullable String getByStart(@NotNull final String string) {
-        return registeredActions.keySet().stream().filter(string::startsWith).findFirst().orElse(null);
-    }
-
-    @Override
     public void execute(@NotNull DCPlayer player, @NotNull String action, int cooldown) {
-        String temp = getByStart(action);
-        if(temp == null) return;
+        Optional<String> temp = getByStart(action);
+        if(!temp.isPresent()) return;
 
-        String context = action.replace(temp, "").trim();
+        String context = action.replace(temp.get(), "").trim();
 
-        CaseAction caseAction = get(temp);
-        if(caseAction == null) return;
+        Optional<CaseAction> caseAction = get(temp.get());
+        if(!caseAction.isPresent()) return;
 
         platform.getScheduler().run(platform, () -> {
             try {
-                caseAction.execute(player, context);
+                caseAction.get().execute(player, context);
             } catch (ActionException e) {
                 platform.getLogger().log(Level.WARNING, "Error with executing action: " + context, e);
             }

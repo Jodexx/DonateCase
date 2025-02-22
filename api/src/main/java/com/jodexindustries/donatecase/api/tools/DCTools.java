@@ -78,12 +78,12 @@ public abstract class DCTools {
     public static Object getItemFromManager(@NotNull String id) {
         MaterialManager manager = DCAPI.getInstance().getMaterialManager();
 
-        String temp = manager.getByStart(id);
+        Optional<String> temp = manager.getByStart(id);
 
-        if (temp != null) {
-            CaseMaterial caseMaterial = manager.get(temp);
+        if (temp.isPresent()) {
+            CaseMaterial caseMaterial = manager.get(temp.get());
             if (caseMaterial != null) {
-                String context = id.replace(temp, "").replaceFirst(":", "").trim();
+                String context = id.replace(temp.get(), "").replaceFirst(":", "").trim();
                 try {
                     return caseMaterial.handle(context);
                 } catch (CaseMaterialException e) {
