@@ -1,27 +1,32 @@
 package com.jodexindustries.dcwebhook.bootstrap;
 
-import com.jodexindustries.dcwebhook.tools.Tools;
-import com.jodexindustries.donatecase.api.DCAPIBukkit;
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
+import com.jodexindustries.dcwebhook.config.Config;
+import com.jodexindustries.dcwebhook.events.EventListener;
+import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 
-public final class MainAddon extends InternalJavaAddon implements Main {
-    private Tools t;
-    private DCAPIBukkit api;
+public final class MainAddon extends InternalJavaAddon {
+
+    public final DCAPI api = DCAPI.getInstance();
+    public final EventListener eventListener = new EventListener(this);
+
+    public Config config;
+
+    @Override
+    public void onLoad() {
+        this.config = new Config(this);
+    }
 
     @Override
     public void onEnable() {
-        api = DCAPIBukkit.get(this);
-        t = new Tools(this);
-        t.load();
+        config.load();
+
+        api.getEventBus().register(eventListener);
     }
 
     @Override
     public void onDisable() {
-        t.unload();
+        api.getEventBus().unregister(eventListener);
     }
 
-    @Override
-    public DCAPIBukkit getDCAPI() {
-        return api;
-    }
 }

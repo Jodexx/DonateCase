@@ -1,7 +1,0 @@
-name: DCWebHook
-version: '${version}'
-main: com.jodexindustries.dcwebhook.bootstrap.MainPlugin
-authors: [_Jodex__, KukiVlad]
-website: https://jodexindustries.xyz
-depend:
-  - DonateCase

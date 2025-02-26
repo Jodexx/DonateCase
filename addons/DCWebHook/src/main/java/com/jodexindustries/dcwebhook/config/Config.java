@@ -1,32 +1,37 @@
 package com.jodexindustries.dcwebhook.config;
 
-import com.jodexindustries.dcwebhook.bootstrap.Main;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+
+import com.jodexindustries.dcwebhook.bootstrap.MainAddon;
+import lombok.Getter;
+import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
+import java.util.logging.Level;
 
 public class Config {
 
-    private final Main main;
-    private YamlConfiguration config;
-    private final File configFile;
+    private final MainAddon addon;
+    private final YamlConfigurationLoader loader;
 
-    public Config(Main main) {
-        this.main = main;
-        configFile = new File(main.getDataFolder(), "config.yml");
-        if (!configFile.exists()) main.saveResource("config.yml", false);
+    @Getter
+    private DiscordWebhook webhook;
 
-        config = YamlConfiguration.loadConfiguration(configFile);
+    public Config(MainAddon addon) {
+        this.addon = addon;
+        File file = new File(addon.getDataFolder(), "config.yml");
+        if(!file.exists()) addon.saveResource("config.yml", false);
+        this.loader = YamlConfigurationLoader.builder().file(file).build();
     }
 
-    public FileConfiguration getConfig() {
-        return config;
-    }
-
-    public void reloadConfig() {
-        config = YamlConfiguration.loadConfiguration(configFile);
-        main.getLogger().info("Config reloaded");
+    public void load() {
+        try {
+            ConfigurationNode node = loader.load();
+            this.webhook = node.get(DiscordWebhook.class);
+        } catch (ConfigurateException e) {
+            addon.getLogger().log(Level.WARNING, "Error with loading configuration", e);
+        }
     }
 
 }
