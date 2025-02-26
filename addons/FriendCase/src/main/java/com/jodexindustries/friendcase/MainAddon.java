@@ -4,12 +4,14 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
+import com.jodexindustries.donatecase.api.event.Subscriber;
 import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
+import net.kyori.event.method.annotation.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class MainAddon extends InternalJavaAddon {
+public final class MainAddon extends InternalJavaAddon implements Subscriber {
 
     public final DCAPI api = DCAPI.getInstance();
 
@@ -22,10 +24,7 @@ public final class MainAddon extends InternalJavaAddon {
 
     @Override
     public void onEnable() {
-        api.getEventBus().register(DonateCaseReloadEvent.class, event -> {
-            if(event.getType() == DonateCaseReloadEvent.Type.CONFIG) config.load();
-            getLogger().info("Config reloaded");
-        });
+        api.getEventBus().register(this);
 
         FriendSubCommand friendSubCommand = new FriendSubCommand(this);
 
@@ -43,7 +42,17 @@ public final class MainAddon extends InternalJavaAddon {
                 .build();
 
         api.getSubCommandManager().register(subCommand);
+    }
 
+    @Override
+    public void onDisable() {
+        api.getEventBus().unregister(this);
+    }
+
+    @Subscribe
+    public void onReload(DonateCaseReloadEvent event) {
+        if(event.type() == DonateCaseReloadEvent.Type.CONFIG) config.load();
+        getLogger().info("Config reloaded");
     }
 
 }

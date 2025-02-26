@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.jodexindustries"
-version = "1.1.4"
+version = "2.0.0"
 
 dependencies {
     compileOnly(project(":api"))
@@ -19,7 +19,7 @@ tasks.processResources {
     val props = mapOf("version" to project.version)
     inputs.properties(props)
     filteringCharset = "UTF-8"
-    filesMatching(listOf("plugin.yml", "addon.yml")) {
+    filesMatching("addon.yml") {
         expand(props)
     }
 }
