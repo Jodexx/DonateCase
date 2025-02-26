@@ -64,6 +64,5 @@ tasks.shadowJar {
         exclude(dependency("org.jetbrains:annotations:.*"))
     }
 
-    relocate("net.kyori.event", "com.jodexindustries.donatecase.api.kyori.event")
     relocate("me.tofaa.entitylib", "com.jodexindustries.donatecase.entitylib")
 }

@@ -22,7 +22,7 @@ public interface EventBus extends net.kyori.event.EventBus<DCEvent> {
      * @param listener the listener to register
      * @throws RuntimeException if a method does not meet the criteria
      */
-    void register(@NotNull Object listener);
+    void register(@NotNull Subscriber listener);
 
     /**
      * Scans the given listener for any method that is annotated with
@@ -30,5 +30,5 @@ public interface EventBus extends net.kyori.event.EventBus<DCEvent> {
      *
      * @param listener the listener to unregister
      */
-    void unregister(@NotNull Object listener);
+    void unregister(@NotNull Subscriber listener);
 }

@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.common.event;
 
+import com.jodexindustries.donatecase.api.event.Subscriber;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
@@ -19,7 +20,7 @@ import net.kyori.event.method.annotation.Subscribe;
 import java.util.Optional;
 import java.util.logging.Level;
 
-public class EventListener {
+public class EventListener implements Subscriber {
 
     private final DonateCase api;
 
