@@ -3,11 +3,10 @@ package com.jodexindustries.donatecase.api;
 import com.jodexindustries.donatecase.api.config.ConfigManager;
 import com.jodexindustries.donatecase.api.config.Loadable;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
-import com.jodexindustries.donatecase.api.event.DCEvent;
+import com.jodexindustries.donatecase.api.event.EventBus;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.api.platform.Platform;
 import lombok.Getter;
-import net.kyori.event.EventBus;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -113,7 +112,7 @@ public abstract class DCAPI {
 
     public abstract @NotNull Loadable getCaseLoader();
 
-    public abstract @NotNull EventBus<DCEvent> getEventBus();
+    public abstract @NotNull EventBus getEventBus();
 
     /**
      * Should return the DonateCase platform instance
