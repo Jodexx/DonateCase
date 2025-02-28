@@ -27,6 +27,8 @@ public class CaseMigrator_1_2_to_1_3 implements ConfigMigrator {
 
         root.node("config", "version").set(13);
         root.node("config", "type").set(config.type());
+
+        root.node("case", "CooldownBeforeAnimation").set(0);
     }
 
     private static void migrateItem(ConfigurationNode node) throws SerializationException {

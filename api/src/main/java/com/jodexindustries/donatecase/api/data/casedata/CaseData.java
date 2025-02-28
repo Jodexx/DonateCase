@@ -54,6 +54,9 @@ public class CaseData implements Cloneable {
     @Setting("AnimationSettings")
     private ConfigurationNode animationSettings;
 
+    @Setting("CooldownBeforeAnimation")
+    private int cooldownBeforeStart;
+
     /**
      * Get case item
      *
