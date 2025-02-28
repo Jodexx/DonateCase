@@ -84,7 +84,7 @@ public class AnimationManagerImpl implements AnimationManager {
 
     @Override
     public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData) {
-        return start(player, location, caseData, 0);
+        return start(player, location, caseData, caseData.cooldownBeforeStart());
     }
 
     @Override
