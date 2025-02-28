@@ -33,7 +33,7 @@ public class AnimationManagerImpl implements AnimationManager {
     private final static Map<UUID, ActiveCase> activeCases = new HashMap<>();
     private final static Map<Object, List<UUID>> activeCasesByBlock = new HashMap<>();
 
-    private final DonateCase api;
+    private final DonateCase apiф;
     private final BackendPlatform backend;
 
     public AnimationManagerImpl(DonateCase api) {
