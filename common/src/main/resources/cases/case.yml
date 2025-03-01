@@ -2,7 +2,7 @@ config:
   version: 13
   type: old_case
 case:
-  Animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/animations
+  Animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL, RANDOM see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/animations
 #  AnimationSettings:
 #    Type: FULL # or RANDOM
 #    ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
