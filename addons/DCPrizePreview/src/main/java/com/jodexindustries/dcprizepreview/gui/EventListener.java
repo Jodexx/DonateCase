@@ -1,15 +1,16 @@
 package com.jodexindustries.dcprizepreview.gui;
 
+import com.jodexindustries.dcprizepreview.bootstrap.MainAddon;
 import com.jodexindustries.dcprizepreview.config.CasePreview;
-import com.jodexindustries.dcprizepreview.config.Config;
-import com.jodexindustries.donatecase.api.DCAPIBukkit;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.event.CaseInteractEvent;
-import com.jodexindustries.donatecase.api.event.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.event.Subscriber;
+import com.jodexindustries.donatecase.api.event.player.CaseInteractEvent;
+import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import net.kyori.event.method.annotation.Subscribe;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -17,35 +18,34 @@ import org.bukkit.inventory.Inventory;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class EventListener implements Listener {
-    private final HashSet<UUID> players = new HashSet<>();
-    private final Config config;
-    private final DCAPIBukkit api;
+public class EventListener implements Subscriber, Listener {
 
-    public EventListener(Config config, DCAPIBukkit api) {
-        this.config = config;
-        this.api = api;
+    private final HashSet<UUID> players = new HashSet<>();
+    private final MainAddon addon;
+
+    public EventListener(MainAddon addon) {
+        this.addon = addon;
     }
 
-    @EventHandler
+    @Subscribe
     public void onReload(DonateCaseReloadEvent e) {
-        if (e.getType() == DonateCaseReloadEvent.Type.CONFIG) {
-            config.reload(true);
+        if (e.type() == DonateCaseReloadEvent.Type.CONFIG) {
+            addon.config.reload(true);
         }
     }
 
-    @EventHandler
+    @Subscribe
     public void onInteract(CaseInteractEvent e) {
-        if (e.getAction() == Action.LEFT_CLICK_BLOCK) {
-            String caseType = e.getCaseType();
-            CasePreview casePreview = config.previewMap.get(caseType);
+        if (e.action() == CaseInteractEvent.Action.LEFT) {
+            String caseType = e.caseInfo().type();
+            CasePreview casePreview = addon.config.previewMap.get(caseType);
             if (casePreview == null) return;
 
-            Player player = e.getPlayer();
+            DCPlayer player = e.player();
 
             switch (casePreview.type()) {
                 case AUTO: {
-                    CaseData caseData = api.getCaseManager().get(caseType);
+                    CaseData caseData = addon.api.getCaseManager().get(caseType);
                     if (caseData != null) {
                         Inventory inventory = PreviewGUI.loadGUI(caseData);
                         if (inventory == null) return;
@@ -57,7 +57,7 @@ public class EventListener implements Listener {
                 }
 
                 case COMMAND: {
-                    player.chat(casePreview.command());
+                    if(player instanceof Player) ((Player) player).chat(casePreview.command());
                     break;
                 }
             }

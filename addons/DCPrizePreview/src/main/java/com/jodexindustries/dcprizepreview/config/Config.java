@@ -1,8 +1,6 @@
 package com.jodexindustries.dcprizepreview.config;
 
-import com.jodexindustries.donatecase.api.addon.Addon;
-import com.jodexindustries.donatecase.api.addon.external.ExternalAddon;
-import com.jodexindustries.donatecase.api.addon.internal.InternalAddon;
+import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,19 +14,13 @@ import java.util.logging.Level;
 public class Config {
     private final File configFile;
     private final YamlConfiguration config = new YamlConfiguration();
-    private final Addon addon;
+    private final InternalJavaAddon addon;
     public final Map<String, CasePreview> previewMap = new HashMap<>();
 
-    public Config(Addon addon) {
+    public Config(InternalJavaAddon addon) {
         this.addon = addon;
         configFile = new File(addon.getDataFolder(), "config.yml");
-        if(!configFile.exists()) {
-            if(addon instanceof InternalAddon) {
-                ((InternalAddon) addon).saveResource("config.yml", false);
-            } else if(addon instanceof ExternalAddon) {
-                ((ExternalAddon) addon).getPlugin().saveResource("config.yml", false);
-            }
-        }
+        if(!configFile.exists()) addon.saveResource("config.yml", false);
         reload();
     }
 

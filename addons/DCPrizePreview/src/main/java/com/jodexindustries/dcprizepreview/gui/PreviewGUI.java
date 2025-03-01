@@ -15,16 +15,16 @@ import java.util.stream.Collectors;
 public class PreviewGUI {
 
     public static Inventory loadGUI(CaseData caseData) {
-        Collection<CaseDataItem> items = caseData.getItems().values();
-        CaseGui caseGui = caseData.getCaseGui();
+        Collection<CaseDataItem> items = caseData.items().values();
+        CaseGui caseGui = caseData.caseGui();
         if(caseGui == null) return null;
 
-        Inventory inventory = Bukkit.createInventory(null, getSize(items.size()), caseGui.getTitle());
-        items = items.stream().sorted(Comparator.comparingInt(CaseDataItem::getIndex)).collect(Collectors.toList());
+        Inventory inventory = Bukkit.createInventory(null, getSize(items.size()), caseGui.title());
+        items = items.stream().sorted(Comparator.comparingInt(CaseDataItem::index)).collect(Collectors.toList());
         for (CaseDataItem item : items) {
-            CaseDataMaterial material = item.getMaterial();
+            CaseDataMaterial material = item.material();
             material.updateMeta();
-            inventory.addItem((ItemStack) material.getItemStack());
+            inventory.addItem((ItemStack) material.itemStack());
         }
         return inventory;
     }

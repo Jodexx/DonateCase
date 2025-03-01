@@ -1,4 +1,6 @@
 name: DCPhysicalKey
 version: '${version}'
-api: 2.0.0
 main: com.jodexindustries.dcphysicalkey.bootstrap.MainAddon
+author: "_Jodex__"
+api: 2.1.0.0
+platforms: ["Bukkit"]
