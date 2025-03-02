@@ -106,24 +106,10 @@ public class SelectAnimation extends BukkitJavaAnimation {
         @Override
         public void accept(SchedulerTask task) {
             if (tick == 0) {
+                int facingYaw = getYaw(facing);
                 for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
                     ArmorStandCreator as = pair.fst;
-                    switch (facing) {
-                        case "south":
-                            location.yaw(0);
-                            break;
-                        case "west":
-                            location.yaw(90);
-                            break;
-                        case "north":
-                            location.yaw(180);
-                            break;
-                        case "east":
-                            location.yaw(270);
-                            break;
-                        default:
-                            break;
-                    }
+                    location.yaw(facingYaw);
                     as.teleport(location);
                 }
             }
@@ -157,7 +143,6 @@ public class SelectAnimation extends BukkitJavaAnimation {
 
             }
 
-
             if (tick >= 100) {
                 preEnd();
                 for (ArmorStandCreator as : toDelete) {
@@ -168,7 +153,22 @@ public class SelectAnimation extends BukkitJavaAnimation {
 
             }
 
+            // TODO: pick logic
+
             tick++;
+        }
+
+        private int getYaw(String facing) {
+            switch (facing) {
+                case "west":
+                    return 90;
+                case "north":
+                    return 180;
+                case "east":
+                    return 270;
+                default:
+                    return 0;
+            }
         }
     }
 }

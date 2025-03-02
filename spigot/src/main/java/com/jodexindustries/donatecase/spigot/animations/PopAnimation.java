@@ -99,24 +99,10 @@ public class PopAnimation extends BukkitJavaAnimation {
         @Override
         public void accept(SchedulerTask task) {
             if (tick == 0) {
+                int facingYaw = getYaw(facing);
                 for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
                     ArmorStandCreator as = pair.fst;
-                    switch (facing) {
-                        case "south":
-                            location.yaw(0);
-                            break;
-                        case "west":
-                            location.yaw(90);
-                            break;
-                        case "north":
-                            location.yaw(180);
-                            break;
-                        case "east":
-                            location.yaw(270);
-                            break;
-                        default:
-                            break;
-                    }
+                    location.yaw(facingYaw);
                     as.teleport(location);
                 }
             }
@@ -213,6 +199,20 @@ public class PopAnimation extends BukkitJavaAnimation {
             }
 
             tick++;
+        }
+
+        private int getYaw(String facing) {
+            switch (facing) {
+                case "west":
+                    return 90;
+                case "north":
+                    return 180;
+                case "east":
+                    return 270;
+                case "south":
+                default:
+                    return 0;
+            }
         }
     }
 }

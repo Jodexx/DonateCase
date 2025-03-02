@@ -290,7 +290,7 @@ public class BukkitBackend extends BackendPlatform {
                         .name("SELECT")
                         .addon(this)
                         .animation(SelectAnimation.class)
-                        .description("Select ur price manually")
+                        .description("Select ur prize manually")
                         .requireSettings(true)
                         .requireBlock(true)
                         .build()
