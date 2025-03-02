@@ -3,20 +3,21 @@ package com.jodexindustries.donatecase.spigot.animations;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
+import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.spigot.tools.Pair;
 import lombok.SneakyThrows;
 import org.bukkit.*;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-public class SelectAnimation extends BukkitJavaAnimation {
+public class PopAnimation extends BukkitJavaAnimation {
 
     private final static DCAPI api = DCAPI.getInstance();
 
@@ -24,13 +25,12 @@ public class SelectAnimation extends BukkitJavaAnimation {
     @Override
     public void start() {
         List<Pair<ArmorStandCreator, CaseLocation>> asList = new ArrayList<>();
-
         double origX = getLocation().x() + 0.5, origY = getLocation().y() - 0.5, origZ = getLocation().z() + 0.5;
 
         CaseLocation origCaseLocation = new CaseLocation(origX, origY, origZ);
-
         String facing = getSettings().node("Facing").getString();
-        System.out.println(facing);
+        if (facing == null)
+            facing = "east";
 
         for (double y = -1; y < 2; y++) {
             for (double hor_offset = -1; hor_offset < 2; hor_offset++) {
@@ -38,28 +38,20 @@ public class SelectAnimation extends BukkitJavaAnimation {
 
                     getLocation().y(origY + y);
 
-                    if (facing != null) {
-                        if (facing.equals("east") || facing.equals("west")) {
-                            getLocation().z(origZ + hor_offset);
-                        } else if (facing.equals("south") || facing.equals("north")) {
-                            getLocation().x(origX + hor_offset);
-                        } else {
-                            throw new Exception("Incorrect facing in config");
-                        }
+                    if (facing.equals("east") || facing.equals("west")) {
+                        getLocation().z(origZ + hor_offset);
+                    } else if (facing.equals("south") || facing.equals("north")) {
+                        getLocation().x(origX + hor_offset);
                     } else {
-                        facing = "east";
+                        throw new Exception("Incorrect facing in config");
                     }
 
                     final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getLocation());
 
                     as.setVisible(false);
-
                     as.setGravity(false);
-
                     as.setSmall(true);
-
                     as.teleport(origCaseLocation);
-
                     as.spawn();
 
                     if (facing.equals("east") || facing.equals("west")) {
@@ -88,9 +80,10 @@ public class SelectAnimation extends BukkitJavaAnimation {
         private final World world;
         private final String facing;
 
-
         private Pair<ArmorStandCreator, CaseLocation> randomAS;
-        private List<ArmorStandCreator> toDelete = new ArrayList<>();
+
+        private final List<Integer> indexes = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
+        private int randomIndex;
 
         public Task(final List<Pair<ArmorStandCreator, CaseLocation>> asList, CaseLocation location, String facing) {
             this.asList = asList;
@@ -128,39 +121,90 @@ public class SelectAnimation extends BukkitJavaAnimation {
                 }
             }
 
-            if (tick >= 10 && tick <= 89) {
-                if (tick % 10 == 0) {
-                    Random random = new Random();
-                    int index = random.nextInt(asList.size());
-                    randomAS = asList.get(index);
-                    asList.remove(index);
-                    toDelete.add(randomAS.fst);
+            if (tick == 10) {
+
+                Random random = new Random();
+                randomIndex = random.nextInt(8);
+
+                Pair<ArmorStandCreator, CaseLocation> win = asList.get(randomIndex);
+                indexes.remove(randomIndex);
+
+                win.fst.setEquipment(itemSlot, getWinItem().material().itemStack());
+                if (getWinItem().material().displayName() != null && !getWinItem().material().displayName().isEmpty())
+                    win.fst.setCustomNameVisible(true);
+                win.fst.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), getWinItem().material().displayName()));
+                win.fst.updateMeta();
+
+
+                for (int i = 0; i < 8; i++) {
+                    if (i != randomIndex) {
+                        Pair<ArmorStandCreator, CaseLocation> pair = asList.get(i);
+                        ArmorStandCreator as = pair.fst;
+                        CaseDataItem item = getCaseData().getRandomItem();
+                        as.setEquipment(itemSlot, item.material().itemStack());
+
+                        String winGroupDisplayName = DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(),
+                                item.material().displayName());
+
+                        if (item.material().displayName() != null && !item.material().displayName().isEmpty()) {
+                            as.setCustomNameVisible(true);
+                        }
+                        as.setCustomName(winGroupDisplayName);
+                        as.updateMeta();
+                    }
                 }
-                ArmorStandCreator as = randomAS.fst;
+            }
 
-                CaseLocation needLocation = randomAS.snd;
+            if (tick >= 10 && tick <= 30) {
+                for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
 
-                as.setEquipment(itemSlot, new ItemStack(Material.CHEST));
-                as.updateMeta();
-                CaseLocation _location = as.getLocation();
+                    ArmorStandCreator as = pair.fst;
+                    CaseLocation needLocation = pair.snd;
 
-                as.teleport(as.getLocation().add(
-                        _location.x() > needLocation.x() ? -0.1 : (Math.abs(_location.x() - needLocation.x()) < 1e-6 ? 0 : 0.1),
-                        _location.y() > needLocation.y() ? -0.1 : (Math.abs(_location.y() - needLocation.y()) < 1e-6 ? 0 : 0.1),
-                        _location.z() > needLocation.z() ? -0.1 : (Math.abs(_location.z() - needLocation.z()) < 1e-6 ? 0 : 0.1)
-                ));
-                as.teleport(as.getLocation());
+                    CaseLocation _location = as.getLocation();
 
+                    as.teleport(as.getLocation().add(
+                            _location.x() > needLocation.x() ? -0.05 : (Math.abs(_location.x() - needLocation.x()) < 1e-6 ? 0 : 0.05),
+                            _location.y() > needLocation.y() ? -0.05 : (Math.abs(_location.y() - needLocation.y()) < 1e-6 ? 0 : 0.05),
+                            _location.z() > needLocation.z() ? -0.05 : (Math.abs(_location.z() - needLocation.z()) < 1e-6 ? 0 : 0.05)
+                    ));
+
+                    as.teleport(as.getLocation());
+                }
+            }
+
+            if (tick >= 40 && tick % 15 == 0 && tick <= 140) {
+                Random random = new Random();
+                int ii = random.nextInt(indexes.size());
+                int index = indexes.get(ii);
+
+                ArmorStandCreator as = asList.get(index).fst;
                 final Location bukkitLocation = new Location(world, as.getLocation().x(), as.getLocation().y() + 1, as.getLocation().z());
 
                 world.spawnParticle(Particle.valueOf("CLOUD"), bukkitLocation, 0);
+                as.remove();
 
+                indexes.remove(ii);
+            }
+
+            if (tick == 141) {
+                ArmorStandCreator as = asList.get(randomIndex).fst;
+                location.x(as.getLocation().x());
+                location.y(as.getLocation().y());
+                location.z(as.getLocation().z());
+                preEnd();
+            }
+
+            if (tick >= 141) {
+                ArmorStandCreator as = asList.get(randomIndex).fst;
+                location.yaw(location.yaw() + 15);
+                as.teleport(location);
             }
 
 
-            if (tick >= 100) {
-                preEnd();
-                for (ArmorStandCreator as : toDelete) {
+            if (tick >= 170) {
+                for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
+                    ArmorStandCreator as = pair.fst;
                     as.remove();
                 }
                 task.cancel();
