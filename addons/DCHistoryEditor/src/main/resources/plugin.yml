@@ -1,6 +1,0 @@
-name: DCHistoryEditor
-version: '${version}'
-main: com.jodexindustries.dchistoryeditor.bootstrap.MainPlugin
-api-version: '1.16'
-depend:
-  - DonateCase
