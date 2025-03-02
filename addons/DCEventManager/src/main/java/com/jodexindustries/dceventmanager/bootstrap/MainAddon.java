@@ -1,27 +1,28 @@
 package com.jodexindustries.dceventmanager.bootstrap;
 
 import com.jodexindustries.dceventmanager.utils.Tools;
-import com.jodexindustries.donatecase.api.DCAPIBukkit;
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
+import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 
-public final class MainAddon extends InternalJavaAddon implements Main {
-    private Tools t;
-    private DCAPIBukkit api;
+public final class MainAddon extends InternalJavaAddon {
+
+    public final DCAPI api = DCAPI.getInstance();
+
+    private Tools tools;
+
+    @Override
+    public void onLoad() {
+        tools = new Tools(this);
+    }
 
     @Override
     public void onEnable() {
-        t = new Tools(this);
-        api = DCAPIBukkit.get(this);
-        t.load();
+        tools.load();
     }
 
     @Override
     public void onDisable() {
-        t.unload();
+        tools.unload();
     }
 
-    @Override
-    public DCAPIBukkit getDCAPI() {
-        return api;
-    }
 }

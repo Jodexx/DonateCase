@@ -1,5 +1,8 @@
 package com.jodexindustries.dceventmanager.data;
 
+import lombok.Getter;
+
+@Getter
 public class Placeholder {
     private final String name;
     private final String method;
@@ -9,11 +12,4 @@ public class Placeholder {
         this.method = method;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getMethod() {
-        return method;
-    }
 }
