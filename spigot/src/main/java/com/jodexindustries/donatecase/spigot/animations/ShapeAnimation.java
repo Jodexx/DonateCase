@@ -85,12 +85,16 @@ public class ShapeAnimation extends BukkitJavaAnimation {
 
         private final Particle particle = getParticle();
 
+        private final Sound scrollSound = Sound.valueOf(getSettings().node("Scroll", "Sound").getString("ENTITY_ITEM_PICKUP"));
+        private final float scrollVolume = getSettings().node("Scroll", "Volume").getFloat(10);
+        private final float scrollPitch = getSettings().node("Scroll", "Pitch").getFloat(1);
+
         public Task(final ArmorStandCreator as, final Color orangeColor, final Color whiteColor) {
             this.as = as;
             this.location = as.getLocation();
             this.bukkitLocation = BukkitUtils.toBukkit(location);
-            this.whiteSize = getSettings().node("Particle", "White", "Size").getFloat();
-            this.orangeSize = getSettings().node("Particle", "Orange", "Size").getFloat();
+            this.whiteSize = getSettings().node("Particle", "White", "Size").getFloat(1);
+            this.orangeSize = getSettings().node("Particle", "Orange", "Size").getFloat(1);
             this.orangeColor = orangeColor;
             this.whiteColor = whiteColor;
 
@@ -141,6 +145,7 @@ public class ShapeAnimation extends BukkitJavaAnimation {
                     as.setCustomName(winGroupDisplayName);
                     as.updateMeta();
                 }
+                world.playSound(bukkitLocation, scrollSound, scrollVolume, scrollPitch);
 
             }
 
