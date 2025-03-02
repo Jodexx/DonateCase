@@ -26,7 +26,7 @@ dependencies {
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
     compileOnly("de.oliver:FancyHolograms:2.3.3")
     compileOnly("com.github.retrooper:packetevents-spigot:2.6.0")
-    implementation("me.tofaa.entitylib:spigot:2.4.11-SNAPSHOT")
+    implementation("com.github.Tofaa2.EntityLib:spigot:2.4.11")
     implementation(project(":api:spigot-api"))
     implementation(project(":common"))
 
@@ -60,9 +60,8 @@ tasks.shadowJar {
     archiveBaseName.set(project.rootProject.name)
     archiveClassifier.set(null as String?)
     archiveVersion.set(project.version.toString())
-    dependencies {
-        exclude(dependency("org.jetbrains:annotations:.*"))
-    }
+    exclude("org/jetbrains/**")
+    exclude("org/intellij/lang/**")
 
     relocate("me.tofaa.entitylib", "com.jodexindustries.donatecase.entitylib")
 }
