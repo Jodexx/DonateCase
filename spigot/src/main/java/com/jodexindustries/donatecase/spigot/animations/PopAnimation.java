@@ -86,6 +86,9 @@ public class PopAnimation extends BukkitJavaAnimation {
         private final List<Integer> indexes = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
         private int randomIndex;
 
+        private final Sound endSound = Sound.ENTITY_ITEM_PICKUP;
+
+
         public Task(final List<Pair<ArmorStandCreator, CaseLocation>> asList, CaseLocation location, String facing) {
             this.asList = asList;
             this.location = location;
@@ -200,6 +203,8 @@ public class PopAnimation extends BukkitJavaAnimation {
             as.remove();
 
             indexes.remove(ii);
+            world.playSound(bukkitLocation, endSound, 1, 1);
+
         }
 
         public void changeArmorStandPosition() {
