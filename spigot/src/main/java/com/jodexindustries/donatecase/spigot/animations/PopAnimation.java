@@ -28,6 +28,7 @@ public class PopAnimation extends BukkitJavaAnimation {
         double origX = getLocation().x() + 0.5, origY = getLocation().y() - 0.5, origZ = getLocation().z() + 0.5;
 
         CaseLocation origCaseLocation = new CaseLocation(origX, origY, origZ);
+
         String facing = getSettings().node("Facing").getString();
         if (facing == null)
             facing = "east";
@@ -108,7 +109,6 @@ public class PopAnimation extends BukkitJavaAnimation {
             }
 
             if (tick == 10) {
-
                 Random random = new Random();
                 randomIndex = random.nextInt(8);
 
@@ -142,35 +142,11 @@ public class PopAnimation extends BukkitJavaAnimation {
             }
 
             if (tick >= 10 && tick <= 30) {
-                for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
-
-                    ArmorStandCreator as = pair.fst;
-                    CaseLocation needLocation = pair.snd;
-
-                    CaseLocation _location = as.getLocation();
-
-                    as.teleport(as.getLocation().add(
-                            _location.x() > needLocation.x() ? -0.05 : (Math.abs(_location.x() - needLocation.x()) < 1e-6 ? 0 : 0.05),
-                            _location.y() > needLocation.y() ? -0.05 : (Math.abs(_location.y() - needLocation.y()) < 1e-6 ? 0 : 0.05),
-                            _location.z() > needLocation.z() ? -0.05 : (Math.abs(_location.z() - needLocation.z()) < 1e-6 ? 0 : 0.05)
-                    ));
-
-                    as.teleport(as.getLocation());
-                }
+                changeArmorStandPosition();
             }
 
             if (tick >= 40 && tick % 15 == 0 && tick <= 140) {
-                Random random = new Random();
-                int ii = random.nextInt(indexes.size());
-                int index = indexes.get(ii);
-
-                ArmorStandCreator as = asList.get(index).fst;
-                final Location bukkitLocation = new Location(world, as.getLocation().x(), as.getLocation().y() + 1, as.getLocation().z());
-
-                world.spawnParticle(Particle.valueOf("CLOUD"), bukkitLocation, 0);
-                as.remove();
-
-                indexes.remove(ii);
+                handleRemoveLogic();
             }
 
             if (tick == 141) {
@@ -190,14 +166,11 @@ public class PopAnimation extends BukkitJavaAnimation {
 
             if (tick >= 170) {
                 for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
-                    ArmorStandCreator as = pair.fst;
-                    as.remove();
+                    pair.fst.remove();
                 }
                 task.cancel();
                 end();
-
             }
-
             tick++;
         }
 
@@ -212,6 +185,38 @@ public class PopAnimation extends BukkitJavaAnimation {
                 case "south":
                 default:
                     return 0;
+            }
+        }
+
+        public void handleRemoveLogic() {
+            Random random = new Random();
+            int ii = random.nextInt(indexes.size());
+            int index = indexes.get(ii);
+
+            ArmorStandCreator as = asList.get(index).fst;
+            final Location bukkitLocation = new Location(world, as.getLocation().x(), as.getLocation().y() + 1, as.getLocation().z());
+
+            world.spawnParticle(Particle.valueOf("CLOUD"), bukkitLocation, 0);
+            as.remove();
+
+            indexes.remove(ii);
+        }
+
+        public void changeArmorStandPosition() {
+            for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
+
+                ArmorStandCreator as = pair.fst;
+                CaseLocation needLocation = pair.snd;
+
+                CaseLocation _location = as.getLocation();
+
+                as.teleport(as.getLocation().add(
+                        _location.x() > needLocation.x() ? -0.05 : (Math.abs(_location.x() - needLocation.x()) < 1e-6 ? 0 : 0.05),
+                        _location.y() > needLocation.y() ? -0.05 : (Math.abs(_location.y() - needLocation.y()) < 1e-6 ? 0 : 0.05),
+                        _location.z() > needLocation.z() ? -0.05 : (Math.abs(_location.z() - needLocation.z()) < 1e-6 ? 0 : 0.05)
+                ));
+
+                as.teleport(as.getLocation());
             }
         }
     }
