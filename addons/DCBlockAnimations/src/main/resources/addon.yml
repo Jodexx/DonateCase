@@ -1,5 +1,6 @@
 name: DCBlockAnimations
 version: '${version}'
 main: com.jodexindustries.dcblockanimations.bootstrap.MainAddon
-authors: [_Jodex__]
-api: 2.0.0
+author: "_Jodex__"
+api: 2.1.0.0
+platforms: ["Bukkit"]
