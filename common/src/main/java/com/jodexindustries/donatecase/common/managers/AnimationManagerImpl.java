@@ -31,7 +31,7 @@ public class AnimationManagerImpl implements AnimationManager {
 
     private final static Map<String, CaseAnimation> registeredAnimations = new HashMap<>();
     private final static Map<UUID, ActiveCase> activeCases = new HashMap<>();
-    private final static Map<Object, List<UUID>> activeCasesByBlock = new HashMap<>();
+    private final static Map<CaseLocation, List<UUID>> activeCasesByBlock = new HashMap<>();
 
     private final DonateCase api;
     private final BackendPlatform backend;
@@ -261,7 +261,7 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     @Override
-    public Map<Object, List<UUID>> getActiveCasesByBlock() {
+    public Map<CaseLocation, List<UUID>> getActiveCasesByBlock() {
         return activeCasesByBlock;
     }
 

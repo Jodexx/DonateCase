@@ -9,19 +9,19 @@ plugins {
 }
 
 group = "com.jodexindustries"
-version = "1.0.4"
+version = "2.0.0"
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
-    compileOnly("org.jetbrains:annotations:24.1.0")
     compileOnly(project(":api:spigot-api"))
+    compileOnly(project(":common"))
+    compileOnly(project(":spigot"))
 }
 
 tasks.processResources {
     val props = mapOf("version" to project.version)
     inputs.properties(props)
     filteringCharset = "UTF-8"
-    filesMatching(listOf("plugin.yml", "addon.yml")) {
+    filesMatching("addon.yml") {
         expand(props)
     }
 }

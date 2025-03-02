@@ -1,29 +1,25 @@
-package com.jodexindustries.dcwebhook.bootstrap;
+package com.jodexindustries.dcblockanimations;
 
-import com.jodexindustries.dcwebhook.config.Config;
-import com.jodexindustries.dcwebhook.events.EventListener;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
+import lombok.Getter;
 
 public final class MainAddon extends InternalJavaAddon {
 
     public final DCAPI api = DCAPI.getInstance();
-    public final EventListener eventListener = new EventListener(this);
 
-    public static MainAddon instance;
-
-    public Config config;
+    @Getter
+    private Config config;
+    private EventListener eventListener;
 
     @Override
     public void onLoad() {
-        instance = this;
         this.config = new Config(this);
+        this.eventListener = new EventListener(this);
     }
 
     @Override
     public void onEnable() {
-        config.load();
-
         api.getEventBus().register(eventListener);
     }
 

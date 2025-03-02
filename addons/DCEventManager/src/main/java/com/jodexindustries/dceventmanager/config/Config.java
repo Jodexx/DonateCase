@@ -1,17 +1,20 @@
 package com.jodexindustries.dceventmanager.config;
 
-import com.jodexindustries.dceventmanager.bootstrap.Main;
+import com.jodexindustries.dceventmanager.bootstrap.MainAddon;
+import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 
 public class Config {
+    @Getter
     private YamlConfiguration config;
+    @Getter
     private YamlConfiguration placeholders;
     private final File configFile;
     private final File placeholdersFile;
 
-    public Config(Main main) {
+    public Config(MainAddon main) {
         configFile = new File(main.getDataFolder(), "config.yml");
         placeholdersFile = new File(main.getDataFolder(), "placeholders.yml");
 
@@ -20,14 +23,6 @@ public class Config {
 
         config = YamlConfiguration.loadConfiguration(configFile);
         placeholders = YamlConfiguration.loadConfiguration(placeholdersFile);
-    }
-
-    public YamlConfiguration getConfig() {
-        return config;
-    }
-
-    public YamlConfiguration getPlaceholders() {
-        return placeholders;
     }
 
     public void reloadConfig() {

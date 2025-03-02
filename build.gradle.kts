@@ -28,9 +28,9 @@ subprojects {
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://repo.papermc.io/repository/maven-releases/")
         maven("https://repo.fancyplugins.de/releases")
-        maven("https://repo.jodexindustries.xyz/releases/")
         maven("https://repo.alessiodp.com/releases/")
-        maven("https://maven.evokegames.gg/snapshots")
+        maven("https://jitpack.io")
+        maven("https://repo.jodexindustries.xyz/releases/")
     }
 
     dependencies {

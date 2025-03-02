@@ -5,13 +5,11 @@ import com.jodexindustries.dceventmanager.data.Placeholder;
 import com.jodexindustries.dceventmanager.utils.Reflection;
 import com.jodexindustries.dceventmanager.utils.Tools;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.event.DonateCaseReloadEvent;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.EventExecutor;
-import org.jetbrains.annotations.NotNull;
+import com.jodexindustries.donatecase.api.event.DCEvent;
+import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import net.kyori.event.EventSubscriber;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,36 +17,40 @@ import java.util.stream.Collectors;
 
 import static com.jodexindustries.dceventmanager.utils.Tools.eventMap;
 import static com.jodexindustries.dceventmanager.utils.Tools.placeholderMap;
+import static com.jodexindustries.donatecase.api.tools.DCTools.rc;
 
-public class DCEventExecutor implements EventExecutor {
-    public final String caseEvent;
+public class DCEventExecutor implements EventSubscriber<DCEvent> {
+
+    public final Class<? extends DCEvent> clazz;
+    public final String name;
     public final Tools tools;
 
-    public DCEventExecutor(String caseEvent, Tools tools) {
-        this.caseEvent = caseEvent;
+    public DCEventExecutor(Class<? extends DCEvent> clazz, Tools tools) {
+        this.clazz = clazz;
+        this.name = clazz.getSimpleName().toUpperCase();
         this.tools = tools;
     }
 
     @Override
-    public void execute(@NotNull Listener listener, @NotNull Event event) {
+    public void invoke(@NonNull DCEvent event) {
         if (event instanceof DonateCaseReloadEvent) {
             DonateCaseReloadEvent reloadEvent = (DonateCaseReloadEvent) event;
-            if(reloadEvent.getType() == DonateCaseReloadEvent.Type.CONFIG) tools.reloadConfig();
+            if(reloadEvent.type() == DonateCaseReloadEvent.Type.CONFIG) tools.reloadConfig();
         }
 
-        final List<EventData> list = eventMap.getOrDefault(caseEvent.toUpperCase(), new ArrayList<>());
-        String caseType = Reflection.getVar(event, "getCaseType", String.class);
-        Integer slot = Reflection.getVar(event, "getSlot", Integer.class);
+        final List<EventData> list = eventMap.getOrDefault(name, new ArrayList<>());
+        String caseType = Reflection.getVar(event, "caseType", String.class);
+        Integer slot = Reflection.getVar(event, "slot", Integer.class);
 
         if (caseType == null) {
-            CaseData caseData = Reflection.getVar(event, "getCaseData", CaseData.class);
+            CaseData caseData = Reflection.getVar(event, "caseData", CaseData.class);
             if (caseData != null) {
-                caseType = caseData.getCaseType();
+                caseType = caseData.caseType();
             }
         }
 
         for (EventData data : list) {
-            if (data.getCase() != null && !data.getCase().equalsIgnoreCase(caseType)) {
+            if (data.getCaseType() != null && !data.getCaseType().equalsIgnoreCase(caseType)) {
                 continue;
             }
 
@@ -62,8 +64,8 @@ public class DCEventExecutor implements EventExecutor {
         }
     }
 
-    private String[] getPlaceholders(Event event) {
-        List<Placeholder> placeholders = placeholderMap.getOrDefault(caseEvent.toUpperCase(), new ArrayList<>());
+    private String[] getPlaceholders(DCEvent event) {
+        List<Placeholder> placeholders = placeholderMap.getOrDefault(name, new ArrayList<>());
         String[] values = new String[placeholders.size() * 2];
 
         int index = 0;
@@ -76,16 +78,21 @@ public class DCEventExecutor implements EventExecutor {
         return values;
     }
 
-    private void executeActions(Event event, List<String> actions) {
-        Player player = null;
+    private void executeActions(DCEvent event, List<String> actions) {
+        DCPlayer player = null;
+
+        // TODO Make the field player in placeholders.yml for selecting correct method for player
+        // TODO Make the scanner for DCPlayer field searching to placeholders autocompleting
         if(Reflection.hasVar(event, "getWhoClicked")) {
-            player = Reflection.getVar(event, "getWhoClicked", Player.class);
-        } else if(Reflection.hasVar(event, "getPlayer")) {
-            player = Reflection.getVar(event, "getPlayer", Player.class);
+            player = Reflection.getVar(event, "getWhoClicked", DCPlayer.class);
+        } else if(Reflection.hasVar(event, "player")) {
+            player = Reflection.getVar(event, "player", DCPlayer.class);
         }
 
         // DonateCase actions
-        tools.getMain().getDCAPI().getActionManager().execute(player, actions);
+        if (player != null) {
+            tools.getMain().api.getActionManager().execute(player, actions);
+        }
 
         // DCEventManager actions
         List<String> oldActions = actions.stream().filter(action -> action.startsWith("[invoke]")).collect(Collectors.toList());
@@ -96,10 +103,6 @@ public class DCEventExecutor implements EventExecutor {
                 Reflection.invokeMethodChain(event, action);
             }
         }
-    }
-
-    private String rc(String text) {
-        return ChatColor.translateAlternateColorCodes('&', text);
     }
 
     public List<String> replaceList(List<String> list, String... args) {
@@ -115,4 +118,5 @@ public class DCEventExecutor implements EventExecutor {
         }
         return newList;
     }
+
 }

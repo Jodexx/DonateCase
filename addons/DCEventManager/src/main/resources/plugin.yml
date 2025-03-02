@@ -1,7 +1,0 @@
-name: DCEventManager
-version: '${version}'
-main: com.jodexindustries.dceventmanager.bootstrap.MainPlugin
-api-version: '1.13'
-authors: [_Jodex__]
-depend:
-  - DonateCase

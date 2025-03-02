@@ -1,21 +1,20 @@
-package com.jodexindustries.dchistoryeditor.bootstrap;
+package com.jodexindustries.dchistoryeditor;
 
-import com.jodexindustries.dchistoryeditor.commands.MainCommand;
-import com.jodexindustries.donatecase.api.DCAPIBukkit;
+
+import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 
-public class Bootstrap {
+public final class MainAddon extends InternalJavaAddon {
 
-    private final DCAPIBukkit api;
+    public final DCAPI api = DCAPI.getInstance();
 
-    private final SubCommand subCommand;
+    @Override
+    public void onLoad() {
+        MainCommand mainCommand = new MainCommand(this);
 
-    public Bootstrap(DCAPIBukkit api) {
-        this.api = api;
-
-        MainCommand mainCommand = new MainCommand(api);
-        this.subCommand = SubCommand.builder()
+        SubCommand subCommand = SubCommand.builder()
                 .name("historyeditor")
                 .description("Edit case history")
                 .args(new String[]{"&7(&aremove&7/&aset&7)", "&7(&acasetype&7)", "&7(&aindex&7/&aall&7)", "&7[&aparam&7]", "&7[&avalue&7]"})
@@ -23,13 +22,13 @@ public class Bootstrap {
                 .tabCompleter(mainCommand)
                 .permission(SubCommandType.ADMIN.permission)
                 .build();
-    }
 
-    public void load() {
         api.getSubCommandManager().register(subCommand);
     }
 
-    public void unload() {
+    @Override
+    public void onDisable() {
         api.getSubCommandManager().unregister("historyeditor");
     }
+
 }

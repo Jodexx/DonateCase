@@ -1,18 +1,15 @@
 package com.jodexindustries.dceventmanager.utils;
 
-import com.jodexindustries.dceventmanager.bootstrap.Main;
+import com.jodexindustries.dceventmanager.bootstrap.MainAddon;
 import com.jodexindustries.dceventmanager.config.Config;
 import com.jodexindustries.dceventmanager.data.EventData;
 import com.jodexindustries.dceventmanager.data.Placeholder;
 import com.jodexindustries.dceventmanager.event.DCEventExecutor;
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
-import org.bukkit.Bukkit;
+import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
+import com.jodexindustries.donatecase.api.event.DCEvent;
+import lombok.Getter;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.PluginManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,23 +18,29 @@ import java.util.Map;
 
 
 public class Tools implements Listener {
+
     public static Map<String, List<EventData>> eventMap = new HashMap<>();
     public static Map<String, List<Placeholder>> placeholderMap = new HashMap<>();
+    public static List<DCEventExecutor> executors = new ArrayList<>();
+
     public boolean debug = false;
-    private final Main main;
+    @Getter
+    private final MainAddon main;
     private final Config config;
 
-
-    public Tools(Main main) {
+    public Tools(MainAddon main) {
         this.main = main;
         this.config = new Config(main);
     }
+
     public void load() {
         debug = config.getConfig().getBoolean("Debug");
+        registerExecutors();
         registerEvents();
         loadPlaceholders();
         loadEvents();
     }
+
     public void unload() {
         unregisterEvents();
     }
@@ -45,17 +48,17 @@ public class Tools implements Listener {
     public void loadPlaceholders() {
         placeholderMap.clear();
         ConfigurationSection section = config.getPlaceholders().getConfigurationSection("Events");
-        if(section == null) return;
+        if (section == null) return;
         int i = 0;
         for (String event : section.getKeys(false)) {
             ConfigurationSection eventSection = section.getConfigurationSection(event);
-            if(eventSection == null) continue;
+            if (eventSection == null) continue;
 
             List<Placeholder> placeholders = new ArrayList<>();
 
             for (String placeholder : eventSection.getKeys(false)) {
                 ConfigurationSection placeholderSection = eventSection.getConfigurationSection(placeholder);
-                if(placeholderSection == null) continue;
+                if (placeholderSection == null) continue;
 
                 String name = placeholderSection.getString("placeholder");
                 String method = placeholderSection.getString("method");
@@ -63,7 +66,7 @@ public class Tools implements Listener {
                 Placeholder p = new Placeholder(name, method);
                 placeholders.add(p);
                 i++;
-                if(debug) main.getLogger().info("Placeholder " + placeholder + " for event " + event + " loaded");
+                if (debug) main.getLogger().info("Placeholder " + placeholder + " for event " + event + " loaded");
             }
 
             placeholderMap.put(event.toUpperCase(), placeholders);
@@ -77,7 +80,7 @@ public class Tools implements Listener {
 
         ConfigurationSection section = config.getConfig().getConfigurationSection("Events");
         int i = 0;
-        if(section != null) {
+        if (section != null) {
             for (String event : section.getKeys(false)) {
                 String eventName = section.getString(event + ".Event");
                 if (eventName == null || eventName.isEmpty()) {
@@ -87,9 +90,9 @@ public class Tools implements Listener {
                 eventName = eventName.toUpperCase();
 
                 List<String> actions = section.getStringList(event + ".Actions");
-                String caseName = section.getString(event + ".Case");
+                String caseType = section.getString(event + ".Case");
                 int slot = section.getInt(event + ".Slot", -1);
-                EventData data = new EventData(actions, caseName, slot);
+                EventData data = new EventData(actions, caseType, slot);
 
                 List<EventData> list = new ArrayList<>();
                 if (eventMap.get(eventName) != null) {
@@ -104,29 +107,37 @@ public class Tools implements Listener {
         main.getLogger().info("Loaded " + i + " event managements from " + eventMap.size() + " events");
     }
 
-    public void registerEvents() {
-        unregisterEvents();
-        ArrayList<Class<? extends Event>> classes = getClasses();
-        PluginManager pluginManager = Bukkit.getPluginManager();
+    public void registerExecutors() {
+        executors.clear();
+        ArrayList<Class<? extends DCEvent>> classes = getClasses();
 
         int i;
         for (i = 0; i < classes.size(); i++) {
-            Class<? extends Event> clazz = classes.get(i);
-            String event = clazz.getSimpleName();
-            pluginManager.registerEvent(clazz, this, EventPriority.NORMAL,
-                    new DCEventExecutor(event, this), main.getDCAPI().getDonateCase());
-            if (debug) main.getLogger().info("Event " + event + " registered");
+            Class<? extends DCEvent> clazz = classes.get(i);
+
+            DCEventExecutor executor = new DCEventExecutor(clazz, this);
+            executors.add(executor);
+
+            if (debug) main.getLogger().info("Executor for " + clazz.getSimpleName() + " registered");
+        }
+    }
+
+    public void registerEvents() {
+        unregisterEvents();
+
+        for (DCEventExecutor executor : executors) {
+            main.api.getEventBus().register(executor.clazz, executor);
         }
 
-        main.getLogger().info("Registered " + i + " events");
+        main.getLogger().info("Registered " + executors.size() + " events");
     }
 
     public void unregisterEvents() {
-        HandlerList.unregisterAll(this);
+        executors.forEach(executor -> main.api.getEventBus().unregister(executor));
     }
 
-    private ArrayList<Class<? extends Event>> getClasses() {
-        ArrayList<Class<? extends Event>> classes;
+    private ArrayList<Class<? extends DCEvent>> getClasses() {
+        ArrayList<Class<? extends DCEvent>> classes;
 
         try {
             String pkg = config.getConfig().getString("Package",
@@ -136,7 +147,7 @@ public class Tools implements Listener {
             classes = Reflection.getClassesForPackage(getClass().getClassLoader().getParent(), pkg);
 
             // load classes from addons
-            for (InternalJavaAddon addon : main.getDCAPI().getAddonManager().getMap().values()) {
+            for (InternalJavaAddon addon : main.api.getAddonManager().getMap().values()) {
                 classes.addAll(Reflection.getClassesForPackage(addon.getUrlClassLoader(), pkg));
             }
 
@@ -154,7 +165,4 @@ public class Tools implements Listener {
         main.getLogger().info("Config reloaded");
     }
 
-    public Main getMain() {
-        return main;
-    }
 }

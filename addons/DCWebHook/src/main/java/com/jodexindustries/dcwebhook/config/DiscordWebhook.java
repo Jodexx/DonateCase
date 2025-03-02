@@ -1,20 +1,23 @@
 package com.jodexindustries.dcwebhook.config;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import com.jodexindustries.dcwebhook.bootstrap.MainAddon;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.event.animation.AnimationEndEvent;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import javax.net.ssl.HttpsURLConnection;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @ConfigSerializable
 public class DiscordWebhook {
@@ -23,18 +26,24 @@ public class DiscordWebhook {
     private String url;
 
     @Setting
+    @Expose
     private String content;
 
     @Setting
+    @Expose
     private String username;
 
     @Setting("avatar_url")
+    @Expose
+    @SerializedName("avatar_url")
     private String avatarUrl;
 
     @Setting
+    @Expose
     private boolean tts;
 
     @Setting
+    @Expose
     private List<EmbedObject> embeds;
 
     public void execute(AnimationEndEvent event) throws IOException {
@@ -46,86 +55,8 @@ public class DiscordWebhook {
             throw new IllegalArgumentException("Set webhook url!");
         }
 
-        JSONObject json = new JSONObject();
 
-        json.put("content", replace(this.content, event));
-        json.put("username", replace(this.username, event));
-        json.put("avatar_url", this.avatarUrl);
-        json.put("tts", this.tts);
-
-        if (!this.embeds.isEmpty()) {
-            List<JSONObject> embedObjects = new ArrayList<>();
-
-            for (EmbedObject embed : this.embeds) {
-                JSONObject jsonEmbed = new JSONObject();
-
-                jsonEmbed.put("title", replace(embed.title, event));
-                jsonEmbed.put("description", replace(embed.description, event));
-                jsonEmbed.put("url", embed.url);
-
-                if (embed.color != null) {
-                    EmbedObject.Color color = embed.color;
-                    int rgb = color.r;
-                    rgb = (rgb << 8) + color.g;
-                    rgb = (rgb << 8) + color.b;
-
-                    jsonEmbed.put("color", rgb);
-                }
-
-                EmbedObject.Footer footer = embed.footer;
-                EmbedObject.Image image = embed.image;
-                EmbedObject.Thumbnail thumbnail = embed.thumbnail;
-                EmbedObject.Author author = embed.author;
-                List<EmbedObject.Field> fields = embed.fields;
-
-                if (footer != null) {
-                    JSONObject jsonFooter = new JSONObject();
-
-                    jsonFooter.put("text", replace(footer.text, event));
-                    jsonFooter.put("icon_url", footer.iconUrl);
-                    jsonEmbed.put("footer", jsonFooter);
-                }
-
-                if (image != null) {
-                    JSONObject jsonImage = new JSONObject();
-
-                    jsonImage.put("url", image.url);
-                    jsonEmbed.put("image", jsonImage);
-                }
-
-                if (thumbnail != null) {
-                    JSONObject jsonThumbnail = new JSONObject();
-
-                    jsonThumbnail.put("url", thumbnail.url);
-                    jsonEmbed.put("thumbnail", jsonThumbnail);
-                }
-
-                if (author != null) {
-                    JSONObject jsonAuthor = new JSONObject();
-
-                    jsonAuthor.put("name", replace(author.name, event));
-                    jsonAuthor.put("url", author.url);
-                    jsonAuthor.put("icon_url", author.iconUrl);
-                    jsonEmbed.put("author", jsonAuthor);
-                }
-
-                List<JSONObject> jsonFields = new ArrayList<>();
-                for (EmbedObject.Field field : fields) {
-                    JSONObject jsonField = new JSONObject();
-
-                    jsonField.put("name", replace(field.name, event));
-                    jsonField.put("value", replace(field.value, event));
-                    jsonField.put("inline", field.inline);
-
-                    jsonFields.add(jsonField);
-                }
-
-                jsonEmbed.put("fields", jsonFields.toArray());
-                embedObjects.add(jsonEmbed);
-            }
-
-            json.put("embeds", embedObjects.toArray());
-        }
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
         URL url = new URL(this.url);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -134,12 +65,30 @@ public class DiscordWebhook {
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
 
-        OutputStream stream = connection.getOutputStream();
-        stream.write(json.toString().getBytes());
-        stream.flush();
-        stream.close();
+        String json = replace(gson.toJson(this), event);
 
-        connection.getInputStream().close(); //I'm not sure why but it doesn't work without getting the InputStream
+        byte[] payload = json.getBytes(StandardCharsets.UTF_8);
+        connection.setRequestProperty("Content-Length", String.valueOf(payload.length));
+
+        try (OutputStream stream = connection.getOutputStream()) {
+            stream.write(payload);
+            stream.flush();
+        }
+
+        int responseCode = connection.getResponseCode();
+
+        InputStream stream;
+        if (responseCode >= 200 && responseCode < 300) {
+            stream = connection.getInputStream();
+        } else {
+            stream = connection.getErrorStream();
+        }
+
+        if (stream != null && stream.read() != -1) {
+            String response = readFully(stream).toString();
+            if(!response.isEmpty()) MainAddon.instance.getLogger().warning("Discord webhook error: " + response);
+        }
+
         connection.disconnect();
     }
 
@@ -147,75 +96,70 @@ public class DiscordWebhook {
         if(text == null) return null;
         ActiveCase activeCase = event.activeCase();
         return text
-                .replace("%player%", event.player().getName())
-                .replace("%group%", activeCase.winItem().group())
-                .replace("%casetype%", activeCase.caseType());
+                .replaceAll("%player%", event.player().getName())
+                .replaceAll("%group%", activeCase.winItem().group())
+                .replaceAll("%casetype%", activeCase.caseType());
     }
 
-    @Override
-    public String toString() {
-        return "DiscordWebhook{" +
-                "url='" + url + '\'' +
-                ", content='" + content + '\'' +
-                ", username='" + username + '\'' +
-                ", avatarUrl='" + avatarUrl + '\'' +
-                ", tts=" + tts +
-                ", embeds=" + embeds +
-                '}';
+    private ByteArrayOutputStream readFully(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = inputStream.read(buffer)) != -1) {
+            byteArrayOutputStream.write(buffer, 0, length);
+        }
+        return byteArrayOutputStream;
     }
 
     @ConfigSerializable
     public static class EmbedObject {
 
         @Setting
+        @Expose
         private String title;
 
         @Setting
+        @Expose
         private String description;
 
         @Setting
+        @Expose
         private String url;
 
         @Setting
-        private Color color;
+        @Expose
+        private int color;
 
         @Setting
+        @Expose
         private Footer footer;
 
         @Setting
+        @Expose
         private Thumbnail thumbnail;
 
         @Setting
+        @Expose
         private Image image;
 
         @Setting
+        @Expose
         private Author author;
 
         @Setting
+        @Expose
         private List<Field> fields;
-
-        @Override
-        public String toString() {
-            return "EmbedObject{" +
-                    "title='" + title + '\'' +
-                    ", description='" + description + '\'' +
-                    ", url='" + url + '\'' +
-                    ", color=" + color +
-                    ", footer=" + footer +
-                    ", thumbnail=" + thumbnail +
-                    ", image=" + image +
-                    ", author=" + author +
-                    ", fields=" + fields +
-                    '}';
-        }
 
         @ConfigSerializable
         private static class Footer {
 
             @Setting
+            @Expose
             private String text;
 
             @Setting("icon_url")
+            @Expose
+            @SerializedName("icon_url")
             private String iconUrl;
         }
 
@@ -223,6 +167,7 @@ public class DiscordWebhook {
         private static class Thumbnail {
 
             @Setting
+            @Expose
             private String url;
         }
 
@@ -230,6 +175,7 @@ public class DiscordWebhook {
         private static class Image {
 
             @Setting
+            @Expose
             private String url;
         }
 
@@ -237,12 +183,16 @@ public class DiscordWebhook {
         private static class Author {
 
             @Setting
+            @Expose
             private String name;
 
             @Setting
+            @Expose
             private String url;
 
             @Setting("icon_url")
+            @Expose
+            @SerializedName("icon_url")
             private String iconUrl;
         }
 
@@ -250,76 +200,17 @@ public class DiscordWebhook {
         private static class Field {
 
             @Setting
+            @Expose
             private String name;
 
             @Setting
+            @Expose
             private String value;
 
             @Setting
+            @Expose
             private boolean inline;
 
-        }
-
-        @ConfigSerializable
-        private static class Color {
-
-            @Setting
-            private int r;
-
-            @Setting
-            private int g;
-
-            @Setting
-            private int b;
-        }
-    }
-
-    private static class JSONObject {
-
-        private final HashMap<String, Object> map = new HashMap<>();
-
-        void put(String key, Object value) {
-            if (value != null) {
-                map.put(key, value);
-            }
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder builder = new StringBuilder();
-            Set<Map.Entry<String, Object>> entrySet = map.entrySet();
-            builder.append("{");
-
-            int i = 0;
-            for (Map.Entry<String, Object> entry : entrySet) {
-                Object val = entry.getValue();
-                builder.append(quote(entry.getKey())).append(":");
-
-                if (val instanceof String) {
-                    builder.append(quote(String.valueOf(val)));
-                } else if (val instanceof Integer) {
-                    builder.append(Integer.valueOf(String.valueOf(val)));
-                } else if (val instanceof Boolean) {
-                    builder.append(val);
-                } else if (val instanceof JSONObject) {
-                    builder.append(val);
-                } else if (val.getClass().isArray()) {
-                    builder.append("[");
-                    int len = Array.getLength(val);
-                    for (int j = 0; j < len; j++) {
-                        builder.append(Array.get(val, j).toString()).append(j != len - 1 ? "," : "");
-                    }
-                    builder.append("]");
-                }
-
-                builder.append(++i == entrySet.size() ? "}" : ",");
-            }
-
-            return builder.toString();
-        }
-
-        private String quote(String string) {
-            return "\"" + string + "\"";
         }
     }
 

@@ -1,6 +1,6 @@
 package com.jodexindustries.dceventmanager.utils;
 
-import org.bukkit.event.Event;
+import com.jodexindustries.donatecase.api.event.DCEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class Reflection {
      *             if it can't correctly read from the jar file.
      */
     private static void checkJarFile(JarURLConnection connection,
-                                     String pckgname, ArrayList<Class<? extends Event>> classes) throws IOException {
+                                     String pckgname, ArrayList<Class<? extends DCEvent>> classes) throws IOException {
         final JarFile jarFile = connection.getJarFile();
         final Enumeration<JarEntry> entries = jarFile.entries();
         String name;
@@ -45,8 +45,8 @@ public class Reflection {
                 if (name.contains(pckgname)) {
                     try {
                         Class<?> clazz = Class.forName(name);
-                        if (Event.class.isAssignableFrom(clazz)) {
-                            classes.add(clazz.asSubclass(Event.class));
+                        if (DCEvent.class.isAssignableFrom(clazz)) {
+                            classes.add(clazz.asSubclass(DCEvent.class));
                         }
                     } catch (Throwable ignored) {}
                 }
@@ -62,8 +62,8 @@ public class Reflection {
      *            the package name to search
      * @return a list of classes that exist within that package
      */
-    public static ArrayList<Class<? extends Event>> getClassesForPackage(ClassLoader cld, String pckgname) throws ClassNotFoundException {
-        final ArrayList<Class<? extends Event>> classes = new ArrayList<>();
+    public static ArrayList<Class<? extends DCEvent>> getClassesForPackage(ClassLoader cld, String pckgname) throws ClassNotFoundException {
+        final ArrayList<Class<? extends DCEvent>> classes = new ArrayList<>();
 
         try {
             if (cld == null)
@@ -104,7 +104,7 @@ public class Reflection {
         return classes;
     }
 
-    public static boolean hasVar(Event event, String methodName) {
+    public static boolean hasVar(DCEvent event, String methodName) {
         try {
             event.getClass().getMethod(methodName);
         } catch (NoSuchMethodException e) {
@@ -114,7 +114,7 @@ public class Reflection {
     }
 
     @Nullable
-    public static <T> T getVar(Event event, String methodName, Class<T> clazz) {
+    public static <T> T getVar(DCEvent event, String methodName, Class<T> clazz) {
         T object = null;
         try {
             Method method = event.getClass().getMethod(methodName);

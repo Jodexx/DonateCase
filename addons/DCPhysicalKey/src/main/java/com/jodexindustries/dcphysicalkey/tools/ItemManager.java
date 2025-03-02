@@ -1,6 +1,6 @@
 package com.jodexindustries.dcphysicalkey.tools;
 
-import com.jodexindustries.dcphysicalkey.bootstrap.Bootstrap;
+import com.jodexindustries.dcphysicalkey.bootstrap.MainAddon;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -11,21 +11,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.jodexindustries.donatecase.tools.DCToolsBukkit.rc;
+import static com.jodexindustries.dcphysicalkey.bootstrap.MainAddon.NAMESPACED_KEY;
+import static com.jodexindustries.donatecase.api.tools.DCTools.rc;
 
 public class ItemManager {
 
-    private final Bootstrap bootstrap;
+    private final MainAddon addon;
 
     public static final Map<String, ItemStack> items = new HashMap<>();
 
-    public ItemManager(Bootstrap bootstrap) {
-        this.bootstrap = bootstrap;
+    public ItemManager(MainAddon addon) {
+        this.addon = addon;
     }
 
     public void load() {
         items.clear();
-        ConfigurationSection section = bootstrap.getConfig().get().getConfigurationSection("keys");
+        ConfigurationSection section = addon.getConfig().get().getConfigurationSection("keys");
         if (section == null) return;
 
         for (String key : section.getKeys(false)) {
@@ -34,18 +35,18 @@ public class ItemManager {
 
             Material material = Material.getMaterial(keySection.getString("material", "STONE"));
             if (material == null) {
-                bootstrap.getPlugin().getLogger().warning("Key " + key + ": Material not found. Skipping this key.");
+                addon.getLogger().warning("Key " + key + ": Material not found. Skipping this key.");
                 continue;
             }
 
             String caseType = keySection.getString("case-type", "");
             if (caseType.isEmpty()) {
-                bootstrap.getPlugin().getLogger().warning("Key " + key + ": Case type is empty. Skipping this key.");
+                addon.getLogger().warning("Key " + key + ": Case type is empty. Skipping this key.");
                 continue;
             }
 
-            if (!bootstrap.getPlugin().getDCAPI().getCaseManager().hasByType(caseType)) {
-                bootstrap.getPlugin().getLogger().warning("Key " + key + ": Case type \"" + caseType + "\" not found. Skipping this key.");
+            if (!MainAddon.api.getCaseManager().hasByType(caseType)) {
+                addon.getLogger().warning("Key " + key + ": Case type \"" + caseType + "\" not found. Skipping this key.");
                 continue;
             }
 
@@ -55,13 +56,13 @@ public class ItemManager {
             ItemStack itemStack = new ItemStack(material);
             ItemMeta meta = itemStack.getItemMeta();
             if (meta == null) {
-                bootstrap.getPlugin().getLogger().warning("Key " + key + ": Item meta is null. Skipping this key.");
+                addon.getLogger().warning("Key " + key + ": Item meta is null. Skipping this key.");
                 continue;
             }
 
             meta.setDisplayName(rc(displayName));
             meta.setLore(rc(lore));
-            meta.getPersistentDataContainer().set(Bootstrap.NAMESPACED_KEY, PersistentDataType.STRING, caseType);
+            meta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, caseType);
             itemStack.setItemMeta(meta);
 
             items.put(key, itemStack);
