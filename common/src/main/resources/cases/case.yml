@@ -2,7 +2,7 @@ config:
   version: 13
   type: old_case
 case:
-  Animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/animations
+  Animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL, RANDOM see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/animations
 #  AnimationSettings:
 #    Type: FULL # or RANDOM
 #    ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
@@ -56,6 +56,8 @@ case:
     - "[sound] ENTITY_ENDERMAN_TELEPORT"
 
   HistoryDataSize: 10 # 0 if you want to disable history data
+
+  CooldownBeforeAnimation: 0 # in tick
 
   LevelGroups: # delete all of this section, if you want to use default LevelGroups from Config.yml
     ultra: 6

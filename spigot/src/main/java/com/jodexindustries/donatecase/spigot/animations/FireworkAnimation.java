@@ -37,7 +37,7 @@ public class FireworkAnimation extends BukkitJavaAnimation {
         boolean small = getSettings().node("SmallArmorStand").getBoolean(true);
 
         final ArmorStandEulerAngle angle = getSettings().node("Pose").get(ArmorStandEulerAngle.class);
-        if(angle != null) as.setAngle(angle);
+        if (angle != null) as.setAngle(angle);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
@@ -64,7 +64,7 @@ public class FireworkAnimation extends BukkitJavaAnimation {
             this.location = as.getLocation();
 
             this.itemSlot = EquipmentSlot.valueOf(getSettings().node("ItemSlot").getString("HEAD").toUpperCase());
-            this.yaw = getSettings().node("Scroll", "Yaw").getFloat( 20.0F);
+            this.yaw = getSettings().node("Scroll", "Yaw").getFloat(20.0F);
 
             world = getPlayer().getWorld();
         }
@@ -92,14 +92,14 @@ public class FireworkAnimation extends BukkitJavaAnimation {
                 preEnd();
             }
 
-            if(tick >= 10 && tick <= 30) {
-                location.y(location.y() + yaw);
+            if (tick >= 10 && tick < 60) {
+                location.yaw(location.yaw() + yaw);
                 as.teleport(location);
             }
 
             if (tick >= 60) {
-                task.cancel();
                 as.remove();
+                task.cancel();
                 end();
             }
 
