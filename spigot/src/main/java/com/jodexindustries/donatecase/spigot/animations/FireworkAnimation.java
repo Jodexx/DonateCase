@@ -93,7 +93,7 @@ public class FireworkAnimation extends BukkitJavaAnimation {
             }
 
             if (tick >= 10 && tick < 60) {
-                location.yaw(location.yaw() + 20);
+                location.yaw(location.yaw() + yaw);
                 as.teleport(location);
             }
 
