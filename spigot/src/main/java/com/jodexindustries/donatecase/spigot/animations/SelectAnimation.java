@@ -152,9 +152,6 @@ public class SelectAnimation extends BukkitJavaAnimation {
                 end();
 
             }
-
-            // TODO: pick logic
-
             tick++;
         }
 
