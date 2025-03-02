@@ -14,6 +14,7 @@ import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.manager.*;
+import com.jodexindustries.donatecase.spigot.animations.SelectAnimation;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
@@ -282,6 +283,17 @@ public class BukkitBackend extends BackendPlatform {
                         .addon(this)
                         .animation(WheelAnimation.class)
                         .description("Items resolve around the case")
+                        .requireSettings(true)
+                        .requireBlock(true)
+                        .build()
+        );
+
+        manager.register(
+                CaseAnimation.builder()
+                        .name("SELECT")
+                        .addon(this)
+                        .animation(SelectAnimation.class)
+                        .description("Select ur price manually")
                         .requireSettings(true)
                         .requireBlock(true)
                         .build()

@@ -152,4 +152,10 @@ public class CaseLocation implements Cloneable, TypeSerializer<CaseLocation> {
     public @org.checkerframework.checker.nullness.qual.Nullable CaseLocation emptyValue(Type specificType, ConfigurationOptions options) {
         return new CaseLocation();
     }
+
+    @Override
+    public String toString() {
+        return String.format("Position: %f %f %f", x, y, z);
+    }
+
 }
