@@ -3,7 +3,7 @@ package com.jodexindustries.donatecase.spigot.tools;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
-import com.jodexindustries.donatecase.spigot.BukkitBackend;
+import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitCommandSender;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitPlayer;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
@@ -16,6 +16,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class BukkitUtils {
 
@@ -76,7 +79,12 @@ public class BukkitUtils {
     }
 
     public static Plugin getDonateCase() {
-        BukkitBackend platform = (BukkitBackend) DCAPI.getInstance().getPlatform();
-        return platform.getPlugin();
+        try {
+            Platform platform = DCAPI.getInstance().getPlatform();
+            Method method = platform.getClass().getDeclaredMethod("getDonateCase");
+            return (Plugin) method.invoke(platform);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
