@@ -10,10 +10,13 @@ public final class MainAddon extends InternalJavaAddon {
     public final DCAPI api = DCAPI.getInstance();
     public final EventListener eventListener = new EventListener(this);
 
+    public static MainAddon instance;
+
     public Config config;
 
     @Override
     public void onLoad() {
+        instance = this;
         this.config = new Config(this);
     }
 
