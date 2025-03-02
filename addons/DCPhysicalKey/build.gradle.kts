@@ -12,6 +12,8 @@ group = "com.jodexindustries"
 version = "2.0.0"
 
 dependencies {
+    compileOnly(project(":spigot"))
+    compileOnly(project(":common"))
     compileOnly(project(":api:spigot-api"))
 }
 

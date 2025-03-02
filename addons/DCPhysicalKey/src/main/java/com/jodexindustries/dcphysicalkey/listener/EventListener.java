@@ -1,8 +1,11 @@
 package com.jodexindustries.dcphysicalkey.listener;
 
-import com.jodexindustries.dcphysicalkey.bootstrap.Bootstrap;
-import com.jodexindustries.donatecase.api.event.DonateCaseReloadEvent;
-import com.jodexindustries.donatecase.api.event.PreOpenCaseEvent;
+import com.jodexindustries.dcphysicalkey.bootstrap.MainAddon;
+import com.jodexindustries.donatecase.api.event.Subscriber;
+import com.jodexindustries.donatecase.api.event.player.PreOpenCaseEvent;
+import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import net.kyori.event.method.annotation.Subscribe;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,28 +15,30 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import static com.jodexindustries.dcphysicalkey.bootstrap.Bootstrap.NAMESPACED_KEY;
+import static com.jodexindustries.dcphysicalkey.bootstrap.MainAddon.NAMESPACED_KEY;
 
-public class EventListener implements Listener {
-    private final Bootstrap bootstrap;
-    public EventListener(Bootstrap bootstrap) {
-        this.bootstrap = bootstrap;
+public class EventListener implements Listener, Subscriber {
+
+    private final MainAddon addon;
+
+    public EventListener(MainAddon addon) {
+        this.addon = addon;
     }
 
-    @EventHandler
+    @Subscribe
     public void onReload(DonateCaseReloadEvent e) {
-        if(e.getType() == DonateCaseReloadEvent.Type.CONFIG) {
-            bootstrap.getConfig().reloadConfig();
-            bootstrap.unload();
-            bootstrap.load();
+        if(e.type() == DonateCaseReloadEvent.Type.CONFIG) {
+            addon.getConfig().reloadConfig();
         }
     }
 
-    @EventHandler
+    @Subscribe
     public void onCaseInteract(PreOpenCaseEvent event) {
-        Player p = event.getPlayer();
+        DCPlayer dcPlayer = event.player();
 
-        for (ItemStack item : p.getInventory().getContents()) {
+        Player player = (Player) dcPlayer.getHandler();
+
+        for (ItemStack item : player.getInventory().getContents()) {
             if (item != null && item.hasItemMeta()) {
                 ItemMeta meta = item.getItemMeta();
                 if(meta == null) continue;
@@ -42,8 +47,8 @@ public class EventListener implements Listener {
                 if(!container.has(NAMESPACED_KEY, PersistentDataType.STRING)) continue;
 
                 String caseType = container.get(NAMESPACED_KEY, PersistentDataType.STRING);
-                if(event.getCaseData().getCaseType().equals(caseType)) {
-                    event.setIgnoreKeys(true);
+                if(event.caseData().caseType().equals(caseType)) {
+                    event.ignoreKeys(true);
                     item.setAmount(item.getAmount() - 1);
                     break;
                 }

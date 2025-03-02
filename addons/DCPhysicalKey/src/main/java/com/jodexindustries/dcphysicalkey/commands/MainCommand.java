@@ -1,14 +1,13 @@
 package com.jodexindustries.dcphysicalkey.commands;
 
-import com.jodexindustries.dcphysicalkey.bootstrap.Bootstrap;
+import com.jodexindustries.dcphysicalkey.bootstrap.MainAddon;
 import com.jodexindustries.dcphysicalkey.tools.ItemManager;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
 import com.jodexindustries.dcphysicalkey.config.Config;
-import com.jodexindustries.donatecase.api.manager.SubCommandManager;
+import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -16,22 +15,22 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jodexindustries.donatecase.tools.DCToolsBukkit.rc;
+import static com.jodexindustries.donatecase.api.tools.DCTools.rc;
 
-public class MainCommand implements SubCommandExecutor<CommandSender>, SubCommandTabCompleter<CommandSender> {
+public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
+
     private final Config config;
-    private final SubCommandManager<CommandSender> manager;
 
     private String commandName;
 
-    public MainCommand(SubCommandManager<CommandSender> manager, Bootstrap bootstrap) {
-        this.config = bootstrap.getConfig();
-        this.manager = manager;
+    public MainCommand(Config config) {
+        this.config = config;
     }
 
     public void register() {
         commandName = config.get().getString("command", "physicalkey");
-        SubCommand<CommandSender> subCommand = manager.builder(commandName)
+        SubCommand subCommand = SubCommand.builder()
+                .name(commandName)
                 .permission(config.get().getString("permissions.give", "dcphysicalkey.give"))
                 .description("&2Gives physical key to specific player")
                 .args(new String[]{
@@ -43,17 +42,17 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
                 .executor(this)
                 .tabCompleter(this)
                 .build();
-        manager.register(subCommand);
+        MainAddon.api.getSubCommandManager().register(subCommand);
     }
 
     public void unregister() {
-        if(commandName != null) manager.unregister(commandName);
+        if(commandName != null) MainAddon.api.getSubCommandManager().unregister(commandName);
     }
 
     @Override
-    public void execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
+    public boolean execute(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
         if (args.length < 1) {
-            return;
+            return false;
         }
 
         if (args[0].equalsIgnoreCase("givekey")) {
@@ -61,9 +60,11 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
                 handleGiveKeyCommand(sender, args);
             }
         }
+
+        return true;
     }
 
-    private void handleGiveKeyCommand(@NotNull CommandSender sender, String[] args) {
+    private void handleGiveKeyCommand(@NotNull DCCommandSender sender, String[] args) {
         if (args.length < 4) {
             return;
         }
@@ -107,7 +108,7 @@ public class MainCommand implements SubCommandExecutor<CommandSender>, SubComman
     }
 
     @Override
-    public List<String> getTabCompletions(@NotNull CommandSender sender, @NotNull String label, String[] args) {
+    public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
         List<String> completions = new ArrayList<>();
 
         if (args.length == 1) {

@@ -1,26 +1,56 @@
 package com.jodexindustries.dcphysicalkey.bootstrap;
 
-import com.jodexindustries.donatecase.api.DCAPIBukkit;
-import com.jodexindustries.donatecase.api.addon.internal.InternalJavaAddon;
 
-public class MainAddon extends InternalJavaAddon implements Main {
-    private Bootstrap bootstrap;
-    private DCAPIBukkit api;
+import com.jodexindustries.dcphysicalkey.commands.MainCommand;
+import com.jodexindustries.dcphysicalkey.config.Config;
+import com.jodexindustries.dcphysicalkey.listener.EventListener;
+import com.jodexindustries.dcphysicalkey.tools.ItemManager;
+import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
+import com.jodexindustries.donatecase.spigot.BukkitBackend;
+import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
+public class MainAddon extends InternalJavaAddon {
+
+    public static final DCAPI api = DCAPI.getInstance();
+
+    @Getter
+    private Config config;
+    private ItemManager itemManager;
+    private EventListener eventListener;
+    private MainCommand mainCommand;
+
+    @NotNull
+    public static final NamespacedKey NAMESPACED_KEY = Objects.requireNonNull(NamespacedKey.fromString("dcphysicalkey:key"));
+
+    @Override
+    public void onLoad() {
+        this.config = new Config(this);
+        this.itemManager = new ItemManager(this);
+        this.eventListener = new EventListener(this);
+        this.mainCommand = new MainCommand(config);
+    }
 
     @Override
     public void onEnable() {
-        api = DCAPIBukkit.get(this);
-        bootstrap = new Bootstrap(this);
-        bootstrap.load();
+        mainCommand.register();
+        itemManager.load();
+        api.getEventBus().register(eventListener);
+
+        Bukkit.getServer().getPluginManager().registerEvents(eventListener, ((BukkitBackend) api.getPlatform()).getPlugin());
     }
 
     @Override
     public void onDisable() {
-        bootstrap.unload();
+        mainCommand.unregister();
+        api.getEventBus().unregister(eventListener);
+        HandlerList.unregisterAll(eventListener);
     }
 
-    @Override
-    public DCAPIBukkit getDCAPI() {
-        return api;
-    }
 }
