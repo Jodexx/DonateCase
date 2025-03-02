@@ -9,6 +9,8 @@ version = project(":api").version
 
 dependencies {
     compileOnlyApi("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
+    compileOnly(project(":common"))
+    compileOnly(project(":spigot"))
     api(project(":api"))
 }
 

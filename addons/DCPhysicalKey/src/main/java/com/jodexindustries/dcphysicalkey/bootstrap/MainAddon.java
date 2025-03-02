@@ -7,7 +7,7 @@ import com.jodexindustries.dcphysicalkey.listener.EventListener;
 import com.jodexindustries.dcphysicalkey.tools.ItemManager;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
-import com.jodexindustries.donatecase.spigot.BukkitBackend;
+import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -43,7 +43,7 @@ public class MainAddon extends InternalJavaAddon {
         itemManager.load();
         api.getEventBus().register(eventListener);
 
-        Bukkit.getServer().getPluginManager().registerEvents(eventListener, ((BukkitBackend) api.getPlatform()).getPlugin());
+        Bukkit.getServer().getPluginManager().registerEvents(eventListener, BukkitUtils.getDonateCase());
     }
 
     @Override

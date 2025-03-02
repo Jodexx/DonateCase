@@ -3,8 +3,6 @@ package com.jodexindustries.donatecase.spigot.api.armorstand;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
-import com.jodexindustries.donatecase.spigot.BukkitBackend;
-import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import org.bukkit.Location;
@@ -28,9 +26,7 @@ public class EntityArmorStandCreator implements ArmorStandCreator {
         }
         entity = world.spawn(location, ArmorStand.class);
         entity.setMetadata("case",
-                new FixedMetadataValue(
-                        ((BukkitBackend) DCAPI.getInstance().getPlatform()).getPlugin(),
-                        "case")
+                new FixedMetadataValue(BukkitUtils.getDonateCase(), "case")
         );
     }
 

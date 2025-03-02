@@ -4,7 +4,7 @@ import com.jodexindustries.dcprizepreview.config.Config;
 import com.jodexindustries.dcprizepreview.gui.EventListener;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
-import com.jodexindustries.donatecase.spigot.BukkitBackend;
+import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 
@@ -23,9 +23,7 @@ public class MainAddon extends InternalJavaAddon {
     @Override
     public void onEnable() {
         api.getEventBus().register(eventListener);
-        BukkitBackend platform = (BukkitBackend) api.getPlatform();
-        Bukkit.getServer().getPluginManager().registerEvents(eventListener, platform.getPlugin());
-
+        Bukkit.getServer().getPluginManager().registerEvents(eventListener, BukkitUtils.getDonateCase());
     }
 
     @Override
