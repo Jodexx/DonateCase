@@ -81,7 +81,8 @@ public class BukkitUtils {
     public static Plugin getDonateCase() {
         try {
             Platform platform = DCAPI.getInstance().getPlatform();
-            Method method = platform.getClass().getDeclaredMethod("getDonateCase");
+
+            Method method = platform.getClass().getDeclaredMethod("getPlugin");
             return (Plugin) method.invoke(platform);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);

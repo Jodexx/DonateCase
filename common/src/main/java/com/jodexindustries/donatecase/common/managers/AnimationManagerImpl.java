@@ -18,7 +18,6 @@ import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
-import net.luckperms.api.model.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -190,8 +189,8 @@ public class AnimationManagerImpl implements AnimationManager {
         Map<String, Integer> levelGroups = getDefaultLevelGroup();
         if(!caseData.levelGroups().isEmpty()) levelGroups = caseData.levelGroups();
 
-        String playerGroup = getPlayerGroup(player);
-        if(isAlternative(levelGroups, playerGroup, item.group())) {
+        String primaryGroup = backend.getLuckPermsSupport().getPrimaryGroup(player.getUniqueId());
+        if(isAlternative(levelGroups, primaryGroup, item.group())) {
             executeActions(player, caseData, item, null, true);
         } else {
             if (item.giveType().equalsIgnoreCase("ONE")) {
@@ -369,24 +368,6 @@ public class AnimationManagerImpl implements AnimationManager {
         api.getActionManager().execute(player, actions);
     }
 
-    /**
-     * Get player primary group from Vault or LuckPerms
-     * @param player Player
-     * @return player primary group
-     */
-    public String getPlayerGroup(DCPlayer player) {
-        String group = null;
-        if(backend.getLuckPerms() != null) {
-            User user = backend.getLuckPerms().getUserManager().getUser(player.getUniqueId());
-            if(user != null) group = user.getPrimaryGroup();
-        }
-        return group;
-    }
-
-    /**
-     * Get map of default LevelGroup from Config.yml
-     * @return map of LevelGroup
-     */
     private Map<String, Integer> getDefaultLevelGroup() {
         Map<String, Integer> levelGroup = new HashMap<>();
         boolean isEnabled = api.getConfigManager().getConfig().node("DonateCase", "LevelGroup").getBoolean();

@@ -30,6 +30,7 @@ import com.jodexindustries.donatecase.spigot.holograms.CMIHologramsImpl;
 import com.jodexindustries.donatecase.spigot.holograms.DecentHologramsImpl;
 import com.jodexindustries.donatecase.spigot.holograms.FancyHologramsImpl;
 import com.jodexindustries.donatecase.spigot.holograms.HolographicDisplaysImpl;
+import com.jodexindustries.donatecase.common.hook.LuckPermsSupport;
 import com.jodexindustries.donatecase.spigot.listener.EventListener;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
 import com.jodexindustries.donatecase.spigot.materials.*;
@@ -68,7 +69,8 @@ public class BukkitBackend extends BackendPlatform {
 
     private PAPI papi;
     @Getter private PacketEventsSupport packetEventsSupport;
-    private LuckPerms luckPerms;
+
+    private final LuckPermsSupport luckPermsSupport = new LuckPermsSupport();
     private MetaUpdater metaUpdater;
 
     public BukkitBackend(BukkitDonateCase plugin) {
@@ -117,8 +119,8 @@ public class BukkitBackend extends BackendPlatform {
     }
 
     @Override
-    public LuckPerms getLuckPerms() {
-        return luckPerms;
+    public @NotNull LuckPermsSupport getLuckPermsSupport() {
+        return luckPermsSupport;
     }
 
     @Override
@@ -438,7 +440,7 @@ public class BukkitBackend extends BackendPlatform {
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
             RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServer().getServicesManager().getRegistration(LuckPerms.class);
             if (provider != null) {
-                luckPerms = provider.getProvider();
+                luckPermsSupport.setProvider(provider.getProvider());
             }
         }
     }

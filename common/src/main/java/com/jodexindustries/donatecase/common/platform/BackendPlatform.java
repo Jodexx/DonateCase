@@ -5,7 +5,7 @@ import com.jodexindustries.donatecase.common.gui.CaseGuiWrapperImpl;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.platform.Platform;
-import net.luckperms.api.LuckPerms;
+import com.jodexindustries.donatecase.common.hook.LuckPermsSupport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +24,8 @@ public abstract class BackendPlatform implements Platform {
 
     public abstract void unload();
 
-    public abstract LuckPerms getLuckPerms();
+    @NotNull
+    public abstract LuckPermsSupport getLuckPermsSupport();
 
     public CaseGuiWrapperImpl createGui(DCPlayer player, CaseData caseData, CaseLocation location) {
         return new CaseGuiWrapperImpl(this, player, caseData, location);
