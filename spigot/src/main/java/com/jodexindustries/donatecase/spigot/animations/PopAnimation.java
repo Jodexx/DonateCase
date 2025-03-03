@@ -29,20 +29,19 @@ public class PopAnimation extends BukkitJavaAnimation {
 
         CaseLocation origCaseLocation = new CaseLocation(origX, origY, origZ);
 
-        String facing = getSettings().node("Facing").getString();
-        if (facing == null)
-            facing = "east";
+        String facing = getSettings().node("Facing").getString("east");
+        boolean rounded = getSettings().node("Rounded").getBoolean(true);
 
         for (double y = -1; y < 2; y++) {
             for (double hor_offset = -1; hor_offset < 2; hor_offset++) {
                 if (!(y == 0 && hor_offset == 0)) {
 
-                    getLocation().y(origY + y);
+                    getLocation().y(origY + (rounded ? (y / 1.4142) : y));
 
                     if (facing.equals("east") || facing.equals("west")) {
-                        getLocation().z(origZ + hor_offset);
+                        getLocation().z(origZ + (rounded ? (hor_offset * (y == 0 ? 1 : 0.707)) : hor_offset));
                     } else if (facing.equals("south") || facing.equals("north")) {
-                        getLocation().x(origX + hor_offset);
+                        getLocation().x(origX + (rounded ? (hor_offset * (y == 0 ? 1 : 0.707)) : hor_offset));
                     } else {
                         throw new Exception("Incorrect facing in config");
                     }
@@ -56,9 +55,9 @@ public class PopAnimation extends BukkitJavaAnimation {
                     as.spawn();
 
                     if (facing.equals("east") || facing.equals("west")) {
-                        asList.add(Pair.of(as, new CaseLocation(origX, origY + y, origZ + hor_offset)));
+                        asList.add(Pair.of(as, new CaseLocation(origX, origY + (rounded ? (y / (hor_offset == 0 ? 1 : 1.4142)) : y), origZ + (rounded ? (hor_offset * (y == 0 ? 1 : 0.707)) : hor_offset))));
                     } else {
-                        asList.add(Pair.of(as, new CaseLocation(origX + hor_offset, origY + y, origZ)));
+                        asList.add(Pair.of(as, new CaseLocation(origX + (rounded ? (hor_offset * (y == 0 ? 1 : 0.707)) : hor_offset), origY + (rounded ? (y / (hor_offset == 0 ? 1 : 1.4142)) : y), origZ)));
                     }
 
                 }
@@ -69,6 +68,7 @@ public class PopAnimation extends BukkitJavaAnimation {
 
         api.getPlatform().getScheduler().run(api.getPlatform(), new Task(asList, origCaseLocation, facing), 0L, period);
     }
+
 
     private class Task implements Consumer<SchedulerTask> {
 
@@ -81,13 +81,14 @@ public class PopAnimation extends BukkitJavaAnimation {
         private final World world;
         private final String facing;
 
+        private final Sound popSound = Sound.valueOf(getSettings().node("Scroll", "Sound").getString("ENTITY_ITEM_PICKUP"));
+        private final float popVolume = getSettings().node("Scroll", "Volume").getFloat(10);
+        private final float popPitch = getSettings().node("Scroll", "Pitch").getFloat(1);
+
         private Pair<ArmorStandCreator, CaseLocation> randomAS;
 
         private final List<Integer> indexes = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
         private int randomIndex;
-
-        private final Sound endSound = Sound.ENTITY_ITEM_PICKUP;
-
 
         public Task(final List<Pair<ArmorStandCreator, CaseLocation>> asList, CaseLocation location, String facing) {
             this.asList = asList;
@@ -110,23 +111,28 @@ public class PopAnimation extends BukkitJavaAnimation {
                 fillStandItem();
             }
 
-            if (tick >= 10 && tick <= 30) {
-                changeArmorStandPosition();
+            if (tick == 10) {
+                for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
+                    ArmorStandCreator as = pair.fst;
+                    CaseLocation target = pair.snd;
+                    as.teleport(target);
+                }
             }
 
-            if (tick >= 40 && tick % 15 == 0 && tick <= 140) {
+            if (tick >= 30 && tick % 15 == 0 && tick <= 129) {
                 handleRemoveLogic();
             }
 
-            if (tick == 141) {
+            if (tick == 129) {
                 ArmorStandCreator as = asList.get(randomIndex).fst;
                 location.x(as.getLocation().x());
                 location.y(as.getLocation().y());
                 location.z(as.getLocation().z());
+                location.yaw(as.getLocation().yaw());
                 preEnd();
             }
 
-            if (tick >= 141) {
+            if (tick >= 129) {
                 ArmorStandCreator as = asList.get(randomIndex).fst;
                 location.yaw(location.yaw() + 15);
                 as.teleport(location);
@@ -165,7 +171,7 @@ public class PopAnimation extends BukkitJavaAnimation {
             as.remove();
 
             indexes.remove(ii);
-            world.playSound(bukkitLocation, endSound, 1, 1);
+            world.playSound(bukkitLocation, popSound, popVolume, popPitch);
 
         }
 

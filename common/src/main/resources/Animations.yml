@@ -125,3 +125,4 @@ POP:
     Volume: 10
     Pitch: 1
   Facing: east
+  Rounded: true
