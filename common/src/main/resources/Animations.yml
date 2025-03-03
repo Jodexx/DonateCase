@@ -5,31 +5,31 @@ config:
 SHAPE:
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
-#  Pose:
-#    Head:
-#      x: 0
-#      y: 0
-#      z: 0
-#    Body:
-#      x: 0
-#      y: 0
-#      z: 0
-#    RightArm:
-#      x: 0
-#      y: 0
-#      z: 0
-#    LeftArm:
-#      x: 0
-#      y: 0
-#      z: 0
-#    RightLeg:
-#      x: 0
-#      y: 0
-#      z: 0
-#    LeftLeg:
-#      x: 0
-#      y: 0
-#      z: 0
+  #  Pose:
+  #    Head:
+  #      x: 0
+  #      y: 0
+  #      z: 0
+  #    Body:
+  #      x: 0
+  #      y: 0
+  #      z: 0
+  #    RightArm:
+  #      x: 0
+  #      y: 0
+  #      z: 0
+  #    LeftArm:
+  #      x: 0
+  #      y: 0
+  #      z: 0
+  #    RightLeg:
+  #      x: 0
+  #      y: 0
+  #      z: 0
+  #    LeftLeg:
+  #      x: 0
+  #      y: 0
+  #      z: 0
   Particle: # 1.13+
     Orange:
       Size: 1.0
@@ -49,6 +49,9 @@ SHAPE:
     Height: 0.91
     Interval: 1
     Yaw: 20.0
+    Volume: 10
+    Pitch: 1
+    Sound: UI_BUTTON_CLICK
   End:
     Time: 25
 
@@ -110,7 +113,17 @@ WHEEL:
     Pitch: 1
 
 RANDOM:
-  SHAPE: 25 # Chance
-  RAINLY: 25
-  FIREWORK: 25
-  WHEEL: 25
+  SHAPE: 20 # Chance
+  RAINLY: 20
+  FIREWORK: 20
+  WHEEL: 20
+  POP: 20
+
+POP:
+  Scroll:
+    Sound: ENTITY_ITEM_PICKUP
+    Volume: 10
+    Pitch: 1
+  Facing: east
+  Rounded: true
+  Radius: 1.5

@@ -14,15 +14,13 @@ import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.manager.*;
+import com.jodexindustries.donatecase.spigot.animations.*;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.scheduler.Scheduler;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.PAPI;
-import com.jodexindustries.donatecase.spigot.animations.FireworkAnimation;
-import com.jodexindustries.donatecase.spigot.animations.RainlyAnimation;
-import com.jodexindustries.donatecase.spigot.animations.ShapeAnimation;
 import com.jodexindustries.donatecase.spigot.animations.wheel.WheelAnimation;
 import com.jodexindustries.donatecase.common.gui.items.HISTORYItemHandlerImpl;
 import com.jodexindustries.donatecase.common.gui.items.OPENItemClickHandlerImpl;
@@ -284,6 +282,28 @@ public class BukkitBackend extends BackendPlatform {
                         .addon(this)
                         .animation(WheelAnimation.class)
                         .description("Items resolve around the case")
+                        .requireSettings(true)
+                        .requireBlock(true)
+                        .build()
+        );
+
+        manager.register(
+                CaseAnimation.builder()
+                        .name("SELECT")
+                        .addon(this)
+                        .animation(SelectAnimation.class)
+                        .description("Select ur prize manually")
+                        .requireSettings(true)
+                        .requireBlock(true)
+                        .build()
+        );
+
+        manager.register(
+                CaseAnimation.builder()
+                        .name("POP")
+                        .addon(this)
+                        .animation(PopAnimation.class)
+                        .description("Items pop")
                         .requireSettings(true)
                         .requireBlock(true)
                         .build()
