@@ -181,19 +181,6 @@ public class PopAnimation extends BukkitJavaAnimation {
 
         }
 
-        public void changeArmorStandPosition() {
-            for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
-                ArmorStandCreator as = pair.fst;
-                CaseLocation target = pair.snd;
-                CaseLocation current = as.getLocation();
-                as.teleport(current.add(
-                        stepTowards(current.x(), target.x()),
-                        stepTowards(current.y(), target.y()),
-                        stepTowards(current.z(), target.z())
-                ));
-            }
-        }
-
         private void alignArmorStands() {
             int yaw = getYaw(facing);
             for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
