@@ -24,7 +24,7 @@ public class PopSettings {
     public int period;
 
     @Setting("ItemSlot")
-    public EquipmentSlot itemSlot;
+    public EquipmentSlot itemSlot = EquipmentSlot.HEAD;
 
     public enum Facing {
         WEST(90),
