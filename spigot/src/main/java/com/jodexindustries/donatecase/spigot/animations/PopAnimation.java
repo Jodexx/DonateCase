@@ -103,45 +103,11 @@ public class PopAnimation extends BukkitJavaAnimation {
         @Override
         public void accept(SchedulerTask task) {
             if (tick == 0) {
-                int facingYaw = getYaw(facing);
-                for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
-                    ArmorStandCreator as = pair.fst;
-                    location.yaw(facingYaw);
-                    as.teleport(location);
-                }
+                alignArmorStands();
             }
 
             if (tick == 10) {
-                Random random = new Random();
-                randomIndex = random.nextInt(8);
-
-                Pair<ArmorStandCreator, CaseLocation> win = asList.get(randomIndex);
-                indexes.remove(randomIndex);
-
-                win.fst.setEquipment(itemSlot, getWinItem().material().itemStack());
-                if (getWinItem().material().displayName() != null && !getWinItem().material().displayName().isEmpty())
-                    win.fst.setCustomNameVisible(true);
-                win.fst.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), getWinItem().material().displayName()));
-                win.fst.updateMeta();
-
-
-                for (int i = 0; i < 8; i++) {
-                    if (i != randomIndex) {
-                        Pair<ArmorStandCreator, CaseLocation> pair = asList.get(i);
-                        ArmorStandCreator as = pair.fst;
-                        CaseDataItem item = getCaseData().getRandomItem();
-                        as.setEquipment(itemSlot, item.material().itemStack());
-
-                        String winGroupDisplayName = DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(),
-                                item.material().displayName());
-
-                        if (item.material().displayName() != null && !item.material().displayName().isEmpty()) {
-                            as.setCustomNameVisible(true);
-                        }
-                        as.setCustomName(winGroupDisplayName);
-                        as.updateMeta();
-                    }
-                }
+                fillStandItem();
             }
 
             if (tick >= 10 && tick <= 30) {
@@ -168,11 +134,7 @@ public class PopAnimation extends BukkitJavaAnimation {
 
 
             if (tick >= 170) {
-                for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
-                    pair.fst.remove();
-                }
-                task.cancel();
-                end();
+                cleanup(task);
             }
             tick++;
         }
@@ -209,20 +171,66 @@ public class PopAnimation extends BukkitJavaAnimation {
 
         public void changeArmorStandPosition() {
             for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
-
                 ArmorStandCreator as = pair.fst;
-                CaseLocation needLocation = pair.snd;
-
-                CaseLocation _location = as.getLocation();
-
-                as.teleport(as.getLocation().add(
-                        _location.x() > needLocation.x() ? -0.05 : (Math.abs(_location.x() - needLocation.x()) < 1e-6 ? 0 : 0.05),
-                        _location.y() > needLocation.y() ? -0.05 : (Math.abs(_location.y() - needLocation.y()) < 1e-6 ? 0 : 0.05),
-                        _location.z() > needLocation.z() ? -0.05 : (Math.abs(_location.z() - needLocation.z()) < 1e-6 ? 0 : 0.05)
+                CaseLocation target = pair.snd;
+                CaseLocation current = as.getLocation();
+                as.teleport(current.add(
+                        stepTowards(current.x(), target.x()),
+                        stepTowards(current.y(), target.y()),
+                        stepTowards(current.z(), target.z())
                 ));
-
-                as.teleport(as.getLocation());
             }
+        }
+
+        private void alignArmorStands() {
+            int yaw = getYaw(facing);
+            for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
+                pair.fst.teleport(location.yaw(yaw));
+            }
+        }
+
+        private void fillStandItem(){
+            Random random = new Random();
+            randomIndex = random.nextInt(8);
+
+            Pair<ArmorStandCreator, CaseLocation> win = asList.get(randomIndex);
+            indexes.remove(randomIndex);
+
+            win.fst.setEquipment(itemSlot, getWinItem().material().itemStack());
+            if (getWinItem().material().displayName() != null && !getWinItem().material().displayName().isEmpty())
+                win.fst.setCustomNameVisible(true);
+            win.fst.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), getWinItem().material().displayName()));
+            win.fst.updateMeta();
+
+
+            for (int i = 0; i < 8; i++) {
+                if (i != randomIndex) {
+                    Pair<ArmorStandCreator, CaseLocation> pair = asList.get(i);
+                    ArmorStandCreator as = pair.fst;
+                    CaseDataItem item = getCaseData().getRandomItem();
+                    as.setEquipment(itemSlot, item.material().itemStack());
+
+                    String winGroupDisplayName = DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(),
+                            item.material().displayName());
+
+                    if (item.material().displayName() != null && !item.material().displayName().isEmpty()) {
+                        as.setCustomNameVisible(true);
+                    }
+                    as.setCustomName(winGroupDisplayName);
+                    as.updateMeta();
+                }
+            }
+        }
+
+
+        private void cleanup(SchedulerTask task) {
+            asList.forEach(pair -> pair.fst.remove());
+            task.cancel();
+            end();
+        }
+
+        private double stepTowards(double current, double target) {
+            return Double.compare(current, target) == 0 ? 0 : (current > target ? -0.05 : 0.05);
         }
     }
 }
