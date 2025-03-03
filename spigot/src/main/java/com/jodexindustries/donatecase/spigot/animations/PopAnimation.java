@@ -32,16 +32,20 @@ public class PopAnimation extends BukkitJavaAnimation {
         String facing = getSettings().node("Facing").getString("east");
         boolean rounded = getSettings().node("Rounded").getBoolean(true);
 
+        double radius = getSettings().node("Radius").getDouble(1.1);
+
         for (double y = -1; y < 2; y++) {
             for (double hor_offset = -1; hor_offset < 2; hor_offset++) {
                 if (!(y == 0 && hor_offset == 0)) {
 
                     getLocation().y(origY + (rounded ? (y / 1.4142) : y));
 
+                    double horizont_offset = rounded ? (hor_offset * (y == 0 ? 1 : 0.707)) : hor_offset;
+
                     if (facing.equals("east") || facing.equals("west")) {
-                        getLocation().z(origZ + (rounded ? (hor_offset * (y == 0 ? 1 : 0.707)) : hor_offset));
+                        getLocation().z(origZ + horizont_offset);
                     } else if (facing.equals("south") || facing.equals("north")) {
-                        getLocation().x(origX + (rounded ? (hor_offset * (y == 0 ? 1 : 0.707)) : hor_offset));
+                        getLocation().x(origX + horizont_offset);
                     } else {
                         throw new Exception("Incorrect facing in config");
                     }
@@ -54,10 +58,12 @@ public class PopAnimation extends BukkitJavaAnimation {
                     as.teleport(origCaseLocation);
                     as.spawn();
 
+                    double y_offset = origY + (rounded ? (y / (hor_offset == 0 ? 1 : 1.4142)) : y) * radius;
+
                     if (facing.equals("east") || facing.equals("west")) {
-                        asList.add(Pair.of(as, new CaseLocation(origX, origY + (rounded ? (y / (hor_offset == 0 ? 1 : 1.4142)) : y), origZ + (rounded ? (hor_offset * (y == 0 ? 1 : 0.707)) : hor_offset))));
+                        asList.add(Pair.of(as, new CaseLocation(origX, y_offset, origZ + horizont_offset * radius)));
                     } else {
-                        asList.add(Pair.of(as, new CaseLocation(origX + (rounded ? (hor_offset * (y == 0 ? 1 : 0.707)) : hor_offset), origY + (rounded ? (y / (hor_offset == 0 ? 1 : 1.4142)) : y), origZ)));
+                        asList.add(Pair.of(as, new CaseLocation(origX + horizont_offset * radius, y_offset, origZ)));
                     }
 
                 }
