@@ -124,6 +124,6 @@ POP:
     Sound: ENTITY_ITEM_PICKUP
     Volume: 10
     Pitch: 1
-  Facing: east
+  Facing: EAST
   Rounded: true
   Radius: 1.5

@@ -15,6 +15,7 @@ import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.spigot.animations.*;
+import com.jodexindustries.donatecase.spigot.animations.pop.PopAnimation;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;

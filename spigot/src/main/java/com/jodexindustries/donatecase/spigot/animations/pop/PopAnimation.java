@@ -1,8 +1,7 @@
-package com.jodexindustries.donatecase.spigot.animations;
+package com.jodexindustries.donatecase.spigot.animations.pop;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
@@ -10,6 +9,7 @@ import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.spigot.tools.Pair;
 import lombok.SneakyThrows;
 import org.bukkit.*;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,33 +21,33 @@ public class PopAnimation extends BukkitJavaAnimation {
 
     private final static DCAPI api = DCAPI.getInstance();
 
-    @SneakyThrows
+    private PopSettings settings;
+
     @Override
     public void start() {
+        try {
+            this.settings = getSettings().get(PopSettings.class);
+        } catch (SerializationException e) {
+            throw new RuntimeException("Error with parsing animation settings", e);
+        }
+
         List<Pair<ArmorStandCreator, CaseLocation>> asList = new ArrayList<>();
         double origX = getLocation().x() + 0.5, origY = getLocation().y() - 0.5, origZ = getLocation().z() + 0.5;
 
         CaseLocation origCaseLocation = new CaseLocation(origX, origY, origZ);
 
-        String facing = getSettings().node("Facing").getString("east");
-        boolean rounded = getSettings().node("Rounded").getBoolean(true);
-
-        double radius = getSettings().node("Radius").getDouble(1.1);
-
         for (double y = -1; y < 2; y++) {
-            for (double hor_offset = -1; hor_offset < 2; hor_offset++) {
-                if (!(y == 0 && hor_offset == 0)) {
+            for (double horOffset = -1; horOffset < 2; horOffset++) {
+                if (!(y == 0 && horOffset == 0)) {
 
-                    getLocation().y(origY + (rounded ? (y / 1.4142) : y));
+                    getLocation().y(origY + (settings.rounded ? (y / 1.4142) : y));
 
-                    double horizont_offset = rounded ? (hor_offset * (y == 0 ? 1 : 0.707)) : hor_offset;
+                    double horizonOffset = settings.rounded ? (horOffset * (y == 0 ? 1 : 0.707)) : horOffset;
 
-                    if (facing.equals("east") || facing.equals("west")) {
-                        getLocation().z(origZ + horizont_offset);
-                    } else if (facing.equals("south") || facing.equals("north")) {
-                        getLocation().x(origX + horizont_offset);
+                    if (settings.facing == PopSettings.Facing.EAST || settings.facing == PopSettings.Facing.WEST) {
+                        getLocation().z(origZ + horizonOffset);
                     } else {
-                        throw new Exception("Incorrect facing in config");
+                        getLocation().x(origX + horizonOffset);
                     }
 
                     final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getLocation());
@@ -58,21 +58,19 @@ public class PopAnimation extends BukkitJavaAnimation {
                     as.teleport(origCaseLocation);
                     as.spawn();
 
-                    double y_offset = origY + (rounded ? (y / (hor_offset == 0 ? 1 : 1.4142)) : y) * radius;
+                    double yOffset = origY + (settings.rounded ? (y / (horOffset == 0 ? 1 : 1.4142)) : y) * settings.radius;
 
-                    if (facing.equals("east") || facing.equals("west")) {
-                        asList.add(Pair.of(as, new CaseLocation(origX, y_offset, origZ + horizont_offset * radius)));
+                    if (settings.facing == PopSettings.Facing.EAST || settings.facing == PopSettings.Facing.WEST) {
+                        asList.add(Pair.of(as, new CaseLocation(origX, yOffset, origZ + horizonOffset * settings.radius)));
                     } else {
-                        asList.add(Pair.of(as, new CaseLocation(origX + horizont_offset * radius, y_offset, origZ)));
+                        asList.add(Pair.of(as, new CaseLocation(origX + horizonOffset * settings.radius, yOffset, origZ)));
                     }
 
                 }
             }
         }
 
-        long period = getSettings().node("Scroll", "Period").getLong();
-
-        api.getPlatform().getScheduler().run(api.getPlatform(), new Task(asList, origCaseLocation, facing), 0L, period);
+        api.getPlatform().getScheduler().run(api.getPlatform(), new Task(asList, origCaseLocation), 0L, settings.period);
     }
 
 
@@ -81,29 +79,18 @@ public class PopAnimation extends BukkitJavaAnimation {
         private int tick;
 
         private final CaseLocation location;
-        private List<Pair<ArmorStandCreator, CaseLocation>> asList;
+        private final List<Pair<ArmorStandCreator, CaseLocation>> asList;
 
-        private final EquipmentSlot itemSlot;
         private final World world;
-        private final String facing;
-
-        private final Sound popSound = Sound.valueOf(getSettings().node("Scroll", "Sound").getString("ENTITY_ITEM_PICKUP"));
-        private final float popVolume = getSettings().node("Scroll", "Volume").getFloat(10);
-        private final float popPitch = getSettings().node("Scroll", "Pitch").getFloat(1);
-
-        private Pair<ArmorStandCreator, CaseLocation> randomAS;
 
         private final List<Integer> indexes = new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7));
         private int randomIndex;
 
-        public Task(final List<Pair<ArmorStandCreator, CaseLocation>> asList, CaseLocation location, String facing) {
+        public Task(final List<Pair<ArmorStandCreator, CaseLocation>> asList, CaseLocation location) {
             this.asList = asList;
             this.location = location;
 
-            this.itemSlot = EquipmentSlot.valueOf(getSettings().node("ItemSlot").getString("HEAD").toUpperCase());
-
             this.world = getPlayer().getWorld();
-            this.facing = facing;
         }
 
         @SneakyThrows
@@ -151,40 +138,27 @@ public class PopAnimation extends BukkitJavaAnimation {
             tick++;
         }
 
-        private int getYaw(String facing) {
-            switch (facing) {
-                case "west":
-                    return 90;
-                case "north":
-                    return 180;
-                case "east":
-                    return 270;
-                case "south":
-                default:
-                    return 0;
-            }
-        }
-
         public void handleRemoveLogic() {
             Random random = new Random();
-            int ii = random.nextInt(indexes.size());
-            int index = indexes.get(ii);
+            int randomIndex = random.nextInt(indexes.size());
+            int initialIndex = indexes.get(randomIndex);
 
-            ArmorStandCreator as = asList.get(index).fst;
+            ArmorStandCreator as = asList.get(initialIndex).fst;
             final Location bukkitLocation = new Location(world, as.getLocation().x(), as.getLocation().y() + 1, as.getLocation().z());
 
-            world.spawnParticle(Particle.valueOf("CLOUD"), bukkitLocation, 0);
+            world.spawnParticle(Particle.CLOUD, bukkitLocation, 0);
             as.remove();
 
-            indexes.remove(ii);
-            world.playSound(bukkitLocation, popSound, popVolume, popPitch);
+            indexes.remove(randomIndex);
+
+            Sound sound = settings.scroll.sound();
+            if(sound != null) world.playSound(bukkitLocation, sound, settings.scroll.volume, settings.scroll.pitch);
 
         }
 
         private void alignArmorStands() {
-            int yaw = getYaw(facing);
             for (Pair<ArmorStandCreator, CaseLocation> pair : asList) {
-                pair.fst.teleport(location.yaw(yaw));
+                pair.fst.teleport(location.yaw(settings.facing.yaw));
             }
         }
 
@@ -195,21 +169,20 @@ public class PopAnimation extends BukkitJavaAnimation {
             Pair<ArmorStandCreator, CaseLocation> win = asList.get(randomIndex);
             indexes.remove(randomIndex);
 
-            win.fst.setEquipment(itemSlot, getWinItem().material().itemStack());
+            win.fst.setEquipment(settings.itemSlot, getWinItem().material().itemStack());
             if (getWinItem().material().displayName() != null && !getWinItem().material().displayName().isEmpty())
                 win.fst.setCustomNameVisible(true);
-            win.fst.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), getWinItem().material().displayName()));
+            win.fst.setCustomName(api.getPlatform().getPAPI().setPlaceholders(getPlayer(), getWinItem().material().displayName()));
             win.fst.updateMeta();
-
 
             for (int i = 0; i < 8; i++) {
                 if (i != randomIndex) {
                     Pair<ArmorStandCreator, CaseLocation> pair = asList.get(i);
                     ArmorStandCreator as = pair.fst;
                     CaseDataItem item = getCaseData().getRandomItem();
-                    as.setEquipment(itemSlot, item.material().itemStack());
+                    as.setEquipment(settings.itemSlot, item.material().itemStack());
 
-                    String winGroupDisplayName = DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(),
+                    String winGroupDisplayName = api.getPlatform().getPAPI().setPlaceholders(getPlayer(),
                             item.material().displayName());
 
                     if (item.material().displayName() != null && !item.material().displayName().isEmpty()) {
