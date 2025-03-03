@@ -39,14 +39,12 @@ import com.jodexindustries.donatecase.spigot.tools.ToolsImpl;
 import com.jodexindustries.donatecase.spigot.hook.PacketEventsSupport;
 import com.jodexindustries.donatecase.spigot.hook.papi.PAPISupport;
 import lombok.Getter;
-import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -459,10 +457,7 @@ public class BukkitBackend extends BackendPlatform {
 
     private void loadLuckPerms() {
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
-            RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServer().getServicesManager().getRegistration(LuckPerms.class);
-            if (provider != null) {
-                luckPermsSupport.setProvider(provider.getProvider());
-            }
+            luckPermsSupport.load();
         }
     }
 
