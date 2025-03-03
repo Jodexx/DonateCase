@@ -153,9 +153,16 @@ public class CaseLocation implements Cloneable, TypeSerializer<CaseLocation> {
         return new CaseLocation();
     }
 
+
     @Override
     public String toString() {
-        return String.format("Position: %f %f %f", x, y, z);
+        return "CaseLocation{" +
+                "world='" + world + '\'' +
+                ", x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                ", pitch=" + pitch +
+                ", yaw=" + yaw +
+                '}';
     }
-
 }
