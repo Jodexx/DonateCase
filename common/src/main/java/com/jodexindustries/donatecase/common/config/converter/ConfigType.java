@@ -18,7 +18,7 @@ public enum ConfigType {
     CASE_SETTINGS(10),
     CASE_ITEMS(10),
     ANIMATIONS(14),
-    CASES(10),
+    CASES(10), // TODO Converter for locations (from old to new format)
     CONFIG(25),
     LANG(26),
     /**
