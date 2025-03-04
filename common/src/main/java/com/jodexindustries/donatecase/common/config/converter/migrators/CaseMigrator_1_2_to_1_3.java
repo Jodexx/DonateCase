@@ -31,15 +31,15 @@ public class CaseMigrator_1_2_to_1_3 implements ConfigMigrator {
         root.node("case", "CooldownBeforeAnimation").set(0);
     }
 
-    private static void migrateItem(ConfigurationNode node) throws SerializationException {
+    private static void migrateItem(ConfigurationNode node) {
         // get
-        ConfigurationNode itemNode = node.node("Item");
+        ConfigurationNode itemNode = node.node("Item").copy();
 
         // clear
         node.removeChild("Item");
 
         // set
-        node.node("Material").set(itemNode);
+        node.node("Material").from(itemNode);
     }
 
     private static void migrateGuiItem(ConfigurationNode node) throws SerializationException {
