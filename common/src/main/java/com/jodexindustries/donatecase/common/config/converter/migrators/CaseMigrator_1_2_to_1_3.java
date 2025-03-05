@@ -5,17 +5,15 @@ import com.jodexindustries.donatecase.common.config.converter.ConfigMigrator;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import java.util.Map;
-
 public class CaseMigrator_1_2_to_1_3 implements ConfigMigrator {
 
     @Override
     public void migrate(ConfigImpl config) throws SerializationException {
         ConfigurationNode root = config.node();
 
-        for (Map.Entry<Object, ? extends ConfigurationNode> entry : root.node("case", "Gui", "Items")
-                .childrenMap().entrySet()) {
-            migrateGuiItem(entry.getValue());
+        for (ConfigurationNode node : root.node("case", "Gui", "Items")
+                .childrenMap().values()) {
+            migrateGuiItem(node);
         }
 
         for (ConfigurationNode node : root.node("case", "Items")
