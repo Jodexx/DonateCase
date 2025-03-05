@@ -1,5 +1,5 @@
 config:
-  version: 10
+  version: 11
   type: cases
 
 DonateCase:

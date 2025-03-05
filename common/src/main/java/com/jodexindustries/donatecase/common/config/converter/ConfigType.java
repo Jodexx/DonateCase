@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.common.config.converter;
 
 import com.jodexindustries.donatecase.common.config.converter.migrators.CaseMigrator_1_2_to_1_3;
+import com.jodexindustries.donatecase.common.config.converter.migrators.CasesMigrator_1_0_to_1_1;
 import com.jodexindustries.donatecase.common.config.converter.migrators.UnknownMigrator;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,10 @@ public enum ConfigType {
     CASE_SETTINGS(10),
     CASE_ITEMS(10),
     ANIMATIONS(14),
-    CASES(10), // TODO Converter for locations (from old to new format)
+    CASES(11, new HashMap<Integer, ConfigMigrator>() {{
+        put(10, new CasesMigrator_1_0_to_1_1());
+    }}),
+
     CONFIG(25),
     LANG(26),
     /**
