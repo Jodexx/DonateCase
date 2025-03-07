@@ -23,7 +23,7 @@ public class Tools {
 
     public boolean debug = false;
 
-    private final MainAddon main;
+    public final MainAddon main;
 
     @Getter
     private final ConfigManager configManager;

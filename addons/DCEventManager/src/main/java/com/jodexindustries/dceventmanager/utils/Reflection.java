@@ -117,8 +117,7 @@ public class Reflection {
         return object;
     }
 
-    public static Object invokeMethodChain(Object event, String method) {
-        try {
+    public static Object invokeMethodChain(Object event, String method) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
             String[] methods = method.split("#");
             for (String methodName : methods) {
                 // Check if the method contains arguments
@@ -157,9 +156,6 @@ public class Reflection {
                 event = m.invoke(event, args);
             }
             return event;
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }
