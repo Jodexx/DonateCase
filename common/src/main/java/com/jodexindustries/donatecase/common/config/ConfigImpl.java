@@ -38,7 +38,11 @@ public class ConfigImpl implements Config {
     private ConfigType type;
     private ConfigurationNode node;
 
-    public ConfigImpl(String path, File file) {
+    public ConfigImpl(File file) {
+        this(file.getPath().replace("\\", "/"), file);
+    }
+
+    private ConfigImpl(String path, File file) {
         this.path = path;
         this.file = file;
         this.loader = YamlConfigurationLoader

@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.common.config;
 
-import com.jodexindustries.donatecase.api.config.*;
+import com.jodexindustries.donatecase.api.config.ConfigManager;
 import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.common.config.converter.ConfigConverter;
 import com.jodexindustries.donatecase.common.database.CaseDatabaseImpl;
@@ -20,8 +20,8 @@ import java.util.logging.Level;
 
 public class ConfigManagerImpl implements ConfigManager {
 
-    private final Messages messages;
-    private final CaseStorage caseStorage;
+    private final MessagesImpl messages;
+    private final CaseStorageImpl caseStorage;
     private final ConfigConverter converter;
 
     private final Map<String, ConfigImpl> configurations = new HashMap<>();
@@ -43,14 +43,14 @@ public class ConfigManagerImpl implements ConfigManager {
     }
 
     @Override
-    public @Nullable Config getConfig(@NotNull String name) {
+    public @Nullable ConfigImpl getConfig(@NotNull String name) {
         return configurations.get("plugins/DonateCase/" + name);
     }
 
     @Override
     @Nullable
-    public ConfigurationNode get(@NotNull String name) {
-        Config config = getConfig(name);
+    public ConfigurationNode getNode(@NotNull String name) {
+        ConfigImpl config = getConfig(name);
         return config != null ? config.node() : null;
     }
 
@@ -108,16 +108,16 @@ public class ConfigManagerImpl implements ConfigManager {
     }
 
     @Override
-    public Config load(@NotNull File file) {
+    public ConfigImpl load(@NotNull File file) {
         String path = file.getPath().replace("\\", "/");
-        Config exist = configurations.get(path);
+        ConfigImpl exist = configurations.get(path);
         if (exist != null) return exist;
 
-        ConfigImpl config = new ConfigImpl(path, file);
+        ConfigImpl config = new ConfigImpl(file);
 
         try {
             config.load();
-            configurations.put(path, config);
+            configurations.put(config.path(), config);
         } catch (ConfigurateException e) {
             platform.getLogger().log(Level.WARNING, "Error with loading configuration: ", e);
         }
@@ -133,12 +133,12 @@ public class ConfigManagerImpl implements ConfigManager {
     }
 
     @Override
-    public @NotNull Messages getMessages() {
+    public @NotNull MessagesImpl getMessages() {
         return messages;
     }
 
     @Override
-    public @NotNull CaseStorage getCaseStorage() {
+    public @NotNull CaseStorageImpl getCaseStorage() {
         return caseStorage;
     }
 

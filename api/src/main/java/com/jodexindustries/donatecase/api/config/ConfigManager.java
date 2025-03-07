@@ -15,16 +15,16 @@ public interface ConfigManager extends Loadable {
     Config getConfig(@NotNull String name);
 
     @Nullable
-    ConfigurationNode get(@NotNull String name);
+    ConfigurationNode getNode(@NotNull String name);
 
     Map<String, ? extends Config> get();
 
     default ConfigurationNode getConfig() {
-        return get("Config.yml");
+        return getNode("Config.yml");
     }
 
     default ConfigurationNode getAnimations() {
-        return get("Animations.yml");
+        return getNode("Animations.yml");
     }
 
     @NotNull
