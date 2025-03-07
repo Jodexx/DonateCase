@@ -151,7 +151,7 @@ public class AnimationManagerImpl implements AnimationManager {
                 try {
                     javaAnimation.start();
                     animationCompletion.complete(uuid);
-                    api.getEventBus().post(new AnimationStartEvent(player, activeCase));
+                    api.getEventBus().post(new AnimationStartEvent(activeCase));
                 } catch (Throwable t) {
                     backend.getLogger().log(Level.WARNING, "Error with starting animation " + animation, t);
                     if (caseAnimation.isRequireBlock()) activeCasesByBlock.remove(temp);
