@@ -19,15 +19,11 @@ public class Reflection {
     /**
      * Private helper method.
      *
-     * @param connection
-     *            the connection to the jar
-     * @param pckgname
-     *            the package name to search for
-     * @param classes
-     *            the current ArrayList of all classes. This method will simply
-     *            add new classes.
-     * @throws IOException
-     *             if it can't correctly read from the jar file.
+     * @param connection the connection to the jar
+     * @param pckgname   the package name to search for
+     * @param classes    the current ArrayList of all classes. This method will simply
+     *                   add new classes.
+     * @throws IOException if it can't correctly read from the jar file.
      */
     private static void checkJarFile(JarURLConnection connection,
                                      String pckgname, ArrayList<Class<? extends DCEvent>> classes) throws IOException {
@@ -36,30 +32,32 @@ public class Reflection {
         String name;
 
         for (JarEntry jarEntry; entries.hasMoreElements()
-                && ((jarEntry = entries.nextElement()) != null);) {
+                && ((jarEntry = entries.nextElement()) != null); ) {
             name = jarEntry.getName();
 
-            if (name.contains(".class")) {
+            if (name.endsWith(".class")) {
                 name = name.substring(0, name.length() - 6).replace('/', '.');
 
-                if (name.contains(pckgname)) {
+                if (name.startsWith(pckgname)) {
                     try {
                         Class<?> clazz = Class.forName(name);
-                        if (DCEvent.class.isAssignableFrom(clazz)) {
+
+                        if (DCEvent.class.isAssignableFrom(clazz) && clazz != DCEvent.class) {
                             classes.add(clazz.asSubclass(DCEvent.class));
                         }
-                    } catch (Throwable ignored) {}
+                    } catch (Throwable ignored) {
+                    }
                 }
             }
         }
     }
 
+
     /**
      * Attempts to list all the classes in the specified package as determined
      * by the context class loader
      *
-     * @param pckgname
-     *            the package name to search
+     * @param pckgname the package name to search
      * @return a list of classes that exist within that package
      */
     public static ArrayList<Class<? extends DCEvent>> getClassesForPackage(ClassLoader cld, String pckgname) throws ClassNotFoundException {
@@ -74,7 +72,7 @@ public class Reflection {
             URLConnection connection;
 
             for (URL url; resources.hasMoreElements()
-                    && ((url = resources.nextElement()) != null);) {
+                    && ((url = resources.nextElement()) != null); ) {
                 try {
                     connection = url.openConnection();
                     if (connection instanceof JarURLConnection) {
@@ -84,10 +82,10 @@ public class Reflection {
                         throw new ClassNotFoundException(pckgname + " ("
                                 + url.getPath()
                                 + ") does not appear to be a valid package");
-                } catch (final IOException ioex) {
+                } catch (final IOException ex) {
                     throw new ClassNotFoundException(
                             "IOException was thrown when trying to get all resources for "
-                                    + pckgname, ioex);
+                                    + pckgname, ex);
                 }
             }
         } catch (final NullPointerException ex) {
@@ -95,22 +93,13 @@ public class Reflection {
                     pckgname
                             + " does not appear to be a valid package (Null pointer exception)",
                     ex);
-        } catch (final IOException ioex) {
+        } catch (final IOException ex) {
             throw new ClassNotFoundException(
                     "IOException was thrown when trying to get all resources for "
-                            + pckgname, ioex);
+                            + pckgname, ex);
         }
 
         return classes;
-    }
-
-    public static boolean hasVar(DCEvent event, String methodName) {
-        try {
-            event.getClass().getMethod(methodName);
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
-        return true;
     }
 
     @Nullable

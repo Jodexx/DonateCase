@@ -1,0 +1,6 @@
+events: # See wiki -> https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/Addons/dc-event-manager
+  AnimationStartEvent:
+    executors:
+      - name: test
+        actions:
+          - "[broadcast] &cAnimation started!"

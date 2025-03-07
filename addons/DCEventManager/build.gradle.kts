@@ -12,7 +12,8 @@ group = "com.jodexindustries"
 version = "2.0.0"
 
 dependencies {
-    compileOnly(project(":api:spigot-api"))
+    compileOnly(project(":api"))
+    compileOnly(project(":common"))
 }
 
 tasks.processResources {

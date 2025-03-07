@@ -8,21 +8,22 @@ import java.util.List;
 
 @Getter
 @ConfigSerializable
-public class EventData {
+public class EventPlaceholder {
 
     @Setting
-    private List<Executor> executors;
+    private List<Placeholder> placeholders;
 
     @Getter
     @ConfigSerializable
-    public static class Executor {
+    public static class Placeholder {
 
         @Setting
         private String name;
 
-        // TODO Conditions
+        @Setting
+        private String replace;
 
         @Setting
-        private List<String> actions;
+        private String method;
     }
 }
