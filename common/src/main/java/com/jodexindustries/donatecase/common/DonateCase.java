@@ -56,7 +56,7 @@ public class DonateCase extends DCAPI {
         this.configManager = new ConfigManagerImpl(platform);
         this.caseLoader = new CaseLoader(this);
         this.updateChecker = new UpdateChecker(this);
-        this.eventBus = new EventBusImpl();
+        this.eventBus = new EventBusImpl(platform.getLogger());
         this.eventListener = new EventListener(this);
     }
 

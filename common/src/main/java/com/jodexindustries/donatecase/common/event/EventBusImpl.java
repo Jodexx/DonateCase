@@ -2,9 +2,9 @@ package com.jodexindustries.donatecase.common.event;
 
 import java.util.function.Predicate;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.common.collect.SetMultimap;
-import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.event.DCEvent;
 import com.jodexindustries.donatecase.api.event.EventBus;
 import com.jodexindustries.donatecase.api.event.Subscriber;
@@ -19,8 +19,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class EventBusImpl implements EventBus {
 
+    private final Logger logger;
     private final SimpleEventBus<DCEvent> bus = new SimpleEventBus<>(DCEvent.class);
     private final MethodSubscriptionAdapter<Subscriber> methodAdapter = new SimpleMethodSubscriptionAdapter<>(this, new MethodHandleEventExecutorFactory<>());
+
+    public EventBusImpl(Logger logger) {
+        this.logger = logger;
+    }
 
     @Override
     public @NonNull Class<DCEvent> eventType() {
@@ -29,15 +34,26 @@ public class EventBusImpl implements EventBus {
 
     @Override
     public @NonNull PostResult post(@NonNull DCEvent event) {
-        return bus.post(event);
+        PostResult postResult = bus.post(event);
+
+        if (!postResult.wasSuccessful()) {
+            logger.log(Level.WARNING, "Failed to post event: " + event.getClass().getSimpleName());
+
+            postResult.exceptions().forEach((subscriber, exception) ->
+                    logger.log(Level.WARNING, "Subscriber: " + subscriber, exception)
+            );
+        }
+
+        return postResult;
     }
+
 
     @Override
     public void register(@NotNull Subscriber listener) {
         try {
             methodAdapter.register(listener);
         } catch (Exception e) {
-            DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Error with event listener " + listener.getClass() + " registration:", e);
+            logger.log(Level.WARNING, "Error with event listener " + listener.getClass() + " registration:", e);
         }
     }
 
@@ -46,7 +62,7 @@ public class EventBusImpl implements EventBus {
         try {
             bus.register(clazz, subscriber);
         } catch (Exception e) {
-            DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Error with event subscriber " + subscriber.getClass() + " registration:", e);
+            logger.log(Level.WARNING, "Error with event subscriber " + subscriber.getClass() + " registration:", e);
         }
     }
 
