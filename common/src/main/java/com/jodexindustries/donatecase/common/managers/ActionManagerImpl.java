@@ -10,6 +10,7 @@ import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -69,7 +70,7 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public void execute(@NotNull DCPlayer player, @NotNull String action, int cooldown) {
+    public void execute(@Nullable DCPlayer player, @NotNull String action, int cooldown) {
         Optional<String> temp = getByStart(action);
         if(!temp.isPresent()) return;
 
@@ -88,10 +89,10 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public void execute(@NotNull DCPlayer player, @NotNull List<String> actions) {
+    public void execute(@Nullable DCPlayer player, @NotNull List<String> actions) {
         for (String action : actions) {
 
-            action = DCTools.rc(api.getPlatform().getPAPI().setPlaceholders(player, action));
+            if(player != null) action = DCTools.rc(api.getPlatform().getPAPI().setPlaceholders(player, action));
             int cooldown = DCTools.extractCooldown(action);
             action = action.replaceFirst("\\[cooldown:(.*?)]", "");
 

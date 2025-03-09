@@ -5,6 +5,7 @@ import com.jodexindustries.donatecase.api.data.action.ActionException;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +97,7 @@ public interface ActionManager {
      * @param action   the name of the action to execute
      * @param cooldown the cooldown duration in seconds
      */
-    void execute(@NotNull DCPlayer player, @NotNull String action, int cooldown);
+    void execute(@Nullable DCPlayer player, @NotNull String action, int cooldown);
 
     /**
      * Executes a list of actions for a player.
@@ -104,5 +105,5 @@ public interface ActionManager {
      * @param player  the player for whom the actions are executed
      * @param actions the list of action names to execute
      */
-    void execute(@NotNull DCPlayer player, @NotNull List<String> actions);
+    void execute(@Nullable DCPlayer player, @NotNull List<String> actions);
 }
