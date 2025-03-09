@@ -65,7 +65,7 @@ public class DiscordWebhook {
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
 
-        String json = replace(gson.toJson(this), event);
+        String json = replace(gson.toJson(this), event.activeCase());
 
         byte[] payload = json.getBytes(StandardCharsets.UTF_8);
         connection.setRequestProperty("Content-Length", String.valueOf(payload.length));
@@ -92,11 +92,10 @@ public class DiscordWebhook {
         connection.disconnect();
     }
 
-    private String replace(String text, AnimationEndEvent event) {
+    private String replace(String text, ActiveCase activeCase) {
         if(text == null) return null;
-        ActiveCase activeCase = event.activeCase();
         return text
-                .replaceAll("%player%", event.player().getName())
+                .replaceAll("%player%", activeCase.player().getName())
                 .replaceAll("%group%", activeCase.winItem().group())
                 .replaceAll("%casetype%", activeCase.caseType());
     }
