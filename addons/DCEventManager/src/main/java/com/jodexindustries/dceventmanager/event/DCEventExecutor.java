@@ -47,7 +47,6 @@ public class DCEventExecutor implements EventSubscriber<DCEvent> {
 
     private String[] getPlaceholders(DCEvent event) {
         Map<String, EventPlaceholder> map = tools.getConfigManager().getPlaceholderConfig().getEventPlaceholders();
-        if (map == null) return new String[0];
 
         EventPlaceholder eventPlaceholder = map.get(name);
         if (eventPlaceholder == null) return new String[0];

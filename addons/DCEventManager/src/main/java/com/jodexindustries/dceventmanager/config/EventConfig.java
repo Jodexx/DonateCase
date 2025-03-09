@@ -13,6 +13,8 @@ import java.util.Map;
 @Getter
 public class EventConfig extends ConfigImpl {
 
+    private static final TypeToken<Map<String, EventData>> MAP_TYPE_TOKEN = new TypeToken<Map<String, EventData>>() {};
+
     private Map<String, EventData> events;
 
     public EventConfig(File file) {
@@ -22,11 +24,7 @@ public class EventConfig extends ConfigImpl {
     @Override
     public void load() throws ConfigurateException {
         node(loader().load());
-
-        TypeToken<Map<String, EventData>> token = new TypeToken<Map<String, EventData>>() {
-        };
-        this.events = node("events").get(token);
-        if(events == null) events = new HashMap<>();
+        this.events = node("events").get(MAP_TYPE_TOKEN, new HashMap<>());
     }
 
 }

@@ -4,16 +4,17 @@ import com.jodexindustries.dceventmanager.data.EventPlaceholder;
 import com.jodexindustries.donatecase.common.config.ConfigImpl;
 import io.leangen.geantyref.TypeToken;
 import lombok.Getter;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
 public class PlaceholderConfig extends ConfigImpl {
 
-    @Nullable
+    private static final TypeToken<Map<String, EventPlaceholder>> MAP_TYPE_TOKEN = new TypeToken<Map<String, EventPlaceholder>>() {};
+
     private Map<String, EventPlaceholder> eventPlaceholders;
 
     public PlaceholderConfig(File file) {
@@ -23,9 +24,6 @@ public class PlaceholderConfig extends ConfigImpl {
     @Override
     public void load() throws ConfigurateException {
         node(loader().load());
-
-        TypeToken<Map<String, EventPlaceholder>> token = new TypeToken<Map<String, EventPlaceholder>>() {
-        };
-        this.eventPlaceholders = node("events").get(token);
+        this.eventPlaceholders = node("events").get(MAP_TYPE_TOKEN, new HashMap<>());
     }
 }
