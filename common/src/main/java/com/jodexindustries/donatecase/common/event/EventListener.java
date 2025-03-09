@@ -36,7 +36,7 @@ public class EventListener implements Subscriber {
                 if (version.isNew()) {
                     player.sendMessage(
                             DCTools.prefix(
-                                    DCTools.rt(api.getConfigManager().getMessages().getString("new-update"), "%version:" + version)
+                                    DCTools.rt(api.getConfigManager().getMessages().getString("new-update"), "%version:" + version.getVersionNumber())
                             )
                     );
                 }
