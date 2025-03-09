@@ -3,4 +3,13 @@ events: # See wiki -> https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/
     executors:
       - name: test
         actions:
-          - "[broadcast] &cAnimation started!"
+          - "[broadcast] &cAnimation started %casetype% %player%!"
+        conditions:
+          - type: EQUALS
+            placeholder: "%casetype%"
+            input: "case"
+  AnimationEndEvent:
+    executors:
+      - name: test2
+        actions:
+          - "[broadcast] &cAnimation ended %player%!"
