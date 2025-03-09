@@ -7,12 +7,14 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.event.DCEvent;
 import lombok.Getter;
+import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 
 public class Tools {
@@ -71,9 +73,12 @@ public class Tools {
     }
 
     public void loadConfig() {
-        configManager.load();
-
-        main.getLogger().info("Registered " + configManager.getEventConfig().getEvents().size() + " events");
+        try {
+            configManager.load();
+            main.getLogger().info("Registered " + configManager.getEventConfig().getEvents().size() + " events");
+        } catch (ConfigurateException e) {
+            main.getLogger().log(Level.WARNING, "Error with loading configuration", e);
+        }
     }
 
     private Set<Class<? extends DCEvent>> getClasses() {

@@ -6,7 +6,6 @@ import lombok.Getter;
 import org.spongepowered.configurate.ConfigurateException;
 
 import java.io.File;
-import java.util.logging.Level;
 
 @Getter
 public class ConfigManager {
@@ -33,13 +32,9 @@ public class ConfigManager {
         this.placeholderConfig = new PlaceholderConfig(placeholderFile);
     }
 
-    public void load() {
-        try {
-            config.load();
-            eventConfig.load();
-            placeholderConfig.load();
-        } catch (ConfigurateException e) {
-            addon.getLogger().log(Level.WARNING, "Error with loading configuration", e);
-        }
+    public void load() throws ConfigurateException {
+        config.load();
+        eventConfig.load();
+        placeholderConfig.load();
     }
 }
