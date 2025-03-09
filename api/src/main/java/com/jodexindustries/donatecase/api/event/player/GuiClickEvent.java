@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 @Data
 public class GuiClickEvent extends DCEvent implements Cancellable {
 
+    private final int slot;
     @NotNull private final DCPlayer player;
     @NotNull private final CaseGuiWrapper guiWrapper;
     @NotNull private final String itemType;

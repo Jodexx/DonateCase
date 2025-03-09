@@ -61,6 +61,7 @@ public class EventListener implements Listener {
 
             backend.getAPI().getEventBus().post(
                     new GuiClickEvent(
+                            e.getRawSlot(),
                             BukkitUtils.fromBukkit(player),
                             gui,
                             itemType
