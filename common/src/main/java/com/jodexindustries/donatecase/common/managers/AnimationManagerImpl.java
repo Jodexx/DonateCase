@@ -235,7 +235,7 @@ public class AnimationManagerImpl implements AnimationManager {
             if (hologram != null && hologram.enabled()) api.getHologramManager().create(block, hologram);
         }
 
-        api.getEventBus().post(new AnimationEndEvent(player, activeCase));
+        api.getEventBus().post(new AnimationEndEvent(activeCase));
     }
 
     @Override
