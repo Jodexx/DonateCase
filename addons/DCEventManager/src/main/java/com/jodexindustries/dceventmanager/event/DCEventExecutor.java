@@ -10,7 +10,10 @@ import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import net.kyori.event.EventSubscriber;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import static com.jodexindustries.donatecase.api.tools.DCTools.rc;
@@ -37,12 +40,17 @@ public class DCEventExecutor implements EventSubscriber<DCEvent> {
         EventData data = tools.getConfigManager().getEventConfig().getEvents().get(name);
         if (data == null) return;
 
-        Map<String, Object> placeholders = getPlaceholders(event);
+        Map<String, EventPlaceholder> placeholderMap = tools.getConfigManager().getPlaceholderConfig().getEventPlaceholders();
+
+        EventPlaceholder eventPlaceholder = placeholderMap.getOrDefault(name, new EventPlaceholder());
+        List<EventPlaceholder.Placeholder> placeholders = eventPlaceholder.getPlaceholders();
+
+        Map<String, Object> parsedPlaceholders = getPlaceholders(event, placeholders);
 
         for (EventData.Executor executor : data.getExecutors()) {
             try {
-                if (checkConditions(executor.getConditions(), placeholders)) {
-                    executeActions(event, replaceList(executor.getActions(), placeholders));
+                if (checkConditions(executor.getConditions(), parsedPlaceholders)) {
+                    executeActions(event, getPlayerMethod(placeholders), replaceList(executor.getActions(), parsedPlaceholders));
                 }
             } catch (Exception e) {
                 tools.main.getLogger().log(Level.WARNING, "Error with executing executor: " + executor.getName(), e);
@@ -59,51 +67,49 @@ public class DCEventExecutor implements EventSubscriber<DCEvent> {
         return true;
     }
 
-    private Map<String, Object> getPlaceholders(DCEvent event) {
+    private Map<String, Object> getPlaceholders(DCEvent event, List<EventPlaceholder.Placeholder> placeholders) {
         Map<String, Object> map = new HashMap<>();
 
-        Map<String, EventPlaceholder> placeholderMap = tools.getConfigManager().getPlaceholderConfig().getEventPlaceholders();
+        if (placeholders != null) {
+            for (EventPlaceholder.Placeholder placeholder : placeholders) {
+                if (map.containsKey(placeholder.getReplace())) continue;
 
-        EventPlaceholder eventPlaceholder = placeholderMap.get(name);
-        if (eventPlaceholder == null) return map;
+                Object value = null;
+                try {
+                    value = Reflection.invokeMethodChain(event, placeholder.getMethod());
+                } catch (Exception ex) {
+                    tools.main.getLogger().log(Level.WARNING, "Failed to parse placeholder: " + placeholder.getName(), ex);
+                }
 
-        List<EventPlaceholder.Placeholder> placeholders = eventPlaceholder.getPlaceholders();
-
-        for (EventPlaceholder.Placeholder placeholder : placeholders) {
-            if (map.containsKey(placeholder.getReplace())) continue;
-
-            Object value = null;
-            try {
-                value = Reflection.invokeMethodChain(event, placeholder.getMethod());
-            } catch (Exception ex) {
-                tools.main.getLogger().log(Level.WARNING, "Failed to parse placeholder: " + placeholder.getName(), ex);
+                map.put(placeholder.getReplace(), value);
             }
-
-            map.put(placeholder.getReplace(), value);
         }
         return map;
     }
 
-    private void executeActions(DCEvent event, List<String> actions) {
-        DCPlayer player;
-
-        // TODO Make the scanner for all fields searching to placeholders autocompleting
-        player = Reflection.getVar(event, "player", DCPlayer.class);
-        if (player == null) player = Reflection.getVar(event, "getWhoClicked", DCPlayer.class);
-
+    private void executeActions(DCEvent event, String playerMethod, List<String> actions) throws ReflectiveOperationException {
         // DonateCase actions
-        tools.api.getActionManager().execute(player, actions);
+        if (playerMethod != null) {
+            DCPlayer player = (DCPlayer) Reflection.invokeMethodChain(event, playerMethod.replace("#getName", ""));
+            tools.api.getActionManager().execute(player, actions);
+        }
 
         // DCEventManager actions
         for (String action : actions) {
             if (action.startsWith("[invoke]")) {
-                try {
-                    Reflection.invokeMethodChain(event, action.replaceFirst("\\[invoke]", "").trim());
-                } catch (Exception ex) {
-                    tools.main.getLogger().log(Level.WARNING, "Failed to execute action: " + action, ex);
-                }
+                Reflection.invokeMethodChain(event, action.replaceFirst("\\[invoke]", "").trim());
             }
         }
+    }
+
+    private String getPlayerMethod(List<EventPlaceholder.Placeholder> placeholders) {
+        if(placeholders == null) return null;
+
+        for (EventPlaceholder.Placeholder placeholder : placeholders) {
+            if(placeholder.getName().equals("player")) return placeholder.getMethod();
+        }
+
+        return null;
     }
 
     public List<String> replaceList(List<String> list, Map<String, Object> map) {

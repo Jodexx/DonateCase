@@ -26,4 +26,9 @@ public class PlaceholderConfig extends ConfigImpl {
         node(loader().load());
         this.eventPlaceholders = node("events").get(MAP_TYPE_TOKEN, new HashMap<>());
     }
+
+    public void update() throws ConfigurateException {
+        node("events").set(MAP_TYPE_TOKEN, eventPlaceholders);
+        save();
+    }
 }

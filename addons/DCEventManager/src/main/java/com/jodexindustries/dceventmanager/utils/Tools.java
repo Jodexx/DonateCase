@@ -2,6 +2,7 @@ package com.jodexindustries.dceventmanager.utils;
 
 import com.jodexindustries.dceventmanager.bootstrap.MainAddon;
 import com.jodexindustries.dceventmanager.config.ConfigManager;
+import com.jodexindustries.dceventmanager.config.PlaceholderConfig;
 import com.jodexindustries.dceventmanager.event.DCEventExecutor;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
@@ -50,6 +51,8 @@ public class Tools {
         executors.clear();
         Set<Class<? extends DCEvent>> classes = getClasses();
 
+        generatePlaceholders(classes);
+
         for (Class<? extends DCEvent> clazz : classes) {
             DCEventExecutor executor = new DCEventExecutor(clazz, this);
             executors.add(executor);
@@ -78,6 +81,21 @@ public class Tools {
             main.getLogger().info("Registered " + configManager.getEventConfig().getEvents().size() + " events");
         } catch (ConfigurateException e) {
             main.getLogger().log(Level.WARNING, "Error with loading configuration", e);
+        }
+    }
+
+    private void generatePlaceholders(Set<Class<? extends DCEvent>> classes) {
+        PlaceholderConfig config = configManager.getPlaceholderConfig();
+        if(!config.getEventPlaceholders().isEmpty()) return;
+
+        main.getLogger().info("Generating player's placeholders for all available events");
+
+        PlaceholderGenerator generator = new PlaceholderGenerator(config, classes);
+        try {
+            generator.generate();
+            config.update();
+        } catch (ConfigurateException e) {
+            main.getLogger().log(Level.WARNING, "Error with updating placeholders", e);
         }
     }
 
