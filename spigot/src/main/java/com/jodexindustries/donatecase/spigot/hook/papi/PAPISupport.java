@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.tools.PAPI;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.NotNull;
 
 public class PAPISupport implements PAPI {
 
@@ -29,7 +30,7 @@ public class PAPISupport implements PAPI {
     }
 
     @Override
-    public String setPlaceholders(Object player, String text) {
+    public String setPlaceholders(@NotNull Object player, String text) {
         if(donateCaseExpansion == null) return text;
 
         if(player instanceof OfflinePlayer) return PlaceholderAPI.setPlaceholders((OfflinePlayer) player, text);
@@ -39,7 +40,7 @@ public class PAPISupport implements PAPI {
     }
 
     @Override
-    public String setPlaceholders(DCPlayer player, String text) {
+    public String setPlaceholders(@NotNull DCPlayer player, String text) {
         return setPlaceholders(player.getHandler(), text);
     }
 
