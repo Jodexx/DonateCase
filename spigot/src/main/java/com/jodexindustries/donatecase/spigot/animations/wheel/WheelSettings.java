@@ -78,7 +78,7 @@ public class WheelSettings {
         @Setting("Pitch")
         public float pitch;
 
-        public Sound getSound() {
+        public Sound sound() {
             if (sound == null) return null;
             try {
                 return Sound.valueOf(sound);

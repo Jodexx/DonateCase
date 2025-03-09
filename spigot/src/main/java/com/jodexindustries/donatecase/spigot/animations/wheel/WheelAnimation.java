@@ -8,10 +8,11 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
-import lombok.SneakyThrows;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -24,10 +25,13 @@ public class WheelAnimation extends BukkitJavaAnimation {
 
     private WheelSettings settings;
 
-    @SneakyThrows
     @Override
     public void start() {
-        this.settings = getSettings().get(WheelSettings.class);
+        try {
+            this.settings = getSettings().get(WheelSettings.class);
+        } catch (SerializationException e) {
+            throw new RuntimeException("Error with parsing animation settings", e);
+        }
 
         api.getPlatform().getScheduler().run(api.getPlatform(), new Task(), 0L, 0L);
     }
@@ -159,8 +163,9 @@ public class WheelAnimation extends BukkitJavaAnimation {
 
                 double currentAngle = angle - baseAngle;
                 if (currentAngle - lastCompletedRotation >= rotationThreshold) {
-                    if(settings.scroll.getSound() != null) {
-                        world.playSound(location, settings.scroll.getSound(), settings.scroll.volume, settings.scroll.pitch);
+                    Sound sound = settings.scroll.sound();
+                    if (sound != null) {
+                        world.playSound(location, sound, settings.scroll.volume, settings.scroll.pitch);
                         lastCompletedRotation = currentAngle;
                     }
                 }

@@ -7,8 +7,10 @@ import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.spigot.tools.Pair;
-import lombok.SneakyThrows;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.ArrayList;
@@ -93,7 +95,6 @@ public class PopAnimation extends BukkitJavaAnimation {
             this.world = getPlayer().getWorld();
         }
 
-        @SneakyThrows
         @Override
         public void accept(SchedulerTask task) {
             if (tick == 0) {
@@ -152,7 +153,7 @@ public class PopAnimation extends BukkitJavaAnimation {
             indexes.remove(randomIndex);
 
             Sound sound = settings.scroll.sound();
-            if(sound != null) world.playSound(bukkitLocation, sound, settings.scroll.volume, settings.scroll.pitch);
+            if (sound != null) world.playSound(bukkitLocation, sound, settings.scroll.volume, settings.scroll.pitch);
 
         }
 
@@ -162,7 +163,7 @@ public class PopAnimation extends BukkitJavaAnimation {
             }
         }
 
-        private void fillStandItem(){
+        private void fillStandItem() {
             Random random = new Random();
             randomIndex = random.nextInt(8);
 
