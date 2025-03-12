@@ -1,7 +1,6 @@
 package com.jodexindustries.dceventmanager.utils;
 
 import com.jodexindustries.donatecase.api.event.DCEvent;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -100,21 +99,6 @@ public class Reflection {
         }
 
         return classes;
-    }
-
-    @Nullable
-    public static <T> T getVar(DCEvent event, String methodName, Class<T> clazz) {
-        T object = null;
-        try {
-            Method method = event.getClass().getMethod(methodName);
-            method.setAccessible(true);
-            Object result = method.invoke(event);
-            if (clazz.isInstance(result)) {
-                object = clazz.cast(result);
-            }
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
-        }
-        return object;
     }
 
     public static Object invokeMethodChain(Object event, String method) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {

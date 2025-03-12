@@ -9,12 +9,11 @@ import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import net.kyori.event.EventSubscriber;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import static com.jodexindustries.donatecase.api.tools.DCTools.rc;
 
@@ -49,8 +48,10 @@ public class DCEventExecutor implements EventSubscriber<DCEvent> {
 
         for (EventData.Executor executor : data.getExecutors()) {
             try {
-                if (checkConditions(executor.getConditions(), parsedPlaceholders)) {
-                    executeActions(event, getPlayerMethod(placeholders), replaceList(executor.getActions(), parsedPlaceholders));
+                DCPlayer player = getPlayer(event, placeholders);
+
+                if (checkConditions(player, executor.getConditions(), parsedPlaceholders)) {
+                    executeActions(event, player, replaceList(executor.getActions(), parsedPlaceholders));
                 }
             } catch (Exception e) {
                 tools.main.getLogger().log(Level.WARNING, "Error with executing executor: " + executor.getName(), e);
@@ -58,71 +59,78 @@ public class DCEventExecutor implements EventSubscriber<DCEvent> {
         }
     }
 
-    private boolean checkConditions(List<EventData.Condition> conditions, Map<String, Object> placeholders) {
-        for (EventData.Condition condition : conditions) {
-            Object output = placeholders.get(condition.getPlaceholder());
-            if(!condition.compare(output)) return false;
-        }
-
-        return true;
+    private boolean checkConditions(@Nullable DCPlayer player, List<EventData.Condition> conditions, Map<String, Object> placeholders) {
+        return conditions.stream().allMatch(condition -> {
+            Object output = placeholders.getOrDefault(condition.getPlaceholder(),
+                    (player != null) ? tools.api.getPlatform().getPAPI().setPlaceholders(player, condition.getPlaceholder()) : null);
+            return condition.compare(output);
+        });
     }
 
     private Map<String, Object> getPlaceholders(DCEvent event, List<EventPlaceholder.Placeholder> placeholders) {
         Map<String, Object> map = new HashMap<>();
+        if (placeholders == null) return map;
 
-        if (placeholders != null) {
-            for (EventPlaceholder.Placeholder placeholder : placeholders) {
-                if (map.containsKey(placeholder.getReplace())) continue;
-
-                Object value = null;
+        for (EventPlaceholder.Placeholder placeholder : placeholders) {
+            map.computeIfAbsent(placeholder.getReplace(), key -> {
                 try {
-                    value = Reflection.invokeMethodChain(event, placeholder.getMethod());
+                    return Reflection.invokeMethodChain(event, placeholder.getMethod());
                 } catch (Exception ex) {
                     tools.main.getLogger().log(Level.WARNING, "Failed to parse placeholder: " + placeholder.getName(), ex);
+                    return null;
                 }
-
-                map.put(placeholder.getReplace(), value);
-            }
+            });
         }
         return map;
     }
 
-    private void executeActions(DCEvent event, String playerMethod, List<String> actions) throws ReflectiveOperationException {
+    private void executeActions(DCEvent event, @Nullable DCPlayer player, List<String> actions) {
         // DonateCase actions
-        if (playerMethod != null) {
-            DCPlayer player = (DCPlayer) Reflection.invokeMethodChain(event, playerMethod.replace("#getName", ""));
-            tools.api.getActionManager().execute(player, actions);
-        }
+        if (player != null) tools.api.getActionManager().execute(player, actions);
 
         // DCEventManager actions
-        for (String action : actions) {
-            if (action.startsWith("[invoke]")) {
-                Reflection.invokeMethodChain(event, action.replaceFirst("\\[invoke]", "").trim());
-            }
-        }
+        actions.stream()
+                .filter(action -> action.startsWith("[invoke]"))
+                .forEach(action -> {
+                    try {
+                        Reflection.invokeMethodChain(event, action.substring(8).trim());
+                    } catch (Exception e) {
+                        tools.main.getLogger().log(Level.WARNING, "Error executing action: " + action, e);
+                    }
+                });
     }
 
-    private String getPlayerMethod(List<EventPlaceholder.Placeholder> placeholders) {
-        if(placeholders == null) return null;
+    @Nullable
+    private DCPlayer getPlayer(DCEvent event, List<EventPlaceholder.Placeholder> placeholders) {
+        if (placeholders == null) return null;
 
-        for (EventPlaceholder.Placeholder placeholder : placeholders) {
-            if(placeholder.getName().equals("player")) return placeholder.getMethod();
-        }
-
-        return null;
+        return placeholders.stream()
+                .filter(placeholder -> "player".equals(placeholder.getName()))
+                .findFirst()
+                .map(placeholder -> {
+                    try {
+                        Object player = Reflection.invokeMethodChain(event, placeholder.getMethod().replace("#getName", ""));
+                        return (player instanceof DCPlayer) ? (DCPlayer) player : null;
+                    } catch (Exception ignored) {
+                        return null;
+                    }
+                })
+                .orElse(null);
     }
 
-    public List<String> replaceList(List<String> list, Map<String, Object> map) {
-        List<String> newList = new ArrayList<>();
-        if (list == null) return newList;
+    private List<String> replaceList(List<String> list, Map<String, Object> map) {
+        if (list == null) return Collections.emptyList();
 
-        for (String line : list) {
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-                line = line.replace(entry.getKey(), String.valueOf(entry.getValue()));
-            }
-            newList.add(rc(line));
-        }
-        return newList;
+        return list.stream().map(line -> {
+            StringBuilder sb = new StringBuilder(line);
+            map.forEach((key, value) -> {
+                int index;
+                while ((index = sb.indexOf(key)) != -1) {
+                    sb.replace(index, index + key.length(), String.valueOf(value));
+                }
+            });
+            return rc(sb.toString());
+        }).collect(Collectors.toList());
     }
 
 }
