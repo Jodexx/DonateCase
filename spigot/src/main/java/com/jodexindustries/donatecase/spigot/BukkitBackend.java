@@ -286,16 +286,16 @@ public class BukkitBackend extends BackendPlatform {
                         .build()
         );
 
-        manager.register(
-                CaseAnimation.builder()
-                        .name("SELECT")
-                        .addon(this)
-                        .animation(SelectAnimation.class)
-                        .description("Select ur prize manually")
-                        .requireSettings(true)
-                        .requireBlock(true)
-                        .build()
-        );
+//        manager.register(
+//                CaseAnimation.builder()
+//                        .name("SELECT")
+//                        .addon(this)
+//                        .animation(SelectAnimation.class)
+//                        .description("Select ur prize manually")
+//                        .requireSettings(true)
+//                        .requireBlock(true)
+//                        .build()
+//        );
 
         manager.register(
                 CaseAnimation.builder()
