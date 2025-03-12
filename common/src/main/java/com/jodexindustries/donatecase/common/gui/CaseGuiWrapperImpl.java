@@ -12,6 +12,7 @@ import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.common.command.sub.KeysCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -133,30 +134,14 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
     private String setPlaceholders(@Nullable String text) {
         if (text == null) return null;
         String caseType = caseData.caseType();
-        return platform.getPAPI().setPlaceholders(player,
-                processPlaceholders(text.replace("%case%", caseType), caseType, player));
+        return platform.getPAPI().setPlaceholders(
+                player,
+                KeysCommand.formatMessage(player.getName(), text.replace("%casetype%", caseType), true, caseType)
+        );
     }
 
     private List<String> setPlaceholders(List<String> lore) {
         return lore.stream().map(this::setPlaceholders).collect(Collectors.toList());
-    }
-
-    private String processPlaceholders(String line, String caseType, DCPlayer p) {
-        String placeholder = DCTools.getLocalPlaceholder(line);
-
-        if (p != null && placeholder.startsWith("keys")) {
-            if (placeholder.startsWith("keys_")) {
-                String[] parts = placeholder.split("_", 2);
-                if (parts.length == 2) {
-                    caseType = parts[1];
-                }
-            }
-
-            line = line.replace("%" + placeholder + "%",
-                    String.valueOf(platform.getAPI().getCaseKeyManager().getCache(caseType, p.getName())));
-        }
-
-        return line;
     }
 
     /**

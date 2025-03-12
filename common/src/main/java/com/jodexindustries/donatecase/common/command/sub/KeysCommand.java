@@ -42,7 +42,7 @@ public class KeysCommand extends DefaultCommand {
     private void handlePlayer(DCCommandSender sender, DCPlayer player) {
         if (sender.hasPermission("donatecase.player")) {
             for (String message : api.getConfigManager().getMessages().getStringList("my-keys")) {
-                String formattedMessage = formatMessage(player.getName(), message);
+                String formattedMessage = formatMessage(player.getName(), message, false, null);
                 sender.sendMessage(formattedMessage);
             }
         } else {
@@ -53,7 +53,7 @@ public class KeysCommand extends DefaultCommand {
     private void handleMod(DCCommandSender sender, String target) {
         if (sender.hasPermission("donatecase.mod")) {
             for (String message : api.getConfigManager().getMessages().getStringList("player-keys")) {
-                String formattedMessage = formatMessage(target, message);
+                String formattedMessage = formatMessage(target, message, false, null);
                 sender.sendMessage(formattedMessage.replace("%player", target));
             }
         } else {
@@ -61,13 +61,15 @@ public class KeysCommand extends DefaultCommand {
         }
     }
 
-    private String formatMessage(String name, String message) {
+    public static String formatMessage(String player, String message, boolean cached, String caseType) {
         String placeholder = DCTools.getLocalPlaceholder(message);
         String result = "0";
         if (placeholder.startsWith("keys_")) {
             String[] parts = placeholder.split("_");
-            String caseType = parts[1];
-            int keys = api.getCaseKeyManager().get(caseType, name);
+
+            if(caseType == null) caseType = parts[1];
+            int keys = cached ? DCAPI.getInstance().getCaseKeyManager().getCache(caseType, player) :
+                    DCAPI.getInstance().getCaseKeyManager().get(caseType, player);
             if (parts.length == 2) {
                 result = String.valueOf(keys);
             } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
@@ -76,7 +78,6 @@ public class KeysCommand extends DefaultCommand {
         }
         return DCTools.rc(message.replace("%" + placeholder + "%", result));
     }
-
 
     @Override
     public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
