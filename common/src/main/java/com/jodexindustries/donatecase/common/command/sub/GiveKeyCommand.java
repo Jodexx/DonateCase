@@ -8,8 +8,10 @@ import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.common.command.DefaultCommand;
+import com.jodexindustries.donatecase.common.tools.LocalPlaceholder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 
 public class GiveKeyCommand extends DefaultCommand {
@@ -28,10 +30,15 @@ public class GiveKeyCommand extends DefaultCommand {
         }
 
         String playerName = args[0];
-        String caseName = args[1];
+        String caseType = args[1];
         if (!DCTools.isValidPlayerName(playerName)) {
             sender.sendMessage(
-                    DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("player-not-found"), "%player:" + playerName))
+                    DCTools.prefix(
+                            DCTools.rt(
+                                    api.getConfigManager().getMessages().getString("player-not-found"),
+                                    LocalPlaceholder.of("%player%", playerName)
+                            )
+                    )
             );
             return true;
         }
@@ -40,29 +47,48 @@ public class GiveKeyCommand extends DefaultCommand {
         try {
             keys = Integer.parseInt(args[2]);
         } catch (NumberFormatException e) {
-            DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("number-format-exception"), "%string:" + args[2]));
+            DCTools.prefix(DCTools.rt(
+                            api.getConfigManager().getMessages().getString("number-format-exception"),
+                            LocalPlaceholder.of("%string%", args[2])
+                    )
+            );
             return true;
         }
-        if (api.getCaseManager().hasByType(caseName)) {
-            CaseData data = api.getCaseManager().get(caseName);
+        if (api.getCaseManager().hasByType(caseType)) {
+            CaseData data = api.getCaseManager().get(caseType);
             if (data == null) return true;
-            api.getCaseKeyManager().add(caseName, playerName, keys).thenAcceptAsync(status -> {
+            api.getCaseKeyManager().add(caseType, playerName, keys).thenAcceptAsync(status -> {
+                Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(data);
+                placeholders.add(LocalPlaceholder.of("%player%", playerName));
+                placeholders.add(LocalPlaceholder.of("%key%", keys));
+
                 if (status == DatabaseStatus.COMPLETE) {
-                    DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("keys-given"),
-                            "%player:" + playerName, "%key:" + keys, "%casetitle:" + data.caseGui().title(),
-                            "%casedisplayname:" + data.caseDisplayName(), "%case:" + caseName));
+                    DCTools.prefix(
+                            DCTools.rt(
+                                    api.getConfigManager().getMessages().getString("keys-given"),
+                                    placeholders
+                            )
+                    );
 
                     if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
                         DCPlayer target = api.getPlatform().getPlayer(playerName);
                         if (target != null)
-                            target.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("keys-given-target"),
-                                    "%player:" + playerName, "%key:" + keys, "%casetitle:" + data.caseGui().title(),
-                                    "%casedisplayname:" + data.caseDisplayName(), "%case:" + caseName)));
+                            target.sendMessage(
+                                    DCTools.prefix(
+                                            DCTools.rt(api.getConfigManager().getMessages().getString("keys-given-target"),
+                                                    placeholders)
+                                    )
+                            );
                     }
                 }
             });
         } else {
-            DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"), "%case:" + caseName));
+            DCTools.prefix(
+                    DCTools.rt(
+                            api.getConfigManager().getMessages().getString("case-does-not-exist"),
+                            LocalPlaceholder.of("%casetype%", caseType)
+                    )
+            );
         }
 
         return true;

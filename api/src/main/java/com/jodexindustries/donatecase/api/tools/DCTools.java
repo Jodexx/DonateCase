@@ -18,6 +18,8 @@ import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -34,6 +36,12 @@ public abstract class DCTools {
     public abstract ArmorStandCreator createArmorStand(CaseLocation location);
 
     public abstract Object loadCaseItem(String id);
+
+    public static DateFormat getDateFormat() {
+        return new SimpleDateFormat(
+                DCAPI.getInstance().getConfigManager().getConfig().node("DonateCase", "DateFormat").getString("dd.MM HH:mm:ss")
+        );
+    }
 
     public static boolean isValidPlayerName(String player) {
         if (DCAPI.getInstance().getConfigManager().getConfig().node("DonateCase", "CheckPlayerName").getBoolean()) {
@@ -103,28 +111,37 @@ public abstract class DCTools {
         return EnumChatFormat.color(RGBUtils.getInstance().applyFormats(text));
     }
 
-    public static String rt(String text, String... repl) {
-        if (text != null) {
-            for (String s : repl) {
-                if (s != null) {
-                    int l = s.split(":")[0].length();
-                    text = text.replace(s.substring(0, l), s.substring(l + 1));
-                }
+    public static String rt(String text, Placeholder... placeholders) {
+        if (text == null || placeholders.length == 0) return text;
+        return rt(text, Arrays.asList(placeholders));
+    }
+
+    public static String rt(String text, Collection<? extends Placeholder> placeholders) {
+        if (text == null || placeholders == null || placeholders.isEmpty()) return text;
+
+        StringBuilder result = new StringBuilder(text);
+        for (Placeholder placeholder : placeholders) {
+            int index;
+            while ((index = result.indexOf(placeholder.name())) != -1) {
+                result.replace(index, index + placeholder.name().length(), placeholder.value());
             }
-
         }
-        return text;
+        return result.toString();
     }
 
-    public static List<String> rt(List<String> text, String... repl) {
+    public static List<String> rt(List<String> text, Collection<? extends Placeholder> placeholders) {
+        if (text == null) return null;
+        return text.stream().map(t -> rt(t, placeholders)).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public static List<String> rt(List<String> text, Placeholder... placeholders) {
         if(text == null) return null;
-        return text.stream().map(t -> rt(t, repl)).collect(Collectors.toCollection(ArrayList::new));
+        return text.stream().map(t -> rt(t, placeholders)).collect(Collectors.toCollection(ArrayList::new));
     }
 
-
-    public static List<String> rc(List<String> t) {
-        if(t == null) return null;
-        return t.stream().map(DCTools::rc).collect(Collectors.toCollection(ArrayList::new));
+    public static List<String> rc(List<String> list) {
+        if(list == null) return null;
+        return list.stream().map(DCTools::rc).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static boolean isHasCommandForSender(DCCommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, String addon) {

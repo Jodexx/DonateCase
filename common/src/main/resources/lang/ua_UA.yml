@@ -3,72 +3,67 @@ config: # Please do not touch this section
   type: lang
 
 # Локальні плейсхолдери
-# %case% - назва кейсу
+# %casetype% - тип кейсу
 # %casetitle% - заголовок кейсу
 # %casedisplayname% - ім,я кейсу, яке відображається
 # %key% - кількість ключів
-# %keys_<casename>% - кількість ключів окремого кейсу
-# %keys_<casename>_format% - кількість ключів з форматуванням
-# %player - нікнейм гравця
-#
-# Глобальні плейсхолдери
-# %donatecase_keys_<casename>% - кількість ключів від конкретного кейсу
-# %donatecase_keys_<casename>_format% - кількість ключів від конкретного кейсу з форматуванням
-# %donatecase_keys% - кількість всіх ключів
-# %donatecase_keys_format% - кількість всіх ключів з форматуванням
+# %keys_<casetype>% - кількість ключів окремого кейсу
+# %keys_<casetype>_format% - кількість ключів з форматуванням
+# %player% - нікнейм гравця
 
 prefix: '&7[&cDonateCase&7] &e'
 no-permission: '&cУ вас немає прав'
-new-update: "&eНове оновлення плагіну &cDonateCase &a%version &eдоступно&e! &eЗавантажити &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
-case-does-not-exist: '&cКейса &6%case &cне існує.'
-case-already-exist: "&cКейс з назвою &6%casename &cвже існує!"
+new-update: "&eНове оновлення плагіну &cDonateCase &a%version% &eдоступно&e! &eЗавантажити &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
+case-does-not-exist: '&cКейса &6%casetype% &cне існує.'
+case-already-exist: "&cКейс з назвою &6%casename% &cвже існує!"
 case-already-created: '&cЦей блок вже донат кейс'
 case-added: '&eНовий кейс створено'
 case-removed: '&eДонат кейс видалено'
 block-is-not-case: '&cУ цьому блоці не знайдено Донат Кейса'
-keys-given: '&eГравцю &6%player &eвидано &c%key &eключів'
-keys-given-target: '&eВам було видано &c%key &eключів від кейса &6%casetitle'
-keys-sets: '&eГравцю &6%player &eустановлено &c%key &eключів'
-keys-sets-target: '&eВам було установлено &c%key &eключів від кейса &6%casetitle'
-keys-cleared: '&eУ гравця &6%player &eбуло вилучено &c5 &eключів від кейсу &6%case'
+keys-given: '&eГравцю &6%player% &eвидано &c%key% &eключів'
+keys-given-target: '&eВам було видано &c%key% &eключів від кейса &6%casetitle%'
+keys-sets: '&eГравцю &6%player% &eустановлено &c%key% &eключів'
+keys-sets-target: '&eВам було установлено &c%key% &eключів від кейса &6%casetitle%'
+keys-cleared: '&eУ гравця &6%player% &eбуло вилучено &c5 &eключів від кейсу &6%casetype%'
 all-keys-cleared: '&eВсі ключі гравців були видалені'
 case-destroy-disallow: '&cДонат Кейс ломати заборонено'
-no-keys: '&cУ вас немає ключів для цього кейсу. Можете купити їх тут >>> &6JodexIndustries.ua'
+no-keys: '&cУ вас немає ключів для цього кейсу. Можете купити їх тут >>> &6www.jodexindustries.xyz'
 case-opens: '&cЗачекайте, цей кейс відкривається'
 config-reloaded: '&aКонфіг перезавантажено!'
 config-cache-reloaded: '&aПерезавантажено весь кеш DonateCase'
-list-of-cases: '&e%num. &6%casename &3- &r%casetitle'
-number-format-exception: "&cСтрока %string не являється числом"
-player-not-found: "&cГравця %player не знайдено!"
+list-of-cases: '&e%num%. &6%casetype% &3- &r%casetitle%'
+number-format-exception: "&cСтрока %string% не являється числом"
+player-not-found: "&cГравця %player% не знайдено!"
 help:
-  - '&9/%cmd help &3- &2Допомога по плагіну'
-  - '&9/%cmd keys &7(&aГравець&7)&3- &2Показати ключі'
-  - '&9/%cmd opencase &7(&aТип кейсу&7) &3- &2Відкрити кейс'
-  - '&9/%cmd cases &3- &2Показати всі можливі кейси'
-  - '&9/%cmd create &7(&aТип кейсу&7) &7(&aНазва кейсу&7) &3- &2Встановити кейс &7(&6Дивіться на блок&7)'
-  - '&9/%cmd delete &7[&aНазва кейсу&7] &3- &2Видалити кейс &7(&6Дивіться на кейс&7)'
-  - '&9/%cmd givekey &7(&aГравець&7) &7(&aТип кейсу&7) &7(&aКлючі&7) &3- &2Видати ключі гравцю'
-  - '&9/%cmd setkey &7(&aГравець&7) &7(&aТип кейсу&7) &7(&aКлючі&7) &3- &2Встановити ключі гравцю'
-  - '&9/%cmd delkey &7(&aГравець&7) &7(&aТип кейсу&7) &7[&aКлючі&7] &3- &2Видалити ключі гравцю'
-  - '&9/%cmd delkey all &3- &2Видалити всі ключі всім гравцям'
-  - '&9/%cmd reload &3- &2Перезапустити конфіг'
-  - '&9/%cmd addons &3- &2Показати завантажені аддони'
-  - '&9/%cmd addon &7(&aenable&7/&cdisable&7 | &aload&7/&cunload&7) (&aАддон&7) &3- &2Управління аддонами'
-  - "&9/%cmd registry &7(&aanimations&7|&aactions&7|&amaterials&7|&aguitypeditems&7) &3- &2Показати список зареєстрованих об'єктів реєстру"
+  - '&9/%cmd% help &3- &2Допомога по плагіну'
+  - '&9/%cmd% keys &7(&aГравець&7)&3- &2Показати ключі'
+  - '&9/%cmd% opencase &7(&aТип кейсу&7) &3- &2Відкрити кейс'
+  - '&9/%cmd% cases &3- &2Показати всі можливі кейси'
+  - '&9/%cmd% create &7(&aТип кейсу&7) &7(&aНазва кейсу&7) &3- &2Встановити кейс &7(&6Дивіться на блок&7)'
+  - '&9/%cmd% delete &7[&aНазва кейсу&7] &3- &2Видалити кейс &7(&6Дивіться на кейс&7)'
+  - '&9/%cmd% givekey &7(&aГравець&7) &7(&aТип кейсу&7) &7(&aКлючі&7) &3- &2Видати ключі гравцю'
+  - '&9/%cmd% setkey &7(&aГравець&7) &7(&aТип кейсу&7) &7(&aКлючі&7) &3- &2Встановити ключі гравцю'
+  - '&9/%cmd% delkey &7(&aГравець&7) &7(&aТип кейсу&7) &7[&aКлючі&7] &3- &2Видалити ключі гравцю'
+  - '&9/%cmd% delkey all &3- &2Видалити всі ключі всім гравцям'
+  - '&9/%cmd% reload &3- &2Перезавантажити конфіг'
+  - '&9/%cmd% reload cache &3- &2Перезавантажити кеш'
+  - '&9/%cmd% addons &3- &2Показати завантажені аддони'
+  - '&9/%cmd% addon &7(&aenable&7/&cdisable&7 | &aload&7/&cunload&7) (&aАддон&7) &3- &2Управління аддонами'
+  - "&9/%cmd% registry &7(&aanimations&7|&aactions&7|&amaterials&7|&aguitypeditems&7) &3- &2Показати список зареєстрованих об'єктів реєстру"
 
 
 help-addons:
   format:
-    name: "&6%addon" # Залиште пустим, якщо не хочете відокремлювати команди назвами аддонів
-    description: "&3- &2%description"
-    command: "&9/dc %cmd %args %description"
+    name: "&6%addon%" # Залиште пустим, якщо не хочете відокремлювати команди назвами аддонів
+    description: "&3- &2%description%"
+    command: "&9/dc %cmd% %args% %description%"
 help-player:
-  - '&9/%cmd help &3- &2Допомога по плагіну'
-  - '&9/%cmd keys &3- &2Показати свої ключі'
-  - '&9/%cmd opencase &7(&aТип кейсу&7) &3- &2Відкрити кейс'
+  - '&9/%cmd% help &3- &2Допомога по плагіну'
+  - '&9/%cmd% keys &3- &2Показати свої ключі'
+  - '&9/%cmd% opencase &7(&aТип кейсу&7) &3- &2Відкрити кейс'
 my-keys:
   - "&7Ваші ключі:"
   - "&c&lДонат-&a&lКейс &7- &a%keys_case% &7ключів"
 player-keys:
-  - "&7Ключі %player:"
+  - "&7Ключі %player%:"
   - "&c&lДонат-&a&lКейс &7- &a%keys_case% &7ключів"

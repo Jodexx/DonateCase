@@ -9,6 +9,7 @@ import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.common.command.DefaultCommand;
+import com.jodexindustries.donatecase.common.tools.LocalPlaceholder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -32,16 +33,16 @@ public class OpenCaseCommand extends DefaultCommand {
             String playerName = sender.getName();
             DCPlayer player = (DCPlayer) sender;
 
-            String caseName = args[0];
-            CaseData data = api.getCaseManager().get(caseName);
+            String caseType = args[0];
+            CaseData data = api.getCaseManager().get(caseType);
 
             if (data != null) {
                 CaseAnimation animation = api.getAnimationManager().get(data.animation());
                 if (animation == null) return true;
 
-                api.getCaseKeyManager().getAsync(caseName, playerName).thenAccept((keys) -> {
+                api.getCaseKeyManager().getAsync(caseType, playerName).thenAccept((keys) -> {
                     if (keys >= 1) {
-                        api.getCaseKeyManager().remove(caseName, playerName, 1).thenAccept(status -> {
+                        api.getCaseKeyManager().remove(caseType, playerName, 1).thenAccept(status -> {
                             if (status == DatabaseStatus.COMPLETE) {
                                 if (animation.isRequireBlock()) {
                                     api.getAnimationManager().preEnd(data, player, data.getRandomItem());
@@ -56,7 +57,11 @@ public class OpenCaseCommand extends DefaultCommand {
                 });
 
             } else {
-                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"), "%case:" + caseName)));
+                sender.sendMessage(DCTools.prefix(DCTools.rt(
+                                api.getConfigManager().getMessages().getString("case-does-not-exist"),
+                                LocalPlaceholder.of("%casetype%", caseType)
+                        )
+                ));
             }
         }
         return true;

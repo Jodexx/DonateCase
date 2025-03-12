@@ -9,10 +9,12 @@ import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.common.command.DefaultCommand;
+import com.jodexindustries.donatecase.common.tools.LocalPlaceholder;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurateException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -43,8 +45,13 @@ public class CreateCommand extends DefaultCommand {
             CaseData caseData = api.getCaseManager().get(caseType);
 
             if (caseData == null) {
-                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"),
-                        "%case:" + caseType)));
+                sender.sendMessage(
+                        DCTools.prefix(
+                                DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"),
+                                        LocalPlaceholder.of("%casetype%", caseType)
+                                )
+                        )
+                );
                 return true;
             }
 
@@ -54,8 +61,14 @@ public class CreateCommand extends DefaultCommand {
             }
 
             if (api.getConfigManager().getCaseStorage().has(caseName)) {
-                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-already-exist"),
-                        "%casename:" + caseName)));
+                sender.sendMessage(
+                        DCTools.prefix(
+                                DCTools.rt(
+                                        api.getConfigManager().getMessages().getString("case-already-exist"),
+                                        LocalPlaceholder.of("%casename%", caseName)
+                                )
+                        )
+                );
                 return true;
             }
 
@@ -70,8 +83,15 @@ public class CreateCommand extends DefaultCommand {
                 api.getConfigManager().getCaseStorage().save(caseName, caseInfo);
                 api.getHologramManager().create(toSave, caseData.hologram());
 
-                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-added"),
-                        "%casename:" + caseName, "%casetype:" + caseType)));
+                Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(caseData);
+                placeholders.add(LocalPlaceholder.of("%casename%", caseName));
+
+                sender.sendMessage(
+                        DCTools.prefix(
+                                DCTools.rt(
+                                        api.getConfigManager().getMessages().getString("case-added"), placeholders)
+                        )
+                );
 
                 int spawnRadius = api.getPlatform().getSpawnRadius();
                 if (spawnRadius <= 0) return true;

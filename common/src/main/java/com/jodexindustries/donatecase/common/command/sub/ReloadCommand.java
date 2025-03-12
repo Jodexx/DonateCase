@@ -24,7 +24,7 @@ public class ReloadCommand extends DefaultCommand {
         if (args.length == 0) {
             load();
             sender.sendMessage(
-                    DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("config-reloaded")))
+                    DCTools.prefix(DCTools.rc(api.getConfigManager().getMessages().getString("config-reloaded")))
             );
         } else {
             if (args[0].equalsIgnoreCase("cache")) {

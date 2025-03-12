@@ -8,6 +8,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
+import com.jodexindustries.donatecase.common.tools.LocalPlaceholder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -65,7 +66,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
             sendHelpMessages(sender, "help", label);
         }
 
-        if (backend.getAPI().getConfigManager().getConfig().node("DonateCase.AddonsHelp").getBoolean(true)) {
+        if (backend.getAPI().getConfigManager().getConfig().node("DonateCase", "AddonsHelp").getBoolean(true)) {
             Map<String, List<Map<String, SubCommand>>> addonsMap = buildAddonsMap();
             if (DCTools.isHasCommandForSender(sender, addonsMap)) {
                 sendAddonHelpMessages(sender, addonsMap);
@@ -75,7 +76,11 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
 
     private void sendHelpMessages(DCCommandSender sender, String path, String label) {
         for (String string : backend.getAPI().getConfigManager().getMessages().getStringList(path)) {
-            sender.sendMessage(DCTools.rc(DCTools.rt(string, "%cmd:" + label)));
+            sender.sendMessage(
+                    DCTools.rc(
+                            DCTools.rt(string, LocalPlaceholder.of("%cmd%", label))
+                    )
+            );
         }
     }
 
@@ -94,21 +99,27 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
             if (!addon.equalsIgnoreCase("DonateCase") && DCTools.isHasCommandForSender(sender, addonsMap, addon)) {
                 String addonNameFormat = backend.getAPI().getConfigManager().getMessages().getString("help-addons.format.name");
                 if (!addonNameFormat.isEmpty() && !addonNameFormat.equals("help-addons.format.name")) {
-                    sender.sendMessage(DCTools.rc(DCTools.rt(addonNameFormat, "%addon:" + addon)));
+                    sender.sendMessage(
+                            DCTools.rc(
+                                    DCTools.rt(addonNameFormat, LocalPlaceholder.of("%addon", addon))
+                            )
+                    );
                 }
 
                 commands.forEach(command -> command.forEach((commandName, subCommand) -> {
                     String description = subCommand.description();
-                    description = (description != null) ? DCTools.rt(backend.getAPI().getConfigManager().getMessages().getString("help-addons.format.description"), "%description:" + description) : "";
+                    description = (description != null) ? DCTools.rt(
+                            backend.getAPI().getConfigManager().getMessages().getString("help-addons.format.description"),
+                            LocalPlaceholder.of("%description%", description)) : "";
 
                     StringBuilder argsBuilder = compileSubCommandArgs(subCommand.args());
                     String permission = subCommand.permission();
 
                     if (permission == null || sender.hasPermission(permission)) {
                         sender.sendMessage(DCTools.rc(DCTools.rt(backend.getAPI().getConfigManager().getMessages().getString("help-addons.format.command"),
-                                "%cmd:" + commandName,
-                                "%args:" + argsBuilder,
-                                "%description:" + description
+                                LocalPlaceholder.of("%cmd%", commandName),
+                                LocalPlaceholder.of("%args%", argsBuilder),
+                                LocalPlaceholder.of("%description%", description)
                         )));
                     }
                 }));

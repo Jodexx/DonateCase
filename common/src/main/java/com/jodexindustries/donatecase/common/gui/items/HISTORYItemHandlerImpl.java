@@ -7,14 +7,14 @@ import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemException;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemHandler;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.common.tools.LocalPlaceholder;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 public class HISTORYItemHandlerImpl implements TypedItemHandler {
@@ -73,10 +73,10 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
         if (material.equalsIgnoreCase("DEFAULT")) material = historyItem.material().id();
 
-        String[] template = getTemplate(historyCaseData, data, historyItem);
+        Collection<LocalPlaceholder> placeholders = getPlaceholders(historyCaseData, data, historyItem);
 
-        String displayName = DCTools.rt(itemMaterial.displayName(), template);
-        List<String> lore = DCTools.rt(itemMaterial.lore(), template);
+        String displayName = DCTools.rt(itemMaterial.displayName(), placeholders);
+        List<String> lore = DCTools.rt(itemMaterial.lore(), placeholders);
 
         itemMaterial.id(material);
         itemMaterial.displayName(displayName);
@@ -85,42 +85,32 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         return true;
     }
 
-    private String[] getTemplate(CaseData historyCaseData, CaseData.History data, CaseDataItem historyItem) {
-
-        DateFormat formatter = new SimpleDateFormat(DCAPI.getInstance().getConfigManager().getConfig().node("DonateCase.DateFormat").getString("dd.MM HH:mm:ss"));
-        String dateFormatted = formatter.format(new Date(data.time()));
+    private Collection<LocalPlaceholder> getPlaceholders(CaseData historyCaseData, CaseData.History data, CaseDataItem historyItem) {
         String group = data.group();
         String groupDisplayName = data.item() != null ? historyItem.material().displayName() : "group_not_found";
         String action = data.action() != null ? data.action() : group;
 
-        String randomActionDisplayName = getActionDisplayName(action, groupDisplayName, historyItem);
+        String randomActionDisplayName = getActionDisplayName(action, groupDisplayName, historyItem.randomActions());
 
-        return new String[]{
-                "%action%:" + action,
-                "%actiondisplayname%:" + randomActionDisplayName,
-                "%casedisplayname%:" + historyCaseData.caseType(),
-                "%casename%:" + data.caseType(),
-                "%casetitle%:" + historyCaseData.caseGui().title(),
-                "%time%:" + dateFormatted,
-                "%group%:" + group,
-                "%player%:" + data.playerName(),
-                "%groupdisplayname%:" + groupDisplayName
-        };
+        Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(data);
+        placeholders.addAll(LocalPlaceholder.of(historyCaseData));
+        placeholders.add(LocalPlaceholder.of("%actiondisplayname%", randomActionDisplayName));
+        placeholders.add(LocalPlaceholder.of("%groupdisplayname%", groupDisplayName));
+        return placeholders;
     }
 
-    public static String getActionDisplayName(String action, String groupDisplayName, CaseDataItem historyItem) {
-        String randomActionDisplayName = "random_action_not_found";
-        if (action != null && !action.isEmpty()) {
-            CaseDataItem.RandomAction randomAction = historyItem.randomActions().get(action);
-            if (randomAction != null) {
-                randomActionDisplayName = randomAction.displayName();
-            }
-        } else {
-            randomActionDisplayName = groupDisplayName;
+    private static String getActionDisplayName(String action, String groupDisplayName, Map<String, CaseDataItem.RandomAction> randomActions) {
+        if (action == null || action.isEmpty()) {
+            return groupDisplayName;
         }
 
-        return randomActionDisplayName;
+        String displayName = randomActions
+                .getOrDefault(action, new CaseDataItem.RandomAction())
+                .displayName();
+
+        return displayName != null ? displayName : "random_action_not_found";
     }
+
 
     private CaseData.History getHistoryData(String caseType, boolean isGlobal, List<CaseData.History> globalHistoryData, int index) {
         CaseData.History data = null;

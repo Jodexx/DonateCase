@@ -18,6 +18,7 @@ import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
+import com.jodexindustries.donatecase.common.tools.LocalPlaceholder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -354,16 +355,11 @@ public class AnimationManagerImpl implements AnimationManager {
      * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#randomActions()})
      */
     public void executeActions(DCPlayer player, CaseData caseData, CaseDataItem item, String choice, boolean alternative) {
-        final String[] replacementRegex = {
-                "%player%:" + player.getName(),
-                "%casename%:" + caseData.caseType(),
-                "%casedisplayname%:" + caseData.caseDisplayName(),
-                "%casetitle%:" + caseData.caseGui().title(),
-                "%group%:" + item.group(),
-                "%groupdisplayname%:" + item.material().displayName()
-        };
+        Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(caseData);
+        placeholders.add(LocalPlaceholder.of("%player%", player.getName()));
+        placeholders.addAll(LocalPlaceholder.of(item));
 
-        List<String> actions = DCTools.rt(getActionsBasedOnChoice(item, choice, alternative), replacementRegex);
+        List<String> actions = DCTools.rt(getActionsBasedOnChoice(item, choice, alternative), placeholders);
 
         api.getActionManager().execute(player, actions);
     }

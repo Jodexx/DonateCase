@@ -3,72 +3,67 @@ config: # Please do not touch this section
   type: lang
 
 # Local Placeholders
-# %case% - case name
+# %casetype% - case type
 # %casetitle% - case title
 # %casedisplayname% - case displayname
 # %key% - number of keys
-# %keys_<casename>% - number of keys
-# %keys_<casename>_format% - number of keys with format
-# %player - player nickname
-#
-# Global Placeholders
-# %donatecase_keys_<casename>% - number of keys from a particular case
-# %donatecase_keys_<casename>_format% - number of keys from a particular case with format
-# %donatecase_keys% - number of keys from all cases
-# %donatecase_keys_format% - number of keys from all cases with format
+# %keys_<casetype>% - number of keys
+# %keys_<casetype>_format% - number of keys with format
+# %player% - player nickname
 
 prefix: '&7[&cDonateCase&7] &e'
 no-permission: '&c¡No tienes permisos!'
-new-update: "&eNueva &cDonateCase &a%version &edisponible&e! &eDescargar &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
-case-does-not-exist: '&cLa caja &6%case &cno existe.'
-case-already-exist: "&c¡La caja con el nombre &6%casename &cya existe!"
+new-update: "&eNueva &cDonateCase &a%version% &edisponible&e! &eDescargar &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
+case-does-not-exist: '&cLa caja &6%casetype% &cno existe.'
+case-already-exist: "&c¡La caja con el nombre &6%casename% &cya existe!"
 case-already-created: '&cEste bloque ya es una caja de donación'
 case-added: '&eNueva caja creada'
 case-removed: '&eCaja de donación eliminada'
 block-is-not-case: '&cNo se encontró una caja de donación en este bloque'
-keys-given: '&eEl jugador &6%player &eha recibido &c%key &ellave(s)'
-keys-given-target: '&eHas recibido &c%key &ellave(s) para la caja &6%casetitle'
-keys-sets: '&eEl jugador &6%player &eha establecido &c%key &ellave(s)'
-keys-sets-target: '&eSe te han asignado &c%key &ellave(s) para la caja &6%casetitle'
-keys-cleared: '&eEl jugador &6%player &eha eliminado &c%key &ellave(s) de la caja &6%case'
+keys-given: '&eEl jugador &6%player% &eha recibido &c%key% &ellave(s)'
+keys-given-target: '&eHas recibido &c%key% &ellave(s) para la caja &6%casetitle%'
+keys-sets: '&eEl jugador &6%player% &eha establecido &c%key% &ellave(s)'
+keys-sets-target: '&eSe te han asignado &c%key &ellave(s) para la caja &6%casetitle%'
+keys-cleared: '&eEl jugador &6%player% &eha eliminado &c%key% &ellave(s) de la caja &6%case'
 all-keys-cleared: '&eSe han eliminado todas las llaves del jugador'
 case-destroy-disallow: '&cEstá prohibido romper la caja de donación'
-no-keys: "&cNo tienes llaves para esta caja. Puedes comprarlas aquí >>> &6JodexIndustries.com"
+no-keys: "&cNo tienes llaves para esta caja. Puedes comprarlas aquí >>> &6www.jodexindustries.xyz"
 case-opens: '&cPor favor espera, esta caja se está abriendo'
 config-reloaded: '&a¡Configuración recargada!'
 config-cache-reloaded: '&aTodo el caché de DonateCase ha sido recargado'
-list-of-cases: '&e%num. &6%casename &3- &r%casetitle'
-number-format-exception: "&cLa cadena %string no es un número"
-player-not-found: "&cJugador %player no encontrado!"
+list-of-cases: '&e%num%. &6%casetype% &3- &r%casetitle'
+number-format-exception: "&cLa cadena %string% no es un número"
+player-not-found: "&cJugador %player% no encontrado!"
 help:
-  - '&9/%cmd help &3- &2Ayuda para el plugin'
-  - '&9/%cmd keys &7(&aJugador&7) &3- &2Mostrar llaves'
-  - '&9/%cmd opencase &7(&aTipo de Caja&7) &3- &2Abrir caja'
-  - '&9/%cmd cases &3- &2Mostrar todas las cajas disponibles'
-  - '&9/%cmd create &7(&aTipo de Caja&7) (&aNombre de la Caja&7) &3- &2Configurar caja &7(&6Mira el bloque&7)'
-  - '&9/%cmd delete &7[&aNombre de la Caja&7]&3- &2Eliminar caja &7(&6Mira la caja&7)'
-  - '&9/%cmd givekey &7(&aJugador&7) &7(&aTipo de Caja&7) &7(&aLlaves&7) &3- &2Dar llaves al jugador'
-  - '&9/%cmd setkey &7(&aJugador&7) &7(&aTipo de Caja&7) &7(&aLlaves&7) &3- &2Establecer llaves del jugador'
-  - '&9/%cmd delkey &7(&aJugador&7) &7(&aTipo de Caja&7) &7[&aLlaves&7] &3- &2Eliminar llaves de un jugador'
-  - '&9/%cmd delkey all &3- &2Eliminar todas las llaves de todos los jugadores'
-  - '&9/%cmd reload &3- &2Recargar configuración'
-  - '&9/%cmd addons &3- &2Mostrar complementos cargados'
-  - '&9/%cmd addon &7(&aenable&7/&cdisable&7 | &aload&7/&cunload&7) (&aComplemento&7) &3- &2Gestionar complementos'
-  - '&9/%cmd registry &7(&aanimations&7|&aactions&7|&amaterials&7|&aguitypeditems&7) &3- &2Mostrar la lista de elementos registrados'
+  - '&9/%cmd% help &3- &2Ayuda para el plugin'
+  - '&9/%cmd% keys &7(&aJugador&7) &3- &2Mostrar llaves'
+  - '&9/%cmd% opencase &7(&aTipo de Caja&7) &3- &2Abrir caja'
+  - '&9/%cmd% cases &3- &2Mostrar todas las cajas disponibles'
+  - '&9/%cmd% create &7(&aTipo de Caja&7) (&aNombre de la Caja&7) &3- &2Configurar caja &7(&6Mira el bloque&7)'
+  - '&9/%cmd% delete &7[&aNombre de la Caja&7]&3- &2Eliminar caja &7(&6Mira la caja&7)'
+  - '&9/%cmd% givekey &7(&aJugador&7) &7(&aTipo de Caja&7) &7(&aLlaves&7) &3- &2Dar llaves al jugador'
+  - '&9/%cmd% setkey &7(&aJugador&7) &7(&aTipo de Caja&7) &7(&aLlaves&7) &3- &2Establecer llaves del jugador'
+  - '&9/%cmd% delkey &7(&aJugador&7) &7(&aTipo de Caja&7) &7[&aLlaves&7] &3- &2Eliminar llaves de un jugador'
+  - '&9/%cmd% delkey all &3- &2Eliminar todas las llaves de todos los jugadores'
+  - '&9/%cmd% reload &3- &2Recargar configuración'
+  - '&9/%cmd% reload cache &3- &2Recargar cache'
+  - '&9/%cmd% addons &3- &2Mostrar complementos cargados'
+  - '&9/%cmd% addon &7(&aenable&7/&cdisable&7 | &aload&7/&cunload&7) (&aComplemento&7) &3- &2Gestionar complementos'
+  - '&9/%cmd% registry &7(&aanimations&7|&aactions&7|&amaterials&7|&aguitypeditems&7) &3- &2Mostrar la lista de elementos registrados'
 
 
 help-addons:
   format:
-    name: "&6%addon" # Leave it blank if you don't want to separate commands with addon names
-    description: "&3- &2%description"
-    command: "&9/dc %cmd %args %description"
+    name: "&6%addon%" # Leave it blank if you don't want to separate commands with addon names
+    description: "&3- &2%description%"
+    command: "&9/dc %cmd %args% %description%"
 help-player:
-  - '&9/%cmd help &3- &2Ayuda para el plugin'
-  - '&9/%cmd keys &3- &2Mostrar tus llaves'
-  - '&9/%cmd opencase &7(&aTipo de Caja&7) &3- &2Abrir caja'
+  - '&9/%cmd% help &3- &2Ayuda para el plugin'
+  - '&9/%cmd% keys &3- &2Mostrar tus llaves'
+  - '&9/%cmd% opencase &7(&aTipo de Caja&7) &3- &2Abrir caja'
 my-keys:
   - "&7Tus llaves:"
   - "&c&lDonate-&a&lCase &7- &a%keys_case% &7llaves"
 player-keys:
-  - "&7Llaves de %player:"
+  - "&7Llaves de %player%:"
   - "&c&lDonate-&a&lCase &7- &a%keys_case% &7llaves"

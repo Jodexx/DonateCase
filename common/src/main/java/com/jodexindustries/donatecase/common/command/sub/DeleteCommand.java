@@ -8,6 +8,7 @@ import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.common.command.DefaultCommand;
+import com.jodexindustries.donatecase.common.tools.LocalPlaceholder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -45,20 +46,27 @@ public class DeleteCommand extends DefaultCommand {
                 }
             }
         } else if (args.length == 1) {
-            String name = args[0];
+            String caseName = args[0];
 
-            CaseInfo caseInfo = api.getConfigManager().getCaseStorage().get(name);
+            CaseInfo caseInfo = api.getConfigManager().getCaseStorage().get(caseName);
             if (caseInfo != null) {
                 if (api.getAnimationManager().isLocked(caseInfo.location())) {
                     sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("case-opens")));
                     return true;
                 }
 
-                api.getConfigManager().getCaseStorage().delete(name);
+                api.getConfigManager().getCaseStorage().delete(caseName);
                 api.getHologramManager().remove(caseInfo.location());
                 sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("case-removed")));
             } else {
-                sender.sendMessage(DCTools.prefix(DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"), "%case:" + name)));
+                sender.sendMessage(
+                        DCTools.prefix(
+                                DCTools.rt(
+                                        api.getConfigManager().getMessages().getString("case-does-not-exist"),
+                                        LocalPlaceholder.of("%casename%", caseName)
+                                )
+                        )
+                );
             }
         }
         return true;

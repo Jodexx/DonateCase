@@ -13,6 +13,7 @@ import com.jodexindustries.donatecase.api.event.player.JoinEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.common.gui.items.OPENItemClickHandlerImpl;
+import com.jodexindustries.donatecase.common.tools.LocalPlaceholder;
 import net.kyori.event.PostOrders;
 import net.kyori.event.method.annotation.PostOrder;
 import net.kyori.event.method.annotation.Subscribe;
@@ -36,7 +37,10 @@ public class EventListener implements Subscriber {
                 if (version.isNew()) {
                     player.sendMessage(
                             DCTools.prefix(
-                                    DCTools.rt(api.getConfigManager().getMessages().getString("new-update"), "%version:" + version.getVersionNumber())
+                                    DCTools.rt(
+                                            api.getConfigManager().getMessages().getString("new-update"),
+                                            LocalPlaceholder.of("%version%", version.getVersionNumber())
+                                    )
                             )
                     );
                 }
