@@ -1,4 +1,4 @@
-config:
+config: # Please do not touch this section
   version: 25
   type: config
 
