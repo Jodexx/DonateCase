@@ -24,7 +24,7 @@ keys-given: '&eEl jugador &6%player% &eha recibido &c%key% &ellave(s)'
 keys-given-target: '&eHas recibido &c%key% &ellave(s) para la caja &6%casetitle%'
 keys-sets: '&eEl jugador &6%player% &eha establecido &c%key% &ellave(s)'
 keys-sets-target: '&eSe te han asignado &c%key &ellave(s) para la caja &6%casetitle%'
-keys-cleared: '&eEl jugador &6%player% &eha eliminado &c%key% &ellave(s) de la caja &6%case'
+keys-cleared: '&eEl jugador &6%player% &eha eliminado &c%key% &ellave(s) de la caja &6%casetype%'
 all-keys-cleared: '&eSe han eliminado todas las llaves del jugador'
 case-destroy-disallow: '&cEstá prohibido romper la caja de donación'
 no-keys: "&cNo tienes llaves para esta caja. Puedes comprarlas aquí >>> &6www.jodexindustries.xyz"

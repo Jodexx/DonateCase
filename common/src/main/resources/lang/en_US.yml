@@ -24,7 +24,7 @@ keys-given: '&ePlayer &6%player% &egiven &c%key% &ekey(s)'
 keys-given-target: '&eYou have been given &c%key% &ecase keys &6%casetitle%'
 keys-sets: '&ePlayer &6%player% &eset &c%key% &ekey(s)'
 keys-sets-target: '&eYou have been set &c%key% &ecase keys &6%casetitle%'
-keys-cleared: '&ePlayer &6%player% &ehad &c%key% &ekeys removed from &6%case'
+keys-cleared: '&ePlayer &6%player% &ehad &c%key% &ekeys removed from &6%casetype%'
 all-keys-cleared: '&eAll player keys have been removed'
 case-destroy-disallow: '&cDonate Case is forbidden to break'
 no-keys: "&cYou don't have keys for this case. You can buy them here >>> &6www.jodexindustries.xyz"
