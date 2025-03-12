@@ -131,7 +131,7 @@ public class RegistryCommand extends DefaultCommand {
             );
             for (CaseAction action : entry.getValue()) {
                 sender.sendMessage(
-                        DCTools.rc("&9- &a" + action.addon() + " &3- &2" + action.description())
+                        DCTools.rc("&9- &a" + action.name() + " &3- &2" + action.description())
                 );
             }
         }
