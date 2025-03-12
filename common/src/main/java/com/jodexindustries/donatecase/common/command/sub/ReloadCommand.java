@@ -33,7 +33,6 @@ public class ReloadCommand extends DefaultCommand {
                 sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("config-cache-reloaded",
                         "&aReloaded all DonateCase Cache")));
             }
-            return false;
         }
         return true;
     }
