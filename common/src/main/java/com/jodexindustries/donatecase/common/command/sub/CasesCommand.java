@@ -40,9 +40,4 @@ public class CasesCommand extends DefaultCommand {
         return true;
     }
 
-    @Override
-    public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
-        return new ArrayList<>();
-    }
-
 }

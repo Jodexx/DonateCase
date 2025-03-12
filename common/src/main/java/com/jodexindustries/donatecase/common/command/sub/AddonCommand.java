@@ -98,7 +98,7 @@ public class AddonCommand extends DefaultCommand {
             return;
         }
         if (!addon.isEnabled()) {
-            sender.sendMessage(DCTools.prefix("&cAddon &6" + addonName + "&calready disabled!"));
+            sender.sendMessage(DCTools.prefix("&cAddon &6" + addonName + " &calready disabled!"));
             return;
         }
         api.getAddonManager().disable(addon, PowerReason.DONATE_CASE);

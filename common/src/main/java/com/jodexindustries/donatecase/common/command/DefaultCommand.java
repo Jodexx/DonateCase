@@ -1,10 +1,12 @@
 package com.jodexindustries.donatecase.common.command;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
-import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
+import com.jodexindustries.donatecase.api.data.subcommand.*;
+import com.jodexindustries.donatecase.api.platform.DCCommandSender;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DefaultCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
@@ -26,5 +28,10 @@ public abstract class DefaultCommand implements SubCommandExecutor, SubCommandTa
                 .tabCompleter(this)
                 .executor(this)
                 .build();
+    }
+
+    @Override
+    public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, @NotNull String[] args) throws SubCommandException {
+        return new ArrayList<>();
     }
 }

@@ -29,11 +29,6 @@ public class AddonsCommand extends DefaultCommand {
         return true;
     }
 
-    @Override
-    public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
-        return new ArrayList<>();
-    }
-
     private @NotNull StringBuilder compileAddons(List<InternalJavaAddon> addons) {
         StringBuilder builder = new StringBuilder();
         if (addons != null && !addons.isEmpty()) {
