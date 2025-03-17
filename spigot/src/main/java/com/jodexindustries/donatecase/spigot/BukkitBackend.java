@@ -36,7 +36,7 @@ import com.jodexindustries.donatecase.spigot.materials.*;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import com.jodexindustries.donatecase.spigot.tools.Metrics;
 import com.jodexindustries.donatecase.spigot.tools.ToolsImpl;
-import com.jodexindustries.donatecase.spigot.hook.PacketEventsSupport;
+import com.jodexindustries.donatecase.spigot.hook.packetevents.PacketEventsSupport;
 import com.jodexindustries.donatecase.spigot.hook.papi.PAPISupport;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -93,15 +93,15 @@ public class BukkitBackend extends BackendPlatform {
         registerDefaultActions();
         registerDefaultMaterials();
 
-        loadPacketEventsAPI();
-        loadLuckPerms();
-        loadHologramDrivers();
-
         Bukkit.getServer().getPluginManager().registerEvents(new EventListener(this), plugin);
 
         api.load();
         // after config load
+
         loadMetrics();
+        loadPacketEventsAPI();
+        loadLuckPerms();
+        loadHologramDrivers();
     }
 
     @Override

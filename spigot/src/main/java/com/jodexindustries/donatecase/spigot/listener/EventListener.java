@@ -1,6 +1,8 @@
 package com.jodexindustries.donatecase.spigot.listener;
 
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
+import com.jodexindustries.donatecase.api.event.player.ArmorStandCreatorInteractEvent;
 import com.jodexindustries.donatecase.spigot.BukkitBackend;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
@@ -12,8 +14,6 @@ import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -72,12 +72,19 @@ public class EventListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void PlayerInteractEntity(PlayerInteractAtEntityEvent e) {
-        Entity entity = e.getRightClicked();
-        if (entity instanceof ArmorStand) {
-            if (entity.hasMetadata("case")) {
-                e.setCancelled(true);
-            }
-        }
+        ArmorStandCreator creator = ArmorStandCreator.armorStands.get(e.getRightClicked().getEntityId());
+        if (creator == null) return;
+
+        e.setCancelled(true);
+
+        DCPlayer player = BukkitUtils.fromBukkit(e.getPlayer());
+
+        com.jodexindustries.donatecase.api.armorstand.EquipmentSlot hand =
+                e.getHand() == EquipmentSlot.HAND ?
+                        com.jodexindustries.donatecase.api.armorstand.EquipmentSlot.HAND :
+                        com.jodexindustries.donatecase.api.armorstand.EquipmentSlot.OFF_HAND;
+
+        backend.getAPI().getEventBus().post(new ArmorStandCreatorInteractEvent(player, creator, hand));
     }
 
     @EventHandler

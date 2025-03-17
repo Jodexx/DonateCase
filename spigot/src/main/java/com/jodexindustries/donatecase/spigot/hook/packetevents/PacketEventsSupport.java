@@ -1,6 +1,8 @@
-package com.jodexindustries.donatecase.spigot.hook;
+package com.jodexindustries.donatecase.spigot.hook.packetevents;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.PacketEventsAPI;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.jodexindustries.donatecase.spigot.BukkitBackend;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
@@ -11,6 +13,9 @@ import me.tofaa.entitylib.spigot.SpigotEntityLibPlatform;
 import org.bukkit.Bukkit;
 
 public class PacketEventsSupport {
+
+    private final PacketEventsAPI<?> api = PacketEvents.getAPI();
+    private final PacketEventsPacketListener listener = new PacketEventsPacketListener();
 
     private final BukkitBackend backend;
 
@@ -35,12 +40,14 @@ public class PacketEventsSupport {
             }
             PacketEvents.setAPI(SpigotPacketEventsBuilder.build(backend.getPlugin()));
             SpigotEntityLibPlatform platform = new SpigotEntityLibPlatform(backend.getPlugin());
-            APIConfig settings = new APIConfig(PacketEvents.getAPI())
+            APIConfig settings = new APIConfig(api)
                     .tickTickables()
                     .trackPlatformEntities();
             EntityLib.init(platform, settings);
 
-            if (PacketEvents.getAPI().isLoaded()) {
+            api.getEventManager().registerListener(listener, PacketListenerPriority.NORMAL);
+
+            if (api.isLoaded()) {
                 backend.getLogger().info("Hooked to packetevents");
                 usePackets = true;
             } else {
@@ -50,7 +57,7 @@ public class PacketEventsSupport {
     }
 
     public void unload() {
-        PacketEvents.getAPI().terminate();
+        api.terminate();
     }
 
     private ServerVersion getServerVersion() {
@@ -63,4 +70,4 @@ public class PacketEventsSupport {
         return ServerVersion.ERROR;
     }
 
-}
+    }
