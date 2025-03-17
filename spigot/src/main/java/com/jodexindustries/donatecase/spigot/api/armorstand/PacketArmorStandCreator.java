@@ -1,11 +1,13 @@
 package com.jodexindustries.donatecase.spigot.api.armorstand;
 
+import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
@@ -17,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class PacketArmorStandCreator implements ArmorStandCreator {
@@ -114,12 +117,14 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void setCustomName(String displayName) {
-        if(displayName != null) meta.setCustomName(LegacyComponentSerializer.legacyAmpersand().deserialize(displayName));
+        if(displayName != null)
+            meta.setIndex((byte) 2, EntityDataTypes.OPTIONAL_ADV_COMPONENT,
+                    Optional.of(LegacyComponentSerializer.legacyAmpersand().deserialize(DCTools.rc(displayName))));
     }
 
     @Override
     public void setGravity(boolean isGravity) {
-        meta.setHasNoGravity(isGravity);
+        meta.setIndex((byte) 5, EntityDataTypes.BOOLEAN, isGravity);
     }
 
     @Override
@@ -143,7 +148,7 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void setCustomNameVisible(boolean flag) {
-        meta.setCustomNameVisible(flag);
+        meta.setIndex((byte) 3, EntityDataTypes.BOOLEAN, flag);
     }
 
     @Override
@@ -154,6 +159,11 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
     @Override
     public @NotNull UUID getUniqueId() {
         return entity.getUuid();
+    }
+
+    @Override
+    public int getEntityId() {
+        return entity.getEntityId();
     }
 
     @Override

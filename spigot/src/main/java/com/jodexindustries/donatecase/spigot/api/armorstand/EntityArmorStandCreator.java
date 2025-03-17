@@ -117,6 +117,11 @@ public class EntityArmorStandCreator implements ArmorStandCreator {
     }
 
     @Override
+    public int getEntityId() {
+        return entity.getEntityId();
+    }
+
+    @Override
     public void setGravity(boolean hasGravity) {
         entity.setGravity(hasGravity);
     }
