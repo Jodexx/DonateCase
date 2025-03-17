@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class PacketArmorStandCreator implements ArmorStandCreator {
+
     private CaseLocation location;
     private final WrapperLivingEntity entity;
     private final ArmorStandMeta meta;
@@ -34,6 +35,7 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
 
         this.location = location;
 
+        ArmorStandCreator.armorStands.put(entity.getEntityId(), this);
     }
 
     @Override
@@ -164,6 +166,7 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void remove() {
+        ArmorStandCreator.armorStands.remove(entity.getEntityId());
         entity.remove();
     }
 

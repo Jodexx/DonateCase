@@ -4,9 +4,14 @@ import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public interface ArmorStandCreator {
+
+    Map<Integer, ArmorStandCreator> armorStands = new HashMap<>();
+
     void setVisible(boolean isVisible);
 
     void setCustomName(@Nullable String displayName);

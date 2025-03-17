@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class EntityArmorStandCreator implements ArmorStandCreator {
+
     private final ArmorStand entity;
 
     public EntityArmorStandCreator(Location location) {
@@ -28,6 +29,8 @@ public class EntityArmorStandCreator implements ArmorStandCreator {
         entity.setMetadata("case",
                 new FixedMetadataValue(BukkitUtils.getDonateCase(), "case")
         );
+
+        ArmorStandCreator.armorStands.put(entity.getEntityId(), this);
     }
 
     @Override
@@ -120,6 +123,7 @@ public class EntityArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void remove() {
+        ArmorStandCreator.armorStands.remove(entity.getEntityId());
         entity.remove();
     }
 }
