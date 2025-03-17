@@ -64,18 +64,29 @@ public class KeysCommand extends DefaultCommand {
     public static String formatMessage(String player, String message, boolean cached, String caseType) {
         String placeholder = DCTools.getLocalPlaceholder(message);
         String result = "0";
-        if (placeholder.startsWith("keys_")) {
-            String[] parts = placeholder.split("_");
 
-            if(caseType == null) caseType = parts[1];
-            int keys = cached ? DCAPI.getInstance().getCaseKeyManager().getCache(caseType, player) :
-                    DCAPI.getInstance().getCaseKeyManager().get(caseType, player);
-            if (parts.length == 2) {
-                result = String.valueOf(keys);
-            } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
-                result = NumberFormat.getNumberInstance().format(keys);
+        if (placeholder.equals("keys") || placeholder.equals("keys_format")) {
+            if (caseType != null) {
+                int keys = cached ? DCAPI.getInstance().getCaseKeyManager().getCache(caseType, player) :
+                        DCAPI.getInstance().getCaseKeyManager().get(caseType, player);
+                result = placeholder.equals("keys_format") ? NumberFormat.getNumberInstance().format(keys) : String.valueOf(keys);
+            }
+        } else if (placeholder.startsWith("keys_")) {
+            String[] parts = placeholder.split("_");
+            if (caseType == null && parts.length > 1) caseType = parts[1];
+
+            if (caseType != null) {
+                int keys = cached ? DCAPI.getInstance().getCaseKeyManager().getCache(caseType, player) :
+                        DCAPI.getInstance().getCaseKeyManager().get(caseType, player);
+
+                if (parts.length == 2) {
+                    result = String.valueOf(keys);
+                } else if (parts.length == 3 && parts[2].equalsIgnoreCase("format")) {
+                    result = NumberFormat.getNumberInstance().format(keys);
+                }
             }
         }
+
         return DCTools.rc(message.replace("%" + placeholder + "%", result));
     }
 
