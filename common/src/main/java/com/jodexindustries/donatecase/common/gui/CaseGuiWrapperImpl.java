@@ -143,67 +143,36 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
     private List<String> setPlaceholders(List<String> lore) {
         return lore.stream().map(this::setPlaceholders).collect(Collectors.toList());
     }
-
-    /**
-     * Gets GUI Inventory
-     *
-     * @return inventory
-     */
     @NotNull
     @Override
     public CaseInventory getInventory() {
         return inventory;
     }
 
-    /**
-     * Gets location where GUI opened
-     *
-     * @return GUI location
-     */
     @NotNull
     @Override
     public CaseLocation getLocation() {
         return location;
     }
 
-    /**
-     * Gets player who opened GUI
-     *
-     * @return player who opened
-     */
     @NotNull
     @Override
     public DCPlayer getPlayer() {
         return player;
     }
 
-    /**
-     * Gets GUI CaseData. Can be modified, cause this is clone of original {@link com.jodexindustries.donatecase.api.manager.CaseManager#get(String)}
-     *
-     * @return data
-     */
     @NotNull
     @Override
     public CaseData getCaseData() {
         return caseData;
     }
 
-    /**
-     * Gets temporary GUI. Used for updating placeholders, if UpdateRate enabled
-     *
-     * @return GUI
-     */
     @NotNull
     @Override
     public CaseGui getTemporary() {
         return temporary;
     }
 
-    /**
-     * Gets GUI global history data
-     *
-     * @return global history data
-     */
     @NotNull
     @Override
     public List<CaseData.History> getGlobalHistoryData() {
