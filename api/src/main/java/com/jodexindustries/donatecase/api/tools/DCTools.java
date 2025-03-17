@@ -126,7 +126,7 @@ public abstract class DCTools {
                 result.replace(index, index + placeholder.name().length(), placeholder.value());
             }
         }
-        return result.toString();
+        return rc(result.toString());
     }
 
     public static List<String> rt(List<String> text, Collection<? extends Placeholder> placeholders) {
