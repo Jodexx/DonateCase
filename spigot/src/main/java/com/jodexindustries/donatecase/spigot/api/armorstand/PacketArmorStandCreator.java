@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,6 +40,18 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
         this.location = location;
 
         ArmorStandCreator.armorStands.put(entity.getEntityId(), this);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        PacketArmorStandCreator that = (PacketArmorStandCreator) object;
+        return getEntityId() == that.getEntityId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getEntityId());
     }
 
     @Override

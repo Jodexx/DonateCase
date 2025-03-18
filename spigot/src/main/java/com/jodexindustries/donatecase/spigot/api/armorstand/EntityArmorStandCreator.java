@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class EntityArmorStandCreator implements ArmorStandCreator {
@@ -31,6 +32,18 @@ public class EntityArmorStandCreator implements ArmorStandCreator {
         );
 
         ArmorStandCreator.armorStands.put(entity.getEntityId(), this);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        EntityArmorStandCreator that = (EntityArmorStandCreator) object;
+        return Objects.equals(entity, that.entity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(entity);
     }
 
     @Override
