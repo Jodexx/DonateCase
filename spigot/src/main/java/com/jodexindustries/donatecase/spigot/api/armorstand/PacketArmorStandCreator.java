@@ -26,10 +26,12 @@ import java.util.UUID;
 public class PacketArmorStandCreator implements ArmorStandCreator {
 
     private CaseLocation location;
+    private final UUID animationId;
     private final WrapperLivingEntity entity;
     private final ArmorStandMeta meta;
 
-    public PacketArmorStandCreator(CaseLocation location) {
+    public PacketArmorStandCreator(UUID animationId, CaseLocation location) {
+        this.animationId = animationId;
         entity = new WrapperLivingEntity(EntityTypes.ARMOR_STAND);
         entity.getEquipment().setNotifyChanges(true);
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -172,6 +174,11 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
     @Override
     public @NotNull UUID getUniqueId() {
         return entity.getUuid();
+    }
+
+    @Override
+    public UUID getAnimationId() {
+        return animationId;
     }
 
     @Override

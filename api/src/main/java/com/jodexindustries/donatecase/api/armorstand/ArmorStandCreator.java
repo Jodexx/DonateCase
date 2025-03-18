@@ -46,6 +46,8 @@ public interface ArmorStandCreator {
     @NotNull
     UUID getUniqueId();
 
+    UUID getAnimationId();
+
     int getEntityId();
 
     default void spawn() {

@@ -6,9 +6,10 @@ import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.animation.Animation;
 import com.jodexindustries.donatecase.api.event.Subscriber;
 import com.jodexindustries.donatecase.api.event.player.ArmorStandCreatorInteractEvent;
-import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import net.kyori.event.method.annotation.Subscribe;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class SelectAnimationListener implements Subscriber {
 
@@ -16,33 +17,30 @@ public class SelectAnimationListener implements Subscriber {
 
     @Subscribe
     public void onInteract(ArmorStandCreatorInteractEvent event) {
-        Animation animation = getAnimation(event.player());
+        ArmorStandCreator creator = event.armorStandCreator();
+        SelectAnimation animation = getAnimation(creator.getAnimationId());
         if (animation == null) return;
-        if (!(animation instanceof SelectAnimation)) return;
 
-        SelectAnimation selectAnimation = (SelectAnimation) animation;
-        SelectAnimation.Task task = selectAnimation.getTask();
+        SelectAnimation.Task task = animation.getTask();
         if (task.selected || !task.canSelect) return;
 
         task.selected = true;
 
-        ArmorStandCreator creator = event.armorStandCreator();
-
-        creator.setEquipment(task.itemSlot, selectAnimation.getWinItem().material().itemStack());
-        if (selectAnimation.getWinItem().material().displayName() != null && !selectAnimation.getWinItem().material().displayName().isEmpty())
+        creator.setEquipment(task.itemSlot, animation.getWinItem().material().itemStack());
+        if (animation.getWinItem().material().displayName() != null && !animation.getWinItem().material().displayName().isEmpty())
             creator.setCustomNameVisible(true);
-        creator.setCustomName(api.getPlatform().getPAPI().setPlaceholders(event.player(), selectAnimation.getWinItem().material().displayName()));
+        creator.setCustomName(api.getPlatform().getPAPI().setPlaceholders(event.player(), animation.getWinItem().material().displayName()));
         creator.updateMeta();
     }
 
     @Nullable
-    private Animation getAnimation(DCPlayer player) {
-        for (ActiveCase activeCase : api.getAnimationManager().getActiveCases().values()) {
-            if (activeCase.player().getUniqueId().equals(player.getUniqueId())) {
-                return activeCase.animation();
-            }
-        }
+    private SelectAnimation getAnimation(UUID uuid) {
+        ActiveCase activeCase = api.getAnimationManager().getActiveCases().get(uuid);
+        if (activeCase == null) return null;
 
-        return null;
+        Animation animation = activeCase.animation();
+        if (!(animation instanceof SelectAnimation)) return null;
+
+        return (SelectAnimation) animation;
     }
 }

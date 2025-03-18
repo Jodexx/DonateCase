@@ -32,7 +32,7 @@ public class FireworkAnimation extends BukkitJavaAnimation {
 
         getLocation().add(x, y, z);
 
-        final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getLocation());
+        final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getUuid(), getLocation());
 
         boolean small = getSettings().node("SmallArmorStand").getBoolean(true);
 

@@ -54,7 +54,7 @@ public class SelectAnimation extends BukkitJavaAnimation {
                         facing = "east";
                     }
 
-                    final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getLocation());
+                    final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getUuid(), getLocation());
 
                     as.setVisible(false);
 

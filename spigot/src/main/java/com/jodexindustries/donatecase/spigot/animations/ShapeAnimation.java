@@ -36,7 +36,7 @@ public class ShapeAnimation extends BukkitJavaAnimation {
         getLocation().add(x, y, z);
 
         final ArmorStandEulerAngle armorStandEulerAngle = getSettings().node("Pose").get(ArmorStandEulerAngle.class);
-        final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getLocation());
+        final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getUuid(), getLocation());
 
         boolean small = getSettings().node("Shape", "SmallArmorStand").getBoolean(true);
         if(armorStandEulerAngle != null) as.setAngle(armorStandEulerAngle);

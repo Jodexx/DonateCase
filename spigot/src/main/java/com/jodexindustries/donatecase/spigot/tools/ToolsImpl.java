@@ -11,6 +11,8 @@ import com.jodexindustries.donatecase.spigot.api.platform.BukkitInventory;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.UUID;
+
 public class ToolsImpl extends DCToolsBukkit {
 
     private final BukkitBackend backend;
@@ -25,11 +27,11 @@ public class ToolsImpl extends DCToolsBukkit {
     }
 
     @Override
-    public ArmorStandCreator createArmorStand(CaseLocation location) {
+    public ArmorStandCreator createArmorStand(UUID animationId, CaseLocation location) {
         if (backend.getPacketEventsSupport() != null && backend.getPacketEventsSupport().isUsePackets()) {
-            return new PacketArmorStandCreator(location);
+            return new PacketArmorStandCreator(animationId, location);
         } else {
-            return new EntityArmorStandCreator(BukkitUtils.toBukkit(location));
+            return new EntityArmorStandCreator(animationId, BukkitUtils.toBukkit(location));
         }
     }
 

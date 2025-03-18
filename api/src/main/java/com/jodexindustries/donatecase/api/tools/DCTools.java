@@ -33,7 +33,7 @@ public abstract class DCTools {
 
     public abstract CaseInventory createInventory(int size, String title);
 
-    public abstract ArmorStandCreator createArmorStand(CaseLocation location);
+    public abstract ArmorStandCreator createArmorStand(UUID animationUuid, CaseLocation location);
 
     public abstract Object loadCaseItem(String id);
 

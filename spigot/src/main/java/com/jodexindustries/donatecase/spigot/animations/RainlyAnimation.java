@@ -30,7 +30,7 @@ public class RainlyAnimation extends BukkitJavaAnimation {
     public void start() {
         Particle particle = Particle.valueOf(getSettings().node("FallingParticle").getString());
 
-        ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getLocation().clone().add(0.5, 1, 0.5));
+        ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getUuid(), getLocation().clone().add(0.5, 1, 0.5));
         ArmorStandEulerAngle armorStandEulerAngle = getSettings().node("Pose").get(ArmorStandEulerAngle.class);
         if(armorStandEulerAngle != null) as.setAngle(armorStandEulerAngle);
         as.setCustomNameVisible(true);

@@ -52,7 +52,7 @@ public class PopAnimation extends BukkitJavaAnimation {
                         getLocation().x(origX + horizonOffset);
                     }
 
-                    final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getLocation());
+                    final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getUuid(), getLocation());
 
                     as.setVisible(false);
                     as.setGravity(false);

@@ -185,7 +185,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
     private ArmorStandCreator spawnArmorStand(CaseLocation location, CaseDataItem item, boolean small) {
         CaseDataMaterial material = item.material();
 
-        ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(location);
+        ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getUuid(), location);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);

@@ -18,9 +18,11 @@ import java.util.UUID;
 
 public class EntityArmorStandCreator implements ArmorStandCreator {
 
+    private final UUID animationId;
     private final ArmorStand entity;
 
-    public EntityArmorStandCreator(Location location) {
+    public EntityArmorStandCreator(UUID animationId, Location location) {
+        this.animationId = animationId;
         World world = location.getWorld();
         if (world == null) {
             entity = null;
@@ -127,6 +129,11 @@ public class EntityArmorStandCreator implements ArmorStandCreator {
     @Override
     public @NotNull UUID getUniqueId() {
         return entity.getUniqueId();
+    }
+
+    @Override
+    public UUID getAnimationId() {
+        return animationId;
     }
 
     @Override
