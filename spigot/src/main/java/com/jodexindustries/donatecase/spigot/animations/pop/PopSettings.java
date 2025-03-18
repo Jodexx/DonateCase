@@ -9,7 +9,7 @@ import org.spongepowered.configurate.objectmapping.meta.Setting;
 public class PopSettings {
 
     @Setting("Scroll")
-    public Scroll scroll;
+    public Scroll scroll = new Scroll();
 
     @Setting("Facing")
     public Facing facing = Facing.SOUTH;
@@ -43,17 +43,17 @@ public class PopSettings {
     public static class Scroll {
 
         @Setting("Sound")
-        private String sound;
+        private String sound = "ENTITY_ITEM_PICKUP";
 
         @Setting("Volume")
-        public float volume;
+        public float volume = 10;
 
         @Setting("Pitch")
-        public float pitch;
+        public float pitch = 1;
 
         // parse sound without Configurate TypeSerializer due Bukkit has interface instead of enum
         public Sound sound() {
-            if (sound == null) return null;
+            if (sound == null || sound.isEmpty()) return null;
             try {
                 return Sound.valueOf(sound);
             } catch (IllegalArgumentException e) {

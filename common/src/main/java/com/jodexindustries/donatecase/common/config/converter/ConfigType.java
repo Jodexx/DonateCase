@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.common.config.converter;
 
+import com.jodexindustries.donatecase.common.config.converter.migrators.AnimationsMigrator_1_4_to_1_5;
 import com.jodexindustries.donatecase.common.config.converter.migrators.CaseMigrator_1_2_to_1_3;
 import com.jodexindustries.donatecase.common.config.converter.migrators.CasesMigrator_1_0_to_1_1;
 import com.jodexindustries.donatecase.common.config.converter.migrators.UnknownMigrator;
@@ -18,7 +19,9 @@ public enum ConfigType {
     CASE_GUI(10),
     CASE_SETTINGS(10),
     CASE_ITEMS(10),
-    ANIMATIONS(14),
+    ANIMATIONS(15, new HashMap<Integer, ConfigMigrator>() {{
+        put(14, new AnimationsMigrator_1_4_to_1_5());
+    }}),
     CASES(11, new HashMap<Integer, ConfigMigrator>() {{
         put(10, new CasesMigrator_1_0_to_1_1());
     }}),

@@ -1,5 +1,5 @@
 config: # Please do not touch this section
-  version: 14
+  version: 15
   type: animations
 
 SHAPE:
@@ -127,3 +127,5 @@ POP:
   Facing: EAST
   Rounded: true
   Radius: 1.5
+#  Period: 0
+#  ItemSlot: HEAD
