@@ -31,21 +31,18 @@ public class MessagesImpl implements Messages {
     }
 
     @Override
-    public @NotNull String getString(@NotNull String path) {
+    public @NotNull String getString(@NotNull Object... path) {
         String value = config.node(path).getString();
-        return value == null ? path : value;
+        return value == null ? "" : value;
     }
 
     @Override
     public @NotNull String getString(@NotNull String path, @NotNull String def) {
-        String value = getString(path);
-        if(value.equals(path)) return def;
-
-        return value;
+        return config.node((Object[]) path.split("\\.")).getString(def);
     }
 
     @Override
-    public List<String> getStringList(@NotNull String path) {
+    public @NotNull List<String> getStringList(@NotNull String path) {
         try {
             return config.node(path).getList(String.class, new ArrayList<>());
         } catch (SerializationException e) {

@@ -11,11 +11,12 @@ public interface Messages {
     Config get();
 
     @NotNull
-    String getString(@NotNull String path);
+    String getString(@NotNull Object... path);
 
     @NotNull
     String getString(@NotNull String path, @NotNull String def);
 
+    @NotNull
     List<String> getStringList(@NotNull String path);
 
     void load(@NotNull String language) throws ConfigurateException;

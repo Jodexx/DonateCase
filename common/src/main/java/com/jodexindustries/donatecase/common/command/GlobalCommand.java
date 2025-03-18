@@ -96,9 +96,9 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
 
     private void sendAddonHelpMessages(DCCommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
         addonsMap.forEach((addon, commands) -> {
-            if (!addon.equalsIgnoreCase("DonateCase") && DCTools.isHasCommandForSender(sender, addonsMap, addon)) {
-                String addonNameFormat = backend.getAPI().getConfigManager().getMessages().getString("help-addons.format.name");
-                if (!addonNameFormat.isEmpty() && !addonNameFormat.equals("help-addons.format.name")) {
+            if (!addon.equalsIgnoreCase("DonateCase") && DCTools.isHasCommandForSender(sender, commands)) {
+                String addonNameFormat = backend.getAPI().getConfigManager().getMessages().getString("help-addons", "format", "name");
+                if (!addonNameFormat.isEmpty()) {
                     sender.sendMessage(
                             DCTools.rc(
                                     DCTools.rt(addonNameFormat, LocalPlaceholder.of("%addon", addon))
@@ -109,14 +109,14 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
                 commands.forEach(command -> command.forEach((commandName, subCommand) -> {
                     String description = subCommand.description();
                     description = (description != null) ? DCTools.rt(
-                            backend.getAPI().getConfigManager().getMessages().getString("help-addons.format.description"),
+                            backend.getAPI().getConfigManager().getMessages().getString("help-addons", "format", "description"),
                             LocalPlaceholder.of("%description%", description)) : "";
 
                     StringBuilder argsBuilder = compileSubCommandArgs(subCommand.args());
                     String permission = subCommand.permission();
 
                     if (permission == null || sender.hasPermission(permission)) {
-                        sender.sendMessage(DCTools.rc(DCTools.rt(backend.getAPI().getConfigManager().getMessages().getString("help-addons.format.command"),
+                        sender.sendMessage(DCTools.rc(DCTools.rt(backend.getAPI().getConfigManager().getMessages().getString("help-addons", "format", "command"),
                                 LocalPlaceholder.of("%cmd%", commandName),
                                 LocalPlaceholder.of("%args%", argsBuilder),
                                 LocalPlaceholder.of("%description%", description)

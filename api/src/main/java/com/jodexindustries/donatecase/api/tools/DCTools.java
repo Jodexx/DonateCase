@@ -144,11 +144,6 @@ public abstract class DCTools {
         return list.stream().map(DCTools::rc).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public static boolean isHasCommandForSender(DCCommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap, String addon) {
-        List<Map<String, SubCommand>> commands = addonsMap.get(addon);
-        return isHasCommandForSender(sender, commands);
-    }
-
     public static boolean isHasCommandForSender(DCCommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
         return addonsMap.keySet().stream().map(addonsMap::get).anyMatch(commands -> isHasCommandForSender(sender, commands));
     }
