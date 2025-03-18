@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.data;
 
+import com.jodexindustries.donatecase.api.data.animation.Animation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
@@ -22,6 +23,7 @@ public class ActiveCase {
     private final DCPlayer player;
     private final CaseDataItem winItem;
     private final String caseType;
+    private final Animation animation;
 
     private boolean locked;
     private boolean keyRemoved;
@@ -32,11 +34,12 @@ public class ActiveCase {
      * @param block    Case block
      * @param caseType Case type
      */
-    public ActiveCase(UUID uuid, CaseLocation block, DCPlayer player, CaseDataItem winItem, String caseType) {
+    public ActiveCase(UUID uuid, CaseLocation block, DCPlayer player, CaseDataItem winItem, String caseType, Animation animation) {
         this.uuid = uuid;
         this.block = block;
         this.player = player;
         this.winItem = winItem;
         this.caseType = caseType;
+        this.animation = animation;
     }
 }

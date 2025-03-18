@@ -115,8 +115,6 @@ public class AnimationManagerImpl implements AnimationManager {
         winItem = event.winItem();
 
         UUID uuid = UUID.randomUUID();
-        ActiveCase activeCase = new ActiveCase(uuid, temp, player, winItem, caseData.caseType());
-        activeCase.locked(caseAnimation.isRequireBlock());
 
         CompletableFuture<UUID> animationCompletion = new CompletableFuture<>();
 
@@ -144,6 +142,9 @@ public class AnimationManagerImpl implements AnimationManager {
 
             Animation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
             javaAnimation.init(player, temp.clone(), uuid, caseData, winItem, settings);
+
+            ActiveCase activeCase = new ActiveCase(uuid, temp, player, winItem, caseData.caseType(), javaAnimation);
+            activeCase.locked(caseAnimation.isRequireBlock());
 
             activeCases.put(uuid, activeCase);
             activeCasesByBlock.computeIfAbsent(temp, k -> new ArrayList<>()).add(uuid);
