@@ -16,6 +16,8 @@ import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.spigot.animations.*;
 import com.jodexindustries.donatecase.spigot.animations.pop.PopAnimation;
+import com.jodexindustries.donatecase.spigot.animations.select.SelectAnimation;
+import com.jodexindustries.donatecase.spigot.animations.select.SelectAnimationListener;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
@@ -286,16 +288,18 @@ public class BukkitBackend extends BackendPlatform {
                         .build()
         );
 
-//        manager.register(
-//                CaseAnimation.builder()
-//                        .name("SELECT")
-//                        .addon(this)
-//                        .animation(SelectAnimation.class)
-//                        .description("Select ur prize manually")
-//                        .requireSettings(true)
-//                        .requireBlock(true)
-//                        .build()
-//        );
+        manager.register(
+                CaseAnimation.builder()
+                        .name("SELECT")
+                        .addon(this)
+                        .animation(SelectAnimation.class)
+                        .description("Select your prize manually")
+                        .requireSettings(true)
+                        .requireBlock(true)
+                        .build()
+        );
+
+        api.getEventBus().register(new SelectAnimationListener());
 
         manager.register(
                 CaseAnimation.builder()

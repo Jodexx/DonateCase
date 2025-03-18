@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.spigot.animations;
+package com.jodexindustries.donatecase.spigot.animations.select;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -7,8 +7,11 @@ import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.spigot.tools.Pair;
-import lombok.SneakyThrows;
-import org.bukkit.*;
+import lombok.Getter;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -16,11 +19,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
+@Getter
 public class SelectAnimation extends BukkitJavaAnimation {
 
     private final static DCAPI api = DCAPI.getInstance();
 
-    @SneakyThrows
+    private Task task;
+
     @Override
     public void start() {
         List<Pair<ArmorStandCreator, CaseLocation>> asList = new ArrayList<>();
@@ -30,7 +35,6 @@ public class SelectAnimation extends BukkitJavaAnimation {
         CaseLocation origCaseLocation = new CaseLocation(origX, origY, origZ);
 
         String facing = getSettings().node("Facing").getString();
-        System.out.println(facing);
 
         for (double y = -1; y < 2; y++) {
             for (double hor_offset = -1; hor_offset < 2; hor_offset++) {
@@ -44,7 +48,7 @@ public class SelectAnimation extends BukkitJavaAnimation {
                         } else if (facing.equals("south") || facing.equals("north")) {
                             getLocation().x(origX + hor_offset);
                         } else {
-                            throw new Exception("Incorrect facing in config");
+                            throw new RuntimeException("Incorrect facing in config");
                         }
                     } else {
                         facing = "east";
@@ -74,23 +78,28 @@ public class SelectAnimation extends BukkitJavaAnimation {
 
         long period = getSettings().node("Scroll", "Period").getLong();
 
-        api.getPlatform().getScheduler().run(api.getPlatform(), new Task(asList, origCaseLocation, facing), 0L, period);
+        this.task = new Task(asList, origCaseLocation, facing);
+
+        api.getPlatform().getScheduler().run(api.getPlatform(), task, 0L, period);
     }
 
-    private class Task implements Consumer<SchedulerTask> {
+    public class Task implements Consumer<SchedulerTask> {
 
         private int tick;
 
         private final CaseLocation location;
-        private List<Pair<ArmorStandCreator, CaseLocation>> asList;
+        private final List<Pair<ArmorStandCreator, CaseLocation>> asList;
 
-        private final EquipmentSlot itemSlot;
+        public final EquipmentSlot itemSlot;
         private final World world;
         private final String facing;
 
+        public boolean canSelect = false;
+
+        public volatile boolean selected = false;
 
         private Pair<ArmorStandCreator, CaseLocation> randomAS;
-        private List<ArmorStandCreator> toDelete = new ArrayList<>();
+        private final List<ArmorStandCreator> toDelete = new ArrayList<>();
 
         public Task(final List<Pair<ArmorStandCreator, CaseLocation>> asList, CaseLocation location, String facing) {
             this.asList = asList;
@@ -102,7 +111,6 @@ public class SelectAnimation extends BukkitJavaAnimation {
             this.facing = facing;
         }
 
-        @SneakyThrows
         @Override
         public void accept(SchedulerTask task) {
             if (tick == 0) {
@@ -128,12 +136,12 @@ public class SelectAnimation extends BukkitJavaAnimation {
 
                 as.setEquipment(itemSlot, new ItemStack(Material.CHEST));
                 as.updateMeta();
-                CaseLocation _location = as.getLocation();
+                CaseLocation currentLocation = as.getLocation();
 
                 as.teleport(as.getLocation().add(
-                        _location.x() > needLocation.x() ? -0.1 : (Math.abs(_location.x() - needLocation.x()) < 1e-6 ? 0 : 0.1),
-                        _location.y() > needLocation.y() ? -0.1 : (Math.abs(_location.y() - needLocation.y()) < 1e-6 ? 0 : 0.1),
-                        _location.z() > needLocation.z() ? -0.1 : (Math.abs(_location.z() - needLocation.z()) < 1e-6 ? 0 : 0.1)
+                        currentLocation.x() > needLocation.x() ? -0.1 : (Math.abs(currentLocation.x() - needLocation.x()) < 1e-6 ? 0 : 0.1),
+                        currentLocation.y() > needLocation.y() ? -0.1 : (Math.abs(currentLocation.y() - needLocation.y()) < 1e-6 ? 0 : 0.1),
+                        currentLocation.z() > needLocation.z() ? -0.1 : (Math.abs(currentLocation.z() - needLocation.z()) < 1e-6 ? 0 : 0.1)
                 ));
                 as.teleport(as.getLocation());
 
@@ -143,16 +151,33 @@ public class SelectAnimation extends BukkitJavaAnimation {
 
             }
 
-            if (tick >= 100) {
-                preEnd();
-                for (ArmorStandCreator as : toDelete) {
-                    as.remove();
+            if (tick == 90) {
+                this.canSelect = true;
+            }
+
+            if (tick > 90) {
+                // event
+                if (this.selected) {
+                    task.cancel();
+                    api.getPlatform().getScheduler().run(api.getPlatform(), this::end, 40L);
                 }
+            }
+
+            // timeout
+            if (tick >= 1000) {
                 task.cancel();
                 end();
-
             }
             tick++;
+        }
+
+        private void end() {
+            SelectAnimation.super.preEnd();
+            for (ArmorStandCreator as : toDelete) {
+                as.remove();
+            }
+
+            SelectAnimation.super.end();
         }
 
         private int getYaw(String facing) {
@@ -168,4 +193,5 @@ public class SelectAnimation extends BukkitJavaAnimation {
             }
         }
     }
+
 }
