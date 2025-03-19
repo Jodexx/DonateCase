@@ -71,6 +71,82 @@ public class CaseLocation implements Cloneable, TypeSerializer<CaseLocation> {
     }
 
     /**
+     * Adds the location by a vector.
+     *
+     * @see CaseVector
+     * @param vec Vector to use
+     * @return the same location
+     */
+    @NotNull
+    public CaseLocation add(@NotNull CaseVector vec) {
+        this.x += vec.x();
+        this.y += vec.y();
+        this.z += vec.z();
+        return this;
+    }
+
+    /**
+     * Gets a unit-vector pointing in the direction that this Location is
+     * facing.
+     *
+     * @return a vector pointing the direction of this location's {@link
+     *     #pitch() pitch} and {@link #yaw() yaw}
+     */
+    @NotNull
+    public CaseVector getDirection() {
+        CaseVector vector = new CaseVector();
+
+        double rotX = this.yaw();
+        double rotY = this.pitch();
+
+        vector.y(-Math.sin(Math.toRadians(rotY)));
+
+        double xz = Math.cos(Math.toRadians(rotY));
+
+        vector.x(-xz * Math.sin(Math.toRadians(rotX)));
+        vector.z(xz * Math.cos(Math.toRadians(rotX)));
+
+        return vector;
+    }
+
+    /**
+     * Sets the {@link #yaw() yaw} and {@link #pitch() pitch} to point
+     * in the direction of the vector.
+     *
+     * @param vector the direction vector
+     * @return the same location
+     */
+    @NotNull
+    public CaseLocation setDirection(@NotNull CaseLocation vector) {
+        /*
+         * Sin = Opp / Hyp
+         * Cos = Adj / Hyp
+         * Tan = Opp / Adj
+         *
+         * x = -Opp
+         * z = Adj
+         */
+        final double _2PI = 2 * Math.PI;
+        final double x = vector.x;
+        final double z = vector.z();
+
+        if (x == 0 && z == 0) {
+            pitch = vector.y() > 0 ? -90 : 90;
+            return this;
+        }
+
+        double theta = Math.atan2(-x, z);
+        yaw = (float) Math.toDegrees((theta + _2PI) % _2PI);
+
+        double x2 = NumberUtils.square(x);
+        double z2 = NumberUtils.square(z);
+        double xz = Math.sqrt(x2 + z2);
+        pitch = (float) Math.toDegrees(Math.atan(-vector.y() / xz));
+
+        return this;
+    }
+
+    /**
      * Get the distance between this location and another. The value of this
      * method is not cached and uses a costly square-root function, so do not
      * repeatedly call this method to get the location's magnitude. NaN will
