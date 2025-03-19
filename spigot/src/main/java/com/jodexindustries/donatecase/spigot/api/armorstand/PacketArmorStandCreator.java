@@ -158,12 +158,22 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
     }
 
     @Override
+    public boolean isGlowing() {
+        return meta.isGlowing();
+    }
+
+    @Override
     public void setCollidable(boolean collidable) {
     }
 
     @Override
     public void setCustomNameVisible(boolean flag) {
         meta.setIndex((byte) 3, EntityDataTypes.BOOLEAN, flag);
+    }
+
+    @Override
+    public boolean isCustomNameVisible() {
+        return meta.getIndex((byte) 3, false);
     }
 
     @Override

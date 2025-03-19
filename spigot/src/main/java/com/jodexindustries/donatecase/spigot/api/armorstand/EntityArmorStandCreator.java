@@ -69,6 +69,11 @@ public class EntityArmorStandCreator implements ArmorStandCreator {
     }
 
     @Override
+    public boolean isGlowing() {
+        return entity.isGlowing();
+    }
+
+    @Override
     public void setCollidable(boolean collidable) {
         entity.setCollidable(collidable);
     }
@@ -76,6 +81,11 @@ public class EntityArmorStandCreator implements ArmorStandCreator {
     @Override
     public void setCustomNameVisible(boolean flag) {
         entity.setCustomNameVisible(flag);
+    }
+
+    @Override
+    public boolean isCustomNameVisible() {
+        return entity.isCustomNameVisible();
     }
 
     @Override

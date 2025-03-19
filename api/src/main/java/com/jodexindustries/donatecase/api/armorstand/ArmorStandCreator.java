@@ -32,6 +32,8 @@ public interface ArmorStandCreator {
 
     void setGlowing(boolean glowing);
 
+    boolean isGlowing();
+
     /**
      * Only with LivingEntity (not packet)
      *
@@ -40,6 +42,8 @@ public interface ArmorStandCreator {
     void setCollidable(boolean collidable);
 
     void setCustomNameVisible(boolean flag);
+
+    boolean isCustomNameVisible();
 
     CaseLocation getLocation();
 
