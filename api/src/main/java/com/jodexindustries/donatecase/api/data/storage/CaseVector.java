@@ -19,10 +19,6 @@ public class CaseVector implements Cloneable {
 
     /**
      * Threshold for fuzzy equals().
-     * -- GETTER --
-     *  Get the threshold used for equals().
-     *
-
      */
     private static final double epsilon = 0.000001;
 
