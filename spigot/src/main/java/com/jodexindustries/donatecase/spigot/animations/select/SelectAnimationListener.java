@@ -4,19 +4,19 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.animation.Animation;
-import com.jodexindustries.donatecase.api.event.Subscriber;
 import com.jodexindustries.donatecase.api.event.player.ArmorStandCreatorInteractEvent;
-import net.kyori.event.method.annotation.Subscribe;
+import net.kyori.event.EventSubscriber;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class SelectAnimationListener implements Subscriber {
+public class SelectAnimationListener implements EventSubscriber<ArmorStandCreatorInteractEvent> {
 
     private static final DCAPI api = DCAPI.getInstance();
 
-    @Subscribe
-    public void onInteract(ArmorStandCreatorInteractEvent event) {
+    @Override
+    public void invoke(@NonNull ArmorStandCreatorInteractEvent event) {
         ArmorStandCreator creator = event.armorStandCreator();
         SelectAnimation animation = getAnimation(creator.getAnimationId());
         if (animation == null) return;
@@ -26,7 +26,7 @@ public class SelectAnimationListener implements Subscriber {
 
         task.selected = true;
 
-        creator.setEquipment(task.itemSlot, animation.getWinItem().material().itemStack());
+        creator.setEquipment(animation.settings.itemSlot, animation.getWinItem().material().itemStack());
         if (animation.getWinItem().material().displayName() != null && !animation.getWinItem().material().displayName().isEmpty())
             creator.setCustomNameVisible(true);
         creator.setCustomName(api.getPlatform().getPAPI().setPlaceholders(event.player(), animation.getWinItem().material().displayName()));
