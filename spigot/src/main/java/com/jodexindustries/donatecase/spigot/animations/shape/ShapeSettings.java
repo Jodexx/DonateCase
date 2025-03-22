@@ -63,19 +63,13 @@ public class ShapeSettings {
     public static class Particle {
 
         @Setting("Orange")
-        public Orange orange;
+        public Color orange;
 
         @Setting("White")
-        public White white;
+        public Color white;
 
         @ConfigSerializable
-        public static class Orange extends Color { }
-
-        @ConfigSerializable
-        public static class White extends Color { }
-
-        @ConfigSerializable
-        public static abstract class Color {
+        public static class Color {
 
             @Setting("Rgb")
             public String rgb;
