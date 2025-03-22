@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.spigot.animations.pop;
 
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
-import org.bukkit.Sound;
+import com.jodexindustries.donatecase.spigot.animations.SoundSettings;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
@@ -40,25 +40,6 @@ public class PopSettings {
     }
 
     @ConfigSerializable
-    public static class Scroll {
+    public static class Scroll extends SoundSettings {}
 
-        @Setting("Sound")
-        private String sound = "ENTITY_ITEM_PICKUP";
-
-        @Setting("Volume")
-        public float volume = 10;
-
-        @Setting("Pitch")
-        public float pitch = 1;
-
-        // parse sound without Configurate TypeSerializer due Bukkit has interface instead of enum
-        public Sound sound() {
-            if (sound == null || sound.isEmpty()) return null;
-            try {
-                return Sound.valueOf(sound);
-            } catch (IllegalArgumentException e) {
-                return null;
-            }
-        }
-    }
 }

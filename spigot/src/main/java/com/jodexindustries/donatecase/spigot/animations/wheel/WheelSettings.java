@@ -2,13 +2,17 @@ package com.jodexindustries.donatecase.spigot.animations.wheel;
 
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
+import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.spigot.animations.SoundSettings;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 @ConfigSerializable
 public class WheelSettings {
+
+    @Setting("StartPosition")
+    public CaseLocation startPosition;
 
     @Setting("CircleRadius")
     public double radius;
@@ -58,7 +62,7 @@ public class WheelSettings {
     }
 
     @ConfigSerializable
-    public static class Scroll {
+    public static class Scroll extends SoundSettings {
 
         @Setting("Time")
         public int time = 100;
@@ -69,23 +73,6 @@ public class WheelSettings {
         @Setting("EaseAmount")
         public double easeAmount = 2.5;
 
-        @Setting("Sound")
-        public String sound;
-
-        @Setting("Volume")
-        public float volume;
-
-        @Setting("Pitch")
-        public float pitch;
-
-        public Sound sound() {
-            if (sound == null) return null;
-            try {
-                return Sound.valueOf(sound);
-            } catch (IllegalArgumentException e) {
-                return null;
-            }
-        }
     }
 
     @ConfigSerializable

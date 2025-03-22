@@ -1,51 +1,46 @@
-package com.jodexindustries.donatecase.spigot.animations;
+package com.jodexindustries.donatecase.spigot.animations.firework;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
-import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
-import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import com.jodexindustries.donatecase.spigot.tools.DCToolsBukkit;
-import lombok.SneakyThrows;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.World;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
+import org.spongepowered.configurate.serialize.SerializationException;
 
-import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class FireworkAnimation extends BukkitJavaAnimation {
 
     private final static DCAPI api = DCAPI.getInstance();
 
-    @SneakyThrows
+    private FireworkSettings settings;
+
     @Override
     public void start() {
-        double x = getSettings().node("StartPosition", "X").getDouble(0.5);
-        double y = getSettings().node("StartPosition", "Y").getDouble(1);
-        double z = getSettings().node("StartPosition", "Z").getDouble(0.5);
+        try {
+            settings = getSettings().get(FireworkSettings.class);
+        } catch (SerializationException e) {
+            throw new RuntimeException("Error with parsing animation settings", e);
+        }
 
-        getLocation().add(x, y, z);
+        getLocation().add(settings.startPosition);
 
         final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getUuid(), getLocation());
 
-        boolean small = getSettings().node("SmallArmorStand").getBoolean(true);
-
-        final ArmorStandEulerAngle angle = getSettings().node("Pose").get(ArmorStandEulerAngle.class);
-        if (angle != null) as.setAngle(angle);
-        as.setSmall(small);
+        if (settings.pose != null) as.setAngle(settings.pose);
+        as.setSmall(settings.small);
         as.setVisible(false);
         as.setGravity(false);
         as.spawn();
 
-        long period = getSettings().node("Scroll", "Period").getLong();
-
-        api.getPlatform().getScheduler().run(api.getPlatform(), new Task(as), 0L, period);
+        api.getPlatform().getScheduler().run(api.getPlatform(), new Task(as), 0L, settings.scroll.period);
     }
 
     private class Task implements Consumer<SchedulerTask> {
@@ -56,35 +51,28 @@ public class FireworkAnimation extends BukkitJavaAnimation {
         private final ArmorStandCreator as;
         private final World world;
 
-        private final EquipmentSlot itemSlot;
-        private final float yaw;
-
         public Task(final ArmorStandCreator as) {
             this.as = as;
             this.location = as.getLocation();
 
-            this.itemSlot = EquipmentSlot.valueOf(getSettings().node("ItemSlot").getString("HEAD").toUpperCase());
-            this.yaw = getSettings().node("Scroll", "Yaw").getFloat(20.0F);
-
             world = getPlayer().getWorld();
         }
 
-        @SneakyThrows
         @Override
         public void accept(SchedulerTask task) {
             if (tick == 0) {
                 Firework firework = world.spawn(BukkitUtils.toBukkit(location), Firework.class);
                 FireworkMeta data = firework.getFireworkMeta();
                 data.addEffects(FireworkEffect.builder().withColor(Color.PURPLE).withColor(Color.RED).with(FireworkEffect.Type.BALL).withFlicker().build());
-                for (String color : getSettings().node("FireworkColors").getList(String.class, new ArrayList<>())) {
+                for (String color : settings.fireworkColors) {
                     data.addEffect(FireworkEffect.builder().withColor(DCToolsBukkit.parseColor(color)).build());
                 }
-                data.setPower(getSettings().node("Power").getInt());
+                data.setPower(settings.power);
                 firework.setFireworkMeta(data);
             }
 
             if (tick == 10) {
-                as.setEquipment(itemSlot, getWinItem().material().itemStack());
+                as.setEquipment(settings.itemSlot, getWinItem().material().itemStack());
                 if (getWinItem().material().displayName() != null && !getWinItem().material().displayName().isEmpty())
                     as.setCustomNameVisible(true);
                 as.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), getWinItem().material().displayName()));
@@ -93,7 +81,7 @@ public class FireworkAnimation extends BukkitJavaAnimation {
             }
 
             if (tick >= 10 && tick < 60) {
-                location.yaw(location.yaw() + yaw);
+                location.yaw(location.yaw() + settings.scroll.yaw);
                 as.teleport(location);
             }
 

@@ -5,6 +5,7 @@ config: # Please do not touch this section
 SHAPE:
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
+  Firework: true
   #  Pose:
   #    Head:
   #      x: 0
@@ -30,7 +31,7 @@ SHAPE:
   #      x: 0
   #      y: 0
   #      z: 0
-  Particle: # 1.13+
+  Particle:
     Orange:
       Size: 1.0
       Rgb: 255, 165, 0
@@ -38,9 +39,9 @@ SHAPE:
       Size: 1.0
       Rgb: 255, 255, 255
   StartPosition:
-    X: 0.5
-    Y: -0.1
-    Z: 0.5
+    x: 0.5
+    y: -0.1
+    z: 0.5
   Tail:
     Radius: 0.5
   Scroll:
@@ -79,9 +80,9 @@ FIREWORK:
   SmallArmorStand: true
   Power: 0 # Firework power
   StartPosition:
-    X: 0.5
-    Y: 1
-    Z: 0.5
+    x: 0.5
+    y: 1
+    z: 0.5
   Scroll:
     Period: 2
     Yaw: 20.0
@@ -98,9 +99,10 @@ WHEEL:
   ItemsCount: 6 # only for RANDOM type
   Shuffle: true # only for FULL type
   CircleRadius: 2
-  LiftingAlongX: 0
-  LiftingAlongY: 0
-  LiftingAlongZ: 0
+  StartPosition:
+    x: 0.5
+    y: 1
+    z: 0.5
   Flame:
     Enabled: true
     Particle: FLAME

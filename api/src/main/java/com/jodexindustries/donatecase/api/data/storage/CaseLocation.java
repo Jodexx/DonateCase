@@ -70,6 +70,16 @@ public class CaseLocation implements Cloneable, TypeSerializer<CaseLocation> {
         return this;
     }
 
+    @NotNull
+    public CaseLocation add(@NotNull CaseLocation loc) {
+        this.x += loc.x;
+        this.y += loc.y;
+        this.z += loc.z;
+        this.yaw += loc.yaw;
+        this.pitch += loc.pitch;
+        return this;
+    }
+
     /**
      * Adds the location by a vector.
      *

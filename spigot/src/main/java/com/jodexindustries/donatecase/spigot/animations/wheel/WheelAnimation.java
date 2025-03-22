@@ -33,16 +33,14 @@ public class WheelAnimation extends BukkitJavaAnimation {
             throw new RuntimeException("Error with parsing animation settings", e);
         }
 
+        getLocation().add(settings.startPosition);
+
         api.getPlatform().getScheduler().run(api.getPlatform(), new Task(), 0L, 0L);
     }
 
     private class Task implements Consumer<SchedulerTask> {
 
-        private final CaseLocation location = getLocation().clone()
-                .add(0.5, 0, 0.5)
-                .add(0 + getSettings().node("LiftingAlongX").getDouble(),
-                -1 + getSettings().node("LiftingAlongY").getDouble(),
-                0 + getSettings().node("LiftingAlongZ").getDouble());
+        private final CaseLocation location = getLocation();
 
         private final Location bukkitLocation;
 
