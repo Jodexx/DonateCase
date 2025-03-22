@@ -19,6 +19,8 @@ public class AnimationsMigrator_1_4_to_1_5 implements ConfigMigrator {
             Object selectObject = selectClazz.getDeclaredConstructor().newInstance();
             config.node("SELECT").set(selectObject);
 
+            // TODO replace LiftingAlong(X) with StartPosition (CaseLocation)
+
             config.node("config", "version").set(15);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
