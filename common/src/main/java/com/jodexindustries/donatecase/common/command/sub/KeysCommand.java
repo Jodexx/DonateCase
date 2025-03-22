@@ -53,8 +53,7 @@ public class KeysCommand extends DefaultCommand {
     private void handleMod(DCCommandSender sender, String target) {
         if (sender.hasPermission("donatecase.mod")) {
             for (String message : api.getConfigManager().getMessages().getStringList("player-keys")) {
-                String formattedMessage = formatMessage(target, message, false, null);
-                sender.sendMessage(formattedMessage.replace("%player", target));
+                sender.sendMessage(formatMessage(target, message.replace("%player%", target), false, null));
             }
         } else {
             sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("no-permission")));
