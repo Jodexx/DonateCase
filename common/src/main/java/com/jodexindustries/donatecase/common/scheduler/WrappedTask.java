@@ -5,6 +5,7 @@ import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 public class WrappedTask implements SchedulerTask {
 
@@ -36,8 +37,12 @@ public class WrappedTask implements SchedulerTask {
     @Override
     public void run() {
         if (!isCancelled()) {
-            if (r != null) r.run();
-            if (c != null) c.accept(this);
+            try {
+                if (r != null) r.run();
+                if (c != null) c.accept(this);
+            } catch (Throwable e) {
+                DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Error with executing task: " + taskId, e);
+            }
         }
     }
 

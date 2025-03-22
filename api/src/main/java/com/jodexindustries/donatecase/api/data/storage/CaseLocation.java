@@ -75,8 +75,6 @@ public class CaseLocation implements Cloneable, TypeSerializer<CaseLocation> {
         this.x += loc.x;
         this.y += loc.y;
         this.z += loc.z;
-        this.yaw += loc.yaw;
-        this.pitch += loc.pitch;
         return this;
     }
 

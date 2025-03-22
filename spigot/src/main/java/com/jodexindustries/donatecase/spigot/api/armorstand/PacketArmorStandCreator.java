@@ -8,13 +8,11 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.tools.DCTools;
-import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import me.tofaa.entitylib.meta.other.ArmorStandMeta;
 import me.tofaa.entitylib.wrapper.WrapperLivingEntity;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -198,9 +196,7 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void teleport(CaseLocation location) {
-        entity.teleport(
-                fromBukkitLocation(BukkitUtils.toBukkit(location))
-        );
+        entity.teleport(fromBukkitLocation(location));
         this.location = location;
     }
 
@@ -212,9 +208,7 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void spawn() {
-        entity.spawn(
-                fromBukkitLocation(BukkitUtils.toBukkit(location))
-        );
+        entity.spawn(fromBukkitLocation(location));
     }
 
     @Override
@@ -222,8 +216,8 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
         entity.sendPacketToViewers(meta.createPacket());
     }
 
-    public static com.github.retrooper.packetevents.protocol.world.Location fromBukkitLocation(Location location) {
+    public static com.github.retrooper.packetevents.protocol.world.Location fromBukkitLocation(CaseLocation location) {
         return new com.github.retrooper.packetevents.protocol.world.Location(
-                location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+                location.x(), location.y(), location.z(), location.yaw(), location.pitch());
     }
 }

@@ -27,34 +27,13 @@ public class WheelSettings {
     public int itemsCount;
 
     @Setting("ItemSlot")
-    public String itemSlot;
+    public EquipmentSlot itemSlot = EquipmentSlot.HEAD;
 
     @Setting("Pose")
     public ArmorStandEulerAngle armorStandEulerAngle;
 
     @Setting("Type")
-    public String wheelType;
-
-    public EquipmentSlot getItemSlot() {
-        if (itemSlot == null) return EquipmentSlot.HEAD;
-        try {
-            return EquipmentSlot.valueOf(itemSlot);
-        } catch (IllegalArgumentException e) {
-            return EquipmentSlot.HEAD;
-        }
-    }
-
-    /**
-     * Safely parse the wheel type.
-     */
-    public WheelType getWheelType() {
-        if (wheelType == null) return WheelType.RANDOM;
-        try {
-            return WheelType.valueOf(wheelType);
-        } catch (IllegalArgumentException e) {
-            return WheelType.RANDOM;
-        }
-    }
+    public WheelType wheelType = WheelType.RANDOM;
 
     public enum WheelType {
         FULL,  // No duplicates, all unique items

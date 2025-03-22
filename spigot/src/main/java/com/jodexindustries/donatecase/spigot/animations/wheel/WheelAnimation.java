@@ -33,14 +33,12 @@ public class WheelAnimation extends BukkitJavaAnimation {
             throw new RuntimeException("Error with parsing animation settings", e);
         }
 
-        getLocation().add(settings.startPosition);
-
         api.getPlatform().getScheduler().run(api.getPlatform(), new Task(), 0L, 0L);
     }
 
     private class Task implements Consumer<SchedulerTask> {
 
-        private final CaseLocation location = getLocation();
+        private final CaseLocation location = getLocation().clone();
 
         private final Location bukkitLocation;
 
@@ -54,11 +52,12 @@ public class WheelAnimation extends BukkitJavaAnimation {
         private final double offset;
 
         public Task() {
-            float pitch = Math.round(getLocation().pitch() / 45.0f) * 45.0f;
-            float yaw = Math.round(getLocation().yaw() / 45.0f) * 45.0f;
+            float pitch = Math.round(location.pitch() / 45.0f) * 45.0f;
+            float yaw = Math.round(location.yaw() / 45.0f) * 45.0f;
 
+            if(settings.startPosition != null) location.add(settings.startPosition);
             location.pitch(pitch);
-            location.y(yaw);
+            location.yaw(yaw);
 
             this.baseAngle = location.clone().getDirection().angle(new CaseVector(0, 0, 1));
 
@@ -97,7 +96,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
         private void initializeItems() {
             boolean small = getSettings().node("SmallArmorStand").getBoolean(true);
 
-            if (settings.getWheelType() == WheelSettings.WheelType.FULL) {
+            if (settings.wheelType == WheelSettings.WheelType.FULL) {
                 // FULL logic - unique items
                 List<CaseDataItem> uniqueItems = new ArrayList<>(getCaseData().items().values());
 
@@ -109,20 +108,18 @@ public class WheelAnimation extends BukkitJavaAnimation {
                 for (CaseDataItem uniqueItem : uniqueItems) {
                     if (uniqueItem.getName().equals(getWinItem().getName())) {
                         additionalSteps = uniqueItems.size() - armorStands.size();
-                        armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
-                    }
-                    else armorStands.add(spawnArmorStand(getLocation(), uniqueItem, small));
+                        armorStands.add(spawnArmorStand(location, getWinItem(), small));
+                    } else armorStands.add(spawnArmorStand(location, uniqueItem, small));
                 }
 
                 double additionalAngle = additionalSteps * (2 * Math.PI / armorStands.size());
                 targetAngle = 2 * Math.PI * settings.scroll.count + additionalAngle;
-            }
-            else {
+            } else {
                 // RANDOM logic - random items with duplicates
-                armorStands.add(spawnArmorStand(getLocation(), getWinItem(), small));
+                armorStands.add(spawnArmorStand(location, getWinItem(), small));
                 for (int i = 1; i < settings.itemsCount; i++) {
                     CaseDataItem randomItem = getCaseData().getRandomItem();
-                    armorStands.add(spawnArmorStand(getLocation(), randomItem, small));
+                    armorStands.add(spawnArmorStand(location, randomItem, small));
                 }
                 int rand = new Random().nextInt(armorStands.size());
                 int additionalSteps = armorStands.size() - rand;
@@ -186,16 +183,16 @@ public class WheelAnimation extends BukkitJavaAnimation {
     private ArmorStandCreator spawnArmorStand(CaseLocation location, CaseDataItem item, boolean small) {
         CaseDataMaterial material = item.material();
 
-        ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getUuid(), location);
+        ArmorStandCreator as = api.getPlatform().getTools().createArmorStand(getUuid(), location);
         as.setSmall(small);
         as.setVisible(false);
         as.setGravity(false);
-        as.setAngle(settings.armorStandEulerAngle);
-        as.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), item.material().displayName()));
+        if (settings.armorStandEulerAngle != null) as.setAngle(settings.armorStandEulerAngle);
+        as.setCustomName(api.getPlatform().getPAPI().setPlaceholders(getPlayer(), item.material().displayName()));
         as.setCustomNameVisible(item.material().displayName() != null && !item.material().displayName().isEmpty());
         as.spawn();
 
-        as.setEquipment(settings.getItemSlot(), material.itemStack());
+        as.setEquipment(settings.itemSlot, material.itemStack());
         return as;
     }
 }
