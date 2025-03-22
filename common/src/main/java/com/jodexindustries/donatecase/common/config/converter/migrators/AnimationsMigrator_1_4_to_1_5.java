@@ -10,17 +10,20 @@ public class AnimationsMigrator_1_4_to_1_5 implements ConfigMigrator {
 
     @Override
     public void migrate(ConfigImpl config) throws SerializationException {
-        Class<?> clazz;
-        Object object;
         try {
-            clazz = Class.forName("com.jodexindustries.donatecase.spigot.animations.pop.PopSettings");
-            object = clazz.getDeclaredConstructor().newInstance();
+            Class<?> popClazz = Class.forName("com.jodexindustries.donatecase.spigot.animations.pop.PopSettings");
+            Object popObject = popClazz.getDeclaredConstructor().newInstance();
+            config.node("POP").set(popObject);
+
+            Class<?> selectClazz = Class.forName("com.jodexindustries.donatecase.spigot.animations.select.SelectSettings");
+            Object selectObject = selectClazz.getDeclaredConstructor().newInstance();
+            config.node("SELECT").set(selectObject);
+
+            config.node("config", "version").set(15);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
             throw new SerializationException(e);
         }
-        config.node("POP").set(object);
-        config.node("config", "version").set(15);
     }
 
 }

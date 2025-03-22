@@ -158,7 +158,7 @@ public class SelectAnimation extends BukkitJavaAnimation {
             }
 
             // timeout
-            if (tick >= 1000) {
+            if (tick >= settings.timeout) {
                 task.cancel();
                 end();
             }

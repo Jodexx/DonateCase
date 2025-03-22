@@ -70,8 +70,8 @@ RAINLY:
   # FALLING_WATER
   # FALLING_LAVA
   # FALLING_DUST
-  # FALLING_HONEY   1.16+
-  # FALLING_NECTAR  1.16+
+  # FALLING_HONEY
+  # FALLING_NECTAR
   # FALLING_OBSIDIAN_TEAR
 
 FIREWORK:
@@ -113,11 +113,12 @@ WHEEL:
     Pitch: 1
 
 RANDOM:
-  SHAPE: 20 # Chance
-  RAINLY: 20
-  FIREWORK: 20
-  WHEEL: 20
-  POP: 20
+  SHAPE: 15 # Chance
+  RAINLY: 15
+  FIREWORK: 15
+  WHEEL: 15
+  POP: 15
+  SELECT: 15
 
 POP:
   Scroll:
@@ -127,5 +128,11 @@ POP:
   Facing: EAST
   Rounded: true
   Radius: 1.5
+#  Period: 0
+#  ItemSlot: HEAD
+
+SELECT:
+  Facing: EAST
+  Timeout: 600 # in ticks
 #  Period: 0
 #  ItemSlot: HEAD
