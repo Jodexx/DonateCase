@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
+import com.jodexindustries.donatecase.spigot.animations.Facing;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.spigot.tools.Pair;
 import lombok.Getter;
@@ -50,7 +51,7 @@ public class SelectAnimation extends BukkitJavaAnimation {
 
                     getLocation().y(origY + y);
 
-                    if (settings.facing == SelectSettings.Facing.EAST || settings.facing == SelectSettings.Facing.WEST) {
+                    if (settings.facing == Facing.EAST || settings.facing == Facing.WEST) {
                         getLocation().z(origZ + horizonOffset);
                     } else {
                         getLocation().x(origX + horizonOffset);
@@ -68,7 +69,7 @@ public class SelectAnimation extends BukkitJavaAnimation {
 
                     as.spawn();
 
-                    if (settings.facing == SelectSettings.Facing.EAST || settings.facing == SelectSettings.Facing.WEST) {
+                    if (settings.facing == Facing.EAST || settings.facing == Facing.WEST) {
                         asList.add(Pair.of(as, new CaseLocation(origX, origY + y, origZ + horizonOffset)));
                     } else {
                         asList.add(Pair.of(as, new CaseLocation(origX + horizonOffset, origY + y, origZ)));

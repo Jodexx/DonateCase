@@ -5,6 +5,7 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
+import com.jodexindustries.donatecase.spigot.animations.Facing;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.spigot.tools.Pair;
 import org.bukkit.Location;
@@ -46,7 +47,7 @@ public class PopAnimation extends BukkitJavaAnimation {
 
                     double horizonOffset = settings.rounded ? (horOffset * (y == 0 ? 1 : 0.707)) : horOffset;
 
-                    if (settings.facing == PopSettings.Facing.EAST || settings.facing == PopSettings.Facing.WEST) {
+                    if (settings.facing == Facing.EAST || settings.facing == Facing.WEST) {
                         getLocation().z(origZ + horizonOffset);
                     } else {
                         getLocation().x(origX + horizonOffset);
@@ -62,7 +63,7 @@ public class PopAnimation extends BukkitJavaAnimation {
 
                     double yOffset = origY + (settings.rounded ? (y / (horOffset == 0 ? 1 : 1.4142)) : y) * settings.radius;
 
-                    if (settings.facing == PopSettings.Facing.EAST || settings.facing == PopSettings.Facing.WEST) {
+                    if (settings.facing == Facing.EAST || settings.facing == Facing.WEST) {
                         asList.add(Pair.of(as, new CaseLocation(origX, yOffset, origZ + horizonOffset * settings.radius)));
                     } else {
                         asList.add(Pair.of(as, new CaseLocation(origX + horizonOffset * settings.radius, yOffset, origZ)));

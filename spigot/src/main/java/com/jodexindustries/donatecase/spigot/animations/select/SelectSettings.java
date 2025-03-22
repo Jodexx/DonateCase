@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.spigot.animations.select;
 
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
+import com.jodexindustries.donatecase.spigot.animations.Facing;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
@@ -19,16 +20,4 @@ public class SelectSettings {
     @Setting("ItemSlot")
     public EquipmentSlot itemSlot = EquipmentSlot.HEAD;
 
-    public enum Facing {
-        WEST(90),
-        NORTH(180),
-        EAST(270),
-        SOUTH(0);
-
-        public final float yaw;
-
-        Facing(float yaw) {
-            this.yaw = yaw;
-        }
-    }
 }
