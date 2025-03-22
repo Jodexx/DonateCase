@@ -52,6 +52,7 @@ public class ShapeSettings {
         @Setting("Yaw")
         public float yaw = 20;
 
+        @ConfigSerializable
         public static class Tail {
 
             @Setting("Radius")
