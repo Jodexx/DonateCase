@@ -90,7 +90,7 @@ public class CaseLocation implements Cloneable, TypeSerializer<CaseLocation> {
      * facing.
      *
      * @return a vector pointing the direction of this location's {@link
-     *     #pitch() pitch} and {@link #yaw() yaw}
+     *     CaseLocation#pitch pitch} and {@link CaseLocation#yaw yaw}
      */
     @NotNull
     public CaseVector getDirection() {
@@ -110,7 +110,7 @@ public class CaseLocation implements Cloneable, TypeSerializer<CaseLocation> {
     }
 
     /**
-     * Sets the {@link #yaw() yaw} and {@link #pitch() pitch} to point
+     * Sets the {@link CaseLocation#yaw yaw} and {@link CaseLocation#pitch pitch} to point
      * in the direction of the vector.
      *
      * @param vector the direction vector

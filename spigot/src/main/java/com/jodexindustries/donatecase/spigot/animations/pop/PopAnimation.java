@@ -202,8 +202,5 @@ public class PopAnimation extends BukkitJavaAnimation {
             end();
         }
 
-        private double stepTowards(double current, double target) {
-            return Double.compare(current, target) == 0 ? 0 : (current > target ? -0.05 : 0.05);
-        }
     }
 }

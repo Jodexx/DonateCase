@@ -119,7 +119,6 @@ public class ShapeAnimation extends BukkitJavaAnimation {
 
             if (tick <= scrollTime) {
                 location.yaw(location.yaw() + yaw);
-                bukkitLocation.setYaw(bukkitLocation.getYaw() + yaw);
                 location.add(0.0, blockPerTick, 0.0);
                 bukkitLocation.add(0.0, blockPerTick, 0.0);
 

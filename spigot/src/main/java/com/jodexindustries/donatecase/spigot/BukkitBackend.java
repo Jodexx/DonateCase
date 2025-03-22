@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.spigot;
 import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
+import com.jodexindustries.donatecase.api.event.player.ArmorStandCreatorInteractEvent;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.spigot.actions.CommandActionExecutorImpl;
 import com.jodexindustries.donatecase.spigot.actions.SoundActionExecutorImpl;
@@ -299,7 +300,7 @@ public class BukkitBackend extends BackendPlatform {
                         .build()
         );
 
-        api.getEventBus().register(new SelectAnimationListener());
+        api.getEventBus().register(ArmorStandCreatorInteractEvent.class, new SelectAnimationListener());
 
         manager.register(
                 CaseAnimation.builder()

@@ -22,7 +22,6 @@ public class CaseVector implements Cloneable {
      * -- GETTER --
      *  Get the threshold used for equals().
      *
-     * @return The epsilon.
 
      */
     private static final double epsilon = 0.000001;
@@ -31,26 +30,18 @@ public class CaseVector implements Cloneable {
      * -- GETTER --
      *  Gets the X component.
      *
-     * @return The X component.
      */
     protected double x;
     /**
      * -- GETTER --
      *  Gets the Y component.
      *
-     * @return The Y component.
-     * -- SETTER --
-     * Set the Y component.
-     *
-     * @param y The new Y component.
-     * @return This vector.
      */
     protected double y;
     /**
      * -- GETTER --
      *  Gets the Z component.
      *
-     * @return The Z component.
      */
     protected double z;
 

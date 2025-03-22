@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.spigot.animations.wheel;
 
 import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.data.storage.CaseVector;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
@@ -11,7 +12,6 @@ import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.util.Vector;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.*;
@@ -38,11 +38,13 @@ public class WheelAnimation extends BukkitJavaAnimation {
 
     private class Task implements Consumer<SchedulerTask> {
 
-        private final Location location = BukkitUtils.toBukkit(getLocation().clone())
+        private final CaseLocation location = getLocation().clone()
                 .add(0.5, 0, 0.5)
                 .add(0 + getSettings().node("LiftingAlongX").getDouble(),
                 -1 + getSettings().node("LiftingAlongY").getDouble(),
                 0 + getSettings().node("LiftingAlongZ").getDouble());
+
+        private final Location bukkitLocation;
 
         private final World world;
 
@@ -57,10 +59,10 @@ public class WheelAnimation extends BukkitJavaAnimation {
             float pitch = Math.round(getLocation().pitch() / 45.0f) * 45.0f;
             float yaw = Math.round(getLocation().yaw() / 45.0f) * 45.0f;
 
-            location.setPitch(pitch);
-            location.setYaw(yaw);
+            location.pitch(pitch);
+            location.y(yaw);
 
-            this.baseAngle = location.clone().getDirection().angle(new Vector(0, 0, 1));
+            this.baseAngle = location.clone().getDirection().angle(new CaseVector(0, 0, 1));
 
             initializeItems();
 
@@ -68,6 +70,8 @@ public class WheelAnimation extends BukkitJavaAnimation {
             offset = 2 * rotationThreshold;
 
             world = getPlayer().getWorld();
+
+            this.bukkitLocation = BukkitUtils.toBukkit(location);
         }
 
         @Override
@@ -147,8 +151,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
         private void spawnFlameEffect(double deltaX, double deltaY, double theta) {
             double dx = deltaX * Math.sin(theta);
             double dz = deltaX * Math.cos(theta);
-            Location particleLocation = location.clone().add(dx, deltaY, dz);
-            world.spawnParticle(settings.flame.particle, particleLocation, 1, 0, 0, 0, 0, null);
+            world.spawnParticle(settings.flame.particle, bukkitLocation.clone().add(dx, deltaY, dz), 1, 0, 0, 0, 0, null);
         }
 
         private void moveArmorStands(double angle) {
@@ -156,16 +159,16 @@ public class WheelAnimation extends BukkitJavaAnimation {
                 double x = settings.radius * Math.sin(angle);
                 double y = settings.radius * Math.cos(angle);
 
-                Vector rotationAxis = location.getDirection().crossProduct(new Vector(0, 1, 0)).normalize();
-                Location newLoc = location.clone().add(rotationAxis.multiply(x).add(location.getDirection().multiply(y)));
-                entity.teleport(BukkitUtils.fromBukkit(newLoc));
+                CaseVector rotationAxis = location.getDirection().crossProduct(new CaseVector(0, 1, 0)).normalize();
+                CaseLocation newLoc = location.clone().add(rotationAxis.multiply(x).add(location.getDirection().multiply(y)));
+                entity.teleport(newLoc);
                 angle += offset;
 
                 double currentAngle = angle - baseAngle;
                 if (currentAngle - lastCompletedRotation >= rotationThreshold) {
                     Sound sound = settings.scroll.sound();
                     if (sound != null) {
-                        world.playSound(location, sound, settings.scroll.volume, settings.scroll.pitch);
+                        world.playSound(bukkitLocation, sound, settings.scroll.volume, settings.scroll.pitch);
                         lastCompletedRotation = currentAngle;
                     }
                 }
