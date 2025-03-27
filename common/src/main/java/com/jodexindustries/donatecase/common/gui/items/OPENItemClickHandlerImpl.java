@@ -13,6 +13,8 @@ import com.jodexindustries.donatecase.api.event.player.PreOpenCaseEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.CompletableFuture;
+
 public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
 
 
@@ -46,8 +48,10 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
         PreOpenCaseEvent event = new PreOpenCaseEvent(player, caseData, location);
         DCAPI.getInstance().getEventBus().post(event);
 
-        if (!event.cancelled()) {
-            if (event.ignoreKeys() || checkKeys(caseData.caseType(), player.getName())) {
+        if (event.cancelled()) return;
+
+        checkKeys(event).thenAccept(hasKeys -> {
+            if (hasKeys) {
                 OpenCaseEvent openEvent = new OpenCaseEvent(player, caseData, location);
                 DCAPI.getInstance().getEventBus().post(openEvent);
 
@@ -56,7 +60,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
             } else {
                 DCAPI.getInstance().getActionManager().execute(player, caseData.noKeyActions());
             }
-        }
+        });
     }
 
     public static void executeOpenWithoutEvent(DCPlayer player, CaseLocation location, CaseData caseData, boolean ignoreKeys) {
@@ -74,7 +78,13 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
         });
     }
 
-    private static boolean checkKeys(String caseType, String player) {
-        return DCAPI.getInstance().getCaseKeyManager().get(caseType, player) >= 1;
+    private static CompletableFuture<Boolean> checkKeys(PreOpenCaseEvent event) {
+        if (event.ignoreKeys()) return CompletableFuture.completedFuture(true);
+
+        return DCAPI.getInstance()
+                .getCaseKeyManager()
+                .getAsync(event.caseData().caseType(), event.player().getName())
+                .thenApply(keys -> keys >= 1);
     }
+
 }
