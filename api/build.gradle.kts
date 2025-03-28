@@ -9,6 +9,7 @@ version = properties["api"].toString()
 
 
 dependencies {
+    compileOnlyApi("net.kyori:event-api:3.0.0")
     api("net.kyori:event-method:3.0.0") {
         exclude("com.google.guava", "guava")
         exclude("org.checkerframework", "checker-qual")
@@ -18,7 +19,10 @@ dependencies {
     compileOnlyApi("com.google.guava:guava:33.3.1-jre")
     compileOnlyApi("org.projectlombok:lombok:1.18.36")
     compileOnlyApi("org.spongepowered:configurate-yaml:4.1.2")
+
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
 }
+
 
 java {
     withSourcesJar()
@@ -52,13 +56,36 @@ publishing {
     }
 }
 
+val delombokClasspath: Configuration by configurations.creating {
+    extendsFrom(configurations.compileOnly.get())
+    isCanBeResolved = true
+}
+
+
+val delombok by tasks.registering(JavaExec::class) {
+    group = "build"
+    description = "Delombok generated sources to ensure Javadocs are generated correctly."
+    mainClass.set("lombok.launch.Main")
+
+    classpath = delombokClasspath
+    args = listOf("delombok", "src/main/java", "-d", "${buildDir}/generated/sources/delombok")
+}
+
 tasks.javadoc {
+    dependsOn(delombok)
+    source = fileTree("${buildDir}/generated/sources/delombok")
     (options as StandardJavadocDocletOptions).apply {
         links(
-            "https://docs.oracle.com/en/java/javase/22/docs/api/",
-         )
+            "https://docs.oracle.com/en/java/javase/22/docs/api/"
+        )
     }
-    source = sourceSets["main"].allJava
+}
+
+tasks.named<Jar>("sourcesJar") {
+    dependsOn(delombok)
+    from("${buildDir}/generated/sources/delombok")
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.register<Delete>("cleanGenerated") {
