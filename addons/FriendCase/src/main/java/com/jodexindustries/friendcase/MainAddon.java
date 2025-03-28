@@ -34,6 +34,7 @@ public final class MainAddon extends InternalJavaAddon implements Subscriber {
 
         SubCommand subCommand = SubCommand.builder()
                 .name("gift")
+                .addon(this)
                 .tabCompleter(friendSubCommand)
                 .executor(friendSubCommand)
                 .args(args)

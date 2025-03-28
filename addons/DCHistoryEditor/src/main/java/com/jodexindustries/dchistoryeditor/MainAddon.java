@@ -16,6 +16,7 @@ public final class MainAddon extends InternalJavaAddon {
 
         SubCommand subCommand = SubCommand.builder()
                 .name("historyeditor")
+                .addon(this)
                 .description("Edit case history")
                 .args(new String[]{"&7(&aremove&7/&aset&7)", "&7(&acasetype&7)", "&7(&aindex&7/&aall&7)", "&7[&aparam&7]", "&7[&avalue&7]"})
                 .executor(mainCommand)

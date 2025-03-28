@@ -34,7 +34,7 @@ public class MainAddon extends InternalJavaAddon {
         this.config = new Config(this);
         this.itemManager = new ItemManager(this);
         this.eventListener = new EventListener(this);
-        this.mainCommand = new MainCommand(config);
+        this.mainCommand = new MainCommand(this, config);
     }
 
     @Override

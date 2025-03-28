@@ -19,11 +19,13 @@ import static com.jodexindustries.donatecase.api.tools.DCTools.rc;
 
 public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
 
+    private final MainAddon addon;
     private final Config config;
 
     private String commandName;
 
-    public MainCommand(Config config) {
+    public MainCommand(MainAddon addon, Config config) {
+        this.addon = addon;
         this.config = config;
     }
 
@@ -31,6 +33,7 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
         commandName = config.get().getString("command", "physicalkey");
         SubCommand subCommand = SubCommand.builder()
                 .name(commandName)
+                .addon(addon)
                 .permission(config.get().getString("permissions.give", "dcphysicalkey.give"))
                 .description("&2Gives physical key to specific player")
                 .args(new String[]{
