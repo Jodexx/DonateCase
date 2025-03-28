@@ -101,7 +101,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
                 if (!addonNameFormat.isEmpty()) {
                     sender.sendMessage(
                             DCTools.rc(
-                                    DCTools.rt(addonNameFormat, LocalPlaceholder.of("%addon", addon))
+                                    DCTools.rt(addonNameFormat, LocalPlaceholder.of("%addon%", addon))
                             )
                     );
                 }
