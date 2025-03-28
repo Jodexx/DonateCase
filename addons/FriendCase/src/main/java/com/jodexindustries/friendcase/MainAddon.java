@@ -24,6 +24,8 @@ public final class MainAddon extends InternalJavaAddon implements Subscriber {
 
     @Override
     public void onEnable() {
+        this.config.load();
+
         api.getEventBus().register(this);
 
         FriendSubCommand friendSubCommand = new FriendSubCommand(this);
