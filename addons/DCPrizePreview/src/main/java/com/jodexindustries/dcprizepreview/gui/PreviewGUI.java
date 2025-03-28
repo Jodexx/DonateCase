@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
+import com.jodexindustries.donatecase.api.tools.DCTools;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -19,7 +20,7 @@ public class PreviewGUI {
         CaseGui caseGui = caseData.caseGui();
         if(caseGui == null) return null;
 
-        Inventory inventory = Bukkit.createInventory(null, getSize(items.size()), caseGui.title());
+        Inventory inventory = Bukkit.createInventory(null, getSize(items.size()), DCTools.rc(caseGui.title()));
         items = items.stream().sorted(Comparator.comparingInt(CaseDataItem::index)).collect(Collectors.toList());
         for (CaseDataItem item : items) {
             CaseDataMaterial material = item.material();
