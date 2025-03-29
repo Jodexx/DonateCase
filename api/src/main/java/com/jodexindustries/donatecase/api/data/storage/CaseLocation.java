@@ -225,8 +225,8 @@ public class CaseLocation implements Cloneable, TypeSerializer<CaseLocation> {
         node.node("x").set(obj.x);
         node.node("y").set(obj.y);
         node.node("z").set(obj.z);
-        node.node("pitch").set(obj.pitch);
-        node.node("yaw").set(obj.yaw);
+        if (obj.pitch != 0) node.node("pitch").set(obj.pitch);
+        if (obj.yaw != 0) node.node("yaw").set(obj.yaw);
 
         CaseWorld world = obj.getWorld();
         if (world != null) node.node("world").set(world.name());
