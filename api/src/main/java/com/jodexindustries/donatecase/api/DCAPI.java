@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.donatecase.api.config.ConfigManager;
+import com.jodexindustries.donatecase.api.manager.ConfigManager;
 import com.jodexindustries.donatecase.api.config.Loadable;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.api.event.EventBus;

@@ -1,14 +1,14 @@
 package com.jodexindustries.donatecase.common.config.converter.migrators;
 
-import com.jodexindustries.donatecase.common.config.ConfigImpl;
-import com.jodexindustries.donatecase.common.config.converter.ConfigMigrator;
+import com.jodexindustries.donatecase.api.config.Config;
+import com.jodexindustries.donatecase.api.config.converter.ConfigMigrator;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 public class CaseMigrator_1_2_to_1_3 implements ConfigMigrator {
 
     @Override
-    public void migrate(ConfigImpl config) throws SerializationException {
+    public void migrate(Config config) throws SerializationException {
         ConfigurationNode root = config.node();
 
         for (ConfigurationNode node : root.node("case", "Gui", "Items")

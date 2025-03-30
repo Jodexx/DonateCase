@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.config;
 
+import com.jodexindustries.donatecase.api.config.converter.ConfigType;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 
@@ -14,6 +15,14 @@ public interface Config {
     }
 
     File file();
+
+    String path();
+
+    int version();
+
+    ConfigType type();
+
+    void type(ConfigType type);
 
     void load() throws ConfigurateException;
 

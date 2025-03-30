@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.common.config;
 
-import com.jodexindustries.donatecase.api.config.ConfigManager;
+import com.jodexindustries.donatecase.api.manager.ConfigManager;
 import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.common.config.converter.ConfigConverter;
 import com.jodexindustries.donatecase.common.database.CaseDatabaseImpl;

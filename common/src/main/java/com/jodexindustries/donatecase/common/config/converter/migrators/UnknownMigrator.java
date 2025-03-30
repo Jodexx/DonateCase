@@ -1,15 +1,16 @@
 package com.jodexindustries.donatecase.common.config.converter.migrators;
 
-import com.jodexindustries.donatecase.common.config.ConfigImpl;
-import com.jodexindustries.donatecase.common.config.converter.ConfigMigrator;
-import com.jodexindustries.donatecase.common.config.converter.ConfigType;
+import com.jodexindustries.donatecase.api.config.Config;
+import com.jodexindustries.donatecase.api.config.converter.ConfigType;
+import com.jodexindustries.donatecase.api.config.converter.ConfigMigrator;
+import com.jodexindustries.donatecase.common.config.converter.DefaultConfigType;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 public class UnknownMigrator implements ConfigMigrator {
 
     @Override
-    public void migrate(ConfigImpl config) throws SerializationException {
+    public void migrate(Config config) throws SerializationException {
         String name = config.file().getName().toLowerCase();
 
         ConfigurationNode node = config.node();
@@ -17,22 +18,22 @@ public class UnknownMigrator implements ConfigMigrator {
 
         switch (name) {
             case "animations.yml": {
-                type = ConfigType.ANIMATIONS;
+                type = DefaultConfigType.ANIMATIONS;
                 break;
             }
             case "config.yml": {
-                type = ConfigType.CONFIG;
+                type = DefaultConfigType.CONFIG;
                 break;
             }
             case "cases.yml": {
-                type = ConfigType.CASES;
+                type = DefaultConfigType.CASES;
                 break;
             }
         }
 
-        if(config.path().contains("/lang")) type = ConfigType.LANG;
+        if(config.path().contains("/lang")) type = DefaultConfigType.LANG;
 
-        if(type == ConfigType.UNKNOWN) type = ConfigType.UNKNOWN_CUSTOM;
+        if(type == DefaultConfigType.UNKNOWN) type = DefaultConfigType.UNKNOWN_CUSTOM;
 
         node.removeChild("config");
         node.node("config", "version").set(config.version());

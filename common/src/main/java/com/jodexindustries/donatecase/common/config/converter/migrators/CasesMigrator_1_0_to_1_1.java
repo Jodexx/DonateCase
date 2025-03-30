@@ -1,9 +1,9 @@
 package com.jodexindustries.donatecase.common.config.converter.migrators;
 
+import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
-import com.jodexindustries.donatecase.common.config.ConfigImpl;
-import com.jodexindustries.donatecase.common.config.converter.ConfigMigrator;
+import com.jodexindustries.donatecase.api.config.converter.ConfigMigrator;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -12,8 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CasesMigrator_1_0_to_1_1 implements ConfigMigrator {
+
     @Override
-    public void migrate(ConfigImpl config) throws SerializationException {
+    public void migrate(Config config) throws SerializationException {
         ConfigurationNode root = config.node("DonateCase", "Cases");
 
         Map<String, CaseInfo> cases = new HashMap<>();

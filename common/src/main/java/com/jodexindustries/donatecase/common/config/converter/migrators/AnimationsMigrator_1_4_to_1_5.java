@@ -1,8 +1,8 @@
 package com.jodexindustries.donatecase.common.config.converter.migrators;
 
+import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
-import com.jodexindustries.donatecase.common.config.ConfigImpl;
-import com.jodexindustries.donatecase.common.config.converter.ConfigMigrator;
+import com.jodexindustries.donatecase.api.config.converter.ConfigMigrator;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 public class AnimationsMigrator_1_4_to_1_5 implements ConfigMigrator {
 
     @Override
-    public void migrate(ConfigImpl config) throws SerializationException {
+    public void migrate(Config config) throws SerializationException {
         try {
             Class<?> popClazz = Class.forName("com.jodexindustries.donatecase.spigot.animations.pop.PopSettings");
             Object popObject = popClazz.getDeclaredConstructor().newInstance();

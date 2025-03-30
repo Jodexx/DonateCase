@@ -1,6 +1,8 @@
 package com.jodexindustries.donatecase.common.config.converter;
 
-import com.jodexindustries.donatecase.common.config.ConfigImpl;
+import com.jodexindustries.donatecase.api.config.Config;
+import com.jodexindustries.donatecase.api.config.converter.ConfigMigrator;
+import com.jodexindustries.donatecase.api.config.converter.ConfigType;
 import com.jodexindustries.donatecase.common.config.ConfigManagerImpl;
 import org.spongepowered.configurate.ConfigurateException;
 
@@ -15,16 +17,16 @@ public class ConfigConverter {
     }
 
     public void convert() {
-        for (ConfigImpl config : this.configManager.get().values()) {
+        for (Config config : this.configManager.get().values()) {
             try {
-                if (config.type() != ConfigType.UNKNOWN_CUSTOM) convert(config);
+                convert(config);
             } catch (ConfigurateException e) {
                 this.configManager.getPlatform().getLogger().log(Level.WARNING, "Error with converting configuration: " + config, e);
             }
         }
     }
 
-    private void convert(ConfigImpl config) throws ConfigurateException, IllegalArgumentException {
+    public void convert(Config config) throws ConfigurateException, IllegalArgumentException {
         int version = config.version();
         ConfigType type = config.type();
 

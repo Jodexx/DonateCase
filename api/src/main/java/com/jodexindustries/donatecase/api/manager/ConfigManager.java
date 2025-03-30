@@ -1,5 +1,9 @@
-package com.jodexindustries.donatecase.api.config;
+package com.jodexindustries.donatecase.api.manager;
 
+import com.jodexindustries.donatecase.api.config.CaseStorage;
+import com.jodexindustries.donatecase.api.config.Config;
+import com.jodexindustries.donatecase.api.config.Loadable;
+import com.jodexindustries.donatecase.api.config.Messages;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
