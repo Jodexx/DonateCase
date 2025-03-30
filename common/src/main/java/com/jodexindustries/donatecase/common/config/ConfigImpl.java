@@ -39,12 +39,17 @@ public class ConfigImpl implements Config {
     private ConfigurationNode node;
 
     public ConfigImpl(File file) {
-        this(file.getPath().replace("\\", "/"), file);
+        this(file, null);
     }
 
-    private ConfigImpl(String path, File file) {
+    public ConfigImpl(File file, ConfigType type) {
+        this(file.getPath().replace("\\", "/"), file, type);
+    }
+
+    private ConfigImpl(String path, File file, ConfigType type) {
         this.path = path;
         this.file = file;
+        this.type = type;
         this.loader = YamlConfigurationLoader
                 .builder()
                 .nodeStyle(NodeStyle.BLOCK)
@@ -55,12 +60,12 @@ public class ConfigImpl implements Config {
 
     private void setMeta() {
         ConfigurationNode metaNode = node.node("config");
-        if (metaNode.hasChild("version")) {
-            this.version = parse(metaNode.node("version").getString());
-            this.type = ConfigType.getType(metaNode.node("type").getString());
-        } else {
-            this.version = parse(metaNode.getString());
-            this.type = node.hasChild("case") ? ConfigType.OLD_CASE : ConfigType.UNKNOWN;
+        String version = metaNode.node("version").getString();
+        String type = metaNode.node("type").getString();
+
+        this.version = parse(version);
+        if (this.type == null) {
+            this.type = (type != null) ? ConfigType.getType(type) : (node.hasChild("case") ? ConfigType.OLD_CASE : ConfigType.UNKNOWN);
         }
     }
 
