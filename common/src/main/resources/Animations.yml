@@ -136,6 +136,6 @@ POP:
 SELECT:
   Facing: EAST # WEST, NORTH, EAST, SOUTH
   Timeout: 600 # in ticks
-  Radius: 1
+  Radius: 1.5
 #  Period: 0
 #  ItemSlot: HEAD
