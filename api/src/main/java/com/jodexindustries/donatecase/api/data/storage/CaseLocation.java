@@ -174,15 +174,8 @@ public class CaseLocation implements Cloneable, TypeSerializer<CaseLocation> {
      *
      * @param o The other location
      * @return the distance
-     * @throws IllegalArgumentException for differing worlds
      */
     public double distanceSquared(@NotNull CaseLocation o) {
-        if (o.getWorld() == null || getWorld() == null) {
-            throw new IllegalArgumentException("Cannot measure distance to a null world");
-        } else if (!o.getWorld().equals(getWorld())) {
-            throw new IllegalArgumentException("Cannot measure distance between " + getWorld() + " and " + o.getWorld());
-        }
-
         return NumberUtils.square(x - o.x) + NumberUtils.square(y - o.y) + NumberUtils.square(z - o.z);
     }
 
