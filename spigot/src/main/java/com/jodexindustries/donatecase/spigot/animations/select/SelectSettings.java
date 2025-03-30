@@ -17,6 +17,9 @@ public class SelectSettings {
     @Setting("Timeout")
     public int timeout = 600; // 30 seconds
 
+    @Setting("Radius")
+    public double radius = 1;
+
     @Setting("ItemSlot")
     public EquipmentSlot itemSlot = EquipmentSlot.HEAD;
 

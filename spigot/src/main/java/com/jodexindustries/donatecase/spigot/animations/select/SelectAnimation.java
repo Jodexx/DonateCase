@@ -57,7 +57,7 @@ public class SelectAnimation extends BukkitJavaAnimation {
                         getLocation().x(origX + horizonOffset);
                     }
 
-                    final ArmorStandCreator as = DCAPI.getInstance().getPlatform().getTools().createArmorStand(getUuid(), getLocation());
+                    final ArmorStandCreator as = api.getPlatform().getTools().createArmorStand(getUuid(), getLocation());
 
                     as.setVisible(false);
 
@@ -70,9 +70,9 @@ public class SelectAnimation extends BukkitJavaAnimation {
                     as.spawn();
 
                     if (settings.facing == Facing.EAST || settings.facing == Facing.WEST) {
-                        asList.add(Pair.of(as, new CaseLocation(origX, origY + y, origZ + horizonOffset)));
+                        asList.add(Pair.of(as, new CaseLocation(origX, origY + y * settings.radius, origZ + horizonOffset * settings.radius)));
                     } else {
-                        asList.add(Pair.of(as, new CaseLocation(origX + horizonOffset, origY + y, origZ)));
+                        asList.add(Pair.of(as, new CaseLocation(origX + horizonOffset * settings.radius, origY + y * settings.radius, origZ)));
                     }
 
                 }
@@ -117,40 +117,50 @@ public class SelectAnimation extends BukkitJavaAnimation {
                 }
             }
 
-            if (tick >= 10 && tick <= 89) {
-                if (tick % 10 == 0) {
+            if (tick >= 10 && tick < 90) {
+                if (tick % 10 == 0 && !asList.isEmpty()) {
                     Random random = new Random();
                     int index = random.nextInt(asList.size());
                     randomAS = asList.get(index);
                     asList.remove(index);
                     toDelete.add(randomAS.fst);
                 }
-                ArmorStandCreator as = randomAS.fst;
 
-                CaseLocation needLocation = randomAS.snd;
+                if (randomAS != null) {
+                    ArmorStandCreator as = randomAS.fst;
+                    CaseLocation needLocation = randomAS.snd;
 
-                as.setEquipment(settings.itemSlot, new ItemStack(Material.CHEST));
-                as.updateMeta();
-                CaseLocation currentLocation = as.getLocation();
+                    as.setEquipment(settings.itemSlot, new ItemStack(Material.CHEST));
+                    as.updateMeta();
 
-                as.teleport(as.getLocation().add(
-                        currentLocation.x() > needLocation.x() ? -0.1 : (Math.abs(currentLocation.x() - needLocation.x()) < 1e-6 ? 0 : 0.1),
-                        currentLocation.y() > needLocation.y() ? -0.1 : (Math.abs(currentLocation.y() - needLocation.y()) < 1e-6 ? 0 : 0.1),
-                        currentLocation.z() > needLocation.z() ? -0.1 : (Math.abs(currentLocation.z() - needLocation.z()) < 1e-6 ? 0 : 0.1)
-                ));
-                as.teleport(as.getLocation());
+                    CaseLocation currentLocation = as.getLocation().clone();
 
-                final Location bukkitLocation = new Location(world, as.getLocation().x(), as.getLocation().y() + 1, as.getLocation().z());
+                    double deltaX = needLocation.x() - currentLocation.x();
+                    double deltaY = needLocation.y() - currentLocation.y();
+                    double deltaZ = needLocation.z() - currentLocation.z();
 
-                world.spawnParticle(Particle.valueOf("CLOUD"), bukkitLocation, 0);
+                    double distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 
+                    double step = distance / 10;
+
+                    double moveX = deltaX * (step / distance);
+                    double moveY = deltaY * (step / distance);
+                    double moveZ = deltaZ * (step / distance);
+
+                    as.teleport(currentLocation.add(moveX, moveY, moveZ));
+
+                    final Location bukkitLocation = new Location(world, as.getLocation().x(), as.getLocation().y() + 1, as.getLocation().z());
+
+                    world.spawnParticle(Particle.CLOUD, bukkitLocation, 0);
+                }
             }
 
-            if (tick == 90) {
+
+            if (tick == 91) {
                 this.canSelect = true;
             }
 
-            if (tick > 90) {
+            if (tick > 91) {
                 // event
                 if (this.selected) {
                     task.cancel();
