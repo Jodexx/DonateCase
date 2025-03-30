@@ -54,8 +54,10 @@ public final class MainAddon extends InternalJavaAddon implements Subscriber {
 
     @Subscribe
     public void onReload(DonateCaseReloadEvent event) {
-        if(event.type() == DonateCaseReloadEvent.Type.CONFIG) config.load();
-        getLogger().info("Config reloaded");
+        if(event.type() == DonateCaseReloadEvent.Type.CONFIG) {
+            getLogger().info("Config reloaded");
+            config.load();
+        }
     }
 
 }
