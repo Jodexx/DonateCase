@@ -98,15 +98,16 @@ public class BukkitBackend extends BackendPlatform {
         registerDefaultActions();
         registerDefaultMaterials();
 
+        loadHologramDrivers();
+
         Bukkit.getServer().getPluginManager().registerEvents(new EventListener(this), plugin);
 
         api.load();
-        // after config load
 
+        // after config load
         loadMetrics();
         loadPacketEventsAPI();
         loadLuckPerms();
-        loadHologramDrivers();
     }
 
     @Override
