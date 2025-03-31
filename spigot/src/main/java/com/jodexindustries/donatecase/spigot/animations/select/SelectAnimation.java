@@ -9,10 +9,8 @@ import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.spigot.tools.Pair;
 import lombok.Getter;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -130,7 +128,7 @@ public class SelectAnimation extends BukkitJavaAnimation {
                     ArmorStandCreator as = randomAS.fst;
                     CaseLocation needLocation = randomAS.snd;
 
-                    as.setEquipment(settings.itemSlot, new ItemStack(Material.CHEST));
+                    as.setEquipment(settings.itemSlot, api.getPlatform().getTools().loadCaseItem(settings.item));
                     as.updateMeta();
 
                     CaseLocation currentLocation = as.getLocation().clone();

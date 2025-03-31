@@ -23,4 +23,7 @@ public class SelectSettings {
     @Setting("ItemSlot")
     public EquipmentSlot itemSlot = EquipmentSlot.HEAD;
 
+    @Setting("Item")
+    public String item = "CHEST";
+
 }

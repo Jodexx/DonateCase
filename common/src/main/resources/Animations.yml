@@ -137,5 +137,6 @@ SELECT:
   Facing: EAST # WEST, NORTH, EAST, SOUTH
   Timeout: 600 # in ticks
   Radius: 1.5
+  Item: CHEST
 #  Period: 0
 #  ItemSlot: HEAD
