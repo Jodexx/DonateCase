@@ -2,10 +2,7 @@ package com.jodexindustries.donatecase.common.config.converter;
 
 import com.jodexindustries.donatecase.api.config.converter.ConfigMigrator;
 import com.jodexindustries.donatecase.api.config.converter.ConfigType;
-import com.jodexindustries.donatecase.common.config.converter.migrators.AnimationsMigrator_1_4_to_1_5;
-import com.jodexindustries.donatecase.common.config.converter.migrators.CaseMigrator_1_2_to_1_3;
-import com.jodexindustries.donatecase.common.config.converter.migrators.CasesMigrator_1_0_to_1_1;
-import com.jodexindustries.donatecase.common.config.converter.migrators.UnknownMigrator;
+import com.jodexindustries.donatecase.common.config.converter.migrators.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -28,7 +25,9 @@ public enum DefaultConfigType implements ConfigType {
     }}),
 
     CONFIG(25),
-    LANG(26),
+    LANG(27, new HashMap<Integer, ConfigMigrator>() {{
+        put(26, new LanguageMigrator_2_6_to_2_7());
+    }}),
     /**
      * Custom configuration unknown to DonateCase
      */
