@@ -132,7 +132,7 @@ public class PacketArmorStandCreator implements ArmorStandCreator {
     public void setCustomName(String displayName) {
         if(displayName != null)
             meta.setIndex((byte) 2, EntityDataTypes.OPTIONAL_ADV_COMPONENT,
-                    Optional.of(LegacyComponentSerializer.legacyAmpersand().deserialize(DCTools.rc(displayName))));
+                    Optional.of(LegacyComponentSerializer.legacySection().deserialize(DCTools.rc(displayName))));
     }
 
     @Override
