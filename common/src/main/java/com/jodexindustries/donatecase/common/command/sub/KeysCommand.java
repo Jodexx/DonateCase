@@ -62,7 +62,7 @@ public class KeysCommand extends DefaultCommand {
 
     public static String formatMessage(String player, String message, boolean cached, String caseType) {
         String placeholder = DCTools.getLocalPlaceholder(message);
-        String result = "0";
+        String result = "undefined";
 
         if (placeholder.equals("keys") || placeholder.equals("keys_format")) {
             if (caseType != null) {

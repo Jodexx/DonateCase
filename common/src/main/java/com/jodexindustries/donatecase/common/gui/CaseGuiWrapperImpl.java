@@ -134,10 +134,11 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
     private String setPlaceholders(@Nullable String text) {
         if (text == null) return null;
         String caseType = caseData.caseType();
-        return platform.getPAPI().setPlaceholders(
+        text = platform.getPAPI().setPlaceholders(
                 player,
-                KeysCommand.formatMessage(player.getName(), text.replace("%casetype%", caseType), true, caseType)
+                text
         );
+        return KeysCommand.formatMessage(player.getName(), text.replace("%casetype%", caseType), true, caseType);
     }
 
     private List<String> setPlaceholders(List<String> lore) {
