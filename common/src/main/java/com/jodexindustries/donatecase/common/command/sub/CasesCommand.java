@@ -9,9 +9,7 @@ import com.jodexindustries.donatecase.common.command.DefaultCommand;
 import com.jodexindustries.donatecase.common.tools.LocalPlaceholder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class CasesCommand extends DefaultCommand {
 

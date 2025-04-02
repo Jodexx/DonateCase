@@ -7,14 +7,10 @@ import com.jodexindustries.donatecase.api.tools.Placeholder;
 
 import java.util.*;
 
-public class LocalPlaceholder implements Placeholder {
+public class LocalPlaceholder extends Placeholder {
 
-    private final String name;
-    private final String value;
-
-    public LocalPlaceholder(String name, String value) {
-        this.name = name;
-        this.value = value;
+    private LocalPlaceholder(String name, String value) {
+        super(name, value);
     }
 
     public static LocalPlaceholder of(String name, Object value) {
@@ -58,21 +54,12 @@ public class LocalPlaceholder implements Placeholder {
     public boolean equals(Object object) {
         if (object == null || getClass() != object.getClass()) return false;
         LocalPlaceholder that = (LocalPlaceholder) object;
-        return Objects.equals(name, that.name);
+        return Objects.equals(name(), that.name());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name);
+        return Objects.hashCode(name());
     }
 
-    @Override
-    public String name() {
-        return name;
-    }
-
-    @Override
-    public String value() {
-        return value;
-    }
 }
