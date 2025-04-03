@@ -23,7 +23,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
@@ -218,26 +224,26 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     private void animationEnd(@NotNull ActiveCase activeCase) {
+        CaseLocation block = activeCase.block();
+        activeCases.remove(activeCase.uuid());
+        activeCasesByBlock.remove(block);
+
+        DCPlayer player = activeCase.player();
+        if(!activeCase.keyRemoved()) api.getCaseKeyManager().remove(activeCase.caseType(), player.getName(), 1);
+
+        api.getEventBus().post(new AnimationEndEvent(activeCase));
+
         CaseData caseData = api.getCaseManager().get(activeCase.caseType());
         if(caseData == null) return;
 
         CaseAnimation caseAnimation = get(caseData.animation());
         if(caseAnimation == null) return;
 
-        DCPlayer player = activeCase.player();
-
-        if(!activeCase.keyRemoved()) api.getCaseKeyManager().remove(caseData.caseType(), player.getName(), 1);
-
-        CaseLocation block = activeCase.block();
-        activeCases.remove(activeCase.uuid());
-        activeCasesByBlock.remove(block);
-
         if(caseAnimation.isRequireBlock()) {
             CaseData.Hologram hologram = caseData.hologram();
             if (hologram != null && hologram.enabled()) api.getHologramManager().create(block, hologram);
         }
 
-        api.getEventBus().post(new AnimationEndEvent(activeCase));
     }
 
     @Override
