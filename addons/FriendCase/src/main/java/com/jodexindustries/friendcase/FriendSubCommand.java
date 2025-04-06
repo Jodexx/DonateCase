@@ -77,7 +77,7 @@ public class FriendSubCommand implements SubCommandExecutor, SubCommandTabComple
                 return true;
             }
 
-            if (target == p) {
+            if (target.equals(p)) {
                 sender.sendMessage(rc(addon.config.getString("Messages", "GiftYourself")));
                 return true;
             }

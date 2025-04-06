@@ -4,6 +4,8 @@ import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class BukkitCommandSender implements DCCommandSender {
 
     private final CommandSender sender;
@@ -30,5 +32,17 @@ public class BukkitCommandSender implements DCCommandSender {
     @Override
     public void sendMessage(@NotNull String text) {
         sender.sendMessage(text);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        BukkitCommandSender that = (BukkitCommandSender) object;
+        return Objects.equals(sender, that.sender);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(sender);
     }
 }

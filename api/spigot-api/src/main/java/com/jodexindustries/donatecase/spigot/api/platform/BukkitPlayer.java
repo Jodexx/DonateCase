@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class BukkitPlayer extends BukkitCommandSender implements DCPlayer {
@@ -54,5 +55,18 @@ public class BukkitPlayer extends BukkitCommandSender implements DCPlayer {
     @Override
     public void closeInventory() {
         player.closeInventory();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        if (!super.equals(object)) return false;
+        BukkitPlayer that = (BukkitPlayer) object;
+        return Objects.equals(player, that.player);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), player);
     }
 }
