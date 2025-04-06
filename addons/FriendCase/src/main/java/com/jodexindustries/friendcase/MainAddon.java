@@ -7,9 +7,12 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.event.Subscriber;
 import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
 import net.kyori.event.method.annotation.Subscribe;
+import org.spongepowered.configurate.ConfigurateException;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public final class MainAddon extends InternalJavaAddon implements Subscriber {
 
@@ -19,12 +22,12 @@ public final class MainAddon extends InternalJavaAddon implements Subscriber {
 
     @Override
     public void onLoad() {
-        this.config = new Config(this);
+        this.config = new Config(new File(getDataFolder(), "config.yml"), this);
     }
 
     @Override
     public void onEnable() {
-        this.config.load();
+        load(false);
 
         api.getEventBus().register(this);
 
@@ -52,12 +55,17 @@ public final class MainAddon extends InternalJavaAddon implements Subscriber {
         api.getEventBus().unregister(this);
     }
 
-    @Subscribe
-    public void onReload(DonateCaseReloadEvent event) {
-        if(event.type() == DonateCaseReloadEvent.Type.CONFIG) {
-            getLogger().info("Config reloaded");
+    public void load(boolean log) {
+        try {
             config.load();
+            if (log) getLogger().info("Config reloaded!");
+        } catch (ConfigurateException e) {
+            getLogger().log(Level.WARNING, "Error with loading configuration:", e);
         }
     }
 
+    @Subscribe
+    public void onReload(DonateCaseReloadEvent event) {
+        if (event.type() == DonateCaseReloadEvent.Type.CONFIG) load(true);
+    }
 }

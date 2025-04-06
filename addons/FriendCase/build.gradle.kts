@@ -13,6 +13,7 @@ version = "2.0.0"
 
 dependencies {
     compileOnly(project(":api"))
+    compileOnly(project(":common"))
 }
 
 tasks.processResources {

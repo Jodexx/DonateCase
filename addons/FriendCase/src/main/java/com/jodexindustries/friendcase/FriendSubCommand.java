@@ -7,6 +7,7 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter
 import com.jodexindustries.donatecase.api.event.CaseGiftEvent;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import com.jodexindustries.donatecase.api.tools.Placeholder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.jodexindustries.donatecase.api.tools.DCTools.rc;
+import static com.jodexindustries.donatecase.api.tools.DCTools.rt;
 
 public class FriendSubCommand implements SubCommandExecutor, SubCommandTabCompleter {
     private final MainAddon addon;
@@ -63,10 +65,9 @@ public class FriendSubCommand implements SubCommandExecutor, SubCommandTabComple
             int playerKeys = addon.api.getCaseKeyManager().get(caseType, p.getName());
 
             if (playerKeys < 1 || playerKeys < keys) {
-                sender.sendMessage(rc(
-                        addon.config.getString("Messages", "MinNumber")
-                                .replace("%required%", keys + "")
-                ));
+                sender.sendMessage(
+                        rt(addon.config.getString("Messages", "MinNumber"), Placeholder.of("%required%", keys))
+                );
                 return true;
             }
 
@@ -93,19 +94,19 @@ public class FriendSubCommand implements SubCommandExecutor, SubCommandTabComple
                         return;
                     }
 
-                    target.sendMessage(rc(
-                            addon.config.getString("Messages", "YouReceivedGift")
-                                    .replace("%sender%", sender.getName())
-                                    .replace("%target%", target.getName())
-                                    .replace("%keys%", keys + "")
-                                    .replace("%case%", caseType)
+                    target.sendMessage(rt(
+                            addon.config.getString("Messages", "YouReceivedGift"),
+                            Placeholder.of("%sender%", sender.getName()),
+                            Placeholder.of("%target%", target.getName()),
+                            Placeholder.of("%keys%", keys),
+                            Placeholder.of("%case%", caseType)
                     ));
-                    sender.sendMessage(rc(
-                            addon.config.getString("Messages", "YouSendGift")
-                                    .replace("%target%", target.getName())
-                                    .replace("%sender%", sender.getName())
-                                    .replace("%keys%", keys + "")
-                                    .replace("%case%", caseType)
+                    sender.sendMessage(rt(
+                            addon.config.getString("Messages", "YouSendGift"),
+                            Placeholder.of("%sender%", sender.getName()),
+                            Placeholder.of("%target%", target.getName()),
+                            Placeholder.of("%keys%", keys),
+                            Placeholder.of("%case%", caseType)
                     ));
 
                     addon.api.getEventBus().post(new CaseGiftEvent(p, target, caseData, keys));
