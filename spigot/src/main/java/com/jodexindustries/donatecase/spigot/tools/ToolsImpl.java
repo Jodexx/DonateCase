@@ -10,6 +10,7 @@ import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitInventory;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class ToolsImpl extends DCToolsBukkit {
     }
 
     @Override
-    public CaseInventory createInventory(int size, String title) {
+    public CaseInventory createInventory(int size, @Nullable String title) {
         return new BukkitInventory(size, title);
     }
 

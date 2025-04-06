@@ -11,7 +11,8 @@ public class BukkitInventory implements CaseInventory {
     private final Inventory inventory;
 
     public BukkitInventory(int size, String title) {
-        this.inventory = Bukkit.createInventory(null, size, title);
+        String safeTitle = title != null ? title : "";
+        this.inventory = Bukkit.createInventory(null, size, safeTitle);
     }
 
     @Override

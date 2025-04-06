@@ -27,6 +27,9 @@ public class CaseMigrator_1_2_to_1_3 implements ConfigMigrator {
         root.node("config", "type").set(config.type());
 
         root.node("case", "CooldownBeforeAnimation").set(0);
+
+        ConfigurationNode titleNode = root.node("case", "Gui", "Title");
+        if(titleNode.virtual()) titleNode.set(root.node("case", "Title").getString());
     }
 
     private static void migrateItem(ConfigurationNode node) {

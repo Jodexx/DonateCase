@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  */
 public abstract class DCTools {
 
-    public abstract CaseInventory createInventory(int size, String title);
+    public abstract CaseInventory createInventory(int size, @Nullable String title);
 
     public abstract ArmorStandCreator createArmorStand(UUID animationUuid, CaseLocation location);
 
