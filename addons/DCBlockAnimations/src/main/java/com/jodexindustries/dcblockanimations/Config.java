@@ -1,25 +1,25 @@
 package com.jodexindustries.dcblockanimations;
 
-import lombok.Getter;
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.jodexindustries.donatecase.common.config.ConfigImpl;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Config {
+public class Config extends ConfigImpl {
 
-    @Getter
-    private YamlConfiguration config;
-    private final File configFile;
-
-    public Config(MainAddon addon) {
-        configFile = new File(addon.getDataFolder(), "config.yml");
-
-        if(!configFile.exists()) addon.saveResource("config.yml", false);
-
-        load();
+    public Config(File file, MainAddon addon) {
+        super(file);
+        if(!file.exists()) addon.saveResource("config.yml", false);
     }
 
-    public void load() {
-        config = YamlConfiguration.loadConfiguration(configFile);
+    public List<String> getEnabledTypes() {
+        try {
+            return node("enabled-types").getList(String.class);
+        } catch (SerializationException e) {
+            return new ArrayList<>();
+        }
     }
+
 }

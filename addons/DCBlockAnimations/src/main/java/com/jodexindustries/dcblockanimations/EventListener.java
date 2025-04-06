@@ -27,10 +27,9 @@ public class EventListener implements Subscriber {
     @Subscribe
     public void onCaseOpen(AnimationStartEvent e) {
         ActiveCase activeCase = e.activeCase();
-        if(addon.api.getAnimationManager().getActiveCasesByBlock().containsKey(activeCase.block())) return;
+        if (!addon.getConfig().getEnabledTypes().contains(activeCase.caseType())) return;
 
-        String caseType = activeCase.caseType();
-        if (!addon.getConfig().getConfig().getStringList("enabled-types").contains(caseType)) return;
+        if (MainAddon.api.getAnimationManager().getActiveCasesByBlock().containsKey(activeCase.block())) return;
 
         openBlock(activeCase.block());
     }
@@ -42,7 +41,7 @@ public class EventListener implements Subscriber {
 
     @Subscribe
     public void onConfigReload(DonateCaseReloadEvent e) {
-        if (e.type() == DonateCaseReloadEvent.Type.CONFIG) addon.getConfig().load();
+        if (e.type() == DonateCaseReloadEvent.Type.CONFIG) addon.load(true);
     }
 
     private void openBlock(CaseLocation caseLocation) {
