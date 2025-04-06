@@ -5,6 +5,8 @@ import com.jodexindustries.dcwebhook.events.EventListener;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 
+import java.io.File;
+
 public final class MainAddon extends InternalJavaAddon {
 
     public final DCAPI api = DCAPI.getInstance();
@@ -17,7 +19,7 @@ public final class MainAddon extends InternalJavaAddon {
     @Override
     public void onLoad() {
         instance = this;
-        this.config = new Config(this);
+        this.config = new Config(new File(getDataFolder(), "config.yml"), this);
     }
 
     @Override

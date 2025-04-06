@@ -6,7 +6,6 @@ import com.jodexindustries.donatecase.api.event.Subscriber;
 import com.jodexindustries.donatecase.api.event.animation.AnimationEndEvent;
 import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
 import net.kyori.event.PostOrders;
-import net.kyori.event.method.annotation.IgnoreCancelled;
 import net.kyori.event.method.annotation.PostOrder;
 import net.kyori.event.method.annotation.Subscribe;
 
@@ -23,14 +22,12 @@ public class EventListener implements Subscriber {
     }
 
     @Subscribe
-    @IgnoreCancelled
     @PostOrder(PostOrders.LAST)
     public void onReload(DonateCaseReloadEvent e) {
         if (e.type() == DonateCaseReloadEvent.Type.CONFIG) addon.config.load();
     }
 
     @Subscribe
-    @IgnoreCancelled
     @PostOrder(PostOrders.LAST)
     public void onAnimationEnd(AnimationEndEvent e) {
         addon.api.getPlatform().getScheduler().async(addon, () -> {
