@@ -29,9 +29,7 @@ public class EventListener implements Subscriber, Listener {
 
     @Subscribe
     public void onReload(DonateCaseReloadEvent e) {
-        if (e.type() == DonateCaseReloadEvent.Type.CONFIG) {
-            addon.config.reload(true);
-        }
+        if (e.type() == DonateCaseReloadEvent.Type.CONFIG) addon.load(true);
     }
 
     @Subscribe
@@ -57,7 +55,7 @@ public class EventListener implements Subscriber, Listener {
                 }
 
                 case COMMAND: {
-                    if(player instanceof Player) ((Player) player).chat(casePreview.command());
+                    if (player instanceof Player) ((Player) player).chat(casePreview.command());
                     break;
                 }
             }

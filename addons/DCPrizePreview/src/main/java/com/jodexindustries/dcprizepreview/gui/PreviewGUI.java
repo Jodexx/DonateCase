@@ -18,7 +18,7 @@ public class PreviewGUI {
     public static Inventory loadGUI(CaseData caseData) {
         Collection<CaseDataItem> items = caseData.items().values();
         CaseGui caseGui = caseData.caseGui();
-        if(caseGui == null) return null;
+        if (caseGui == null) return null;
 
         Inventory inventory = Bukkit.createInventory(null, getSize(items.size()), DCTools.rc(caseGui.title()));
         items = items.stream().sorted(Comparator.comparingInt(CaseDataItem::index)).collect(Collectors.toList());

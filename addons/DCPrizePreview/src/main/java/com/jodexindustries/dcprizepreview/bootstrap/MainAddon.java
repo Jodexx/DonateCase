@@ -7,6 +7,10 @@ import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
+import org.spongepowered.configurate.ConfigurateException;
+
+import java.io.File;
+import java.util.logging.Level;
 
 public class MainAddon extends InternalJavaAddon {
 
@@ -17,11 +21,12 @@ public class MainAddon extends InternalJavaAddon {
 
     @Override
     public void onLoad() {
-        config = new Config(this);
+        config = new Config(new File(getDataFolder(), "config.yml"), this);
     }
 
     @Override
     public void onEnable() {
+        load(false);
         api.getEventBus().register(eventListener);
         Bukkit.getServer().getPluginManager().registerEvents(eventListener, BukkitUtils.getDonateCase());
     }
@@ -31,6 +36,15 @@ public class MainAddon extends InternalJavaAddon {
         if (eventListener != null) {
             api.getEventBus().unregister(eventListener);
             HandlerList.unregisterAll(eventListener);
+        }
+    }
+
+    public void load(boolean log) {
+        try {
+            config.load();
+            if (log) getLogger().info("Config reloaded!");
+        } catch (ConfigurateException e) {
+            getLogger().log(Level.WARNING, "Error with loading configuration:", e);
         }
     }
 }

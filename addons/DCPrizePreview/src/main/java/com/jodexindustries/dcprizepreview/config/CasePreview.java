@@ -1,26 +1,20 @@
 package com.jodexindustries.dcprizepreview.config;
 
-import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
+@ConfigSerializable
 public class CasePreview {
-    private final PreviewType type;
-    private final String command;
 
-    public CasePreview(@NotNull PreviewType type, @NotNull String command) {
-        this.type = type;
-        this.command = command;
-    }
+    @Setting("preview")
+    private PreviewType preview;
 
-    @NotNull
-    public static CasePreview deserialize(@NotNull ConfigurationSection section) {
-        String type = section.getString("preview", "AUTO");
-        String command = section.getString("command", "");
-        return new CasePreview(PreviewType.type(type), command);
-    }
+    @Setting("command")
+    private String command;
 
     public PreviewType type() {
-        return type;
+        return preview;
     }
 
     @NotNull
@@ -29,15 +23,6 @@ public class CasePreview {
     }
 
     public enum PreviewType {
-        AUTO, COMMAND;
-
-        public static PreviewType type(@NotNull String string) {
-            try {
-                return valueOf(string.toUpperCase());
-            } catch (IllegalArgumentException ignored) {
-            }
-
-            return AUTO;
-        }
+        AUTO, COMMAND
     }
 }

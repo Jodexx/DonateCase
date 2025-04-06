@@ -1,55 +1,30 @@
 package com.jodexindustries.dcprizepreview.config;
 
 import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
+import com.jodexindustries.donatecase.common.config.ConfigImpl;
+import io.leangen.geantyref.TypeToken;
+import org.spongepowered.configurate.ConfigurateException;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
-public class Config {
-    private final File configFile;
-    private final YamlConfiguration config = new YamlConfiguration();
-    private final InternalJavaAddon addon;
-    public final Map<String, CasePreview> previewMap = new HashMap<>();
+public class Config extends ConfigImpl {
 
-    public Config(InternalJavaAddon addon) {
-        this.addon = addon;
-        configFile = new File(addon.getDataFolder(), "config.yml");
-        if(!configFile.exists()) addon.saveResource("config.yml", false);
-        reload();
+    private static final TypeToken<Map<String, CasePreview>> MAP_TYPE_TOKEN = new TypeToken<Map<String, CasePreview>>() {
+    };
+
+    public Map<String, CasePreview> previewMap;
+
+    public Config(File file, InternalJavaAddon addon) {
+        super(file);
+        if (!file().exists()) addon.saveResource("config.yml", false);
     }
 
-    public void load() {
-        previewMap.clear();
-
-        ConfigurationSection section = config.getConfigurationSection("cases");
-        if(section == null) return;
-
-        for (String key : section.getKeys(false)) {
-            ConfigurationSection caseSection = section.getConfigurationSection(key);
-            if(caseSection == null) continue;
-
-            CasePreview casePreview = CasePreview.deserialize(caseSection);
-            previewMap.put(key, casePreview);
-        }
+    @Override
+    public void load() throws ConfigurateException {
+        node(loader().load());
+        this.previewMap = node("cases").get(MAP_TYPE_TOKEN, new HashMap<>());
     }
 
-    public void reload() {
-        reload(false);
-    }
-
-    public void reload(boolean message) {
-        try {
-            config.load(configFile);
-            load();
-            if(message) addon.getLogger().info("Config reloaded");
-        } catch (IOException | InvalidConfigurationException e) {
-            addon.getLogger().log(Level.SEVERE, "Failed to reload config", e);
-        }
-    }
 }
