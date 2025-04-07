@@ -279,26 +279,33 @@ public class AnimationManagerImpl implements AnimationManager {
             return false;
         }
 
-            if (isLocked(location)) {
-                backend.getLogger().log(Level.WARNING, "Player " + player.getName() +
-                        " trying to start animation while another animation is running in case: " + caseData.caseType());
-                return false;
-            }
+        if (location.getWorld() == null || location.getWorld().name() == null) {
+            backend.getLogger().warning("Player " + player.getName() +
+                    " trying to start animation without world name in case: " + caseData.caseType() +
+                    " Check the Cases.yml file!");
+            return false;
+        }
+
+        if (isLocked(location)) {
+            backend.getLogger().warning("Player " + player.getName() +
+                    " trying to start animation while another animation is running in case: " + caseData.caseType());
+            return false;
+        }
 
         if (animation.isRequireSettings() && settings == null) {
-            backend.getLogger().log(Level.WARNING, "Animation " + animation + " requires settings for starting!");
+            backend.getLogger().warning("Animation " + animation + " requires settings for starting!");
             return false;
         }
 
         if (caseData.items().isEmpty()) {
-            backend.getLogger().log(Level.WARNING, "Player " + player.getName() +
-                            " trying to start animation without items in case: " + caseData.caseType());
+            backend.getLogger().warning("Player " + player.getName() +
+                    " trying to start animation without items in case: " + caseData.caseType());
             return false;
         }
 
-        if(!caseData.hasRealItems()) {
-            backend.getLogger().log(Level.WARNING, "Player " + player.getName() +
-                            " trying to start animation without real (chance > 0) items in case: " + caseData.caseType());
+        if (!caseData.hasRealItems()) {
+            backend.getLogger().warning("Player " + player.getName() +
+                    " trying to start animation without real (chance > 0) items in case: " + caseData.caseType());
             return false;
         }
 
