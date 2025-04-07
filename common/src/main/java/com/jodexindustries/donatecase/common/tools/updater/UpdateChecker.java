@@ -36,7 +36,7 @@ public class UpdateChecker {
                 CompletableFuture.supplyAsync(() -> {
 
                     try {
-                        URL url = new URL("https://api.modrinth.com/v2/project/donatecase/version");
+                        URL url = new URL("https://api.modrinth.com/v2/project/donatecase/version?featured=true");
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                         connection.setRequestMethod("GET");
                         connection.setRequestProperty("Accept", "application/json");
