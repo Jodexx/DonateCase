@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.common.config;
 
-import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.config.CaseStorage;
 import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
@@ -110,7 +109,7 @@ public class CaseStorageImpl implements CaseStorage {
         try {
             return node.get(CaseInfo.class);
         } catch (SerializationException e) {
-            DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Error with getting info about case: " + node.key(), e);
+            configManager.getPlatform().getLogger().log(Level.WARNING, "Error with getting info about case: " + node.key(), e);
         }
 
         return null;
