@@ -68,6 +68,8 @@ public class HologramManagerImpl implements HologramManager {
             CaseLocation location = info.location();
             CaseWorld world = location.getWorld();
 
+            if (api.getAnimationManager().isLocked(location)) continue;
+
             if (world == null || !api.getPlatform().isWorldLoaded(world.name())) {
                 api.getPlatform().getLogger().warning("Hologram creation error. World is null for case name: " + entry.getKey());
                 continue;
