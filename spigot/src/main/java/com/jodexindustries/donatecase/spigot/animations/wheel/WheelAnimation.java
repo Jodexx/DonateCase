@@ -52,8 +52,8 @@ public class WheelAnimation extends BukkitJavaAnimation {
         private final double offset;
 
         public Task() {
-            float pitch = Math.round(location.pitch() / 45.0f) * 45.0f;
-            float yaw = Math.round(location.yaw() / 45.0f) * 45.0f;
+            float pitch = settings.facing == null ? Math.round(location.pitch() / 45.0f) * 45.0f : settings.facing.pitch;
+            float yaw = settings.facing == null ? Math.round(location.yaw() / 45.0f) * 45.0f : settings.facing.yaw;
 
             if(settings.startPosition != null) location.add(settings.startPosition);
             location.pitch(pitch);

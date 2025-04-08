@@ -3,8 +3,10 @@ package com.jodexindustries.donatecase.spigot.animations.wheel;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.spigot.animations.Facing;
 import com.jodexindustries.donatecase.spigot.animations.SoundSettings;
 import org.bukkit.Particle;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
@@ -40,6 +42,10 @@ public class WheelSettings {
 
     @Setting("SmallArmorStand")
     public boolean smallArmorStand = true;
+
+    @Nullable
+    @Setting("Facing")
+    public Facing facing;
 
     public enum WheelType {
         FULL,  // No duplicates, all unique items
