@@ -34,7 +34,6 @@ import com.jodexindustries.donatecase.spigot.holograms.CMIHologramsImpl;
 import com.jodexindustries.donatecase.spigot.holograms.DecentHologramsImpl;
 import com.jodexindustries.donatecase.spigot.holograms.FancyHologramsImpl;
 import com.jodexindustries.donatecase.spigot.holograms.HolographicDisplaysImpl;
-import com.jodexindustries.donatecase.common.hook.LuckPermsSupport;
 import com.jodexindustries.donatecase.spigot.listener.EventListener;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
 import com.jodexindustries.donatecase.spigot.materials.*;
@@ -72,7 +71,6 @@ public class BukkitBackend extends BackendPlatform {
     private PAPI papi;
     @Getter private PacketEventsSupport packetEventsSupport;
 
-    private final LuckPermsSupport luckPermsSupport = new LuckPermsSupport();
     private MetaUpdater metaUpdater;
 
     public BukkitBackend(BukkitDonateCase plugin) {
@@ -119,11 +117,6 @@ public class BukkitBackend extends BackendPlatform {
                 .flatMap(world -> world.getEntitiesByClass(ArmorStand.class).stream())
                 .filter(stand -> stand.hasMetadata("case"))
                 .forEach(Entity::remove);
-    }
-
-    @Override
-    public @NotNull LuckPermsSupport getLuckPermsSupport() {
-        return luckPermsSupport;
     }
 
     @Override
@@ -465,7 +458,7 @@ public class BukkitBackend extends BackendPlatform {
 
     private void loadLuckPerms() {
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
-            luckPermsSupport.load();
+            getLuckPermsSupport().load();
         }
     }
 

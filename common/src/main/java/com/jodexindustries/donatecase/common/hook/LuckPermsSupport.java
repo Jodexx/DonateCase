@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.common.hook;
 
 import lombok.Getter;
-import lombok.Setter;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.model.user.User;
@@ -9,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-@Setter
 @Getter
 public class LuckPermsSupport {
 
