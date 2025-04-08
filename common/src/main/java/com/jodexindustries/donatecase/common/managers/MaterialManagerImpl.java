@@ -9,13 +9,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MaterialManagerImpl implements MaterialManager {
 
-    private static final Map<String, CaseMaterial> registeredMaterials = new HashMap<>();
+    private static final Map<String, CaseMaterial> registeredMaterials = new ConcurrentHashMap<>();
 
     private final Platform platform;
 

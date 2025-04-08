@@ -13,11 +13,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class ActionManagerImpl implements ActionManager {
 
-    private static final Map<String, CaseAction> registeredActions = new HashMap<>();
+    private static final Map<String, CaseAction> registeredActions = new ConcurrentHashMap<>();
 
     private final DCAPI api;
     private final Platform platform;

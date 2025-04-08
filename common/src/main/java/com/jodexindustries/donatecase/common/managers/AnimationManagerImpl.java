@@ -31,13 +31,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class AnimationManagerImpl implements AnimationManager {
 
-    private final static Map<String, CaseAnimation> registeredAnimations = new HashMap<>();
-    private final static Map<UUID, ActiveCase> activeCases = new HashMap<>();
-    private final static Map<CaseLocation, List<UUID>> activeCasesByBlock = new HashMap<>();
+    private final static Map<String, CaseAnimation> registeredAnimations = new ConcurrentHashMap<>();
+    private final static Map<UUID, ActiveCase> activeCases = new ConcurrentHashMap<>();
+    private final static Map<CaseLocation, List<UUID>> activeCasesByBlock = new ConcurrentHashMap<>();
 
     private final DonateCase api;
     private final BackendPlatform backend;

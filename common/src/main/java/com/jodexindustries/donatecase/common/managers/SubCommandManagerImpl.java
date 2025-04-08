@@ -10,7 +10,11 @@ import com.jodexindustries.donatecase.common.command.sub.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class SubCommandManagerImpl implements SubCommandManager {
@@ -31,7 +35,7 @@ public class SubCommandManagerImpl implements SubCommandManager {
             SetKeyCommand.class
     );
 
-    private static final Map<String, SubCommand> registeredSubCommands = new HashMap<>();
+    private static final Map<String, SubCommand> registeredSubCommands = new ConcurrentHashMap<>();
 
     private final DCAPI api;
     private final Platform platform;

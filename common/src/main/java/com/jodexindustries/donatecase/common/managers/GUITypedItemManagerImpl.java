@@ -7,11 +7,15 @@ import com.jodexindustries.donatecase.api.platform.Platform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GUITypedItemManagerImpl implements GUITypedItemManager {
 
-    private final static Map<String, TypedItem> registeredItems = new HashMap<>();
+    private final static Map<String, TypedItem> registeredItems = new ConcurrentHashMap<>();
 
     private final Platform platform;
 

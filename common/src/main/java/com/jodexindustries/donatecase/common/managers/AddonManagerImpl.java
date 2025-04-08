@@ -20,12 +20,13 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 public class AddonManagerImpl implements AddonManager {
 
-    private static final Map<String, InternalJavaAddon> addons = new HashMap<>();
+    private static final Map<String, InternalJavaAddon> addons = new ConcurrentHashMap<>();
     private static final List<InternalAddonClassLoader> loaders = new CopyOnWriteArrayList<>();
 
     private MutableGraph<String> dependencyGraph = GraphBuilder.directed().build();

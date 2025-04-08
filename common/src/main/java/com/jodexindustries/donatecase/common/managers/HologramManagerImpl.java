@@ -9,15 +9,15 @@ import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.api.manager.HologramManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class HologramManagerImpl implements HologramManager {
 
     private HologramDriver driver;
 
-    private final Map<String, HologramDriver> drivers = new HashMap<>();
+    private final Map<String, HologramDriver> drivers = new ConcurrentHashMap<>();
     private final DCAPI api;
 
     public HologramManagerImpl(DCAPI api) {

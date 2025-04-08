@@ -5,12 +5,12 @@ import com.jodexindustries.donatecase.api.manager.CaseManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CaseManagerImpl implements CaseManager {
 
-    private final static Map<String, CaseData> caseData = new HashMap<>();
+    private final static Map<String, CaseData> caseData = new ConcurrentHashMap<>();
 
     @Override
     public boolean hasByType(@NotNull String type) {
