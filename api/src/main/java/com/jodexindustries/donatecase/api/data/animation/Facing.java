@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.spigot.animations;
+package com.jodexindustries.donatecase.api.data.animation;
 
 public enum Facing {
     // Horizontal
