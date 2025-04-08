@@ -94,13 +94,11 @@ public class WheelAnimation extends BukkitJavaAnimation {
         }
 
         private void initializeItems() {
-            boolean small = getSettings().node("SmallArmorStand").getBoolean(true);
-
             if (settings.wheelType == WheelSettings.WheelType.FULL) {
                 // FULL logic - unique items
                 List<CaseDataItem> uniqueItems = new ArrayList<>(getCaseData().items().values());
 
-                if (getSettings().node("Shuffle").getBoolean(true)) {
+                if (settings.shuffle) {
                     Collections.shuffle(uniqueItems);
                 }
 
@@ -108,18 +106,18 @@ public class WheelAnimation extends BukkitJavaAnimation {
                 for (CaseDataItem uniqueItem : uniqueItems) {
                     if (uniqueItem.getName().equals(getWinItem().getName())) {
                         additionalSteps = uniqueItems.size() - armorStands.size();
-                        armorStands.add(spawnArmorStand(location, getWinItem(), small));
-                    } else armorStands.add(spawnArmorStand(location, uniqueItem, small));
+                        armorStands.add(spawnArmorStand(location, getWinItem(), settings.smallArmorStand));
+                    } else armorStands.add(spawnArmorStand(location, uniqueItem, settings.smallArmorStand));
                 }
 
                 double additionalAngle = additionalSteps * (2 * Math.PI / armorStands.size());
                 targetAngle = 2 * Math.PI * settings.scroll.count + additionalAngle;
             } else {
                 // RANDOM logic - random items with duplicates
-                armorStands.add(spawnArmorStand(location, getWinItem(), small));
+                armorStands.add(spawnArmorStand(location, getWinItem(), settings.smallArmorStand));
                 for (int i = 1; i < settings.itemsCount; i++) {
                     CaseDataItem randomItem = getCaseData().getRandomItem();
-                    armorStands.add(spawnArmorStand(location, randomItem, small));
+                    armorStands.add(spawnArmorStand(location, randomItem, settings.smallArmorStand));
                 }
                 int rand = new Random().nextInt(armorStands.size());
                 int additionalSteps = armorStands.size() - rand;

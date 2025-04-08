@@ -35,6 +35,12 @@ public class WheelSettings {
     @Setting("Type")
     public WheelType wheelType = WheelType.RANDOM;
 
+    @Setting("Shuffle")
+    public boolean shuffle = true;
+
+    @Setting("SmallArmorStand")
+    public boolean smallArmorStand = true;
+
     public enum WheelType {
         FULL,  // No duplicates, all unique items
         RANDOM // Can have duplicates, random items
