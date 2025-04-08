@@ -99,6 +99,7 @@ WHEEL:
   ItemsCount: 6 # only for RANDOM type
   Shuffle: true # only for FULL type
   CircleRadius: 2
+#  Facing: UP # DOWN
   StartPosition:
     x: 0.5
     y: -0.5
