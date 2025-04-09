@@ -68,9 +68,9 @@ public class SelectAnimation extends BukkitJavaAnimation {
                     as.spawn();
 
                     if (settings.facing == Facing.EAST || settings.facing == Facing.WEST) {
-                        asList.add(Pair.of(as, new CaseLocation(origX, origY + y * settings.radius, origZ + horizonOffset * settings.radius)));
+                        asList.add(Pair.of(as, as.getLocation().clone().x(origX).y(origY + y * settings.radius).z(origZ + horizonOffset * settings.radius)));
                     } else {
-                        asList.add(Pair.of(as, new CaseLocation(origX + horizonOffset * settings.radius, origY + y * settings.radius, origZ)));
+                        asList.add(Pair.of(as, as.getLocation().clone().x(origX + horizonOffset * settings.radius).y(origY + y * settings.radius).z(origZ)));
                     }
 
                 }

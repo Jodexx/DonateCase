@@ -64,9 +64,9 @@ public class PopAnimation extends BukkitJavaAnimation {
                     double yOffset = origY + (settings.rounded ? (y / (horOffset == 0 ? 1 : 1.4142)) : y) * settings.radius;
 
                     if (settings.facing == Facing.EAST || settings.facing == Facing.WEST) {
-                        asList.add(Pair.of(as, new CaseLocation(origX, yOffset, origZ + horizonOffset * settings.radius)));
+                        asList.add(Pair.of(as, as.getLocation().clone().x(origX).y(yOffset).z(origZ + horizonOffset * settings.radius)));
                     } else {
-                        asList.add(Pair.of(as, new CaseLocation(origX + horizonOffset * settings.radius, yOffset, origZ)));
+                        asList.add(Pair.of(as, as.getLocation().clone().x(origX + horizonOffset * settings.radius).y(yOffset).z(origZ)));
                     }
 
                 }
