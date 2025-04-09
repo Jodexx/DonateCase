@@ -37,7 +37,7 @@ public class PopAnimation extends BukkitJavaAnimation {
         List<Pair<ArmorStandCreator, CaseLocation>> asList = new ArrayList<>();
         double origX = getLocation().x() + 0.5, origY = getLocation().y() - 0.5, origZ = getLocation().z() + 0.5;
 
-        CaseLocation origCaseLocation = new CaseLocation(origX, origY, origZ);
+        CaseLocation origCaseLocation = getLocation().clone().x(origX).y(origY).z(origZ);
 
         for (double y = -1; y < 2; y++) {
             for (double horOffset = -1; horOffset < 2; horOffset++) {
