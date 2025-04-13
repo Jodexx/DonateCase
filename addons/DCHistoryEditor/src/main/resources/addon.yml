@@ -2,5 +2,5 @@ name: DCHistoryEditor
 version: '${version}'
 main: com.jodexindustries.dchistoryeditor.MainAddon
 author: "_Jodex__"
-api: 2.1.0.0
+api: 2.1.0.3
 platforms: ["Bukkit"]
