@@ -47,11 +47,11 @@ public class GiveKeyCommand extends DefaultCommand {
         try {
             keys = Integer.parseInt(args[2]);
         } catch (NumberFormatException e) {
-            DCTools.prefix(DCTools.rt(
+            sender.sendMessage(DCTools.prefix(DCTools.rt(
                             api.getConfigManager().getMessages().getString("number-format-exception"),
                             LocalPlaceholder.of("%string%", args[2])
                     )
-            );
+            ));
             return true;
         }
         if (api.getCaseManager().hasByType(caseType)) {
@@ -63,12 +63,12 @@ public class GiveKeyCommand extends DefaultCommand {
                 placeholders.add(LocalPlaceholder.of("%key%", keys));
 
                 if (status == DatabaseStatus.COMPLETE) {
-                    DCTools.prefix(
+                    sender.sendMessage(DCTools.prefix(
                             DCTools.rt(
                                     api.getConfigManager().getMessages().getString("keys-given"),
                                     placeholders
                             )
-                    );
+                    ));
 
                     if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
                         DCPlayer target = api.getPlatform().getPlayer(playerName);
@@ -83,12 +83,12 @@ public class GiveKeyCommand extends DefaultCommand {
                 }
             });
         } else {
-            DCTools.prefix(
+            sender.sendMessage(DCTools.prefix(
                     DCTools.rt(
                             api.getConfigManager().getMessages().getString("case-does-not-exist"),
                             LocalPlaceholder.of("%casetype%", caseType)
                     )
-            );
+            ));
         }
 
         return true;
