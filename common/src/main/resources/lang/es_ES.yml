@@ -44,7 +44,7 @@ help:
   - '&9/%cmd% givekey &7(&aJugador&7) &7(&aTipo de Caja&7) &7(&aLlaves&7) &3- &2Dar llaves al jugador'
   - '&9/%cmd% setkey &7(&aJugador&7) &7(&aTipo de Caja&7) &7(&aLlaves&7) &3- &2Establecer llaves del jugador'
   - '&9/%cmd% delkey &7(&aJugador&7) &7(&aTipo de Caja&7) &7[&aLlaves&7] &3- &2Eliminar llaves de un jugador'
-  - '&9/%cmd% delkey all &3- &2Eliminar todas las llaves de todos los jugadores'
+  - '&9/%cmd% delkey all &7[&aTipo de Caja&7] &3- &2Eliminar todas las llaves de todos los jugadores'
   - '&9/%cmd% reload &3- &2Recargar configuración'
   - '&9/%cmd% reload cache &3- &2Recargar cache'
   - '&9/%cmd% addons &3- &2Mostrar complementos cargados'

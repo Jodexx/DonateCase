@@ -63,6 +63,8 @@ public abstract class CaseKeyManager {
 
     public abstract CompletableFuture<DatabaseStatus> delete();
 
+    public abstract CompletableFuture<DatabaseStatus> delete(String caseType);
+
     /**
      * Get the keys to a certain player's case
      * @param caseType Case type

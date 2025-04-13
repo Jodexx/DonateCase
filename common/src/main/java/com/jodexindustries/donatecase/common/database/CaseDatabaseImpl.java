@@ -111,7 +111,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                     keys.put(result.getCaseType(), result.getKeys());
                 }
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
             }
             return keys;
         });
@@ -133,7 +133,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                     keys = results.get(0).getKeys();
                 }
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
             }
             return keys;
         });
@@ -165,7 +165,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                     updateBuilder.update();
                 }
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
                 return DatabaseStatus.FAIL;
             }
             return DatabaseStatus.COMPLETE;
@@ -185,7 +185,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                         .query();
                 if (!results.isEmpty()) openInfoTable = results.get(0);
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
             }
             if (openInfoTable != null) return (openInfoTable.getCount());
             return 0;
@@ -205,7 +205,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                     opens.put(result.getCaseType(), result.getCount());
                 }
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
             }
             return opens;
         });
@@ -236,7 +236,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                     updateBuilder.update();
                 }
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
                 return DatabaseStatus.FAIL;
             }
             return DatabaseStatus.COMPLETE;
@@ -263,7 +263,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
 
                 return DatabaseStatus.COMPLETE;
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
                 return DatabaseStatus.FAIL;
             }
         });
@@ -295,7 +295,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                 CaseData.History historyDataTable = results.isEmpty() ? null : results.get(index);
                 setHistoryDataTable(historyDataTable, data);
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
                 return DatabaseStatus.FAIL;
             }
             return DatabaseStatus.COMPLETE;
@@ -311,7 +311,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                 deleteBuilder.delete();
                 return DatabaseStatus.COMPLETE;
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
                 return DatabaseStatus.FAIL;
             }
         });
@@ -326,7 +326,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                 deleteBuilder.delete();
                 return DatabaseStatus.COMPLETE;
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
                 return DatabaseStatus.FAIL;
             }
         });
@@ -339,7 +339,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
             try {
                 result.addAll(historyDataTables.queryForAll());
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
             }
             return result;
         });
@@ -355,7 +355,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                         .eq("case_type", caseType)
                         .query());
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
             }
             return result;
         });
@@ -402,7 +402,22 @@ public class CaseDatabaseImpl extends CaseDatabase {
             try {
                 playerKeysTables.deleteBuilder().delete();
             } catch (SQLException e) {
-                logger.warning(e.getMessage());
+                warning(e);
+                return DatabaseStatus.FAIL;
+            }
+            return DatabaseStatus.COMPLETE;
+        });
+    }
+
+    @Override
+    public CompletableFuture<DatabaseStatus> delKeys(String caseType) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                DeleteBuilder<PlayerKeysTable, String> deleteBuilder = playerKeysTables.deleteBuilder();
+                deleteBuilder.where().eq("case_name", caseType);
+                deleteBuilder.delete();
+            } catch (SQLException e) {
+                warning(e);
                 return DatabaseStatus.FAIL;
             }
             return DatabaseStatus.COMPLETE;
@@ -423,5 +438,9 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DatabaseType getType() {
         return databaseType;
+    }
+
+    private void warning(Throwable e) {
+        logger.log(java.util.logging.Level.WARNING, "Error with database query:", e);
     }
 }

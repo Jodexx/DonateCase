@@ -54,6 +54,11 @@ public class CaseKeyManagerImpl extends CaseKeyManager {
     }
 
     @Override
+    public CompletableFuture<DatabaseStatus> delete(String caseType) {
+        return api.getDatabase().delKeys(caseType);
+    }
+
+    @Override
     public CompletableFuture<Integer> getAsync(String caseType, String player) {
         return api.getDatabase().getKeys(caseType, player);
     }

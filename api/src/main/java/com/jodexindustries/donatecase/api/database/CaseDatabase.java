@@ -41,6 +41,8 @@ public abstract class CaseDatabase {
 
     public abstract CompletableFuture<DatabaseStatus> delAllKeys();
 
+    public abstract CompletableFuture<DatabaseStatus> delKeys(String caseType);
+
     /**
      * Get count of opened cases by player
      *

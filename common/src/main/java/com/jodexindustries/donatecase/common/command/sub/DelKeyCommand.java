@@ -25,13 +25,23 @@ public class DelKeyCommand extends DefaultCommand {
     public boolean execute(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
         if (args.length == 0) {
             return false;
-        } else if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("all")) {
-                api.getCaseKeyManager().delete().thenAcceptAsync(status ->
-                        sender.sendMessage(DCTools.rc(api.getConfigManager().getMessages().getString("all-keys-cleared"))));
-            }
         } else {
             String playerName = args[0];
+
+            if (playerName.equalsIgnoreCase("all")) {
+                if (args.length == 1) {
+                    api.getCaseKeyManager().delete().thenAcceptAsync(status ->
+                            sender.sendMessage(DCTools.rc(api.getConfigManager().getMessages().getString("all-keys-cleared"))));
+                    return true;
+                } else if (args.length == 2) {
+                    api.getCaseKeyManager().delete(args[1]).thenAcceptAsync(status ->
+                            sender.sendMessage(DCTools.rc(api.getConfigManager().getMessages().getString("all-keys-cleared"))));
+                    return true;
+                }
+            }
+
+            if(args.length < 2) return false;
+
             String caseType = args[1];
             if (!DCTools.isValidPlayerName(playerName)) {
                 sender.sendMessage(

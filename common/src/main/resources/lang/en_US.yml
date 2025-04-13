@@ -44,7 +44,7 @@ help:
   - '&9/%cmd% givekey &7(&aPlayer&7) &7(&aCase Type&7) &7(&aKeys&7) &3- &2Give keys to player'
   - '&9/%cmd% setkey &7(&aPlayer&7) &7(&aCase Type&7) &7(&aKeys&7) &3- &2Set player keys'
   - '&9/%cmd% delkey &7(&aPlayer&7) &7(&aCase Type&7) &7[&aKeys&7] &3- &2Remove keys to a player'
-  - '&9/%cmd% delkey all &3- &2Delete all keys for all players'
+  - '&9/%cmd% delkey all &7[&aCase type&7] &3- &2Delete all keys for all players'
   - '&9/%cmd% reload &3- &2Reload config'
   - '&9/%cmd% reload cache &3- &2Reload cache'
   - '&9/%cmd% addons &3- &2Show loaded addons'
