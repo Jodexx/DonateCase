@@ -1,14 +1,13 @@
 package com.jodexindustries.dcblockanimations;
 
-import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.event.Subscriber;
 import com.jodexindustries.donatecase.api.event.animation.AnimationEndEvent;
-import com.jodexindustries.donatecase.api.event.animation.AnimationStartEvent;
+import com.jodexindustries.donatecase.api.event.animation.AnimationPreStartEvent;
 import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import net.kyori.event.method.annotation.Subscribe;
-import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Lidded;
 
 import java.util.HashMap;
@@ -25,13 +24,12 @@ public class EventListener implements Subscriber {
     }
 
     @Subscribe
-    public void onCaseOpen(AnimationStartEvent e) {
-        ActiveCase activeCase = e.activeCase();
-        if (!addon.getConfig().getEnabledTypes().contains(activeCase.caseType())) return;
+    public void onCaseOpen(AnimationPreStartEvent e) {
+        if (!addon.getConfig().getEnabledTypes().contains(e.caseData().caseType())) return;
 
-        if (MainAddon.api.getAnimationManager().getActiveCasesByBlock().containsKey(activeCase.block())) return;
+        if (MainAddon.api.getAnimationManager().getActiveCasesByBlock().containsKey(e.block())) return;
 
-        openBlock(activeCase.block());
+        MainAddon.api.getPlatform().getScheduler().run(addon, () -> openBlock(e.block()), 0L);
     }
 
     @Subscribe
@@ -45,9 +43,9 @@ public class EventListener implements Subscriber {
     }
 
     private void openBlock(CaseLocation caseLocation) {
-        Block block = BukkitUtils.toBukkit(caseLocation).getBlock();
-        if (block instanceof Lidded) {
-            Lidded lidded = (Lidded) block;
+        BlockState blockState = BukkitUtils.toBukkit(caseLocation).getBlock().getState();
+        if (blockState instanceof Lidded) {
+            Lidded lidded = (Lidded) blockState;
             lidded.open();
             openedBlocks.put(caseLocation, lidded);
         }
