@@ -103,7 +103,7 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
                 removeInform(sender, status);
             });
         } else {
-            int index = getIndex(sender, arg);
+            int index = getIndex(sender, arg, caseData.historyDataSize());
             if(index == -1) return;
 
             database.removeHistoryData(caseData.caseType(), index).thenAccept(status -> {
@@ -113,7 +113,7 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
     }
 
     private void handleSet(DCCommandSender sender, CaseData caseData, String[] args) {
-        int index = getIndex(sender, args[2]);
+        int index = getIndex(sender, args[2], caseData.historyDataSize());
         if(index == -1) return;
 
         if (args.length < 5) {
@@ -174,7 +174,7 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
     private CaseData.History getHistoryData(String caseType, int index) {
         List<CaseData.History> histories = database.getHistoryData(caseType).join();
 
-        return histories.stream().filter(history -> history.id() == index).findFirst().orElse(null);
+        return histories.get(index);
     }
 
     private void removeInform(DCCommandSender sender, DatabaseStatus status) {
@@ -182,9 +182,9 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
                 rc("&cError with history data removing!"));
     }
 
-    private int getIndex(DCCommandSender sender, String string) {
+    private int getIndex(DCCommandSender sender, String string, int maxSize) {
         int index = parseInt(string);
-        if (index <= -1 || index > 10) {
+        if (index <= -1 || index >= maxSize) {
             sender.sendMessage(rc("&cNumber format exception!"));
             return -1;
         }

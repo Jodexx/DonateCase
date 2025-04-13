@@ -34,6 +34,7 @@ public abstract class DCTools {
 
     public abstract ArmorStandCreator createArmorStand(UUID animationUuid, CaseLocation location);
 
+    @Nullable
     public abstract Object loadCaseItem(String id);
 
     public static DateFormat getDateFormat() {

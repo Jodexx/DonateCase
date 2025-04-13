@@ -315,8 +315,7 @@ public class AnimationManagerImpl implements AnimationManager {
 
     private void saveOpenInfo(CaseData caseData, DCPlayer player, CaseDataItem item, String choice) {
         backend.getScheduler().async(backend, () -> {
-
-            CaseData.History data = new CaseData.History(
+            CaseData.History newEntry = new CaseData.History(
                     item.getName(),
                     caseData.caseType(),
                     player.getName(),
@@ -325,22 +324,7 @@ public class AnimationManagerImpl implements AnimationManager {
                     choice
             );
 
-            List<CaseData.History> databaseData = api.getDatabase().getHistoryData(caseData.caseType()).join();
-            if (!databaseData.isEmpty()) {
-                CaseData.History[] historyData = new CaseData.History[databaseData.size()];
-
-                System.arraycopy(databaseData.toArray(new CaseData.History[0]), 0, historyData, 1, databaseData.size() - 1);
-
-                historyData[0] = data;
-
-                for (int i = 0; i < historyData.length; i++) {
-                    if (historyData[i] != null) {
-                        api.getDatabase().setHistoryData(caseData.caseType(), i, historyData[i]);
-                    }
-                }
-            } else {
-                api.getDatabase().setHistoryData(caseData.caseType(), 0, data);
-            }
+            api.getDatabase().addHistory(caseData.caseType(), newEntry, caseData.historyDataSize());
 
             api.getCaseOpenManager().add(caseData.caseType(), player.getName(), 1);
         }, 0L);

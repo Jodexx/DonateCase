@@ -38,13 +38,12 @@ public class ToolsImpl extends DCToolsBukkit {
 
     @Override
     public Object loadCaseItem(String id) {
-        if(id == null) return new ItemStack(Material.AIR);
+        if(id == null) return null;
 
         Material material = Material.getMaterial(id);
 
         if (material == null) {
-            Object item = DCTools.getItemFromManager(id);
-            return item == null ? new ItemStack(Material.AIR) : item;
+            return DCTools.getItemFromManager(id);
         } else {
             return new ItemStack(material);
         }

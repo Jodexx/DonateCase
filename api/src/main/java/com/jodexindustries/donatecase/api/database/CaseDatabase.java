@@ -61,9 +61,7 @@ public abstract class CaseDatabase {
      */
     public abstract CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count);
 
-    public abstract void setHistoryData(CaseData.History[] historyData);
-
-    public abstract CompletableFuture<DatabaseStatus> setHistoryData(String caseType, CaseData.History data);
+    public abstract CompletableFuture<DatabaseStatus> addHistory(String caseType, CaseData.History newEntry, int maxSize);
 
     /**
      * Sets history data for specific case type and index

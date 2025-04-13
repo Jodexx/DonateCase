@@ -57,6 +57,9 @@ public class CaseData implements Cloneable {
     @Setting("CooldownBeforeAnimation")
     private int cooldownBeforeStart;
 
+    @Setting("HistoryDataSize")
+    private int historyDataSize;
+
     /**
      * Get case item
      *
@@ -143,6 +146,7 @@ public class CaseData implements Cloneable {
     public static class History {
 
         @DatabaseField(columnName = "id")
+        @Deprecated
         private int id;
 
         @DatabaseField(columnName = "item")
@@ -183,6 +187,18 @@ public class CaseData implements Cloneable {
         }
 
         public History() {}
+
+        @Override
+        public String toString() {
+            return "History{" +
+                    "item='" + item + '\'' +
+                    ", playerName='" + playerName + '\'' +
+                    ", time=" + time +
+                    ", group='" + group + '\'' +
+                    ", caseType='" + caseType + '\'' +
+                    ", action='" + action + '\'' +
+                    '}';
+        }
 
         @Override
         public History clone() {

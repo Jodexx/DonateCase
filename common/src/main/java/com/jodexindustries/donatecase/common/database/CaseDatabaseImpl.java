@@ -18,10 +18,7 @@ import com.jodexindustries.donatecase.common.database.entities.PlayerKeysTable;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
@@ -247,49 +244,42 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public void setHistoryData(CaseData.History[] historyData) {
-        for (int index = 0; index < historyData.length; index++) {
-            CaseData.History data = historyData[index];
-            if (data == null) continue;
-
-            setHistoryData(data.caseType(), index, data);
-        }
-    }
-
-    @Override
-    public CompletableFuture<DatabaseStatus> setHistoryData(String caseType, CaseData.History data) {
+    public CompletableFuture<DatabaseStatus> addHistory(String caseType, CaseData.History newEntry, int maxSize) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                QueryBuilder<CaseData.History, String> queryBuilder = historyDataTables.queryBuilder();
-                queryBuilder.where().eq("case_type", caseType);
+                List<CaseData.History> entries = historyDataTables.queryBuilder().orderBy("time", true)
+                        .where()
+                        .eq("case_type", caseType)
+                        .query();
 
-                List<CaseData.History> results = queryBuilder.query();
-
-                for (CaseData.History historyDataTable : results) {
-                    setHistoryDataTable(historyDataTable, historyDataTable.id(), data);
+                if (entries.size() >= maxSize) {
+                    CaseData.History oldest = entries.get(0);
+                    DeleteBuilder<CaseData.History, String> deleteBuilder = historyDataTables.deleteBuilder();
+                    deleteBuilder.where().eq("time", oldest.time()).and().eq("case_type", caseType);
+                    deleteBuilder.delete();
                 }
 
+                historyDataTables.create(newEntry);
+
+                return DatabaseStatus.COMPLETE;
             } catch (SQLException e) {
                 logger.warning(e.getMessage());
                 return DatabaseStatus.FAIL;
             }
-            return DatabaseStatus.COMPLETE;
         });
-
     }
 
-    private void setHistoryDataTable(CaseData.History historyDataTable, int index, CaseData.History data) throws SQLException {
+
+    private void setHistoryDataTable(CaseData.History historyDataTable, CaseData.History data) throws SQLException {
         if (historyDataTable == null) {
-            data.id(index);
             historyDataTables.create(data);
         } else {
             UpdateBuilder<CaseData.History, String> updateBuilder = historyDataTables.updateBuilder();
-            updateBuilder.updateColumnValue("item", data.item());
             updateBuilder.updateColumnValue("player_name", data.playerName());
             updateBuilder.updateColumnValue("time", data.time());
             updateBuilder.updateColumnValue("group", data.group());
             updateBuilder.updateColumnValue("action", data.action());
-            updateBuilder.where().eq("id", index).and().eq("case_type", data.caseType());
+            updateBuilder.where().eq("case_type", data.caseType()).and().eq("time", historyDataTable.time());
             updateBuilder.update();
         }
     }
@@ -299,11 +289,11 @@ public class CaseDatabaseImpl extends CaseDatabase {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 QueryBuilder<CaseData.History, String> queryBuilder = historyDataTables.queryBuilder();
-                queryBuilder.where().eq("case_type", caseType).and().eq("id", index);
+                queryBuilder.where().eq("case_type", caseType);
 
                 List<CaseData.History> results = queryBuilder.query();
-                CaseData.History historyDataTable = results.isEmpty() ? null : results.get(0);
-                setHistoryDataTable(historyDataTable, index, data);
+                CaseData.History historyDataTable = results.isEmpty() ? null : results.get(index);
+                setHistoryDataTable(historyDataTable, data);
             } catch (SQLException e) {
                 logger.warning(e.getMessage());
                 return DatabaseStatus.FAIL;
@@ -360,7 +350,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
         List<CaseData.History> result = new ArrayList<>();
         return CompletableFuture.supplyAsync(() -> {
             try {
-                result.addAll(historyDataTables.queryBuilder()
+                result.addAll(historyDataTables.queryBuilder().orderBy("time", true)
                         .where()
                         .eq("case_type", caseType)
                         .query());
