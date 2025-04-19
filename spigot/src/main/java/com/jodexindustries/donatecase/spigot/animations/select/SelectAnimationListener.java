@@ -24,7 +24,7 @@ public class SelectAnimationListener implements EventSubscriber<ArmorStandCreato
         SelectAnimation.Task task = animation.getTask();
         if (task.selected || !task.canSelect) return;
 
-        if(!animation.getPlayer().equals(event.player())) return;
+        if(!animation.getPlayer().getUniqueId().equals(event.player().getUniqueId())) return;
 
         task.selected = true;
 
