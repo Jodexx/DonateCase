@@ -45,8 +45,7 @@ public class LocalPlaceholder extends Placeholder {
                 of("%player%", data.playerName()),
                 of("%casetype%", data.caseType()),
                 of("%casename%", data.caseType()), // outdated
-                of("%time%", time),
-                of("%id%", data.id())
+                of("%time%", time)
         ));
     }
 
