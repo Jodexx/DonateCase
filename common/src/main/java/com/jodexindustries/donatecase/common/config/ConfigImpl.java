@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.config.converter.ConfigType;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
+import com.jodexindustries.donatecase.api.data.config.ConfigSerializer;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.common.config.converter.DefaultConfigType;
 import com.jodexindustries.donatecase.common.serializer.CaseDataMaterialSerializer;
@@ -11,8 +12,10 @@ import com.jodexindustries.donatecase.common.serializer.CaseGuiSerializer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -37,6 +40,7 @@ public class ConfigImpl implements Config {
     private int version;
     private ConfigType type;
     private ConfigurationNode node;
+    private Object serialized;
 
     /**
      * Constructs a configuration instance without specifying a config type.
@@ -68,7 +72,7 @@ public class ConfigImpl implements Config {
                 .build();
     }
 
-    private void setMeta() {
+    private void setMeta() throws SerializationException {
         ConfigurationNode metaNode = node.node("config");
         String version = metaNode.node("version").getString();
 
@@ -78,6 +82,11 @@ public class ConfigImpl implements Config {
         } else {
             this.version = parse(metaNode.getString());
             this.type = node.hasChild("case") ? DefaultConfigType.OLD_CASE : DefaultConfigType.UNKNOWN;
+        }
+
+        ConfigSerializer configSerializer = type.getConfigSerializer();
+        if(configSerializer != null) {
+            this.serialized = node(configSerializer.path()).get(configSerializer.serializer());
         }
     }
 
@@ -95,6 +104,11 @@ public class ConfigImpl implements Config {
     @Override
     public ConfigurationNode node() {
         return node;
+    }
+
+    @Override
+    public @Nullable Object getSerialized() {
+        return serialized;
     }
 
     @Override

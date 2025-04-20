@@ -32,7 +32,7 @@ public class UpdateChecker {
     }
 
     public CompletableFuture<VersionInfo> getVersion() {
-        return !api.getConfigManager().getConfig().node("DonateCase", "UpdateChecker").getBoolean() ? CompletableFuture.completedFuture(new VersionInfo()) :
+        return !api.getConfigManager().getConfig().updateChecker() ? CompletableFuture.completedFuture(new VersionInfo()) :
                 CompletableFuture.supplyAsync(() -> {
 
                     try {

@@ -66,7 +66,7 @@ public class ConfigManagerImpl implements ConfigManager {
         loadConfigurations(platform.getDataFolder().listFiles(), false);
 
         try {
-            messages.load(getConfig().node("DonateCase", "Languages").getString("en_US"));
+            messages.load(getConfig().languages());
             caseStorage.load();
         } catch (ConfigurateException e) {
             platform.getLogger().log(Level.WARNING, "Error with loading configuration: ", e);
@@ -74,7 +74,7 @@ public class ConfigManagerImpl implements ConfigManager {
 
         converter.convert();
 
-        long caching = getConfig().node("DonateCase", "Caching").getLong();
+        long caching = getConfig().caching();
         if (caching >= 0) {
             CaseOpenManagerImpl.cache.setMaxAge(caching);
             CaseKeyManagerImpl.cache.setMaxAge(caching);

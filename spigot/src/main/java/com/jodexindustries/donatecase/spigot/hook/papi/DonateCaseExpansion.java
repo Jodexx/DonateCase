@@ -1,14 +1,13 @@
 package com.jodexindustries.donatecase.spigot.hook.papi;
 
+import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.spigot.BukkitBackend;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -135,9 +134,7 @@ public class DonateCaseExpansion extends PlaceholderExpansion {
                         }
 
                         case "time" : {
-                            DateFormat formatter = new SimpleDateFormat(
-                                    backend.getAPI().getConfigManager().getConfig().node("DonateCase", "DateFormat").getString("dd.MM HH:mm:ss"));
-                            return formatter.format(new Date(history.time()));
+                            return DCTools.getDateFormat().format(new Date(history.time()));
                         }
                     }
                 }

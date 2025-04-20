@@ -1,5 +1,8 @@
 package com.jodexindustries.donatecase.api.config.converter;
 
+import com.jodexindustries.donatecase.api.data.config.ConfigSerializer;
+import org.jetbrains.annotations.Nullable;
+
 public interface ConfigType {
 
     int getLatestVersion();
@@ -7,5 +10,10 @@ public interface ConfigType {
     boolean isPermanent();
 
     ConfigMigrator getMigrator(int version);
+
+    @Nullable
+    default ConfigSerializer getConfigSerializer() {
+        return null;
+    }
 
 }

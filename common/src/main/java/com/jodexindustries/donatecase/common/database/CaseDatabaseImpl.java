@@ -8,6 +8,7 @@ import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.TableUtils;
+import com.jodexindustries.donatecase.api.data.config.ConfigData;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
@@ -15,7 +16,6 @@ import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.common.database.entities.OpenInfoTable;
 import com.jodexindustries.donatecase.common.database.entities.PlayerKeysTable;
-import org.spongepowered.configurate.ConfigurationNode;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -52,7 +52,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public void connect(String database, String port, String host, String user, String password) {
+    public void connect(String database, int port, String host, String user, String password) {
         try {
             close();
             connectionSource = new JdbcConnectionSource("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
@@ -65,24 +65,19 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     public void connect() {
-        ConfigurationNode node = api.getConfigManager().getConfig().node("DonateCase", "MySql");
-        if(node == null || !node.node("Enabled").getBoolean()) {
+
+        ConfigData.MySQL mysql = api.getConfigManager().getConfig().mySQL();
+        if(mysql == null || !mysql.enabled()) {
             connect(api.getPlatform().getDataFolder().getAbsolutePath());
             return;
         }
 
-        String databaseName = node.node("DataBase").getString();
-        String port = node.node("Port").getString();
-        String host = node.node("Host").getString();
-        String user = node.node("User").getString();
-        String password = node.node("Password").getString();
-
         connect(
-                databaseName,
-                port,
-                host,
-                user,
-                password
+                mysql.database(),
+                mysql.port(),
+                mysql.host(),
+                mysql.user(),
+                mysql.password()
         );
     }
 

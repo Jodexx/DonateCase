@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.config;
 
 import com.jodexindustries.donatecase.api.config.converter.ConfigType;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 
@@ -12,6 +13,11 @@ public interface Config {
 
     default ConfigurationNode node(Object... path) {
         return node().node(path);
+    }
+
+    @Nullable
+    default Object getSerialized() {
+        return null;
     }
 
     File file();

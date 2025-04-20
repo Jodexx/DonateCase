@@ -39,12 +39,12 @@ public abstract class DCTools {
 
     public static DateFormat getDateFormat() {
         return new SimpleDateFormat(
-                DCAPI.getInstance().getConfigManager().getConfig().node("DonateCase", "DateFormat").getString("dd.MM HH:mm:ss")
+                DCAPI.getInstance().getConfigManager().getConfig().dateFormat()
         );
     }
 
     public static boolean isValidPlayerName(String player) {
-        if (DCAPI.getInstance().getConfigManager().getConfig().node("DonateCase", "CheckPlayerName").getBoolean()) {
+        if (DCAPI.getInstance().getConfigManager().getConfig().checkPlayerName()) {
             return Arrays.stream(DCAPI.getInstance().getPlatform().getOfflinePlayers())
                     .map(DCOfflinePlayer::getName)
                     .anyMatch(name -> name != null && name.equals(player.trim()));

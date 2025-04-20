@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.config.CaseStorage;
 import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.config.Loadable;
 import com.jodexindustries.donatecase.api.config.Messages;
+import com.jodexindustries.donatecase.api.data.config.ConfigData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -23,8 +24,11 @@ public interface ConfigManager extends Loadable {
 
     Map<String, ? extends Config> get();
 
-    default ConfigurationNode getConfig() {
-        return getNode("Config.yml");
+    default ConfigData getConfig() {
+        Config config = getConfig("Config.yml");
+        if(config == null) return null;
+
+        return (ConfigData) config.getSerialized();
     }
 
     default ConfigurationNode getAnimations() {

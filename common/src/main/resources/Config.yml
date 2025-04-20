@@ -16,8 +16,7 @@ DonateCase:
   # en_US, es_ES, ru_RU, ua_UA
   Languages: en_US
   HologramDriver: DecentHolograms # CMI, DecentHolograms, HolographicDisplays or FancyHolograms
-  LevelGroup: false # Don't enable if you use "parent add" in LuckPerms
-  LevelGroups:
+  LevelGroups: # Clear this section if you want to disable
     legend: 4
     deluxe: 3
     vipplus: 2

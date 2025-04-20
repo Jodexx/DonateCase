@@ -31,7 +31,7 @@ public abstract class CaseDatabase {
      * @param user     Database user
      * @param password User password
      */
-    public abstract void connect(String database, String port, String host, String user, String password);
+    public abstract void connect(String database, int port, String host, String user, String password);
 
     public abstract CompletableFuture<Map<String, Integer>> getKeys(String player);
 

@@ -16,7 +16,6 @@ import com.jodexindustries.donatecase.api.event.animation.AnimationStartEvent;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
-import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
 import com.jodexindustries.donatecase.common.tools.LocalPlaceholder;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,6 @@ import org.spongepowered.configurate.ConfigurationNode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -194,23 +192,19 @@ public class AnimationManagerImpl implements AnimationManager {
 
     @Override
     public void preEnd(CaseData caseData, DCPlayer player, CaseDataItem item) {
-        String choice = "";
-        Map<String, Integer> levelGroups = getDefaultLevelGroup();
-        if(!caseData.levelGroups().isEmpty()) levelGroups = caseData.levelGroups();
+        CaseDataItem.RandomAction randomAction = item.giveType().equalsIgnoreCase("ONE") ? null : item.getRandomAction();
+        Map<String, Integer> levelGroups = api.getConfigManager().getConfig().levelGroups();
+        if (!caseData.levelGroups().isEmpty()) levelGroups = caseData.levelGroups();
 
         String primaryGroup = backend.getLuckPermsSupport().getPrimaryGroup(player.getUniqueId());
-        if(isAlternative(levelGroups, primaryGroup, item.group())) {
-            executeActions(player, caseData, item, null, true);
-        } else {
-            if (item.giveType().equalsIgnoreCase("ONE")) {
-                executeActions(player, caseData, item, null, false);
-            } else {
-                choice = getRandomActionChoice(item);
-                executeActions(player, caseData, item, choice, false);
-            }
-        }
 
-        saveOpenInfo(caseData, player, item, choice);
+        executeActions(player, caseData, item, randomAction,
+                isBetterOrEqual(
+                        levelGroups, primaryGroup, item.group()
+                )
+        );
+
+        saveOpenInfo(caseData, player, item, randomAction);
     }
 
     @Override
@@ -313,7 +307,10 @@ public class AnimationManagerImpl implements AnimationManager {
         return true;
     }
 
-    private void saveOpenInfo(CaseData caseData, DCPlayer player, CaseDataItem item, String choice) {
+    private void saveOpenInfo(@NotNull CaseData caseData,
+                              @NotNull DCPlayer player,
+                              @NotNull CaseDataItem item,
+                              @Nullable CaseDataItem.RandomAction action) {
         backend.getScheduler().async(backend, () -> {
             CaseData.History newEntry = new CaseData.History(
                     item.getName(),
@@ -321,7 +318,7 @@ public class AnimationManagerImpl implements AnimationManager {
                     player.getName(),
                     System.currentTimeMillis(),
                     item.group(),
-                    choice
+                    action == null ? null : action.getName()
             );
 
             api.getDatabase().addHistory(caseData.caseType(), newEntry, caseData.historyDataSize());
@@ -330,85 +327,21 @@ public class AnimationManagerImpl implements AnimationManager {
         }, 0L);
     }
 
-    /**
-     * Get random choice from item random action list
-     * @param item Case item
-     * @return random action name
-     */
-    public static String getRandomActionChoice(CaseDataItem item) {
-        ProbabilityCollection<String> collection = new ProbabilityCollection<>();
-        for (String name : item.randomActions().keySet()) {
-            CaseDataItem.RandomAction randomAction = item.randomActions().get(name);
-            if(randomAction == null) continue;
-            collection.add(name, randomAction.chance());
-        }
-        return collection.get();
-    }
-
-    /**
-     * Execute actions after case opening
-     * @param player Player, who opened
-     * @param caseData Case that was opened
-     * @param item The prize that was won
-     * @param choice In fact, these are actions that were selected from the RandomActions section
-     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#randomActions()})
-     */
-    public void executeActions(DCPlayer player, CaseData caseData, CaseDataItem item, String choice, boolean alternative) {
+    public void executeActions(DCPlayer player, CaseData caseData, CaseDataItem item, CaseDataItem.RandomAction randomAction, boolean alternative) {
         Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(caseData);
         placeholders.add(LocalPlaceholder.of("%player%", player.getName()));
         placeholders.addAll(LocalPlaceholder.of(item));
 
-        List<String> actions = DCTools.rt(getActionsBasedOnChoice(item, choice, alternative), placeholders);
+        List<String> actions = DCTools.rt(item.getActionsBasedOnChoice(randomAction, alternative), placeholders);
 
         api.getActionManager().execute(player, actions);
     }
 
-    private Map<String, Integer> getDefaultLevelGroup() {
-        Map<String, Integer> levelGroup = new HashMap<>();
-        boolean isEnabled = api.getConfigManager().getConfig().node("DonateCase", "LevelGroup").getBoolean();
-        if(isEnabled) {
-            ConfigurationNode section = api.getConfigManager().getConfig().node("DonateCase", "LevelGroups");
+    public static boolean isBetterOrEqual(Map<String, Integer> groupLevels, String playerGroup, String rewardGroup) {
+        Integer playerLevel = groupLevels.get(playerGroup);
+        Integer rewardLevel = groupLevels.get(rewardGroup);
 
-            if (section != null) {
-                for (Map.Entry<Object, ? extends ConfigurationNode> entry : section.childrenMap().entrySet()) {
-                    int level = entry.getValue().getInt();
-                    levelGroup.put(String.valueOf(entry.getKey()), level);
-                }
-            }
-        }
-        return levelGroup;
+        return playerLevel != null && rewardLevel != null && playerLevel >= rewardLevel;
     }
 
-    /**
-     * Check for alternative actions
-     * @param levelGroups map of LevelGroups (can be from case config or default Config.yml)
-     * @param playerGroup player primary group
-     * @param winGroup player win group
-     * @return boolean
-     */
-    public static boolean isAlternative(Map<String, Integer> levelGroups, String playerGroup, String winGroup) {
-        if(levelGroups.containsKey(playerGroup) && levelGroups.containsKey(winGroup)) {
-            int playerGroupLevel = levelGroups.get(playerGroup);
-            int winGroupLevel = levelGroups.get(winGroup);
-            return playerGroupLevel >= winGroupLevel;
-        }
-        return false;
-    }
-
-    /**
-     * Get actions from case item
-     * @param item Case item
-     * @param choice In fact, these are actions that were selected from the RandomActions section
-     * @param alternative If true, the item's alternative actions will be selected. (Same as {@link CaseDataItem#alternativeActions()})
-     * @return list of selected actions
-     */
-    public static List<String> getActionsBasedOnChoice(CaseDataItem item, String choice, boolean alternative) {
-        if (choice != null) {
-            CaseDataItem.RandomAction randomAction = item.randomActions().get(choice);
-            if (randomAction != null) {
-                return randomAction.actions();
-            }
-        }
-        return alternative ? item.alternativeActions() : item.actions();
-    }
 }

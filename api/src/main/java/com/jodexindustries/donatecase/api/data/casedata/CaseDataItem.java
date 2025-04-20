@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.data.casedata;
 
+import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -51,6 +52,20 @@ public class CaseDataItem implements Cloneable {
         return String.valueOf(node.key());
     }
 
+    public List<String> getActionsBasedOnChoice(RandomAction randomAction, boolean alternative) {
+        if (randomAction != null) return randomAction.actions();
+        return alternative ? alternativeActions() : actions();
+    }
+
+    public RandomAction getRandomAction() {
+        ProbabilityCollection<RandomAction> collection = new ProbabilityCollection<>();
+        for (RandomAction randomAction : randomActions().values()) {
+            double chance = randomAction.chance();
+            if(chance > 0) collection.add(randomAction, chance);
+        }
+        return collection.get();
+    }
+
     /**
      * Class to implement a random action
      */
@@ -59,12 +74,22 @@ public class CaseDataItem implements Cloneable {
     @Getter
     @ConfigSerializable
     public static class RandomAction implements Cloneable {
+
+        @Setting(nodeFromParent = true)
+        private ConfigurationNode node;
+
         @Setting("Chance")
         private double chance;
+
         @Setting("Actions")
         private List<String> actions;
+
         @Setting("DisplayName")
         private String displayName;
+
+        public String getName() {
+            return String.valueOf(node.key());
+        }
 
         @Override
         public RandomAction clone() {

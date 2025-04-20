@@ -48,7 +48,7 @@ public class HologramManagerImpl implements HologramManager {
 
     @Override
     public void load() {
-        String name = api.getConfigManager().getConfig().node("DonateCase", "HologramDriver").getString("decentholograms").toLowerCase();
+        String name = api.getConfigManager().getConfig().hologramDriver().toLowerCase();
         set(name);
         if (driver == null) return;
 

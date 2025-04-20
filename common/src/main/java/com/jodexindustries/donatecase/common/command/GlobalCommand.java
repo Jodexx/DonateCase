@@ -66,7 +66,7 @@ public class GlobalCommand implements SubCommandExecutor, SubCommandTabCompleter
             sendHelpMessages(sender, "help", label);
         }
 
-        if (backend.getAPI().getConfigManager().getConfig().node("DonateCase", "AddonsHelp").getBoolean(true)) {
+        if (backend.getAPI().getConfigManager().getConfig().addonsHelp()) {
             Map<String, List<Map<String, SubCommand>>> addonsMap = buildAddonsMap();
             if (DCTools.isHasCommandForSender(sender, addonsMap)) {
                 sendAddonHelpMessages(sender, addonsMap);

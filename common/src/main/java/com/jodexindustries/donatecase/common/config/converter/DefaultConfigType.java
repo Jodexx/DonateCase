@@ -2,8 +2,11 @@ package com.jodexindustries.donatecase.common.config.converter;
 
 import com.jodexindustries.donatecase.api.config.converter.ConfigMigrator;
 import com.jodexindustries.donatecase.api.config.converter.ConfigType;
+import com.jodexindustries.donatecase.api.data.config.ConfigData;
+import com.jodexindustries.donatecase.api.data.config.ConfigSerializer;
 import com.jodexindustries.donatecase.common.config.converter.migrators.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +27,7 @@ public enum DefaultConfigType implements ConfigType {
         put(10, new CasesMigrator_1_0_to_1_1());
     }}),
 
-    CONFIG(25),
+    CONFIG(25, new ConfigSerializer(ConfigData.class, "DonateCase")),
     LANG(27, new HashMap<Integer, ConfigMigrator>() {{
         put(26, new LanguageMigrator_2_6_to_2_7());
     }}),
@@ -40,6 +43,7 @@ public enum DefaultConfigType implements ConfigType {
     private int latestVersion;
     private boolean permanent;
     private ConfigMigrator permanentMigrator;
+    private ConfigSerializer configSerializer;
 
     private Map<Integer, ConfigMigrator> migrations;
 
@@ -47,9 +51,19 @@ public enum DefaultConfigType implements ConfigType {
         this.latestVersion = latestVersion;
     }
 
+    DefaultConfigType(int latestVersion, ConfigSerializer configSerializer) {
+        this(latestVersion);
+        this.configSerializer = configSerializer;
+    }
+
     DefaultConfigType(int latestVersion, Map<Integer, ConfigMigrator> migrations) {
         this(latestVersion);
         this.migrations = migrations;
+    }
+
+    DefaultConfigType(int latestVersion, Map<Integer, ConfigMigrator> migrations, ConfigSerializer configSerializer) {
+        this(latestVersion, migrations);
+        this.configSerializer = configSerializer;
     }
 
     DefaultConfigType(boolean permanent, ConfigMigrator permanentMigrator) {
@@ -61,6 +75,11 @@ public enum DefaultConfigType implements ConfigType {
     public ConfigMigrator getMigrator(int version) {
         if (migrations == null) return permanentMigrator;
         return migrations.get(version);
+    }
+
+    @Override
+    public @Nullable ConfigSerializer getConfigSerializer() {
+        return configSerializer;
     }
 
     @Override
