@@ -34,6 +34,9 @@ public class FancyHologramsImpl implements HologramDriver {
         String name = "DonateCase-" + UUID.randomUUID();
         DisplayHologramData hologramData = getData(type, name, location);
         hologramData.read(new ConfigurationSectionImpl(node), name);
+        Location tempLocation = hologramData.getLocation();
+        if (tempLocation.getYaw() != 0) location.setYaw(tempLocation.getYaw());
+        if (tempLocation.getPitch() != 0) location.setPitch(tempLocation.getPitch());
         hologramData.setLocation(location);
 
         Hologram hologram = manager.create(hologramData);
