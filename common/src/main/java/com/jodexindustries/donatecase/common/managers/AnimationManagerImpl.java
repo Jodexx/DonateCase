@@ -4,8 +4,8 @@ import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
+import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import com.jodexindustries.donatecase.common.DonateCase;
-import com.jodexindustries.donatecase.common.animations.RandomAnimation;
 import com.jodexindustries.donatecase.api.data.animation.Animation;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
@@ -24,7 +24,6 @@ import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -44,26 +43,13 @@ public class AnimationManagerImpl implements AnimationManager {
     public AnimationManagerImpl(DonateCase api) {
         this.api = api;
         this.backend = api.getPlatform();
-
-        List<? extends CaseAnimation> defaultAnimations = Collections.singletonList(
-                CaseAnimation.builder()
-                        .name("RANDOM")
-                        .addon(backend)
-                        .animation(RandomAnimation.class)
-                        .description("Selects the random animation from config")
-                        .requireSettings(true)
-                        .requireBlock(true)
-                        .build()
-        );
-
-        defaultAnimations.forEach(this::register);
     }
 
     @Override
     public boolean register(CaseAnimation animation) {
         String name = animation.getName();
 
-        if(!isRegistered(name)) {
+        if (!isRegistered(name)) {
             registeredAnimations.put(name, animation);
             return true;
         } else {
@@ -94,27 +80,40 @@ public class AnimationManagerImpl implements AnimationManager {
 
     @Override
     public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay) {
-        String animation = caseData.animation();
-        CaseAnimation caseAnimation = get(animation);
+        return start(player, location, caseData, false, delay);
+    }
 
-        ConfigurationNode settings = caseData.animationSettings().isNull() ? api.getConfigManager().getAnimations().node(animation) : caseData.animationSettings();
+    @Override
+    public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, boolean keyRemoved, int delay) {
+        CaseData data = caseData.clone();
+
+        String animation;
+        if (!data.animation().equalsIgnoreCase("RANDOM")) {
+            animation = data.animation();
+        } else {
+            animation = getRandomAnimation(getSettings(data));
+            data.animation(animation);
+        }
+
+        ConfigurationNode settings = getSettings(data);
 
         CaseLocation temp = location.clone();
 
-        if (!validateStartConditions(caseData, caseAnimation, settings, temp, player)) {
+        CaseAnimation caseAnimation = get(animation);
+
+        if (!validateStartConditions(data, caseAnimation, settings, temp, player)) {
             return CompletableFuture.completedFuture(null);
         }
 
         assert caseAnimation != null;
 
-        caseData = caseData.clone();
-        caseData.items(DCTools.sortItemsByIndex(caseData.items()));
+        data.items(DCTools.sortItemsByIndex(data.items()));
 
 
-        CaseDataItem winItem = caseData.getRandomItem();
+        CaseDataItem winItem = data.getRandomItem();
         winItem.material().displayName(api.getPlatform().getPAPI().setPlaceholders(player, winItem.material().displayName()));
 
-        AnimationPreStartEvent event = new AnimationPreStartEvent(player, caseData, temp, winItem);
+        AnimationPreStartEvent event = new AnimationPreStartEvent(player, data, temp, winItem);
         api.getEventBus().post(event);
 
         winItem = event.winItem();
@@ -131,7 +130,7 @@ public class AnimationManagerImpl implements AnimationManager {
                 temp.yaw(caseLocation.yaw());
             }
 
-            CaseData.Hologram hologram = caseData.hologram();
+            CaseData.Hologram hologram = data.hologram();
             if (hologram != null && hologram.enabled()) api.getHologramManager().remove(temp);
 
             for (CaseGuiWrapper gui : api.getGUIManager().getMap().values()) {
@@ -146,10 +145,11 @@ public class AnimationManagerImpl implements AnimationManager {
         try {
 
             Animation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
-            javaAnimation.init(player, temp.clone(), uuid, caseData, winItem, settings);
+            javaAnimation.init(player, temp.clone(), uuid, data, winItem, settings);
 
-            ActiveCase activeCase = new ActiveCase(uuid, temp, player, winItem, caseData.caseType(), javaAnimation);
+            ActiveCase activeCase = new ActiveCase(uuid, temp, player, winItem, data.caseType(), javaAnimation);
             activeCase.locked(caseAnimation.isRequireBlock());
+            activeCase.keyRemoved(keyRemoved);
 
             activeCases.put(uuid, activeCase);
             activeCasesByBlock.computeIfAbsent(temp, k -> new ArrayList<>()).add(uuid);
@@ -342,6 +342,17 @@ public class AnimationManagerImpl implements AnimationManager {
         Integer rewardLevel = groupLevels.get(rewardGroup);
 
         return playerLevel != null && rewardLevel != null && playerLevel >= rewardLevel;
+    }
+
+    public String getRandomAnimation(ConfigurationNode settings) {
+        ProbabilityCollection<String> collection = new ProbabilityCollection<>();
+        settings.childrenMap().forEach((key, value) ->
+                collection.add((String) key, value.getInt()));
+        return collection.get();
+    }
+
+    private ConfigurationNode getSettings(CaseData caseData) {
+        return caseData.animationSettings().isNull() ? api.getConfigManager().getAnimations().node(caseData.animation()) : caseData.animationSettings();
     }
 
 }

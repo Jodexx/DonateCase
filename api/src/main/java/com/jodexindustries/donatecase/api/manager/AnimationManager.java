@@ -69,6 +69,8 @@ public interface AnimationManager {
      */
     CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay);
 
+    CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, boolean keyRemoved, int delay);
+
     /**
      * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
      * @param uuid The unique ID of the active case.
