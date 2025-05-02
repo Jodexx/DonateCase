@@ -29,11 +29,10 @@ public interface CaseGuiWrapper {
     }
 
     default int getCurrentPage() {
-        return getCaseData().caseGui().getPageData().getCurrentPage() + 1; // Исправлено
-    }
+        return getCaseData().caseGui().getPageData().getCurrentPage() + 1;
 
     default int getTotalPages() {
-        return Math.max(1, getCaseData().caseGui().getPageData().getTotalPages()); // Исправлено
+        return Math.max(1, getCaseData().caseGui().getPageData().getTotalPages());
     }
 
     void updateInventory();
