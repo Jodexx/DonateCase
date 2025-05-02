@@ -22,6 +22,7 @@ public class TypedItem {
     @Nullable private final String description;
     @Nullable private final TypedItemHandler handler;
     @Nullable private final TypedItemClickHandler click;
+    @Builder.Default private boolean paginationItem = false;
 
     private final boolean updateMeta;
     private final boolean loadOnCase;

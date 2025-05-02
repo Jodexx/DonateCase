@@ -13,8 +13,6 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Required;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
-import java.util.*;
-
 /**
  * Class for implementing cases that are loaded into the plugin's memory.
  */
