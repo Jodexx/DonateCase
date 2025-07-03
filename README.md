@@ -23,9 +23,9 @@
 ```
 ```xml
 <dependency>
-  <groupId>com.jodexindustries.donatecase</groupId>
-  <artifactId>spigot-api</artifactId>
-  <version>2.1.0.4</version>
+    <groupId>com.jodexindustries.donatecase</groupId>
+    <artifactId>spigot-api</artifactId>
+    <version>2.1.0.4</version>
 </dependency>
 ```
 > Gradle
