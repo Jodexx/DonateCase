@@ -30,7 +30,7 @@ subprojects {
         maven("https://repo.fancyplugins.de/releases")
         maven("https://repo.alessiodp.com/releases/")
         maven("https://jitpack.io")
-        maven("https://repo.jodexindustries.xyz/releases/")
+        maven("https://repo.jodex.xyz/releases/")
     }
 
     dependencies {

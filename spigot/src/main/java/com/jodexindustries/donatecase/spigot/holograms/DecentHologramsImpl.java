@@ -43,7 +43,7 @@ public class DecentHologramsImpl implements HologramDriver {
 
     @Override
     public void remove() {
-        this.holograms.values().forEach(eu.decentsoftware.holograms.api.holograms.Hologram::delete);
+        this.holograms.values().forEach(Hologram::delete);
         this.holograms.clear();
     }
 }
