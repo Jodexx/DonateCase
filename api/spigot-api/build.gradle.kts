@@ -25,7 +25,7 @@ publishing {
     repositories {
         maven {
             name = "JodexIndustries"
-            url = uri("https://repo.jodex.xyz/releases")
+            url = uri("https://repo.jodexindustries.xyz/releases")
             credentials {
                 username = findProperty("repoUser") as String?
                 password = findProperty("repoPassword") as String?
@@ -48,7 +48,7 @@ tasks.javadoc {
     (options as StandardJavadocDocletOptions).apply {
         links(
             "https://docs.oracle.com/en/java/javase/22/docs/api/",
-            "https://repo.jodex.xyz/javadoc/releases/com/jodexindustries/donatecase/api/$version/raw/",
+            "https://repo.jodexindustries.xyz/javadoc/releases/com/jodexindustries/donatecase/api/$version/raw/",
             "https://helpch.at/docs/1.16.5/",
             )
     }
