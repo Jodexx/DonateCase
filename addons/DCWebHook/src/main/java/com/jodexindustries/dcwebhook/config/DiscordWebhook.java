@@ -115,7 +115,6 @@ public class DiscordWebhook {
         return s == null ? "" : s;
     }
 
-
     private String stripColorCodes(String input) {
         if (input == null) return "";
         input = input.replaceAll("(?i)&x((&[0-9A-F]){6})", "");
