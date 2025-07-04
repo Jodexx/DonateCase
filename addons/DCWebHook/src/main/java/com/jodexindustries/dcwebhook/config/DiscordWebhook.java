@@ -105,16 +105,21 @@ public class DiscordWebhook {
         if (caseTitle == null) caseTitle = "";
         caseTitle = stripColorCodes(caseTitle);
         return text
-                .replaceAll("%player%", activeCase.player().getName())
-                .replaceAll("%group%", activeCase.winItem().group())
-                .replaceAll("%casetype%", activeCase.caseType())
-                .replaceAll("%casetitle%", caseTitle);
+                .replaceAll("%player%", safe(activeCase.player() != null ? activeCase.player().getName() : null))
+                .replaceAll("%group%", safe(activeCase.winItem() != null ? activeCase.winItem().group() : null))
+                .replaceAll("%casetype%", safe(activeCase.caseType()))
+                .replaceAll("%casetitle%", safe(caseTitle));
+    }
+
+    private String safe(String s) {
+        return s == null ? "" : s;
     }
 
     private String stripColorCodes(String input) {
         if (input == null) return "";
         input = input.replaceAll("(?i)&x((&[0-9A-F]){6})", "");
         input = input.replaceAll("(?i)&#[0-9A-F]{6}", "");
+        input = input.replaceAll("(?i)#[0-9A-F]{6}", "");
         input = input.replaceAll("(?i)&[0-9A-FK-OR]", "");
         input = input.replaceAll("(?i)§[0-9A-FK-OR]", "");
         input = input.replaceAll("(?i)§x(§[0-9A-F]){6}", "");
