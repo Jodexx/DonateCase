@@ -37,7 +37,7 @@ publishing {
     repositories {
         maven {
             name = "JodexIndustries"
-            url = uri("https://repo.jodex.xyz/releases")
+            url = uri("https://repo.jodexindustries.xyz/releases")
             credentials {
                 username = findProperty("repoUser") as String?
                 password = findProperty("repoPassword") as String?

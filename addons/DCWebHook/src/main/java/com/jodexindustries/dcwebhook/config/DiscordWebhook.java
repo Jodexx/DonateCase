@@ -6,7 +6,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.jodexindustries.dcwebhook.bootstrap.MainAddon;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.event.animation.AnimationEndEvent;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
@@ -95,30 +94,10 @@ public class DiscordWebhook {
 
     private String replace(String text, ActiveCase activeCase) {
         if(text == null) return null;
-        String caseTitle = "";
-        try {
-            CaseData caseData = MainAddon.instance.api.getCaseManager().get(activeCase.caseType());
-            if (caseData != null && caseData.caseGui() != null && caseData.caseGui().title() != null) {
-                caseTitle = caseData.caseGui().title();
-            }
-        } catch (Exception ignored) {}
-        if (caseTitle == null) caseTitle = "";
-        caseTitle = stripColorCodes(caseTitle);
         return text
                 .replaceAll("%player%", activeCase.player().getName())
                 .replaceAll("%group%", activeCase.winItem().group())
-                .replaceAll("%casetype%", activeCase.caseType())
-                .replaceAll("%casetitle%", caseTitle);
-    }
-
-    private String stripColorCodes(String input) {
-        if (input == null) return "";
-        input = input.replaceAll("(?i)&x((&[0-9A-F]){6})", "");
-        input = input.replaceAll("(?i)&#[0-9A-F]{6}", "");
-        input = input.replaceAll("(?i)&[0-9A-FK-OR]", "");
-        input = input.replaceAll("(?i)§[0-9A-FK-OR]", "");
-        input = input.replaceAll("(?i)§x(§[0-9A-F]){6}", "");
-        return input;
+                .replaceAll("%casetype%", activeCase.caseType());
     }
 
     private ByteArrayOutputStream readFully(InputStream inputStream) throws IOException {
