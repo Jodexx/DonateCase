@@ -52,7 +52,7 @@ public class HolographicDisplaysImpl implements HologramDriver {
 
     @Override
     public void remove() {
-        this.holograms.values().forEach(me.filoghost.holographicdisplays.api.hologram.Hologram::delete);
+        this.holograms.values().forEach(Hologram::delete);
         this.holograms.clear();
     }
 }
