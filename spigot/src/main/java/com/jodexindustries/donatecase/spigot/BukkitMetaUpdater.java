@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.spigot;
 
 import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
+import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.spigot.tools.DCToolsBukkit;
 import org.bukkit.Color;
 import org.bukkit.enchantments.Enchantment;
@@ -20,8 +21,8 @@ public class BukkitMetaUpdater implements MetaUpdater {
             ItemStack item = (ItemStack) itemStack;
             ItemMeta meta = item.getItemMeta();
             if (meta != null) {
-                if (displayName != null) meta.setDisplayName(displayName);
-                if (lore != null) meta.setLore(lore);
+                if (displayName != null) meta.setDisplayName(DCTools.rc(displayName));
+                if (lore != null) meta.setLore(DCTools.rc(lore));
                 if (modelData != -1) meta.setCustomModelData(modelData);
                 if (enchanted) meta.addEnchant(Enchantment.LURE, 1, true);
 

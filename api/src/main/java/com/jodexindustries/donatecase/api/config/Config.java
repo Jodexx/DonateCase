@@ -16,8 +16,15 @@ public interface Config {
     }
 
     @Nullable
-    default Object getSerialized() {
+    default <T> T getSerialized(Class<T> clazz) {
         return null;
+    }
+
+    default String getNameWithoutExtension() {
+        String name = file().getName();
+        int dotIndex = name.lastIndexOf('.');
+        if (dotIndex > 0) return name.substring(0, dotIndex);
+        return name;
     }
 
     File file();

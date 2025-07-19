@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.data.casedata.gui;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -10,10 +11,12 @@ import org.spongepowered.configurate.ConfigurationNode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Accessors(fluent = true)
 @Setter
 @Getter
+@Deprecated
 public class CaseGui implements Cloneable {
 
     private String title;
@@ -27,6 +30,21 @@ public class CaseGui implements Cloneable {
             if (item.slots.contains(slot)) return item.type;
         }
         return null;
+    }
+
+    public static CaseGui fromMenu(CaseMenu menu) {
+        CaseGui caseGui = new CaseGui();
+
+        caseGui.items = fromMenu(menu.items());
+        caseGui.size = menu.size();
+        caseGui.title = menu.title();
+        caseGui.updateRate = menu.updateRate();
+
+        return caseGui;
+    }
+
+    private static Map<String, Item> fromMenu(Map<String, CaseMenu.Item> itemMap) {
+        return itemMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> Item.fromMenu(entry.getValue()), (a, b) -> b));
     }
 
     /**
@@ -71,6 +89,17 @@ public class CaseGui implements Cloneable {
         private String type;
         private CaseDataMaterial material;
         private transient List<Integer> slots;
+
+        public static Item fromMenu(CaseMenu.Item item) {
+            Item oldItem = new Item();
+
+            oldItem.node = item.node();
+            oldItem.slots = item.slots();
+            oldItem.type = item.type();
+            oldItem.material = CaseDataMaterial.fromMaterial(item.material());
+
+            return oldItem;
+        }
 
         @Override
         public Item clone() {

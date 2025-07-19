@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.common.config;
 
-import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.config.Messages;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +17,7 @@ public class MessagesImpl implements Messages {
     private final ConfigManagerImpl configManager;
     private final BackendPlatform platform;
 
-    private Config config;
+    private ConfigImpl config;
 
     public MessagesImpl(ConfigManagerImpl configManager) {
         this.configManager = configManager;
@@ -26,7 +25,7 @@ public class MessagesImpl implements Messages {
     }
 
     @Override
-    public @NotNull Config get() {
+    public @NotNull ConfigImpl get() {
         return config;
     }
 
@@ -53,7 +52,7 @@ public class MessagesImpl implements Messages {
     @Override
     public void load(@NotNull String language) throws ConfigurateException {
         String path = "lang/" + language + ".yml";
-        Config config = this.configManager.getConfig(path);
+        ConfigImpl config = this.configManager.getConfig(path);
 
         if (config == null) {
             if(platform.getResource(path) != null) {
@@ -72,7 +71,7 @@ public class MessagesImpl implements Messages {
         this.config = config;
     }
 
-    private Config loadDefault() {
+    private ConfigImpl loadDefault() {
         File defaultLang = new File(platform.getDataFolder(), DEFAULT_LANG);
         if(!defaultLang.exists()) platform.saveResource(DEFAULT_LANG, false);
 

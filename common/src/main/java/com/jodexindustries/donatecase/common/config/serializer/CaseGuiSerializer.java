@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.common.serializer;
+package com.jodexindustries.donatecase.common.config.serializer;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;

@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GUITypedItemManagerImpl implements GUITypedItemManager {
 
-    private final static Map<String, TypedItem> registeredItems = new ConcurrentHashMap<>();
+    public final Map<String, TypedItem> registeredItems = new ConcurrentHashMap<>();
 
     private final Platform platform;
 

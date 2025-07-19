@@ -2,8 +2,11 @@ package com.jodexindustries.donatecase.common.config.converter;
 
 import com.jodexindustries.donatecase.api.config.converter.ConfigMigrator;
 import com.jodexindustries.donatecase.api.config.converter.ConfigType;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItems;
 import com.jodexindustries.donatecase.api.data.config.ConfigData;
 import com.jodexindustries.donatecase.api.data.config.ConfigSerializer;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import com.jodexindustries.donatecase.common.config.converter.migrators.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,13 +16,18 @@ import java.util.Map;
 
 public enum DefaultConfigType implements ConfigType {
 
-    OLD_CASE(13, new HashMap<Integer, ConfigMigrator>() {{
+    /**
+     * @see #CASE_MENU
+     * @see #CASE_ITEMS
+     * @see #CASE_SETTINGS
+     */
+    OLD_CASE(14, new HashMap<Integer, ConfigMigrator>() {{
         put(12, new CaseMigrator_1_2_to_1_3());
     }}),
 
-    CASE_GUI(10),
-    CASE_SETTINGS(10),
-    CASE_ITEMS(10),
+    CASE_MENU(1, new ConfigSerializer(CaseMenu.class)),
+    CASE_SETTINGS(1, new ConfigSerializer(CaseSettings.class)),
+    CASE_ITEMS(1, new ConfigSerializer(CaseItems.class, "items")),
     ANIMATIONS(15, new HashMap<Integer, ConfigMigrator>() {{
         put(14, new AnimationsMigrator_1_4_to_1_5());
     }}),
@@ -71,6 +79,10 @@ public enum DefaultConfigType implements ConfigType {
         this.permanentMigrator = permanentMigrator;
     }
 
+    public boolean isUnknown() {
+        return this == UNKNOWN || this == UNKNOWN_CUSTOM;
+    }
+
     @Override
     public ConfigMigrator getMigrator(int version) {
         if (migrations == null) return permanentMigrator;
@@ -85,6 +97,11 @@ public enum DefaultConfigType implements ConfigType {
     @Override
     public boolean isPermanent() {
         return permanent;
+    }
+
+    @Override
+    public String getName() {
+        return toString();
     }
 
     @Override

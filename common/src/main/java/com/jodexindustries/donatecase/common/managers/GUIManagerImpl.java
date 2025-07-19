@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GUIManagerImpl implements GUIManager {
 
-    private final static Map<UUID, CaseGuiWrapper> playersGui = new ConcurrentHashMap<>();
+    public final Map<UUID, CaseGuiWrapper> playersGui = new ConcurrentHashMap<>();
 
     private final BackendPlatform platform;
 

@@ -1,9 +1,11 @@
 package com.jodexindustries.donatecase.api.data.casedata;
 
 import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMaterial;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 @Accessors(fluent = true)
 @Setter
 @Getter
+@Deprecated
 public class CaseDataMaterial implements MetaUpdater, Cloneable {
 
     private String id;
@@ -26,6 +29,19 @@ public class CaseDataMaterial implements MetaUpdater, Cloneable {
     private int modelData;
     private String[] rgb;
     private Object itemStack;
+
+    public static CaseDataMaterial fromMaterial(CaseMaterial material) {
+        CaseDataMaterial oldMaterial = new CaseDataMaterial();
+
+        oldMaterial.id = material.id();
+        oldMaterial.displayName = material.displayName();
+        oldMaterial.enchanted = material.enchanted();
+        oldMaterial.lore = material.lore();
+        oldMaterial.modelData = material.modelData();
+        oldMaterial.rgb = material.rgb();
+        oldMaterial.itemStack = material.itemStack();
+        return oldMaterial;
+    }
 
     public void updateMeta() {
         updateMeta(itemStack, displayName, lore, modelData, enchanted, rgb);

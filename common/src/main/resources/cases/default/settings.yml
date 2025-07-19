@@ -1,0 +1,79 @@
+config: # Please do not touch this section
+  version: 1
+  type: case_settings
+
+type: default
+
+default-menu: default_menu
+
+animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL, RANDOM, POP, SELECT see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/animations
+#  AnimationSettings:
+#    Type: FULL # or RANDOM
+#    ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
+#    SmallArmorStand: true
+#    ItemsCount: 6 # only for RANDOM type
+#    Shuffle: true # only for FULL type
+#    CircleRadius: 2
+#    StartPosition:
+#      x: 0.5
+#      y: -0.5
+#      z: 0.5
+#    Flame:
+#      Enabled: true
+#      Particle: FLAME
+#    Scroll:
+#      Count: 1
+#      Time: 150
+#      EaseAmount: 2.5 # 1 = linear
+#      Sound: UI_BUTTON_CLICK
+#      Volume: 10
+#      Pitch: 1
+
+hologram: # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/holograms
+  # Toggle on and off the holograms for the case.
+  enabled: true
+  # The height of the hologram above the case.
+  height: 1.5
+  # The distance the hologram can be seen. Only works with CMI and DecentHolograms
+  range: 8
+  # The message that will be displayed.
+  message:
+    - '&6DonateCase'
+
+## FancyHolograms
+#  type: TEXT
+#  visibility_distance: -1
+#  visibility: ALL
+#  persistent: true
+#  scale_x: 1.5
+#  scale_y: 1.5
+#  scale_z: 1.5
+#  shadow_radius: 1.0
+#  shadow_strength: 1.0
+#  text:
+#    - "Test"
+#  text_shadow: false
+#  see_through: false
+#  text_alignment: center
+#  update_text_interval: -1
+
+open-type: GUI # or BLOCK
+
+no-key-actions:
+  - "[message] &cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.xyz"
+  - "[sound] ENTITY_ENDERMAN_TELEPORT"
+
+history-data-size: 10 # 0 if you want to disable history data
+
+cooldown-before-animation: 0 # in tick
+
+level-groups: # delete all of this section, if you want to use default LevelGroups from Config.yml
+  ultra: 6
+  legend: 5
+  deluxe: 4
+  premium: 3
+  vipplus: 2
+  vip: 1
+  default: 0
+
+display-name: "&c&lDonate-&a&lCase" # Name for placeholders

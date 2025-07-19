@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api.data.casedata;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
+import com.jodexindustries.donatecase.api.data.casedefinition.*;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import java.util.*;
 /**
  * Class for implementing cases that are loaded into the plugin's memory.
  */
+@Deprecated
 @Accessors(fluent = true)
 @Getter
 @Setter
@@ -93,6 +95,53 @@ public class CaseData implements Cloneable {
      */
     public boolean hasRealItems() {
         return items.values().stream().anyMatch(item -> item.chance() > 0);
+    }
+
+    public static CaseData fromDefinition(CaseDefinition definition) {
+        CaseSettings settings = definition.settings();
+        CaseSettings.Hologram hologram = settings.hologram();
+
+        CaseData caseData = new CaseData();
+
+        // default
+        caseData.caseType = settings.type();
+        caseData.openType = settings.openType();
+        caseData.animation = settings.animation();
+        caseData.animationSettings = settings.animationSettings();
+        caseData.levelGroups = settings.levelGroups().map();
+        caseData.noKeyActions = settings.noKeyActions();
+        caseData.caseDisplayName = settings.displayName();
+        caseData.cooldownBeforeStart = settings.cooldownBeforeAnimation();
+        caseData.historyDataSize = settings.historyDataSize();
+
+        // typed
+
+        // hologram
+        CaseData.Hologram oldHologram = new Hologram();
+        oldHologram.enabled = hologram.enabled();
+        oldHologram.range = hologram.range();
+        oldHologram.messages = hologram.message();
+        oldHologram.height = hologram.height();
+        oldHologram.node = hologram.node();
+
+        caseData.hologram = oldHologram;
+
+        CaseMenu menu = definition.getMenuById(settings.defaultMenu());
+        if (menu != null) caseData.caseGui = CaseGui.fromMenu(menu);
+
+        caseData.items = fromDefinition(definition.items());
+
+        return caseData;
+    }
+
+    private static Map<String, CaseDataItem> fromDefinition(CaseItems items) {
+        Map<String, CaseDataItem> old = new HashMap<>();
+
+        for (Map.Entry<String, CaseItem> entry : items.items().entrySet()) {
+            old.put(entry.getKey(), CaseDataItem.fromItem(entry.getValue()));
+        }
+
+        return old;
     }
 
     @Override
@@ -217,6 +266,7 @@ public class CaseData implements Cloneable {
     @Accessors(fluent = true)
     @Getter
     @ConfigSerializable
+    @Deprecated
     public static class Hologram {
 
         @Setting(nodeFromParent = true)

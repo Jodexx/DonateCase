@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MaterialManagerImpl implements MaterialManager {
 
-    private static final Map<String, CaseMaterial> registeredMaterials = new ConcurrentHashMap<>();
+    public final Map<String, CaseMaterial> registeredMaterials = new ConcurrentHashMap<>();
 
     private final Platform platform;
 

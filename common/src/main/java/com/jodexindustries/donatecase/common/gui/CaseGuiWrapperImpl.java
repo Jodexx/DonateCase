@@ -86,12 +86,6 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         material.updateMeta();
     }
 
-    private void colorize(CaseDataMaterial material) {
-        material.displayName(DCTools.rc(material.displayName()));
-        material.lore(DCTools.rc(material.lore()));
-        material.updateMeta();
-    }
-
     private void startUpdateTask() {
         int updateRate = temporary.updateRate();
         if (updateRate >= 0) {
@@ -124,7 +118,7 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
 
         if (material.itemStack() == null) material.itemStack(platform.getTools().loadCaseItem(material.id()));
 
-        colorize(material);
+        material.updateMeta();
 
         for (Integer slot : item.slots()) {
             inventory.setItem(slot, item.material().itemStack());

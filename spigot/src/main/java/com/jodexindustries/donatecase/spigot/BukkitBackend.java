@@ -8,7 +8,6 @@ import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.spigot.actions.CommandActionExecutorImpl;
 import com.jodexindustries.donatecase.spigot.actions.SoundActionExecutorImpl;
 import com.jodexindustries.donatecase.spigot.actions.TitleActionExecutorImpl;
-import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
@@ -79,7 +78,7 @@ public class BukkitBackend extends BackendPlatform {
         this.tools = new ToolsImpl(this);
         this.scheduler = new BukkitScheduler(this);
 
-        DCAPI.setInstance(api);
+        DonateCase.setInstance(api);
     }
 
 

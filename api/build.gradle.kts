@@ -17,10 +17,8 @@ dependencies {
     compileOnlyApi("com.j256.ormlite:ormlite-jdbc:6.1")
     compileOnlyApi("org.jetbrains:annotations:24.0.0")
     compileOnlyApi("com.google.guava:guava:33.3.1-jre")
-    compileOnlyApi("org.projectlombok:lombok:1.18.36")
+    compileOnlyApi("org.projectlombok:lombok:1.18.38")
     compileOnlyApi("org.spongepowered:configurate-yaml:4.1.2")
-
-    annotationProcessor("org.projectlombok:lombok:1.18.36")
 }
 
 
@@ -56,23 +54,7 @@ publishing {
     }
 }
 
-val delombokClasspath: Configuration by configurations.creating {
-    extendsFrom(configurations.compileOnly.get())
-    isCanBeResolved = true
-}
-
-
-val delombok by tasks.registering(JavaExec::class) {
-    group = "build"
-    description = "Delombok generated sources to ensure Javadocs are generated correctly."
-    mainClass.set("lombok.launch.Main")
-
-    classpath = delombokClasspath
-    args = listOf("delombok", "src/main/java", "-d", "${buildDir}/generated/sources/delombok")
-}
-
 tasks.javadoc {
-    dependsOn(delombok)
     source = fileTree("${buildDir}/generated/sources/delombok")
     (options as StandardJavadocDocletOptions).apply {
         links(
@@ -82,7 +64,6 @@ tasks.javadoc {
 }
 
 tasks.named<Jar>("sourcesJar") {
-    dependsOn(delombok)
     from("${buildDir}/generated/sources/delombok")
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

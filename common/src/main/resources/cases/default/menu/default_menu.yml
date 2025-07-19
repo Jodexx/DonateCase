@@ -1,0 +1,43 @@
+config: # Please do not touch this section
+  version: 10
+  type: case_menu
+
+id: default_menu
+
+title: "&c&lDonate-&a&lCase"
+size: 45
+update-rate: 20 # in ticks, set -1 to disable updating
+# see more about items configuring -> https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/items-settings
+items:
+  "1":
+    material:
+      id: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
+      display-name: "&cJodexIndustries.xyz"
+      enchanted: false
+      lore:
+        - ""
+    slots: # or Slots: 0-10 (range)
+      - 0
+      - 8
+    type: DEFAULT
+  open:
+    material:
+      id: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
+      display-name: "&bOpen Case"
+      enchanted: false
+      lore:
+        - '&6The case can be bought on the website: &cJodexIndustries.xyz'
+        - ''
+        - '&7Keys: &e%keys%'
+        - ''
+        - '&6Drops:'
+        - '&7[&eVIP&7] - &b&n30%'
+        - '&7[&bVIP&6+&7] - &b&n25%'
+        - '&7[&3Premium&7] - &b&n20%'
+        - '&7[&5Deluxe&7] - &b&n15%'
+        - '&7[&dLegend&7] - &b&n10%'
+        - '&7[&cUltra&7] - &b&n5%'
+        - ''
+    slots: # or Slots: 0-10 (range)
+      - 22
+    type: OPEN # or you can use OPEN_<anotherCaseName> for opening another case

@@ -33,9 +33,9 @@ import java.util.logging.Level;
 
 public class AnimationManagerImpl implements AnimationManager {
 
-    private final static Map<String, CaseAnimation> registeredAnimations = new ConcurrentHashMap<>();
-    private final static Map<UUID, ActiveCase> activeCases = new ConcurrentHashMap<>();
-    private final static Map<CaseLocation, List<UUID>> activeCasesByBlock = new ConcurrentHashMap<>();
+    public final Map<String, CaseAnimation> registeredAnimations = new ConcurrentHashMap<>();
+    public final Map<UUID, ActiveCase> activeCases = new ConcurrentHashMap<>();
+    public final Map<CaseLocation, List<UUID>> activeCasesByBlock = new ConcurrentHashMap<>();
 
     private final DonateCase api;
     private final BackendPlatform backend;

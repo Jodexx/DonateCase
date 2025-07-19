@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.data.casedata;
 
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,10 +20,13 @@ import java.util.Map;
 @Getter
 @Setter
 @ConfigSerializable
+@Deprecated
 public class CaseDataItem implements Cloneable {
 
     @Setting(nodeFromParent = true)
     private ConfigurationNode node;
+
+    private transient String name;
 
     @Setting("Group")
     private String group;
@@ -48,7 +52,34 @@ public class CaseDataItem implements Cloneable {
     @Setting("RandomActions")
     private Map<String, RandomAction> randomActions;
 
+    public static CaseDataItem fromItem(CaseItem item) {
+        CaseDataItem old = new CaseDataItem();
+
+        old.name = item.name();
+        old.group = item.group();
+        old.chance = item.chance();
+        old.index = item.index();
+        old.material = CaseDataMaterial.fromMaterial(item.material());
+        old.giveType = item.giveType().name();
+        old.actions = item.actions();
+        old.alternativeActions = item.alternativeActions();
+        old.randomActions = fromItem(item.randomActions());
+
+        return old;
+    }
+
+    private static Map<String, RandomAction> fromItem(Map<String, CaseItem.RandomAction> randomActions) {
+        Map<String, RandomAction> old = new HashMap<>();
+
+        for (Map.Entry<String, CaseItem.RandomAction> entry : randomActions.entrySet()) {
+            old.put(entry.getKey(), RandomAction.fromItem(entry.getValue()));
+        }
+
+        return old;
+    }
+
     public String getName() {
+        if (name != null) return name;
         return String.valueOf(node.key());
     }
 
@@ -78,6 +109,8 @@ public class CaseDataItem implements Cloneable {
         @Setting(nodeFromParent = true)
         private ConfigurationNode node;
 
+        private transient String name;
+
         @Setting("Chance")
         private double chance;
 
@@ -87,7 +120,19 @@ public class CaseDataItem implements Cloneable {
         @Setting("DisplayName")
         private String displayName;
 
+        public static RandomAction fromItem(CaseItem.RandomAction randomAction) {
+            RandomAction old = new RandomAction();
+
+            old.name = randomAction.name();
+            old.chance = randomAction.chance();
+            old.actions = randomAction.actions();
+            old.displayName = randomAction.displayName();
+
+            return old;
+        }
+
         public String getName() {
+            if (name != null) return name;
             return String.valueOf(node.key());
         }
 
