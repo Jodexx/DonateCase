@@ -43,7 +43,21 @@ public class CaseItemSerializer implements TypeSerializer<CaseItem> {
     public void serialize(Type type, @Nullable CaseItem obj, ConfigurationNode node) throws SerializationException {
         if (obj == null) return;
 
-        // TODO finish serialization of CaseItem
+        node.node("group").set(obj.group());
+        node.node("chance").set(obj.chance());
+        node.node("index").set(obj.index());
+        node.node("material").set(CaseMaterial.class, obj.material());
+        node.node("give-type").set(obj.giveType());
+        node.node("actions").setList(String.class, obj.actions());
+        node.node("alternative-actions").setList(String.class, obj.alternativeActions());
+
+        Map<String, CaseItem.RandomAction> randomActions = obj.randomActions();
+        if (randomActions != null && !randomActions.isEmpty()) {
+            ConfigurationNode randomActionsNode = node.node("random-actions");
+            for (Map.Entry<String, CaseItem.RandomAction> entry : randomActions.entrySet()) {
+                randomActionsNode.node(entry.getKey()).set(CaseItem.RandomAction.class, entry.getValue());
+            }
+        }
     }
 
     public static class RandomAction implements TypeSerializer<CaseItem.RandomAction> {
@@ -62,7 +76,9 @@ public class CaseItemSerializer implements TypeSerializer<CaseItem> {
         public void serialize(Type type, CaseItem.@Nullable RandomAction obj, ConfigurationNode node) throws SerializationException {
             if (obj == null) return;
 
-            // TODO finish serialization of RandomAction
+            node.node("chance").set(obj.chance());
+            node.node("actions").setList(String.class, obj.actions());
+            node.node("display-name").set(obj.displayName());
         }
     }
 }

@@ -38,7 +38,19 @@ public class CaseSettingsSerializer implements TypeSerializer<CaseSettings> {
 
     @Override
     public void serialize(Type type, @Nullable CaseSettings obj, ConfigurationNode node) throws SerializationException {
-        // TODO finish serialization of CaseSettings
+        if (obj == null) return;
+
+        node.node("type").set(obj.type());
+        node.node("default-menu").set(obj.defaultMenu());
+        node.node("animation").set(obj.animation());
+        node.node("hologram").set(CaseSettings.Hologram.class, obj.hologram());
+        node.node("level-groups").set(CaseSettings.LevelGroups.class, obj.levelGroups());
+        node.node("no-key-actions").setList(String.class, obj.noKeyActions());
+        node.node("open-type").set(OpenType.class, obj.openType());
+        node.node("animation-settings").set(obj.animationSettings());
+        node.node("cooldown-before-animation").set(obj.cooldownBeforeAnimation());
+        node.node("history-data-size").set(obj.historyDataSize());
+        node.node("display-name").set(obj.displayName());
     }
 
     public static class LevelGroups implements TypeSerializer<CaseSettings.LevelGroups> {
@@ -58,7 +70,11 @@ public class CaseSettingsSerializer implements TypeSerializer<CaseSettings> {
 
         @Override
         public void serialize(Type type, CaseSettings.@Nullable LevelGroups obj, ConfigurationNode node) throws SerializationException {
-            // TODO finish serialization of LevelGroups
+            if (obj == null) return;
+
+            for (Map.Entry<String, Integer> entry : obj.map().entrySet()) {
+                node.node(entry.getKey()).set(entry.getValue());
+            }
         }
     }
 
@@ -77,7 +93,12 @@ public class CaseSettingsSerializer implements TypeSerializer<CaseSettings> {
 
         @Override
         public void serialize(Type type, CaseSettings.@Nullable Hologram obj, ConfigurationNode node) throws SerializationException {
-            // TODO finish serialization of Hologram
+            if (obj == null) return;
+
+            node.node("enabled").set(obj.enabled());
+            node.node("height").set(obj.height());
+            node.node("range").set(obj.range());
+            node.node("message").setList(String.class, obj.message());
         }
     }
 }

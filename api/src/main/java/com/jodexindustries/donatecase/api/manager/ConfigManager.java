@@ -19,6 +19,9 @@ public interface ConfigManager extends Loadable {
     Config load(@NotNull File file);
 
     @Nullable
+    Config unload(@NotNull String name);
+
+    @Nullable
     Config getConfig(@NotNull String name);
 
     @NotNull

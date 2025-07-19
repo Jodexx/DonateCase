@@ -6,6 +6,7 @@ import com.jodexindustries.donatecase.api.config.converter.ConfigType;
 import com.jodexindustries.donatecase.common.config.ConfigManagerImpl;
 import org.spongepowered.configurate.ConfigurateException;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class ConfigConverter {
@@ -17,7 +18,7 @@ public class ConfigConverter {
     }
 
     public void convert() {
-        for (Config config : this.configManager.get().values()) {
+        for (Config config : new ArrayList<>(this.configManager.get().values())) {
             try {
                 convert(config);
             } catch (ConfigurateException e) {

@@ -9,7 +9,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 import java.util.List;
 import java.util.Map;
 
-@Accessors(fluent = true)
+@Accessors(fluent = true, chain = false)
 @Getter
 @Setter
 public class CaseSettings {

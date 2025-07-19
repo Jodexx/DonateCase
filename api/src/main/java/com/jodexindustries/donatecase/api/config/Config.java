@@ -39,5 +39,7 @@ public interface Config {
 
     void load() throws ConfigurateException;
 
+    boolean delete();
+
     void save() throws ConfigurateException;
 }

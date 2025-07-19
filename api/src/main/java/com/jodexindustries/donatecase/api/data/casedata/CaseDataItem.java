@@ -68,6 +68,21 @@ public class CaseDataItem implements Cloneable {
         return old;
     }
 
+    public static CaseItem toItem(CaseDataItem old) {
+        return new CaseItem(
+                old.name,
+                old.group,
+                old.chance,
+                old.index,
+                CaseDataMaterial.toMaterial(old.material),
+                GiveType.valueOf(old.giveType),
+                old.actions,
+                old.alternativeActions,
+                toItem(old.randomActions)
+        );
+    }
+
+
     private static Map<String, RandomAction> fromItem(Map<String, CaseItem.RandomAction> randomActions) {
         Map<String, RandomAction> old = new HashMap<>();
 
@@ -77,6 +92,17 @@ public class CaseDataItem implements Cloneable {
 
         return old;
     }
+
+    private static Map<String, CaseItem.RandomAction> toItem(Map<String, RandomAction> oldRandomActions) {
+        Map<String, CaseItem.RandomAction> map = new HashMap<>();
+
+        for (Map.Entry<String, RandomAction> entry : oldRandomActions.entrySet()) {
+            map.put(entry.getKey(), RandomAction.toItem(entry.getValue()));
+        }
+
+        return map;
+    }
+
 
     public String getName() {
         if (name != null) return name;
@@ -129,6 +155,15 @@ public class CaseDataItem implements Cloneable {
             old.displayName = randomAction.displayName();
 
             return old;
+        }
+
+        public static CaseItem.RandomAction toItem(RandomAction old) {
+            return new CaseItem.RandomAction(
+                    old.name,
+                    old.chance,
+                    old.actions,
+                    old.displayName
+            );
         }
 
         public String getName() {

@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api.data.casedefinition;
 
-import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -9,7 +8,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 import java.util.List;
 import java.util.Map;
 
-@Accessors(fluent = true)
+@Accessors(fluent = true, chain = false)
 @Getter
 @Setter
 public class CaseMenu {

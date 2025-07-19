@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-@Accessors(fluent = true)
+@Accessors(fluent = true, chain = false)
 @Setter
 @Getter
 public class CaseMaterial implements MetaUpdater, Cloneable {

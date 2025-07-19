@@ -19,9 +19,9 @@ public class CaseDataMaterialSerializer implements TypeSerializer<CaseDataMateri
         CaseDataMaterial material = new CaseDataMaterial();
 
         material.id(node.node("ID").getString());
-        material.displayName(DCTools.rc(node.node("DisplayName").getString()));
+        material.displayName(node.node("DisplayName").getString());
         material.enchanted(node.node("Enchanted").getBoolean());
-        material.lore(DCTools.rc(node.node("Lore").getList(String.class)));
+        material.lore(node.node("Lore").getList(String.class));
         material.modelData(node.node("ModelData").getInt(-1));
 
         List<String> rgb = node.node("Rgb").getList(String.class);

@@ -157,6 +157,11 @@ public class ConfigManagerImpl implements ConfigManager {
         return config;
     }
 
+    @Override
+    public @Nullable ConfigImpl unload(@NotNull String name) {
+        return configurations.remove(name);
+    }
+
     private void createFiles() {
         for (String fileName : defaultFiles) {
             File file = new File(platform.getDataFolder(), fileName);

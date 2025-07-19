@@ -17,12 +17,16 @@ import java.util.Map;
 public enum DefaultConfigType implements ConfigType {
 
     /**
-     * @see #CASE_MENU
-     * @see #CASE_ITEMS
-     * @see #CASE_SETTINGS
+     * Legacy case configuration format used prior to the introduction of modular formats:
+     * {@link #CASE_MENU}, {@link #CASE_ITEMS}, and {@link #CASE_SETTINGS}.
+     *
+     * <p>Version {@code 14} is a virtual/fake version used solely for migration purposes.</p>
+     * <p>Automatically triggers conversion to the new case format structure.</p>
+     *
      */
     OLD_CASE(14, new HashMap<Integer, ConfigMigrator>() {{
         put(12, new CaseMigrator_1_2_to_1_3());
+        put(13, new CaseMigrator_1_3_to_1_4());
     }}),
 
     CASE_MENU(1, new ConfigSerializer(CaseMenu.class)),

@@ -43,6 +43,19 @@ public class CaseDataMaterial implements MetaUpdater, Cloneable {
         return oldMaterial;
     }
 
+    public static CaseMaterial toMaterial(CaseDataMaterial oldMaterial) {
+        return new CaseMaterial(
+                oldMaterial.id,
+                oldMaterial.displayName,
+                oldMaterial.enchanted,
+                oldMaterial.lore,
+                oldMaterial.modelData,
+                oldMaterial.rgb,
+                oldMaterial.itemStack
+        );
+    }
+
+
     public void updateMeta() {
         updateMeta(itemStack, displayName, lore, modelData, enchanted, rgb);
     }

@@ -134,6 +134,42 @@ public class CaseData implements Cloneable {
         return caseData;
     }
 
+    public static CaseDefinition toDefinition(CaseData data) {
+        CaseSettings.Hologram hologram = new CaseSettings.Hologram(
+                data.hologram.node,
+                data.hologram.enabled,
+                data.hologram.height,
+                data.hologram.range,
+                data.hologram.messages
+        );
+
+        CaseSettings settings = new CaseSettings(
+                data.caseType,
+                "default_menu",
+                data.animation,
+                hologram,
+                new CaseSettings.LevelGroups(data.levelGroups),
+                data.noKeyActions,
+                data.openType,
+                data.animationSettings,
+                data.cooldownBeforeStart,
+                data.historyDataSize,
+                data.caseDisplayName
+        );
+
+        // Items
+        CaseItems items = toDefinition(data.items);
+
+        // Menu
+        List<CaseMenu> menus = new ArrayList<>();
+        if (data.caseGui != null) {
+            menus.add(CaseGui.toMenu(data.caseGui));
+        }
+
+        return new CaseDefinition(settings, items, menus);
+    }
+
+
     private static Map<String, CaseDataItem> fromDefinition(CaseItems items) {
         Map<String, CaseDataItem> old = new HashMap<>();
 
@@ -143,6 +179,17 @@ public class CaseData implements Cloneable {
 
         return old;
     }
+
+    private static CaseItems toDefinition(Map<String, CaseDataItem> oldItems) {
+        Map<String, CaseItem> items = new HashMap<>();
+
+        for (Map.Entry<String, CaseDataItem> entry : oldItems.entrySet()) {
+            items.put(entry.getKey(), CaseDataItem.toItem(entry.getValue()));
+        }
+
+        return new CaseItems(items);
+    }
+
 
     @Override
     public CaseData clone() {

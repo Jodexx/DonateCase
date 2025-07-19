@@ -147,6 +147,8 @@ public class CaseLoader implements Loadable {
 
                 String caseFolder = parts[3];
 
+                if (caseFolder.equals(config.file().getName())) continue;
+
                 cases.computeIfAbsent(caseFolder, k -> new ArrayList<>()).add(config);
             }
         }

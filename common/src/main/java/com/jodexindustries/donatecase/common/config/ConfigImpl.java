@@ -63,6 +63,8 @@ public class ConfigImpl implements Config {
     private ConfigurationNode node;
     private Object serialized;
 
+    private boolean deleted;
+
     /**
      * Constructs a configuration instance without specifying a config type.
      * This will default to detecting the type during loading.
@@ -99,14 +101,16 @@ public class ConfigImpl implements Config {
 
         if (version != null) {
             this.version = parse(version);
-            this.type = DefaultConfigType.getType(metaNode.node("type").getString());
+            if (this.type == null)
+                this.type = DefaultConfigType.getType(metaNode.node("type").getString());
         } else {
             this.version = parse(metaNode.getString());
-            this.type = node.hasChild("case") ? DefaultConfigType.OLD_CASE : DefaultConfigType.UNKNOWN;
+            if (this.type == null)
+                this.type = node.hasChild("case") ? DefaultConfigType.OLD_CASE : DefaultConfigType.UNKNOWN;
         }
 
         ConfigSerializer configSerializer = type.getConfigSerializer();
-        if(configSerializer != null) {
+        if (configSerializer != null) {
             this.serialized = node(configSerializer.path()).get(configSerializer.serializer());
         }
     }
@@ -144,8 +148,14 @@ public class ConfigImpl implements Config {
     }
 
     @Override
+    public boolean delete() {
+        deleted = file.delete();
+        return deleted;
+    }
+
+    @Override
     public void save() throws ConfigurateException {
-        loader.save(node);
+        if (!deleted) loader.save(node);
     }
 
     @Override

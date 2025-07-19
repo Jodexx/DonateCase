@@ -43,8 +43,22 @@ public class CaseGui implements Cloneable {
         return caseGui;
     }
 
+    public static CaseMenu toMenu(CaseGui caseGui) {
+        return new CaseMenu(
+                "default_menu",
+                caseGui.title,
+                caseGui.size,
+                caseGui.updateRate,
+                toMenu(caseGui.items)
+        );
+    }
+
     private static Map<String, Item> fromMenu(Map<String, CaseMenu.Item> itemMap) {
         return itemMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> Item.fromMenu(entry.getValue()), (a, b) -> b));
+    }
+
+    private static Map<String, CaseMenu.Item> toMenu(Map<String, Item> itemMap) {
+        return itemMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> Item.toMenu(entry.getValue()), (a, b) -> b));
     }
 
     /**
@@ -99,6 +113,16 @@ public class CaseGui implements Cloneable {
             oldItem.material = CaseDataMaterial.fromMaterial(item.material());
 
             return oldItem;
+        }
+
+        public static CaseMenu.Item toMenu(Item old) {
+
+            return new CaseMenu.Item(
+                    old.node,
+                    old.type,
+                    CaseDataMaterial.toMaterial(old.material),
+                    old.slots
+                    );
         }
 
         @Override

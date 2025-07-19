@@ -51,7 +51,21 @@ public class CaseMenuSerializer implements TypeSerializer<CaseMenu> {
 
     @Override
     public void serialize(Type type, @Nullable CaseMenu obj, ConfigurationNode node) throws SerializationException {
-        // TODO finish serialization of CaseMenu
+        if (obj == null) return;
+
+        node.node("id").set(obj.id());
+        node.node("title").set(obj.title());
+        node.node("size").set(obj.size());
+        node.node("update-rate").set(obj.updateRate());
+
+        ConfigurationNode itemsNode = node.node("items");
+        Map<String, CaseMenu.Item> items = obj.items();
+
+        if (items != null) {
+            for (Map.Entry<String, CaseMenu.Item> entry : items.entrySet()) {
+                itemsNode.node(entry.getKey()).set(CaseMenu.Item.class, entry.getValue());
+            }
+        }
     }
 
     private CaseMenu.Item loadItem(String i, @NotNull ConfigurationNode itemSection, Set<Integer> currentSlots) throws SerializationException {
@@ -94,7 +108,11 @@ public class CaseMenuSerializer implements TypeSerializer<CaseMenu> {
 
         @Override
         public void serialize(Type type, CaseMenu.@Nullable Item obj, ConfigurationNode node) throws SerializationException {
-            // TODO finish serialization of CaseMenu.Item
+            if (obj == null) return;
+
+            node.node("type").set(obj.type());
+            node.node("material").set(CaseMaterial.class, obj.material());
+            node.node("slots").setList(Integer.class, obj.slots());
         }
 
         private List<Integer> getItemSlots(ConfigurationNode node) throws SerializationException {

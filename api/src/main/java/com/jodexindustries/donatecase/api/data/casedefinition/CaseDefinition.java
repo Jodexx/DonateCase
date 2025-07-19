@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-@Accessors(fluent = true)
+@Accessors(fluent = true, chain = false)
 @Getter
 public class CaseDefinition {
 
