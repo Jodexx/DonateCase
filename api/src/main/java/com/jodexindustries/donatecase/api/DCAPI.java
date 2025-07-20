@@ -116,6 +116,20 @@ public abstract class DCAPI {
      */
     public abstract @NotNull Platform getPlatform();
 
+    /**
+     * Returns the total number of case openings for all cases and all players.
+     */
+    public int getGlobalOpenCount() {
+        return getCaseOpenManager().getGlobalOpenCount();
+    }
+
+    /**
+     * Returns the total number of openings for a specific case type for all players.
+     */
+    public int getGlobalOpenCount(String caseType) {
+        return getCaseOpenManager().getGlobalOpenCount(caseType);
+    }
+
     @ApiStatus.Experimental
     public abstract void clear();
 }

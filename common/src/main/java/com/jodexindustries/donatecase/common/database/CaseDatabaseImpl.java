@@ -419,6 +419,15 @@ public class CaseDatabaseImpl extends CaseDatabase {
         });
     }
 
+    public List<OpenInfoTable> getAllOpenInfo() {
+        try {
+            return openInfoTables.queryForAll();
+        } catch (SQLException e) {
+            warning(e);
+            return Collections.emptyList();
+        }
+    }
+
     @Override
     public void close() {
         if (connectionSource != null) {

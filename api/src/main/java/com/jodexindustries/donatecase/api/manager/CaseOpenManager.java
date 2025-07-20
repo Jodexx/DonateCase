@@ -48,6 +48,19 @@ public abstract class CaseOpenManager {
     public abstract Map<String, Integer> getCache(String player);
 
     /**
+     * Returns the total number of case openings for all cases and all players.
+     * @return total open count
+     */
+    public abstract int getGlobalOpenCount();
+
+    /**
+     * Returns the total number of openings for a specific case type for all players.
+     * @param caseType case type
+     * @return total open count for the given case type
+     */
+    public abstract int getGlobalOpenCount(String caseType);
+
+    /**
      * Set case keys to a specific player (async)
      *
      * @param caseType  Case type

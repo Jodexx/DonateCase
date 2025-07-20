@@ -4,6 +4,8 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.manager.CaseOpenManager;
+import com.jodexindustries.donatecase.common.database.CaseDatabaseImpl;
+import com.jodexindustries.donatecase.common.database.entities.OpenInfoTable;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -69,6 +71,26 @@ public class CaseOpenManagerImpl extends CaseOpenManager {
     @Override
     public CompletableFuture<DatabaseStatus> add(String caseType, String player, int openCount) {
         return getAsync(caseType, player).thenComposeAsync(integer -> set(caseType, player, integer + openCount));
+    }
+
+    @Override
+    public int getGlobalOpenCount() {
+        int sum = 0;
+        for (OpenInfoTable entry : ((CaseDatabaseImpl) api.getDatabase()).getAllOpenInfo()) {
+            sum += entry.getCount();
+        }
+        return sum;
+    }
+
+    @Override
+    public int getGlobalOpenCount(String caseType) {
+        int sum = 0;
+        for (OpenInfoTable entry : ((CaseDatabaseImpl) api.getDatabase()).getAllOpenInfo()) {
+            if (caseType.equals(entry.getCaseType())) {
+                sum += entry.getCount();
+            }
+        }
+        return sum;
     }
 
 }
