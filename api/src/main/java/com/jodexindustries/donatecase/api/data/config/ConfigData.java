@@ -1,13 +1,12 @@
 package com.jodexindustries.donatecase.api.data.config;
 
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Comment;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
-
-import java.util.Map;
 
 @Accessors(fluent = true)
 @Getter
@@ -28,7 +27,7 @@ public class ConfigData {
     private String hologramDriver = "DecentHolograms";
 
     @Setting("LevelGroups")
-    private Map<String, Integer> levelGroups;
+    private CaseSettings.LevelGroups levelGroups;
 
     @Setting("DateFormat")
     private String dateFormat = "dd.MM HH:mm:ss";

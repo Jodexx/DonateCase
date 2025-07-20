@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.api.manager;
 
+import com.jodexindustries.donatecase.api.addon.InternalAddonClassLoader;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
 import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 import org.jetbrains.annotations.NotNull;
@@ -82,6 +83,15 @@ public interface AddonManager {
 
     @NotNull
     File getFolder();
+
+    /**
+     * Gets InternalAddonClassLoader
+     *
+     * @param file Addon jar file
+     * @return InternalAddon ClassLoader
+     */
+    @Nullable
+    InternalAddonClassLoader getAddonClassLoader(File file);
 
     /**
      * Retrieves the main class of an addon by its binary name.

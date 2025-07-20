@@ -8,7 +8,6 @@ import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.common.command.DefaultCommand;
-import com.jodexindustries.donatecase.common.managers.AddonManagerImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -112,13 +111,13 @@ public class AddonCommand extends DefaultCommand {
             return;
         }
 
-        InternalAddonClassLoader loader = AddonManagerImpl.getAddonClassLoader(addonFile);
+        InternalAddonClassLoader loader = api.getAddonManager().getAddonClassLoader(addonFile);
         if (loader != null) {
             sender.sendMessage(DCTools.prefix("&cAddon &6" + addonName + " &calready loaded!"));
             return;
         }
         if (api.getAddonManager().load(addonFile)) {
-            loader = AddonManagerImpl.getAddonClassLoader(addonFile);
+            loader = api.getAddonManager().getAddonClassLoader(addonFile);
             if (loader == null) {
                 handleAddonError(sender, addonName, "loading");
                 return;

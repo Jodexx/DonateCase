@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.data.casedata.gui;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -10,23 +11,63 @@ import org.spongepowered.configurate.ConfigurationNode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Accessors(fluent = true)
 @Setter
 @Getter
 public class CaseGui implements Cloneable {
 
+    @Deprecated
     private String title;
+
+    @Deprecated
     private int size;
+
+    @Deprecated
     private int updateRate;
+
+    @Deprecated
     private transient Map<String, Item> items;
 
+    @Deprecated
     @Nullable
     public String getItemTypeBySlot(int slot) {
         for (Item item : items.values()) {
             if (item.slots.contains(slot)) return item.type;
         }
         return null;
+    }
+
+    @Deprecated
+    public static CaseGui fromMenu(CaseMenu menu) {
+        CaseGui caseGui = new CaseGui();
+
+        caseGui.items = fromMenu(menu.items());
+        caseGui.size = menu.size();
+        caseGui.title = menu.title();
+        caseGui.updateRate = menu.updateRate();
+
+        return caseGui;
+    }
+
+    @Deprecated
+    public static CaseMenu toMenu(CaseGui caseGui) {
+        return new CaseMenu(
+                "default_menu",
+                caseGui.title,
+                caseGui.size,
+                caseGui.updateRate,
+                toMenu(caseGui.items)
+        );
+    }
+
+    private static Map<String, Item> fromMenu(Map<String, CaseMenu.Item> itemMap) {
+        return itemMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> Item.fromMenu(entry.getValue()), (a, b) -> b));
+    }
+
+    private static Map<String, CaseMenu.Item> toMenu(Map<String, Item> itemMap) {
+        return itemMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> Item.toMenu(entry.getValue()), (a, b) -> b));
     }
 
     /**
@@ -40,6 +81,7 @@ public class CaseGui implements Cloneable {
         return clonedMap;
     }
 
+    @Deprecated
     @Override
     public CaseGui clone() {
         try {
@@ -52,6 +94,7 @@ public class CaseGui implements Cloneable {
         }
     }
 
+    @Deprecated
     @Override
     public String toString() {
         return "CaseGui{" +
@@ -71,6 +114,28 @@ public class CaseGui implements Cloneable {
         private String type;
         private CaseDataMaterial material;
         private transient List<Integer> slots;
+
+        public static Item fromMenu(CaseMenu.Item item) {
+            Item oldItem = new Item();
+
+            oldItem.node = item.node();
+            oldItem.slots = item.slots();
+            oldItem.type = item.type();
+            oldItem.material = CaseDataMaterial.fromMaterial(item.material());
+
+            return oldItem;
+        }
+
+        public static CaseMenu.Item toMenu(Item old) {
+
+            return new CaseMenu.Item(
+                    old.node,
+                    String.valueOf(old.node.key()),
+                    old.type,
+                    CaseDataMaterial.toMaterial(old.material),
+                    old.slots
+                    );
+        }
 
         @Override
         public Item clone() {

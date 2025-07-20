@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.common.command.sub;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class GiveKeyCommand extends DefaultCommand {
 
@@ -55,10 +56,11 @@ public class GiveKeyCommand extends DefaultCommand {
             return true;
         }
         if (api.getCaseManager().hasByType(caseType)) {
-            CaseData data = api.getCaseManager().get(caseType);
-            if (data == null) return true;
+            Optional<CaseDefinition> optional = api.getCaseManager().getByType(caseType);
+            if (!optional.isPresent()) return true;
+
             api.getCaseKeyManager().add(caseType, playerName, keys).thenAcceptAsync(status -> {
-                Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(data);
+                Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(optional.get());
                 placeholders.add(LocalPlaceholder.of("%player%", playerName));
                 placeholders.add(LocalPlaceholder.of("%key%", keys));
 

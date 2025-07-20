@@ -18,7 +18,7 @@ import java.util.logging.Level;
 
 public class ActionManagerImpl implements ActionManager {
 
-    private static final Map<String, CaseAction> registeredActions = new ConcurrentHashMap<>();
+    public final Map<String, CaseAction> registeredActions = new ConcurrentHashMap<>();
 
     private final DCAPI api;
     private final Platform platform;

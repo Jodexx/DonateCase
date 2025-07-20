@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.common.command.sub;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CreateCommand extends DefaultCommand {
 
@@ -42,21 +44,19 @@ public class CreateCommand extends DefaultCommand {
             String caseType = args[0];
             String caseName = args[1];
 
-            CaseData caseData = api.getCaseManager().get(caseType);
-
-            if (caseData == null) {
+            Optional<CaseDefinition> optional = api.getCaseManager().getByType(caseType);
+            if (!optional.isPresent()) {
                 sender.sendMessage(
                         DCTools.prefix(
                                 DCTools.rt(api.getConfigManager().getMessages().getString("case-does-not-exist"),
-                                        LocalPlaceholder.of("%casetype%", caseType)
-                                )
-                        )
-                );
+                                        LocalPlaceholder.of("%casetype%", caseType))));
                 return true;
             }
+            CaseDefinition caseDefinition = optional.get();
 
             if (api.getConfigManager().getCaseStorage().has(block)) {
-                sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("case-already-created")));
+                sender.sendMessage(
+                        DCTools.prefix(api.getConfigManager().getMessages().getString("case-already-created")));
                 return true;
             }
 
@@ -65,10 +65,7 @@ public class CreateCommand extends DefaultCommand {
                         DCTools.prefix(
                                 DCTools.rt(
                                         api.getConfigManager().getMessages().getString("case-already-exist"),
-                                        LocalPlaceholder.of("%casename%", caseName)
-                                )
-                        )
-                );
+                                        LocalPlaceholder.of("%casename%", caseName))));
                 return true;
             }
 
@@ -81,29 +78,27 @@ public class CreateCommand extends DefaultCommand {
 
             try {
                 api.getConfigManager().getCaseStorage().save(caseName, caseInfo);
-                api.getHologramManager().create(toSave, caseData.hologram());
+                api.getHologramManager().create(toSave, caseDefinition.settings().hologram());
 
-                Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(caseData);
+                Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(caseDefinition);
                 placeholders.add(LocalPlaceholder.of("%casename%", caseName));
 
                 sender.sendMessage(
                         DCTools.prefix(
                                 DCTools.rt(
-                                        api.getConfigManager().getMessages().getString("case-added"), placeholders)
-                        )
-                );
+                                        api.getConfigManager().getMessages().getString("case-added"), placeholders)));
 
                 int spawnRadius = api.getPlatform().getSpawnRadius();
-                if (spawnRadius <= 0) return true;
+                if (spawnRadius <= 0)
+                    return true;
 
                 if (block.distance(player.getWorld().spawnLocation()) <= spawnRadius) {
                     sender.sendMessage(
                             DCTools.prefix(
                                     "&cWarning: " +
-                                            "The case cannot be opened by a regular player without an OP due to spawn-protection! " +
-                                            "Move the case away from the spawn or disable spawn-protection in server.properties."
-                            )
-                    );
+                                            "The case cannot be opened by a regular player without an OP due to spawn-protection! "
+                                            +
+                                            "Move the case away from the spawn or disable spawn-protection in server.properties."));
                 }
 
             } catch (ConfigurateException e) {
@@ -115,7 +110,9 @@ public class CreateCommand extends DefaultCommand {
 
     @Override
     public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
-        List<String> list = new ArrayList<>(api.getCaseManager().getMap().keySet());
+        List<String> list = api.getCaseManager().definitions().stream()
+                .map(def -> def.settings().type())
+                .collect(Collectors.toList());
         if (args.length >= 2) {
             return new ArrayList<>();
         }

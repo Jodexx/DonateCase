@@ -1,11 +1,11 @@
 package com.jodexindustries.donatecase.spigot.animations.wheel;
 
 import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.storage.CaseVector;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
@@ -96,17 +96,17 @@ public class WheelAnimation extends BukkitJavaAnimation {
         private void initializeItems() {
             if (settings.wheelType == WheelSettings.WheelType.FULL) {
                 // FULL logic - unique items
-                List<CaseDataItem> uniqueItems = new ArrayList<>(getCaseData().items().values());
+                List<CaseItem> uniqueItems = new ArrayList<>(getDefinition().items().items().values());
 
                 if (settings.shuffle) {
                     Collections.shuffle(uniqueItems);
                 }
 
                 int additionalSteps = 0;
-                for (CaseDataItem uniqueItem : uniqueItems) {
-                    if (uniqueItem.getName().equals(getWinItem().getName())) {
+                for (CaseItem uniqueItem : uniqueItems) {
+                    if (uniqueItem.name().equals(getItem().name())) {
                         additionalSteps = uniqueItems.size() - armorStands.size();
-                        armorStands.add(spawnArmorStand(location, getWinItem(), settings.smallArmorStand));
+                        armorStands.add(spawnArmorStand(location, getItem(), settings.smallArmorStand));
                     } else armorStands.add(spawnArmorStand(location, uniqueItem, settings.smallArmorStand));
                 }
 
@@ -114,9 +114,9 @@ public class WheelAnimation extends BukkitJavaAnimation {
                 targetAngle = 2 * Math.PI * settings.scroll.count + additionalAngle;
             } else {
                 // RANDOM logic - random items with duplicates
-                armorStands.add(spawnArmorStand(location, getWinItem(), settings.smallArmorStand));
+                armorStands.add(spawnArmorStand(location, getItem(), settings.smallArmorStand));
                 for (int i = 1; i < settings.itemsCount; i++) {
-                    CaseDataItem randomItem = getCaseData().getRandomItem();
+                    CaseItem randomItem = getDefinition().items().getRandomItem();
                     armorStands.add(spawnArmorStand(location, randomItem, settings.smallArmorStand));
                 }
                 int rand = new Random().nextInt(armorStands.size());
@@ -178,8 +178,8 @@ public class WheelAnimation extends BukkitJavaAnimation {
         }
     }
 
-    private ArmorStandCreator spawnArmorStand(CaseLocation location, CaseDataItem item, boolean small) {
-        CaseDataMaterial material = item.material();
+    private ArmorStandCreator spawnArmorStand(CaseLocation location, CaseItem item, boolean small) {
+        CaseMaterial material = item.material();
 
         ArmorStandCreator as = api.getPlatform().getTools().createArmorStand(getUuid(), location);
         as.setSmall(small);

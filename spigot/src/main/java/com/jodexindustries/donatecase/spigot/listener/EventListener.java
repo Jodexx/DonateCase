@@ -56,7 +56,7 @@ public class EventListener implements Listener {
         if (gui != null) {
             e.setCancelled(true);
 
-            String itemType = gui.getCaseData().caseGui().getItemTypeBySlot(e.getRawSlot());
+            String itemType = gui.getDefinition().defaultMenu().getItemTypeBySlot(e.getRawSlot());
             if (itemType == null) return;
 
             backend.getAPI().getEventBus().post(

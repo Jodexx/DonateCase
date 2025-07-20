@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.common.command.sub;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class DelKeyCommand extends DefaultCommand {
 
@@ -40,9 +41,10 @@ public class DelKeyCommand extends DefaultCommand {
                 }
             }
 
-            if(args.length < 2) return false;
+            if (args.length < 2) return false;
 
             String caseType = args[1];
+
             if (!DCTools.isValidPlayerName(playerName)) {
                 sender.sendMessage(
                         DCTools.rt(
@@ -52,47 +54,47 @@ public class DelKeyCommand extends DefaultCommand {
                 );
                 return true;
             }
-            CaseData data = api.getCaseManager().get(caseType);
 
-
-            if (data != null) {
-                int keys;
-                if (args.length == 2) {
-                    keys = api.getCaseKeyManager().get(caseType, playerName);
-                    api.getCaseKeyManager().set(caseType, playerName, 0);
-                } else {
-                    try {
-                        keys = Integer.parseInt(args[2]);
-                    } catch (NumberFormatException e) {
-                        sender.sendMessage(DCTools.rt(
-                                        api.getConfigManager().getMessages().getString("number-format-exception"),
-                                        LocalPlaceholder.of("%string%", args[2])
-                                )
-                        );
-                        return true;
-                    }
-
-                    api.getCaseKeyManager().remove(caseType, playerName, keys);
-                }
-
-                Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(data);
-                placeholders.add(LocalPlaceholder.of("%player%", playerName));
-                placeholders.add(LocalPlaceholder.of("%key%", keys));
-
-                sender.sendMessage(
-                        DCTools.rt(
-                                api.getConfigManager().getMessages().getString("keys-cleared"),
-                                placeholders
-                        )
-                );
-            } else {
+            Optional<CaseDefinition> optional = api.getCaseManager().getByType(caseType);
+            if (!optional.isPresent()) {
                 sender.sendMessage(
                         DCTools.rt(
                                 api.getConfigManager().getMessages().getString("case-does-not-exist"),
                                 LocalPlaceholder.of("%casetype%", caseType)
                         )
                 );
+                return true;
             }
+
+            int keys;
+            if (args.length == 2) {
+                keys = api.getCaseKeyManager().get(caseType, playerName);
+                api.getCaseKeyManager().set(caseType, playerName, 0);
+            } else {
+                try {
+                    keys = Integer.parseInt(args[2]);
+                } catch (NumberFormatException e) {
+                    sender.sendMessage(DCTools.rt(
+                                    api.getConfigManager().getMessages().getString("number-format-exception"),
+                                    LocalPlaceholder.of("%string%", args[2])
+                            )
+                    );
+                    return true;
+                }
+
+                api.getCaseKeyManager().remove(caseType, playerName, keys);
+            }
+
+            Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(optional.get());
+            placeholders.add(LocalPlaceholder.of("%player%", playerName));
+            placeholders.add(LocalPlaceholder.of("%key%", keys));
+
+            sender.sendMessage(
+                    DCTools.rt(
+                            api.getConfigManager().getMessages().getString("keys-cleared"),
+                            placeholders
+                    )
+            );
         }
         return true;
     }

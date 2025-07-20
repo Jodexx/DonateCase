@@ -4,11 +4,17 @@ import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.config.converter.ConfigType;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItems;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMaterial;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import com.jodexindustries.donatecase.api.data.config.ConfigSerializer;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.common.config.converter.DefaultConfigType;
-import com.jodexindustries.donatecase.common.serializer.CaseDataMaterialSerializer;
-import com.jodexindustries.donatecase.common.serializer.CaseGuiSerializer;
+import com.jodexindustries.donatecase.common.config.serializer.CaseDataMaterialSerializer;
+import com.jodexindustries.donatecase.common.config.serializer.CaseGuiSerializer;
+import com.jodexindustries.donatecase.common.config.serializer.casedefinition.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -28,10 +34,25 @@ import java.io.File;
 public class ConfigImpl implements Config {
 
     public static final TypeSerializerCollection.Builder SERIALIZER_COLLECTION = TypeSerializerCollection.builder()
+            .register(CaseSettings.class, new CaseSettingsSerializer())
+            .register(CaseSettings.Hologram.class, new CaseSettingsSerializer.Hologram())
+            .register(CaseSettings.LevelGroups.class, new CaseSettingsSerializer.LevelGroups())
+
+            .register(CaseItems.class, new CaseItemsSerializer())
+
+            .register(CaseItem.class, new CaseItemSerializer())
+            .register(CaseItem.RandomAction.class, new CaseItemSerializer.RandomAction())
+
+            .register(CaseMenu.class, new CaseMenuSerializer())
+            .register(CaseMenu.Item.class, new CaseMenuSerializer.Item())
+
+            .register(CaseMaterial.class, new CaseMaterialSerializer())
+            .register(CaseLocation.class, new CaseLocation())
+
+            // deprecated
             .register(CaseGui.class, new CaseGuiSerializer())
             .register(CaseGui.Item.class, new CaseGuiSerializer.Item())
-            .register(CaseDataMaterial.class, new CaseDataMaterialSerializer())
-            .register(CaseLocation.class, new CaseLocation());
+            .register(CaseDataMaterial.class, new CaseDataMaterialSerializer());
 
     private final String path;
     private final File file;
@@ -41,6 +62,8 @@ public class ConfigImpl implements Config {
     private ConfigType type;
     private ConfigurationNode node;
     private Object serialized;
+
+    private boolean deleted;
 
     /**
      * Constructs a configuration instance without specifying a config type.
@@ -78,14 +101,16 @@ public class ConfigImpl implements Config {
 
         if (version != null) {
             this.version = parse(version);
-            this.type = DefaultConfigType.getType(metaNode.node("type").getString());
+            if (this.type == null)
+                this.type = DefaultConfigType.getType(metaNode.node("type").getString());
         } else {
             this.version = parse(metaNode.getString());
-            this.type = node.hasChild("case") ? DefaultConfigType.OLD_CASE : DefaultConfigType.UNKNOWN;
+            if (this.type == null)
+                this.type = node.hasChild("case") ? DefaultConfigType.OLD_CASE : DefaultConfigType.UNKNOWN;
         }
 
         ConfigSerializer configSerializer = type.getConfigSerializer();
-        if(configSerializer != null) {
+        if (configSerializer != null) {
             this.serialized = node(configSerializer.path()).get(configSerializer.serializer());
         }
     }
@@ -107,8 +132,8 @@ public class ConfigImpl implements Config {
     }
 
     @Override
-    public @Nullable Object getSerialized() {
-        return serialized;
+    public @Nullable <T> T getSerialized(Class<T> clazz) {
+        return clazz.cast(serialized);
     }
 
     @Override
@@ -123,8 +148,14 @@ public class ConfigImpl implements Config {
     }
 
     @Override
+    public boolean delete() {
+        deleted = file.delete();
+        return deleted;
+    }
+
+    @Override
     public void save() throws ConfigurateException {
-        loader.save(node);
+        if (!deleted) loader.save(node);
     }
 
     @Override

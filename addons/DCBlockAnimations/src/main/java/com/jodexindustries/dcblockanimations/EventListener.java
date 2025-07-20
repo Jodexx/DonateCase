@@ -25,7 +25,7 @@ public class EventListener implements Subscriber {
 
     @Subscribe
     public void onCaseOpen(AnimationPreStartEvent e) {
-        if (!addon.getConfig().getEnabledTypes().contains(e.caseData().caseType())) return;
+        if (!addon.getConfig().getEnabledTypes().contains(e.definition().settings().type())) return;
 
         if (MainAddon.api.getAnimationManager().getActiveCasesByBlock().containsKey(e.block())) return;
 

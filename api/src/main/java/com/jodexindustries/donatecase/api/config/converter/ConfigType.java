@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ConfigType {
 
+    String getName();
+
     int getLatestVersion();
 
     boolean isPermanent();

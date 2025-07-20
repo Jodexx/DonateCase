@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.event.player;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.event.DCEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
@@ -20,11 +21,15 @@ import net.kyori.event.Cancellable;
 public class PreOpenCaseEvent extends DCEvent implements Cancellable {
 
     private final DCPlayer player;
-    private final CaseData caseData;
+    private final CaseDefinition definition;
     private final CaseLocation block;
     private boolean cancelled;
     private boolean ignoreKeys;
 
+    @Deprecated
+    public CaseData getCaseData() {
+        return CaseData.fromDefinition(definition);
+    }
 
     @Override
     public boolean cancelled() {

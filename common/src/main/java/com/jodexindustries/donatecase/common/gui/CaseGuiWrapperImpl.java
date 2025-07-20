@@ -1,13 +1,15 @@
 package com.jodexindustries.donatecase.common.gui;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseInventory;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemException;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemHandler;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMaterial;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.platform.Platform;
@@ -28,23 +30,30 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
 
     protected final Platform platform;
     protected final DCPlayer player;
-    protected final CaseData caseData;
+    protected final CaseDefinition definition;
     protected final CaseLocation location;
-    protected final CaseGui temporary;
+    protected final CaseMenu menu;
+    protected final CaseMenu temporary;
     protected final CaseInventory inventory;
 
     private List<CaseData.History> globalHistoryData;
 
-    public CaseGuiWrapperImpl(@NotNull Platform platform, @NotNull DCPlayer player, @NotNull CaseData caseData, @NotNull CaseLocation location) {
+    public CaseGuiWrapperImpl(@NotNull Platform platform,
+            @NotNull DCPlayer player,
+            @NotNull CaseDefinition definition,
+            @NotNull CaseMenu caseMenu,
+            @NotNull CaseLocation location) {
         this.platform = platform;
         this.player = player;
-        this.caseData = caseData;
+        this.definition = definition;
         this.location = location;
-        this.temporary = caseData.caseGui().clone();
-        this.inventory = platform.getTools().createInventory(temporary.size(), DCTools.rc(setPlaceholders(temporary.title())));
+        this.menu = caseMenu;
+        this.temporary = menu.clone();
+        this.inventory = platform.getTools().createInventory(temporary.size(),
+                DCTools.rc(setPlaceholders(temporary.title())));
 
         load().thenAccept((loaded) -> {
-            platform.getScheduler().run(platform, () -> player.openInventory(inventory.getInventory()), 0L);
+            platform.getScheduler().run(platform, () -> player.openInventory(inventory.getHandle()), 0L);
             startUpdateTask();
         }).exceptionally(ex -> {
             platform.getLogger().log(Level.WARNING, "GUI loading failed: " + ex.getMessage());
@@ -58,7 +67,7 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
 
         platform.getScheduler().async(platform, () -> {
             globalHistoryData = DCTools.sortHistoryDataByDate(platform.getAPI().getDatabase().getCache());
-            for (CaseGui.Item item : temporary.items().values()) {
+            for (CaseMenu.Item item : temporary.items().values()) {
                 try {
                     processItem(item);
                 } catch (TypedItemException e) {
@@ -78,17 +87,11 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         return future;
     }
 
-    private void updateMeta(CaseGui.Item temp) {
-        CaseDataMaterial original = getOriginal((String) temp.node().key());
-        CaseDataMaterial material = temp.material();
+    private void updateMeta(CaseMenu.Item temp) {
+        CaseMaterial original = getOriginal(temp.name());
+        CaseMaterial material = temp.material();
         material.displayName(setPlaceholders(original.displayName()));
         material.lore(setPlaceholders(original.lore()));
-        material.updateMeta();
-    }
-
-    private void colorize(CaseDataMaterial material) {
-        material.displayName(DCTools.rc(material.displayName()));
-        material.lore(DCTools.rc(material.lore()));
         material.updateMeta();
     }
 
@@ -97,34 +100,38 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         if (updateRate >= 0) {
             platform.getScheduler().async(platform,
                     (task) -> {
-                        if (!platform.getAPI().getGUIManager().getMap().containsKey(player.getUniqueId())) task.cancel();
+                        if (!platform.getAPI().getGUIManager().getMap().containsKey(player.getUniqueId()))
+                            task.cancel();
                         load();
                     }, updateRate, updateRate);
         }
     }
 
-    private CaseDataMaterial getOriginal(String itemName) {
-        return caseData.caseGui().items().get(itemName).material();
+    private CaseMaterial getOriginal(String itemName) {
+        return menu.items().get(itemName).material();
     }
 
-    private void processItem(CaseGui.Item item) throws TypedItemException {
+    private void processItem(CaseMenu.Item item) throws TypedItemException {
         String itemType = item.type();
         if (!itemType.equalsIgnoreCase("DEFAULT")) {
             Optional<TypedItem> typedItem = platform.getAPI().getGuiTypedItemManager().getFromString(itemType);
             if (typedItem.isPresent()) {
                 TypedItemHandler handler = typedItem.get().handler();
-                if (handler != null) item = handler.handle(this, item);
-                if (typedItem.get().updateMeta()) updateMeta(item);
+                if (handler != null)
+                    item = handler.handle(this, item);
+                if (typedItem.get().updateMeta())
+                    updateMeta(item);
             }
         } else {
             updateMeta(item);
         }
 
-        CaseDataMaterial material = item.material();
+        CaseMaterial material = item.material();
 
-        if (material.itemStack() == null) material.itemStack(platform.getTools().loadCaseItem(material.id()));
+        if (material.itemStack() == null)
+            material.itemStack(platform.getTools().loadCaseItem(material.id()));
 
-        colorize(material);
+        material.updateMeta();
 
         for (Integer slot : item.slots()) {
             inventory.setItem(slot, item.material().itemStack());
@@ -132,18 +139,19 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
     }
 
     private String setPlaceholders(@Nullable String text) {
-        if (text == null) return null;
-        String caseType = caseData.caseType();
+        if (text == null)
+            return null;
+        String caseType = definition.settings().type();
         text = platform.getPAPI().setPlaceholders(
                 player,
-                text
-        );
+                text);
         return KeysCommand.formatMessage(player.getName(), text.replace("%casetype%", caseType), true, caseType);
     }
 
     private List<String> setPlaceholders(List<String> lore) {
         return lore.stream().map(this::setPlaceholders).collect(Collectors.toList());
     }
+
     @NotNull
     @Override
     public CaseInventory getInventory() {
@@ -162,15 +170,27 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         return player;
     }
 
+    @Deprecated
     @NotNull
     @Override
     public CaseData getCaseData() {
-        return caseData;
+        return CaseData.fromDefinition(definition);
+    }
+
+    @Override
+    public @NotNull CaseDefinition getDefinition() {
+        return definition;
+    }
+
+    @Deprecated
+    @Override
+    public CaseGui getTemporary() {
+        return CaseGui.fromMenu(menu);
     }
 
     @NotNull
     @Override
-    public CaseGui getTemporary() {
+    public CaseMenu getMenu() {
         return temporary;
     }
 

@@ -1,7 +1,7 @@
 package com.jodexindustries.donatecase.common.command.sub;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class SetKeyCommand extends DefaultCommand {
 
@@ -57,36 +58,9 @@ public class SetKeyCommand extends DefaultCommand {
             return true;
         }
 
-        CaseData data = api.getCaseManager().get(caseName);
+        Optional<CaseDefinition> optional = api.getCaseManager().getByType(caseName);
 
-        if (data != null) {
-            api.getCaseKeyManager().set(caseName, playerName, keys).thenAcceptAsync(status -> {
-                Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(data);
-                placeholders.add(LocalPlaceholder.of("%player%", playerName));
-                placeholders.add(LocalPlaceholder.of("%key%", keys));
-
-                if (status == DatabaseStatus.COMPLETE) {
-                    sender.sendMessage(
-                            DCTools.prefix(
-                                    DCTools.rt(
-                                            api.getConfigManager().getMessages().getString("keys-sets"),
-                                            placeholders
-                                    )
-                            )
-                    );
-
-                    if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
-                        DCPlayer target = api.getPlatform().getPlayer(playerName);
-                        if (target != null) target.sendMessage(
-                                DCTools.prefix(DCTools.rt(
-                                        api.getConfigManager().getMessages().getString("keys-sets-target"),
-                                        placeholders
-                                ))
-                        );
-                    }
-                }
-            });
-        } else {
+        if (!optional.isPresent()) {
             sender.sendMessage(
                     DCTools.prefix(
                             DCTools.rt(
@@ -95,7 +69,35 @@ public class SetKeyCommand extends DefaultCommand {
                             )
                     )
             );
+            return true;
         }
+
+        api.getCaseKeyManager().set(caseName, playerName, keys).thenAcceptAsync(status -> {
+            Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(optional.get());
+            placeholders.add(LocalPlaceholder.of("%player%", playerName));
+            placeholders.add(LocalPlaceholder.of("%key%", keys));
+
+            if (status == DatabaseStatus.COMPLETE) {
+                sender.sendMessage(
+                        DCTools.prefix(
+                                DCTools.rt(
+                                        api.getConfigManager().getMessages().getString("keys-sets"),
+                                        placeholders
+                                )
+                        )
+                );
+
+                if (args.length < 4 || !args[3].equalsIgnoreCase("-s")) {
+                    DCPlayer target = api.getPlatform().getPlayer(playerName);
+                    if (target != null) target.sendMessage(
+                            DCTools.prefix(DCTools.rt(
+                                    api.getConfigManager().getMessages().getString("keys-sets-target"),
+                                    placeholders
+                            ))
+                    );
+                }
+            }
+        });
         return true;
     }
 

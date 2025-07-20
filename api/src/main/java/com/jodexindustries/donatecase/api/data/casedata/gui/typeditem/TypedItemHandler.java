@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.api.data.casedata.gui.typeditem;
 
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,6 +18,11 @@ public interface TypedItemHandler {
      * @param item    Current item
      * @return Completed GUI.Item
      */
+    @Deprecated
     @NotNull
-    CaseGui.@NotNull Item handle(@NotNull CaseGuiWrapper caseGui, @NotNull CaseGui.Item item) throws TypedItemException;
+    default CaseGui.@NotNull Item handle(@NotNull CaseGuiWrapper caseGui, @NotNull CaseGui.Item item) throws TypedItemException {
+        return CaseGui.Item.fromMenu(handle(caseGui, CaseGui.Item.toMenu(item)));
+    }
+
+    CaseMenu.Item handle(@NotNull CaseGuiWrapper caseGuiWrapper, @NotNull CaseMenu.Item item) throws TypedItemException;
 }

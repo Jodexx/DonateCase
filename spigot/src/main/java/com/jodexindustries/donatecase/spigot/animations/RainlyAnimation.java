@@ -1,13 +1,13 @@
 package com.jodexindustries.donatecase.spigot.animations;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
-import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
+import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
+import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
@@ -112,12 +112,12 @@ public class RainlyAnimation extends BukkitJavaAnimation {
         }
 
         private void handleWinningItem() {
-            as.setEquipment(itemSlot, getWinItem().material().itemStack());
+            as.setEquipment(itemSlot, getItem().material().itemStack());
 
             String winGroupDisplayName = DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(
-                    getPlayer(), getWinItem().material().displayName()
+                    getPlayer(), getItem().material().displayName()
             );
-            getWinItem().material().displayName(winGroupDisplayName);
+            getItem().material().displayName(winGroupDisplayName);
 
             as.setCustomName(winGroupDisplayName);
             as.updateMeta();
@@ -129,7 +129,7 @@ public class RainlyAnimation extends BukkitJavaAnimation {
         }
 
         private void updateRandomItem() {
-            CaseDataItem item = getCaseData().getRandomItem();
+            CaseItem item = getDefinition().items().getRandomItem();
             String itemDisplayName = DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(
                     getPlayer(), item.material().displayName()
             );

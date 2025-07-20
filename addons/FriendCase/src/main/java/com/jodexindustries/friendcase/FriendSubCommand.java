@@ -1,6 +1,6 @@
 package com.jodexindustries.friendcase;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.jodexindustries.donatecase.api.tools.DCTools.rc;
@@ -55,22 +56,20 @@ public class FriendSubCommand implements SubCommandExecutor, SubCommandTabComple
                 return true;
             }
 
-            CaseData caseData = addon.api.getCaseManager().get(caseType);
-
-            if (caseData == null) {
+            Optional<CaseDefinition> optional = addon.api.getCaseManager().getByType(caseType);
+            if (!optional.isPresent()) {
                 sender.sendMessage(rc(addon.config.getString("Messages", "CaseNotFound")));
                 return true;
             }
+            CaseDefinition caseDefinition = optional.get();
 
             int playerKeys = addon.api.getCaseKeyManager().get(caseType, p.getName());
 
             if (playerKeys < 1 || playerKeys < keys) {
                 sender.sendMessage(
-                        rt(addon.config.getString("Messages", "MinNumber"), Placeholder.of("%required%", keys))
-                );
+                        rt(addon.config.getString("Messages", "MinNumber"), Placeholder.of("%required%", keys)));
                 return true;
             }
-
 
             if (target == null) {
                 sender.sendMessage(rc(addon.config.getString("Messages", "PlayerNotFound")));
@@ -99,17 +98,16 @@ public class FriendSubCommand implements SubCommandExecutor, SubCommandTabComple
                             Placeholder.of("%sender%", sender.getName()),
                             Placeholder.of("%target%", target.getName()),
                             Placeholder.of("%keys%", keys),
-                            Placeholder.of("%case%", caseType)
-                    ));
+                            Placeholder.of("%case%", caseType)));
                     sender.sendMessage(rt(
                             addon.config.getString("Messages", "YouSendGift"),
                             Placeholder.of("%sender%", sender.getName()),
                             Placeholder.of("%target%", target.getName()),
                             Placeholder.of("%keys%", keys),
-                            Placeholder.of("%case%", caseType)
-                    ));
+                            Placeholder.of("%case%", caseType)));
 
-                    addon.api.getEventBus().post(new CaseGiftEvent(p, target, caseData, keys));
+                    addon.api.getEventBus()
+                            .post(new CaseGiftEvent(p, target, caseDefinition, keys));
                 });
             });
 
@@ -128,9 +126,12 @@ public class FriendSubCommand implements SubCommandExecutor, SubCommandTabComple
     public List<String> getTabCompletions(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
         List<String> strings = new ArrayList<>();
         if (args.length == 1) {
-            strings.addAll(Arrays.stream(addon.api.getPlatform().getOnlinePlayers()).map(DCPlayer::getName).collect(Collectors.toList()));
+            strings.addAll(Arrays.stream(addon.api.getPlatform().getOnlinePlayers()).map(DCPlayer::getName)
+                    .collect(Collectors.toList()));
         } else if (args.length == 2) {
-            strings.addAll(addon.api.getCaseManager().getMap().keySet());
+            strings.addAll(addon.api.getCaseManager().definitions().stream()
+                    .map(def -> def.settings().type())
+                    .collect(Collectors.toList()));
         }
         return strings;
     }

@@ -1,7 +1,8 @@
 package com.jodexindustries.donatecase.api.data;
 
 import com.jodexindustries.donatecase.api.data.animation.Animation;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import lombok.Getter;
@@ -21,25 +22,23 @@ public class ActiveCase {
     private final UUID uuid;
     private final CaseLocation block;
     private final DCPlayer player;
-    private final CaseDataItem winItem;
-    private final String caseType;
+    private final CaseItem winItem;
+    private final CaseDefinition definition;
     private final Animation animation;
 
     private boolean locked;
     private boolean keyRemoved;
 
-    /**
-     * Default constructor
-     *
-     * @param block    Case block
-     * @param caseType Case type
-     */
-    public ActiveCase(UUID uuid, CaseLocation block, DCPlayer player, CaseDataItem winItem, String caseType, Animation animation) {
+    public ActiveCase(UUID uuid, CaseLocation block, DCPlayer player, CaseItem winItem, CaseDefinition definition, Animation animation) {
         this.uuid = uuid;
         this.block = block;
         this.player = player;
         this.winItem = winItem;
-        this.caseType = caseType;
+        this.definition = definition;
         this.animation = animation;
+    }
+
+    public String caseType() {
+        return definition.settings().type();
     }
 }

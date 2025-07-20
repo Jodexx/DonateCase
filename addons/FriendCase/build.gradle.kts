@@ -8,8 +8,8 @@ plugins {
     java
 }
 
-group = "com.jodexindustries"
-version = "2.0.0"
+group = "com.jodexindustries.friendcase"
+version = "2.0.1"
 
 dependencies {
     compileOnly(project(":api"))

@@ -2,8 +2,11 @@ package com.jodexindustries.donatecase.common.managers;
 
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.GiveType;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.api.data.animation.Animation;
@@ -22,20 +25,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public class AnimationManagerImpl implements AnimationManager {
 
-    private final static Map<String, CaseAnimation> registeredAnimations = new ConcurrentHashMap<>();
-    private final static Map<UUID, ActiveCase> activeCases = new ConcurrentHashMap<>();
-    private final static Map<CaseLocation, List<UUID>> activeCasesByBlock = new ConcurrentHashMap<>();
+    public final Map<String, CaseAnimation> registeredAnimations = new ConcurrentHashMap<>();
+    public final Map<UUID, ActiveCase> activeCases = new ConcurrentHashMap<>();
+    public final Map<CaseLocation, List<UUID>> activeCasesByBlock = new ConcurrentHashMap<>();
 
     private final DonateCase api;
     private final BackendPlatform backend;
@@ -74,46 +73,45 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     @Override
-    public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData) {
-        return start(player, location, caseData, caseData.cooldownBeforeStart());
+    public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition) {
+        return start(player, location, definition, definition.settings().cooldownBeforeAnimation());
     }
 
     @Override
-    public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay) {
-        return start(player, location, caseData, false, delay);
+    public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition, int delay) {
+        return start(player, location, definition, false, delay);
     }
 
     @Override
-    public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, boolean keyRemoved, int delay) {
-        CaseData data = caseData.clone();
+    public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition caseDefinition, boolean keyRemoved, int delay) {
+        CaseDefinition definition = caseDefinition.clone();
 
         String animation;
-        if (!data.animation().equalsIgnoreCase("RANDOM")) {
-            animation = data.animation();
+        if (!definition.settings().animation().equalsIgnoreCase("RANDOM")) {
+            animation = definition.settings().animation();
         } else {
-            animation = getRandomAnimation(getSettings(data));
-            data.animation(animation);
+            animation = getRandomAnimation(getSettings(definition));
+            definition.settings().animation(animation);
         }
 
-        ConfigurationNode settings = getSettings(data);
+        ConfigurationNode settings = getSettings(definition);
 
         CaseLocation temp = location.clone();
 
         CaseAnimation caseAnimation = get(animation);
 
-        if (!validateStartConditions(data, caseAnimation, settings, temp, player)) {
+        if (!validateStartConditions(definition, caseAnimation, settings, temp, player)) {
             return CompletableFuture.completedFuture(null);
         }
 
         assert caseAnimation != null;
 
-        data.items(DCTools.sortItemsByIndex(data.items()));
+        definition.items().items(DCTools.sortItemsByIndex(definition.items().items()));
 
-
-        CaseDataItem winItem = data.getRandomItem();
+        CaseItem winItem = definition.items().getRandomItem();
         winItem.material().displayName(api.getPlatform().getPAPI().setPlaceholders(player, winItem.material().displayName()));
 
-        AnimationPreStartEvent event = new AnimationPreStartEvent(player, data, temp, winItem);
+        AnimationPreStartEvent event = new AnimationPreStartEvent(player, definition, temp, winItem);
         api.getEventBus().post(event);
 
         winItem = event.winItem();
@@ -130,7 +128,7 @@ public class AnimationManagerImpl implements AnimationManager {
                 temp.yaw(caseLocation.yaw());
             }
 
-            CaseData.Hologram hologram = data.hologram();
+            CaseSettings.Hologram hologram = definition.settings().hologram();
             if (hologram != null && hologram.enabled()) api.getHologramManager().remove(temp);
 
             for (CaseGuiWrapper gui : api.getGUIManager().getMap().values()) {
@@ -145,9 +143,9 @@ public class AnimationManagerImpl implements AnimationManager {
         try {
 
             Animation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
-            javaAnimation.init(player, temp.clone(), uuid, data, winItem, settings);
+            javaAnimation.init(player, temp.clone(), uuid, definition, winItem, settings);
 
-            ActiveCase activeCase = new ActiveCase(uuid, temp, player, winItem, data.caseType(), javaAnimation);
+            ActiveCase activeCase = new ActiveCase(uuid, temp, player, winItem, caseDefinition.clone(), javaAnimation);
             activeCase.locked(caseAnimation.isRequireBlock());
             activeCase.keyRemoved(keyRemoved);
 
@@ -179,38 +177,36 @@ public class AnimationManagerImpl implements AnimationManager {
     @Override
     public void preEnd(UUID uuid) {
         ActiveCase activeCase = activeCases.get(uuid);
-        if(activeCase == null) {
+        if (activeCase == null) {
             backend.getLogger().warning("Animation with uuid: " + uuid + " not found!");
             return;
         }
 
-        CaseData caseData = api.getCaseManager().get(activeCase.caseType());
-        if (caseData != null) {
-            preEnd(caseData, activeCase.player(), activeCase.winItem());
-        }
+        Optional<CaseDefinition> optional = api.getCaseManager().getByType(activeCase.caseType());
+        optional.ifPresent(definition -> preEnd(definition, activeCase.player(), activeCase.winItem()));
     }
 
     @Override
-    public void preEnd(CaseData caseData, DCPlayer player, CaseDataItem item) {
-        CaseDataItem.RandomAction randomAction = item.giveType().equalsIgnoreCase("ONE") ? null : item.getRandomAction();
-        Map<String, Integer> levelGroups = api.getConfigManager().getConfig().levelGroups();
-        if (!caseData.levelGroups().isEmpty()) levelGroups = caseData.levelGroups();
+    public void preEnd(CaseDefinition definition, DCPlayer player, CaseItem item) {
+        CaseItem.RandomAction randomAction = item.giveType() == GiveType.ONE ? null : item.getRandomAction();
+        CaseSettings.LevelGroups levelGroups = api.getConfigManager().getConfig().levelGroups();
+        if (!definition.settings().levelGroups().map().isEmpty()) levelGroups = definition.settings().levelGroups();
 
         String primaryGroup = backend.getLuckPermsSupport().getPrimaryGroup(player.getUniqueId());
 
-        executeActions(player, caseData, item, randomAction,
-                isBetterOrEqual(
-                        levelGroups, primaryGroup, item.group()
+        executeActions(player, definition, item, randomAction,
+                levelGroups.isBetterOrEqual(
+                        primaryGroup, item.group()
                 )
         );
 
-        saveOpenInfo(caseData, player, item, randomAction);
+        saveOpenInfo(definition, player, item, randomAction);
     }
 
     @Override
     public void end(UUID uuid) {
         ActiveCase activeCase = activeCases.get(uuid);
-        if(activeCase == null) {
+        if (activeCase == null) {
             backend.getLogger().warning("Animation with uuid: " + uuid + " not found!");
             return;
         }
@@ -224,18 +220,17 @@ public class AnimationManagerImpl implements AnimationManager {
         activeCasesByBlock.remove(block);
 
         DCPlayer player = activeCase.player();
-        if(!activeCase.keyRemoved()) api.getCaseKeyManager().remove(activeCase.caseType(), player.getName(), 1);
+        if (!activeCase.keyRemoved()) api.getCaseKeyManager().remove(activeCase.caseType(), player.getName(), 1);
 
         api.getEventBus().post(new AnimationEndEvent(activeCase));
 
-        CaseData caseData = api.getCaseManager().get(activeCase.caseType());
-        if(caseData == null) return;
+        CaseDefinition definition = activeCase.definition();
 
-        CaseAnimation caseAnimation = get(caseData.animation());
-        if(caseAnimation == null) return;
+        CaseAnimation caseAnimation = get(definition.settings().animation());
+        if (caseAnimation == null) return;
 
-        if(caseAnimation.isRequireBlock()) {
-            CaseData.Hologram hologram = caseData.hologram();
+        if (caseAnimation.isRequireBlock()) {
+            CaseSettings.Hologram hologram = definition.settings().hologram();
             if (hologram != null && hologram.enabled()) api.getHologramManager().create(block, hologram);
         }
 
@@ -267,23 +262,23 @@ public class AnimationManagerImpl implements AnimationManager {
         return activeCasesByBlock;
     }
 
-    private boolean validateStartConditions(CaseData caseData, CaseAnimation animation,
+    private boolean validateStartConditions(CaseDefinition definition, CaseAnimation animation,
                                             ConfigurationNode settings, CaseLocation location, DCPlayer player) {
         if (animation == null) {
-            backend.getLogger().log(Level.WARNING, "Case animation " + caseData.animation() + " does not exist!");
+            backend.getLogger().log(Level.WARNING, "Case animation " + definition.settings().animation() + " does not exist!");
             return false;
         }
 
         if (location.getWorld() == null || location.getWorld().name() == null) {
             backend.getLogger().warning("Player " + player.getName() +
-                    " trying to start animation without world name in case: " + caseData.caseType() +
+                    " trying to start animation without world name in case: " + definition.settings().type() +
                     " Check the Cases.yml file!");
             return false;
         }
 
         if (isLocked(location)) {
             backend.getLogger().warning("Player " + player.getName() +
-                    " trying to start animation while another animation is running in case: " + caseData.caseType());
+                    " trying to start animation while another animation is running in case: " + definition.settings().type());
             return false;
         }
 
@@ -292,42 +287,42 @@ public class AnimationManagerImpl implements AnimationManager {
             return false;
         }
 
-        if (caseData.items().isEmpty()) {
+        if (definition.items().items().isEmpty()) {
             backend.getLogger().warning("Player " + player.getName() +
-                    " trying to start animation without items in case: " + caseData.caseType());
+                    " trying to start animation without items in case: " + definition.settings().type());
             return false;
         }
 
-        if (!caseData.hasRealItems()) {
+        if (!definition.items().hasRealItems()) {
             backend.getLogger().warning("Player " + player.getName() +
-                    " trying to start animation without real (chance > 0) items in case: " + caseData.caseType());
+                    " trying to start animation without real (chance > 0) items in case: " + definition.settings().type());
             return false;
         }
 
         return true;
     }
 
-    private void saveOpenInfo(@NotNull CaseData caseData,
+    private void saveOpenInfo(@NotNull CaseDefinition definition,
                               @NotNull DCPlayer player,
-                              @NotNull CaseDataItem item,
-                              @Nullable CaseDataItem.RandomAction action) {
+                              @NotNull CaseItem item,
+                              @Nullable CaseItem.RandomAction action) {
         backend.getScheduler().async(backend, () -> {
             CaseData.History newEntry = new CaseData.History(
-                    item.getName(),
-                    caseData.caseType(),
+                    item.name(),
+                    definition.settings().type(),
                     player.getName(),
                     System.currentTimeMillis(),
                     item.group(),
-                    action == null ? null : action.getName()
+                    action == null ? null : action.name()
             );
 
-            api.getDatabase().addHistory(caseData.caseType(), newEntry, caseData.historyDataSize());
+            api.getDatabase().addHistory(definition.settings().type(), newEntry, definition.settings().historyDataSize());
 
-            api.getCaseOpenManager().add(caseData.caseType(), player.getName(), 1);
+            api.getCaseOpenManager().add(definition.settings().type(), player.getName(), 1);
         }, 0L);
     }
 
-    public void executeActions(DCPlayer player, CaseData caseData, CaseDataItem item, CaseDataItem.RandomAction randomAction, boolean alternative) {
+    public void executeActions(DCPlayer player, CaseDefinition caseData, CaseItem item, CaseItem.RandomAction randomAction, boolean alternative) {
         Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(caseData);
         placeholders.add(LocalPlaceholder.of("%player%", player.getName()));
         placeholders.addAll(LocalPlaceholder.of(item));
@@ -337,13 +332,6 @@ public class AnimationManagerImpl implements AnimationManager {
         api.getActionManager().execute(player, actions);
     }
 
-    public static boolean isBetterOrEqual(Map<String, Integer> groupLevels, String playerGroup, String rewardGroup) {
-        Integer playerLevel = groupLevels.get(playerGroup);
-        Integer rewardLevel = groupLevels.get(rewardGroup);
-
-        return playerLevel != null && rewardLevel != null && playerLevel >= rewardLevel;
-    }
-
     public String getRandomAnimation(ConfigurationNode settings) {
         ProbabilityCollection<String> collection = new ProbabilityCollection<>();
         settings.childrenMap().forEach((key, value) ->
@@ -351,8 +339,9 @@ public class AnimationManagerImpl implements AnimationManager {
         return collection.get();
     }
 
-    private ConfigurationNode getSettings(CaseData caseData) {
-        return caseData.animationSettings().isNull() ? api.getConfigManager().getAnimations().node(caseData.animation()) : caseData.animationSettings();
+    private ConfigurationNode getSettings(CaseDefinition definition) {
+        return definition.settings().animationSettings().isNull() ?
+                api.getConfigManager().getAnimations().node(definition.settings().animation()) : definition.settings().animationSettings();
     }
 
 }

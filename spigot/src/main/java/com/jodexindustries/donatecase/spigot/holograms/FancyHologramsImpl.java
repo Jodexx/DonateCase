@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.spigot.holograms;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.spigot.serializer.ConfigurationSectionImpl;
@@ -23,7 +23,7 @@ public class FancyHologramsImpl implements HologramDriver {
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void create(CaseLocation block, CaseData.Hologram caseHologram) {
+    public void create(CaseLocation block, CaseSettings.Hologram caseHologram) {
         ConfigurationNode node = caseHologram.node();
 
         HologramType type = HologramType.getByName(node.node("type").getString());

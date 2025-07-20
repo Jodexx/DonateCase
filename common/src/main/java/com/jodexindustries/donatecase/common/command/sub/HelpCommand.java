@@ -6,9 +6,6 @@ import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.common.command.DefaultCommand;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class HelpCommand extends DefaultCommand {
 
     public HelpCommand(DCAPI api) {

@@ -1,8 +1,12 @@
 package com.jodexindustries.donatecase.common.config;
 
+import com.jodexindustries.donatecase.api.config.Config;
+import com.jodexindustries.donatecase.api.config.converter.ConfigType;
+import com.jodexindustries.donatecase.api.data.config.ConfigData;
 import com.jodexindustries.donatecase.api.manager.ConfigManager;
 import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.common.config.converter.ConfigConverter;
+import com.jodexindustries.donatecase.common.config.converter.DefaultConfigType;
 import com.jodexindustries.donatecase.common.database.CaseDatabaseImpl;
 import com.jodexindustries.donatecase.common.managers.CaseKeyManagerImpl;
 import com.jodexindustries.donatecase.common.managers.CaseOpenManagerImpl;
@@ -16,10 +20,12 @@ import org.spongepowered.configurate.ConfigurationNode;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 
 public class ConfigManagerImpl implements ConfigManager {
 
+    private ConfigData configData;
     private final MessagesImpl messages;
     private final CaseStorageImpl caseStorage;
     private final ConfigConverter converter;
@@ -48,6 +54,11 @@ public class ConfigManagerImpl implements ConfigManager {
     }
 
     @Override
+    public @NotNull Optional<ConfigImpl> getConfig(@NotNull ConfigType type) {
+        return configurations.values().stream().filter(value -> type.equals(value.type())).findFirst();
+    }
+
+    @Override
     @Nullable
     public ConfigurationNode getNode(@NotNull String name) {
         ConfigImpl config = getConfig(name);
@@ -60,13 +71,35 @@ public class ConfigManagerImpl implements ConfigManager {
     }
 
     @Override
+    public ConfigData getConfig() {
+        return getConfig(false);
+    }
+
+    private ConfigData getConfig(boolean refresh) {
+        if (!refresh && configData != null) return configData;
+
+        Config config = getConfig("Config.yml");
+
+        if (config == null) {
+            config = getConfig(DefaultConfigType.CONFIG).orElse(null);
+            if (config == null) {
+                throw new IllegalStateException("DonateCase config is null!");
+            }
+        }
+
+        configData = config.getSerialized(ConfigData.class);
+
+        return configData;
+    }
+
+    @Override
     public void load() {
         configurations.clear();
         createFiles();
         loadConfigurations(platform.getDataFolder().listFiles(), false);
 
         try {
-            messages.load(getConfig().languages());
+            messages.load(getConfig(true).languages());
             caseStorage.load();
         } catch (ConfigurateException e) {
             platform.getLogger().log(Level.WARNING, "Error with loading configuration: ", e);
@@ -97,12 +130,11 @@ public class ConfigManagerImpl implements ConfigManager {
                 } else if ("lang".equals(dirName)) {
                     loadConfigurations(subFiles, false);
                 }
-                continue;
-            }
-
-            String fileName = file.getName().toLowerCase();
-            if (fileName.endsWith(".yml") || fileName.endsWith(".yaml")) {
-                load(file);
+            } else {
+                String fileName = file.getName().toLowerCase();
+                if (fileName.endsWith(".yml") || fileName.endsWith(".yaml")) {
+                    load(file);
+                }
             }
         }
     }
@@ -123,6 +155,11 @@ public class ConfigManagerImpl implements ConfigManager {
         }
 
         return config;
+    }
+
+    @Override
+    public @Nullable ConfigImpl unload(@NotNull String name) {
+        return configurations.remove(name);
     }
 
     private void createFiles() {

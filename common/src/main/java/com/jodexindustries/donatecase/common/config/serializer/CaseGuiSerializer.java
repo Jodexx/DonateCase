@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.common.serializer;
+package com.jodexindustries.donatecase.common.config.serializer;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
@@ -18,6 +18,7 @@ import java.util.stream.IntStream;
 
 public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
 
+    @Deprecated
     @Override
     public CaseGui deserialize(Type type, ConfigurationNode source) throws SerializationException {
         CaseGui caseGui = new CaseGui();
@@ -57,6 +58,7 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
 
     }
 
+    @Deprecated
     private CaseGui.Item loadGUIItem(String i, @NotNull ConfigurationNode itemSection, Set<Integer> currentSlots) throws SerializationException {
         CaseGui.Item item = itemSection.get(CaseGui.Item.class);
         if (item == null) return null;
@@ -88,6 +90,7 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
 
     public static class Item implements TypeSerializer<CaseGui.Item> {
 
+        @Deprecated
         @Override
         public CaseGui.Item deserialize(Type type, ConfigurationNode source) throws SerializationException {
             CaseGui.Item item = new CaseGui.Item();
@@ -103,6 +106,7 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
             return item;
         }
 
+        @Deprecated
         @Override
         public void serialize(Type type, CaseGui.@Nullable Item obj, ConfigurationNode target) {
 

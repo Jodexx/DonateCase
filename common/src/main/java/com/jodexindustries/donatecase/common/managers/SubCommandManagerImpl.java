@@ -35,7 +35,7 @@ public class SubCommandManagerImpl implements SubCommandManager {
             SetKeyCommand.class
     );
 
-    private static final Map<String, SubCommand> registeredSubCommands = new ConcurrentHashMap<>();
+    private final Map<String, SubCommand> registeredSubCommands = new ConcurrentHashMap<>();
 
     private final DCAPI api;
     private final Platform platform;

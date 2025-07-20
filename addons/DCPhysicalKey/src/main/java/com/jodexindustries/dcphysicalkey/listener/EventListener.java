@@ -47,7 +47,7 @@ public class EventListener implements Listener, Subscriber {
                 if(!container.has(NAMESPACED_KEY, PersistentDataType.STRING)) continue;
 
                 String caseType = container.get(NAMESPACED_KEY, PersistentDataType.STRING);
-                if(event.caseData().caseType().equals(caseType)) {
+                if(event.definition().settings().type().equals(caseType)) {
                     event.ignoreKeys(true);
                     item.setAmount(item.getAmount() - 1);
                     break;

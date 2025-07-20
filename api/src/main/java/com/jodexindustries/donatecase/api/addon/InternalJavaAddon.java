@@ -79,7 +79,7 @@ public abstract class InternalJavaAddon implements InternalAddon {
     @Override
     public final @NotNull File getDataFolder() {
         File data = new File(getPlatform().getDataFolder(), "addons/" + getDescription().getName());
-        if (!data.exists()) data.mkdir();
+        if (!data.exists()) data.mkdirs();
         return data;
     }
 

@@ -1,7 +1,8 @@
 package com.jodexindustries.donatecase.common.managers;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
@@ -10,6 +11,7 @@ import com.jodexindustries.donatecase.api.manager.HologramManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -61,9 +63,12 @@ public class HologramManagerImpl implements HologramManager {
 
             String caseType = info.type();
 
-            CaseData caseData = api.getCaseManager().get(caseType);
+            Optional<CaseDefinition> optional = api.getCaseManager().getByType(caseType);
+            if (!optional.isPresent()) continue;
 
-            if (caseData == null || !caseData.hologram().enabled()) continue;
+            CaseSettings.Hologram hologram = optional.get().settings().hologram();
+
+            if (!hologram.enabled()) continue;
 
             CaseLocation location = info.location();
             CaseWorld world = location.getWorld();
@@ -75,14 +80,14 @@ public class HologramManagerImpl implements HologramManager {
                 continue;
             }
 
-            create(location, caseData.hologram());
+            create(location, hologram);
         }
     }
 
     @Override
-    public void create(CaseLocation block, CaseData.Hologram caseHologram) {
+    public void create(CaseLocation block, CaseSettings.Hologram hologram) {
         try {
-            if (driver != null) driver.create(block, caseHologram);
+            if (driver != null) driver.create(block, hologram);
         } catch (Exception e) {
             api.getPlatform().getLogger().log(Level.WARNING, "Error with creating hologram: ", e);
         }

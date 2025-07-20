@@ -8,7 +8,6 @@ import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.spigot.actions.CommandActionExecutorImpl;
 import com.jodexindustries.donatecase.spigot.actions.SoundActionExecutorImpl;
 import com.jodexindustries.donatecase.spigot.actions.TitleActionExecutorImpl;
-import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
@@ -73,13 +72,15 @@ public class BukkitBackend extends BackendPlatform {
 
     private MetaUpdater metaUpdater;
 
+    private Metrics metrics;
+
     public BukkitBackend(BukkitDonateCase plugin) {
         this.plugin = plugin;
         this.api = new DonateCase(this);
         this.tools = new ToolsImpl(this);
         this.scheduler = new BukkitScheduler(this);
 
-        DCAPI.setInstance(api);
+        DonateCase.setInstance(api);
     }
 
 
@@ -112,6 +113,7 @@ public class BukkitBackend extends BackendPlatform {
     public void unload() {
         api.unload();
         if (packetEventsSupport != null) packetEventsSupport.unload();
+        if (metrics != null) metrics.shutdown();
 
         Bukkit.getWorlds().stream()
                 .flatMap(world -> world.getEntitiesByClass(ArmorStand.class).stream())
@@ -463,7 +465,7 @@ public class BukkitBackend extends BackendPlatform {
     }
 
     private void loadMetrics() {
-        Metrics metrics = new Metrics(plugin, 18709);
+        this.metrics = new Metrics(plugin, 18709);
         metrics.addCustomChart(new Metrics.SimplePie("language", () -> api.getConfigManager().getConfig().languages()));
     }
 

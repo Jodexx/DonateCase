@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandEulerAngle;
 import com.jodexindustries.donatecase.api.armorstand.EquipmentSlot;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -90,7 +91,7 @@ public class EntityArmorStandCreator implements ArmorStandCreator {
 
     @Override
     public void setCustomName(String displayName) {
-        entity.setCustomName(displayName);
+        entity.setCustomName(DCTools.rc(displayName));
     }
 
     @Override

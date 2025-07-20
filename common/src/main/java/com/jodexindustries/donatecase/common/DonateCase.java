@@ -2,6 +2,9 @@ package com.jodexindustries.donatecase.common;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.PowerReason;
+import com.jodexindustries.donatecase.api.database.CaseDatabase;
+import com.jodexindustries.donatecase.api.manager.CaseKeyManager;
+import com.jodexindustries.donatecase.api.manager.CaseOpenManager;
 import com.jodexindustries.donatecase.common.config.CaseLoader;
 import com.jodexindustries.donatecase.common.config.ConfigManagerImpl;
 import com.jodexindustries.donatecase.common.database.CaseDatabaseImpl;
@@ -11,6 +14,7 @@ import com.jodexindustries.donatecase.common.managers.*;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
 import com.jodexindustries.donatecase.common.tools.updater.UpdateChecker;
 import lombok.Getter;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public class DonateCase extends DCAPI {
@@ -60,6 +64,11 @@ public class DonateCase extends DCAPI {
         this.eventListener = new EventListener(this);
     }
 
+    @ApiStatus.Internal
+    public static void setInstance(DCAPI instance) {
+        DCAPI.instance = instance;
+    }
+
     public void load() {
         long time = System.currentTimeMillis();
         addonManager.load();
@@ -91,6 +100,7 @@ public class DonateCase extends DCAPI {
         guiManager.getMap().values().parallelStream().forEach(gui -> gui.getPlayer().closeInventory());
 
         clear();
+        setInstance(null);
     }
 
     @Override
@@ -170,5 +180,15 @@ public class DonateCase extends DCAPI {
     @Override
     public @NotNull BackendPlatform getPlatform() {
         return platform;
+    }
+
+    @Override
+    public void clear() {
+        getCaseManager().caseDefinitionMap.clear();
+        getAnimationManager().activeCases.clear();
+        getAnimationManager().activeCasesByBlock.clear();
+        CaseOpenManager.cache.clear();
+        CaseKeyManager.cache.clear();
+        CaseDatabase.cache.clear();
     }
 }

@@ -26,8 +26,8 @@ import java.util.logging.Level;
 
 public class AddonManagerImpl implements AddonManager {
 
-    private static final Map<String, InternalJavaAddon> addons = new ConcurrentHashMap<>();
-    private static final List<InternalAddonClassLoader> loaders = new CopyOnWriteArrayList<>();
+    public final Map<String, InternalJavaAddon> addons = new ConcurrentHashMap<>();
+    public final List<InternalAddonClassLoader> loaders = new CopyOnWriteArrayList<>();
 
     private MutableGraph<String> dependencyGraph = GraphBuilder.directed().build();
 
@@ -286,14 +286,9 @@ public class AddonManagerImpl implements AddonManager {
         return folder;
     }
 
-    /**
-     * Gets InternalAddonClassLoader
-     *
-     * @param file Addon jar file
-     * @return InternalAddon ClassLoader
-     */
     @Nullable
-    public static InternalAddonClassLoader getAddonClassLoader(File file) {
+    @Override
+    public InternalAddonClassLoader getAddonClassLoader(File file) {
         return loaders.stream().filter(loader -> loader.getFile().equals(file)).findFirst().orElse(null);
     }
 

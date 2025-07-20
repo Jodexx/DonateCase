@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api;
 
-import com.jodexindustries.donatecase.api.manager.ConfigManager;
 import com.jodexindustries.donatecase.api.config.Loadable;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
 import com.jodexindustries.donatecase.api.event.EventBus;
@@ -18,11 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class DCAPI {
 
     @Getter
-    private static DCAPI instance;
-
-    public static void setInstance(@NotNull DCAPI instance) {
-        if(DCAPI.instance == null) DCAPI.instance = instance;
-    }
+    protected static DCAPI instance;
 
     /**
      * Retrieves the {@link ActionManager} responsible for handling custom actions in the system.
@@ -122,12 +117,5 @@ public abstract class DCAPI {
     public abstract @NotNull Platform getPlatform();
 
     @ApiStatus.Experimental
-    public void clear() {
-        getCaseManager().getMap().clear();
-        getAnimationManager().getActiveCases().clear();
-        getAnimationManager().getActiveCasesByBlock().clear();
-        CaseOpenManager.cache.clear();
-        CaseKeyManager.cache.clear();
-        CaseDatabase.cache.clear();
-    }
+    public abstract void clear();
 }

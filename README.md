@@ -8,7 +8,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/jodexx/donatecase/badge)](https://www.codefactor.io/repository/github/jodexx/donatecase)
 
 | [MavenRepo](https://repo.jodex.xyz/#/releases/com/jodexindustries/donatecase/) | [JavaDocs](https://repo.jodex.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot-api/latest) | [Wiki](https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/API/install) |
-|------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+|--------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
 
 
 
