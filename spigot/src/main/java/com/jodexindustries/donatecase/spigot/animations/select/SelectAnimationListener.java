@@ -28,10 +28,10 @@ public class SelectAnimationListener implements EventSubscriber<ArmorStandCreato
 
         task.selected = true;
 
-        creator.setEquipment(animation.settings.itemSlot, animation.getWinItem().material().itemStack());
-        if (animation.getWinItem().material().displayName() != null && !animation.getWinItem().material().displayName().isEmpty())
+        creator.setEquipment(animation.settings.itemSlot, animation.getItem().material().itemStack());
+        if (animation.getItem().material().displayName() != null && !animation.getItem().material().displayName().isEmpty())
             creator.setCustomNameVisible(true);
-        creator.setCustomName(api.getPlatform().getPAPI().setPlaceholders(event.player(), animation.getWinItem().material().displayName()));
+        creator.setCustomName(api.getPlatform().getPAPI().setPlaceholders(event.player(), animation.getItem().material().displayName()));
         creator.updateMeta();
     }
 

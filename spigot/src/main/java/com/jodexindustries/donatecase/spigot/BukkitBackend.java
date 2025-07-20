@@ -72,6 +72,8 @@ public class BukkitBackend extends BackendPlatform {
 
     private MetaUpdater metaUpdater;
 
+    private Metrics metrics;
+
     public BukkitBackend(BukkitDonateCase plugin) {
         this.plugin = plugin;
         this.api = new DonateCase(this);
@@ -111,6 +113,7 @@ public class BukkitBackend extends BackendPlatform {
     public void unload() {
         api.unload();
         if (packetEventsSupport != null) packetEventsSupport.unload();
+        if (metrics != null) metrics.shutdown();
 
         Bukkit.getWorlds().stream()
                 .flatMap(world -> world.getEntitiesByClass(ArmorStand.class).stream())
@@ -462,7 +465,7 @@ public class BukkitBackend extends BackendPlatform {
     }
 
     private void loadMetrics() {
-        Metrics metrics = new Metrics(plugin, 18709);
+        this.metrics = new Metrics(plugin, 18709);
         metrics.addCustomChart(new Metrics.SimplePie("language", () -> api.getConfigManager().getConfig().languages()));
     }
 

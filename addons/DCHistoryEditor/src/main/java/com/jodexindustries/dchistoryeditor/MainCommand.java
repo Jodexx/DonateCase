@@ -1,6 +1,7 @@
 package com.jodexindustries.dchistoryeditor;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -10,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.jodexindustries.donatecase.api.tools.DCTools.rc;
@@ -46,21 +49,23 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
             String action = args[0].toLowerCase();
             String caseType = args[1];
 
-            CaseData caseData = addon.api.getCaseManager().get(caseType);
+            Optional<CaseDefinition> optional = addon.api.getCaseManager().getByType(caseType);
 
-            if(caseData == null) {
-                sender.sendMessage(rc("&cCase with type: " + caseType + " not found!"));
+            if(!optional.isPresent()) {
+                sender.sendMessage(rc("&cCase with type: '" + caseType + "' not found!"));
                 return;
             }
 
+            CaseDefinition definition = optional.get();
+
             switch (action) {
                 case "remove": {
-                    handleRemove(sender, caseData, args[2]);
+                    handleRemove(sender, definition, args[2]);
                     return;
                 }
 
                 case "set": {
-                    handleSet(sender, caseData, args);
+                    handleSet(sender, definition, args);
                     return;
                 }
 
@@ -82,7 +87,7 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
         }
 
         if(args.length == 2) {
-            list.addAll(addon.api.getCaseManager().getMap().keySet());
+            list.addAll(addon.api.getCaseManager().definitions().stream().map(definition -> definition.settings().type()).collect(Collectors.toList()));
         }
 
         if(args.length == 3) {
@@ -97,23 +102,19 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
         return list;
     }
 
-    private void handleRemove(DCCommandSender sender, CaseData caseData, String arg) {
+    private void handleRemove(DCCommandSender sender, CaseDefinition definition, String arg) {
         if(arg.equalsIgnoreCase("all") ) {
-            database.removeHistoryData(caseData.caseType()).thenAccept(status -> {
-                removeInform(sender, status);
-            });
+            database.removeHistoryData(definition.settings().type()).thenAccept(status -> removeInform(sender, status));
         } else {
-            int index = getIndex(sender, arg, caseData.historyDataSize());
+            int index = getIndex(sender, arg, definition.settings().historyDataSize());
             if(index == -1) return;
 
-            database.removeHistoryData(caseData.caseType(), index).thenAccept(status -> {
-                removeInform(sender, status);
-            });
+            database.removeHistoryData(definition.settings().type(), index).thenAccept(status -> removeInform(sender, status));
         }
     }
 
-    private void handleSet(DCCommandSender sender, CaseData caseData, String[] args) {
-        int index = getIndex(sender, args[2], caseData.historyDataSize());
+    private void handleSet(DCCommandSender sender, CaseDefinition definition, String[] args) {
+        int index = getIndex(sender, args[2], definition.settings().historyDataSize());
         if(index == -1) return;
 
         if (args.length < 5) {
@@ -131,9 +132,9 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
             return;
         }
 
-        CaseData.History tempHistory = getHistoryData(caseData.caseType(), index);
+        CaseData.History tempHistory = getHistoryData(definition.settings().type(), index);
 
-        CaseData.History history = tempHistory == null ? new CaseData.History(null, caseData.caseType(), null, index, null, null) : tempHistory;
+        CaseData.History history = tempHistory == null ? new CaseData.History(null, definition.settings().type(), null, index, null, null) : tempHistory;
 
         switch (param) {
             case "item": {
@@ -162,7 +163,7 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
             }
         }
 
-        database.setHistoryData(caseData.caseType(), index, history).thenAccept(status -> {
+        database.setHistoryData(definition.settings().type(), index, history).thenAccept(status -> {
             if (status == DatabaseStatus.COMPLETE) {
                 sender.sendMessage(rc("&aHistory data updated!"));
             } else {

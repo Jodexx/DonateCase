@@ -16,14 +16,21 @@ import java.util.stream.Collectors;
 @Accessors(fluent = true)
 @Setter
 @Getter
-@Deprecated
 public class CaseGui implements Cloneable {
 
+    @Deprecated
     private String title;
+
+    @Deprecated
     private int size;
+
+    @Deprecated
     private int updateRate;
+
+    @Deprecated
     private transient Map<String, Item> items;
 
+    @Deprecated
     @Nullable
     public String getItemTypeBySlot(int slot) {
         for (Item item : items.values()) {
@@ -32,6 +39,7 @@ public class CaseGui implements Cloneable {
         return null;
     }
 
+    @Deprecated
     public static CaseGui fromMenu(CaseMenu menu) {
         CaseGui caseGui = new CaseGui();
 
@@ -43,6 +51,7 @@ public class CaseGui implements Cloneable {
         return caseGui;
     }
 
+    @Deprecated
     public static CaseMenu toMenu(CaseGui caseGui) {
         return new CaseMenu(
                 "default_menu",
@@ -72,6 +81,7 @@ public class CaseGui implements Cloneable {
         return clonedMap;
     }
 
+    @Deprecated
     @Override
     public CaseGui clone() {
         try {
@@ -84,6 +94,7 @@ public class CaseGui implements Cloneable {
         }
     }
 
+    @Deprecated
     @Override
     public String toString() {
         return "CaseGui{" +

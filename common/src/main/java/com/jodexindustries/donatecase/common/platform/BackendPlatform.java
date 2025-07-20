@@ -49,7 +49,9 @@ public abstract class BackendPlatform implements Platform {
         File outDir = new File(getDataFolder(), resourcePath.substring(0, Math.max(lastIndex, 0)));
 
         if (!outDir.exists()) {
-            outDir.mkdirs();
+            if(!outDir.mkdirs()) {
+                getLogger().warning("Could not create folders for " + outFile.getName());
+            }
         }
 
         try {

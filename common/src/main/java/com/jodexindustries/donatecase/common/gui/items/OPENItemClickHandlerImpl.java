@@ -24,22 +24,22 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
         CaseGuiWrapper gui = e.guiWrapper();
         CaseLocation location = gui.getLocation();
         String itemType = e.itemType();
-        CaseData caseData = gui.getCaseData();
-        String caseType = caseData.caseType();
+        CaseDefinition definition = gui.getDefinition();
+        String caseType = definition.settings().type();
 
         if (itemType.contains("_")) {
             String[] parts = itemType.split("_");
             if (parts.length >= 2) {
                 caseType = parts[1];
-                caseData = DCAPI.getInstance().getCaseManager().get(caseType);
+                definition = DCAPI.getInstance().getCaseManager().getByType(caseType).orElse(null);
             }
         }
 
-        if (caseData != null) {
-            executeOpen(caseData, e.player(), location);
+        if (definition != null) {
+            executeOpen(definition, e.player(), location);
             e.player().closeInventory();
         } else {
-            DCAPI.getInstance().getPlatform().getLogger().warning("CaseData " + caseType + " not found. ");
+            DCAPI.getInstance().getPlatform().getLogger().warning("Case with type '" + caseType + "' not found. ");
         }
 
     }

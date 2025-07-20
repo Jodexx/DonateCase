@@ -36,7 +36,6 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
     protected final CaseMenu temporary;
     protected final CaseInventory inventory;
 
-    @Deprecated
     private List<CaseData.History> globalHistoryData;
 
     public CaseGuiWrapperImpl(@NotNull Platform platform,
@@ -195,7 +194,6 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         return temporary;
     }
 
-    @Deprecated
     @NotNull
     @Override
     public List<CaseData.History> getGlobalHistoryData() {

@@ -13,7 +13,6 @@ import java.util.Optional;
  * Interface for managing case definitions and legacy case data.
  * <p>
  * Recommended usage involves {@link CaseDefinition} as the primary structure.
- * Legacy support for {@link CaseData} remains for backward compatibility.
  */
 public interface CaseManager {
 

@@ -32,6 +32,13 @@ public class CaseMenu implements Cloneable {
         this.items = items;
     }
 
+    public String getItemTypeBySlot(int slot) {
+        for (Item item : items.values()) {
+            if (item.slots.contains(slot)) return item.type;
+        }
+        return null;
+    }
+
     @Override
     public CaseMenu clone() {
         try {

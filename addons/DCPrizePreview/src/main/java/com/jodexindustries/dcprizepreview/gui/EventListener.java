@@ -2,7 +2,7 @@ package com.jodexindustries.dcprizepreview.gui;
 
 import com.jodexindustries.dcprizepreview.bootstrap.MainAddon;
 import com.jodexindustries.dcprizepreview.config.CasePreview;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.event.Subscriber;
 import com.jodexindustries.donatecase.api.event.player.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.UUID;
 
 public class EventListener implements Subscriber, Listener {
@@ -43,14 +44,13 @@ public class EventListener implements Subscriber, Listener {
 
             switch (casePreview.type()) {
                 case AUTO: {
-                    CaseData caseData = addon.api.getCaseManager().get(caseType);
-                    if (caseData != null) {
-                        Inventory inventory = PreviewGUI.loadGUI(caseData);
-                        if (inventory == null) return;
+                    Optional<CaseDefinition> optional = addon.api.getCaseManager().getByType(caseType);
+                    optional.ifPresent(definition -> {
+                        Inventory inventory = PreviewGUI.loadGUI(definition);
 
                         player.openInventory(inventory);
                         players.add(player.getUniqueId());
-                    }
+                    });
                     break;
                 }
 

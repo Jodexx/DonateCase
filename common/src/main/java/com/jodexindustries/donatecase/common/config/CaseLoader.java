@@ -106,8 +106,11 @@ public class CaseLoader implements Loadable {
                 continue;
             }
 
+            CaseMenu defaultMenu = null;
+
             if (settings.defaultMenu() == null || settings.defaultMenu().isEmpty()) {
-                String first = menus.get(0).id();
+                defaultMenu = menus.get(0);
+                String first = defaultMenu.id();
                 info(caseFolder, "Case default menu is undefined. Using the first available: '" + first + "'.");
                 settings.defaultMenu(first);
             }
@@ -115,7 +118,7 @@ public class CaseLoader implements Loadable {
             // update meta for all materials
             items.updateItemsMeta(api.getPlatform().getMetaUpdater());
 
-            CaseDefinition definition = new CaseDefinition(settings, items, menus);
+            CaseDefinition definition = new CaseDefinition(settings, items, menus, defaultMenu);
 
             caseManager.caseDefinitionMap.put(settings.type(), definition);
         }

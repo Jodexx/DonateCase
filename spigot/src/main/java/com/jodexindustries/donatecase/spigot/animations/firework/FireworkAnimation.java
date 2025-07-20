@@ -72,10 +72,10 @@ public class FireworkAnimation extends BukkitJavaAnimation {
             }
 
             if (tick == 10) {
-                as.setEquipment(settings.itemSlot, getWinItem().material().itemStack());
-                if (getWinItem().material().displayName() != null && !getWinItem().material().displayName().isEmpty())
+                as.setEquipment(settings.itemSlot, getItem().material().itemStack());
+                if (getItem().material().displayName() != null && !getItem().material().displayName().isEmpty())
                     as.setCustomNameVisible(true);
-                as.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), getWinItem().material().displayName()));
+                as.setCustomName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(getPlayer(), getItem().material().displayName()));
                 as.updateMeta();
                 preEnd();
             }

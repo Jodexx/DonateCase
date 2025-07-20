@@ -5,7 +5,6 @@ import com.jodexindustries.donatecase.api.data.casedefinition.CaseMaterial;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.List;
 @Accessors(fluent = true)
 @Setter
 @Getter
-@Deprecated
 public class CaseDataMaterial implements MetaUpdater, Cloneable {
 
     private String id;

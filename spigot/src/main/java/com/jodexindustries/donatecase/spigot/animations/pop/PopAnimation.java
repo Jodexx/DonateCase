@@ -2,10 +2,10 @@ package com.jodexindustries.donatecase.spigot.animations.pop;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.animation.Facing;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
-import com.jodexindustries.donatecase.api.data.animation.Facing;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.spigot.tools.Pair;
 import org.bukkit.Location;
@@ -171,17 +171,17 @@ public class PopAnimation extends BukkitJavaAnimation {
             Pair<ArmorStandCreator, CaseLocation> win = asList.get(randomIndex);
             indexes.remove(randomIndex);
 
-            win.fst.setEquipment(settings.itemSlot, getWinItem().material().itemStack());
-            if (getWinItem().material().displayName() != null && !getWinItem().material().displayName().isEmpty())
+            win.fst.setEquipment(settings.itemSlot, getItem().material().itemStack());
+            if (getItem().material().displayName() != null && !getItem().material().displayName().isEmpty())
                 win.fst.setCustomNameVisible(true);
-            win.fst.setCustomName(api.getPlatform().getPAPI().setPlaceholders(getPlayer(), getWinItem().material().displayName()));
+            win.fst.setCustomName(api.getPlatform().getPAPI().setPlaceholders(getPlayer(), getItem().material().displayName()));
             win.fst.updateMeta();
 
             for (int i = 0; i < 8; i++) {
                 if (i != randomIndex) {
                     Pair<ArmorStandCreator, CaseLocation> pair = asList.get(i);
                     ArmorStandCreator as = pair.fst;
-                    CaseDataItem item = getCaseData().getRandomItem();
+                    CaseItem item = getDefinition().items().getRandomItem();
                     as.setEquipment(settings.itemSlot, item.material().itemStack());
 
                     String winGroupDisplayName = api.getPlatform().getPAPI().setPlaceholders(getPlayer(),

@@ -1,19 +1,15 @@
 package com.jodexindustries.donatecase.spigot.animations.shape;
 
-import com.jodexindustries.donatecase.spigot.BukkitBackend;
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
+import com.jodexindustries.donatecase.spigot.BukkitBackend;
+import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import com.jodexindustries.donatecase.spigot.tools.DCToolsBukkit;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -108,7 +104,7 @@ public class ShapeAnimation extends BukkitJavaAnimation {
                 handleTail();
 
                 if (tick % settings.scroll.interval == 0) {
-                    CaseDataItem item = getCaseData().getRandomItem();
+                    CaseItem item = getDefinition().items().getRandomItem();
                     as.setEquipment(settings.itemSlot, item.material().itemStack());
 
                     String winGroupDisplayName = api.getPlatform().getPAPI().setPlaceholders(getPlayer(),
@@ -125,8 +121,8 @@ public class ShapeAnimation extends BukkitJavaAnimation {
             }
 
             if (tick == settings.scroll.time + 1) {
-                as.setEquipment(settings.itemSlot, getWinItem().material().itemStack());
-                as.setCustomName(getWinItem().material().displayName());
+                as.setEquipment(settings.itemSlot, getItem().material().itemStack());
+                as.setCustomName(getItem().material().displayName());
                 as.updateMeta();
                 if (settings.firework) launchFirework(bukkitLocation.add(0, 0.5, 0));
                 preEnd();

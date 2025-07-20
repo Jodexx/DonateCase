@@ -57,11 +57,6 @@ public final class ProbabilityCollection<E> {
     private final NavigableSet<ProbabilitySetElement<E>> collection;
     private final SplittableRandom random = new SplittableRandom();
 
-    /**
-     * -- GETTER --
-     *
-     * @return Sum of all element's probability
-     */
     @Getter
     private double totalProbability;
 
@@ -205,20 +200,13 @@ public final class ProbabilityCollection<E> {
      * @param <T> Type of element
      */
     public final static class ProbabilitySetElement<T> {
-        /**
-         * -- GETTER --
-         *
-         * @return The actual object
-         */
+
         @Getter
         private final T object;
-        /**
-         * -- GETTER --
-         *
-         * @return Probability share in this collection
-         */
+
         @Getter
         private final double probability;
+
         private double index;
 
         /**

@@ -32,6 +32,5 @@ public interface CaseGuiWrapper {
     @NotNull
     CaseMenu getMenu();
 
-    @Deprecated
     List<CaseData.History> getGlobalHistoryData();
 }

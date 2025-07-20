@@ -1,9 +1,12 @@
 package com.jodexindustries.donatecase.api.data.casedefinition;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,10 +24,24 @@ public class CaseDefinition implements Cloneable {
     @NotNull
     private List<CaseMenu> menus;
 
+    @NotNull
+    @Setter
+    private CaseMenu defaultMenu;
+
     public CaseDefinition(@NotNull CaseSettings settings, @NotNull CaseItems items, @NotNull List<CaseMenu> menus) {
+        this(settings, items, menus, null);
+    }
+
+    public CaseDefinition(@NotNull CaseSettings settings, @NotNull CaseItems items, @NotNull List<CaseMenu> menus, @Nullable CaseMenu defaultMenu) {
         this.settings = settings;
         this.items = items;
         this.menus = menus;
+        this.defaultMenu = defaultMenu == null ? getMenuById(settings.defaultMenu()).orElseGet(() -> menus.get(0)) : defaultMenu;
+    }
+
+    @NotNull
+    public List<CaseMenu> menus() {
+        return Collections.unmodifiableList(menus);
     }
 
     @NotNull
