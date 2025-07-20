@@ -143,7 +143,7 @@ public abstract class CaseDatabase {
     public abstract CompletableFuture<DatabaseStatus> addHistory(String caseType, CaseData.History newEntry, int maxSize);
 
     /**
-     * Sets a history entry at a specific index or the full list if index < 0.
+     * Sets a history entry at a specific index or the full list if index &lt; 0.
      *
      * @param caseType the case type
      * @param index    index of the history entry (use -1 to overwrite all)
