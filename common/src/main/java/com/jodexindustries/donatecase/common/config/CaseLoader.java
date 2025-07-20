@@ -101,6 +101,11 @@ public class CaseLoader implements Loadable {
                 settings.type(caseFolder);
             }
 
+            if (caseManager.hasByType(settings.type())) {
+                warn(caseFolder, "Duplicate case detected! Case type '" + settings.type() + "' already exists. Skipping.");
+                continue;
+            }
+
             if (settings.defaultMenu() == null || settings.defaultMenu().isEmpty()) {
                 String first = menus.get(0).id();
                 info(caseFolder, "Case default menu is undefined. Using the first available: '" + first + "'.");
