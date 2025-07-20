@@ -53,7 +53,7 @@ public class CaseMenu implements Cloneable {
     @Accessors(fluent = true)
     @Getter
     @Setter
-    public static class Item {
+    public static class Item implements Cloneable {
 
         private ConfigurationNode node;
 
