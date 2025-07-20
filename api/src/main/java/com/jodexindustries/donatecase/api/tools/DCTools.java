@@ -26,7 +26,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Utility class for the DonateCase system, providing tools for parsing, validation, and manipulation.
+ * Utility class for the DonateCase system, providing tools for parsing,
+ * validation, and manipulation.
  */
 public abstract class DCTools {
 
@@ -39,8 +40,7 @@ public abstract class DCTools {
 
     public static DateFormat getDateFormat() {
         return new SimpleDateFormat(
-                DCAPI.getInstance().getConfigManager().getConfig().dateFormat()
-        );
+                DCAPI.getInstance().getConfigManager().getConfig().dateFormat());
     }
 
     public static boolean isValidPlayerName(String player) {
@@ -53,15 +53,16 @@ public abstract class DCTools {
     }
 
     public static @NotNull List<String> resolveSDGCompletions(String[] args) {
-        List<String> value = new ArrayList<>(DCAPI.getInstance().getCaseManager().getMap().keySet());
+        List<String> value = DCAPI.getInstance().getCaseManager().definitions().stream()
+                .map(def -> def.settings().type())
+                .collect(Collectors.toList());
         List<String> list = new ArrayList<>();
         if (args.length == 1) {
             list.addAll(
                     Arrays.stream(DCAPI.getInstance().getPlatform().getOnlinePlayers())
-                    .map(DCPlayer::getName)
-                    .filter(px -> px.startsWith(args[0]))
-                    .collect(Collectors.toList())
-            );
+                            .map(DCPlayer::getName)
+                            .filter(px -> px.startsWith(args[0]))
+                            .collect(Collectors.toList()));
             return list;
         } else if (args.length >= 3) {
             if (args.length == 4) {
@@ -75,9 +76,8 @@ public abstract class DCTools {
         } else {
             list.addAll(
                     value.stream()
-                    .filter(tmp -> tmp.startsWith(args[args.length - 1]))
-                    .collect(Collectors.toList())
-            );
+                            .filter(tmp -> tmp.startsWith(args[args.length - 1]))
+                            .collect(Collectors.toList()));
         }
         return list;
     }
@@ -95,7 +95,8 @@ public abstract class DCTools {
                 try {
                     return caseMaterial.handle(context);
                 } catch (CaseMaterialException e) {
-                    DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Error with handling material " + context, e);
+                    DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING,
+                            "Error with handling material " + context, e);
                 }
             }
         }
@@ -107,17 +108,20 @@ public abstract class DCTools {
     }
 
     public static String rc(String text) {
-        if(text == null) return null;
+        if (text == null)
+            return null;
         return ColorUtils.color(text);
     }
 
     public static String rt(String text, Placeholder... placeholders) {
-        if (text == null || placeholders.length == 0) return text;
+        if (text == null || placeholders.length == 0)
+            return text;
         return rt(text, Arrays.asList(placeholders));
     }
 
     public static String rt(String text, Collection<? extends Placeholder> placeholders) {
-        if (text == null || placeholders == null || placeholders.isEmpty()) return text;
+        if (text == null || placeholders == null || placeholders.isEmpty())
+            return text;
 
         StringBuilder result = new StringBuilder(text);
         for (Placeholder placeholder : placeholders) {
@@ -130,40 +134,49 @@ public abstract class DCTools {
     }
 
     public static List<String> rt(List<String> text, Collection<? extends Placeholder> placeholders) {
-        if (text == null) return null;
+        if (text == null)
+            return null;
         return text.stream().map(t -> rt(t, placeholders)).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static List<String> rt(List<String> text, Placeholder... placeholders) {
-        if(text == null) return null;
+        if (text == null)
+            return null;
         return text.stream().map(t -> rt(t, placeholders)).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static List<String> rc(List<String> list) {
-        if(list == null) return null;
+        if (list == null)
+            return null;
         return list.stream().map(DCTools::rc).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public static boolean isHasCommandForSender(DCCommandSender sender, Map<String, List<Map<String, SubCommand>>> addonsMap) {
-        return addonsMap.keySet().stream().map(addonsMap::get).anyMatch(commands -> isHasCommandForSender(sender, commands));
+    public static boolean isHasCommandForSender(DCCommandSender sender,
+            Map<String, List<Map<String, SubCommand>>> addonsMap) {
+        return addonsMap.keySet().stream().map(addonsMap::get)
+                .anyMatch(commands -> isHasCommandForSender(sender, commands));
     }
 
     /**
      * Check sender for permission to executing commands
      * Checks only if sender has permission for one or more commands, not all
-     * @param sender Player or Console
+     * 
+     * @param sender   Player or Console
      * @param commands List of commands, that loaded in DonateCase
      * @return true, if sender has permission
      */
     public static boolean isHasCommandForSender(DCCommandSender sender, List<Map<String, SubCommand>> commands) {
-        return commands.stream().flatMap(command -> command.values().stream()).map(SubCommand::permission).anyMatch(permission -> permission == null || sender.hasPermission(permission));
+        return commands.stream().flatMap(command -> command.values().stream()).map(SubCommand::permission)
+                .anyMatch(permission -> permission == null || sender.hasPermission(permission));
     }
 
     /**
      * Extracts the local placeholder from a string, delimited by `%`.
      *
-     * @param string the input string containing placeholders in the format `%placeholder%`.
-     * @return the extracted placeholder without `%` symbols, or "null" if no placeholder is found.
+     * @param string the input string containing placeholders in the format
+     *               `%placeholder%`.
+     * @return the extracted placeholder without `%` symbols, or "null" if no
+     *         placeholder is found.
      */
     public static String getLocalPlaceholder(String string) {
         Pattern pattern = Pattern.compile("%(.*?)%");
@@ -182,12 +195,12 @@ public abstract class DCTools {
      *
      * @param version the version string to be parsed (e.g., "2.2.2").
      * @return the numeric representation of the version (e.g., "2220").
-     * <p>
-     * Examples:
-     * <ul>
-     *     <li>Input: <code>"2.2.2"</code> → Output: <code>2220</code></li>
-     *     <li>Input: <code>"2.2.2.2"</code> → Output: <code>2222</code></li>
-     * </ul>
+     *         <p>
+     *         Examples:
+     *         <ul>
+     *         <li>Input: <code>"2.2.2"</code> → Output: <code>2220</code></li>
+     *         <li>Input: <code>"2.2.2.2"</code> → Output: <code>2222</code></li>
+     *         </ul>
      */
     public static int getPluginVersion(String version) {
         version = version.replaceAll("\\.", "");
@@ -201,7 +214,8 @@ public abstract class DCTools {
     /**
      * Extracts a cooldown value from an action string.
      *
-     * @param action the action string containing a cooldown in the format <code>[cooldown:int]</code>.
+     * @param action the action string containing a cooldown in the format
+     *               <code>[cooldown:int]</code>.
      * @return the cooldown value, or 0 if no cooldown is specified.
      */
     public static int extractCooldown(String action) {
@@ -216,10 +230,12 @@ public abstract class DCTools {
     /**
      * Sorts and filters case history data based on a specific case type.
      *
-     * @param historyData the list of {@link CaseData.History} objects to sort and filter.
+     * @param historyData the list of {@link CaseData.History} objects to sort and
+     *                    filter.
      * @param caseType    the type of case to filter by.
-     * @return a sorted list of {@link CaseData.History}, filtered by the specified case type,
-     * sorted in descending order of time.
+     * @return a sorted list of {@link CaseData.History}, filtered by the specified
+     *         case type,
+     *         sorted in descending order of time.
      */
     public static List<CaseData.History> sortHistoryDataByCase(List<CaseData.History> historyData, String caseType) {
         List<CaseData.History> list = new ArrayList<>();
@@ -244,6 +260,7 @@ public abstract class DCTools {
 
     /**
      * Sort case items by index
+     * 
      * @param items Map with Case items
      * @return New map with sorted items
      */
@@ -255,11 +272,10 @@ public abstract class DCTools {
                         Map.Entry::getKey,
                         Map.Entry::getValue,
                         (e1, e2) -> e1,
-                        LinkedHashMap::new
-                ));
+                        LinkedHashMap::new));
     }
 
-   public static boolean isValidGuiSize(int size) {
+    public static boolean isValidGuiSize(int size) {
         return size >= 9 && size <= 54 && size % 9 == 0;
     }
 

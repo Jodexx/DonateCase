@@ -40,17 +40,18 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
     private List<CaseData.History> globalHistoryData;
 
     public CaseGuiWrapperImpl(@NotNull Platform platform,
-                              @NotNull DCPlayer player,
-                              @NotNull CaseDefinition definition,
-                              @NotNull CaseMenu caseMenu,
-                              @NotNull CaseLocation location) {
+            @NotNull DCPlayer player,
+            @NotNull CaseDefinition definition,
+            @NotNull CaseMenu caseMenu,
+            @NotNull CaseLocation location) {
         this.platform = platform;
         this.player = player;
         this.definition = definition;
         this.location = location;
         this.menu = caseMenu;
         this.temporary = menu.clone();
-        this.inventory = platform.getTools().createInventory(temporary.size(), DCTools.rc(setPlaceholders(temporary.title())));
+        this.inventory = platform.getTools().createInventory(temporary.size(),
+                DCTools.rc(setPlaceholders(temporary.title())));
 
         load().thenAccept((loaded) -> {
             platform.getScheduler().run(platform, () -> player.openInventory(inventory.getHandle()), 0L);
@@ -100,7 +101,8 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         if (updateRate >= 0) {
             platform.getScheduler().async(platform,
                     (task) -> {
-                        if (!platform.getAPI().getGUIManager().getMap().containsKey(player.getUniqueId())) task.cancel();
+                        if (!platform.getAPI().getGUIManager().getMap().containsKey(player.getUniqueId()))
+                            task.cancel();
                         load();
                     }, updateRate, updateRate);
         }
@@ -116,8 +118,10 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
             Optional<TypedItem> typedItem = platform.getAPI().getGuiTypedItemManager().getFromString(itemType);
             if (typedItem.isPresent()) {
                 TypedItemHandler handler = typedItem.get().handler();
-                if (handler != null) item = handler.handle(this, item);
-                if (typedItem.get().updateMeta()) updateMeta(item);
+                if (handler != null)
+                    item = handler.handle(this, item);
+                if (typedItem.get().updateMeta())
+                    updateMeta(item);
             }
         } else {
             updateMeta(item);
@@ -125,7 +129,8 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
 
         CaseMaterial material = item.material();
 
-        if (material.itemStack() == null) material.itemStack(platform.getTools().loadCaseItem(material.id()));
+        if (material.itemStack() == null)
+            material.itemStack(platform.getTools().loadCaseItem(material.id()));
 
         material.updateMeta();
 
@@ -135,18 +140,19 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
     }
 
     private String setPlaceholders(@Nullable String text) {
-        if (text == null) return null;
+        if (text == null)
+            return null;
         String caseType = definition.settings().type();
         text = platform.getPAPI().setPlaceholders(
                 player,
-                text
-        );
+                text);
         return KeysCommand.formatMessage(player.getName(), text.replace("%casetype%", caseType), true, caseType);
     }
 
     private List<String> setPlaceholders(List<String> lore) {
         return lore.stream().map(this::setPlaceholders).collect(Collectors.toList());
     }
+
     @NotNull
     @Override
     public CaseInventory getInventory() {
