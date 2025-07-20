@@ -1,6 +1,6 @@
 package com.jodexindustries.donatecase.spigot.holograms;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -19,7 +19,7 @@ public class DecentHologramsImpl implements HologramDriver {
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void create(CaseLocation block, CaseData.Hologram caseHologram) {
+    public void create(CaseLocation block, CaseSettings.Hologram caseHologram) {
         if (!caseHologram.enabled()) return;
 
         double height = caseHologram.height();
@@ -27,7 +27,7 @@ public class DecentHologramsImpl implements HologramDriver {
 
         hologram.setDisplayRange(caseHologram.range());
 
-        caseHologram.messages().forEach(line -> DHAPI.addHologramLine(hologram, DCTools.rc(line)));
+        caseHologram.message().forEach(line -> DHAPI.addHologramLine(hologram, DCTools.rc(line)));
 
         this.holograms.put(block, hologram);
     }

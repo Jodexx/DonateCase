@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.data.hologram;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 
 public interface HologramDriver {
@@ -8,9 +9,14 @@ public interface HologramDriver {
     /**
      * Creates the hologram
      * @param block Block, where hologram will be created
-     * @param caseHologram Hooked CaseData Hologram
+     * @param hologram Hooked CaseData Hologram
      */
-    void create(CaseLocation block, CaseData.Hologram caseHologram);
+    void create(CaseLocation block, CaseSettings.Hologram hologram);
+
+    @Deprecated
+    default void create(CaseLocation block, CaseData.Hologram hologram) {
+        create(block, CaseData.Hologram.toDefinition(hologram));
+    }
 
     /**
      * Removes the hologram

@@ -2,6 +2,8 @@ package com.jodexindustries.donatecase.common.tools;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.Placeholder;
 
@@ -17,6 +19,23 @@ public class LocalPlaceholder extends Placeholder {
         return new LocalPlaceholder(name, String.valueOf(value));
     }
 
+    public static Set<LocalPlaceholder> of(CaseDefinition definition) {
+        return new HashSet<>(Arrays.asList(
+                of("%casetype%", definition.settings().type()),
+                of("%casedisplayname%", definition.settings().displayName()),
+                of("%casetitle%", definition.settings().displayName()), // deprecated
+                of("%animation%", definition.settings().animation())
+        ));
+    }
+
+    public static Set<LocalPlaceholder> of(CaseItem item) {
+        return new HashSet<>(Arrays.asList(
+                of("%group%", item.group()),
+                of("%groupdisplayname%", item.material().displayName())
+        ));
+    }
+
+    @Deprecated
     public static Set<LocalPlaceholder> of(CaseData caseData) {
         return new HashSet<>(Arrays.asList(
                 of("%casetype%", caseData.caseType()),
@@ -27,6 +46,7 @@ public class LocalPlaceholder extends Placeholder {
         ));
     }
 
+    @Deprecated
     public static Set<LocalPlaceholder> of(CaseDataItem item) {
         return new HashSet<>(Arrays.asList(
                 of("%group%", item.group()),
@@ -34,6 +54,7 @@ public class LocalPlaceholder extends Placeholder {
         ));
     }
 
+    @Deprecated
     public static Set<LocalPlaceholder> of(CaseData.History data) {
         String time = DCTools.getDateFormat().format(new Date(data.time()));
         String group = data.group();

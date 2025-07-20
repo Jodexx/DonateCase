@@ -2,7 +2,7 @@ package com.jodexindustries.donatecase.spigot.holograms;
 
 import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Holograms.CMIHologram;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
@@ -19,7 +19,7 @@ public class CMIHologramsImpl implements HologramDriver {
     private final HashMap<CaseLocation, CMIHologram> holograms = new HashMap<>();
 
     @Override
-    public void create(CaseLocation block, CaseData.Hologram caseHologram) {
+    public void create(CaseLocation block, CaseSettings.Hologram caseHologram) {
         if (!caseHologram.enabled()) return;
 
         double height = caseHologram.height();
@@ -28,7 +28,7 @@ public class CMIHologramsImpl implements HologramDriver {
 
         CMIHologram hologram = new CMIHologram("DonateCase-" + UUID.randomUUID(), location);
 
-        hologram.setLines(caseHologram.messages());
+        hologram.setLines(caseHologram.message());
 
         hologram.setShowRange(caseHologram.range());
 

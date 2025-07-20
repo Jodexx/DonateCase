@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.data.casedefinition;
 
 import com.jodexindustries.donatecase.api.data.casedata.GiveType;
+import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -42,6 +43,21 @@ public class CaseItem implements Cloneable {
         this.actions = actions;
         this.alternativeActions = alternativeActions;
         this.randomActions = randomActions;
+    }
+
+    public RandomAction getRandomAction() {
+        ProbabilityCollection<RandomAction> collection = new ProbabilityCollection<>();
+        for (RandomAction randomAction : randomActions().values()) {
+            double chance = randomAction.chance();
+            if(chance > 0) collection.add(randomAction, chance);
+        }
+        return collection.get();
+    }
+
+    // TODO upgrade
+    public List<String> getActionsBasedOnChoice(RandomAction randomAction, boolean alternative) {
+        if (randomAction != null) return randomAction.actions();
+        return alternative ? alternativeActions() : actions();
     }
 
     @Override

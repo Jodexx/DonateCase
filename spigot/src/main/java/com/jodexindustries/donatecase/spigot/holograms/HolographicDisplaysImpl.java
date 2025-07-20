@@ -1,9 +1,9 @@
 package com.jodexindustries.donatecase.spigot.holograms;
 
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.spigot.BukkitBackend;
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
@@ -26,14 +26,14 @@ public class HolographicDisplaysImpl implements HologramDriver {
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void create(CaseLocation block, CaseData.Hologram caseHologram) {
+    public void create(CaseLocation block, CaseSettings.Hologram caseHologram) {
         if (!caseHologram.enabled()) return;
 
         double height = caseHologram.height();
 
         Hologram hologram = this.api.createHologram(BukkitUtils.toBukkit(block).add(.5, height, .5));
         hologram.setPlaceholderSetting(PlaceholderSetting.DEFAULT);
-        caseHologram.messages().forEach(line -> hologram.getLines().appendText(
+        caseHologram.message().forEach(line -> hologram.getLines().appendText(
                 DCTools.rc((line))
         ));
 

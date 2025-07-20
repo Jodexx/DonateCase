@@ -18,7 +18,7 @@ public abstract class Animation {
     private DCPlayer player;
     private CaseLocation location;
     private UUID uuid;
-    private CaseDefinition caseDefinition;
+    private CaseDefinition definition;
     private CaseItem item;
     private ConfigurationNode settings;
 
@@ -32,7 +32,7 @@ public abstract class Animation {
         this.player = player;
         this.location = location;
         this.uuid = uuid;
-        this.caseDefinition = caseDefinition;
+        this.definition = caseDefinition;
         this.item = winItem;
         this.settings = settings;
     }
@@ -53,7 +53,7 @@ public abstract class Animation {
 
     @Deprecated
     public CaseData getCaseData() {
-        return CaseData.fromDefinition(caseDefinition);
+        return CaseData.fromDefinition(definition);
     }
 
     @Deprecated

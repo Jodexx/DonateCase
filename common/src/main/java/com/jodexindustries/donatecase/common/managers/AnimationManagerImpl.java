@@ -2,7 +2,7 @@ package com.jodexindustries.donatecase.common.managers;
 
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedata.GiveType;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
@@ -145,7 +145,7 @@ public class AnimationManagerImpl implements AnimationManager {
             Animation javaAnimation = animationClass.getDeclaredConstructor().newInstance();
             javaAnimation.init(player, temp.clone(), uuid, definition, winItem, settings);
 
-            ActiveCase activeCase = new ActiveCase(uuid, temp, player, winItem, definition.settings().type(), javaAnimation);
+            ActiveCase activeCase = new ActiveCase(uuid, temp, player, winItem, caseDefinition.clone(), javaAnimation);
             activeCase.locked(caseAnimation.isRequireBlock());
             activeCase.keyRemoved(keyRemoved);
 
@@ -187,25 +187,20 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     @Override
-    public void preEnd(CaseData caseData, DCPlayer player, CaseDataItem item) {
-        CaseDataItem.RandomAction randomAction = item.giveType().equalsIgnoreCase("ONE") ? null : item.getRandomAction();
-        Map<String, Integer> levelGroups = api.getConfigManager().getConfig().levelGroups();
-        if (!caseData.levelGroups().isEmpty()) levelGroups = caseData.levelGroups();
+    public void preEnd(CaseDefinition definition, DCPlayer player, CaseItem item) {
+        CaseItem.RandomAction randomAction = item.giveType() == GiveType.ONE ? null : item.getRandomAction();
+        CaseSettings.LevelGroups levelGroups = api.getConfigManager().getConfig().levelGroups();
+        if (!definition.settings().levelGroups().map().isEmpty()) levelGroups = definition.settings().levelGroups();
 
         String primaryGroup = backend.getLuckPermsSupport().getPrimaryGroup(player.getUniqueId());
 
-        executeActions(player, caseData, item, randomAction,
-                isBetterOrEqual(
-                        levelGroups, primaryGroup, item.group()
+        executeActions(player, definition, item, randomAction,
+                levelGroups.isBetterOrEqual(
+                        primaryGroup, item.group()
                 )
         );
 
-        saveOpenInfo(caseData, player, item, randomAction);
-    }
-
-    @Override
-    public void preEnd(CaseDefinition definition, DCPlayer player, CaseItem item) {
-
+        saveOpenInfo(definition, player, item, randomAction);
     }
 
     @Override
@@ -229,14 +224,13 @@ public class AnimationManagerImpl implements AnimationManager {
 
         api.getEventBus().post(new AnimationEndEvent(activeCase));
 
-        CaseData caseData = api.getCaseManager().get(activeCase.caseType());
-        if (caseData == null) return;
+        CaseDefinition definition = activeCase.definition();
 
-        CaseAnimation caseAnimation = get(caseData.animation());
+        CaseAnimation caseAnimation = get(definition.settings().animation());
         if (caseAnimation == null) return;
 
         if (caseAnimation.isRequireBlock()) {
-            CaseData.Hologram hologram = caseData.hologram();
+            CaseSettings.Hologram hologram = definition.settings().hologram();
             if (hologram != null && hologram.enabled()) api.getHologramManager().create(block, hologram);
         }
 
@@ -308,27 +302,27 @@ public class AnimationManagerImpl implements AnimationManager {
         return true;
     }
 
-    private void saveOpenInfo(@NotNull CaseData caseData,
+    private void saveOpenInfo(@NotNull CaseDefinition definition,
                               @NotNull DCPlayer player,
-                              @NotNull CaseDataItem item,
-                              @Nullable CaseDataItem.RandomAction action) {
+                              @NotNull CaseItem item,
+                              @Nullable CaseItem.RandomAction action) {
         backend.getScheduler().async(backend, () -> {
             CaseData.History newEntry = new CaseData.History(
-                    item.getName(),
-                    caseData.caseType(),
+                    item.name(),
+                    definition.settings().type(),
                     player.getName(),
                     System.currentTimeMillis(),
                     item.group(),
-                    action == null ? null : action.getName()
+                    action == null ? null : action.name()
             );
 
-            api.getDatabase().addHistory(caseData.caseType(), newEntry, caseData.historyDataSize());
+            api.getDatabase().addHistory(definition.settings().type(), newEntry, definition.settings().historyDataSize());
 
-            api.getCaseOpenManager().add(caseData.caseType(), player.getName(), 1);
+            api.getCaseOpenManager().add(definition.settings().type(), player.getName(), 1);
         }, 0L);
     }
 
-    public void executeActions(DCPlayer player, CaseData caseData, CaseDataItem item, CaseDataItem.RandomAction randomAction, boolean alternative) {
+    public void executeActions(DCPlayer player, CaseDefinition caseData, CaseItem item, CaseItem.RandomAction randomAction, boolean alternative) {
         Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(caseData);
         placeholders.add(LocalPlaceholder.of("%player%", player.getName()));
         placeholders.addAll(LocalPlaceholder.of(item));
@@ -336,13 +330,6 @@ public class AnimationManagerImpl implements AnimationManager {
         List<String> actions = DCTools.rt(item.getActionsBasedOnChoice(randomAction, alternative), placeholders);
 
         api.getActionManager().execute(player, actions);
-    }
-
-    public static boolean isBetterOrEqual(Map<String, Integer> groupLevels, String playerGroup, String rewardGroup) {
-        Integer playerLevel = groupLevels.get(playerGroup);
-        Integer rewardLevel = groupLevels.get(rewardGroup);
-
-        return playerLevel != null && rewardLevel != null && playerLevel >= rewardLevel;
     }
 
     public String getRandomAnimation(ConfigurationNode settings) {

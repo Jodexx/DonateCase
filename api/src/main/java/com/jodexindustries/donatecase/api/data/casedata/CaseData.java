@@ -100,11 +100,9 @@ public class CaseData implements Cloneable {
 
     public static CaseData fromDefinition(CaseDefinition definition) {
         CaseSettings settings = definition.settings();
-        CaseSettings.Hologram hologram = settings.hologram();
 
         CaseData caseData = new CaseData();
 
-        // default
         caseData.caseType = settings.type();
         caseData.openType = settings.openType();
         caseData.animation = settings.animation();
@@ -115,17 +113,7 @@ public class CaseData implements Cloneable {
         caseData.cooldownBeforeStart = settings.cooldownBeforeAnimation();
         caseData.historyDataSize = settings.historyDataSize();
 
-        // typed
-
-        // hologram
-        CaseData.Hologram oldHologram = new Hologram();
-        oldHologram.enabled = hologram.enabled();
-        oldHologram.range = hologram.range();
-        oldHologram.messages = hologram.message();
-        oldHologram.height = hologram.height();
-        oldHologram.node = hologram.node();
-
-        caseData.hologram = oldHologram;
+        caseData.hologram = Hologram.fromDefinition(settings.hologram());
 
         definition.getMenuById(settings.defaultMenu()).ifPresent(menu -> caseData.caseGui = CaseGui.fromMenu(menu));
 
@@ -331,5 +319,24 @@ public class CaseData implements Cloneable {
         @Setting("Message")
         private List<String> messages;
 
+        public static CaseSettings.Hologram toDefinition(Hologram hologram) {
+            return new CaseSettings.Hologram(
+                    hologram.node,
+                    hologram.enabled,
+                    hologram.height,
+                    hologram.range,
+                    hologram.messages
+            );
+        }
+
+        public static Hologram fromDefinition(CaseSettings.Hologram hologram) {
+            CaseData.Hologram old = new Hologram();
+            old.enabled = hologram.enabled();
+            old.range = hologram.range();
+            old.messages = hologram.message();
+            old.height = hologram.height();
+            old.node = hologram.node();
+            return old;
+        }
     }
 }
