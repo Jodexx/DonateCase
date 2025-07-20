@@ -7,11 +7,12 @@ import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Accessors(fluent = true, chain = false)
 @Getter
 @Setter
-public class CaseMenu {
+public class CaseMenu implements Cloneable {
 
     private String id;
 
@@ -31,6 +32,17 @@ public class CaseMenu {
         this.items = items;
     }
 
+    @Override
+    public CaseMenu clone() {
+        try {
+            CaseMenu clone = (CaseMenu) super.clone();
+            clone.items = this.items.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().clone(), (a, b) -> b));
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
     @Accessors(fluent = true)
     @Getter
     @Setter
@@ -38,14 +50,17 @@ public class CaseMenu {
 
         private ConfigurationNode node;
 
+        private String name;
+
         private String type;
 
         private CaseMaterial material;
 
         private List<Integer> slots;
 
-        public Item(ConfigurationNode node, String type, CaseMaterial material, List<Integer> slots) {
+        public Item(ConfigurationNode node, String name, String type, CaseMaterial material, List<Integer> slots) {
             this.node = node;
+            this.name = name;
             this.type = type;
             this.material = material;
             this.slots = slots;
@@ -55,6 +70,7 @@ public class CaseMenu {
         public Item clone() {
             try {
                 Item cloned = (Item) super.clone();
+                cloned.node = node.copy();
                 cloned.material = material.clone();
                 return cloned;
             } catch (CloneNotSupportedException e) {

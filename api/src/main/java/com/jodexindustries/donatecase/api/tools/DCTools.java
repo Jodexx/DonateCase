@@ -3,11 +3,9 @@ package com.jodexindustries.donatecase.api.tools;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.chat.ColorUtils;
-import com.jodexindustries.donatecase.api.config.Config;
-import com.jodexindustries.donatecase.api.config.Messages;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseInventory;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterialException;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
@@ -249,10 +247,10 @@ public abstract class DCTools {
      * @param items Map with Case items
      * @return New map with sorted items
      */
-    public static Map<String, CaseDataItem> sortItemsByIndex(Map<String, CaseDataItem> items) {
+    public static Map<String, CaseItem> sortItemsByIndex(Map<String, CaseItem> items) {
         return items.entrySet()
                 .stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(CaseDataItem::index)))
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(CaseItem::index)))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,

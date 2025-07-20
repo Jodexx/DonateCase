@@ -1,9 +1,9 @@
 package com.jodexindustries.donatecase.common.event;
 
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.event.Subscriber;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
@@ -67,12 +67,14 @@ public class EventListener implements Subscriber {
         CaseInfo caseInfo = event.caseInfo();
         String caseType = caseInfo.type();
 
-        CaseData caseData = DCAPI.getInstance().getCaseManager().get(caseType);
-        if (caseData == null) {
+        Optional<CaseDefinition> optional = DCAPI.getInstance().getCaseManager().getByType(caseType);
+        if (!optional.isPresent()) {
             player.sendMessage(DCTools.prefix("&cSomething wrong! Contact with server administrator!"));
             DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Case with type: " + caseType + " not found! Check your Cases.yml for broken cases locations.");
             return;
         }
+
+        CaseDefinition caseDefinition = optional.get();
 
         if (event.action() == CaseInteractEvent.Action.RIGHT) {
             if (!event.cancelled()) {
@@ -81,12 +83,12 @@ public class EventListener implements Subscriber {
                     return;
                 }
 
-                switch (caseData.openType()) {
+                switch (caseDefinition.settings().openType()) {
                     case GUI:
-                        DCAPI.getInstance().getGUIManager().open(player, caseData, caseInfo.location());
+                        DCAPI.getInstance().getGUIManager().open(player, caseDefinition, caseInfo.location());
                         break;
                     case BLOCK:
-                        OPENItemClickHandlerImpl.executeOpen(caseData, player, caseInfo.location());
+                        OPENItemClickHandlerImpl.executeOpen(caseDefinition, player, caseInfo.location());
                         break;
                 }
             }

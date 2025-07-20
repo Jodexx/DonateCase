@@ -32,6 +32,10 @@ public class CaseItems implements Cloneable {
         return collection.get();
     }
 
+    public void items(Map<String, CaseItem> items) {
+        this.items = items;
+    }
+
     public Map<String, CaseItem> items() {
         return Collections.unmodifiableMap(items);
     }
@@ -42,6 +46,16 @@ public class CaseItems implements Cloneable {
 
     public void updateItemsMeta(MetaUpdater metaUpdater) {
         items.values().forEach(value -> value.material().updateMeta(metaUpdater));
+    }
+
+    /**
+     * Checks if the current collection of items contains any "real" items.
+     * A "real" item is defined as an item with a chance greater than 0.
+     *
+     * @return {@code true} if all items in the collection have a chance greater than 0, {@code false} otherwise.
+     */
+    public boolean hasRealItems() {
+        return items.values().stream().anyMatch(item -> item.chance() > 0);
     }
 
     @Override

@@ -18,6 +18,7 @@ import java.util.*;
 
 /**
  * Class for implementing cases that are loaded into the plugin's memory.
+ * @deprecated use {@link CaseDefinition} instead
  */
 @Deprecated
 @Accessors(fluent = true)
@@ -126,8 +127,7 @@ public class CaseData implements Cloneable {
 
         caseData.hologram = oldHologram;
 
-        CaseMenu menu = definition.getMenuById(settings.defaultMenu());
-        if (menu != null) caseData.caseGui = CaseGui.fromMenu(menu);
+        definition.getMenuById(settings.defaultMenu()).ifPresent(menu -> caseData.caseGui = CaseGui.fromMenu(menu));
 
         caseData.items = fromDefinition(definition.items());
 

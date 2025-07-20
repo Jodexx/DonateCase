@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.common.platform;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
 import com.jodexindustries.donatecase.common.gui.CaseGuiWrapperImpl;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
@@ -29,8 +30,8 @@ public abstract class BackendPlatform implements Platform {
 
     public abstract void unload();
 
-    public CaseGuiWrapperImpl createGui(DCPlayer player, CaseData caseData, CaseLocation location) {
-        return new CaseGuiWrapperImpl(this, player, caseData, location);
+    public CaseGuiWrapperImpl createGui(DCPlayer player, CaseDefinition definition, CaseMenu menu, CaseLocation location) {
+        return new CaseGuiWrapperImpl(this, player, definition, menu, location);
     }
 
     public final void saveResource(@NotNull String resourcePath, boolean replace) {

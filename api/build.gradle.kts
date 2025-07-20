@@ -55,7 +55,6 @@ publishing {
 }
 
 tasks.javadoc {
-    source = fileTree("${buildDir}/generated/sources/delombok")
     (options as StandardJavadocDocletOptions).apply {
         links(
             "https://docs.oracle.com/en/java/javase/22/docs/api/"
@@ -64,8 +63,6 @@ tasks.javadoc {
 }
 
 tasks.named<Jar>("sourcesJar") {
-    from("${buildDir}/generated/sources/delombok")
-
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 

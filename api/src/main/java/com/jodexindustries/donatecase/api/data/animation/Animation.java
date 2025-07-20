@@ -3,6 +3,8 @@ package com.jodexindustries.donatecase.api.data.animation;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import lombok.Getter;
@@ -16,22 +18,22 @@ public abstract class Animation {
     private DCPlayer player;
     private CaseLocation location;
     private UUID uuid;
-    private CaseData caseData;
-    private CaseDataItem winItem;
+    private CaseDefinition caseDefinition;
+    private CaseItem item;
     private ConfigurationNode settings;
 
     /**
      * @param uuid     Active case uuid
-     * @param caseData Case data
+     * @param caseDefinition Case definition
      * @param winItem  winItem
      */
-    public void init(DCPlayer player, CaseLocation location, UUID uuid, CaseData caseData,
-                     CaseDataItem winItem, ConfigurationNode settings) {
+    public void init(DCPlayer player, CaseLocation location, UUID uuid, CaseDefinition caseDefinition,
+                     CaseItem winItem, ConfigurationNode settings) {
         this.player = player;
         this.location = location;
         this.uuid = uuid;
-        this.caseData = caseData;
-        this.winItem = winItem;
+        this.caseDefinition = caseDefinition;
+        this.item = winItem;
         this.settings = settings;
     }
 
@@ -47,5 +49,15 @@ public abstract class Animation {
 
     public final void end() {
         DCAPI.getInstance().getAnimationManager().end(getUuid());
+    }
+
+    @Deprecated
+    public CaseData getCaseData() {
+        return CaseData.fromDefinition(caseDefinition);
+    }
+
+    @Deprecated
+    public CaseDataItem getWinItem() {
+        return CaseDataItem.fromItem(item);
     }
 }

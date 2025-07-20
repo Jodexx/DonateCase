@@ -12,7 +12,7 @@ import java.util.Map;
 @Accessors(fluent = true, chain = false)
 @Getter
 @Setter
-public class CaseSettings {
+public class CaseSettings implements Cloneable {
 
     private String type;
 
@@ -50,6 +50,17 @@ public class CaseSettings {
         this.displayName = displayName;
     }
 
+    @Override
+    public CaseSettings clone() {
+        try {
+            CaseSettings clone = (CaseSettings) super.clone();
+            clone.hologram = hologram.clone();
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
     public static class LevelGroups {
 
         @Getter
@@ -71,7 +82,7 @@ public class CaseSettings {
     @Accessors(fluent = true)
     @Getter
     @Setter
-    public static class Hologram {
+    public static class Hologram implements Cloneable {
 
         private ConfigurationNode node;
 
@@ -89,6 +100,17 @@ public class CaseSettings {
             this.height = height;
             this.range = range;
             this.message = message;
+        }
+
+        @Override
+        public Hologram clone() {
+            try {
+                Hologram clone = (Hologram) super.clone();
+                clone.node = this.node.copy();
+                return clone;
+            } catch (CloneNotSupportedException e) {
+                throw new AssertionError();
+            }
         }
     }
 }

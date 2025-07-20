@@ -2,10 +2,12 @@ package com.jodexindustries.donatecase.common.gui.items;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.*;
-import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemException;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemHandler;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMaterial;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.common.tools.LocalPlaceholder;
 import org.jetbrains.annotations.NotNull;
@@ -21,16 +23,16 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
     @NotNull
     @Override
-    public CaseGui.Item handle(@NotNull CaseGuiWrapper caseGui, CaseGui.@NotNull Item item) throws TypedItemException {
-        CaseData caseData = caseGui.getCaseData();
+    public CaseMenu.Item handle(@NotNull CaseGuiWrapper caseGui, CaseMenu.@NotNull Item item) throws TypedItemException {
+        CaseDefinition definition = caseGui.getDefinition();
 
-        boolean handled = handleHistoryItem(caseData, item, caseGui.getGlobalHistoryData());
+        boolean handled = handleHistoryItem(definition, item, caseGui.getGlobalHistoryData());
 
         if (!handled) {
             try {
                 ConfigurationNode notFoundNode = item.node().node("HistoryNotFound");
                 if (!notFoundNode.isNull()) {
-                    item.material(notFoundNode.get(CaseDataMaterial.class));
+                    item.material(notFoundNode.get(CaseMaterial.class));
                 } else {
                     item.material().id("AIR");
                 }
@@ -42,10 +44,10 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         return item;
     }
 
-    private boolean handleHistoryItem(CaseData caseData, CaseGui.Item item, List<CaseData.History> globalHistoryData) {
-        CaseDataMaterial itemMaterial = item.material();
+    private boolean handleHistoryItem(CaseDefinition definition, CaseMenu.Item item, List<CaseData.History> globalHistoryData) {
+        CaseMaterial itemMaterial = item.material();
 
-        String caseType = caseData.caseType();
+        String caseType = definition.settings().type();
 
         String[] typeArgs = item.type().split("-");
         int index = Integer.parseInt(typeArgs[1]);

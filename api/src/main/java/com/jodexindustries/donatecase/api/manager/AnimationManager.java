@@ -5,6 +5,8 @@ import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +50,12 @@ public interface AnimationManager {
      */
     void unregister();
 
+    CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition);
+
+    CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition, int delay);
+
+    CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition, boolean keyRemoved, int delay);
+
     /**
      * Starts an animation at a specified location.
      *
@@ -56,7 +64,10 @@ public interface AnimationManager {
      * @param caseData The case data associated with the animation.
      * @return A {@link CompletableFuture} that completes when the animation starts.
      */
-    CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData);
+    @Deprecated
+    default CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData) {
+        return start(player, location, CaseData.toDefinition(caseData));
+    }
 
     /**
      * Starts an animation at a specified location after a delay.
@@ -67,12 +78,19 @@ public interface AnimationManager {
      * @param delay    The delay in ticks before starting the animation.
      * @return A {@link CompletableFuture} that completes when the animation starts.
      */
-    CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay);
+    @Deprecated
+    default CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay) {
+        return start(player, location, CaseData.toDefinition(caseData), delay);
+    }
 
-    CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, boolean keyRemoved, int delay);
+    @Deprecated
+    default CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, boolean keyRemoved, int delay) {
+        return start(player, location, CaseData.toDefinition(caseData), keyRemoved, delay);
+    }
 
     /**
      * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
+     *
      * @param uuid The unique ID of the active case.
      */
     void preEnd(UUID uuid);
@@ -84,7 +102,12 @@ public interface AnimationManager {
      * @param player   The player interacting with the animation (can be offline).
      * @param item     The item data associated with the animation's result.
      */
-    void preEnd(CaseData caseData, DCPlayer player, CaseDataItem item);
+    @Deprecated
+    default void preEnd(CaseData caseData, DCPlayer player, CaseDataItem item) {
+        preEnd(CaseData.toDefinition(caseData), player, CaseDataItem.toItem(item));
+    }
+
+    void preEnd(CaseDefinition definition, DCPlayer player, CaseItem item);
 
     /**
      * Completes the animation process and performs cleanup tasks.
@@ -112,6 +135,7 @@ public interface AnimationManager {
 
     /**
      * Retrieves all registered animations by addon.
+     *
      * @param addon The addon instance
      * @return List of animations
      */
@@ -143,6 +167,7 @@ public interface AnimationManager {
 
     /**
      * Gets active case by block
+     *
      * @param block Block to check
      * @return active case by block
      */
@@ -163,6 +188,7 @@ public interface AnimationManager {
 
     /**
      * Check if block locked
+     *
      * @param block Block to check
      * @return true if block is locked by DonateCase
      */

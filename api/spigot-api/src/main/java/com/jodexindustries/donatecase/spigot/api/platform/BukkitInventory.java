@@ -16,7 +16,7 @@ public class BukkitInventory implements CaseInventory {
     }
 
     @Override
-    public Inventory getInventory() {
+    public Inventory getHandle() {
         return inventory;
     }
 

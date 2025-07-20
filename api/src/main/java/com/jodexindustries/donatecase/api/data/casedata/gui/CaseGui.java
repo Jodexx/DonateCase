@@ -119,6 +119,7 @@ public class CaseGui implements Cloneable {
 
             return new CaseMenu.Item(
                     old.node,
+                    String.valueOf(old.node.key()),
                     old.type,
                     CaseDataMaterial.toMaterial(old.material),
                     old.slots

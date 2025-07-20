@@ -100,6 +100,7 @@ public class CaseMenuSerializer implements TypeSerializer<CaseMenu> {
         public CaseMenu.Item deserialize(Type type, ConfigurationNode node) throws SerializationException {
             return new CaseMenu.Item(
                     node,
+                    String.valueOf(node.key()),
                     node.node("type").getString(),
                     node.node("material").get(CaseMaterial.class),
                     getItemSlots(node.node("slots"))

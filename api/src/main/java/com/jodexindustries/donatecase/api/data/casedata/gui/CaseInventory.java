@@ -4,7 +4,12 @@ import org.jetbrains.annotations.Nullable;
 
 public interface CaseInventory {
 
-    Object getInventory();
+    @Deprecated
+    default Object getInventory() {
+        return getHandle();
+    }
+
+    Object getHandle();
 
     void setItem(int index, @Nullable Object item);
 }
