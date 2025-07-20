@@ -34,14 +34,11 @@ tasks.withType<GenerateModuleMetadata> {
 publishing {
     repositories {
         maven {
-            name = "JodexIndustries"
-            url = uri("https://repo.jodexindustries.xyz/releases")
+            name = "Jodex"
+            url = uri("https://repo.jodex.xyz/releases")
             credentials {
-                username = findProperty("repoUser") as String?
-                password = findProperty("repoPassword") as String?
-            }
-            authentication {
-                create<BasicAuthentication>("basic")
+                username = findProperty("jodexRepoUser") as String? ?: System.getenv("JODEX_REPO_USER")
+                password = findProperty("jodexRepoPassword") as String? ?: System.getenv("JODEX_REPO_PASSWORD")
             }
         }
     }
