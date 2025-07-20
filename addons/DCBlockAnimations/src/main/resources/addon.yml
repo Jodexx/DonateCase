@@ -2,5 +2,5 @@ name: DCBlockAnimations
 version: '${version}'
 main: com.jodexindustries.dcblockanimations.MainAddon
 author: "_Jodex__"
-api: 2.1.0.0
+api: 2.1.0.5
 platforms: ["Bukkit"]

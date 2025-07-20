@@ -7,8 +7,8 @@ plugins {
     java
 }
 
-group = "com.jodexindustries"
-version = "2.0.1"
+group = "com.jodexindustries.dcblockanimations"
+version = "2.0.2"
 
 dependencies {
     compileOnly(project(":api:spigot-api"))
