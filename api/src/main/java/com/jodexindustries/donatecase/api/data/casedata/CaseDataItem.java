@@ -20,38 +20,48 @@ import java.util.Map;
 @Getter
 @Setter
 @ConfigSerializable
-@Deprecated
 public class CaseDataItem implements Cloneable {
 
+    @Deprecated
     @Setting(nodeFromParent = true)
     private ConfigurationNode node;
 
+    @Deprecated
     private transient String name;
 
+    @Deprecated
     @Setting("Group")
     private String group;
 
+    @Deprecated
     @Setting("Chance")
     private double chance;
 
+    @Deprecated
     @Setting("Index")
     private int index;
 
+    @Deprecated
     @Setting("Material")
     private CaseDataMaterial material;
 
+    @Deprecated
     @Setting("GiveType")
     private String giveType = "ONE";
 
+    @Deprecated
     @Setting("Actions")
     private List<String> actions;
 
+    @Deprecated
     @Setting("AlternativeActions")
     private List<String> alternativeActions;
 
+    @Deprecated
     @Setting("RandomActions")
     private Map<String, RandomAction> randomActions;
 
+    @Deprecated
     public static CaseDataItem fromItem(CaseItem item) {
         CaseDataItem old = new CaseDataItem();
 
@@ -68,6 +78,7 @@ public class CaseDataItem implements Cloneable {
         return old;
     }
 
+    @Deprecated
     public static CaseItem toItem(CaseDataItem old) {
         return new CaseItem(
                 old.name,
@@ -82,7 +93,7 @@ public class CaseDataItem implements Cloneable {
         );
     }
 
-
+    @Deprecated
     private static Map<String, RandomAction> fromItem(Map<String, CaseItem.RandomAction> randomActions) {
         Map<String, RandomAction> old = new HashMap<>();
 
@@ -93,6 +104,7 @@ public class CaseDataItem implements Cloneable {
         return old;
     }
 
+    @Deprecated
     private static Map<String, CaseItem.RandomAction> toItem(Map<String, RandomAction> oldRandomActions) {
         Map<String, CaseItem.RandomAction> map = new HashMap<>();
 
@@ -103,17 +115,19 @@ public class CaseDataItem implements Cloneable {
         return map;
     }
 
-
+    @Deprecated
     public String getName() {
         if (name != null) return name;
         return String.valueOf(node.key());
     }
 
+    @Deprecated
     public List<String> getActionsBasedOnChoice(RandomAction randomAction, boolean alternative) {
         if (randomAction != null) return randomAction.actions();
         return alternative ? alternativeActions() : actions();
     }
 
+    @Deprecated
     public RandomAction getRandomAction() {
         ProbabilityCollection<RandomAction> collection = new ProbabilityCollection<>();
         for (RandomAction randomAction : randomActions().values()) {
@@ -132,20 +146,26 @@ public class CaseDataItem implements Cloneable {
     @ConfigSerializable
     public static class RandomAction implements Cloneable {
 
+        @Deprecated
         @Setting(nodeFromParent = true)
         private ConfigurationNode node;
 
+        @Deprecated
         private transient String name;
 
+        @Deprecated
         @Setting("Chance")
         private double chance;
 
+        @Deprecated
         @Setting("Actions")
         private List<String> actions;
 
+        @Deprecated
         @Setting("DisplayName")
         private String displayName;
 
+        @Deprecated
         public static RandomAction fromItem(CaseItem.RandomAction randomAction) {
             RandomAction old = new RandomAction();
 
@@ -157,6 +177,7 @@ public class CaseDataItem implements Cloneable {
             return old;
         }
 
+        @Deprecated
         public static CaseItem.RandomAction toItem(RandomAction old) {
             return new CaseItem.RandomAction(
                     old.name,
@@ -166,11 +187,13 @@ public class CaseDataItem implements Cloneable {
             );
         }
 
+        @Deprecated
         public String getName() {
             if (name != null) return name;
             return String.valueOf(node.key());
         }
 
+        @Deprecated
         @Override
         public RandomAction clone() {
             try {
@@ -180,6 +203,7 @@ public class CaseDataItem implements Cloneable {
             }
         }
 
+        @Deprecated
         @Override
         public String toString() {
             return "RandomAction{" +
@@ -190,6 +214,7 @@ public class CaseDataItem implements Cloneable {
         }
     }
 
+    @Deprecated
     @Override
     public CaseDataItem clone() {
         try {
@@ -203,6 +228,7 @@ public class CaseDataItem implements Cloneable {
         }
     }
 
+    @Deprecated
     @Override
     public String toString() {
         return "CaseDataItem{" +
@@ -221,6 +247,7 @@ public class CaseDataItem implements Cloneable {
     /**
      * Clone method for CaseData deep clone
      */
+    @Deprecated
     private static Map<String, RandomAction> cloneRandomActionsMap(Map<String, RandomAction> originalMap) {
         Map<String, RandomAction> clonedMap = new HashMap<>();
         for (Map.Entry<String, RandomAction> entry : originalMap.entrySet()) {
