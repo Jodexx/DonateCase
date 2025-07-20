@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class CaseDatabaseImpl extends CaseDatabase {
 
@@ -170,7 +171,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public CompletableFuture<Integer> getOpenCount(String player, String caseType) {
         return CompletableFuture.supplyAsync(() -> {
-            OpenInfoTable openInfoTable = null;
             try {
                 List<OpenInfoTable> results = openInfoTables.queryBuilder()
                         .where()
@@ -178,12 +178,12 @@ public class CaseDatabaseImpl extends CaseDatabase {
                         .and()
                         .eq("case_type", caseType)
                         .query();
-                if (!results.isEmpty()) openInfoTable = results.get(0);
+
+                return results.stream().mapToInt(OpenInfoTable::getCount).sum();
             } catch (SQLException e) {
                 warning(e);
+                return 0;
             }
-            if (openInfoTable != null) return (openInfoTable.getCount());
-            return 0;
         });
     }
 
@@ -197,7 +197,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                         .eq("player", player)
                         .query();
                 for (OpenInfoTable result : results) {
-                    opens.put(result.getCaseType(), result.getCount());
+                    opens.merge(result.getCaseType(), result.getCount(), Integer::sum);
                 }
             } catch (SQLException e) {
                 warning(e);
@@ -205,6 +205,45 @@ public class CaseDatabaseImpl extends CaseDatabase {
             return opens;
         });
     }
+
+    @Override
+    public CompletableFuture<Map<String, Map<String, Integer>>> getGlobalOpenCount() {
+        return CompletableFuture.supplyAsync(() -> {
+            Map<String, Map<String, Integer>> globalMap = new HashMap<>();
+            try {
+                List<OpenInfoTable> results = openInfoTables.queryForAll();
+                for (OpenInfoTable result : results) {
+                    globalMap
+                            .computeIfAbsent(result.getPlayer(), k -> new HashMap<>())
+                            .merge(result.getCaseType(), result.getCount(), Integer::sum);
+                }
+            } catch (SQLException e) {
+                warning(e);
+            }
+            return globalMap;
+        });
+    }
+
+    @Override
+    public CompletableFuture<Map<String, Integer>> getGlobalOpenCount(String caseType) {
+        return CompletableFuture.supplyAsync(() -> {
+            Map<String, Integer> opens = new HashMap<>();
+            try {
+                List<OpenInfoTable> results = openInfoTables.queryBuilder()
+                        .where()
+                        .eq("case_type", caseType)
+                        .query();
+                opens = results.stream().collect(Collectors.toMap(
+                        OpenInfoTable::getPlayer,
+                        OpenInfoTable::getCount,
+                        Integer::sum
+                ));
+            } catch (SQLException e) {
+                warning(e);
+            }
+            return opens;
+        });
+        }
 
     @Override
     public CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count) {

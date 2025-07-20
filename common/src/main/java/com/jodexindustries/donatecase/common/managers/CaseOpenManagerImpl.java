@@ -37,6 +37,16 @@ public class CaseOpenManagerImpl extends CaseOpenManager {
     }
 
     @Override
+    public CompletableFuture<Map<String, Map<String, Integer>>> getGlobalAsync() {
+        return api.getDatabase().getGlobalOpenCount();
+    }
+
+    @Override
+    public CompletableFuture<Map<String, Integer>> getGlobalAsync(String caseType) {
+        return api.getDatabase().getGlobalOpenCount(caseType);
+    }
+
+    @Override
     public int getCache(String caseType, String player) {
         Integer count = getCache(player).get(caseType);
         if (count == null) return 0;
