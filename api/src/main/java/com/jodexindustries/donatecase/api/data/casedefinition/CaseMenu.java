@@ -78,7 +78,8 @@ public class CaseMenu implements Cloneable {
             try {
                 Item cloned = (Item) super.clone();
                 cloned.node = node.copy();
-                cloned.material = material.clone();
+                if (cloned.material != null)
+                    cloned.material = material.clone();
                 return cloned;
             } catch (CloneNotSupportedException e) {
                 throw new AssertionError();

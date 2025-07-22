@@ -100,12 +100,15 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
 
     private void applyMaterial(CaseMaterial itemMaterial, CaseData.History data, CaseItem historyItem) {
-        String material = Optional.ofNullable(itemMaterial.id())
-                .filter(id -> !id.equalsIgnoreCase("DEFAULT"))
-                .orElse("HEAD:" + data.playerName());
+        String id = itemMaterial.id();
 
-        if (material.equalsIgnoreCase("DEFAULT")) {
+        String material;
+        if (id == null) {
+            material = "HEAD:" + data.playerName();
+        } else if (id.equalsIgnoreCase("DEFAULT")) {
             material = historyItem.material().id();
+        } else {
+            material = id;
         }
 
         itemMaterial.id(material);

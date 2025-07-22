@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.common.config.serializer.casedefinition;
 
 import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -82,14 +83,16 @@ public class CaseMenuSerializer implements TypeSerializer<CaseMenu> {
 
         currentSlots.addAll(item.slots());
 
-//        if (!item.type().equalsIgnoreCase("DEFAULT")) {
-//            Optional<TypedItem> typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(item.toString());
-//            if (typedItem.isPresent()) {
-//                if (typedItem.get().loadOnCase()) {
-//                    material.itemStack(DCAPI.getInstance().getPlatform().getTools().loadCaseItem(item.material().id()));
-//                }
-//            }
-//        }
+        if (!item.type().equalsIgnoreCase("DEFAULT")) {
+            Optional<TypedItem> typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(item.type());
+            if (typedItem.isPresent()) {
+                if (typedItem.get().loadOnCase()) {
+                    item.material().itemStack(DCAPI.getInstance().getPlatform().getTools().loadCaseItem(item.material().id()));
+                }
+            }
+        } else {
+            item.material().itemStack(null);
+        }
 
         return item;
     }
