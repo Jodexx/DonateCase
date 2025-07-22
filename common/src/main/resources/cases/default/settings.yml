@@ -6,7 +6,7 @@ type: default
 
 default-menu: default_menu
 
-animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL, RANDOM, POP, SELECT see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/animations
+animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL, RANDOM, POP, SELECT see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/animations
 #  AnimationSettings:
 #    Type: FULL # or RANDOM
 #    ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
@@ -29,7 +29,7 @@ animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL, RANDOM, POP, SELECT see: https
 #      Volume: 10
 #      Pitch: 1
 
-hologram: # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/holograms
+hologram: # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/holograms
   # Toggle on and off the holograms for the case.
   enabled: true
   # The height of the hologram above the case.
@@ -60,7 +60,7 @@ hologram: # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/holog
 open-type: GUI # or BLOCK
 
 no-key-actions:
-  - "[message] &cYou don't have keys for this case. You can buy them here >>> &6JodexIndustries.xyz"
+  - "[message] &cYou don't have keys for this case. You can buy them here >>> &6www.jodex.xyz"
   - "[sound] ENTITY_ENDERMAN_TELEPORT"
 
 history-data-size: 10 # 0 if you want to disable history data
@@ -76,4 +76,4 @@ level-groups: # delete all of this section, if you want to use default LevelGrou
   vip: 1
   default: 0
 
-display-name: "&c&lDonate-&a&lCase" # Name for placeholders
+display-name: "&6Donate&7-&fCase" # Name for placeholders

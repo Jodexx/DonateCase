@@ -1,43 +1,141 @@
 config: # Please do not touch this section
-  version: 10
+  version: 1
   type: case_menu
 
 id: default_menu
 
-title: "&c&lDonate-&a&lCase"
+title: '&e&l✨ &6Donate&7-&fCase &e&l✨'
 size: 45
 update-rate: 20 # in ticks, set -1 to disable updating
-# see more about items configuring -> https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/items-settings
+# see more about items configuring -> https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/items-settings
 items:
   "1":
     material:
-      id: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
-      display-name: "&cJodexIndustries.xyz"
-      enchanted: false
-      lore:
-        - ""
-    slots: # or Slots: 0-10 (range)
-      - 0
-      - 8
+      id: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/materials
+      display-name: "&cwww.jodex.xyz"
+    slots:
+      - 0-8
     type: DEFAULT
   open:
     material:
-      id: TRIPWIRE_HOOK # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
+      id: TRIPWIRE_HOOK # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/materials
       display-name: "&bOpen Case"
-      enchanted: false
+      enchanted: true
       lore:
-        - '&6The case can be bought on the website: &cJodexIndustries.xyz'
+        - "&eClick to open this donate case!"
+        - ""
+        - "&6Available rewards:"
+        - "&8▸ &eVIP &7- &f30%"
+        - "&8▸ &bVIP+ &7- &f25%"
+        - "&8▸ &3Premium &7- &f20%"
+        - "&8▸ &5Deluxe &7- &f15%"
+        - "&8▸ &dLegend &7- &f10%"
+        - "&8▸ &cUltra &7- &f5%"
+        - ""
+        - "&7Your keys: &e%keys%"
+        - ""
+        - "&aPurchase more at:"
+        - "&bwww.jodex.xyz"
         - ''
-        - '&7Keys: &e%keys%'
-        - ''
-        - '&6Drops:'
-        - '&7[&eVIP&7] - &b&n30%'
-        - '&7[&bVIP&6+&7] - &b&n25%'
-        - '&7[&3Premium&7] - &b&n20%'
-        - '&7[&5Deluxe&7] - &b&n15%'
-        - '&7[&dLegend&7] - &b&n10%'
-        - '&7[&cUltra&7] - &b&n5%'
-        - ''
-    slots: # or Slots: 0-10 (range)
+    slots:
       - 22
     type: OPEN # or you can use OPEN_<anotherCaseName> for opening another case
+  history0:
+    material:
+      id: DEFAULT
+      display-name: "&c%player%"
+      lore:
+        - '&6Group &f- &c%groupdisplayname%'
+        - '&6Time &f- &c%time%'
+        - ''
+    slots:
+      - 36
+    type: HISTORY-0
+  history1:
+    material:
+      id: DEFAULT
+      display-name: "&c%player%"
+      lore:
+        - '&6Group &f- &c%groupdisplayname%'
+        - '&6Time &f- &c%time%'
+        - ''
+    slots:
+      - 37
+    type: HISTORY-1
+  history2:
+    material:
+      id: DEFAULT
+      display-name: "&c%player%"
+      lore:
+        - '&6Group &f- &c%groupdisplayname%'
+        - '&6Time &f- &c%time%'
+        - ''
+    slots:
+      - 38
+    type: HISTORY-2
+  history3:
+    material:
+      id: DEFAULT
+      display-name: "&c%player%"
+      lore:
+        - '&6Group &f- &c%groupdisplayname%'
+        - '&6Time &f- &c%time%'
+        - ''
+    slots:
+      - 39
+    type: HISTORY-3
+  history4:
+    material:
+      id: DEFAULT
+      display-name: "&c%player%"
+      lore:
+        - '&6Group &f- &c%groupdisplayname%'
+        - '&6Time &f- &c%time%'
+        - ''
+    slots:
+      - 40
+    type: HISTORY-4
+  history5:
+    material:
+      id: DEFAULT
+      display-name: "&c%player%"
+      lore:
+        - '&6Group &f- &c%groupdisplayname%'
+        - '&6Time &f- &c%time%'
+        - ''
+    slots:
+      - 41
+    type: HISTORY-5
+  history6:
+    material:
+      id: DEFAULT
+      display-name: "&c%player%"
+      lore:
+        - '&6Group &f- &c%groupdisplayname%'
+        - '&6Time &f- &c%time%'
+        - ''
+    slots:
+      - 42
+    type: HISTORY-6
+  history7:
+    material:
+      id: DEFAULT
+      display-name: "&c%player%"
+      lore:
+        - '&6Group &f- &c%groupdisplayname%'
+        - '&6Time &f- &c%time%'
+        - ''
+    slots:
+      - 43
+    type: HISTORY-7
+  history8:
+    material:
+      id: DEFAULT
+      display-name: "&c%player%"
+      lore:
+        - '&6Group &f- &c%groupdisplayname%'
+        - '&6Time &f- &c%time%'
+        - ''
+    slots:
+      - 44
+    type: HISTORY-8

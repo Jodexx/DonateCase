@@ -7,15 +7,15 @@ items:
     group: vip
     chance: 30
     material:
-      id: YELLOW_WOOL # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
-      display-name: '&7[&eVIP&7]'
+      id: YELLOW_WOOL # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/materials
+      display-name: '&eVIP'
       enchanted: false
     index: 0
     give-type: ONE # or RANDOM
     actions: # GiveType: ONE
       - '[command] lp user %player% parent set %group%'
       - '[title] &aCongratulations!;&5you won %groupdisplayname%'
-      - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+      - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
     alternative-actions: # GiveType: any, it doesn't matter; is performed if the group is lower in rank than the player's group in LevelGroups
       - "[message] &cI'm sorry %player%, but you have group a stronger group than you won:("
     random-actions: # GiveType: RANDOM
@@ -24,25 +24,25 @@ items:
         display-name: "something" # displayname for historydata displaying
         actions:
           - '[command] say something'
-          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
       second:
         chance: 50
         actions:
           - '[command] say something'
-          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
   vip-plus:
     group: vipplus
     chance: 25
     material:
-      id: LIGHT_BLUE_WOOL # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
-      display-name: '&7[&bVIP&6+&7]'
+      id: LIGHT_BLUE_WOOL # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/materials
+      display-name: '&bVIP+'
       enchanted: false
     index: 1
     give-type: ONE # or RANDOM
     actions: # GiveType: ONE
       - '[command] lp user %player% parent set %group%'
       - '[title] &aCongratulations!;&5you won %groupdisplayname%'
-      - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+      - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
     alternative-actions: # GiveType: any, it doesn't matter; is performed if the group is lower in rank than the player's group in LevelGroups
       - "[message] &cI'm sorry %player%, but you have group a stronger group than you won:("
     random-actions: # GiveType: RANDOM
@@ -51,25 +51,25 @@ items:
         display-name: "something" # displayname for historydata displaying
         actions:
           - '[command] say something'
-          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
       second:
         chance: 50
         actions:
           - '[command] say something'
-          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
   premium:
     group: premium
     chance: 20
     material:
       id: CYAN_WOOL
-      display-name: '&7[&3Premium&7]'
+      display-name: '&3Premium'
     index: 2
     give-type: ONE
     actions:
       - '[command] lp user %player% parent set %group%'
       - '[title] &aCongratulations!;&5you won %groupdisplayname%'
       - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from
-        &5Ultra-Case.'
+        %casedisplayname%'
     alternative-actions: # GiveType: any, it doesn't matter; is performed if the group is lower in rank than the player's group in LevelGroups
       - "[message] &cI'm sorry %player%, but you have group a stronger group than you won:("
     random-actions: # GiveType: RANDOM
@@ -78,25 +78,25 @@ items:
         display-name: "something" # displayname for historydata displaying
         actions:
           - '[command] say something'
-          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
       second:
         chance: 50
         actions:
           - '[command] say something'
-          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
   deluxe:
     group: deluxe
     chance: 15
     material:
-      id: PURPLE_WOOL # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
-      display-name: '&7[&5Deluxe&7]'
+      id: PURPLE_WOOL # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/materials
+      display-name: '&5Deluxe'
       enchanted: false
     index: 3
     give-type: ONE # or RANDOM
     actions: # GiveType: ONE
       - '[command] lp user %player% parent set %group%'
       - '[title] &aCongratulations!;&5you won %groupdisplayname%'
-      - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+      - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
     alternative-actions: # GiveType: any, it doesn't matter; is performed if the group is lower in rank than the player's group in LevelGroups
       - "[message] &cI'm sorry %player%, but you have group a stronger group than you won:("
     random-actions: # GiveType: RANDOM
@@ -104,25 +104,25 @@ items:
         chance: 50
         actions:
           - '[command] say something'
-          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
       second:
         chance: 50
         actions:
           - '[command] say something'
-          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
   legend:
     group: legend
     chance: 10
     material:
-      id: PINK_WOOL # see: https://wiki.jodexindustries.xyz/en/docs/2.0.0/DonateCase/materials
-      display-name: '&7[&dLegend&7]'
+      id: PINK_WOOL # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/materials
+      display-name: '&dLegend'
       enchanted: false
     index: 4
     give-type: ONE # or RANDOM
     actions: # GiveType: ONE
       - '[command] lp user %player% parent set %group%'
       - '[title] &aCongratulations!;&5you won %groupdisplayname%'
-      - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+      - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
     alternative-actions: # GiveType: any, it doesn't matter; is performed if the group is lower in rank than the player's group in LevelGroups
       - "[message] &cI'm sorry %player%, but you have group a stronger group than you won:("
     random-actions: # GiveType: RANDOM
@@ -130,18 +130,18 @@ items:
         chance: 50
         actions:
           - '[command] say something'
-          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
       second:
         chance: 50
         actions:
           - '[command] say something'
-          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
   ultra:
     group: ultra
     chance: 5
     material:
       id: RED_WOOL
-      display-name: '&7[&cUltra&7]'
+      display-name: '&cUltra'
       enchanted: true
     index: 5
     give-type: ONE
@@ -149,7 +149,7 @@ items:
       - '[command] lp user %player% parent set %group%'
       - '[command] say lp user %player% parent set %group%'
       - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from
-        &5Ultra-Case.'
+        %casedisplayname%'
     alternative-actions: # GiveType: any, it doesn't matter; is performed if the group is lower in rank than the player's group in LevelGroups
       - "[message] &cI'm sorry %player%, but you have group a stronger group than you won:("
     random-actions: # GiveType: RANDOM
@@ -158,9 +158,9 @@ items:
         display-name: "something" # displayname for historydata displaying
         actions:
           - '[command] say something'
-          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
       second:
         chance: 50
         actions:
           - '[command] say something'
-          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from &5Ultra-Case.'
+          - '[broadcast] &a>&c>&e> &c%player% &6won a donate %groupdisplayname% &6from %casedisplayname%'
