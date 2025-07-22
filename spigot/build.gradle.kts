@@ -22,7 +22,6 @@ dependencies {
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
     compileOnly("de.oliver:FancyHolograms:2.3.3")
     compileOnly("com.github.retrooper:packetevents-spigot:2.9.3")
-    implementation("com.github.Tofaa2.EntityLib:spigot:2.4.11")
     compileOnly(fileTree("libs").include("*.jar"))
     implementation(project(":api:spigot-api"))
     implementation(project(":common"))
