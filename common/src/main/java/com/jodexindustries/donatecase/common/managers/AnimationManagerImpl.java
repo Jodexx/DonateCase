@@ -194,11 +194,11 @@ public class AnimationManagerImpl implements AnimationManager {
 
         String primaryGroup = backend.getLuckPermsSupport().getPrimaryGroup(player.getUniqueId());
 
-        executeActions(player, definition, item, randomAction,
-                levelGroups.isBetterOrEqual(
-                        primaryGroup, item.group()
-                )
-        );
+        boolean alternative = levelGroups.isBetterOrEqual(primaryGroup, item.group());
+
+        List<String> actions = alternative ? item.alternativeActions() : randomAction == null ? item.actions() : randomAction.actions();
+
+        executeActions(player, definition, item, actions);
 
         saveOpenInfo(definition, player, item, randomAction);
     }
@@ -322,14 +322,12 @@ public class AnimationManagerImpl implements AnimationManager {
         }, 0L);
     }
 
-    public void executeActions(DCPlayer player, CaseDefinition caseData, CaseItem item, CaseItem.RandomAction randomAction, boolean alternative) {
+    public void executeActions(DCPlayer player, CaseDefinition caseData, CaseItem item, List<String> actions) {
         Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(caseData);
         placeholders.add(LocalPlaceholder.of("%player%", player.getName()));
         placeholders.addAll(LocalPlaceholder.of(item));
 
-        List<String> actions = DCTools.rt(item.getActionsBasedOnChoice(randomAction, alternative), placeholders);
-
-        api.getActionManager().execute(player, actions);
+        api.getActionManager().execute(player, DCTools.rt(actions, placeholders));
     }
 
     public String getRandomAnimation(ConfigurationNode settings) {

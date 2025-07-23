@@ -54,12 +54,6 @@ public class CaseItem implements Cloneable {
         return collection.get();
     }
 
-    // TODO upgrade
-    public List<String> getActionsBasedOnChoice(RandomAction randomAction, boolean alternative) {
-        if (randomAction != null) return randomAction.actions();
-        return alternative ? alternativeActions() : actions();
-    }
-
     @Override
     public CaseItem clone() {
         try {
