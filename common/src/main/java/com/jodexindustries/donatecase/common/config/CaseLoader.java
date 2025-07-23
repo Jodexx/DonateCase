@@ -87,8 +87,7 @@ public class CaseLoader implements Loadable {
             }
 
             if (items == null) {
-                warn(caseFolder, "Case items not found! Create a new config file with type 'case_items'.");
-                continue;
+                items = new CaseItems();
             }
 
             if (menus.isEmpty()) {
