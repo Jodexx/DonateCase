@@ -28,7 +28,7 @@ dependencies {
 }
 
 tasks.runServer {
-    minecraftVersion("1.20.4")
+    minecraftVersion("1.21.8")
 }
 
 tasks.build {
