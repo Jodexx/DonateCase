@@ -55,6 +55,4 @@ tasks.shadowJar {
     archiveVersion.set(project.version.toString())
     exclude("org/jetbrains/**")
     exclude("org/intellij/lang/**")
-
-    relocate("me.tofaa.entitylib", "com.jodexindustries.donatecase.entitylib")
 }
