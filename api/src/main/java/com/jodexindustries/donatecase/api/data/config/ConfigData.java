@@ -47,7 +47,7 @@ public class ConfigData {
 
     @Comment("If true, checks whether the player with the nickname exists on the server.")
     @Setting("CheckPlayerName")
-    private boolean checkPlayerName = true;
+    private boolean checkPlayerName = false;
 
     @Accessors(fluent = true)
     @Getter
