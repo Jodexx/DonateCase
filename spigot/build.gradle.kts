@@ -11,7 +11,6 @@ plugins {
 }
 
 group = "com.jodexindustries.donatecase"
-version = properties["version"].toString()
 
 dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
