@@ -41,10 +41,6 @@ public class ConfigData {
     @Setting("Caching")
     private long caching = 20;
 
-    @Comment("Set spawn-protection to 0 in server.properties")
-    @Setting("DisableSpawnProtection")
-    private boolean disableSpawnProtection = true;
-
     @Comment("If true, formats the nickname of the player (searches for a similar one on the server).")
     @Setting("CheckPlayerName")
     private boolean checkPlayerName = false;
