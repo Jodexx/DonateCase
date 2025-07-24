@@ -61,14 +61,16 @@ import java.util.logging.Logger;
 
 public class BukkitBackend extends BackendPlatform {
 
-    @Getter private final BukkitDonateCase plugin;
+    @Getter
+    private final BukkitDonateCase plugin;
 
     private final DonateCase api;
     private final DCTools tools;
     private final BukkitScheduler scheduler;
 
     private PAPI papi;
-    @Getter private PacketEventsSupport packetEventsSupport;
+    @Getter
+    private PacketEventsSupport packetEventsSupport;
 
     private MetaUpdater metaUpdater;
 
@@ -104,9 +106,9 @@ public class BukkitBackend extends BackendPlatform {
         api.load();
 
         // after config load
-        loadMetrics();
         loadPacketEventsAPI();
         loadLuckPerms();
+        loadMetrics();
     }
 
     @Override
@@ -467,6 +469,7 @@ public class BukkitBackend extends BackendPlatform {
     private void loadMetrics() {
         this.metrics = new Metrics(plugin, 18709);
         metrics.addCustomChart(new Metrics.SimplePie("language", () -> api.getConfigManager().getConfig().language()));
+        metrics.addCustomChart(new Metrics.SimplePie("use_packets", () -> packetEventsSupport != null ? packetEventsSupport.isUsePackets() ? "yes" : "no" : "no"));
     }
 
 }
