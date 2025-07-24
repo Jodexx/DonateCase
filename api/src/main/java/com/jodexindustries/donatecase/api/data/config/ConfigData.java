@@ -45,7 +45,7 @@ public class ConfigData {
     @Setting("DisableSpawnProtection")
     private boolean disableSpawnProtection = true;
 
-    @Comment("If true, checks whether the player with the nickname exists on the server.")
+    @Comment("If true, formats the nickname of the player (searches for a similar one on the server).")
     @Setting("CheckPlayerName")
     private boolean checkPlayerName = false;
 

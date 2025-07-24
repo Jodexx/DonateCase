@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,13 +44,25 @@ public abstract class DCTools {
                 DCAPI.getInstance().getConfigManager().getConfig().dateFormat());
     }
 
-    public static boolean isValidPlayerName(String player) {
-        if (DCAPI.getInstance().getConfigManager().getConfig().checkPlayerName()) {
-            return Arrays.stream(DCAPI.getInstance().getPlatform().getOfflinePlayers())
-                    .map(DCOfflinePlayer::getName)
-                    .anyMatch(name -> name != null && name.equals(player.trim()));
-        }
-        return true;
+    @NotNull
+    public static CompletableFuture<@NotNull String> formatPlayerName(String name) {
+        String trimmed = name.trim();
+
+        return CompletableFuture.supplyAsync(() -> {
+            if (!DCAPI.getInstance().getConfigManager().getConfig().checkPlayerName()) {
+                return trimmed;
+            }
+
+            for (DCOfflinePlayer player : DCAPI.getInstance().getPlatform().getOfflinePlayers()) {
+                String offlinePlayer = player.getName();
+
+                if (offlinePlayer != null && trimmed.equalsIgnoreCase(offlinePlayer.trim())) {
+                    return player.getName();
+                }
+            }
+
+            return trimmed;
+        });
     }
 
     public static @NotNull List<String> resolveSDGCompletions(String[] args) {

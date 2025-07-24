@@ -27,9 +27,9 @@ public class DelKeyCommand extends DefaultCommand {
         if (args.length == 0) {
             return false;
         } else {
-            String playerName = args[0];
+            String plainName = args[0];
 
-            if (playerName.equalsIgnoreCase("all")) {
+            if (plainName.equalsIgnoreCase("all")) {
                 if (args.length == 1) {
                     api.getCaseKeyManager().delete().thenAcceptAsync(status ->
                             sender.sendMessage(DCTools.rc(api.getConfigManager().getMessages().getString("all-keys-cleared"))));
@@ -45,16 +45,6 @@ public class DelKeyCommand extends DefaultCommand {
 
             String caseType = args[1];
 
-            if (!DCTools.isValidPlayerName(playerName)) {
-                sender.sendMessage(
-                        DCTools.rt(
-                                api.getConfigManager().getMessages().getString("player-not-found"),
-                                LocalPlaceholder.of("%player%", playerName)
-                        )
-                );
-                return true;
-            }
-
             Optional<CaseDefinition> optional = api.getCaseManager().getByType(caseType);
             if (!optional.isPresent()) {
                 sender.sendMessage(
@@ -66,35 +56,38 @@ public class DelKeyCommand extends DefaultCommand {
                 return true;
             }
 
-            int keys;
-            if (args.length == 2) {
-                keys = api.getCaseKeyManager().get(caseType, playerName);
-                api.getCaseKeyManager().set(caseType, playerName, 0);
-            } else {
-                try {
-                    keys = Integer.parseInt(args[2]);
-                } catch (NumberFormatException e) {
-                    sender.sendMessage(DCTools.rt(
-                                    api.getConfigManager().getMessages().getString("number-format-exception"),
-                                    LocalPlaceholder.of("%string%", args[2])
-                            )
-                    );
-                    return true;
+            DCTools.formatPlayerName(plainName).thenAccept(playerName -> {
+                int keys;
+                if (args.length == 2) {
+                    keys = api.getCaseKeyManager().get(caseType, playerName);
+                    api.getCaseKeyManager().set(caseType, playerName, 0);
+                } else {
+                    try {
+                        keys = Integer.parseInt(args[2]);
+                    } catch (NumberFormatException e) {
+                        sender.sendMessage(DCTools.rt(
+                                        api.getConfigManager().getMessages().getString("number-format-exception"),
+                                        LocalPlaceholder.of("%string%", args[2])
+                                )
+                        );
+                        return;
+                    }
+
+                    api.getCaseKeyManager().remove(caseType, playerName, keys);
                 }
 
-                api.getCaseKeyManager().remove(caseType, playerName, keys);
-            }
+                Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(optional.get());
+                placeholders.add(LocalPlaceholder.of("%player%", playerName));
+                placeholders.add(LocalPlaceholder.of("%key%", keys));
 
-            Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(optional.get());
-            placeholders.add(LocalPlaceholder.of("%player%", playerName));
-            placeholders.add(LocalPlaceholder.of("%key%", keys));
+                sender.sendMessage(
+                        DCTools.rt(
+                                api.getConfigManager().getMessages().getString("keys-cleared"),
+                                placeholders
+                        )
+                );
 
-            sender.sendMessage(
-                    DCTools.rt(
-                            api.getConfigManager().getMessages().getString("keys-cleared"),
-                            placeholders
-                    )
-            );
+            });
         }
         return true;
     }

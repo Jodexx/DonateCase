@@ -31,5 +31,5 @@ DonateCase:
   Caching: 20 # in ticks
   # Set spawn-protection to 0 in server.properties
   DisableSpawnProtection: true
-  # If true, checks whether the player with the nickname exists on the server.
+  # If true, formats the nickname of the player (searches for a similar one on the server).
   CheckPlayerName: false

@@ -30,19 +30,8 @@ public class GiveKeyCommand extends DefaultCommand {
             return false;
         }
 
-        String playerName = args[0];
+        String plainName = args[0];
         String caseType = args[1];
-        if (!DCTools.isValidPlayerName(playerName)) {
-            sender.sendMessage(
-                    DCTools.prefix(
-                            DCTools.rt(
-                                    api.getConfigManager().getMessages().getString("player-not-found"),
-                                    LocalPlaceholder.of("%player%", playerName)
-                            )
-                    )
-            );
-            return true;
-        }
 
         int keys;
         try {
@@ -59,7 +48,7 @@ public class GiveKeyCommand extends DefaultCommand {
             Optional<CaseDefinition> optional = api.getCaseManager().getByType(caseType);
             if (!optional.isPresent()) return true;
 
-            api.getCaseKeyManager().add(caseType, playerName, keys).thenAcceptAsync(status -> {
+            DCTools.formatPlayerName(plainName).thenAccept(playerName -> api.getCaseKeyManager().add(caseType, playerName, keys).thenAcceptAsync(status -> {
                 Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(optional.get());
                 placeholders.add(LocalPlaceholder.of("%player%", playerName));
                 placeholders.add(LocalPlaceholder.of("%key%", keys));
@@ -83,7 +72,7 @@ public class GiveKeyCommand extends DefaultCommand {
                             );
                     }
                 }
-            });
+            }));
         } else {
             sender.sendMessage(DCTools.prefix(
                     DCTools.rt(

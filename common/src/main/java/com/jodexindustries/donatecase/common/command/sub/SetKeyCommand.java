@@ -28,19 +28,8 @@ public class SetKeyCommand extends DefaultCommand {
     public boolean execute(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
         if (args.length < 3) return false;
 
-        String playerName = args[0];
+        String plainName = args[0];
         String caseName = args[1];
-        if (!DCTools.isValidPlayerName(playerName)) {
-            sender.sendMessage(
-                    DCTools.prefix(
-                            DCTools.rt(
-                                    api.getConfigManager().getMessages().getString("player-not-found"),
-                                    LocalPlaceholder.of("%player%", playerName)
-                            )
-                    )
-            );
-            return true;
-        }
 
         int keys;
 
@@ -72,7 +61,7 @@ public class SetKeyCommand extends DefaultCommand {
             return true;
         }
 
-        api.getCaseKeyManager().set(caseName, playerName, keys).thenAcceptAsync(status -> {
+        DCTools.formatPlayerName(plainName).thenAccept(playerName -> api.getCaseKeyManager().set(caseName, playerName, keys).thenAcceptAsync(status -> {
             Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(optional.get());
             placeholders.add(LocalPlaceholder.of("%player%", playerName));
             placeholders.add(LocalPlaceholder.of("%key%", keys));
@@ -97,7 +86,7 @@ public class SetKeyCommand extends DefaultCommand {
                     );
                 }
             }
-        });
+        }));
         return true;
     }
 
