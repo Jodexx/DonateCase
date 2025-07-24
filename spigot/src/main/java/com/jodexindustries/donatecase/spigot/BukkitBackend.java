@@ -470,6 +470,7 @@ public class BukkitBackend extends BackendPlatform {
         this.metrics = new Metrics(plugin, 18709);
         metrics.addCustomChart(new Metrics.SimplePie("language", () -> api.getConfigManager().getConfig().language()));
         metrics.addCustomChart(new Metrics.SimplePie("use_packets", () -> packetEventsSupport != null ? packetEventsSupport.isUsePackets() ? "yes" : "no" : "no"));
+        metrics.addCustomChart(new Metrics.SimplePie("hologram_driver", () -> api.getConfigManager().getConfig().hologramDriver()));
     }
 
 }
