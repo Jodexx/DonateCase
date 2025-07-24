@@ -14,36 +14,36 @@ import org.spongepowered.configurate.objectmapping.meta.Setting;
 @ConfigSerializable
 public class ConfigData {
 
-    @Setting("UpdateChecker")
+    @Setting()
     private boolean updateChecker = true;
 
-    @Setting("MySql")
-    private MySQL mySQL = new MySQL();
+    @Setting()
+    private MySQL mysql = new MySQL();
 
-    @Setting("Languages")
-    private String languages = "en_US";
+    @Setting()
+    private String language = "en_US";
 
-    @Setting("HologramDriver")
+    @Setting()
     private String hologramDriver = "DecentHolograms";
 
-    @Setting("LevelGroups")
+    @Setting()
     private CaseSettings.LevelGroups levelGroups;
 
-    @Setting("DateFormat")
+    @Setting()
     private String dateFormat = "dd.MM HH:mm:ss";
 
-    @Setting("AddonsHelp")
+    @Setting()
     private boolean addonsHelp = true;
 
-    @Setting("UsePackets")
-    private boolean usePackets = false;
+    @Setting()
+    private boolean usePackets = true;
 
-    @Setting("Caching")
+    @Setting()
     private long caching = 20;
 
     @Comment("If true, formats the nickname of the player (searches for a similar one on the server).")
-    @Setting("CheckPlayerName")
-    private boolean checkPlayerName = false;
+    @Setting()
+    private boolean formatPlayerName = false;
 
     @Accessors(fluent = true)
     @Getter
@@ -51,22 +51,22 @@ public class ConfigData {
     @ConfigSerializable
     public static class MySQL {
 
-        @Setting("Enabled")
+        @Setting()
         private boolean enabled = false;
 
-        @Setting("Host")
+        @Setting()
         private String host = "localhost";
 
-        @Setting("Port")
+        @Setting()
         private int port = 3306;
 
-        @Setting("DataBase")
+        @Setting()
         private String database = "donatecase";
 
-        @Setting("User")
-        private String user = "admin";
+        @Setting()
+        private String username = "admin";
 
-        @Setting("Password")
+        @Setting()
         private String password = "123456";
     }
 }

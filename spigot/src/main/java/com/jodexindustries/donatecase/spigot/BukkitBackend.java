@@ -466,7 +466,7 @@ public class BukkitBackend extends BackendPlatform {
 
     private void loadMetrics() {
         this.metrics = new Metrics(plugin, 18709);
-        metrics.addCustomChart(new Metrics.SimplePie("language", () -> api.getConfigManager().getConfig().languages()));
+        metrics.addCustomChart(new Metrics.SimplePie("language", () -> api.getConfigManager().getConfig().language()));
     }
 
 }

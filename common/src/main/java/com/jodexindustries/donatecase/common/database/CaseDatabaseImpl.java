@@ -67,7 +67,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
 
     public void connect() {
 
-        ConfigData.MySQL mysql = api.getConfigManager().getConfig().mySQL();
+        ConfigData.MySQL mysql = api.getConfigManager().getConfig().mysql();
         if(mysql == null || !mysql.enabled()) {
             connect(api.getPlatform().getDataFolder().getAbsolutePath());
             return;
@@ -77,7 +77,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
                 mysql.database(),
                 mysql.port(),
                 mysql.host(),
-                mysql.user(),
+                mysql.username(),
                 mysql.password()
         );
     }

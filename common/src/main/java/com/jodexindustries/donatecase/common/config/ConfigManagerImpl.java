@@ -99,7 +99,7 @@ public class ConfigManagerImpl implements ConfigManager {
         loadConfigurations(platform.getDataFolder().listFiles(), false);
 
         try {
-            messages.load(getConfig(true).languages());
+            messages.load(getConfig(true).language());
             caseStorage.load();
         } catch (ConfigurateException e) {
             platform.getLogger().log(Level.WARNING, "Error with loading configuration: ", e);

@@ -49,7 +49,7 @@ public abstract class DCTools {
         String trimmed = name.trim();
 
         return CompletableFuture.supplyAsync(() -> {
-            if (!DCAPI.getInstance().getConfigManager().getConfig().checkPlayerName()) {
+            if (!DCAPI.getInstance().getConfigManager().getConfig().formatPlayerName()) {
                 return trimmed;
             }
 

@@ -22,7 +22,6 @@ public enum DefaultConfigType implements ConfigType {
      *
      * <p>Version {@code 14} is a virtual/fake version used solely for migration purposes.</p>
      * <p>Automatically triggers conversion to the new case format structure.</p>
-     *
      */
     OLD_CASE(14, new HashMap<Integer, ConfigMigrator>() {{
         put(12, new CaseMigrator_1_2_to_1_3());
@@ -30,23 +29,34 @@ public enum DefaultConfigType implements ConfigType {
     }}),
 
     CASE_MENU(1, new ConfigSerializer(CaseMenu.class)),
+
     CASE_SETTINGS(1, new ConfigSerializer(CaseSettings.class)),
+
     CASE_ITEMS(1, new ConfigSerializer(CaseItems.class, "items")),
+
     ANIMATIONS(15, new HashMap<Integer, ConfigMigrator>() {{
         put(14, new AnimationsMigrator_1_4_to_1_5());
     }}),
+
     CASES(11, new HashMap<Integer, ConfigMigrator>() {{
         put(10, new CasesMigrator_1_0_to_1_1());
     }}),
 
-    CONFIG(25, new ConfigSerializer(ConfigData.class, "DonateCase")),
+    CONFIG(26,
+            new HashMap<Integer, ConfigMigrator>() {{
+                put(25, new ConfigMigrator_2_5_to_2_6());
+            }},
+            new ConfigSerializer(ConfigData.class)),
+
     LANG(27, new HashMap<Integer, ConfigMigrator>() {{
         put(26, new LanguageMigrator_2_6_to_2_7());
     }}),
+
     /**
      * Custom configuration unknown to DonateCase
      */
     UNKNOWN_CUSTOM(0),
+
     /**
      * Configuration is not of the specified type
      */
