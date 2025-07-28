@@ -24,7 +24,10 @@ public enum Facing {
     DOWN_NORTH(180, 45),
     DOWN_EAST(270, 45),
     DOWN_SOUTH(0, 45),
-    DOWN_WEST(90, 45);
+    DOWN_WEST(90, 45),
+
+    UP_NORTH_WEST(-45, -90),
+    DOWN_SOUTH_EAST(135, 90);
 
     public final float yaw;
     public final float pitch;
