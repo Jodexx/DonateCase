@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.spongepowered.configurate.ConfigurationNode;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +69,10 @@ public class CaseSettings implements Cloneable {
 
         public LevelGroups(Map<String, Integer> map) {
             this.map = map;
+        }
+
+        public LevelGroups() {
+            this.map = new HashMap<>();
         }
 
         public boolean isBetterOrEqual(String playerGroup, String rewardGroup) {

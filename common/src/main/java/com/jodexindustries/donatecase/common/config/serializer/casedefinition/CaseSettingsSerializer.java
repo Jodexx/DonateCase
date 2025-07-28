@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.data.casedata.OpenType;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 
@@ -75,6 +76,11 @@ public class CaseSettingsSerializer implements TypeSerializer<CaseSettings> {
             for (Map.Entry<String, Integer> entry : obj.map().entrySet()) {
                 node.node(entry.getKey()).set(entry.getValue());
             }
+        }
+
+        @Override
+        public CaseSettings.@Nullable LevelGroups emptyValue(Type specificType, ConfigurationOptions options) {
+            return new CaseSettings.LevelGroups();
         }
     }
 
