@@ -61,7 +61,7 @@ public class SetKeyCommand extends DefaultCommand {
             return true;
         }
 
-        DCTools.formatPlayerName(plainName).thenAccept(playerName -> api.getCaseKeyManager().set(caseName, playerName, keys).thenAcceptAsync(status -> {
+        DCTools.formatPlayerName(plainName).thenAcceptAsync(playerName -> api.getCaseKeyManager().set(caseName, playerName, keys).thenAcceptAsync(status -> {
             Collection<LocalPlaceholder> placeholders = LocalPlaceholder.of(optional.get());
             placeholders.add(LocalPlaceholder.of("%player%", playerName));
             placeholders.add(LocalPlaceholder.of("%key%", keys));

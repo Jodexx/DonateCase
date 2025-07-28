@@ -56,7 +56,7 @@ public class DelKeyCommand extends DefaultCommand {
                 return true;
             }
 
-            DCTools.formatPlayerName(plainName).thenAccept(playerName -> {
+            DCTools.formatPlayerName(plainName).thenAcceptAsync(playerName -> {
                 int keys;
                 if (args.length == 2) {
                     keys = api.getCaseKeyManager().get(caseType, playerName);
