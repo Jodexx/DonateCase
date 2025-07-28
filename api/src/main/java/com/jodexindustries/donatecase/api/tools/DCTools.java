@@ -32,6 +32,11 @@ import java.util.stream.Collectors;
  */
 public abstract class DCTools {
 
+    public static String[] parseRGB(String string) {
+        if (string == null) return new String[0];
+        return string.replaceAll(" ", "").split(",");
+    }
+
     public abstract CaseInventory createInventory(int size, @Nullable String title);
 
     public abstract ArmorStandCreator createArmorStand(UUID animationUuid, CaseLocation location);

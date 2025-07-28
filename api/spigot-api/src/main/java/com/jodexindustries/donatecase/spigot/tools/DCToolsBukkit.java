@@ -2,7 +2,6 @@ package com.jodexindustries.donatecase.spigot.tools;
 
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import org.bukkit.Color;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -32,10 +31,6 @@ public abstract class DCToolsBukkit extends DCTools {
             }
         }
         return null;
-    }
-
-    public static String[] parseRGB(@NotNull String string) {
-        return string.replaceAll(" ", "").split(",");
     }
 
     public static Color fromRGBString(String[] rgb, Color def) {
