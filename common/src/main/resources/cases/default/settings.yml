@@ -7,7 +7,7 @@ type: default
 default-menu: default_menu
 
 animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL, RANDOM, POP, SELECT see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/animations
-#  AnimationSettings:
+#  animation-settings:
 #    Type: FULL # or RANDOM
 #    ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
 #    SmallArmorStand: true
