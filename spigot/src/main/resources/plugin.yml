@@ -6,6 +6,7 @@ website: "https://jodexindustries.xyz/"
 libraries:
   - com.j256.ormlite:ormlite-jdbc:6.1
   - org.spongepowered:configurate-yaml:4.1.2
+  - net.kyori:event-method:3.0.0
 softdepend:
   - LuckPerms
   - PlaceholderAPI

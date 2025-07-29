@@ -9,11 +9,7 @@ version = properties["api"].toString()
 
 
 dependencies {
-    compileOnlyApi("net.kyori:event-api:3.0.0")
-    api("net.kyori:event-method:3.0.0") {
-        exclude("com.google.guava", "guava")
-        exclude("org.checkerframework", "checker-qual")
-    }
+    compileOnlyApi("net.kyori:event-method:3.0.0")
     compileOnlyApi("com.j256.ormlite:ormlite-jdbc:6.1")
     compileOnlyApi("org.jetbrains:annotations:24.0.0")
     compileOnlyApi("com.google.guava:guava:33.3.1-jre")
