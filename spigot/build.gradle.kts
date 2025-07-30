@@ -50,7 +50,7 @@ tasks.processResources {
 
 tasks.shadowJar {
     archiveBaseName.set(project.rootProject.name)
-    archiveClassifier.set("beta-3")
+    archiveClassifier.set("")
     archiveVersion.set(project.version.toString())
     exclude("org/jetbrains/**")
     exclude("org/intellij/lang/**")
