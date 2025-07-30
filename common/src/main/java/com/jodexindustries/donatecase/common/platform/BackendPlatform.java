@@ -7,6 +7,7 @@ import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.common.hook.LuckPermsSupport;
+import com.jodexindustries.donatecase.common.scheduler.BackendScheduler;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +26,7 @@ public abstract class BackendPlatform implements Platform {
 
     @NotNull
     private final LuckPermsSupport luckPermsSupport = new LuckPermsSupport();
+    private final BackendScheduler scheduler = new BackendScheduler();
 
     public abstract void load();
 
@@ -88,4 +90,8 @@ public abstract class BackendPlatform implements Platform {
         }
     }
 
+    @Override
+    public @NotNull BackendScheduler getScheduler() {
+        return scheduler;
+    }
 }

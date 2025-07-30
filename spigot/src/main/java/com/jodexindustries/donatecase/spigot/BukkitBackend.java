@@ -23,7 +23,6 @@ import com.jodexindustries.donatecase.spigot.animations.shape.ShapeAnimation;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
-import com.jodexindustries.donatecase.api.scheduler.Scheduler;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.PAPI;
 import com.jodexindustries.donatecase.spigot.animations.wheel.WheelAnimation;
@@ -169,7 +168,7 @@ public class BukkitBackend extends BackendPlatform {
     }
 
     @Override
-    public @NotNull Scheduler getScheduler() {
+    public @NotNull BukkitScheduler getScheduler() {
         return scheduler;
     }
 

@@ -3,7 +3,9 @@ package com.jodexindustries.donatecase.common.scheduler;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
+import lombok.Setter;
 
+import java.util.concurrent.ScheduledFuture;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -17,32 +19,34 @@ public class WrappedTask implements SchedulerTask {
     private final Consumer<SchedulerTask> c;
 
     private volatile boolean cancelled = false;
+    @Setter
+    private ScheduledFuture<?> future;
 
     @SuppressWarnings("unchecked")
     public WrappedTask(Addon owner, int taskId, boolean sync, Object task) {
         this.owner = owner;
         this.taskId = taskId;
         this.sync = sync;
+
         if (task instanceof Runnable) {
-            this.c = null;
             this.r = (Runnable) task;
+            this.c = null;
         } else if (task instanceof Consumer) {
             this.r = null;
             this.c = (Consumer<SchedulerTask>) task;
         } else {
-            throw new AssertionError("Illegal task class " + task);
+            throw new IllegalArgumentException("Invalid task type: " + task.getClass());
         }
     }
 
     @Override
     public void run() {
-        if (!isCancelled()) {
-            try {
-                if (r != null) r.run();
-                if (c != null) c.accept(this);
-            } catch (Throwable e) {
-                DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Error with executing task: " + taskId, e);
-            }
+        if (cancelled) return;
+        try {
+            if (r != null) r.run();
+            if (c != null) c.accept(this);
+        } catch (Throwable t) {
+            DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Exception while executing task: " + taskId, t);
         }
     }
 
@@ -58,7 +62,7 @@ public class WrappedTask implements SchedulerTask {
 
     @Override
     public boolean isCancelled() {
-        return cancelled;
+        return cancelled || (future != null && future.isCancelled());
     }
 
     @Override
@@ -68,8 +72,10 @@ public class WrappedTask implements SchedulerTask {
 
     @Override
     public void cancel() {
-        this.cancelled = true;
+        cancelled = true;
+        if (future != null) {
+            future.cancel(false);
+        }
         DCAPI.getInstance().getPlatform().getScheduler().cancel(taskId);
     }
-
 }
