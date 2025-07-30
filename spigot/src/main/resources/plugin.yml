@@ -2,7 +2,8 @@ name: DonateCase
 main: com.jodexindustries.donatecase.spigot.BukkitDonateCase
 author: _Jodex__
 version: '${version}'
-website: "https://jodexindustries.xyz/"
+website: "https://www.jodex.xyz/"
+description: A powerful plugin for creating donation cases on Minecraft servers
 libraries:
   - com.j256.ormlite:ormlite-jdbc:6.1
   - org.spongepowered:configurate-yaml:4.1.2
