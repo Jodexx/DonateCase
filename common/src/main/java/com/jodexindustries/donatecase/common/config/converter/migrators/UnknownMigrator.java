@@ -31,9 +31,9 @@ public class UnknownMigrator implements ConfigMigrator {
             }
         }
 
-        if(config.path().contains("/lang")) type = DefaultConfigType.LANG;
+        if (config.path().contains("/lang")) type = DefaultConfigType.LANG;
 
-        if(type == DefaultConfigType.UNKNOWN) type = DefaultConfigType.UNKNOWN_CUSTOM;
+        if (type == DefaultConfigType.UNKNOWN) type = DefaultConfigType.UNKNOWN_CUSTOM;
 
         node.removeChild("config");
         node.node("config", "version").set(config.version());

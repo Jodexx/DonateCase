@@ -24,7 +24,7 @@ public class CasesMigrator_1_0_to_1_1 implements ConfigMigrator {
             String caseType = node.node("type").getString();
             String[] location = node.node("location").getString("").split(";");
 
-            if(location.length < 4) continue;
+            if (location.length < 4) continue;
 
             CaseInfo caseInfo = getCaseInfo(location, caseType);
 
