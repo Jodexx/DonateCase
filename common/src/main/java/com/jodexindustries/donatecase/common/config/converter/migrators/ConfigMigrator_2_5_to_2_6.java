@@ -35,20 +35,63 @@ public class ConfigMigrator_2_5_to_2_6 implements ConfigMigrator {
 
     @Override
     public void migrate(Config config) throws ConfigurateException {
-        ConfigurationNode donateCase = config.node("DonateCase").copy();
+        ConfigurationNode donateCase = getRoot(config).copy();
         if (!donateCase.virtual()) {
+            donateCase.removeChild("NoKeyWarningSound");
+            donateCase.removeChild("SetKeysTargetMessage");
+            donateCase.removeChild("PermissionDriver");
+            donateCase.removeChild("LevelGroup");
             donateCase.removeChild("DisableSpawnProtection");
             renameKeysRecursively(donateCase);
+
+            ConfigurationNode caching = donateCase.node("caching");
+            if (caching.virtual()) {
+                caching.set(20);
+            }
+
+            ConfigurationNode formatPlayerName = donateCase.node("format-player-name");
+            if (formatPlayerName.virtual()) {
+                formatPlayerName.set(false);
+            }
+
+            ConfigurationNode language = donateCase.node("language");
+            String languageString = language.getString();
+            if (languageString != null) {
+                switch (languageString.toLowerCase()) {
+                    case "ru": {
+                        language.set("ru_RU");
+                        break;
+                    }
+
+                    case "en": {
+                        language.set("en_US");
+                        break;
+                    }
+
+                    case "ua": {
+                        language.set("ua_UA");
+                        break;
+                    }
+                }
+            }
         }
 
         ConfigurationNode root = config.node();
-        root.removeChild("DonateCase");
+        Object key = donateCase.key();
+        if (key != null) root.removeChild(key);
 
         for (Map.Entry<Object, ? extends ConfigurationNode> entry : donateCase.childrenMap().entrySet()) {
             root.node(entry.getKey()).set(entry.getValue());
         }
 
         root.node("config", "version").set(26);
+    }
+
+    private ConfigurationNode getRoot(Config config) {
+        ConfigurationNode donateCase = config.node("DonateCase");
+        if (!donateCase.virtual()) return donateCase;
+
+        return config.node("DonatCase");
     }
 
     private void renameKeysRecursively(ConfigurationNode node) {
