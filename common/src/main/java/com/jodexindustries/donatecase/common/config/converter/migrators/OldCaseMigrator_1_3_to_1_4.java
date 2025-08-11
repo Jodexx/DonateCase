@@ -14,7 +14,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.io.File;
 
-public class CaseMigrator_1_3_to_1_4 implements ConfigMigrator {
+public class OldCaseMigrator_1_3_to_1_4 implements ConfigMigrator {
 
     @Override
     @Deprecated

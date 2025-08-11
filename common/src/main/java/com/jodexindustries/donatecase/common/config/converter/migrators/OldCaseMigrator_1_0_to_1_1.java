@@ -8,7 +8,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import java.util.Arrays;
 import java.util.List;
 
-public class CaseMigrator_1_0_to_1_1 implements ConfigMigrator {
+public class OldCaseMigrator_1_0_to_1_1 implements ConfigMigrator {
 
     @Override
     public void migrate(Config config) throws SerializationException {

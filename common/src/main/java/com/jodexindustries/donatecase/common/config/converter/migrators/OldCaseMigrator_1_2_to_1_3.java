@@ -5,7 +5,7 @@ import com.jodexindustries.donatecase.api.config.converter.ConfigMigrator;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-public class CaseMigrator_1_2_to_1_3 implements ConfigMigrator {
+public class OldCaseMigrator_1_2_to_1_3 implements ConfigMigrator {
 
     @Override
     public void migrate(Config config) throws SerializationException {

@@ -24,10 +24,10 @@ public enum DefaultConfigType implements ConfigType {
      * <p>Automatically triggers conversion to the new case format structure.</p>
      */
     OLD_CASE(14, new HashMap<Integer, ConfigMigrator>() {{
-        put(10, new CaseMigrator_1_0_to_1_1());
-        put(11, new CaseMigrator_1_1_to_1_2());
-        put(12, new CaseMigrator_1_2_to_1_3());
-        put(13, new CaseMigrator_1_3_to_1_4());
+        put(10, new OldCaseMigrator_1_0_to_1_1());
+        put(11, new OldCaseMigrator_1_1_to_1_2());
+        put(12, new OldCaseMigrator_1_2_to_1_3());
+        put(13, new OldCaseMigrator_1_3_to_1_4());
     }}),
 
     CASE_MENU(1, new ConfigSerializer(CaseMenu.class)),
