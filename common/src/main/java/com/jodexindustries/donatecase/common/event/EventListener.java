@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.common.event;
 
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemException;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.event.Subscriber;
 import com.jodexindustries.donatecase.common.DonateCase;
@@ -51,13 +52,19 @@ public class EventListener implements Subscriber {
     @Subscribe
     @PostOrder(PostOrders.LAST)
     public void onGUIClick(GuiClickEvent event) {
-        Optional<TypedItem> typedItem = DCAPI.getInstance().getGuiTypedItemManager().getFromString(event.itemType());
-        if (!typedItem.isPresent()) return;
+        Optional<TypedItem> optional = DCAPI.getInstance().getGuiTypedItemManager().getFromString(event.itemType());
+        if (!optional.isPresent()) return;
 
-        TypedItemClickHandler handler = typedItem.get().click();
+        TypedItem typedItem = optional.get();
+
+        TypedItemClickHandler handler = typedItem.click();
         if (handler == null) return;
 
-        handler.onClick(event);
+        try {
+            handler.onClick(event);
+        } catch (TypedItemException e) {
+            api.getPlatform().getLogger().log(Level.WARNING, "Error with typed item: " + typedItem.id(), e);
+        }
     }
 
     @Subscribe
