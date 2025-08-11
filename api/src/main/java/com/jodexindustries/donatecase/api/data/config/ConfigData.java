@@ -14,36 +14,39 @@ import org.spongepowered.configurate.objectmapping.meta.Setting;
 @ConfigSerializable
 public class ConfigData {
 
-    @Setting()
+    @Setting
     private boolean updateChecker = true;
 
-    @Setting()
+    @Setting
     private MySQL mysql = new MySQL();
 
-    @Setting()
+    @Setting
     private String language = "en_US";
 
-    @Setting()
+    @Setting
     private String hologramDriver = "DecentHolograms";
 
-    @Setting()
+    @Setting
     private CaseSettings.LevelGroups levelGroups;
 
-    @Setting()
+    @Setting
     private String dateFormat = "dd.MM HH:mm:ss";
 
-    @Setting()
+    @Setting
     private boolean addonsHelp = true;
 
-    @Setting()
+    @Setting
     private boolean usePackets = true;
 
-    @Setting()
+    @Setting
     private long caching = 20;
 
     @Comment("If true, formats the nickname of the player (searches for a similar one on the server).")
-    @Setting()
+    @Setting
     private boolean formatPlayerName = false;
+
+    @Setting
+    private Converter converter;
 
     @Accessors(fluent = true)
     @Getter
@@ -51,22 +54,35 @@ public class ConfigData {
     @ConfigSerializable
     public static class MySQL {
 
-        @Setting()
+        @Setting
         private boolean enabled = false;
 
-        @Setting()
+        @Setting
         private String host = "localhost";
 
-        @Setting()
+        @Setting
         private int port = 3306;
 
-        @Setting()
+        @Setting
         private String database = "donatecase";
 
-        @Setting()
+        @Setting
         private String username = "admin";
 
-        @Setting()
+        @Setting
         private String password = "123456";
+    }
+
+    @Accessors(fluent = true)
+    @Getter
+    @Setter
+    @ConfigSerializable
+    public static class Converter {
+
+        @Setting
+        private boolean keys = false;
+
+        @Setting
+        private boolean data = false;
     }
 }

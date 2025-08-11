@@ -30,6 +30,14 @@ public enum DefaultConfigType implements ConfigType {
         put(13, new OldCaseMigrator_1_3_to_1_4());
     }}),
 
+    OLD_KEYS(1, new HashMap<Integer, ConfigMigrator>() {{
+        put(0, new OldKeysMigrator());
+    }}),
+
+    OLD_DATA(1, new HashMap<Integer, ConfigMigrator>() {{
+        put(0, new OldDataMigrator());
+    }}),
+
     CASE_MENU(1, new ConfigSerializer(CaseMenu.class)),
 
     CASE_SETTINGS(1, new ConfigSerializer(CaseSettings.class)),
@@ -44,9 +52,10 @@ public enum DefaultConfigType implements ConfigType {
         put(10, new CasesMigrator_1_0_to_1_1());
     }}),
 
-    CONFIG(26,
+    CONFIG(27,
             new HashMap<Integer, ConfigMigrator>() {{
                 put(25, new ConfigMigrator_2_5_to_2_6());
+                put(26, new ConfigMigrator_2_6_to_2_7());
             }},
             new ConfigSerializer(ConfigData.class)),
 

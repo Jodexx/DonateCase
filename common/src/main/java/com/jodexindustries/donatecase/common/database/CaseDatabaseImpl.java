@@ -172,6 +172,48 @@ public class CaseDatabaseImpl extends CaseDatabase {
         });
     }
 
+    public CompletableFuture<DatabaseStatus> setKeysBulk(String caseName, Map<String, Integer> playerKeysMap) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                playerKeysTables.callBatchTasks(() -> {
+                    for (Map.Entry<String, Integer> entry : playerKeysMap.entrySet()) {
+                        String player = entry.getKey();
+                        int keys = entry.getValue();
+
+                        List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
+                                .where()
+                                .eq("player", player)
+                                .and()
+                                .eq("case_name", caseName)
+                                .query();
+
+                        if (results.isEmpty()) {
+                            PlayerKeysTable newEntry = new PlayerKeysTable();
+                            newEntry.setPlayer(player);
+                            newEntry.setCaseType(caseName);
+                            newEntry.setKeys(keys);
+                            playerKeysTables.create(newEntry);
+                        } else {
+                            UpdateBuilder<PlayerKeysTable, String> updateBuilder = playerKeysTables.updateBuilder();
+                            updateBuilder.updateColumnValue("keys", keys);
+                            updateBuilder.where()
+                                    .eq("player", player)
+                                    .and()
+                                    .eq("case_name", caseName);
+                            updateBuilder.update();
+                        }
+                    }
+                    return null;
+                });
+            } catch (Exception e) {
+                warning(e);
+                return DatabaseStatus.FAIL;
+            }
+            return DatabaseStatus.COMPLETE;
+        });
+    }
+
+
     @Override
     public CompletableFuture<Integer> getOpenCount(String player, String caseType) {
         return CompletableFuture.supplyAsync(() -> {

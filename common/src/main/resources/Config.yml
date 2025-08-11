@@ -1,5 +1,5 @@
 config: # Please do not touch this section
-  version: 26
+  version: 27
   type: config
 
 # Do I need to check for plugin updates?
@@ -30,3 +30,6 @@ use-packets: true # you need to install packetevents plugin
 caching: 20 # in ticks
 # If true, formats the nickname of the player (searches for a similar one on the server).
 format-player-name: false
+converter: # Old data converters
+  keys: false # Keys.yml
+  data: false # Data.yml

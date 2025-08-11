@@ -29,6 +29,14 @@ public class UnknownMigrator implements ConfigMigrator {
                 type = DefaultConfigType.CASES;
                 break;
             }
+            case "keys.yml": {
+                type = DefaultConfigType.OLD_KEYS;
+                break;
+            }
+            case "data.yml": {
+                type = DefaultConfigType.OLD_DATA;
+                break;
+            }
         }
 
         if (config.path().contains("/lang")) type = DefaultConfigType.LANG;
