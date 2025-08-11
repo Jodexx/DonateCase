@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.common.config.converter;
 import com.jodexindustries.donatecase.api.config.Config;
 import com.jodexindustries.donatecase.api.config.converter.ConfigMigrator;
 import com.jodexindustries.donatecase.api.config.converter.ConfigType;
+import com.jodexindustries.donatecase.api.config.converter.ConvertOrder;
 import com.jodexindustries.donatecase.common.config.ConfigManagerImpl;
 import org.spongepowered.configurate.ConfigurateException;
 
@@ -17,17 +18,17 @@ public class ConfigConverter {
         this.configManager = configManager;
     }
 
-    public void convert() {
+    public void convert(ConvertOrder order) {
         for (Config config : new ArrayList<>(this.configManager.get().values())) {
             try {
-                convert(config);
+                convert(config, order);
             } catch (ConfigurateException e) {
                 this.configManager.getPlatform().getLogger().log(Level.WARNING, "Error with converting configuration: " + config, e);
             }
         }
     }
 
-    public void convert(Config config) throws ConfigurateException, IllegalArgumentException {
+    public void convert(Config config, ConvertOrder order) throws ConfigurateException, IllegalArgumentException {
         int version = config.version();
         ConfigType currentType = config.type();
 
@@ -37,11 +38,15 @@ public class ConfigConverter {
             ConfigMigrator migrator = currentType.getMigrator(version);
             if (migrator == null) break;
 
+            if (migrator.order() != order) {
+                break;
+            }
+
             this.configManager.getPlatform().getLogger().info(config + " converting...");
             migrator.migrate(config);
             if(currentType.isPermanent()) {
                 this.configManager.getPlatform().getLogger().info(config + " converted permanently from " + currentType + " to " + config.type());
-                convert(config);
+                convert(config, order);
                 break;
             }
             this.configManager.getPlatform().getLogger().info(config + " converted from " + version + " to " + ++version);

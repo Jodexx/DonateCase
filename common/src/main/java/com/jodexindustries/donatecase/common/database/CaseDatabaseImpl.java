@@ -8,12 +8,14 @@ import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.TableUtils;
+import com.jodexindustries.donatecase.api.config.converter.ConvertOrder;
 import com.jodexindustries.donatecase.api.data.config.ConfigData;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
+import com.jodexindustries.donatecase.common.config.ConfigManagerImpl;
 import com.jodexindustries.donatecase.common.database.entities.OpenInfoTable;
 import com.jodexindustries.donatecase.common.database.entities.PlayerKeysTable;
 
@@ -66,20 +68,22 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     public void connect() {
+        ConfigManagerImpl configManager = api.getConfigManager();
 
-        ConfigData.MySQL mysql = api.getConfigManager().getConfig().mysql();
-        if(mysql == null || !mysql.enabled()) {
+        ConfigData.MySQL mysql = configManager.getConfig().mysql();
+        if (mysql == null || !mysql.enabled()) {
             connect(api.getPlatform().getDataFolder().getAbsolutePath());
-            return;
+        } else {
+            connect(
+                    mysql.database(),
+                    mysql.port(),
+                    mysql.host(),
+                    mysql.username(),
+                    mysql.password()
+            );
         }
 
-        connect(
-                mysql.database(),
-                mysql.port(),
-                mysql.host(),
-                mysql.username(),
-                mysql.password()
-        );
+        configManager.getConverter().convert(ConvertOrder.ON_DATABASE);
     }
 
     private void init() throws SQLException {
