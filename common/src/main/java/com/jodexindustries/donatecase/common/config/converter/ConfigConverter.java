@@ -38,7 +38,7 @@ public class ConfigConverter {
             ConfigMigrator migrator = currentType.getMigrator(version);
             if (migrator == null) break;
 
-            if (migrator.order() != order) {
+            if (migrator.order() != order && !migrator.canMigrate()) {
                 break;
             }
 

@@ -12,4 +12,8 @@ public interface ConfigMigrator {
     default ConvertOrder order() {
         return ConvertOrder.ON_CONFIG;
     }
+
+    default boolean canMigrate() {
+        return true;
+    }
 }
