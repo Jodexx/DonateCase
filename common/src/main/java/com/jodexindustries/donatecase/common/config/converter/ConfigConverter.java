@@ -29,18 +29,18 @@ public class ConfigConverter {
 
     public void convert(Config config) throws ConfigurateException, IllegalArgumentException {
         int version = config.version();
-        ConfigType type = config.type();
+        ConfigType currentType = config.type();
 
-        if (version == type.getLatestVersion() && !type.isPermanent()) return;
+        if (version == currentType.getLatestVersion() && !currentType.isPermanent()) return;
 
-        while (version < type.getLatestVersion() || type.isPermanent()) {
-            ConfigMigrator migrator = type.getMigrator(version);
+        while (version < currentType.getLatestVersion() || currentType.isPermanent()) {
+            ConfigMigrator migrator = currentType.getMigrator(version);
             if (migrator == null) break;
 
             this.configManager.getPlatform().getLogger().info(config + " converting...");
             migrator.migrate(config);
-            if(type.isPermanent()) {
-                this.configManager.getPlatform().getLogger().info(config + " converted permanently from UNKNOWN to " + config.type());
+            if(currentType.isPermanent()) {
+                this.configManager.getPlatform().getLogger().info(config + " converted permanently from " + currentType + " to " + config.type());
                 convert(config);
                 break;
             }
