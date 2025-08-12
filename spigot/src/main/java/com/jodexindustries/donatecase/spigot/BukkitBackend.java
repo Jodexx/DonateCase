@@ -80,8 +80,6 @@ public class BukkitBackend extends BackendPlatform {
         this.api = new DonateCase(this);
         this.tools = new ToolsImpl(this);
         this.scheduler = new BukkitScheduler(this);
-
-        DonateCase.setInstance(api);
     }
 
 

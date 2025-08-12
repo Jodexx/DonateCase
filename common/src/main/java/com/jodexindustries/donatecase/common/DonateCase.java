@@ -14,7 +14,6 @@ import com.jodexindustries.donatecase.common.managers.*;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
 import com.jodexindustries.donatecase.common.tools.updater.UpdateChecker;
 import lombok.Getter;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public class DonateCase extends DCAPI {
@@ -62,11 +61,7 @@ public class DonateCase extends DCAPI {
         this.updateChecker = new UpdateChecker(this);
         this.eventBus = new EventBusImpl(platform.getLogger());
         this.eventListener = new EventListener(this);
-    }
-
-    @ApiStatus.Internal
-    public static void setInstance(DCAPI instance) {
-        DCAPI.instance = instance;
+        DCAPI.instance = this;
     }
 
     public void load() {
@@ -100,7 +95,7 @@ public class DonateCase extends DCAPI {
         guiManager.getMap().values().parallelStream().forEach(gui -> gui.getPlayer().closeInventory());
 
         clear();
-        setInstance(null);
+        DCAPI.instance = null;
     }
 
     @Override
