@@ -45,6 +45,11 @@ public class BackendScheduler implements Scheduler {
     }
 
     @Override
+    public SchedulerTask run(Addon addon, Runnable task) {
+        return schedule(addon, task, 0, -1, false);
+    }
+
+    @Override
     public SchedulerTask run(Addon addon, Runnable task, long delay) {
         return schedule(addon, task, delay, -1, false);
     }
@@ -52,6 +57,11 @@ public class BackendScheduler implements Scheduler {
     @Override
     public SchedulerTask run(Addon addon, Runnable task, long delay, long period) {
         return schedule(addon, task, delay, period, false);
+    }
+
+    @Override
+    public void run(Addon addon, Consumer<SchedulerTask> consumer) {
+        scheduleConsumer(addon, consumer, 0, -1, false);
     }
 
     @Override

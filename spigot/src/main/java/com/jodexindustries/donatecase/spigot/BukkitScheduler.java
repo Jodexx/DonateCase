@@ -24,6 +24,12 @@ public class BukkitScheduler extends BackendScheduler {
     }
 
     @Override
+    public SchedulerTask run(Addon addon, Runnable task) {
+        BukkitTask bukkitTask = scheduler.runTask(plugin, task);
+        return wrapper(addon, bukkitTask);
+    }
+
+    @Override
     public SchedulerTask run(Addon addon, Runnable task, long delay) {
         BukkitTask bukkitTask = scheduler.runTaskLater(plugin, task, delay);
         return wrapper(addon, bukkitTask);
@@ -33,6 +39,14 @@ public class BukkitScheduler extends BackendScheduler {
     public SchedulerTask run(Addon addon, Runnable task, long delay, long period) {
         BukkitTask bukkitTask = scheduler.runTaskTimer(plugin, task, delay, period);
         return wrapper(addon, bukkitTask);
+    }
+
+    @Override
+    public void run(Addon addon, Consumer<SchedulerTask> task) {
+        scheduler.runTask(plugin, (bukkitTask) -> {
+            WrappedTask wrappedTask = wrapper(addon, bukkitTask);
+            task.accept(wrappedTask);
+        });
     }
 
     @Override

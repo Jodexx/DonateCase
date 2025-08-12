@@ -6,9 +6,13 @@ import java.util.function.Consumer;
 
 public interface Scheduler {
 
+    SchedulerTask run(Addon addon, Runnable task);
+
     SchedulerTask run(Addon addon, Runnable task, long delay);
 
     SchedulerTask run(Addon addon, Runnable task, long delay, long period);
+
+    void run(Addon addon, Consumer<SchedulerTask> task);
 
     void run(Addon addon, Consumer<SchedulerTask> task, long delay);
 
