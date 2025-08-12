@@ -53,8 +53,8 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         this.inventory = platform.getTools().createInventory(temporary.size(),
                 DCTools.rc(setPlaceholders(temporary.title())));
 
-        load().thenAccept((loaded) -> {
-            platform.getScheduler().run(platform, () -> player.openInventory(inventory.getHandle()), 0L);
+        load().thenAcceptSync((loaded) -> {
+            player.openInventory(inventory.getHandle());
             startUpdateTask();
         }).exceptionally(ex -> {
             platform.getLogger().log(Level.WARNING, "GUI loading failed: " + ex.getMessage());
