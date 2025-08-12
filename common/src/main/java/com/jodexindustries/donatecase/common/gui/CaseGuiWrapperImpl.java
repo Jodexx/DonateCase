@@ -13,6 +13,7 @@ import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.platform.Platform;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.common.command.sub.KeysCommand;
 import org.jetbrains.annotations.NotNull;
@@ -62,8 +63,8 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         });
     }
 
-    private CompletableFuture<Void> load() {
-        CompletableFuture<Void> future = new CompletableFuture<>();
+    private DCFuture<Void> load() {
+        DCFuture<Void> future = new DCFuture<>();
 
         platform.getScheduler().async(platform, () -> {
             globalHistoryData = DCTools.sortHistoryDataByDate(platform.getAPI().getDatabase().getCache());

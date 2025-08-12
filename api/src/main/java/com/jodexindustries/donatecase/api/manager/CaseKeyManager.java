@@ -2,9 +2,9 @@ package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Interface for managing case keys for players in a Donate Case system. Provides methods
@@ -21,9 +21,9 @@ public abstract class CaseKeyManager {
      * @param caseType Case type
      * @param player   Player name
      * @param keys     Number of keys
-     * @return CompletableFuture of completion status
+     * @return DCFuture of completion status
      */
-    public abstract CompletableFuture<DatabaseStatus> set(String caseType, String player, int keys);
+    public abstract DCFuture<DatabaseStatus> set(String caseType, String player, int keys);
 
     /**
      * Modify case keys for a specific player
@@ -33,7 +33,7 @@ public abstract class CaseKeyManager {
      * @param keys     Number of keys to modify (positive to add, negative to remove)
      * @return Completable future of completion status
      */
-    public abstract CompletableFuture<DatabaseStatus> modify(String caseType, String player, int keys);
+    public abstract DCFuture<DatabaseStatus> modify(String caseType, String player, int keys);
 
     /**
      * Add case keys to a specific player (async)
@@ -44,7 +44,7 @@ public abstract class CaseKeyManager {
      * @return Completable future of completes
      * @see #modify(String, String, int)
      */
-    public CompletableFuture<DatabaseStatus> add(String caseType, String player, int keys) {
+    public DCFuture<DatabaseStatus> add(String caseType, String player, int keys) {
         return modify(caseType, player, keys);
     }
 
@@ -57,13 +57,13 @@ public abstract class CaseKeyManager {
      * @return Completable future of completes
      * @see #modify(String, String, int)
      */
-    public CompletableFuture<DatabaseStatus> remove(String caseType, String player, int keys) {
+    public DCFuture<DatabaseStatus> remove(String caseType, String player, int keys) {
         return modify(caseType, player, -keys);
     }
 
-    public abstract CompletableFuture<DatabaseStatus> delete();
+    public abstract DCFuture<DatabaseStatus> delete();
 
-    public abstract CompletableFuture<DatabaseStatus> delete(String caseType);
+    public abstract DCFuture<DatabaseStatus> delete(String caseType);
 
     /**
      * Get the keys to a certain player's case
@@ -88,16 +88,16 @@ public abstract class CaseKeyManager {
      * Get the keys to a certain player's case
      * @param caseType Case type
      * @param player Player name
-     * @return CompletableFuture of keys
+     * @return DCFuture of keys
      */
-    public abstract CompletableFuture<Integer> getAsync(String caseType, String player);
+    public abstract DCFuture<Integer> getAsync(String caseType, String player);
 
     /**
      * Get the map of all player's keys
      * @param player Player name
      * @return Map of the keys. Key - Case type, Value - Number of keys
      */
-    public abstract CompletableFuture<Map<String, Integer>> getAsync(String player);
+    public abstract DCFuture<Map<String, Integer>> getAsync(String player);
 
     /**
      * Get the keys to a certain player's case from cache <br/>

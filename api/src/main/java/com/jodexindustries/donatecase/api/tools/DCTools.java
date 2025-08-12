@@ -14,13 +14,13 @@ import com.jodexindustries.donatecase.api.manager.MaterialManager;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,10 +50,10 @@ public abstract class DCTools {
     }
 
     @NotNull
-    public static CompletableFuture<@NotNull String> formatPlayerName(String name) {
+    public static DCFuture<@NotNull String> formatPlayerName(String name) {
         String trimmed = name.trim();
 
-        return CompletableFuture.supplyAsync(() -> {
+        return DCFuture.supplyAsync(() -> {
             if (!DCAPI.getInstance().getConfigManager().getConfig().formatPlayerName()) {
                 return trimmed;
             }

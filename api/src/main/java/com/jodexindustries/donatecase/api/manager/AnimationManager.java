@@ -9,6 +9,7 @@ import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -50,11 +50,11 @@ public interface AnimationManager {
      */
     void unregister();
 
-    CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition);
+    DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition);
 
-    CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition, int delay);
+    DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition, int delay);
 
-    CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition, boolean keyRemoved, int delay);
+    DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition, boolean keyRemoved, int delay);
 
     /**
      * Starts an animation at a specified location.
@@ -62,10 +62,10 @@ public interface AnimationManager {
      * @param player   The player who triggered the animation.
      * @param location The location where the animation should start.
      * @param caseData The case data associated with the animation.
-     * @return A {@link CompletableFuture} that completes when the animation starts.
+     * @return A {@link DCFuture} that completes when the animation starts.
      */
     @Deprecated
-    default CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData) {
+    default DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData) {
         return start(player, location, CaseData.toDefinition(caseData));
     }
 
@@ -76,15 +76,15 @@ public interface AnimationManager {
      * @param location The location where the animation should start.
      * @param caseData The case data associated with the animation.
      * @param delay    The delay in ticks before starting the animation.
-     * @return A {@link CompletableFuture} that completes when the animation starts.
+     * @return A {@link DCFuture} that completes when the animation starts.
      */
     @Deprecated
-    default CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay) {
+    default DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay) {
         return start(player, location, CaseData.toDefinition(caseData), delay);
     }
 
     @Deprecated
-    default CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, boolean keyRemoved, int delay) {
+    default DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, boolean keyRemoved, int delay) {
         return start(player, location, CaseData.toDefinition(caseData), keyRemoved, delay);
     }
 

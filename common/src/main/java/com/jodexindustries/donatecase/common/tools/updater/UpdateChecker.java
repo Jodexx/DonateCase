@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.CompletableFuture;
 
 public class UpdateChecker {
 
@@ -31,9 +31,9 @@ public class UpdateChecker {
         });
     }
 
-    public CompletableFuture<VersionInfo> getVersion() {
-        return !api.getConfigManager().getConfig().updateChecker() ? CompletableFuture.completedFuture(new VersionInfo()) :
-                CompletableFuture.supplyAsync(() -> {
+    public DCFuture<VersionInfo> getVersion() {
+        return !api.getConfigManager().getConfig().updateChecker() ? DCFuture.completedFuture(new VersionInfo()) :
+                DCFuture.supplyAsync(() -> {
 
                     try {
                         URL url = new URL("https://api.modrinth.com/v2/project/donatecase/version?featured=true");

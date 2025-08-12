@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandType;
 import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.common.command.DefaultCommand;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +13,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class KeysCommand extends DefaultCommand {
@@ -26,7 +26,7 @@ public class KeysCommand extends DefaultCommand {
 
     @Override
     public boolean execute(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
-        CompletableFuture.runAsync(() -> {
+        DCFuture.runAsync(() -> {
             if (args.length < 1) {
                 if (sender instanceof DCPlayer) {
                     DCPlayer player = (DCPlayer) sender;

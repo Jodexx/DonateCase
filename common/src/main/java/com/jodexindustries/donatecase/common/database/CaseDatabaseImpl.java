@@ -10,6 +10,7 @@ import com.j256.ormlite.stmt.UpdateBuilder;
 import com.j256.ormlite.table.TableUtils;
 import com.jodexindustries.donatecase.api.config.converter.ConvertOrder;
 import com.jodexindustries.donatecase.api.data.config.ConfigData;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
@@ -21,7 +22,6 @@ import com.jodexindustries.donatecase.common.database.entities.PlayerKeysTable;
 
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -98,8 +98,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<Map<String, Integer>> getKeys(String player) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<Map<String, Integer>> getKeys(String player) {
+        return DCFuture.supplyAsync(() -> {
             Map<String, Integer> keys = new HashMap<>();
             try {
                 List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
@@ -118,8 +118,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<Integer> getKeys(String name, String player) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<Integer> getKeys(String name, String player) {
+        return DCFuture.supplyAsync(() -> {
             int keys = 0;
             try {
                 List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
@@ -140,8 +140,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> setKeys(String name, String player, int keys) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<DatabaseStatus> setKeys(String name, String player, int keys) {
+        return DCFuture.supplyAsync(() -> {
 
             try {
                 List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
@@ -172,8 +172,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
         });
     }
 
-    public CompletableFuture<DatabaseStatus> setKeysBulk(String caseName, Map<String, Integer> playerKeysMap) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<DatabaseStatus> setKeysBulk(String caseName, Map<String, Integer> playerKeysMap) {
+        return DCFuture.supplyAsync(() -> {
             try {
                 playerKeysTables.callBatchTasks(() -> {
                     for (Map.Entry<String, Integer> entry : playerKeysMap.entrySet()) {
@@ -215,8 +215,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
 
 
     @Override
-    public CompletableFuture<Integer> getOpenCount(String player, String caseType) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<Integer> getOpenCount(String player, String caseType) {
+        return DCFuture.supplyAsync(() -> {
             try {
                 List<OpenInfoTable> results = openInfoTables.queryBuilder()
                         .where()
@@ -234,8 +234,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<Map<String, Integer>> getOpenCount(String player) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<Map<String, Integer>> getOpenCount(String player) {
+        return DCFuture.supplyAsync(() -> {
             Map<String, Integer> opens = new HashMap<>();
             try {
                 List<OpenInfoTable> results = openInfoTables.queryBuilder()
@@ -253,8 +253,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<Map<String, Map<String, Integer>>> getGlobalOpenCount() {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<Map<String, Map<String, Integer>>> getGlobalOpenCount() {
+        return DCFuture.supplyAsync(() -> {
             Map<String, Map<String, Integer>> globalMap = new HashMap<>();
             try {
                 List<OpenInfoTable> results = openInfoTables.queryForAll();
@@ -271,8 +271,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<Map<String, Integer>> getGlobalOpenCount(String caseType) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<Map<String, Integer>> getGlobalOpenCount(String caseType) {
+        return DCFuture.supplyAsync(() -> {
             Map<String, Integer> opens = new HashMap<>();
             try {
                 List<OpenInfoTable> results = openInfoTables.queryBuilder()
@@ -292,8 +292,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
         }
 
     @Override
-    public CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<DatabaseStatus> setCount(String caseType, String player, int count) {
+        return DCFuture.supplyAsync(() -> {
             try {
                 List<OpenInfoTable> results = openInfoTables.queryBuilder()
                         .where()
@@ -324,8 +324,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> addHistory(String caseType, CaseData.History newEntry, int maxSize) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<DatabaseStatus> addHistory(String caseType, CaseData.History newEntry, int maxSize) {
+        return DCFuture.supplyAsync(() -> {
             try {
                 List<CaseData.History> entries = historyDataTables.queryBuilder().orderBy("time", true)
                         .where()
@@ -365,8 +365,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseData.History data) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseData.History data) {
+        return DCFuture.supplyAsync(() -> {
             try {
                 QueryBuilder<CaseData.History, String> queryBuilder = historyDataTables.queryBuilder();
                 queryBuilder.where().eq("case_type", caseType);
@@ -383,8 +383,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> removeHistoryData(String caseType) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<DatabaseStatus> removeHistoryData(String caseType) {
+        return DCFuture.supplyAsync(() -> {
             try {
                 DeleteBuilder<CaseData.History, String> deleteBuilder = historyDataTables.deleteBuilder();
                 deleteBuilder.where().eq("case_type", caseType);
@@ -398,8 +398,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> removeHistoryData(String caseType, int index) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<DatabaseStatus> removeHistoryData(String caseType, int index) {
+        return DCFuture.supplyAsync(() -> {
             try {
                 DeleteBuilder<CaseData.History, String> deleteBuilder = historyDataTables.deleteBuilder();
                 deleteBuilder.where().eq("case_type", caseType).and().eq("id", index);
@@ -413,9 +413,9 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<List<CaseData.History>> getHistoryData() {
+    public DCFuture<List<CaseData.History>> getHistoryData() {
         List<CaseData.History> result = new ArrayList<>();
-        return CompletableFuture.supplyAsync(() -> {
+        return DCFuture.supplyAsync(() -> {
             try {
                 result.addAll(historyDataTables.queryForAll());
             } catch (SQLException e) {
@@ -426,9 +426,9 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<List<CaseData.History>> getHistoryData(String caseType) {
+    public DCFuture<List<CaseData.History>> getHistoryData(String caseType) {
         List<CaseData.History> result = new ArrayList<>();
-        return CompletableFuture.supplyAsync(() -> {
+        return DCFuture.supplyAsync(() -> {
             try {
                 result.addAll(historyDataTables.queryBuilder().orderBy("time", true)
                         .where()
@@ -477,8 +477,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> delAllKeys() {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<DatabaseStatus> delAllKeys() {
+        return DCFuture.supplyAsync(() -> {
             try {
                 playerKeysTables.deleteBuilder().delete();
             } catch (SQLException e) {
@@ -490,8 +490,8 @@ public class CaseDatabaseImpl extends CaseDatabase {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> delKeys(String caseType) {
-        return CompletableFuture.supplyAsync(() -> {
+    public DCFuture<DatabaseStatus> delKeys(String caseType) {
+        return DCFuture.supplyAsync(() -> {
             try {
                 DeleteBuilder<PlayerKeysTable, String> deleteBuilder = playerKeysTables.deleteBuilder();
                 deleteBuilder.where().eq("case_name", caseType);

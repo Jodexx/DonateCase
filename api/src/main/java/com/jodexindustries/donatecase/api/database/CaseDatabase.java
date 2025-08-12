@@ -4,10 +4,10 @@ import com.jodexindustries.donatecase.api.caching.SimpleCache;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * This abstract class defines the contract for interacting with the case database.
@@ -48,18 +48,18 @@ public abstract class CaseDatabase {
      * Retrieves the number of keys the player has for all case types.
      *
      * @param player the player's name
-     * @return a {@link CompletableFuture} completing with a map of caseType -> keys
+     * @return a {@link DCFuture} completing with a map of caseType -> keys
      */
-    public abstract CompletableFuture<Map<String, Integer>> getKeys(String player);
+    public abstract DCFuture<Map<String, Integer>> getKeys(String player);
 
     /**
      * Retrieves the number of keys a player has for a specific case type.
      *
      * @param name   case type
      * @param player the player's name
-     * @return a {@link CompletableFuture} completing with the number of keys
+     * @return a {@link DCFuture} completing with the number of keys
      */
-    public abstract CompletableFuture<Integer> getKeys(String name, String player);
+    public abstract DCFuture<Integer> getKeys(String name, String player);
 
     /**
      * Sets the number of keys a player has for a specific case type.
@@ -67,58 +67,58 @@ public abstract class CaseDatabase {
      * @param name   case type
      * @param player the player's name
      * @param keys   number of keys to set
-     * @return a {@link CompletableFuture} completing with the result status
+     * @return a {@link DCFuture} completing with the result status
      */
-    public abstract CompletableFuture<DatabaseStatus> setKeys(String name, String player, int keys);
+    public abstract DCFuture<DatabaseStatus> setKeys(String name, String player, int keys);
 
     /**
      * Deletes all key data for all players and case types.
      *
-     * @return a {@link CompletableFuture} completing with the result status
+     * @return a {@link DCFuture} completing with the result status
      */
-    public abstract CompletableFuture<DatabaseStatus> delAllKeys();
+    public abstract DCFuture<DatabaseStatus> delAllKeys();
 
     /**
      * Deletes key data for a specific case type.
      *
      * @param caseType the case type to delete keys for
-     * @return a {@link CompletableFuture} completing with the result status
+     * @return a {@link DCFuture} completing with the result status
      */
-    public abstract CompletableFuture<DatabaseStatus> delKeys(String caseType);
+    public abstract DCFuture<DatabaseStatus> delKeys(String caseType);
 
     /**
      * Retrieves the number of times a player has opened a specific case type.
      *
      * @param player   the player's name
      * @param caseType the case type
-     * @return a {@link CompletableFuture} completing with the open count
+     * @return a {@link DCFuture} completing with the open count
      */
-    public abstract CompletableFuture<Integer> getOpenCount(String player, String caseType);
+    public abstract DCFuture<Integer> getOpenCount(String player, String caseType);
 
     /**
      * Retrieves all case open counts for a player, grouped by case type.
      *
      * @param player the player's name
-     * @return a {@link CompletableFuture} completing with a map of caseType -> open count
+     * @return a {@link DCFuture} completing with a map of caseType -> open count
      */
-    public abstract CompletableFuture<Map<String, Integer>> getOpenCount(String player);
+    public abstract DCFuture<Map<String, Integer>> getOpenCount(String player);
 
     /**
      * Retrieves global case open counts for all players and case types.
      *
-     * @return a {@link CompletableFuture} completing with a map where:
+     * @return a {@link DCFuture} completing with a map where:
      *         - key is the player name,
      *         - value is another map of caseType -> open count
      */
-    public abstract CompletableFuture<Map<String, Map<String, Integer>>> getGlobalOpenCount();
+    public abstract DCFuture<Map<String, Map<String, Integer>>> getGlobalOpenCount();
 
     /**
      * Retrieves the open count of a specific case type across all players.
      *
      * @param caseType the case type
-     * @return a {@link CompletableFuture} completing with a map of player -> open count
+     * @return a {@link DCFuture} completing with a map of player -> open count
      */
-    public abstract CompletableFuture<Map<String, Integer>> getGlobalOpenCount(String caseType);
+    public abstract DCFuture<Map<String, Integer>> getGlobalOpenCount(String caseType);
 
 
     /**
@@ -127,9 +127,9 @@ public abstract class CaseDatabase {
      * @param caseType the case type
      * @param player   the player's name
      * @param count    the number of times opened
-     * @return a {@link CompletableFuture} completing with the result status
+     * @return a {@link DCFuture} completing with the result status
      */
-    public abstract CompletableFuture<DatabaseStatus> setCount(String caseType, String player, int count);
+    public abstract DCFuture<DatabaseStatus> setCount(String caseType, String player, int count);
 
     /**
      * Adds a new entry to the case opening history for a specific case type.
@@ -138,9 +138,9 @@ public abstract class CaseDatabase {
      * @param caseType the case type
      * @param newEntry the new history entry
      * @param maxSize  maximum size of the history list
-     * @return a {@link CompletableFuture} completing with the result status
+     * @return a {@link DCFuture} completing with the result status
      */
-    public abstract CompletableFuture<DatabaseStatus> addHistory(String caseType, CaseData.History newEntry, int maxSize);
+    public abstract DCFuture<DatabaseStatus> addHistory(String caseType, CaseData.History newEntry, int maxSize);
 
     /**
      * Sets a history entry at a specific index or the full list if index &lt; 0.
@@ -148,41 +148,41 @@ public abstract class CaseDatabase {
      * @param caseType the case type
      * @param index    index of the history entry (use -1 to overwrite all)
      * @param data     the history entry to set; if {@code null}, the entry is removed
-     * @return a {@link CompletableFuture} completing with the result status
+     * @return a {@link DCFuture} completing with the result status
      */
-    public abstract CompletableFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseData.History data);
+    public abstract DCFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseData.History data);
 
     /**
      * Removes all history entries for a given case type.
      *
      * @param caseType the case type
-     * @return a {@link CompletableFuture} completing with the result status
+     * @return a {@link DCFuture} completing with the result status
      */
-    public abstract CompletableFuture<DatabaseStatus> removeHistoryData(String caseType);
+    public abstract DCFuture<DatabaseStatus> removeHistoryData(String caseType);
 
     /**
      * Removes a history entry at a specific index for a given case type.
      *
      * @param caseType the case type
      * @param index    index of the entry to remove
-     * @return a {@link CompletableFuture} completing with the result status
+     * @return a {@link DCFuture} completing with the result status
      */
-    public abstract CompletableFuture<DatabaseStatus> removeHistoryData(String caseType, int index);
+    public abstract DCFuture<DatabaseStatus> removeHistoryData(String caseType, int index);
 
     /**
      * Retrieves all case opening history entries.
      *
-     * @return a {@link CompletableFuture} completing with a list of all history entries
+     * @return a {@link DCFuture} completing with a list of all history entries
      */
-    public abstract CompletableFuture<List<CaseData.History>> getHistoryData();
+    public abstract DCFuture<List<CaseData.History>> getHistoryData();
 
     /**
      * Retrieves case opening history entries for a specific case type.
      *
      * @param caseType the case type
-     * @return a {@link CompletableFuture} completing with a list of history entries
+     * @return a {@link DCFuture} completing with a list of history entries
      */
-    public abstract CompletableFuture<List<CaseData.History>> getHistoryData(String caseType);
+    public abstract DCFuture<List<CaseData.History>> getHistoryData(String caseType);
 
     /**
      * Retrieves all cached history data.

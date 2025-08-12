@@ -7,6 +7,7 @@ import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import com.jodexindustries.donatecase.api.tools.ProbabilityCollection;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.api.data.animation.Animation;
@@ -26,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
@@ -73,17 +73,19 @@ public class AnimationManagerImpl implements AnimationManager {
     }
 
     @Override
-    public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition) {
+    public DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition) {
         return start(player, location, definition, definition.settings().cooldownBeforeAnimation());
     }
 
     @Override
-    public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition, int delay) {
+    public DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition, int delay) {
         return start(player, location, definition, false, delay);
     }
 
     @Override
-    public CompletableFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition caseDefinition, boolean keyRemoved, int delay) {
+    public DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition caseDefinition, boolean keyRemoved, int delay) {
+        DCFuture<UUID> animationCompletion = new DCFuture<>();
+
         CaseDefinition definition = caseDefinition.clone();
 
         String animation;
@@ -101,7 +103,8 @@ public class AnimationManagerImpl implements AnimationManager {
         CaseAnimation caseAnimation = get(animation);
 
         if (!validateStartConditions(definition, caseAnimation, settings, temp, player)) {
-            return CompletableFuture.completedFuture(null);
+            animationCompletion.complete(null);
+            return animationCompletion;
         }
 
         assert caseAnimation != null;
@@ -117,8 +120,6 @@ public class AnimationManagerImpl implements AnimationManager {
         winItem = event.winItem();
 
         UUID uuid = UUID.randomUUID();
-
-        CompletableFuture<UUID> animationCompletion = new CompletableFuture<>();
 
         if (caseAnimation.isRequireBlock()) {
             CaseInfo info = api.getConfigManager().getCaseStorage().get(temp);

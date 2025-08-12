@@ -5,10 +5,9 @@ import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.event.plugin.KeysTransactionEvent;
 import com.jodexindustries.donatecase.api.manager.CaseKeyManager;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-
 
 
 public class CaseKeyManagerImpl extends CaseKeyManager {
@@ -26,45 +25,45 @@ public class CaseKeyManagerImpl extends CaseKeyManager {
      * @param player   Player name
      * @param newKeys  New number of keys
      * @param before   Number of keys before modification
-     * @return CompletableFuture of the operation's status
+     * @return DCFuture of the operation's status
      */
-    private CompletableFuture<DatabaseStatus> setKeysWithEvent(String caseType, String player, int newKeys, int before) {
+    private DCFuture<DatabaseStatus> setKeysWithEvent(String caseType, String player, int newKeys, int before) {
         KeysTransactionEvent event = new KeysTransactionEvent(caseType, player, newKeys, before);
         api.getEventBus().post(event);
 
         return !event.cancelled()
                 ? api.getDatabase().setKeys(caseType, player, event.after())
-                : CompletableFuture.completedFuture(DatabaseStatus.CANCELLED);
+                : DCFuture.completedFuture(DatabaseStatus.CANCELLED);
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> set(String caseType, String player, int keys) {
+    public DCFuture<DatabaseStatus> set(String caseType, String player, int keys) {
         return getAsync(caseType, player).thenComposeAsync(before -> setKeysWithEvent(caseType, player, keys, before));
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> modify(String caseType, String player, int keys) {
+    public DCFuture<DatabaseStatus> modify(String caseType, String player, int keys) {
         return getAsync(caseType, player)
                 .thenComposeAsync(before -> setKeysWithEvent(caseType, player, before + keys, before));
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> delete() {
+    public DCFuture<DatabaseStatus> delete() {
         return api.getDatabase().delAllKeys();
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> delete(String caseType) {
+    public DCFuture<DatabaseStatus> delete(String caseType) {
         return api.getDatabase().delKeys(caseType);
     }
 
     @Override
-    public CompletableFuture<Integer> getAsync(String caseType, String player) {
+    public DCFuture<Integer> getAsync(String caseType, String player) {
         return api.getDatabase().getKeys(caseType, player);
     }
 
     @Override
-    public CompletableFuture<Map<String, Integer>> getAsync(String player) {
+    public DCFuture<Map<String, Integer>> getAsync(String player) {
         return api.getDatabase().getKeys(player);
     }
 

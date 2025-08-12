@@ -4,9 +4,9 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.manager.CaseOpenManager;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public class CaseOpenManagerImpl extends CaseOpenManager {
 
@@ -27,22 +27,22 @@ public class CaseOpenManagerImpl extends CaseOpenManager {
     }
 
     @Override
-    public CompletableFuture<Integer> getAsync(String caseType, String player) {
+    public DCFuture<Integer> getAsync(String caseType, String player) {
         return api.getDatabase().getOpenCount(player, caseType);
     }
 
     @Override
-    public CompletableFuture<Map<String, Integer>> getAsync(String player) {
+    public DCFuture<Map<String, Integer>> getAsync(String player) {
         return api.getDatabase().getOpenCount(player);
     }
 
     @Override
-    public CompletableFuture<Map<String, Map<String, Integer>>> getGlobalAsync() {
+    public DCFuture<Map<String, Map<String, Integer>>> getGlobalAsync() {
         return api.getDatabase().getGlobalOpenCount();
     }
 
     @Override
-    public CompletableFuture<Map<String, Integer>> getGlobalAsync(String caseType) {
+    public DCFuture<Map<String, Integer>> getGlobalAsync(String caseType) {
         return api.getDatabase().getGlobalOpenCount(caseType);
     }
 
@@ -72,12 +72,12 @@ public class CaseOpenManagerImpl extends CaseOpenManager {
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> set(String caseType, String player, int openCount) {
+    public DCFuture<DatabaseStatus> set(String caseType, String player, int openCount) {
         return api.getDatabase().setCount(caseType, player, openCount);
     }
 
     @Override
-    public CompletableFuture<DatabaseStatus> add(String caseType, String player, int openCount) {
+    public DCFuture<DatabaseStatus> add(String caseType, String player, int openCount) {
         return getAsync(caseType, player).thenComposeAsync(integer -> set(caseType, player, integer + openCount));
     }
 

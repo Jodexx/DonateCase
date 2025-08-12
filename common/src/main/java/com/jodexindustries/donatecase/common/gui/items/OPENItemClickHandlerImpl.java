@@ -12,9 +12,8 @@ import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.event.player.OpenCaseEvent;
 import com.jodexindustries.donatecase.api.event.player.PreOpenCaseEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.CompletableFuture;
 
 public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
 
@@ -50,7 +49,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
 
         if (event.cancelled()) return;
 
-        checkKeys(event).thenAccept(hasKeys -> {
+        checkKeys(event).thenAcceptSync(hasKeys -> {
             if (hasKeys) {
                 OpenCaseEvent openEvent = new OpenCaseEvent(player, definition, location);
                 DCAPI.getInstance().getEventBus().post(openEvent);
@@ -83,13 +82,13 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
         });
     }
 
-    private static CompletableFuture<Boolean> checkKeys(PreOpenCaseEvent event) {
-        if (event.ignoreKeys()) return CompletableFuture.completedFuture(true);
+    private static DCFuture<Boolean> checkKeys(PreOpenCaseEvent event) {
+        if (event.ignoreKeys()) return DCFuture.completedFuture(true);
 
         return DCAPI.getInstance()
                 .getCaseKeyManager()
                 .getAsync(event.definition().settings().type(), event.player().getName())
-                .thenApply(keys -> keys >= 1);
+                .thenApplySync(keys -> keys >= 1);
     }
 
 }

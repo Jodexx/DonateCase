@@ -2,10 +2,10 @@ package com.jodexindustries.donatecase.api.manager;
 
 import com.jodexindustries.donatecase.api.caching.SimpleCache;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * This abstract class provides methods for managing the number of opened cases by players.
@@ -44,36 +44,36 @@ public abstract class CaseOpenManager {
      *
      * @param caseType the case type
      * @param player   the player's name
-     * @return a {@link CompletableFuture} completing with the open count
+     * @return a {@link DCFuture} completing with the open count
      */
-    public abstract CompletableFuture<Integer> getAsync(String caseType, String player);
+    public abstract DCFuture<Integer> getAsync(String caseType, String player);
 
     /**
      * Gets all opened case counts grouped by case type for a specific player (asynchronously).
      *
      * @param player the player's name
-     * @return a {@link CompletableFuture} completing with a map of caseType -> open count
+     * @return a {@link DCFuture} completing with a map of caseType -> open count
      */
-    public abstract CompletableFuture<Map<String, Integer>> getAsync(String player);
+    public abstract DCFuture<Map<String, Integer>> getAsync(String player);
 
     /**
      * Gets all opened case counts for all players (asynchronously).
      *
-     * @return a {@link CompletableFuture} completing with a map where:
+     * @return a {@link DCFuture} completing with a map where:
      *         - key is the player name,
      *         - value is a map of caseType -> open count
      */
-    public abstract CompletableFuture<Map<String, Map<String, Integer>>> getGlobalAsync();
+    public abstract DCFuture<Map<String, Map<String, Integer>>> getGlobalAsync();
 
     /**
      * Gets the number of times a specific case type has been opened by all players (asynchronously).
      *
      * @param caseType the case type
-     * @return a {@link CompletableFuture} completing with a map where:
+     * @return a {@link DCFuture} completing with a map where:
      *         - key is the player name,
      *         - value is the number of times that case type has been opened
      */
-    public abstract CompletableFuture<Map<String, Integer>> getGlobalAsync(String caseType);
+    public abstract DCFuture<Map<String, Integer>> getGlobalAsync(String caseType);
 
     /**
      * Gets the cached number of times a specific case type has been opened by a player.
@@ -100,9 +100,9 @@ public abstract class CaseOpenManager {
      * @param caseType  the case type
      * @param player    the player's name
      * @param openCount the number of opened cases to set
-     * @return a {@link CompletableFuture} completing with the result of the database operation
+     * @return a {@link DCFuture} completing with the result of the database operation
      */
-    public abstract CompletableFuture<DatabaseStatus> set(String caseType, String player, int openCount);
+    public abstract DCFuture<DatabaseStatus> set(String caseType, String player, int openCount);
 
     /**
      * Increments the number of opened cases for a specific player and case type (asynchronously).
@@ -110,8 +110,8 @@ public abstract class CaseOpenManager {
      * @param caseType  the case type
      * @param player    the player's name
      * @param openCount the number of opened cases to add
-     * @return a {@link CompletableFuture} completing with the result of the database operation
+     * @return a {@link DCFuture} completing with the result of the database operation
      */
-    public abstract CompletableFuture<DatabaseStatus> add(String caseType, String player, int openCount);
+    public abstract DCFuture<DatabaseStatus> add(String caseType, String player, int openCount);
 
 }
