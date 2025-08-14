@@ -92,7 +92,7 @@ public class DonateCase extends DCAPI {
 
         database.close();
 
-        guiManager.getMap().values().parallelStream().forEach(gui -> gui.getPlayer().closeInventory());
+        guiManager.getMap().values().forEach(gui -> gui.getPlayer().closeInventory());
 
         clear();
         DCAPI.instance = null;
