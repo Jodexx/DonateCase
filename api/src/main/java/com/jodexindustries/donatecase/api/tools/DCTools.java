@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.chat.ColorUtils;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseInventory;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
@@ -37,7 +38,7 @@ public abstract class DCTools {
         return string.replaceAll(" ", "").split(",");
     }
 
-    public abstract CaseInventory createInventory(int size, @Nullable String title);
+    public abstract CaseInventory createInventory(CaseGuiWrapper wrapper, int size, @Nullable String title);
 
     public abstract ArmorStandCreator createArmorStand(UUID animationUuid, CaseLocation location);
 

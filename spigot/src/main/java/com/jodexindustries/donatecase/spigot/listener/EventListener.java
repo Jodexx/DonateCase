@@ -12,6 +12,7 @@ import com.jodexindustries.donatecase.api.event.player.GuiClickEvent;
 import com.jodexindustries.donatecase.api.event.player.JoinEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.spigot.api.platform.BukkitInventory;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Firework;
@@ -24,10 +25,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.InventoryHolder;
 
 public class EventListener implements Listener {
 
@@ -46,28 +49,39 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onAdminJoined(PlayerJoinEvent event) {
-            backend.getAPI().getEventBus().post(new JoinEvent(BukkitUtils.fromBukkit(event.getPlayer())));
+        backend.getAPI().getEventBus().post(new JoinEvent(BukkitUtils.fromBukkit(event.getPlayer())));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void InventoryClick(InventoryClickEvent e) {
+    public void onInventoryClick(InventoryClickEvent e) {
+        InventoryHolder holder = e.getInventory().getHolder();
+        if (!(holder instanceof BukkitInventory)) return;
+
+        CaseGuiWrapper gui = ((BukkitInventory) holder).getWrapper();
+
         Player player = (Player) e.getWhoClicked();
-        CaseGuiWrapper gui = DCAPI.getInstance().getGUIManager().getMap().get(player.getUniqueId());
-        if (gui != null) {
-            e.setCancelled(true);
 
-            String itemType = gui.getDefinition().defaultMenu().getItemTypeBySlot(e.getRawSlot());
-            if (itemType == null) return;
+        e.setCancelled(true);
 
-            backend.getAPI().getEventBus().post(
-                    new GuiClickEvent(
-                            e.getRawSlot(),
-                            BukkitUtils.fromBukkit(player),
-                            gui,
-                            itemType
-                    )
-            );
-        }
+        String itemType = gui.getDefinition().defaultMenu().getItemTypeBySlot(e.getRawSlot());
+        if (itemType == null) return;
+
+        backend.getAPI().getEventBus().post(
+                new GuiClickEvent(
+                        e.getRawSlot(),
+                        BukkitUtils.fromBukkit(player),
+                        gui,
+                        itemType
+                )
+        );
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInventoryDrag(InventoryDragEvent e) {
+        InventoryHolder holder = e.getInventory().getHolder();
+        if (!(holder instanceof BukkitInventory)) return;
+
+        e.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -108,6 +122,9 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void InventoryClose(InventoryCloseEvent e) {
+        InventoryHolder holder = e.getInventory().getHolder();
+        if (!(holder instanceof BukkitInventory)) return;
+
         DCAPI.getInstance().getGUIManager().getMap().remove(e.getPlayer().getUniqueId());
     }
 

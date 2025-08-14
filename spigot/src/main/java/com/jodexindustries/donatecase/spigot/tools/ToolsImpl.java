@@ -1,5 +1,6 @@
 package com.jodexindustries.donatecase.spigot.tools;
 
+import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseInventory;
 import com.jodexindustries.donatecase.spigot.BukkitBackend;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
@@ -23,8 +24,8 @@ public class ToolsImpl extends DCToolsBukkit {
     }
 
     @Override
-    public CaseInventory createInventory(int size, @Nullable String title) {
-        return new BukkitInventory(size, title);
+    public CaseInventory createInventory(CaseGuiWrapper wrapper, int size, @Nullable String title) {
+        return new BukkitInventory(wrapper, size, title);
     }
 
     @Override

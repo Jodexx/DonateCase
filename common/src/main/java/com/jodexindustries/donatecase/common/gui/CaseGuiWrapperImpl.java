@@ -50,7 +50,7 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         this.location = location;
         this.menu = caseMenu;
         this.temporary = menu.clone();
-        this.inventory = platform.getTools().createInventory(temporary.size(),
+        this.inventory = platform.getTools().createInventory(this, temporary.size(),
                 DCTools.rc(setPlaceholders(temporary.title())));
 
         load().thenAcceptSync((loaded) -> {
@@ -101,8 +101,10 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         if (updateRate >= 0) {
             platform.getScheduler().async(platform,
                     (task) -> {
-                        if (!platform.getAPI().getGUIManager().getMap().containsKey(player.getUniqueId()))
+                        if (!platform.getAPI().getGUIManager().getMap().containsKey(player.getUniqueId())) {
                             task.cancel();
+                            return;
+                        }
                         load();
                     }, updateRate, updateRate);
         }
