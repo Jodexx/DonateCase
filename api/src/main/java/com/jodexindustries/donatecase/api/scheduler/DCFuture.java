@@ -66,6 +66,11 @@ public class DCFuture <T> extends CompletableFuture<T> {
         return this;
     }
 
+    public DCFuture<T> thenAcceptSync(Consumer<? super T> action, long delay) {
+        super.thenAccept(result -> SCHEDULER.get().run(PLATFORM.get(), () -> action.accept(result), delay));
+        return this;
+    }
+
     public <U> DCFuture<U> thenApplySync(Function<? super T, ? extends U> fn) {
         DCFuture<U> next = new DCFuture<>();
         super.thenAccept(result ->
