@@ -12,11 +12,19 @@ import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.event.player.OpenCaseEvent;
 import com.jodexindustries.donatecase.api.event.player.PreOpenCaseEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import org.jetbrains.annotations.NotNull;
 
 public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
 
+    private final DCAPI api;
+    private final Platform platform;
+
+    public OPENItemClickHandlerImpl() {
+        this.api = DCAPI.getInstance();
+        this.platform = api.getPlatform();
+    }
 
     @Override
     public void onClick(@NotNull GuiClickEvent e) {
@@ -30,15 +38,15 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
             String[] parts = itemType.split("_");
             if (parts.length >= 2) {
                 caseType = parts[1];
-                definition = DCAPI.getInstance().getCaseManager().getByType(caseType).orElse(null);
+                definition = api.getCaseManager().getByType(caseType).orElse(null);
             }
         }
 
         if (definition != null) {
-            executeOpen(definition, e.player(), location);
             e.player().closeInventory();
+            executeOpen(definition, e.player(), location);
         } else {
-            DCAPI.getInstance().getPlatform().getLogger().warning("Case with type '" + caseType + "' not found. ");
+            platform.getLogger().warning("Case with type '" + caseType + "' not found. ");
         }
 
     }
