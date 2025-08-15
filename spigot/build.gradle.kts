@@ -7,7 +7,7 @@ buildscript {
 plugins {
     java
     id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("com.gradleup.shadow") version "9.0.0-rc2"
+    id("com.gradleup.shadow") version "9.0.2"
 }
 
 group = "com.jodexindustries.donatecase"
