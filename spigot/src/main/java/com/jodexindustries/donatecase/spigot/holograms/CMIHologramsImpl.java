@@ -7,6 +7,7 @@ import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import net.Zrips.CMILib.Container.CMILocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -19,9 +20,7 @@ public class CMIHologramsImpl implements HologramDriver {
     private final HashMap<CaseLocation, CMIHologram> holograms = new HashMap<>();
 
     @Override
-    public void create(CaseLocation block, CaseSettings.Hologram caseHologram) {
-        if (!caseHologram.enabled()) return;
-
+    public void forceCreate(@NotNull CaseLocation block, CaseSettings.@NotNull Hologram caseHologram) {
         double height = caseHologram.height();
 
         CMILocation location = new CMILocation(BukkitUtils.toBukkit(block).add(0.5, height, 0.5));
@@ -40,7 +39,7 @@ public class CMIHologramsImpl implements HologramDriver {
     }
 
     @Override
-    public void remove(CaseLocation block) {
+    public void remove(@NotNull CaseLocation block) {
         if (!this.holograms.containsKey(block)) return;
 
         CMIHologram hologram = this.holograms.get(block);

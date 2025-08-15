@@ -85,16 +85,16 @@ public class HologramManagerImpl implements HologramManager {
     }
 
     @Override
-    public void create(CaseLocation block, CaseSettings.Hologram hologram) {
+    public void forceCreate(@NotNull CaseLocation block, CaseSettings.@NotNull Hologram hologram) {
         try {
-            if (driver != null) driver.create(block, hologram);
+            if (driver != null) driver.forceCreate(block, hologram);
         } catch (Exception e) {
             api.getPlatform().getLogger().log(Level.WARNING, "Error with creating hologram: ", e);
         }
     }
 
     @Override
-    public void remove(CaseLocation block) {
+    public void remove(@NotNull CaseLocation block) {
         if (driver != null) driver.remove(block);
     }
 

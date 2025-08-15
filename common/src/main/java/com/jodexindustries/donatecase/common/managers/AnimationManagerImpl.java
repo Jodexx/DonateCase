@@ -228,13 +228,8 @@ public class AnimationManagerImpl implements AnimationManager {
         CaseDefinition definition = activeCase.definition();
 
         CaseAnimation caseAnimation = get(definition.settings().animation());
-        if (caseAnimation == null) return;
-
-        if (caseAnimation.isRequireBlock()) {
-            CaseSettings.Hologram hologram = definition.settings().hologram();
-            if (hologram != null && hologram.enabled()) api.getHologramManager().create(block, hologram);
-        }
-
+        if (caseAnimation != null && caseAnimation.isRequireBlock())
+            api.getHologramManager().create(block, definition.settings().hologram());
     }
 
     @Override

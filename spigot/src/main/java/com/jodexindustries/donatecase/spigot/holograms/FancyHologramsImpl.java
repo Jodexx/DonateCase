@@ -23,7 +23,9 @@ public class FancyHologramsImpl implements HologramDriver {
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void create(CaseLocation block, CaseSettings.Hologram caseHologram) {
+    public void forceCreate(@NotNull CaseLocation block, CaseSettings.@NotNull Hologram caseHologram) {
+        if (this.holograms.containsKey(block)) return;
+
         ConfigurationNode node = caseHologram.node();
 
         HologramType type = HologramType.getByName(node.node("type").getString());
@@ -46,7 +48,7 @@ public class FancyHologramsImpl implements HologramDriver {
     }
 
     @Override
-    public void remove(CaseLocation block) {
+    public void remove(@NotNull CaseLocation block) {
         Hologram hologram = this.holograms.get(block);
         if(hologram == null) return;
 

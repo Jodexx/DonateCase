@@ -26,8 +26,8 @@ public class HolographicDisplaysImpl implements HologramDriver {
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void create(CaseLocation block, CaseSettings.Hologram caseHologram) {
-        if (!caseHologram.enabled()) return;
+    public void forceCreate(@NotNull CaseLocation block, CaseSettings.@NotNull Hologram caseHologram) {
+        if (this.holograms.containsKey(block)) return;
 
         double height = caseHologram.height();
 
@@ -41,7 +41,7 @@ public class HolographicDisplaysImpl implements HologramDriver {
     }
 
     @Override
-    public void remove(CaseLocation block) {
+    public void remove(@NotNull CaseLocation block) {
         if (!this.holograms.containsKey(block)) return;
 
         Hologram hologram = this.holograms.get(block);

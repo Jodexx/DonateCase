@@ -7,6 +7,7 @@ import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -19,21 +20,21 @@ public class DecentHologramsImpl implements HologramDriver {
     private final HashMap<CaseLocation, Hologram> holograms = new HashMap<>();
 
     @Override
-    public void create(CaseLocation block, CaseSettings.Hologram caseHologram) {
-        if (!caseHologram.enabled()) return;
+    public void forceCreate(@NotNull CaseLocation block, CaseSettings.@NotNull Hologram caseHologram) {
+        if (this.holograms.containsKey(block)) return;
 
         double height = caseHologram.height();
         Hologram hologram = DHAPI.createHologram("DonateCase-" + UUID.randomUUID(), BukkitUtils.toBukkit(block).add(.5, height, .5));
-
         hologram.setDisplayRange(caseHologram.range());
 
         caseHologram.message().forEach(line -> DHAPI.addHologramLine(hologram, DCTools.rc(line)));
+        hologram.updateAll();
 
         this.holograms.put(block, hologram);
     }
 
     @Override
-    public void remove(CaseLocation block) {
+    public void remove(@NotNull CaseLocation block) {
         if (!this.holograms.containsKey(block)) return;
 
         Hologram hologram = this.holograms.get(block);
