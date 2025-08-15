@@ -1,11 +1,10 @@
 plugins {
-    id("java")
-    id("java-library")
+    `java-library`
     `maven-publish`
 }
 
 group = "com.jodexindustries.donatecase.api"
-version = properties["api"].toString()
+version = properties["api"]!!
 
 
 dependencies {
@@ -13,7 +12,6 @@ dependencies {
     compileOnlyApi("com.j256.ormlite:ormlite-jdbc:6.1")
     compileOnlyApi("org.jetbrains:annotations:24.0.0")
     compileOnlyApi("com.google.guava:guava:33.3.1-jre")
-    compileOnlyApi("org.projectlombok:lombok:1.18.38")
     compileOnlyApi("org.spongepowered:configurate-yaml:4.1.2")
 }
 
@@ -55,25 +53,31 @@ tasks.javadoc {
     }
 }
 
-tasks.named<Jar>("sourcesJar") {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
+val generatedDir = layout.buildDirectory.dir("generated/java")
 
 tasks.register<Delete>("cleanGenerated") {
-   delete("${buildDir}/generated")
+    delete(generatedDir)
 }
 
 tasks.register<Copy>("generateJava") {
-    from(project.file("src/template/java"))
-    into("${buildDir}/generated/java")
-    expand(properties)
+    from("src/template/java")
+    into(generatedDir)
+    expand(project.properties)
+    filteringCharset = "UTF-8"
 }
 
-sourceSets.main { java.srcDir("${buildDir}/generated/java") }
+sourceSets {
+    main {
+        java.srcDir(generatedDir)
+        resources.srcDir("src/generated/resources")
+    }
+}
 
-tasks.compileJava { dependsOn("generateJava", "cleanGenerated") }
+tasks.compileJava {
+    dependsOn("cleanGenerated", "generateJava")
+}
 
-tasks.named<Jar>("sourcesJar") { dependsOn("generateJava") }
-
-sourceSets.main { resources.srcDir("src/generated/resources") }
-
+tasks.named<Jar>("sourcesJar") {
+    dependsOn("generateJava")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
