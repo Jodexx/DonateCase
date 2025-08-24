@@ -7,7 +7,7 @@ items:
     group: vip
     chance: 30
     material:
-      id: YELLOW_WOOL # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/materials
+      id: YELLOW_WOOL # see: https://wiki.jodex.xyz/DonateCase/materials
       display-name: '&eVIP'
       enchanted: false
     index: 0
@@ -34,7 +34,7 @@ items:
     group: vipplus
     chance: 25
     material:
-      id: LIGHT_BLUE_WOOL # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/materials
+      id: LIGHT_BLUE_WOOL # see: https://wiki.jodex.xyz/DonateCase/materials
       display-name: '&bVIP+'
       enchanted: false
     index: 1
@@ -88,7 +88,7 @@ items:
     group: deluxe
     chance: 15
     material:
-      id: PURPLE_WOOL # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/materials
+      id: PURPLE_WOOL # see: https://wiki.jodex.xyz/DonateCase/materials
       display-name: '&5Deluxe'
       enchanted: false
     index: 3
@@ -114,7 +114,7 @@ items:
     group: legend
     chance: 10
     material:
-      id: PINK_WOOL # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/materials
+      id: PINK_WOOL # see: https://wiki.jodex.xyz/DonateCase/materials
       display-name: '&dLegend'
       enchanted: false
     index: 4

@@ -13,7 +13,7 @@ config: # Please do not touch this section
 
 prefix: '&7[&cDonateCase&7] &e'
 no-permission: '&cУ вас немає прав'
-new-update: "&eНове оновлення плагіну &cDonateCase &a%version% &eдоступно&e! &eЗавантажити &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
+new-update: "&eНове оновлення плагіну &cDonateCase &a%version% &eдоступно&e! &eЗавантажити &f- &ahttps://modrinth.com/plugin/donatecase"
 case-does-not-exist: '&cКейса &6%casetype% &cне існує.'
 case-already-exist: "&cКейс з назвою &6%casename% &cвже існує!"
 case-already-created: '&cЦей блок вже донат кейс'

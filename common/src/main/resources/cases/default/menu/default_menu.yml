@@ -7,18 +7,18 @@ id: default_menu
 title: '&e&l✨ &6Donate&7-&fCase &e&l✨'
 size: 45
 update-rate: 20 # in ticks, set -1 to disable updating
-# see more about items configuring -> https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/items-settings
+# see more about items configuring -> https://wiki.jodex.xyz/DonateCase/items-settings
 items:
   "1":
     material:
-      id: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/materials
+      id: WHITE_STAINED_GLASS_PANE # see: https://wiki.jodex.xyz/DonateCase/materials
       display-name: "&cwww.jodex.xyz"
     slots:
       - 0-8
     type: DEFAULT
   open:
     material:
-      id: TRIPWIRE_HOOK # see: https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/materials
+      id: TRIPWIRE_HOOK # see: https://wiki.jodex.xyz/DonateCase/materials
       display-name: "&bOpen Case"
       enchanted: true
       lore:

@@ -2,6 +2,8 @@ config: # Please do not touch this section
   version: 27
   type: config
 
+# More information about this configuration - https://wiki.jodex.xyz/DonateCase/Configs/config
+
 # Do I need to check for plugin updates?
 update-checker: true
 # MySQL Settings

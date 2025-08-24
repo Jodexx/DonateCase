@@ -13,7 +13,7 @@ config: # Please do not touch this section
 
 prefix: '&7[&cDonateCase&7] &e'
 no-permission: '&cYou do not have permissions!'
-new-update: "&eNew &cDonateCase &a%version% &eplugin update available&e! &eDownload &f- &ahttps://www.spigotmc.org/resources/donatecase.106701/"
+new-update: "&eNew &cDonateCase &a%version% &eplugin update available&e! &eDownload &f- &ahttps://modrinth.com/plugin/donatecase"
 case-does-not-exist: '&cCase &6%casetype% &cdoes not exist.'
 case-already-exist: "&cCase with name &6%casename% &calready exists!"
 case-already-created: '&cThis block is already a donation case'
