@@ -2,6 +2,8 @@ config: # Please do not touch this section
   version: 1
   type: case_items
 
+# Check our detailed documentation about this file - https://wiki.jodex.xyz/DonateCase/Configs/Cases/prizes
+
 items:
   vip:
     group: vip

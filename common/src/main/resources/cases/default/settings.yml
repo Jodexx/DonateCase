@@ -2,6 +2,8 @@ config: # Please do not touch this section
   version: 1
   type: case_settings
 
+# Check our detailed documentation about this file - https://wiki.jodex.xyz/DonateCase/Configs/Cases
+
 type: default
 
 default-menu: default_menu
@@ -41,21 +43,27 @@ hologram: # see: https://wiki.jodex.xyz/DonateCase/holograms
     - '&6DonateCase'
 
 ## FancyHolograms
-#  type: TEXT
-#  visibility_distance: -1
-#  visibility: ALL
-#  persistent: true
-#  scale_x: 1.5
-#  scale_y: 1.5
-#  scale_z: 1.5
-#  shadow_radius: 1.0
-#  shadow_strength: 1.0
-#  text:
-#    - "Test"
-#  text_shadow: false
-#  see_through: false
-#  text_alignment: center
-#  update_text_interval: -1
+# hologram:
+#   # Toggle on and off the holograms for the crates.
+#   enabled: true
+#   # The height of the hologram above the case.
+#   height: 0.0
+
+#   type: TEXT
+#   visibility_distance: -1
+#   visibility: ALL
+#   persistent: true
+#   scale_x: 1.5
+#   scale_y: 1.5
+#   scale_z: 1.5
+#   shadow_radius: 1.0
+#   shadow_strength: 1.0
+#   text:
+#     - "&6DonateCase"
+#   text_shadow: false
+#   see_through: false
+#   text_alignment: center
+#   update_text_interval: -1
 
 open-type: GUI # or BLOCK
 

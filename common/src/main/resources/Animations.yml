@@ -2,6 +2,8 @@ config: # Please do not touch this section
   version: 15
   type: animations
 
+# More information about this configuration - https://wiki.jodex.xyz/DonateCase/Configs/animations
+
 SHAPE:
   ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
   SmallArmorStand: true
