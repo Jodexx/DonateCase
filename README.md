@@ -7,7 +7,7 @@
 [![wakatime](https://wakatime.com/badge/user/829f0c0b-33fd-4885-a87a-8ee676d706fd/project/eaecf335-b19a-4642-9d6c-2637e4a392f5.svg)](https://wakatime.com/badge/user/829f0c0b-33fd-4885-a87a-8ee676d706fd/project/eaecf335-b19a-4642-9d6c-2637e4a392f5)
 [![CodeFactor](https://www.codefactor.io/repository/github/jodexx/donatecase/badge)](https://www.codefactor.io/repository/github/jodexx/donatecase)
 
-| [MavenRepo](https://repo.jodex.xyz/#/releases/com/jodexindustries/donatecase/) | [JavaDocs](https://repo.jodex.xyz/javadoc/releases/com/jodexindustries/donatecase/spigot-api/latest) | [Wiki](https://wiki.jodex.xyz/en/docs/2.0.0/DonateCase/API/install) |
+| [MavenRepo](https://repo.jodex.xyz/#/releases/com/jodexindustries/donatecase/) | [JavaDocs](https://repo.jodex.xyz/javadoc/releases/com/jodexindustries/donatecase/api/latest) | [Wiki](https://wiki.jodex.xyz/DonateCase/donatecase-main) |
 |--------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
 
 
@@ -25,7 +25,7 @@
 <dependency>
   <groupId>com.jodexindustries.donatecase</groupId>
   <artifactId>spigot-api</artifactId>
-  <version>2.1.0.4</version>
+  <version>2.1.0.5</version>
 </dependency>
 ```
 > Gradle
@@ -36,5 +36,5 @@ maven {
 }
 ```
 ```groovy
-compileOnly("com.jodexindustries.donatecase:spigot-api:2.1.0.4")
+compileOnly("com.jodexindustries.donatecase:spigot-api:2.1.0.5")
 ```
