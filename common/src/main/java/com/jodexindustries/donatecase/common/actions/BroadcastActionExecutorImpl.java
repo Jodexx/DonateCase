@@ -10,8 +10,10 @@ public class BroadcastActionExecutorImpl implements ActionExecutor {
 
     @Override
     public void execute(@Nullable DCPlayer player, @NotNull String context) {
-            for (DCPlayer p : DCAPI.getInstance().getPlatform().getOnlinePlayers()) {
+        for (DCPlayer p : DCAPI.getInstance().getPlatform().getOnlinePlayers()) {
+            if (p.hasPermission("donatecase.notify")) {
                 p.sendMessage(context);
             }
+        }
     }
 }

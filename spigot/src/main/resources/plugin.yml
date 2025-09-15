@@ -28,9 +28,14 @@ commands:
   donatecase:
     aliases: [dc]
 permissions:
+  donatecase.notify:
+    description: Allow players see the broadcast message
+    default: true
   donatecase.player:
     description: Allow players commands
     default: true
+    children:
+      donatecase.notify: true
   donatecase.mod:
     description: Allow mod commands
     default: op
