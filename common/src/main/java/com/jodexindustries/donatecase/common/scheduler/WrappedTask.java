@@ -22,11 +22,18 @@ public class WrappedTask implements SchedulerTask {
     @Setter
     private ScheduledFuture<?> future;
 
-    @SuppressWarnings("unchecked")
+    private final boolean external;
+
     public WrappedTask(Addon owner, int taskId, boolean sync, Object task) {
+        this(owner, taskId, sync, task, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    public WrappedTask(Addon owner, int taskId, boolean sync, Object task, boolean external) {
         this.owner = owner;
         this.taskId = taskId;
         this.sync = sync;
+        this.external = external;
 
         if (task instanceof Runnable) {
             this.r = (Runnable) task;
@@ -72,10 +79,13 @@ public class WrappedTask implements SchedulerTask {
 
     @Override
     public void cancel() {
+        if (isCancelled()) return;
+
         cancelled = true;
         if (future != null) {
             future.cancel(false);
         }
-        DCAPI.getInstance().getPlatform().getScheduler().cancel(taskId);
+
+        if (external) DCAPI.getInstance().getPlatform().getScheduler().cancel(taskId);
     }
 }

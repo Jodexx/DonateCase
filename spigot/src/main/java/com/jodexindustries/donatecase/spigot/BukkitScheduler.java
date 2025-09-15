@@ -20,7 +20,7 @@ public class BukkitScheduler extends BackendScheduler {
     }
 
     private WrappedTask wrapper(Addon addon, BukkitTask task) {
-        return new WrappedTask(addon, task.getTaskId(), task.isSync(), task);
+        return new WrappedTask(addon, task.getTaskId(), task.isSync(), task, true);
     }
 
     @Override
