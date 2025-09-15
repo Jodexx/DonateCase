@@ -72,7 +72,7 @@ public class KeysCommand extends DefaultCommand {
             }
         } else if (placeholder.startsWith("keys_")) {
             String[] parts = placeholder.split("_");
-            if (caseType == null && parts.length > 1) caseType = parts[1];
+            if (parts.length > 1) caseType = parts[1];
 
             if (caseType != null) {
                 int keys = cached ? DCAPI.getInstance().getCaseKeyManager().getCache(caseType, player) :
