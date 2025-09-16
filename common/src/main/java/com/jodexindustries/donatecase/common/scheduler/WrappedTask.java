@@ -86,6 +86,6 @@ public class WrappedTask implements SchedulerTask {
             future.cancel(false);
         }
 
-        if (external) DCAPI.getInstance().getPlatform().getScheduler().cancel(taskId);
+        DCAPI.getInstance().getPlatform().getScheduler().cancel(taskId, external);
     }
 }

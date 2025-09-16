@@ -66,8 +66,9 @@ public class BukkitScheduler extends BackendScheduler {
     }
 
     @Override
-    public void cancel(int taskId) {
-        super.cancel(taskId);
-        scheduler.cancelTask(taskId);
+    public void cancel(int taskId, boolean external) {
+        super.cancel(taskId, external);
+
+        if (external) scheduler.cancelTask(taskId);
     }
 }

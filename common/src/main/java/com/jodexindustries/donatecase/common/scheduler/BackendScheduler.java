@@ -170,7 +170,7 @@ public class BackendScheduler implements Scheduler {
     }
 
     @Override
-    public void cancel(int taskId) {
+    public void cancel(int taskId, boolean external) {
         remove(taskId);
     }
 

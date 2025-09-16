@@ -26,7 +26,7 @@ public interface Scheduler {
 
     void async(Addon addon, Consumer<SchedulerTask> task, long delay, long period);
 
-    void cancel(int taskId);
+    void cancel(int taskId, boolean external);
 
     void shutdown();
 }
