@@ -1,10 +1,8 @@
 plugins {
-    id("java")
-    id("java-library")
+    `java-library`
 }
 
 group = "com.jodexindustries.donatecase"
-version = properties["version"].toString()
 
 repositories {
     mavenCentral()
