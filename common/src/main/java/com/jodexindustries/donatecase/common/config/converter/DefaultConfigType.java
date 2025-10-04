@@ -52,10 +52,11 @@ public enum DefaultConfigType implements ConfigType {
         put(10, new CasesMigrator_1_0_to_1_1());
     }}),
 
-    CONFIG(27,
+    CONFIG(28,
             new HashMap<Integer, ConfigMigrator>() {{
                 put(25, new ConfigMigrator_2_5_to_2_6());
                 put(26, new ConfigMigrator_2_6_to_2_7());
+                put(27, new ConfigMigrator_2_7_to_2_8());
             }},
             new ConfigSerializer(ConfigData.class)),
 
