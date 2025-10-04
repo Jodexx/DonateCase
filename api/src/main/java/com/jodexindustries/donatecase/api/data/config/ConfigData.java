@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.api.data.config;
 
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
+import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,6 +19,10 @@ public class ConfigData {
     private boolean updateChecker = true;
 
     @Setting
+    private Database database = new Database();
+
+    @Setting
+    @Deprecated
     private MySQL mysql = new MySQL();
 
     @Setting
@@ -52,6 +57,42 @@ public class ConfigData {
     @Getter
     @Setter
     @ConfigSerializable
+    public static class Database {
+
+        @Setting
+        DatabaseType type = DatabaseType.SQLITE;
+
+        @Setting
+        Settings settings = new Settings();
+
+        @Accessors(fluent = true)
+        @Getter
+        @Setter
+        @ConfigSerializable
+        public static class Settings {
+
+            @Setting
+            private String host = "localhost";
+
+            @Setting
+            private int port = 3306;
+
+            @Setting
+            private String database = "donatecase";
+
+            @Setting
+            private String username = "admin";
+
+            @Setting
+            private String password = "123456";
+        }
+    }
+
+    @Accessors(fluent = true)
+    @Getter
+    @Setter
+    @ConfigSerializable
+    @Deprecated
     public static class MySQL {
 
         @Setting
@@ -71,6 +112,15 @@ public class ConfigData {
 
         @Setting
         private String password = "123456";
+
+        public Database.Settings toSettings() {
+            return new Database.Settings()
+                    .host(this.host)
+                    .port(this.port)
+                    .database(this.database)
+                    .username(this.username)
+                    .password(this.password);
+        }
     }
 
     @Accessors(fluent = true)

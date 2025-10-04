@@ -1,19 +1,21 @@
 config: # Please do not touch this section
-  version: 27
+  version: 28
   type: config
 
 # More information about this configuration - https://wiki.jodex.xyz/DonateCase/Configs/config
 
 # Do I need to check for plugin updates?
 update-checker: true
-# MySQL Settings
-mysql:
-  enabled: false
-  host: 'localhost'
-  port: 3306
-  database: 'nameDataBase'
-  username: 'root'
-  password: 'password'
+
+database:
+  type: SQLITE # MYSQL, POSTGRESQL
+  settings: # mysql settings
+    host: 'localhost'
+    port: 3306
+    database: 'nameDataBase'
+    username: 'root'
+    password: 'password'
+
 # en_US, es_ES, ru_RU, ua_UA
 language: en_US
 hologram-driver: DecentHolograms # CMI, DecentHolograms, HolographicDisplays or FancyHolograms
