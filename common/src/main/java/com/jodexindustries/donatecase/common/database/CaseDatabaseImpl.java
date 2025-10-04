@@ -41,49 +41,68 @@ public class CaseDatabaseImpl extends CaseDatabase {
         this.logger = api.getPlatform().getLogger();
     }
 
+    @Deprecated
     @Override
     public void connect(String path) {
+        DatabaseType databaseType = DatabaseType.SQLITE;
+
         try {
-            close();
-            connectionSource = new JdbcConnectionSource("jdbc:sqlite:" + path + "/database.db");
-            databaseType = DatabaseType.SQLITE;
-            init();
-            logger.info("Using SQLITE database type!");
+            connect(databaseType, new JdbcConnectionSource("jdbc:sqlite:" + path + "/database.db"));
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.log(
+                    java.util.logging.Level.SEVERE, "Error while building url connection (" + databaseType + ")", e
+            );
+        }
+    }
+
+    @Deprecated
+    @Override
+    public void connect(String database, int port, String host, String user, String password) {
+        DatabaseType databaseType = DatabaseType.MYSQL;
+
+        try {
+            connect(databaseType, new JdbcConnectionSource("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password));
+        } catch (SQLException e) {
+            logger.log(
+                    java.util.logging.Level.SEVERE, "Error while building url connection (" + databaseType + ")", e
+            );
         }
     }
 
     @Override
-    public void connect(String database, int port, String host, String user, String password) {
-        try {
-            close();
-            connectionSource = new JdbcConnectionSource("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
-            databaseType = DatabaseType.MYSQL;
-            init();
-            logger.info("Using MYSQL database type!");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void connect() {
         ConfigManagerImpl configManager = api.getConfigManager();
 
-        ConfigData.MySQL mysql = configManager.getConfig().mysql();
-        if (mysql == null || !mysql.enabled()) {
-            connect(api.getPlatform().getDataFolder().getAbsolutePath());
-        } else {
-            connect(
-                    mysql.database(),
-                    mysql.port(),
-                    mysql.host(),
-                    mysql.username(),
-                    mysql.password()
+        ConfigData.Database database = configManager.getConfig().database();
+
+        DatabaseType databaseType = database.type();
+
+        try {
+            connect(databaseType, databaseType.build(api, database.settings()));
+        } catch (Exception e) {
+            logger.log(
+                    java.util.logging.Level.SEVERE, "Error while building url connection (" + databaseType + ")", e
             );
         }
 
         configManager.getConverter().convert(ConvertOrder.ON_DATABASE);
+    }
+
+    private void connect(DatabaseType databaseType, JdbcConnectionSource connectionSource) {
+        try {
+            close();
+
+            this.connectionSource = connectionSource;
+            this.databaseType = databaseType;
+
+            init();
+
+            logger.info("Using " + databaseType + " database type!");
+        } catch (Exception e) {
+            logger.log(
+                    java.util.logging.Level.SEVERE, "Error while loading to database (" + databaseType + ")", e
+            );
+        }
     }
 
     private void init() throws SQLException {
@@ -289,7 +308,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
             }
             return opens;
         });
-        }
+    }
 
     @Override
     public DCFuture<DatabaseStatus> setCount(String caseType, String player, int count) {

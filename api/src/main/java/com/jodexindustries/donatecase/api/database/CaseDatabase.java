@@ -31,6 +31,7 @@ public abstract class CaseDatabase {
      *
      * @param path absolute path to the SQLite database file
      */
+    @Deprecated
     public abstract void connect(String path);
 
     /**
@@ -42,6 +43,7 @@ public abstract class CaseDatabase {
      * @param user     username
      * @param password password
      */
+    @Deprecated
     public abstract void connect(String database, int port, String host, String user, String password);
 
     /**
