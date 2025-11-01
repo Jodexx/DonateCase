@@ -25,6 +25,7 @@ import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+// TODO must be updated with JGuiWrapper
 public class CaseGuiWrapperImpl implements CaseGuiWrapper {
 
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(1);
@@ -40,10 +41,10 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
     private List<CaseData.History> globalHistoryData;
 
     public CaseGuiWrapperImpl(@NotNull Platform platform,
-            @NotNull DCPlayer player,
-            @NotNull CaseDefinition definition,
-            @NotNull CaseMenu caseMenu,
-            @NotNull CaseLocation location) {
+                              @NotNull DCPlayer player,
+                              @NotNull CaseDefinition definition,
+                              @NotNull CaseMenu caseMenu,
+                              @NotNull CaseLocation location) {
         this.platform = platform;
         this.player = player;
         this.definition = definition;
@@ -69,12 +70,14 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         platform.getScheduler().async(platform, () -> {
             globalHistoryData = DCTools.sortHistoryDataByDate(platform.getAPI().getDatabase().getCache());
             for (CaseMenu.Item item : temporary.items().values()) {
-                try {
-                    processItem(item);
-                } catch (TypedItemException e) {
-                    platform.getLogger().log(Level.WARNING,
-                            "Error occurred while loading item: " + item.node().key(), e);
-                }
+                platform.getScheduler().async(platform, () -> {
+                    try {
+                        processItem(item);
+                    } catch (TypedItemException e) {
+                        platform.getLogger().log(Level.WARNING,
+                                "Error occurred while loading item: " + item.name(), e);
+                    }
+                }, 0L);
             }
             future.complete(null);
         }, 0L);
