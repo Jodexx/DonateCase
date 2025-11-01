@@ -9,6 +9,7 @@ import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.common.tools.LocalPlaceholder;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +28,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
     public CaseMenu.Item handle(@NotNull CaseGuiWrapper caseGui, @NotNull CaseMenu.Item item)
             throws TypedItemException {
         CaseDefinition definition = caseGui.getDefinition();
-        boolean handled = handleHistoryItem(definition, item, caseGui.getGlobalHistoryData());
+        boolean handled = handleHistoryItem(caseGui.getPlayer(), definition, item, caseGui.getGlobalHistoryData());
 
         if (!handled) {
             applyFallbackMaterial(item);
@@ -49,7 +50,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         }
     }
 
-    private boolean handleHistoryItem(CaseDefinition definition, CaseMenu.Item item,
+    private boolean handleHistoryItem(DCPlayer player, CaseDefinition definition, CaseMenu.Item item,
                                       List<CaseData.History> globalHistoryData) {
         CaseMaterial itemMaterial = item.material();
         String[] typeArgs = item.type().split("-");
@@ -78,7 +79,7 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         if (historyItem == null) return false;
 
         applyMaterial(itemMaterial, history, historyItem);
-        applyPlaceholders(itemMaterial, history, historyItem, historyCaseData);
+        applyPlaceholders(player, itemMaterial, history, historyItem, historyCaseData);
 
         return true;
     }
@@ -114,11 +115,11 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         itemMaterial.id(material);
     }
 
-    private void applyPlaceholders(CaseMaterial itemMaterial, CaseData.History data,
+    private void applyPlaceholders(DCPlayer player, CaseMaterial itemMaterial, CaseData.History data,
                                    CaseItem historyItem, CaseDefinition caseDefinition) {
         Collection<LocalPlaceholder> placeholders = getPlaceholders(caseDefinition, data, historyItem);
-        itemMaterial.displayName(DCTools.rt(itemMaterial.displayName(), placeholders));
-        itemMaterial.lore(DCTools.rt(itemMaterial.lore(), placeholders));
+        itemMaterial.displayName(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(player, DCTools.rt(itemMaterial.displayName(), placeholders)));
+        itemMaterial.lore(DCAPI.getInstance().getPlatform().getPAPI().setPlaceholders(player, DCTools.rt(itemMaterial.lore(), placeholders)));
     }
 
     private Collection<LocalPlaceholder> getPlaceholders(CaseDefinition caseDefinition, CaseData.History data,
