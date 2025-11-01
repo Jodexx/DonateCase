@@ -6,7 +6,9 @@ import com.jodexindustries.donatecase.api.tools.PAPI;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class PAPISupport implements PAPI {
 
@@ -30,18 +32,27 @@ public class PAPISupport implements PAPI {
     }
 
     @Override
-    public String setPlaceholders(@NotNull Object player, String text) {
-        if(donateCaseExpansion == null) return text;
+    public String setPlaceholders(@Nullable Object player, String text) {
+        if (donateCaseExpansion == null) return text;
 
-        if(player instanceof OfflinePlayer) return PlaceholderAPI.setPlaceholders((OfflinePlayer) player, text);
-        if(player instanceof DCPlayer) return setPlaceholders((DCPlayer) player, text);
+        OfflinePlayer offlinePlayer = getPlayer(player);
 
-        return text;
+        return PlaceholderAPI.setPlaceholders(offlinePlayer, text);
     }
 
     @Override
-    public String setPlaceholders(@NotNull DCPlayer player, String text) {
-        return setPlaceholders(player.getHandler(), text);
+    public List<String> setPlaceholders(@Nullable Object player, List<String> text) {
+        if (donateCaseExpansion == null) return text;
+
+        OfflinePlayer offlinePlayer = getPlayer(player);
+
+        return PlaceholderAPI.setPlaceholders(offlinePlayer, text);
     }
 
+    @Nullable
+    private OfflinePlayer getPlayer(@Nullable Object player) {
+        if (player == null) return null;
+
+        return player instanceof DCPlayer ? ((OfflinePlayer) ((DCPlayer) player).getHandler()) : ((OfflinePlayer) player);
+    }
 }

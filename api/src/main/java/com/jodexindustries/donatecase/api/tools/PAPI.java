@@ -1,7 +1,8 @@
 package com.jodexindustries.donatecase.api.tools;
 
-import com.jodexindustries.donatecase.api.platform.DCPlayer;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Interface for placeholder api interaction
@@ -24,7 +25,7 @@ public interface PAPI {
      * @param text String for parsing
      * @return string with placeholders
      */
-    String setPlaceholders(@NotNull Object player, String text);
+    String setPlaceholders(@Nullable Object player, String text);
 
-    String setPlaceholders(@NotNull DCPlayer player, String text);
+    List<String> setPlaceholders(@Nullable Object player, List<String> text);
 }
