@@ -45,6 +45,12 @@ public abstract class DCTools {
     @Nullable
     public abstract Object loadCaseItem(String id);
 
+    public abstract Object createSkullFromTexture(String texture);
+
+    public abstract DCFuture<?> createSkullFromPlayer(String playerName);
+
+    public abstract DCFuture<?> createSkullFromUuid(UUID uuid);
+
     public static DateFormat getDateFormat() {
         return new SimpleDateFormat(
                 DCAPI.getInstance().getConfigManager().getConfig().dateFormat());

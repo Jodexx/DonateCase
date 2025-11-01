@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.spigot.tools;
 
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseInventory;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import com.jodexindustries.donatecase.spigot.BukkitBackend;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.spigot.api.armorstand.EntityArmorStandCreator;
@@ -9,8 +10,12 @@ import com.jodexindustries.donatecase.spigot.api.armorstand.PacketArmorStandCrea
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitInventory;
+import dev.rollczi.liteskullapi.SkullAPI;
+import dev.rollczi.liteskullapi.SkullData;
+import dev.rollczi.liteskullapi.standard.LiteSkullBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -18,9 +23,13 @@ import java.util.UUID;
 public class ToolsImpl extends DCToolsBukkit {
 
     private final BukkitBackend backend;
+    private final SkullAPI skullAPI;
 
     public ToolsImpl(BukkitBackend backend) {
         this.backend = backend;
+
+        Plugin plugin = backend.getPlugin();
+        this.skullAPI = LiteSkullBuilder.builder().bukkitScheduler(plugin).logger(plugin.getLogger()).build();
     }
 
     @Override
@@ -39,7 +48,7 @@ public class ToolsImpl extends DCToolsBukkit {
 
     @Override
     public Object loadCaseItem(String id) {
-        if(id == null) return null;
+        if (id == null) return null;
 
         Material material = Material.getMaterial(id);
 
@@ -50,4 +59,20 @@ public class ToolsImpl extends DCToolsBukkit {
         }
     }
 
+    @Override
+    public Object createSkullFromTexture(String texture) {
+        SkullData skullData = new SkullData(texture);
+
+        return skullAPI.getSkull(skullData);
+    }
+
+    @Override
+    public DCFuture<?> createSkullFromPlayer(String playerName) {
+        return DCFuture.fromCompletableFuture(skullAPI.getSkull(playerName));
+    }
+
+    @Override
+    public DCFuture<?> createSkullFromUuid(UUID uuid) {
+        return DCFuture.fromCompletableFuture(skullAPI.getSkull(uuid));
+    }
 }
