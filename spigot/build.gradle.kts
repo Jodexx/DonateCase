@@ -16,7 +16,6 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.arcaniax:HeadDatabase-API:1.3.2")
     compileOnly("dev.lone:api-itemsadder:4.0.10")
-    compileOnly("com.mojang:authlib:1.5.25")
     compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.17")
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
     compileOnly("de.oliver:FancyHolograms:2.4.0")
@@ -24,11 +23,15 @@ dependencies {
     compileOnly(fileTree("libs").include("*.jar"))
     implementation(project(":api:spigot-api"))
     implementation(project(":common"))
-
+    implementation("dev.rollczi:liteskullapi:2.0.0")
 }
 
 tasks.runServer {
-    minecraftVersion("1.21.8")
+    minecraftVersion("1.21.10")
+    allJvmArgs = listOf("-DPaper.IgnoreJavaVersion=true")
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 
 tasks.build {
@@ -51,7 +54,12 @@ tasks.processResources {
 tasks.shadowJar {
     archiveBaseName.set(project.rootProject.name)
     archiveClassifier.set("")
-    archiveVersion.set(project.version.toString())
     exclude("org/jetbrains/**")
     exclude("org/intellij/lang/**")
+
+    relocate("dev.rollczi", "com.jodexindustries")
+
+    minimize {
+        include(dependency("dev.rollczi:.*"))
+    }
 }
