@@ -25,6 +25,18 @@ public class DCFuture <T> extends CompletableFuture<T> {
         return future;
     }
 
+    public static <U> DCFuture<U> fromCompletableFuture(CompletableFuture<U> future) {
+        DCFuture<U> dcFuture = new DCFuture<>();
+        future.whenComplete((result, error) -> {
+            if (error != null) {
+                dcFuture.completeExceptionally(error);
+            } else {
+                dcFuture.complete(result);
+            }
+        });
+        return dcFuture;
+    }
+
     public <U> @NotNull DCFuture<U> thenComposeAsync(@NotNull Function<? super T, ? extends CompletionStage<U>> fn) {
         DCFuture<U> future = new DCFuture<>();
         super.thenComposeAsync(fn)
