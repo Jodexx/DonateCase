@@ -27,10 +27,10 @@ subprojects {
         mavenCentral()
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://repo.papermc.io/repository/maven-releases/")
-        maven("https://repo.fancyinnovations.com/releases")
+        maven("https://repo.fancyinnovations.com/releases") // FancyHolograms
         maven("https://repo.alessiodp.com/releases/")
         maven("https://jitpack.io")
-        maven("https://maven.devs.beer/")
+        maven("https://maven.devs.beer/") // ItemsAdder
         maven("https://repo.jodex.xyz/releases/")
     }
 
