@@ -16,7 +16,7 @@ import java.util.List;
 public class BukkitMetaUpdater implements MetaUpdater {
 
     @Override
-    public void updateMeta(Object itemStack, String displayName, List<String> lore, int modelData, boolean enchanted, String[] rgb) {
+    public void updateMeta(Object itemStack, String displayName, List<String> lore, int modelData, boolean enchanted, Integer[] rgb) {
         if (!(itemStack instanceof ItemStack)) {
             return;
         }
@@ -39,8 +39,8 @@ public class BukkitMetaUpdater implements MetaUpdater {
             meta.addEnchant(Enchantment.LURE, 1, true);
         }
 
-        if (rgb != null && rgb.length >= 3) {
-            Color color = DCToolsBukkit.fromRGBString(rgb, Color.WHITE);
+        if (rgb.length != 0) {
+            Color color = DCToolsBukkit.fromRGB(rgb, Color.WHITE);
             updateColor(meta, color);
         }
 
@@ -58,6 +58,7 @@ public class BukkitMetaUpdater implements MetaUpdater {
     private void updateColor(@NotNull ItemMeta meta, @NotNull Color color) {
         try {
             Method setColorMethod = meta.getClass().getDeclaredMethod("setColor", Color.class);
+            setColorMethod.setAccessible(true);
             setColorMethod.invoke(meta, color);
         } catch (Exception ignored) {
         }

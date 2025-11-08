@@ -33,9 +33,12 @@ import java.util.stream.Collectors;
  */
 public abstract class DCTools {
 
-    public static String[] parseRGB(String string) {
-        if (string == null) return new String[0];
-        return string.replaceAll(" ", "").split(",");
+    public static Integer[] parseRGB(String string) {
+        if (string == null || string.isEmpty()) return new Integer[0];
+
+        return Arrays.stream(string.replace(" ", "").split(","))
+                .map(Integer::parseInt)
+                .toArray(Integer[]::new);
     }
 
     public abstract CaseInventory createInventory(CaseGuiWrapper wrapper, int size, @Nullable String title);
@@ -177,7 +180,7 @@ public abstract class DCTools {
     }
 
     public static boolean isHasCommandForSender(DCCommandSender sender,
-            Map<String, List<Map<String, SubCommand>>> addonsMap) {
+                                                Map<String, List<Map<String, SubCommand>>> addonsMap) {
         return addonsMap.keySet().stream().map(addonsMap::get)
                 .anyMatch(commands -> isHasCommandForSender(sender, commands));
     }
@@ -185,7 +188,7 @@ public abstract class DCTools {
     /**
      * Check sender for permission to executing commands
      * Checks only if sender has permission for one or more commands, not all
-     * 
+     *
      * @param sender   Player or Console
      * @param commands List of commands, that loaded in DonateCase
      * @return true, if sender has permission
@@ -201,7 +204,7 @@ public abstract class DCTools {
      * @param string the input string containing placeholders in the format
      *               `%placeholder%`.
      * @return the extracted placeholder without `%` symbols, or "null" if no
-     *         placeholder is found.
+     * placeholder is found.
      */
     public static String getLocalPlaceholder(String string) {
         Pattern pattern = Pattern.compile("%(.*?)%");
@@ -220,12 +223,12 @@ public abstract class DCTools {
      *
      * @param version the version string to be parsed (e.g., "2.2.2").
      * @return the numeric representation of the version (e.g., "2220").
-     *         <p>
-     *         Examples:
-     *         <ul>
-     *         <li>Input: <code>"2.2.2"</code> → Output: <code>2220</code></li>
-     *         <li>Input: <code>"2.2.2.2"</code> → Output: <code>2222</code></li>
-     *         </ul>
+     * <p>
+     * Examples:
+     * <ul>
+     * <li>Input: <code>"2.2.2"</code> → Output: <code>2220</code></li>
+     * <li>Input: <code>"2.2.2.2"</code> → Output: <code>2222</code></li>
+     * </ul>
      */
     public static int getPluginVersion(String version) {
         version = version.replaceAll("\\.", "");
@@ -259,8 +262,8 @@ public abstract class DCTools {
      *                    filter.
      * @param caseType    the type of case to filter by.
      * @return a sorted list of {@link CaseData.History}, filtered by the specified
-     *         case type,
-     *         sorted in descending order of time.
+     * case type,
+     * sorted in descending order of time.
      */
     public static List<CaseData.History> sortHistoryDataByCase(List<CaseData.History> historyData, String caseType) {
         List<CaseData.History> list = new ArrayList<>();
@@ -285,7 +288,7 @@ public abstract class DCTools {
 
     /**
      * Sort case items by index
-     * 
+     *
      * @param items Map with Case items
      * @return New map with sorted items
      */

@@ -25,7 +25,7 @@ public class CaseDataMaterial implements MetaUpdater, Cloneable {
     private boolean enchanted;
     private List<String> lore;
     private int modelData;
-    private String[] rgb;
+    private Integer[] rgb;
     private Object itemStack;
 
     public static CaseDataMaterial fromMaterial(CaseMaterial material) {
@@ -59,7 +59,7 @@ public class CaseDataMaterial implements MetaUpdater, Cloneable {
     }
 
     @Override
-    public void updateMeta(Object itemStack, String displayName, List<String> lore, int modelData, boolean enchanted, String[] rgb) {
+    public void updateMeta(Object itemStack, String displayName, List<String> lore, int modelData, boolean enchanted, Integer[] rgb) {
         DCAPI.getInstance().getPlatform().getMetaUpdater().updateMeta(itemStack, displayName, lore, modelData, enchanted, rgb);
     }
 

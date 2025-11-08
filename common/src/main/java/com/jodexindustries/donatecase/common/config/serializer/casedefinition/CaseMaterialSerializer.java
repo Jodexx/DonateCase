@@ -20,7 +20,7 @@ public class CaseMaterialSerializer implements TypeSerializer<CaseMaterial> {
 
         ConfigurationNode rgbNode = node.node("rgb");
 
-        String[] rgb = rgbNode.isList() ? node.node("rgb").get(String[].class, new String[0]) : DCTools.parseRGB(rgbNode.getString());
+        Integer[] rgb = rgbNode.isList() ? rgbNode.get(Integer[].class, new Integer[0]) : DCTools.parseRGB(rgbNode.getString());
 
         Object itemStack = DCAPI.getInstance().getPlatform().getTools().loadCaseItem(id);
 
@@ -44,6 +44,6 @@ public class CaseMaterialSerializer implements TypeSerializer<CaseMaterial> {
         node.node("enchanted").set(obj.enchanted());
         node.node("lore").setList(String.class, obj.lore());
         node.node("model-data").set(obj.modelData());
-        node.node("rgb").setList(String.class, Arrays.asList(obj.rgb()));
+        node.node("rgb").setList(Integer.class, Arrays.asList(obj.rgb()));
     }
 }

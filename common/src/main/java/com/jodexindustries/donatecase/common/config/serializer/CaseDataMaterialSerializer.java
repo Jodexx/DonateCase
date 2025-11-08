@@ -2,6 +2,7 @@ package com.jodexindustries.donatecase.common.config.serializer;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedata.CaseDataMaterial;
+import com.jodexindustries.donatecase.api.tools.DCTools;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.ConfigurationOptions;
@@ -9,7 +10,6 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
-import java.util.List;
 
 public class CaseDataMaterialSerializer implements TypeSerializer<CaseDataMaterial> {
 
@@ -24,8 +24,9 @@ public class CaseDataMaterialSerializer implements TypeSerializer<CaseDataMateri
         material.lore(node.node("Lore").getList(String.class));
         material.modelData(node.node("ModelData").getInt(-1));
 
-        List<String> rgb = node.node("Rgb").getList(String.class);
-        if(rgb != null) material.rgb(rgb.toArray(new String[0]));
+        ConfigurationNode rgbNode = node.node("Rgb");
+        Integer[] rgb = rgbNode.isList() ? rgbNode.get(Integer[].class, new Integer[0]) : DCTools.parseRGB(rgbNode.getString());
+        material.rgb(rgb);
 
         material.itemStack(DCAPI.getInstance().getPlatform().getTools().loadCaseItem(material.id()));
 
