@@ -303,18 +303,22 @@ public class AnimationManagerImpl implements AnimationManager {
                               @NotNull CaseItem item,
                               @Nullable CaseItem.RandomAction action) {
         backend.getScheduler().async(backend, () -> {
-            CaseData.History newEntry = new CaseData.History(
-                    item.name(),
-                    definition.settings().type(),
-                    player.getName(),
-                    System.currentTimeMillis(),
-                    item.group(),
-                    action == null ? null : action.name()
-            );
+            String type = definition.settings().type();
 
-            api.getDatabase().addHistory(definition.settings().type(), newEntry, definition.settings().historyDataSize());
+            int size = definition.settings().historyDataSize();
+            if (size > 0) {
+                CaseData.History newEntry = new CaseData.History(
+                        item.name(),
+                        type,
+                        player.getName(),
+                        System.currentTimeMillis(),
+                        item.group(),
+                        action == null ? null : action.name()
+                );
+                api.getDatabase().addHistory(type, newEntry, size);
+            }
 
-            api.getCaseOpenManager().add(definition.settings().type(), player.getName(), 1);
+            api.getCaseOpenManager().add(type, player.getName(), 1);
         }, 0L);
     }
 
@@ -337,5 +341,4 @@ public class AnimationManagerImpl implements AnimationManager {
         return definition.settings().animationSettings().isNull() ?
                 api.getConfigManager().getAnimations().node(definition.settings().animation()) : definition.settings().animationSettings();
     }
-
 }
