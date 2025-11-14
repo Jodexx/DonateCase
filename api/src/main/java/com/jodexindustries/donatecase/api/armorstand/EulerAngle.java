@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.api.armorstand;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 /**
  * EulerAngle is used to represent 3 angles, one for each
@@ -17,18 +18,22 @@ public class EulerAngle {
      */
     public static final EulerAngle ZERO = new EulerAngle(0, 0, 0);
 
-    private final double x;
-    private final double y;
+    @Setting
+    private double x;
 
-    private final double z;
+    @Setting
+    private double y;
+
+    @Setting
+    private double z;
 
     /**
      * Creates a EulerAngle with each axis set to the
      * passed angle in radians
      *
-     * @param x the angle for the x axis in radians
-     * @param y the angle for the y axis in radians
-     * @param z the angle for the z axis in radians
+     * @param x the angle for the x-axis in radians
+     * @param y the angle for the y-axis in radians
+     * @param z the angle for the z-axis in radians
      */
     public EulerAngle(double x, double y, double z) {
         this.x = x;
@@ -44,65 +49,67 @@ public class EulerAngle {
 
     /**
      * Return a EulerAngle which is the result of changing
-     * the x axis to the passed angle
+     * the x-axis to the passed angle
      *
      * @param x the angle in radians
      * @return the resultant EulerAngle
      */
     @NotNull
-    public EulerAngle setX(double x) {
-        return new EulerAngle(x, y, z);
+    public EulerAngle x(double x) {
+        this.x = x;
+        return this;
     }
 
     /**
      * Return a EulerAngle which is the result of changing
-     * the y axis to the passed angle
+     * the y-axis to the passed angle
      *
      * @param y the angle in radians
      * @return the resultant EulerAngle
      */
     @NotNull
-    public EulerAngle setY(double y) {
-        return new EulerAngle(x, y, z);
+    public EulerAngle y(double y) {
+        this.y = y;
+        return this;
     }
 
     /**
      * Return a EulerAngle which is the result of changing
-     * the z axis to the passed angle
+     * the z-axis to the passed angle
      *
      * @param z the angle in radians
      * @return the resultant EulerAngle
      */
     @NotNull
-    public EulerAngle setZ(double z) {
-        return new EulerAngle(x, y, z);
+    public EulerAngle z(double z) {
+        this.z = z;
+        return this;
     }
 
     /**
      * Creates a new EulerAngle which is the result of adding
      * the x, y, z components to this EulerAngle
      *
-     * @param x the angle to add to the x axis in radians
-     * @param y the angle to add to the y axis in radians
-     * @param z the angle to add to the z axis in radians
+     * @param x the angle to add to the x-axis in radians
+     * @param y the angle to add to the y-axis in radians
+     * @param z the angle to add to the z-axis in radians
      * @return the resultant EulerAngle
      */
     @NotNull
     public EulerAngle add(double x, double y, double z) {
-        return new EulerAngle(
-                this.x + x,
-                this.y + y,
-                this.z + z
-        );
+        this.x += x;
+        this.y += y;
+        this.z += z;
+        return this;
     }
 
     /**
      * Creates a new EulerAngle which is the result of subtracting
      * the x, y, z components to this EulerAngle
      *
-     * @param x the angle to subtract to the x axis in radians
-     * @param y the angle to subtract to the y axis in radians
-     * @param z the angle to subtract to the z axis in radians
+     * @param x the angle to subtract to the x-axis in radians
+     * @param y the angle to subtract to the y-axis in radians
+     * @param z the angle to subtract to the z-axis in radians
      * @return the resultant EulerAngle
      */
     @NotNull
