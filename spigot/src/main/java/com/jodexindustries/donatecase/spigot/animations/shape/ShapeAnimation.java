@@ -65,6 +65,8 @@ public class ShapeAnimation extends BukkitJavaAnimation {
         private final Color orangeColor;
         private final Color whiteColor;
 
+        private final Sound sound = settings.scroll.sound();
+
         private double currentTail;
 
         private final int endTime;
@@ -107,8 +109,7 @@ public class ShapeAnimation extends BukkitJavaAnimation {
                     CaseItem item = getDefinition().items().getRandomItem();
                     as.setEquipment(settings.itemSlot, item.material().itemStack());
 
-                    String winGroupDisplayName = api.getPlatform().getPAPI().setPlaceholders(getPlayer(),
-                            item.material().displayName());
+                    String winGroupDisplayName = api.getPlatform().getPAPI().setPlaceholders(getPlayer(), item.material().displayName());
 
                     if (item.material().displayName() != null && !item.material().displayName().isEmpty()) {
                         as.setCustomNameVisible(true);
@@ -116,8 +117,9 @@ public class ShapeAnimation extends BukkitJavaAnimation {
                     as.setCustomName(winGroupDisplayName);
                     as.updateMeta();
                 }
-                world.playSound(bukkitLocation, settings.scroll.sound(), settings.scroll.volume, settings.scroll.pitch);
 
+                if (sound != null)
+                    world.playSound(bukkitLocation, sound, settings.scroll.volume, settings.scroll.pitch);
             }
 
             if (tick == settings.scroll.time + 1) {
@@ -150,11 +152,7 @@ public class ShapeAnimation extends BukkitJavaAnimation {
                 loc.add(x, 0.4, z);
                 Particle.DustOptions dustOptions = new Particle.DustOptions(whiteColor, settings.particle.white.size);
 
-                world.spawnParticle(
-                        particle,
-                        loc,
-                        1, 0.1, 0.1, 0.1, 0.0, dustOptions
-                );
+                world.spawnParticle(particle, loc, 1, 0.1, 0.1, 0.1, 0.0, dustOptions);
                 loc.subtract(x, 0.4, z);
             }
 
@@ -181,6 +179,5 @@ public class ShapeAnimation extends BukkitJavaAnimation {
             firework.setMetadata("case", new FixedMetadataValue(((BukkitBackend) api.getPlatform()).getPlugin(), "case"));
             firework.detonate();
         }
-
     }
 }

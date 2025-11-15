@@ -44,6 +44,8 @@ public class WheelAnimation extends BukkitJavaAnimation {
 
         private final World world;
 
+        private final Sound sound = settings.scroll.sound();
+
         private final double baseAngle;
         private double lastCompletedRotation = 0.0;
         private int ticks;
@@ -55,7 +57,7 @@ public class WheelAnimation extends BukkitJavaAnimation {
             float pitch = settings.facing == null ? Math.round(location.pitch() / 45.0f) * 45.0f : settings.facing.pitch;
             float yaw = settings.facing == null ? Math.round(location.yaw() / 45.0f) * 45.0f : settings.facing.yaw;
 
-            if(settings.startPosition != null) location.add(settings.startPosition);
+            if (settings.startPosition != null) location.add(settings.startPosition);
             location.pitch(pitch);
             location.yaw(yaw);
 
@@ -157,10 +159,9 @@ public class WheelAnimation extends BukkitJavaAnimation {
                 entity.teleport(newLoc);
                 angle += offset;
 
-                double currentAngle = angle - baseAngle;
-                if (currentAngle - lastCompletedRotation >= rotationThreshold) {
-                    Sound sound = settings.scroll.sound();
-                    if (sound != null) {
+                if (sound != null) {
+                    double currentAngle = angle - baseAngle;
+                    if (currentAngle - lastCompletedRotation >= rotationThreshold) {
                         world.playSound(bukkitLocation, sound, settings.scroll.volume, settings.scroll.pitch);
                         lastCompletedRotation = currentAngle;
                     }

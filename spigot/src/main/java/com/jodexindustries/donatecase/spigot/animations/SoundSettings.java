@@ -1,6 +1,7 @@
 package com.jodexindustries.donatecase.spigot.animations;
 
 import org.bukkit.Sound;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
@@ -8,7 +9,7 @@ import org.spongepowered.configurate.objectmapping.meta.Setting;
 public class SoundSettings {
 
     @Setting("Sound")
-    private String sound = "ENTITY_ITEM_PICKUP";
+    private String sound;
 
     @Setting("Volume")
     public float volume = 10;
@@ -17,6 +18,7 @@ public class SoundSettings {
     public float pitch = 1;
 
     // parse sound without Configurate TypeSerializer due Bukkit has interface instead of enum
+    @Nullable
     public Sound sound() {
         if (sound == null || sound.isEmpty()) return null;
         try {
