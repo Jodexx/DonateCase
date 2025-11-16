@@ -90,6 +90,7 @@ public class ConfigImpl implements Config {
         this.loader = YamlConfigurationLoader
                 .builder()
                 .nodeStyle(NodeStyle.BLOCK)
+                .indent(2)
                 .defaultOptions(opts -> opts.serializers(build -> build.registerAll(SERIALIZER_COLLECTION.build())))
                 .file(file)
                 .build();
