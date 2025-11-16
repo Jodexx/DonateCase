@@ -19,8 +19,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 import org.spongepowered.configurate.yaml.NodeStyle;
@@ -60,7 +60,7 @@ public class ConfigImpl implements Config {
 
     private int version;
     private ConfigType type;
-    private ConfigurationNode node;
+    private CommentedConfigurationNode node;
     private Object serialized;
 
     private boolean deleted;
@@ -96,7 +96,7 @@ public class ConfigImpl implements Config {
     }
 
     private void setMeta() throws SerializationException {
-        ConfigurationNode metaNode = node.node("config");
+        CommentedConfigurationNode metaNode = node.node("config");
         String version = metaNode.node("version").getString();
 
         if (version != null) {
@@ -127,7 +127,7 @@ public class ConfigImpl implements Config {
     }
 
     @Override
-    public ConfigurationNode node() {
+    public CommentedConfigurationNode node() {
         return node;
     }
 

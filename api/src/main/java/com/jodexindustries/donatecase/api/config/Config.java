@@ -2,16 +2,16 @@ package com.jodexindustries.donatecase.api.config;
 
 import com.jodexindustries.donatecase.api.config.converter.ConfigType;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.File;
 
 public interface Config {
 
-    ConfigurationNode node();
+    CommentedConfigurationNode node();
 
-    default ConfigurationNode node(Object... path) {
+    default CommentedConfigurationNode node(Object... path) {
         return node().node(path);
     }
 
