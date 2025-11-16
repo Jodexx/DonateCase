@@ -1,5 +1,5 @@
 name: FriendCase
 main: com.jodexindustries.friendcase.MainAddon
 version: '${version}'
-api: 2.1.0.5
+api: 2.1.0.7
 platforms: ["Bukkit"]

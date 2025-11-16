@@ -2,5 +2,5 @@ name: DCEventManager
 version: '${version}'
 main: com.jodexindustries.dceventmanager.bootstrap.MainAddon
 author: "_Jodex__"
-api: 2.1.0.0
+api: 2.1.0.7
 platforms: ["Bukkit"]

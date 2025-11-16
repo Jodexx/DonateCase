@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.jodexindustries.dcprizepreview"
-version = "2.0.1"
+version = "2.0.2"
 
 dependencies {
     compileOnly(project(":api:spigot-api"))

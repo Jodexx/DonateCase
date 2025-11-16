@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.jodexindustries.friendcase"
-version = "2.0.1"
+version = "2.0.2"
 
 dependencies {
     compileOnly(project(":api"))
