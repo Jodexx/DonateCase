@@ -44,8 +44,9 @@ public enum DefaultConfigType implements ConfigType {
 
     CASE_ITEMS(1, new ConfigSerializer(CaseItems.class, "items")),
 
-    ANIMATIONS(15, new HashMap<Integer, ConfigMigrator>() {{
+    ANIMATIONS(16, new HashMap<Integer, ConfigMigrator>() {{
         put(14, new AnimationsMigrator_1_4_to_1_5());
+        put(15, new AnimationsMigrator_1_5_to_1_6());
     }}),
 
     CASES(11, new HashMap<Integer, ConfigMigrator>() {{
