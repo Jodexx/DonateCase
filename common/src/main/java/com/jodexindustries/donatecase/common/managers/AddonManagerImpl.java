@@ -219,6 +219,7 @@ public class AddonManagerImpl implements AddonManager {
         } catch (Throwable t) {
             platform.getLogger().log(Level.SEVERE,
                     "Error occurred while enabling addon " + addon.getName() + " v" + addon.getVersion(), t);
+            disable(addon, reason);
         }
         return false;
     }
