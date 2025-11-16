@@ -16,6 +16,12 @@ public class AnimationsMigrator_1_5_to_1_6 implements ConfigMigrator {
 
             config.node("FUTURE_WHEEL").set(futureWheelObject);
 
+            config.node("RAINLY").act(rainly -> {
+                rainly.node("CloudParticle").set("CLOUD");
+                rainly.node("End", "Particle").set("EXPLOSION_HUGE");
+                rainly.node("Scroll", "Particle").set("FIREWORKS_SPARK");
+            });
+
             config.node("config", "version").set(16);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                  ClassNotFoundException e) {
