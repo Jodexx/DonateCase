@@ -12,7 +12,7 @@ dependencies {
     compileOnlyApi("com.j256.ormlite:ormlite-jdbc:6.1")
     compileOnlyApi("org.jetbrains:annotations:24.0.0")
     compileOnlyApi("com.google.guava:guava:33.3.1-jre")
-    compileOnlyApi("org.spongepowered:configurate-yaml:4.1.2")
+    compileOnlyApi("org.spongepowered:configurate-yaml:4.2.0")
 }
 
 
