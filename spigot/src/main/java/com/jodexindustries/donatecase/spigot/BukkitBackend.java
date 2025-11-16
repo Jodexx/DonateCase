@@ -16,6 +16,7 @@ import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.manager.*;
 import com.jodexindustries.donatecase.spigot.animations.*;
 import com.jodexindustries.donatecase.spigot.animations.firework.FireworkAnimation;
+import com.jodexindustries.donatecase.spigot.animations.futurewheel.FutureWheelAnimation;
 import com.jodexindustries.donatecase.spigot.animations.pop.PopAnimation;
 import com.jodexindustries.donatecase.spigot.animations.select.SelectAnimation;
 import com.jodexindustries.donatecase.spigot.animations.select.SelectAnimationListener;
@@ -305,6 +306,17 @@ public class BukkitBackend extends BackendPlatform {
                         .addon(this)
                         .animation(PopAnimation.class)
                         .description("Items pop")
+                        .requireSettings(true)
+                        .requireBlock(true)
+                        .build()
+        );
+
+        manager.register(
+                CaseAnimation.builder()
+                        .name("FUTURE_WHEEL")
+                        .addon(this)
+                        .animation(FutureWheelAnimation.class)
+                        .description("Improved version of the WHEEL animation")
                         .requireSettings(true)
                         .requireBlock(true)
                         .build()
