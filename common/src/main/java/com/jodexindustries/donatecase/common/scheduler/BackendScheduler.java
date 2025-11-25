@@ -96,7 +96,7 @@ public class BackendScheduler implements Scheduler {
 
     private SchedulerTask schedule(Addon addon, Runnable task, long delayTicks, long periodTicks, boolean async) {
         long delayMs = delayTicks * 50;
-        long periodMs = periodTicks > 0 ? periodTicks * 50 : -1;
+        long periodMs = periodTicks > -1 ? Math.max(periodTicks, 1) * 50 : -1;
 
         int id = taskCounter.incrementAndGet();
         WrappedTask wrappedTask = new WrappedTask(addon, id, !async, task);
@@ -130,7 +130,7 @@ public class BackendScheduler implements Scheduler {
 
     private void scheduleConsumer(Addon addon, Consumer<SchedulerTask> consumer, long delayTicks, long periodTicks, boolean async) {
         long delayMs = delayTicks * 50;
-        long periodMs = periodTicks > 0 ? periodTicks * 50 : -1;
+        long periodMs = periodTicks > -1 ? Math.max(periodTicks, 1) * 50 : -1;
 
         int id = getId();
         WrappedTask[] wrapperHolder = new WrappedTask[1];
