@@ -10,6 +10,7 @@ import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.api.manager.HologramManager;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +20,7 @@ public class HologramManagerImpl implements HologramManager {
 
     private HologramDriver driver;
 
-    private final Map<String, HologramDriver> drivers = new ConcurrentHashMap<>();
+    private final Map<@NotNull String, @NotNull HologramDriver> drivers = new ConcurrentHashMap<>();
     private final DCAPI api;
 
     public HologramManagerImpl(DCAPI api) {
@@ -52,9 +53,18 @@ public class HologramManagerImpl implements HologramManager {
     public void load() {
         String name = api.getConfigManager().getConfig().hologramDriver().toLowerCase();
         set(name);
-        if (driver == null) return;
-
-        api.getPlatform().getLogger().info("Using " + name + " as hologram driver");
+        if (driver == null) {
+            Iterator<String> it = drivers.keySet().iterator();
+            if (it.hasNext()) {
+                String fallback = it.next();
+                api.getPlatform().getLogger().info("Hologram driver '" + name + "' was not found! Using '" + fallback + "' instead");
+                set(fallback);
+            } else {
+                return;
+            }
+        } else {
+            api.getPlatform().getLogger().info("Using '" + name + "' as hologram driver");
+        }
 
         remove();
 
