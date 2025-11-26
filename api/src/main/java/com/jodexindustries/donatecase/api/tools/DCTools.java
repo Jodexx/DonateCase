@@ -16,6 +16,7 @@ import com.jodexindustries.donatecase.api.platform.DCCommandSender;
 import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.scheduler.DCFuture;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,12 +34,20 @@ import java.util.stream.Collectors;
  */
 public abstract class DCTools {
 
-    public static Integer[] parseRGB(String string) {
+    @Contract("null -> new")
+    public static Integer @NotNull [] parseRGB(String string) {
         if (string == null || string.isEmpty()) return new Integer[0];
 
-        return Arrays.stream(string.replace(" ", "").split(","))
-                .map(Integer::parseInt)
-                .toArray(Integer[]::new);
+        List<Integer> list = new ArrayList<>();
+        for (String s : string.replace(" ", "").split(",")) {
+            try {
+                Integer parseInt = Integer.parseInt(s);
+                list.add(parseInt);
+            } catch (NumberFormatException ignored) {
+                list.add(0);
+            }
+        }
+        return list.toArray(new Integer[0]);
     }
 
     public abstract CaseInventory createInventory(CaseGuiWrapper wrapper, int size, @Nullable String title);

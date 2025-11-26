@@ -10,8 +10,8 @@ import java.lang.reflect.Modifier;
 public abstract class DCToolsBukkit extends DCTools {
 
     public static Color parseColor(String s) {
-        Color color = fromRGBString(s, null);
-        if (color == null) color = getColor(s);
+        Color color = getColor(s);
+        if (color == null) color = fromRGBString(s, null);
         return color;
     }
 
@@ -25,7 +25,7 @@ public abstract class DCToolsBukkit extends DCTools {
                     try {
                         return (Color) field.get(null);
                     } catch (IllegalArgumentException | IllegalAccessException e1) {
-                        throw new RuntimeException(e1);
+                        return null;
                     }
                 }
 
