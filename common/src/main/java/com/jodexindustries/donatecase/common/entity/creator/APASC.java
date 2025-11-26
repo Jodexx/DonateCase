@@ -40,6 +40,7 @@ public abstract class APASC implements ArmorStandCreator {
         this.meta = new ArmorStandMeta(entityId);
         this.equipment = new EntityEquipment(entityId);
         this.location = location;
+        ArmorStandCreator.armorStands.put(entityId, this);
     }
 
     @Override
