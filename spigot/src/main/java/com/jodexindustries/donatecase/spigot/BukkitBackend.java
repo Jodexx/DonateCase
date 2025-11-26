@@ -450,8 +450,8 @@ public class BukkitBackend extends BackendPlatform {
                 Class<? extends HologramDriver> driver = provider.get();
                 if (driver != null) {
                     try {
-                        manager.register(plugin.toLowerCase(), driver.newInstance());
-                    } catch (InstantiationException | IllegalAccessException e) {
+                        manager.register(plugin.toLowerCase(), driver.getDeclaredConstructor().newInstance());
+                    } catch (Exception e) {
                         getLogger().log(Level.WARNING, "Error with loading " + plugin + " hologram driver: ", e);
                     }
                 }
