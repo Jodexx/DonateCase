@@ -29,6 +29,7 @@ import com.jodexindustries.donatecase.api.tools.PAPI;
 import com.jodexindustries.donatecase.spigot.animations.wheel.WheelAnimation;
 import com.jodexindustries.donatecase.common.gui.items.HISTORYItemHandlerImpl;
 import com.jodexindustries.donatecase.common.gui.items.OPENItemClickHandlerImpl;
+import com.jodexindustries.donatecase.common.gui.items.CLOSEItemClickHandlerImpl;
 import com.jodexindustries.donatecase.spigot.holograms.CMIHologramsImpl;
 import com.jodexindustries.donatecase.spigot.holograms.DecentHologramsImpl;
 import com.jodexindustries.donatecase.spigot.holograms.FancyHologramsImpl;
@@ -233,6 +234,15 @@ public class BukkitBackend extends BackendPlatform {
                         .click(new OPENItemClickHandlerImpl())
                         .updateMeta(true)
                         .loadOnCase(true)
+                        .build()
+        );
+
+        manager.register(
+                TypedItem.builder()
+                        .id("CLOSE")
+                        .addon(this)
+                        .description("Close menu")
+                        .click(new CLOSEItemClickHandlerImpl())
                         .build()
         );
 
