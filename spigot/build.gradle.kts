@@ -20,6 +20,7 @@ dependencies {
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
     compileOnly("de.oliver:FancyHolograms:2.4.0")
     compileOnly("com.github.retrooper:packetevents-spigot:2.11.1")
+    compileOnly("com.nexomc:nexo:1.17.0")
     compileOnly(fileTree("libs").include("*.jar"))
     implementation(project(":api:spigot-api"))
     implementation(project(":common"))

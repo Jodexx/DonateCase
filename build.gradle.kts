@@ -16,7 +16,7 @@ tasks.jar {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(21)) // TODO split modules for java compatibility
     }
 }
 
@@ -33,6 +33,7 @@ subprojects {
         maven("https://maven.devs.beer/") // ItemsAdder
         maven("https://repo.codemc.io/repository/maven-releases/") // packetevents
         maven("https://repo.extendedclip.com/releases/") // placeholderapi
+        maven("https://repo.nexomc.com/releases") // Nexo
     }
 
     dependencies {
@@ -42,7 +43,7 @@ subprojects {
 
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(8)
+        options.release.set(21)
         options.compilerArgs.add("-Xlint:-deprecation")
         options.compilerArgs.add("-Xlint:-options")
         options.compilerArgs.add("-Xdoclint:none")

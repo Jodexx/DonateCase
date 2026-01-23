@@ -432,6 +432,17 @@ public class BukkitBackend extends BackendPlatform {
             );
         }
 
+        if (Bukkit.getServer().getPluginManager().isPluginEnabled("Nexo")) {
+            manager.register(
+                    CaseMaterial.builder()
+                            .id("NEXO")
+                            .addon(this)
+                            .handler(new NexoMaterialHandlerImpl())
+                            .description("Items from Nexo plugin")
+                            .build()
+            );
+        }
+
         getLogger().info("Registered " + manager.getMap().size() + " materials");
     }
 
