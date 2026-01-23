@@ -3,6 +3,7 @@ package com.jodexindustries.donatecase.spigot.animations.select;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
+import com.jodexindustries.donatecase.api.data.storage.CaseVector;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.api.data.animation.Facing;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
@@ -49,30 +50,50 @@ public class SelectAnimation extends BukkitJavaAnimation {
 
                     getLocation().y(origY + y);
 
-                    if (settings.facing == Facing.EAST || settings.facing == Facing.WEST) {
-                        getLocation().z(origZ + horizonOffset);
-                    } else {
-                        getLocation().x(origX + horizonOffset);
+                    double offsetX = 0;
+                    double offsetZ = 0;
+
+                    switch (settings.facing) {
+                        case NORTH, SOUTH:
+                            offsetX = horizonOffset;
+                            break;
+                        case EAST, WEST:
+                            offsetZ = horizonOffset;
+                            break;
+                        case NORTH_EAST:
+                            offsetX = horizonOffset * 0.707;
+                            offsetZ = horizonOffset * 0.707;
+                            break;
+                        case NORTH_WEST:
+                            offsetX = horizonOffset * 0.707;
+                            offsetZ = -horizonOffset * 0.707;
+                            break;
+                        case SOUTH_EAST:
+                            offsetX = -horizonOffset * 0.707;
+                            offsetZ = horizonOffset * 0.707;
+                            break;
+                        case SOUTH_WEST:
+                            offsetX = -horizonOffset * 0.707;
+                            offsetZ = -horizonOffset * 0.707;
+                            break;
                     }
+
+                    getLocation().x(origX + offsetX);
+                    getLocation().z(origZ + offsetZ);
 
                     final ArmorStandCreator as = api.getPlatform().getTools().createArmorStand(getUuid(), getLocation());
 
                     as.setVisible(false);
-
                     as.setGravity(false);
-
                     as.setSmall(true);
-
                     as.teleport(origCaseLocation);
-
                     as.spawn();
 
-                    if (settings.facing == Facing.EAST || settings.facing == Facing.WEST) {
-                        asList.add(Pair.of(as, as.getLocation().clone().x(origX).y(origY + y * settings.radius).z(origZ + horizonOffset * settings.radius)));
-                    } else {
-                        asList.add(Pair.of(as, as.getLocation().clone().x(origX + horizonOffset * settings.radius).y(origY + y * settings.radius).z(origZ)));
-                    }
-
+                    asList.add(Pair.of(as,
+                            as.getLocation().clone()
+                                    .x(origX + offsetX * settings.radius)
+                                    .y(origY + y * settings.radius)
+                                    .z(origZ + offsetZ * settings.radius)));
                 }
             }
         }
