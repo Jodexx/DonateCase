@@ -73,7 +73,7 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
                 platform.getScheduler().async(platform, () -> {
                     try {
                         processItem(item);
-                    } catch (TypedItemException e) {
+                    } catch (Exception e) {
                         platform.getLogger().log(Level.WARNING,
                                 "Error occurred while loading item: " + item.name(), e);
                     }
