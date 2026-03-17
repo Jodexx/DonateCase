@@ -5,6 +5,7 @@ import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.common.config.serializer.SerializerUtil;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -106,7 +107,7 @@ public class CaseMenuSerializer implements TypeSerializer<CaseMenu> {
                     String.valueOf(node.key()),
                     node.node("type").getString(),
                     node.node("material").get(CaseMaterial.class),
-                    getItemSlots(node.node("slots"))
+                    SerializerUtil.intNode(node.node("slots"))
             );
         }
 
@@ -117,51 +118,6 @@ public class CaseMenuSerializer implements TypeSerializer<CaseMenu> {
             node.node("type").set(obj.type());
             node.node("material").set(CaseMaterial.class, obj.material());
             node.node("slots").setList(Integer.class, obj.slots());
-        }
-
-        private List<Integer> getItemSlots(ConfigurationNode node) throws SerializationException {
-            if (node.isList()) {
-                return getItemSlotsListed(node.getList(String.class));
-            } else {
-                return getItemSlotsRanged(node.getString());
-            }
-        }
-
-        private List<Integer> getItemSlotsListed(List<String> temp) {
-            if (temp == null || temp.isEmpty()) return Collections.emptyList();
-
-            List<Integer> slots = new ArrayList<>();
-            for (String slot : temp) {
-                String[] values = slot.split("-", 2);
-                try {
-                    int start = Integer.parseInt(values[0]);
-                    int end = (values.length == 2) ? Integer.parseInt(values[1]) : start;
-                    addRange(slots, start, end);
-                } catch (NumberFormatException ignored) {
-                }
-            }
-            return slots;
-        }
-
-        private List<Integer> getItemSlotsRanged(String slots) {
-            if (slots == null || slots.isEmpty()) return Collections.emptyList();
-
-            String[] slotArgs = slots.split("-");
-            try {
-                int start = Integer.parseInt(slotArgs[0]);
-                int end = (slotArgs.length >= 2) ? Integer.parseInt(slotArgs[1]) : start;
-                List<Integer> result = new ArrayList<>();
-                addRange(result, start, end);
-                return result;
-            } catch (NumberFormatException e) {
-                return Collections.emptyList();
-            }
-        }
-
-        private void addRange(List<Integer> slots, int start, int end) {
-            for (int i = start; i <= end; i++) {
-                slots.add(i);
-            }
         }
 
     }

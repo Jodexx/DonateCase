@@ -13,8 +13,6 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
 
@@ -42,11 +40,9 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
 
         Set<Integer> slots = new HashSet<>();
 
-        if (itemsNode != null) {
-            for (Map.Entry<Object, ? extends ConfigurationNode> entry : itemsNode.childrenMap().entrySet()) {
-                CaseGui.Item item = loadGUIItem(String.valueOf(entry.getKey()), entry.getValue(), slots);
-                if (item != null) itemMap.put((String) item.node().key(), item);
-            }
+        for (Map.Entry<Object, ? extends ConfigurationNode> entry : itemsNode.childrenMap().entrySet()) {
+            CaseGui.Item item = loadGUIItem(String.valueOf(entry.getKey()), entry.getValue(), slots);
+            if (item != null) itemMap.put((String) item.node().key(), item);
         }
 
         caseGui.items(itemMap);
@@ -102,7 +98,7 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
             item.material(material);
             item.node(source);
 
-            item.slots(getItemSlots(source));
+            item.slots(SerializerUtil.intNode((source.node("Slots"))));
             return item;
         }
 
@@ -112,41 +108,5 @@ public class CaseGuiSerializer implements TypeSerializer<CaseGui> {
 
         }
 
-        private List<Integer> getItemSlots(ConfigurationNode itemSection) throws SerializationException {
-            if (itemSection.node("Slots").isList()) {
-                return getItemSlotsListed(itemSection);
-            } else {
-                return getItemSlotsRanged(itemSection);
-            }
-        }
-
-        private List<Integer> getItemSlotsListed(ConfigurationNode itemSection) throws SerializationException {
-            List<Integer> slots = new ArrayList<>();
-            List<String> temp = itemSection.node("Slots").getList(String.class);
-            if (temp != null) {
-                for (String slot : temp) {
-                    String[] values = slot.split("-", 2);
-                    if (values.length == 2) {
-                        for (int i = Integer.parseInt(values[0]); i <= Integer.parseInt(values[1]); i++) {
-                            slots.add(i);
-                        }
-                    } else {
-                        slots.add(Integer.parseInt(slot));
-                    }
-                }
-            }
-            return slots;
-        }
-
-        private List<Integer> getItemSlotsRanged(ConfigurationNode itemSection) {
-            String slots = itemSection.node("Slots").getString();
-
-            if (slots == null || slots.isEmpty()) return new ArrayList<>();
-
-            String[] slotArgs = slots.split("-");
-            int range1 = Integer.parseInt(slotArgs[0]);
-            int range2 = slotArgs.length >= 2 ? Integer.parseInt(slotArgs[1]) : range1;
-            return IntStream.rangeClosed(range1, range2).boxed().collect(Collectors.toList());
-        }
     }
 }
