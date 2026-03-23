@@ -22,7 +22,7 @@ public class ConfigConverter {
         for (Config config : new ArrayList<>(this.configManager.get().values())) {
             try {
                 convert(config, order);
-            } catch (ConfigurateException e) {
+            } catch (Exception e) {
                 this.configManager.getPlatform().getLogger().log(Level.WARNING, "Error with converting configuration: " + config, e);
             }
         }
@@ -43,7 +43,16 @@ public class ConfigConverter {
             }
 
             this.configManager.getPlatform().getLogger().info(config + " converting...");
-            migrator.migrate(config);
+            try {
+                migrator.migrate(config);
+            } catch (ConfigurateException e) {
+                this.configManager.getPlatform().getLogger().log(
+                        Level.WARNING,
+                        "Error with converting configuration " + config +  " from " + version + " to " + ++version,
+                        e
+                );
+                break;
+            }
             if(currentType.isPermanent()) {
                 this.configManager.getPlatform().getLogger().info(config + " converted permanently from " + currentType + " to " + config.type());
                 convert(config, order);

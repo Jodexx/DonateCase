@@ -19,6 +19,12 @@ public class ConfigMigrator_2_7_to_2_8 implements ConfigMigrator {
         DCAPI api = DonateCase.getInstance();
 
         ConfigData configData = api.getConfigManager().getConfig();
+        if (configData == null) {
+            // only after looped migration
+            configData = root.get(ConfigData.class);
+        }
+
+        if (configData == null) throw new ConfigurateException("Config cannot be converted");
 
         ConfigData.MySQL mysql = configData.mysql();
 
