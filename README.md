@@ -1,7 +1,7 @@
 # DonateCase plugin for Minecraft Bukkit implementation
 
 [![Modrinth Version](https://img.shields.io/modrinth/v/donatecase?label=DonateCase)](https://modrinth.com/plugin/donatecase)
-[![API](https://jitpack.io/v/Jodexx/DonateCase.svg)](https://wiki.jodex.xyz/DonateCase/API/install)
+[![API](https://jitpack.io/v/Jodexx/DonateCase.svg)](https://jodexx.github.io/JodexIndustriesWiki/DonateCase/API/install)
 [![Modrinth Versions](https://img.shields.io/modrinth/game-versions/donatecase)](https://modrinth.com/plugin/donatecase)
 [![Modrinth Downloads](https://img.shields.io/modrinth/dt/donatecase?label=Modrinth%20downloads)](https://modrinth.com/plugin/donatecase)
 [![Spiget Downloads](https://img.shields.io/spiget/downloads/106701?label=Spigot%20downloads)](https://www.spigotmc.org/resources/donatecase.106701/)
