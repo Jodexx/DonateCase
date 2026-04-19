@@ -2,11 +2,11 @@ package com.jodexindustries.dceventmanager.event;
 
 import com.jodexindustries.dceventmanager.data.EventData;
 import com.jodexindustries.dceventmanager.data.EventPlaceholder;
-import com.jodexindustries.dceventmanager.utils.Reflection;
 import com.jodexindustries.dceventmanager.utils.Tools;
 import com.jodexindustries.donatecase.api.event.DCEvent;
 import com.jodexindustries.donatecase.api.event.plugin.DonateCaseReloadEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import com.jodexindustries.donatecase.common.tools.ReflectionUtils;
 import net.kyori.event.EventSubscriber;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,7 +74,7 @@ public class DCEventExecutor implements EventSubscriber<DCEvent> {
         for (EventPlaceholder.Placeholder placeholder : placeholders) {
             map.computeIfAbsent(placeholder.getReplace(), key -> {
                 try {
-                    return Reflection.invokeMethodChain(event, placeholder.getMethod());
+                    return ReflectionUtils.invokeMethodChain(event, placeholder.getMethod());
                 } catch (Exception ex) {
                     tools.main.getLogger().log(Level.WARNING, "Failed to parse placeholder: " + placeholder.getName(), ex);
                     return null;
@@ -93,7 +93,7 @@ public class DCEventExecutor implements EventSubscriber<DCEvent> {
                 .filter(action -> action.startsWith("[invoke]"))
                 .forEach(action -> {
                     try {
-                        Reflection.invokeMethodChain(event, action.substring(8).trim());
+                        ReflectionUtils.invokeMethodChain(event, action.substring(8).trim());
                     } catch (Exception e) {
                         tools.main.getLogger().log(Level.WARNING, "Error executing action: " + action, e);
                     }
@@ -109,7 +109,7 @@ public class DCEventExecutor implements EventSubscriber<DCEvent> {
                 .findFirst()
                 .map(placeholder -> {
                     try {
-                        Object player = Reflection.invokeMethodChain(event, placeholder.getMethod().replace("#getName", ""));
+                        Object player = ReflectionUtils.invokeMethodChain(event, placeholder.getMethod().replace("#getName", ""));
                         return (player instanceof DCPlayer) ? (DCPlayer) player : null;
                     } catch (Exception ignored) {
                         return null;

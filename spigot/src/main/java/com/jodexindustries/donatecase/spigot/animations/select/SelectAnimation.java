@@ -3,9 +3,7 @@ package com.jodexindustries.donatecase.spigot.animations.select;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
-import com.jodexindustries.donatecase.api.data.storage.CaseVector;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
-import com.jodexindustries.donatecase.api.data.animation.Facing;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
 import com.jodexindustries.donatecase.spigot.tools.Pair;
 import lombok.Getter;
@@ -54,10 +52,12 @@ public class SelectAnimation extends BukkitJavaAnimation {
                     double offsetZ = 0;
 
                     switch (settings.facing) {
-                        case NORTH, SOUTH:
+                        case SOUTH:
+                        case NORTH:
                             offsetX = horizonOffset;
                             break;
-                        case EAST, WEST:
+                        case WEST:
+                        case EAST:
                             offsetZ = horizonOffset;
                             break;
                         case NORTH_EAST:

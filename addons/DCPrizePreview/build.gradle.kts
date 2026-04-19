@@ -14,7 +14,6 @@ version = "2.0.2"
 dependencies {
     compileOnly(project(":api:spigot-api"))
     compileOnly(project(":common"))
-    compileOnly(project(":spigot"))
 }
 
 tasks.processResources {

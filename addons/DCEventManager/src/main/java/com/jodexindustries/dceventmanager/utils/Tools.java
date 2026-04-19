@@ -7,15 +7,15 @@ import com.jodexindustries.dceventmanager.event.DCEventExecutor;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.InternalJavaAddon;
 import com.jodexindustries.donatecase.api.event.DCEvent;
+import com.jodexindustries.donatecase.common.tools.ReflectionUtils;
 import lombok.Getter;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 public class Tools {
@@ -105,14 +105,15 @@ public class Tools {
         try {
             List<String> packages = configManager.getConfig().node("packages").getList(String.class);
 
+            // TODO make scanner better
             if (packages != null) {
                 for (String pkg : packages) {
                     // load classes from DonateCase
-                    classes.addAll(Reflection.getClassesForPackage(getClass().getClassLoader().getParent(), pkg));
+                    classes.addAll(getClasses(getClass().getClassLoader().getParent(), pkg));
 
                     // load classes from addons
                     for (InternalJavaAddon addon : api.getAddonManager().getMap().values()) {
-                        classes.addAll(Reflection.getClassesForPackage(addon.getUrlClassLoader(), pkg));
+                        classes.addAll(getClasses(addon.getUrlClassLoader(), pkg));
                     }
                 }
             }
@@ -122,6 +123,14 @@ public class Tools {
         }
 
         return classes;
+    }
+
+    private static List<Class<? extends DCEvent>> getClasses(ClassLoader loader, String pkg) throws ClassNotFoundException {
+        Stream<Class<? extends DCEvent>> stream = ReflectionUtils.getClasses(loader, pkg)
+                .stream()
+                .filter(clazz -> DCEvent.class.isAssignableFrom(clazz) && clazz != DCEvent.class)
+                .map(clazz -> clazz.asSubclass(DCEvent.class));
+        return stream.collect(Collectors.toList());
     }
 
 }

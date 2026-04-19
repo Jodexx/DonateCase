@@ -1,10 +1,13 @@
 package com.jodexindustries.donatecase.spigot;
 
-import com.Zrips.CMI.Modules.ModuleHandling.CMIModule;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
+import com.jodexindustries.donatecase.api.data.hologram.HologramFactory;
+import com.jodexindustries.donatecase.api.data.material.MaterialFactory;
 import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.api.event.player.ArmorStandCreatorInteractEvent;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import com.jodexindustries.donatecase.common.DonateCase;
+import com.jodexindustries.donatecase.common.tools.ReflectionUtils;
 import com.jodexindustries.donatecase.spigot.actions.CommandActionExecutorImpl;
 import com.jodexindustries.donatecase.spigot.actions.SoundActionExecutorImpl;
 import com.jodexindustries.donatecase.spigot.actions.TitleActionExecutorImpl;
@@ -29,10 +32,6 @@ import com.jodexindustries.donatecase.api.tools.PAPI;
 import com.jodexindustries.donatecase.spigot.animations.wheel.WheelAnimation;
 import com.jodexindustries.donatecase.common.gui.items.HISTORYItemHandlerImpl;
 import com.jodexindustries.donatecase.common.gui.items.OPENItemClickHandlerImpl;
-import com.jodexindustries.donatecase.spigot.holograms.CMIHologramsImpl;
-import com.jodexindustries.donatecase.spigot.holograms.DecentHologramsImpl;
-import com.jodexindustries.donatecase.spigot.holograms.FancyHologramsImpl;
-import com.jodexindustries.donatecase.spigot.holograms.HolographicDisplaysImpl;
 import com.jodexindustries.donatecase.spigot.listener.EventListener;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
 import com.jodexindustries.donatecase.spigot.materials.*;
@@ -47,15 +46,12 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -83,7 +79,6 @@ public class BukkitBackend extends BackendPlatform {
         this.scheduler = new BukkitScheduler(this);
     }
 
-
     @Override
     public void load() {
         this.papi = new PAPISupport(this);
@@ -95,18 +90,19 @@ public class BukkitBackend extends BackendPlatform {
         registerDefaultGUITypedItems();
         registerDefaultAnimations();
         registerDefaultActions();
-        registerDefaultMaterials();
-
-        loadHologramDrivers();
+        registerMaterials();
 
         Bukkit.getServer().getPluginManager().registerEvents(new EventListener(this), plugin);
 
         api.load();
 
         // after config load
+        loadHologramDrivers().thenRunSync(() -> api.getHologramManager().load());
+
         loadPacketEventsAPI();
         loadLuckPerms();
-        loadMetrics();
+
+        scheduler.async(this, this::loadMetrics, 0L);
     }
 
     @Override
@@ -358,7 +354,7 @@ public class BukkitBackend extends BackendPlatform {
         getLogger().info("Registered " + manager.getMap().size() + " actions");
     }
 
-    private void registerDefaultMaterials() {
+    private void registerMaterials() {
         MaterialManager manager = api.getMaterialManager();
 
         manager.register(
@@ -388,85 +384,52 @@ public class BukkitBackend extends BackendPlatform {
                         .build()
         );
 
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
-            manager.register(
-                    CaseMaterial.builder()
-                            .id("IA")
-                            .addon(this)
-                            .handler(new IAMaterialHandlerImpl())
-                            .description("Items from ItemsAdder plugin")
-                            .build()
-            );
-        }
+        // load external hooks
+        scheduler.async(this, () -> {
+            try {
+                for (Class<?> clazz : ReflectionUtils.getClasses(getClass().getClassLoader(), "com.jodexindustries.donatecase.spigot.materials.factory")) {
+                    if (!MaterialFactory.class.isAssignableFrom(clazz)) continue;
 
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("Oraxen")) {
-            manager.register(
-                    CaseMaterial.builder()
-                            .id("ORAXEN")
-                            .addon(this)
-                            .handler(new OraxenMaterialHandlerImpl())
-                            .description("Items from Oraxen plugin")
-                            .build()
-            );
-        }
-
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
-            manager.register(
-                    CaseMaterial.builder()
-                            .id("CH")
-                            .addon(this)
-                            .handler(new CHMaterialHandlerImpl())
-                            .description("Heads from CustomHeads plugin")
-                            .build()
-            );
-        }
-
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("HeadDatabase")) {
-            manager.register(
-                    CaseMaterial.builder()
-                            .id("HDB")
-                            .addon(this)
-                            .handler(new HDBMaterialHandlerImpl())
-                            .description("Heads from HeadDatabase plugin")
-                            .build()
-            );
-        }
-
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("Nexo")) {
-            manager.register(
-                    CaseMaterial.builder()
-                            .id("NEXO")
-                            .addon(this)
-                            .handler(new NexoMaterialHandlerImpl())
-                            .description("Items from Nexo plugin")
-                            .build()
-            );
-        }
-
-        getLogger().info("Registered " + manager.getMap().size() + " materials");
-    }
-
-    private void loadHologramDrivers() {
-        HologramManager manager = api.getHologramManager();
-        PluginManager pluginManager = Bukkit.getServer().getPluginManager();
-
-        Map<String, Supplier<Class<? extends HologramDriver>>> drivers = new HashMap<>();
-        drivers.put("CMI", () -> CMIModule.holograms.isEnabled() ? CMIHologramsImpl.class : null);
-        drivers.put("DecentHolograms", () -> DecentHologramsImpl.class);
-        drivers.put("HolographicDisplays", () -> HolographicDisplaysImpl.class);
-        drivers.put("FancyHolograms", () -> FancyHologramsImpl.class);
-
-        drivers.forEach((plugin, provider) -> {
-            if (pluginManager.isPluginEnabled(plugin)) {
-                Class<? extends HologramDriver> driver = provider.get();
-                if (driver != null) {
-                    try {
-                        manager.register(plugin.toLowerCase(), driver.getDeclaredConstructor().newInstance());
-                    } catch (Exception e) {
-                        getLogger().log(Level.WARNING, "Error with loading " + plugin + " hologram driver: ", e);
+                    MaterialFactory factory = (MaterialFactory) clazz.getDeclaredField("INSTANCE").get(null);
+                    CaseMaterial material = factory.create(this);
+                    if (material != null) {
+                        manager.register(material);
                     }
                 }
+            } catch (ReflectiveOperationException ignored) {
             }
+
+            getLogger().info("Registered " + manager.getMap().size() + " materials");
+        }, 0L);
+    }
+
+    private DCFuture<Void> loadHologramDrivers() {
+        HologramManager manager = api.getHologramManager();
+
+        return DCFuture.supplyAsync(() -> {
+            try {
+                List<Class<?>> classes = ReflectionUtils.getClasses(getClass().getClassLoader(), "com.jodexindustries.donatecase.spigot.holograms.factory");
+
+                for (Class<?> clazz : classes) {
+                    if (!HologramFactory.class.isAssignableFrom(clazz)) continue;
+
+                    HologramFactory factory = (HologramFactory) clazz.getDeclaredField("INSTANCE").get(null);
+                    HologramDriver driver = factory.create(this);
+
+                    if (driver != null) {
+                        try {
+                            manager.register(factory.name().toLowerCase(), driver);
+                        } catch (Throwable e) {
+                            getLogger().log(Level.WARNING, "Error with loading " + factory.name() + " hologram driver: ", e);
+                        }
+                    }
+                }
+            } catch (ReflectiveOperationException ignored) {
+            }
+
+            getLogger().info("Registered " + manager.get().size() + " hologram drivers");
+
+            return null;
         });
     }
 

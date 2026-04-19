@@ -6,6 +6,7 @@ buildscript {
 
 plugins {
     java
+    id("com.gradleup.shadow") version "9.0.2" apply false
 }
 
 defaultTasks("clean", "build")
@@ -16,7 +17,7 @@ tasks.jar {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21)) // TODO split modules for java compatibility
+        languageVersion.set(JavaLanguageVersion.of(8))
     }
 }
 
@@ -27,13 +28,10 @@ subprojects {
         mavenCentral()
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://repo.papermc.io/repository/maven-releases/")
-        maven("https://repo.fancyinnovations.com/releases") // FancyHolograms
         maven("https://repo.alessiodp.com/releases/")
         maven("https://jitpack.io")
-        maven("https://maven.devs.beer/") // ItemsAdder
         maven("https://repo.codemc.io/repository/maven-releases/") // packetevents
         maven("https://repo.extendedclip.com/releases/") // placeholderapi
-        maven("https://repo.nexomc.com/releases") // Nexo
     }
 
     dependencies {
@@ -41,9 +39,14 @@ subprojects {
         annotationProcessor("org.projectlombok:lombok:1.18.38")
     }
 
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(8))
+        }
+    }
+
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(21)
         options.compilerArgs.add("-Xlint:-deprecation")
         options.compilerArgs.add("-Xlint:-options")
         options.compilerArgs.add("-Xdoclint:none")

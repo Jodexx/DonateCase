@@ -3,7 +3,7 @@
     eclipse
     idea
     id("xyz.jpenilla.run-velocity") version "2.3.1"
-    id("com.gradleup.shadow") version "9.0.2"
+    id("com.gradleup.shadow")
 }
 
 repositories {
@@ -33,12 +33,14 @@ tasks {
   }
 }
 
-tasks.withType<JavaCompile> {
-    options.release.set(17)
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
 var templateSource = file("src/main/templates")
-var templateDest = layout.buildDirectory.dir("generated/sources/templates")!!
+var templateDest = layout.buildDirectory.dir("generated/sources/templates")
 var generateTemplates = tasks.register<Copy>("generateTemplates") {
     var props = mapOf("version" to project.version)
     inputs.properties(props)

@@ -32,6 +32,15 @@ publishing {
 }
 
 tasks.javadoc {
+    val toolchain = project.extensions
+        .getByType(JavaToolchainService::class.java)
+
+    javadocTool.set(
+        toolchain.javadocToolFor {
+            languageVersion.set(JavaLanguageVersion.of(21))
+        }
+    )
+
     (options as StandardJavadocDocletOptions).apply {
         links(
             "https://docs.oracle.com/en/java/javase/22/docs/api/",

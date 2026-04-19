@@ -6,33 +6,17 @@ buildscript {
 
 plugins {
     java
-    id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("com.gradleup.shadow") version "9.0.2"
+    id("com.gradleup.shadow")
 }
 
 group = "com.jodexindustries.donatecase"
 
 dependencies {
     compileOnly("me.clip:placeholderapi:2.11.7")
-    compileOnly("com.arcaniax:HeadDatabase-API:1.3.2")
-    compileOnly("dev.lone:api-itemsadder:4.0.10")
-    compileOnly("com.github.decentsoftware-eu:decentholograms:2.8.17")
-    compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0")
-    compileOnly("de.oliver:FancyHolograms:2.4.0")
     compileOnly("com.github.retrooper:packetevents-spigot:2.11.1")
-    compileOnly("com.nexomc:nexo:1.17.0")
-    compileOnly(fileTree("libs").include("*.jar"))
     implementation(project(":api:spigot-api"))
     implementation(project(":common"))
     implementation("com.github.Jodexx:LiteSkullAPI:2.0.0")
-}
-
-tasks.runServer {
-    minecraftVersion("1.21.10")
-    allJvmArgs = listOf("-DPaper.IgnoreJavaVersion=true")
-    javaLauncher = javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
 }
 
 tasks.build {
@@ -53,7 +37,7 @@ tasks.processResources {
 }
 
 tasks.shadowJar {
-    archiveBaseName.set(project.rootProject.name)
+    archiveBaseName.set(project.name)
     archiveClassifier.set("")
     exclude("org/jetbrains/**")
     exclude("org/intellij/lang/**")

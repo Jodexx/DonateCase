@@ -12,7 +12,6 @@ group = "com.jodexindustries.dcphysicalkey"
 version = "2.0.1"
 
 dependencies {
-    compileOnly(project(":spigot"))
     compileOnly(project(":common"))
     compileOnly(project(":api:spigot-api"))
 }
