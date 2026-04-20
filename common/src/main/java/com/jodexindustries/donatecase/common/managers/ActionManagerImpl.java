@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.common.managers;
 
-import com.jodexindustries.donatecase.common.actions.BroadcastActionExecutorImpl;
-import com.jodexindustries.donatecase.common.actions.MessageActionExecutorImpl;
+import com.jodexindustries.donatecase.common.actions.*;
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.action.ActionException;
 import com.jodexindustries.donatecase.api.data.action.CaseAction;
@@ -39,6 +38,24 @@ public class ActionManagerImpl implements ActionManager {
                         .addon(platform)
                         .executor(new BroadcastActionExecutorImpl())
                         .description("Sends a broadcast to the players")
+                        .build(),
+                CaseAction.builder()
+                        .name("[command]")
+                        .addon(platform)
+                        .executor(new CommandActionExecutorImpl())
+                        .description("Sends a command to the console")
+                        .build(),
+                CaseAction.builder()
+                        .name("[title]")
+                        .addon(platform)
+                        .executor(new TitleActionExecutorImpl())
+                        .description("Sends a title to the player")
+                        .build(),
+                CaseAction.builder()
+                        .name("[sound]")
+                        .addon(platform)
+                        .executor(new SoundActionExecutorImpl())
+                        .description("Sends a sound to the player")
                         .build()
         );
 

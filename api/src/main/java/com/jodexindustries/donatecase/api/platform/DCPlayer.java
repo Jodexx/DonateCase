@@ -17,4 +17,8 @@ public interface DCPlayer extends DCCommandSender, DCOfflinePlayer {
     void openInventory(Object inventory);
 
     void closeInventory();
+
+    void showTitle(@NotNull String title, @NotNull String subTitle, int fadeInTicks, int stayTicks, int fadeOutTicks);
+
+    void playSound(@NotNull String sound, float volume, float pitch);
 }

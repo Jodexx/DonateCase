@@ -4,6 +4,7 @@ import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +56,16 @@ public class BukkitPlayer extends BukkitCommandSender implements DCPlayer {
     @Override
     public void closeInventory() {
         player.closeInventory();
+    }
+
+    @Override
+    public void showTitle(@NotNull String title, @NotNull String subTitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        player.sendTitle(title, subTitle, fadeInTicks, stayTicks, fadeOutTicks);
+    }
+
+    @Override
+    public void playSound(@NotNull String sound, float volume, float pitch) {
+        player.playSound(player.getLocation(), Sound.valueOf(sound.toUpperCase()), volume, pitch);
     }
 
     @Override

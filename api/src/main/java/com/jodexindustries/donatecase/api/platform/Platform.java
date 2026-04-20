@@ -22,6 +22,8 @@ public interface Platform extends Addon {
 
     Logger getLogger();
 
+    void dispatchConsoleCommand(@NotNull String command);
+
     DCTools getTools();
 
     PAPI getPAPI();

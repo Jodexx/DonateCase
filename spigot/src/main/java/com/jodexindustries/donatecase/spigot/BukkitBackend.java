@@ -1,22 +1,25 @@
 package com.jodexindustries.donatecase.spigot;
 
-import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
-import com.jodexindustries.donatecase.api.data.hologram.HologramFactory;
-import com.jodexindustries.donatecase.api.data.material.MaterialFactory;
-import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
-import com.jodexindustries.donatecase.api.event.player.ArmorStandCreatorInteractEvent;
-import com.jodexindustries.donatecase.api.scheduler.DCFuture;
-import com.jodexindustries.donatecase.common.DonateCase;
-import com.jodexindustries.donatecase.common.tools.ReflectionUtils;
-import com.jodexindustries.donatecase.spigot.actions.CommandActionExecutorImpl;
-import com.jodexindustries.donatecase.spigot.actions.SoundActionExecutorImpl;
-import com.jodexindustries.donatecase.spigot.actions.TitleActionExecutorImpl;
-import com.jodexindustries.donatecase.api.data.action.CaseAction;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
+import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
+import com.jodexindustries.donatecase.api.data.hologram.HologramFactory;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
+import com.jodexindustries.donatecase.api.data.material.MaterialFactory;
+import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
+import com.jodexindustries.donatecase.api.event.player.ArmorStandCreatorInteractEvent;
 import com.jodexindustries.donatecase.api.manager.*;
+import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
+import com.jodexindustries.donatecase.api.platform.DCPlayer;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
+import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.api.tools.PAPI;
+import com.jodexindustries.donatecase.common.DonateCase;
+import com.jodexindustries.donatecase.common.gui.items.HISTORYItemHandlerImpl;
+import com.jodexindustries.donatecase.common.gui.items.OPENItemClickHandlerImpl;
+import com.jodexindustries.donatecase.common.platform.BackendPlatform;
+import com.jodexindustries.donatecase.common.tools.ReflectionUtils;
 import com.jodexindustries.donatecase.spigot.animations.firework.FireworkAnimation;
 import com.jodexindustries.donatecase.spigot.animations.futurewheel.FutureWheelAnimation;
 import com.jodexindustries.donatecase.spigot.animations.pop.PopAnimation;
@@ -24,22 +27,17 @@ import com.jodexindustries.donatecase.spigot.animations.rainly.RainlyAnimation;
 import com.jodexindustries.donatecase.spigot.animations.select.SelectAnimation;
 import com.jodexindustries.donatecase.spigot.animations.select.SelectAnimationListener;
 import com.jodexindustries.donatecase.spigot.animations.shape.ShapeAnimation;
-import com.jodexindustries.donatecase.spigot.api.platform.BukkitOfflinePlayer;
-import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
-import com.jodexindustries.donatecase.api.platform.DCPlayer;
-import com.jodexindustries.donatecase.api.tools.DCTools;
-import com.jodexindustries.donatecase.api.tools.PAPI;
 import com.jodexindustries.donatecase.spigot.animations.wheel.WheelAnimation;
-import com.jodexindustries.donatecase.common.gui.items.HISTORYItemHandlerImpl;
-import com.jodexindustries.donatecase.common.gui.items.OPENItemClickHandlerImpl;
+import com.jodexindustries.donatecase.spigot.api.platform.BukkitOfflinePlayer;
+import com.jodexindustries.donatecase.spigot.hook.packetevents.PacketEventsSupport;
+import com.jodexindustries.donatecase.spigot.hook.papi.PAPISupport;
 import com.jodexindustries.donatecase.spigot.listener.EventListener;
-import com.jodexindustries.donatecase.common.platform.BackendPlatform;
-import com.jodexindustries.donatecase.spigot.materials.*;
+import com.jodexindustries.donatecase.spigot.materials.BASE64MaterialHandlerImpl;
+import com.jodexindustries.donatecase.spigot.materials.HEADMaterialHandlerImpl;
+import com.jodexindustries.donatecase.spigot.materials.MCURLMaterialHandlerImpl;
 import com.jodexindustries.donatecase.spigot.tools.BukkitUtils;
 import com.jodexindustries.donatecase.spigot.tools.Metrics;
 import com.jodexindustries.donatecase.spigot.tools.ToolsImpl;
-import com.jodexindustries.donatecase.spigot.hook.packetevents.PacketEventsSupport;
-import com.jodexindustries.donatecase.spigot.hook.papi.PAPISupport;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -89,7 +87,6 @@ public class BukkitBackend extends BackendPlatform {
         registerDefaultCommand();
         registerDefaultGUITypedItems();
         registerDefaultAnimations();
-        registerDefaultActions();
         registerMaterials();
 
         Bukkit.getServer().getPluginManager().registerEvents(new EventListener(this), plugin);
@@ -150,6 +147,11 @@ public class BukkitBackend extends BackendPlatform {
     @Override
     public Logger getLogger() {
         return plugin.getLogger();
+    }
+
+    @Override
+    public void dispatchConsoleCommand(@NotNull String command) {
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
     }
 
     @Override
@@ -231,8 +233,6 @@ public class BukkitBackend extends BackendPlatform {
                         .loadOnCase(true)
                         .build()
         );
-
-        getLogger().info("Registered " + manager.getMap().size() + " gui typed items");
     }
 
 
@@ -317,41 +317,6 @@ public class BukkitBackend extends BackendPlatform {
                         .requireBlock(true)
                         .build()
         );
-
-        getLogger().info("Registered " + manager.getMap().size() + " animations");
-    }
-
-    private void registerDefaultActions() {
-        ActionManager manager = api.getActionManager();
-
-        manager.register(
-                CaseAction.builder()
-                        .name("[command]")
-                        .addon(this)
-                        .executor(new CommandActionExecutorImpl())
-                        .description("Sends a command to the console")
-                        .build()
-        );
-
-        manager.register(
-                CaseAction.builder()
-                        .name("[title]")
-                        .addon(this)
-                        .executor(new TitleActionExecutorImpl())
-                        .description("Sends a title to the player")
-                        .build()
-        );
-
-        manager.register(
-                CaseAction.builder()
-                        .name("[sound]")
-                        .addon(this)
-                        .executor(new SoundActionExecutorImpl())
-                        .description("Sends a sound to the player")
-                        .build()
-        );
-
-        getLogger().info("Registered " + manager.getMap().size() + " actions");
     }
 
     private void registerMaterials() {
