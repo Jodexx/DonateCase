@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+// https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol_version_numbers
 public abstract class APASC implements ArmorStandCreator {
 
     private final PacketEventsAPI<?> api = PacketEvents.getAPI();

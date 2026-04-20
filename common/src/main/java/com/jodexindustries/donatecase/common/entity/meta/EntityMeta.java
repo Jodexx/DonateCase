@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
+// https://github.com/Tofaa2/EntityLib/blob/master/api/src/main/java/me/tofaa/entitylib/meta/EntityMeta.java
 public class EntityMeta implements EntityMetadataProvider {
 
     public static final byte OFFSET = 0;
