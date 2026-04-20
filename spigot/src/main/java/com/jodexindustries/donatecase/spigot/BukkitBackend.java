@@ -323,6 +323,7 @@ public class BukkitBackend extends BackendPlatform {
         );
 
         // load external hooks
+        // TODO move to common
         scheduler.async(this, () -> {
             try {
                 for (Class<?> clazz : ReflectionUtils.getClasses(getClass().getClassLoader(), "com.jodexindustries.donatecase.spigot.materials.factory")) {
@@ -341,6 +342,7 @@ public class BukkitBackend extends BackendPlatform {
         }, 0L);
     }
 
+    // TODO move to common
     private DCFuture<Void> loadHologramDrivers() {
         HologramManager manager = api.getHologramManager();
 
@@ -371,6 +373,7 @@ public class BukkitBackend extends BackendPlatform {
         });
     }
 
+    // TODO move to common
     private void loadPacketEventsAPI() {
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("packetevents")) {
             try {
@@ -381,6 +384,7 @@ public class BukkitBackend extends BackendPlatform {
         }
     }
 
+    // TODO move to common
     private void loadLuckPerms() {
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
             getLuckPermsSupport().load();
