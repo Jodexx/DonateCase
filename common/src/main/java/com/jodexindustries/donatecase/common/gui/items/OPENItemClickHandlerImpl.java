@@ -4,27 +4,18 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
+import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
+import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.event.player.GuiClickEvent;
-import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemClickHandler;
-import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.event.player.OpenCaseEvent;
 import com.jodexindustries.donatecase.api.event.player.PreOpenCaseEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
-import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import org.jetbrains.annotations.NotNull;
 
 public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
-
-    private final DCAPI api;
-    private final Platform platform;
-
-    public OPENItemClickHandlerImpl() {
-        this.api = DCAPI.getInstance();
-        this.platform = api.getPlatform();
-    }
 
     @Override
     public void onClick(@NotNull GuiClickEvent e) {
@@ -38,7 +29,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
             String[] parts = itemType.split("_");
             if (parts.length >= 2) {
                 caseType = parts[1];
-                definition = api.getCaseManager().getByType(caseType).orElse(null);
+                definition = DCAPI.getInstance().getCaseManager().getByType(caseType).orElse(null);
             }
         }
 
@@ -46,7 +37,7 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
             e.player().closeInventory();
             executeOpen(definition, e.player(), location);
         } else {
-            platform.getLogger().warning("Case with type '" + caseType + "' not found. ");
+            DCAPI.getInstance().getPlatform().getLogger().warning("Case with type '" + caseType + "' not found. ");
         }
 
     }

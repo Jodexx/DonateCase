@@ -2,22 +2,21 @@ package com.jodexindustries.donatecase.spigot;
 
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
-import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.hologram.HologramFactory;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.material.MaterialFactory;
 import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.api.event.player.ArmorStandCreatorInteractEvent;
-import com.jodexindustries.donatecase.api.manager.*;
+import com.jodexindustries.donatecase.api.manager.AnimationManager;
+import com.jodexindustries.donatecase.api.manager.HologramManager;
+import com.jodexindustries.donatecase.api.manager.MaterialManager;
 import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.PAPI;
 import com.jodexindustries.donatecase.common.DonateCase;
-import com.jodexindustries.donatecase.common.gui.items.HISTORYItemHandlerImpl;
-import com.jodexindustries.donatecase.common.gui.items.OPENItemClickHandlerImpl;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
 import com.jodexindustries.donatecase.common.tools.ReflectionUtils;
 import com.jodexindustries.donatecase.spigot.animations.firework.FireworkAnimation;
@@ -85,7 +84,6 @@ public class BukkitBackend extends BackendPlatform {
         this.metaUpdater = new BukkitMetaUpdater();
 
         registerDefaultCommand();
-        registerDefaultGUITypedItems();
         registerDefaultAnimations();
         registerMaterials();
 
@@ -210,31 +208,6 @@ public class BukkitBackend extends BackendPlatform {
             command.setTabCompleter(bukkitCommand);
         }
     }
-
-    private void registerDefaultGUITypedItems() {
-        GUITypedItemManager manager = api.getGuiTypedItemManager();
-
-        manager.register(
-                TypedItem.builder()
-                        .id("HISTORY")
-                        .addon(this)
-                        .description("Type for displaying the history of case openings")
-                        .handler(new HISTORYItemHandlerImpl())
-                        .build()
-        );
-
-        manager.register(
-                TypedItem.builder()
-                        .id("OPEN")
-                        .addon(this)
-                        .description("Type to open the case")
-                        .click(new OPENItemClickHandlerImpl())
-                        .updateMeta(true)
-                        .loadOnCase(true)
-                        .build()
-        );
-    }
-
 
     private void registerDefaultAnimations() {
         AnimationManager manager = api.getAnimationManager();
