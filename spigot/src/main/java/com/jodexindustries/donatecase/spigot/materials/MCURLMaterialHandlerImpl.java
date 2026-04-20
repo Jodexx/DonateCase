@@ -23,7 +23,7 @@ public class MCURLMaterialHandlerImpl implements MaterialHandler {
             DCAPI.getInstance().getPlatform().getLogger().log(Level.WARNING, "Error with handling item: " + context, e);
         }
 
-        return new ItemStack(Material.AIR);
+        return new ItemStack(Material.STONE);
     }
 
     private static String urlToBase64(String url) {
