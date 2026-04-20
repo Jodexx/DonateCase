@@ -1,11 +1,11 @@
 package com.jodexindustries.donatecase.spigot.materials.factory;
 
 import com.google.j2objc.annotations.UsedByReflection;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterialException;
 import com.jodexindustries.donatecase.api.data.material.MaterialFactory;
 import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
+import com.jodexindustries.donatecase.api.platform.Platform;
 import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,25 +22,25 @@ public class ItemsAdderMaterialFactory implements MaterialFactory {
     public static final ItemsAdderMaterialFactory INSTANCE = new ItemsAdderMaterialFactory();
 
     @Override
-    public @Nullable CaseMaterial create(Addon addon) {
+    public @Nullable CaseMaterial create(Platform platform) {
         if (!Bukkit.getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
             return null;
         }
 
         return CaseMaterial.builder()
                 .id("IA")
-                .addon(addon)
-                .handler(new Handler(addon))
+                .addon(platform)
+                .handler(new Handler(platform))
                 .description("Items from ItemsAdder plugin")
                 .build();
     }
 
     static class Handler implements MaterialHandler {
 
-        private final Addon addon;
+        private final Platform platform;
 
-        Handler(Addon addon) {
-            this.addon = addon;
+        Handler(Platform platform) {
+            this.platform = platform;
         }
 
         @Override
@@ -50,7 +50,7 @@ public class ItemsAdderMaterialFactory implements MaterialFactory {
                 CustomStack stack = CustomStack.getInstance(context);
                 item = stack.getItemStack();
             } catch (Exception e) {
-                addon.getLogger().log(Level.WARNING,
+                platform.getLogger().log(Level.WARNING,
                         "Could not find the item you were looking for by ItemsAdder support. Namespace: ", e);
             }
             return item;

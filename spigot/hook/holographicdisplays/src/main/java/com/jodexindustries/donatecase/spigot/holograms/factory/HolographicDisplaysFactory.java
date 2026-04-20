@@ -1,9 +1,9 @@
 package com.jodexindustries.donatecase.spigot.holograms.factory;
 
 import com.google.j2objc.annotations.UsedByReflection;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.hologram.HologramFactory;
+import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import com.jodexindustries.donatecase.api.data.hologram.AbstractHologramDriver;
@@ -24,7 +24,7 @@ public class HolographicDisplaysFactory implements HologramFactory {
     private static final String PLUGIN_NAME = "HolographicDisplays";
 
     @Override
-    public @Nullable HologramDriver create(Addon addon) {
+    public @Nullable HologramDriver create(Platform platform) {
         return !Bukkit.getServer().getPluginManager().isPluginEnabled(PLUGIN_NAME) ? null : new HolographicDisplaysDriver();
     }
 

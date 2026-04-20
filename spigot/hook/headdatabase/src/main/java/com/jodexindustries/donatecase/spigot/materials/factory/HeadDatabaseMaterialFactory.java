@@ -1,11 +1,11 @@
 package com.jodexindustries.donatecase.spigot.materials.factory;
 
 import com.google.j2objc.annotations.UsedByReflection;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterialException;
 import com.jodexindustries.donatecase.api.data.material.MaterialFactory;
 import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
+import com.jodexindustries.donatecase.api.platform.Platform;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,25 +20,25 @@ public class HeadDatabaseMaterialFactory implements MaterialFactory {
     public static final HeadDatabaseMaterialFactory INSTANCE = new HeadDatabaseMaterialFactory();
 
     @Override
-    public @Nullable CaseMaterial create(Addon addon) {
+    public @Nullable CaseMaterial create(Platform platform) {
         if (!Bukkit.getServer().getPluginManager().isPluginEnabled("HeadDatabase")) {
             return null;
         }
 
         return CaseMaterial.builder()
                 .id("HDB")
-                .addon(addon)
-                .handler(new Handler(addon))
+                .addon(platform)
+                .handler(new Handler(platform))
                 .description("Heads from HeadDatabase plugin")
                 .build();
     }
 
     static class Handler implements MaterialHandler {
 
-        private final Addon addon;
+        private final Platform platform;
 
-        Handler(Addon addon) {
-            this.addon = addon;
+        Handler(Platform platform) {
+            this.platform = platform;
         }
 
         @Override
@@ -48,7 +48,7 @@ public class HeadDatabaseMaterialFactory implements MaterialFactory {
             try {
                 item = api.getItemHead(context);
             } catch (NullPointerException e) {
-                addon.getLogger().warning("Could not find the head you were looking for: " + context);
+                platform.getLogger().warning("Could not find the head you were looking for: " + context);
             }
             return item;
         }

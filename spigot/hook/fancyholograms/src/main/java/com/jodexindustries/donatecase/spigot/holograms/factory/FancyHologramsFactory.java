@@ -1,9 +1,9 @@
 package com.jodexindustries.donatecase.spigot.holograms.factory;
 
 import com.google.j2objc.annotations.UsedByReflection;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.hologram.HologramFactory;
+import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.spigot.holograms.factory.serializer.ConfigurationSectionImpl;
 import de.oliver.fancyholograms.api.FancyHologramsPlugin;
 import de.oliver.fancyholograms.api.HologramManager;
@@ -33,7 +33,7 @@ public class FancyHologramsFactory implements HologramFactory {
     private static final String PLUGIN_NAME = "FancyHolograms";
 
     @Override
-    public @Nullable HologramDriver create(Addon addon) {
+    public @Nullable HologramDriver create(Platform platform) {
         return !Bukkit.getServer().getPluginManager().isPluginEnabled(PLUGIN_NAME) ? null : new FancyHologramsDriver();
     }
 

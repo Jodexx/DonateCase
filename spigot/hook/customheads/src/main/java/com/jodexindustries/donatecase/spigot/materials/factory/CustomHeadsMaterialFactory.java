@@ -1,11 +1,11 @@
 package com.jodexindustries.donatecase.spigot.materials.factory;
 
 import com.google.j2objc.annotations.UsedByReflection;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterialException;
 import com.jodexindustries.donatecase.api.data.material.MaterialFactory;
 import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
+import com.jodexindustries.donatecase.api.platform.Platform;
 import de.likewhat.customheads.CustomHeads;
 import de.likewhat.customheads.api.CustomHeadsAPI;
 import org.bukkit.Bukkit;
@@ -21,25 +21,25 @@ public class CustomHeadsMaterialFactory implements MaterialFactory {
     public static final CustomHeadsMaterialFactory INSTANCE = new CustomHeadsMaterialFactory();
 
     @Override
-    public @Nullable CaseMaterial create(Addon addon) {
+    public @Nullable CaseMaterial create(Platform platform) {
         if (!Bukkit.getServer().getPluginManager().isPluginEnabled("CustomHeads")) {
             return null;
         }
 
         return CaseMaterial.builder()
                 .id("CH")
-                .addon(addon)
-                .handler(new Handler(addon))
+                .addon(platform)
+                .handler(new Handler(platform))
                 .description("Heads from CustomHeads plugin")
                 .build();
     }
 
     static class Handler implements MaterialHandler {
 
-        private final Addon addon;
+        private final Platform platform;
 
-        Handler(Addon addon) {
-            this.addon = addon;
+        Handler(Platform platform) {
+            this.platform = platform;
         }
 
         @Override
@@ -57,7 +57,7 @@ public class CustomHeadsMaterialFactory implements MaterialFactory {
                 CustomHeadsAPI api = CustomHeads.getApi();
                 item = api.getHead(category, id);
             } catch (Exception e) {
-                addon.getLogger().warning("Could not find the head you were looking for by CustomHeads support. Category: " + category);
+                platform.getLogger().warning("Could not find the head you were looking for by CustomHeads support. Category: " + category);
             }
             return item;
         }

@@ -3,9 +3,9 @@ package com.jodexindustries.donatecase.spigot.holograms.factory;
 import com.Zrips.CMI.CMI;
 import com.Zrips.CMI.Modules.Holograms.CMIHologram;
 import com.google.j2objc.annotations.UsedByReflection;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
 import com.jodexindustries.donatecase.api.data.hologram.HologramFactory;
+import com.jodexindustries.donatecase.api.platform.Platform;
 import net.Zrips.CMILib.Container.CMILocation;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import com.jodexindustries.donatecase.api.data.hologram.AbstractHologramDriver;
@@ -25,7 +25,7 @@ public class CMIHologramsFactory implements HologramFactory {
     private static final String PLUGIN_NAME = "CMI";
 
     @Override
-    public @Nullable HologramDriver create(Addon addon) {
+    public @Nullable HologramDriver create(Platform platform) {
         return !Bukkit.getServer().getPluginManager().isPluginEnabled(PLUGIN_NAME) ? null : new CMIHologramsDriver();
     }
 

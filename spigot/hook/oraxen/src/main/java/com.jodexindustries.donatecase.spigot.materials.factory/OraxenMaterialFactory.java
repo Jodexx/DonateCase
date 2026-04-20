@@ -1,10 +1,10 @@
 package com.jodexindustries.donatecase.spigot.materials.factory;
 
 import com.google.j2objc.annotations.UsedByReflection;
-import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.material.MaterialFactory;
 import com.jodexindustries.donatecase.api.data.material.MaterialHandler;
+import com.jodexindustries.donatecase.api.platform.Platform;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import org.bukkit.Bukkit;
@@ -19,20 +19,20 @@ public class OraxenMaterialFactory implements MaterialFactory {
     public static final OraxenMaterialFactory INSTANCE = new OraxenMaterialFactory();
 
     @Override
-    public @Nullable CaseMaterial create(Addon addon) {
+    public @Nullable CaseMaterial create(Platform platform) {
         if (!Bukkit.getServer().getPluginManager().isPluginEnabled("Oraxen")) {
             return null;
         }
 
         return CaseMaterial.builder()
                 .id("ORAXEN")
-                .addon(addon)
-                .handler(getHandler(addon))
+                .addon(platform)
+                .handler(getHandler(platform))
                 .description("Items from Oraxen plugin")
                 .build();
     }
 
-    private static MaterialHandler getHandler(Addon addon) {
+    private static MaterialHandler getHandler(Platform platform) {
         return context -> {
             ItemStack item = new ItemStack(Material.STONE);
 
@@ -40,7 +40,7 @@ public class OraxenMaterialFactory implements MaterialFactory {
             if (itemBuilder != null) {
                 item = itemBuilder.getReferenceClone();
             } else {
-                addon.getLogger().warning("Could not find the item you were looking for by Oraxen support. ID: " + context);
+                platform.getLogger().warning("Could not find the item you were looking for by Oraxen support. ID: " + context);
             }
             return item;
         };
