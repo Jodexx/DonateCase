@@ -15,6 +15,8 @@ import java.util.List;
 
 public class BukkitMetaUpdater implements MetaUpdater {
 
+    private static boolean colorException = false;
+
     @Override
     public void updateMeta(Object itemStack, String displayName, List<String> lore, int modelData, boolean enchanted, Integer[] rgb) {
         if (!(itemStack instanceof ItemStack)) {
@@ -56,11 +58,14 @@ public class BukkitMetaUpdater implements MetaUpdater {
     }
 
     private void updateColor(@NotNull ItemMeta meta, @NotNull Color color) {
+        if (colorException) return;
+
         try {
             Method setColorMethod = meta.getClass().getDeclaredMethod("setColor", Color.class);
             setColorMethod.setAccessible(true);
             setColorMethod.invoke(meta, color);
         } catch (Exception ignored) {
+            colorException = true;
         }
     }
 }
