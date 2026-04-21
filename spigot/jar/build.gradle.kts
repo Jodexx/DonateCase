@@ -2,7 +2,7 @@ import org.gradle.jvm.tasks.Jar
 
 plugins {
     id("com.gradleup.shadow")
-    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
 }
 
 val platformPaths = setOf(
