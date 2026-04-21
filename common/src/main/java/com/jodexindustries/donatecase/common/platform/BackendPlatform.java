@@ -32,6 +32,8 @@ public abstract class BackendPlatform implements Platform {
 
     public abstract String hologramsFactoryPackage();
 
+    public abstract String materialsFactoryPackage();
+
     public CaseGuiWrapperImpl createGui(DCPlayer player, CaseDefinition definition, CaseMenu menu, CaseLocation location) {
         return new CaseGuiWrapperImpl(this, player, definition, menu, location);
     }

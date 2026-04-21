@@ -68,14 +68,16 @@ public class DonateCase extends DCAPI {
         long time = System.currentTimeMillis();
         addonManager.load();
 
+        materialManager.load(); // async
         configManager.load();
         caseLoader.load();
-        hologramManager.load();
+        hologramManager.load(); // async
         updateChecker.check();
         database.connect();
         eventBus.register(eventListener);
         addonManager.enable(PowerReason.DONATE_CASE);
 
+        // sync managers
         platform.getLogger().info("Registered " + guiTypedItemManager.getMap().size() + " gui typed items");
         platform.getLogger().info("Registered " + animationManager.getMap().size() + " animations");
         platform.getLogger().info("Registered " + actionManager.getMap().size() + " actions");

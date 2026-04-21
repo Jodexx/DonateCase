@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
  */
 public interface MaterialManager {
 
+    void load();
+
     void register(CaseMaterial material);
 
     /**

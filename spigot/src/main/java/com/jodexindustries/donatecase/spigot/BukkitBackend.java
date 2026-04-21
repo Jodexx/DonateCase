@@ -3,7 +3,6 @@ package com.jodexindustries.donatecase.spigot;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
-import com.jodexindustries.donatecase.api.data.material.MaterialFactory;
 import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.api.event.player.ArmorStandCreatorInteractEvent;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
@@ -14,7 +13,6 @@ import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.PAPI;
 import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.common.platform.BackendPlatform;
-import com.jodexindustries.donatecase.common.tools.ReflectionUtils;
 import com.jodexindustries.donatecase.spigot.animations.firework.FireworkAnimation;
 import com.jodexindustries.donatecase.spigot.animations.futurewheel.FutureWheelAnimation;
 import com.jodexindustries.donatecase.spigot.animations.pop.PopAnimation;
@@ -108,6 +106,11 @@ public class BukkitBackend extends BackendPlatform {
     @Override
     public String hologramsFactoryPackage() {
         return "com.jodexindustries.donatecase.spigot.holograms.factory";
+    }
+
+    @Override
+    public String materialsFactoryPackage() {
+        return "com.jodexindustries.donatecase.spigot.materials.factory";
     }
 
     @Override
@@ -328,25 +331,6 @@ public class BukkitBackend extends BackendPlatform {
                         .description("Default Minecraft heads by nickname")
                         .build()
         );
-
-        // load external hooks
-        // TODO move to common
-        scheduler.async(this, () -> {
-            try {
-                for (Class<?> clazz : ReflectionUtils.getClasses(getClass().getClassLoader(), "com.jodexindustries.donatecase.spigot.materials.factory")) {
-                    if (!MaterialFactory.class.isAssignableFrom(clazz)) continue;
-
-                    MaterialFactory factory = (MaterialFactory) clazz.getDeclaredField("INSTANCE").get(null);
-                    CaseMaterial material = factory.create(this);
-                    if (material != null) {
-                        manager.register(material);
-                    }
-                }
-            } catch (ReflectiveOperationException ignored) {
-            }
-
-            getLogger().info("Registered " + manager.getMap().size() + " materials");
-        }, 0L);
     }
 
     // TODO move to common
