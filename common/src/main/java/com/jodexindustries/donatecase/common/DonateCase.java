@@ -70,7 +70,7 @@ public class DonateCase extends DCAPI {
 
         configManager.load();
         caseLoader.load();
-//        hologramManager.load(); // moved to platform
+        hologramManager.load();
         updateChecker.check();
         database.connect();
         eventBus.register(eventListener);

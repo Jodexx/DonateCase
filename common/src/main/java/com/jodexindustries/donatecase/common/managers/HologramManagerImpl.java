@@ -1,16 +1,20 @@
 package com.jodexindustries.donatecase.common.managers;
 
-import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseSettings;
 import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
+import com.jodexindustries.donatecase.api.data.hologram.HologramFactory;
 import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.api.manager.HologramManager;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
+import com.jodexindustries.donatecase.common.DonateCase;
+import com.jodexindustries.donatecase.common.tools.ReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,11 +23,12 @@ import java.util.logging.Level;
 public class HologramManagerImpl implements HologramManager {
 
     private HologramDriver driver;
+    private boolean driversChecked = false;
 
     private final Map<@NotNull String, @NotNull HologramDriver> drivers = new ConcurrentHashMap<>();
-    private final DCAPI api;
+    private final DonateCase api;
 
-    public HologramManagerImpl(DCAPI api) {
+    public HologramManagerImpl(DonateCase api) {
         this.api = api;
     }
 
@@ -39,6 +44,12 @@ public class HologramManagerImpl implements HologramManager {
 
     @Override
     public void load() {
+        if (!driversChecked) {
+            driversChecked = true;
+            loadHologramDrivers().thenRunSync(this::load);
+            return;
+        }
+
         String name = api.getConfigManager().getConfig().hologramDriver().toLowerCase();
         set(name);
         if (driver == null) {
@@ -80,6 +91,34 @@ public class HologramManagerImpl implements HologramManager {
 
             create(location, hologram);
         }
+    }
+
+    private DCFuture<Void> loadHologramDrivers() {
+        return DCFuture.supplyAsync(() -> {
+            try {
+                List<Class<?>> classes = ReflectionUtils.getClasses(getClass().getClassLoader(), api.getPlatform().hologramsFactoryPackage());
+
+                for (Class<?> clazz : classes) {
+                    if (!HologramFactory.class.isAssignableFrom(clazz)) continue;
+
+                    HologramFactory factory = (HologramFactory) clazz.getDeclaredField("INSTANCE").get(null);
+                    HologramDriver driver = factory.create(api.getPlatform());
+
+                    if (driver != null) {
+                        try {
+                            register(factory.name().toLowerCase(), driver);
+                        } catch (Throwable e) {
+                            api.getPlatform().getLogger().log(Level.WARNING, "Error with loading " + factory.name() + " hologram driver: ", e);
+                        }
+                    }
+                }
+            } catch (ReflectiveOperationException ignored) {
+            }
+
+            api.getPlatform().getLogger().info("Registered " + get().size() + " hologram drivers");
+
+            return null;
+        });
     }
 
     @Override

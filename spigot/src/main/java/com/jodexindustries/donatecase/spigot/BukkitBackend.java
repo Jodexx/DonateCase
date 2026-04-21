@@ -2,18 +2,14 @@ package com.jodexindustries.donatecase.spigot;
 
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
 import com.jodexindustries.donatecase.api.data.casedata.MetaUpdater;
-import com.jodexindustries.donatecase.api.data.hologram.HologramDriver;
-import com.jodexindustries.donatecase.api.data.hologram.HologramFactory;
 import com.jodexindustries.donatecase.api.data.material.CaseMaterial;
 import com.jodexindustries.donatecase.api.data.material.MaterialFactory;
 import com.jodexindustries.donatecase.api.data.storage.CaseWorld;
 import com.jodexindustries.donatecase.api.event.player.ArmorStandCreatorInteractEvent;
 import com.jodexindustries.donatecase.api.manager.AnimationManager;
-import com.jodexindustries.donatecase.api.manager.HologramManager;
 import com.jodexindustries.donatecase.api.manager.MaterialManager;
 import com.jodexindustries.donatecase.api.platform.DCOfflinePlayer;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
-import com.jodexindustries.donatecase.api.scheduler.DCFuture;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.PAPI;
 import com.jodexindustries.donatecase.common.DonateCase;
@@ -48,7 +44,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -92,8 +87,6 @@ public class BukkitBackend extends BackendPlatform {
         api.load();
 
         // after config load
-        loadHologramDrivers().thenRunSync(() -> api.getHologramManager().load());
-
         loadPacketEventsAPI();
         loadLuckPerms();
 
@@ -110,6 +103,11 @@ public class BukkitBackend extends BackendPlatform {
                 .flatMap(world -> world.getEntitiesByClass(ArmorStand.class).stream())
                 .filter(stand -> stand.hasMetadata("case"))
                 .forEach(Entity::remove);
+    }
+
+    @Override
+    public String hologramsFactoryPackage() {
+        return "com.jodexindustries.donatecase.spigot.holograms.factory";
     }
 
     @Override
@@ -349,37 +347,6 @@ public class BukkitBackend extends BackendPlatform {
 
             getLogger().info("Registered " + manager.getMap().size() + " materials");
         }, 0L);
-    }
-
-    // TODO move to common
-    private DCFuture<Void> loadHologramDrivers() {
-        HologramManager manager = api.getHologramManager();
-
-        return DCFuture.supplyAsync(() -> {
-            try {
-                List<Class<?>> classes = ReflectionUtils.getClasses(getClass().getClassLoader(), "com.jodexindustries.donatecase.spigot.holograms.factory");
-
-                for (Class<?> clazz : classes) {
-                    if (!HologramFactory.class.isAssignableFrom(clazz)) continue;
-
-                    HologramFactory factory = (HologramFactory) clazz.getDeclaredField("INSTANCE").get(null);
-                    HologramDriver driver = factory.create(this);
-
-                    if (driver != null) {
-                        try {
-                            manager.register(factory.name().toLowerCase(), driver);
-                        } catch (Throwable e) {
-                            getLogger().log(Level.WARNING, "Error with loading " + factory.name() + " hologram driver: ", e);
-                        }
-                    }
-                }
-            } catch (ReflectiveOperationException ignored) {
-            }
-
-            getLogger().info("Registered " + manager.get().size() + " hologram drivers");
-
-            return null;
-        });
     }
 
     // TODO move to common

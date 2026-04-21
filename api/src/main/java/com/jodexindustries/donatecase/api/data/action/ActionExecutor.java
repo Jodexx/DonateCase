@@ -17,5 +17,4 @@ public interface ActionExecutor {
      */
     void execute(@Nullable DCPlayer player, @NotNull String context) throws ActionException;
 
-    // TODO test method
 }
