@@ -14,7 +14,10 @@ public class LuckPermsSupport {
     private LuckPerms provider;
 
     public void load() {
-        this.provider = LuckPermsProvider.get();
+        try {
+            this.provider = LuckPermsProvider.get();
+        } catch (Throwable ignored) {
+        }
     }
 
     @Nullable

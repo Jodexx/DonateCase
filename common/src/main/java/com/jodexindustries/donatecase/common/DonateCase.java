@@ -77,6 +77,8 @@ public class DonateCase extends DCAPI {
         eventBus.register(eventListener);
         addonManager.enable(PowerReason.DONATE_CASE);
 
+        platform.getLuckPermsSupport().load();
+
         // sync managers
         platform.getLogger().info("Registered " + guiTypedItemManager.getMap().size() + " gui typed items");
         platform.getLogger().info("Registered " + animationManager.getMap().size() + " animations");

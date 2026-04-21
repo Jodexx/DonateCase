@@ -86,7 +86,6 @@ public class BukkitBackend extends BackendPlatform {
 
         // after config load
         loadPacketEventsAPI();
-        loadLuckPerms();
 
         scheduler.async(this, this::loadMetrics, 0L);
     }
@@ -341,13 +340,6 @@ public class BukkitBackend extends BackendPlatform {
             } catch (Throwable e) {
                 getLogger().log(Level.WARNING, "Error hooking to packetevents: ", e);
             }
-        }
-    }
-
-    // TODO move to common
-    private void loadLuckPerms() {
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("LuckPerms")) {
-            getLuckPermsSupport().load();
         }
     }
 
