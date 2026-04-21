@@ -20,6 +20,8 @@ public interface Platform extends Addon {
 
     String getVersion();
 
+    int getPlatformVersion();
+
     Logger getLogger();
 
     void dispatchConsoleCommand(@NotNull String command);

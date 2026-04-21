@@ -1,6 +1,10 @@
 package com.jodexindustries.donatecase.common.tools;
 
+import com.jodexindustries.donatecase.api.DCAPI;
+
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -11,6 +15,30 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class ReflectionUtils {
+
+    private static final int maxMajor;
+
+    static {
+        int mc = DCAPI.getInstance().getPlatform().getPlatformVersion();
+
+        if (mc <= 16) {
+            maxMajor = 60; // Java 16
+        } else if (mc <= 18) {
+            maxMajor = 61; // Java 17
+        } else if (mc <= 20) {
+            maxMajor = 64; // Java 20
+        } else {
+            String[] versionElements = System.getProperty("java.version").split("\\.");
+            int discard = Integer.parseInt(versionElements[0]);
+            int version;
+            if (discard == 1) {
+                version = Integer.parseInt(versionElements[1]);
+            } else {
+                version = discard;
+            }
+            maxMajor = version + 44;
+        }
+    }
 
     /**
      * Attempts to list all the classes in the specified package as determined
@@ -45,6 +73,18 @@ public class ReflectionUtils {
                         if (!name.startsWith(path) || !name.endsWith(".class") || name.indexOf('$') != -1)
                             continue;
 
+                        // fix paper plugin remapper
+                        try (InputStream is = jar.getInputStream(entry)) {
+                            int major = getClassMajorVersion(is);
+
+                            if (major > maxMajor) {
+                                System.out.println("Major: " + major + " Max: " + maxMajor);
+                                continue;
+                            }
+                        } catch (Throwable ignored) {
+                            continue;
+                        }
+
                         String className = name.replace('/', '.').substring(0, name.length() - 6);
 
                         try {
@@ -59,6 +99,17 @@ public class ReflectionUtils {
         }
 
         return classes;
+    }
+
+    public static int getClassMajorVersion(InputStream is) throws IOException {
+        DataInputStream dis = new DataInputStream(is);
+
+        if (dis.readInt() != 0xCAFEBABE) {
+            throw new IOException("Invalid class");
+        }
+
+        dis.readUnsignedShort(); // minor
+        return dis.readUnsignedShort(); // major
     }
 
     public static Object invokeMethodChain(Object event, String method) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
