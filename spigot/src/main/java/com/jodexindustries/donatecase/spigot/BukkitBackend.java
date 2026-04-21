@@ -22,7 +22,7 @@ import com.jodexindustries.donatecase.spigot.animations.select.SelectAnimationLi
 import com.jodexindustries.donatecase.spigot.animations.shape.ShapeAnimation;
 import com.jodexindustries.donatecase.spigot.animations.wheel.WheelAnimation;
 import com.jodexindustries.donatecase.spigot.api.platform.BukkitOfflinePlayer;
-import com.jodexindustries.donatecase.spigot.hook.packetevents.PacketEventsSupport;
+import com.jodexindustries.donatecase.spigot.hook.packetevents.PacketEventsSupportImpl;
 import com.jodexindustries.donatecase.spigot.hook.papi.PAPISupport;
 import com.jodexindustries.donatecase.spigot.listener.EventListener;
 import com.jodexindustries.donatecase.spigot.materials.BASE64MaterialHandlerImpl;
@@ -49,17 +49,12 @@ public class BukkitBackend extends BackendPlatform {
 
     @Getter
     private final BukkitDonateCase plugin;
-
     private final DonateCase api;
     private final DCTools tools;
     private final BukkitScheduler scheduler;
 
     private PAPI papi;
-    @Getter
-    private PacketEventsSupport packetEventsSupport;
-
     private MetaUpdater metaUpdater;
-
     private Metrics metrics;
 
     public BukkitBackend(BukkitDonateCase plugin) {
@@ -332,11 +327,10 @@ public class BukkitBackend extends BackendPlatform {
         );
     }
 
-    // TODO move to common
     private void loadPacketEventsAPI() {
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("packetevents")) {
             try {
-                packetEventsSupport = new PacketEventsSupport(this);
+                packetEventsSupport = new PacketEventsSupportImpl(this);
             } catch (Throwable e) {
                 getLogger().log(Level.WARNING, "Error hooking to packetevents: ", e);
             }
