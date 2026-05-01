@@ -25,7 +25,7 @@
 <dependency>
     <groupId>com.github.Jodexx.DonateCase</groupId>
     <artifactId>spigot-api</artifactId>
-    <version>v2.2.9.9</version>
+    <version>v2.3.0.0</version>
 </dependency>
 ```
 
@@ -39,5 +39,5 @@ maven {
 ```
 
 ```groovy
-compileOnly("com.github.Jodexx.DonateCase:spigot-api:v2.2.9.9")
+compileOnly("com.github.Jodexx.DonateCase:spigot-api:v2.3.0.0")
 ```
