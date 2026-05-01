@@ -133,15 +133,6 @@ public class BukkitBackend extends BackendPlatform {
     }
 
     @Override
-    public int getPlatformVersion() {
-        try {
-            String[] parts = Bukkit.getBukkitVersion().split("-")[0].split("\\.");
-            return Integer.parseInt(parts[1]);
-        } catch (Exception ignored) {}
-        return 0;
-    }
-
-    @Override
     public @NotNull File getDataFolder() {
         return plugin.getDataFolder();
     }
