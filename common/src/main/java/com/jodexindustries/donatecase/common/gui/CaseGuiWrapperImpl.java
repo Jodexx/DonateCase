@@ -19,6 +19,8 @@ import com.jodexindustries.donatecase.common.command.sub.KeysCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
@@ -69,17 +71,45 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
 
         platform.getScheduler().async(platform, () -> {
             globalHistoryData = DCTools.sortHistoryDataByDate(platform.getAPI().getDatabase().getCache());
-            for (CaseMenu.Item item : temporary.items().values()) {
+
+            List<CaseMenu.Item> items = new ArrayList<>(temporary.items().values());
+            int count = items.size();
+
+            if (count == 0) {
+                future.complete(null);
+                return;
+            }
+
+            CountDownLatch latch = new CountDownLatch(count);
+            List<CaseMenu.Item> processed = Collections.synchronizedList(new ArrayList<>());
+
+            for (CaseMenu.Item item : items) {
                 platform.getScheduler().async(platform, () -> {
                     try {
-                        processItem(item);
+                        processed.add(processItem(item));
                     } catch (Exception e) {
                         platform.getLogger().log(Level.WARNING,
                                 "Error occurred while loading item: " + item.name(), e);
+                    } finally {
+                        latch.countDown();
                     }
                 }, 0L);
             }
-            future.complete(null);
+            try {
+                latch.await(4, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            // All items processed — set them on the main thread to avoid async inventory issues
+            platform.getScheduler().run(platform, () -> {
+                for (CaseMenu.Item item : processed) {
+                    for (Integer slot : item.slots()) {
+                        inventory.setItem(slot, item.material().itemStack());
+                    }
+                }
+                future.complete(null);
+            });
         }, 0L);
 
         SCHEDULER.schedule(() -> {
@@ -117,7 +147,7 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         return menu.items().get(itemName).material();
     }
 
-    private void processItem(CaseMenu.Item item) throws TypedItemException {
+    private CaseMenu.Item processItem(CaseMenu.Item item) throws TypedItemException {
         String itemType = item.type();
         if (!itemType.equalsIgnoreCase("DEFAULT")) {
             Optional<TypedItem> typedItem = platform.getAPI().getGuiTypedItemManager().getFromString(itemType);
@@ -142,6 +172,7 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         for (Integer slot : item.slots()) {
             inventory.setItem(slot, item.material().itemStack());
         }
+        return item;
     }
 
     private String setPlaceholders(@Nullable String text) {
