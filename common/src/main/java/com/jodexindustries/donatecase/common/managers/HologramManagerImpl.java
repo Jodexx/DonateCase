@@ -101,18 +101,16 @@ public class HologramManagerImpl implements HologramManager {
                 for (Class<?> clazz : classes) {
                     if (!HologramFactory.class.isAssignableFrom(clazz)) continue;
 
-                    HologramFactory factory = (HologramFactory) clazz.getDeclaredField("INSTANCE").get(null);
-                    HologramDriver driver = factory.create(api.getPlatform());
-
-                    if (driver != null) {
-                        try {
-                            register(factory.name().toLowerCase(), driver);
-                        } catch (Throwable e) {
-                            api.getPlatform().getLogger().log(Level.WARNING, "Error with loading " + factory.name() + " hologram driver: ", e);
-                        }
+                    try {
+                        HologramFactory factory = (HologramFactory) clazz.getDeclaredField("INSTANCE").get(null);
+                        HologramDriver driver = factory.create(api.getPlatform());
+                        if (driver != null) register(factory.name().toLowerCase(), driver);
+                    } catch (Throwable e) {
+                        api.getPlatform().getLogger().log(Level.WARNING, "Error with loading " + clazz.getSimpleName() + " hologram driver: ", e);
                     }
                 }
-            } catch (ReflectiveOperationException ignored) {
+            } catch (ReflectiveOperationException e) {
+                api.getPlatform().getLogger().log(Level.WARNING, "Error with hologram drivers registration: ", e);
             }
 
             api.getPlatform().getLogger().info("Registered " + get().size() + " hologram drivers");
