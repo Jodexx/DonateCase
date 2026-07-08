@@ -12,7 +12,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import lombok.Getter;
 import org.slf4j.Logger;
 
-import javax.inject.Inject;
+import com.google.inject.Inject;
 import java.nio.file.Path;
 
 @Plugin(
@@ -24,12 +24,18 @@ import java.nio.file.Path;
 )
 public class VelocityPlatform {
 
-    @Inject private Logger logger;
-    @Inject @DataDirectory private Path dataDirectory;
+    private final Logger logger;
+    private final Path dataDirectory;
 
     private VelocityDatabase database;
     @Getter
     private VelocityCaseDatabase caseDatabase;
+
+    @Inject
+    public VelocityPlatform(Logger logger, @DataDirectory Path dataDirectory) {
+        this.logger = logger;
+        this.dataDirectory = dataDirectory;
+    }
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
