@@ -6,7 +6,7 @@ buildscript {
 
 plugins {
     java
-    id("com.gradleup.shadow") version "9.0.2" apply false
+    id("com.gradleup.shadow") version "9.5.1" apply false
 }
 
 defaultTasks("clean", "build")
@@ -35,8 +35,8 @@ subprojects {
     }
 
     dependencies {
-        compileOnly("org.projectlombok:lombok:1.18.38")
-        annotationProcessor("org.projectlombok:lombok:1.18.38")
+        compileOnly("org.projectlombok:lombok:1.18.46")
+        annotationProcessor("org.projectlombok:lombok:1.18.46")
     }
 
     java {

@@ -13,5 +13,5 @@ repositories {
 }
 
 dependencies {
-    compileOnly("de.oliver:FancyHolograms:2.9.1")
+    compileOnly("de.oliver:FancyHolograms:2.10.0")
 }

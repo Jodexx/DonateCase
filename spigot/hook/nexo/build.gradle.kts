@@ -13,5 +13,5 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.nexomc:nexo:1.21.0")
+    compileOnly("com.nexomc:nexo:1.23")
 }

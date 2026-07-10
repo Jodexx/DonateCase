@@ -13,5 +13,5 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.th0rgal:oraxen:1.212.0")
+    compileOnly("io.th0rgal:oraxen:1.217.0")
 }

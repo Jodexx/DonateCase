@@ -12,8 +12,8 @@ plugins {
 group = "com.jodexindustries.donatecase"
 
 dependencies {
-    compileOnly("me.clip:placeholderapi:2.11.7")
-    compileOnly("com.github.retrooper:packetevents-spigot:2.11.1")
+    compileOnly("me.clip:placeholderapi:2.12.3")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.13.0")
     implementation(project(":api:spigot-api"))
     implementation(project(":common"))
     implementation("com.github.Jodexx:LiteSkullAPI:2.0.0")

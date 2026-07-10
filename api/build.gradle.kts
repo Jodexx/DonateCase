@@ -4,14 +4,14 @@ plugins {
 }
 
 group = "com.jodexindustries.donatecase.api"
-version = properties["api"]!!
+version = property("api")!!
 
 
 dependencies {
     compileOnlyApi("net.kyori:event-method:3.0.0")
     compileOnlyApi("com.j256.ormlite:ormlite-jdbc:6.1")
-    compileOnlyApi("org.jetbrains:annotations:24.0.0")
-    compileOnlyApi("com.google.guava:guava:33.3.1-jre")
+    compileOnlyApi("org.jetbrains:annotations:26.1.0")
+    compileOnlyApi("com.google.guava:guava:33.6.0-jre")
     compileOnlyApi("org.spongepowered:configurate-yaml:4.2.0")
 }
 

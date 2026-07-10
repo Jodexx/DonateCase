@@ -9,5 +9,5 @@ java {
 }
 
 dependencies {
-    compileOnly("com.github.decentsoftware-eu.decentholograms:plugin:2.10.0") { isTransitive = false }
+    compileOnly("com.github.decentsoftware-eu.decentholograms:plugin:2.10.1") { isTransitive = false }
 }
