@@ -16,6 +16,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.function.Consumer;
 
+// TODO Get rid of the dependence on Bukkit in favor of cross-platform compatibility
 public class FireworkAnimation extends BukkitJavaAnimation {
 
     private final static DCAPI api = DCAPI.getInstance();
