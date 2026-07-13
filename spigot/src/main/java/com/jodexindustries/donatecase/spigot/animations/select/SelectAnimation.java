@@ -5,7 +5,7 @@ import com.jodexindustries.donatecase.api.armorstand.ArmorStandCreator;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.scheduler.SchedulerTask;
 import com.jodexindustries.donatecase.spigot.api.animation.BukkitJavaAnimation;
-import com.jodexindustries.donatecase.spigot.tools.Pair;
+import com.jodexindustries.donatecase.common.tools.Pair;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Particle;

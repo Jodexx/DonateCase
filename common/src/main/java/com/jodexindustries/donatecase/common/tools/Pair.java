@@ -1,4 +1,4 @@
-package com.jodexindustries.donatecase.spigot.tools;
+package com.jodexindustries.donatecase.common.tools;
 
 public class Pair<U, V> {
     public final U fst;
