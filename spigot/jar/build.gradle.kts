@@ -40,8 +40,7 @@ tasks {
 }
 
 tasks.runServer {
-    minecraftVersion("1.21.11")
-    allJvmArgs = listOf("-DPaper.IgnoreJavaVersion=true")
+    version("26.2")
     javaLauncher = javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(25))
     }
