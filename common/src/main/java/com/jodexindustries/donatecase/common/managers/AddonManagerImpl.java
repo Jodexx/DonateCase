@@ -7,9 +7,11 @@ import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.addon.*;
 import com.jodexindustries.donatecase.api.event.addon.AddonDisableEvent;
 import com.jodexindustries.donatecase.api.event.addon.AddonEnableEvent;
+import com.jodexindustries.donatecase.api.io.FilesLookup;
 import com.jodexindustries.donatecase.api.manager.AddonManager;
 import com.jodexindustries.donatecase.api.platform.Platform;
 import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.common.io.FilesLookupFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,23 +51,30 @@ public class AddonManagerImpl implements AddonManager {
 
         Map<String, InternalAddonDescription> descriptions = new HashMap<>();
 
-        for (File file : files) {
-            if (file.isFile() && file.getName().endsWith(".jar")) {
-                try {
-                    InternalAddonDescription description = new InternalAddonDescription(file);
-                    descriptions.put(description.getName(), description);
+        try (FilesLookup lookup = FilesLookupFactory.getInstance().lookupFolder(addonsDir)) {
+            for (File original : files) {
+                String name = original.getName();
 
-                    Collection<String> depend = description.getDepend();
-                    Collection<String> softDepend = description.getSoftDepend();
+                if (original.isFile() && name.endsWith(".jar")) {
 
-                    for (String dependency : depend) {
-                        dependencyGraph.putEdge(description.getName(), dependency);
+                    File file = lookup.getFile(name);
+
+                    try {
+                        InternalAddonDescription description = new InternalAddonDescription(file);
+                        descriptions.put(description.getName(), description);
+
+                        Collection<String> depend = description.getDepend();
+                        Collection<String> softDepend = description.getSoftDepend();
+
+                        for (String dependency : depend) {
+                            dependencyGraph.putEdge(description.getName(), dependency);
+                        }
+                        for (String softDependency : softDepend) {
+                            dependencyGraph.putEdge(description.getName(), softDependency);
+                        }
+                    } catch (IOException | InvalidAddonException e) {
+                        platform.getLogger().log(Level.SEVERE, "Failed to parse addon: " + name, e);
                     }
-                    for (String softDependency : softDepend) {
-                        dependencyGraph.putEdge(description.getName(), softDependency);
-                    }
-                } catch (IOException | InvalidAddonException e) {
-                    platform.getLogger().log(Level.SEVERE, "Failed to parse addon: " + file.getName(), e);
                 }
             }
         }

@@ -9,7 +9,8 @@ val platformPaths = setOf(
     ":spigot",
     "spigot:hook:nexo", "spigot:hook:oraxen", "spigot:hook:customheads",
     "spigot:hook:cmi", "spigot:hook:fancyholograms", "spigot:hook:decentholograms",
-    "spigot:hook:holographicdisplays", "spigot:hook:itemsadder", "spigot:hook:headdatabase"
+    "spigot:hook:holographicdisplays", "spigot:hook:itemsadder", "spigot:hook:headdatabase",
+    "spigot:hook:papermc"
 )
 val loadedProjects: List<Project> = platformPaths.map { rootProject.project(it) }
 

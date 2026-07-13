@@ -7,7 +7,8 @@ include(
     ":api:spigot-api", "velocity", "spigot", "spigot:jar",
     "spigot:hook:nexo", "spigot:hook:oraxen", "spigot:hook:customheads",
     "spigot:hook:cmi", "spigot:hook:fancyholograms", "spigot:hook:decentholograms",
-    "spigot:hook:holographicdisplays", "spigot:hook:itemsadder", "spigot:hook:headdatabase"
+    "spigot:hook:holographicdisplays", "spigot:hook:itemsadder", "spigot:hook:headdatabase",
+    "spigot:hook:papermc"
 )
 
 file("addons").listFiles()?.forEach { dir ->
