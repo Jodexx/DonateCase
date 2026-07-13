@@ -2,13 +2,13 @@ config: # Please do not touch this section
   version: 1
   type: case_settings
 
-# Check our detailed documentation about this file - https://wiki.jodex.xyz/DonateCase/Configs/Cases
+# Check our detailed documentation about this file - https://jodexx.github.io/JodexIndustriesWiki/DonateCase/Configs/Cases
 
 type: default
 
 default-menu: default_menu
 
-animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL, RANDOM, POP, SELECT see: https://wiki.jodex.xyz/DonateCase/animations
+animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL, RANDOM, POP, SELECT see: https://jodexx.github.io/JodexIndustriesWiki/DonateCase/animations
 #  animation-settings:
 #    Type: FULL # or RANDOM
 #    ItemSlot: HEAD # HEAD, HAND, OFF_HAND, FEET, LEGS, CHEST
@@ -31,7 +31,7 @@ animation: WHEEL #SHAPE, FIREWORK, RAINLY, WHEEL, RANDOM, POP, SELECT see: https
 #      Volume: 10
 #      Pitch: 1
 
-hologram: # see: https://wiki.jodex.xyz/DonateCase/holograms
+hologram: # see: https://jodexx.github.io/JodexIndustriesWiki/DonateCase/holograms
   # Toggle on and off the holograms for the case.
   enabled: true
   # The height of the hologram above the case.
