@@ -6,6 +6,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.jodexindustries.dcwebhook.bootstrap.MainAddon;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.event.animation.AnimationEndEvent;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.api.tools.Placeholder;
@@ -100,7 +101,8 @@ public class DiscordWebhook {
 
     private String formatPlaceholders(String text, ActiveCase activeCase) {
         String player = activeCase.player().getName();
-        String group = activeCase.winItem().group() != null ? activeCase.winItem().group() : "";
+        CaseItem winItem = activeCase.winItem();
+        String group = winItem.group() != null ? winItem.group() : winItem.name();
         String caseType = activeCase.caseType();
 
         return DCTools.rt(

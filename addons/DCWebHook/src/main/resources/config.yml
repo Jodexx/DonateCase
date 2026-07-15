@@ -3,7 +3,7 @@ url: "" # here is your discord webhook
 #username: ""
 #avatar_url: ""
 #tts: false
-embeds: # Placeholders: %player%, %group%, %casetype%, %animation%, %casetitle%.
+embeds: # Placeholders: %player%, %group%, %group_mapping%, %casetype%, %casetype_mapping%
   title: "DonateCase, opening case:"
 #  description: ""
   color: 444444
@@ -19,16 +19,16 @@ embeds: # Placeholders: %player%, %group%, %casetype%, %animation%, %casetitle%.
       value: "**Player:** %player%"
       inline: false
     - name: ""
-      value: "**Type:** %casetype%"
+      value: "**Type:** %casetype_mapping%"
       inline: false
     - name: ""
-      value: "**Prize:** %group%"
+      value: "**Prize:** %group_mapping%"
       inline: false
 
 mappings:
   cases:
     default: "Default case"
-  groups:
+  groups: # or item id if there is no group
     vip: "Vip"
     vipplus: "Vip+"
     premium: "Premium"
