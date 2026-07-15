@@ -7,6 +7,8 @@ import com.google.gson.annotations.SerializedName;
 import com.jodexindustries.dcwebhook.bootstrap.MainAddon;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.event.animation.AnimationEndEvent;
+import com.jodexindustries.donatecase.api.tools.DCTools;
+import com.jodexindustries.donatecase.api.tools.Placeholder;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
@@ -17,7 +19,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ConfigSerializable
 public class DiscordWebhook {
@@ -46,15 +50,17 @@ public class DiscordWebhook {
     @Expose
     private List<EmbedObject> embeds;
 
+    @Setting
+    private Mappings mappings;
+
     public void execute(AnimationEndEvent event) throws IOException {
-        if (this.content == null && this.embeds.isEmpty()) {
+        if (content == null && (embeds == null || embeds.isEmpty())) {
             throw new IllegalArgumentException("Set content or add at least one EmbedObject");
         }
 
-        if (this.url == null || this.url.isEmpty()) {
+        if (url == null || url.isEmpty()) {
             throw new IllegalArgumentException("Set webhook url!");
         }
-
 
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
@@ -65,7 +71,7 @@ public class DiscordWebhook {
         connection.setDoOutput(true);
         connection.setRequestMethod("POST");
 
-        String json = replace(gson.toJson(this), event.activeCase());
+        String json = formatPlaceholders(gson.toJson(this), event.activeCase());
 
         byte[] payload = json.getBytes(StandardCharsets.UTF_8);
         connection.setRequestProperty("Content-Length", String.valueOf(payload.length));
@@ -77,37 +83,52 @@ public class DiscordWebhook {
 
         int responseCode = connection.getResponseCode();
 
-        InputStream stream;
-        if (responseCode >= 200 && responseCode < 300) {
-            stream = connection.getInputStream();
-        } else {
-            stream = connection.getErrorStream();
-        }
+        InputStream stream =
+                responseCode >= 200 && responseCode < 300
+                        ? connection.getInputStream()
+                        : connection.getErrorStream();
 
-        if (stream != null && stream.read() != -1) {
-            String response = readFully(stream).toString();
-            if(!response.isEmpty()) MainAddon.instance.getLogger().warning("Discord webhook error: " + response);
+        if (stream != null) {
+            String response = readFully(stream);
+            if (!response.isEmpty()) {
+                MainAddon.instance.getLogger().warning("Discord webhook error: " + response);
+            }
         }
 
         connection.disconnect();
     }
 
-    private String replace(String text, ActiveCase activeCase) {
-        if(text == null) return null;
-        return text
-                .replaceAll("%player%", activeCase.player().getName())
-                .replaceAll("%group%", activeCase.winItem().group() != null ? activeCase.winItem().group() : "")
-                .replaceAll("%casetype%", activeCase.caseType());
+    private String formatPlaceholders(String text, ActiveCase activeCase) {
+        String player = activeCase.player().getName();
+        String group = activeCase.winItem().group() != null ? activeCase.winItem().group() : "";
+        String caseType = activeCase.caseType();
+
+        return DCTools.rt(
+                text,
+                Placeholder.of("%player%", player),
+                Placeholder.of("%group%", group),
+                Placeholder.of(
+                        "%group_mapping%",
+                        mappings.groups.getOrDefault(group, group)
+                ),
+                Placeholder.of("%casetype%", caseType),
+                Placeholder.of(
+                        "%casetype_mapping%",
+                        mappings.cases.getOrDefault(caseType, caseType)
+                )
+        );
     }
 
-    private ByteArrayOutputStream readFully(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+    private String readFully(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;
+
         while ((length = inputStream.read(buffer)) != -1) {
-            byteArrayOutputStream.write(buffer, 0, length);
+            output.write(buffer, 0, length);
         }
-        return byteArrayOutputStream;
+
+        return output.toString(StandardCharsets.UTF_8.name());
     }
 
     @ConfigSerializable
@@ -211,6 +232,16 @@ public class DiscordWebhook {
             private boolean inline;
 
         }
+    }
+
+    @ConfigSerializable
+    public static class Mappings {
+
+        @Setting
+        protected Map<String, String> groups = new HashMap<>();
+
+        @Setting
+        protected Map<String, String> cases = new HashMap<>();
     }
 
 }

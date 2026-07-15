@@ -24,3 +24,14 @@ embeds: # Placeholders: %player%, %group%, %casetype%, %animation%, %casetitle%.
     - name: ""
       value: "**Prize:** %group%"
       inline: false
+
+mappings:
+  cases:
+    default: "Default case"
+  groups:
+    vip: "Vip"
+    vipplus: "Vip+"
+    premium: "Premium"
+    deluxe: "Deluxe"
+    legend: "Legend"
+    ultra: "Ultra"
