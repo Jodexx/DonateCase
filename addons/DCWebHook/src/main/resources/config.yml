@@ -3,7 +3,7 @@ url: "" # here is your discord webhook
 #username: ""
 #avatar_url: ""
 #tts: false
-embeds: # Placeholders: %player%, %group%, %group_mapping%, %casetype%, %casetype_mapping%
+embeds: # Placeholders: %player%, %group%, %group_mapping%, %casetype%, %casetype_mapping%, %item_data:<key>%, %case_data:<key>%
   title: "DonateCase, opening case:"
 #  description: ""
   color: 444444

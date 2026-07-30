@@ -9,6 +9,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +36,8 @@ public class CaseItemSerializer implements TypeSerializer<CaseItem> {
                 node.node("give-type").get(GiveType.class, GiveType.ONE),
                 node.node("actions").getList(String.class),
                 node.node("alternative-actions").getList(String.class),
-                randomActions
+                randomActions,
+                deserializeCustomData(node.node("custom-data"))
         );
     }
 
@@ -57,6 +59,26 @@ public class CaseItemSerializer implements TypeSerializer<CaseItem> {
             for (Map.Entry<String, CaseItem.RandomAction> entry : randomActions.entrySet()) {
                 randomActionsNode.node(entry.getKey()).set(CaseItem.RandomAction.class, entry.getValue());
             }
+        }
+
+        serializeCustomData(node.node("custom-data"), obj.customData());
+    }
+
+    static Map<String, Object> deserializeCustomData(ConfigurationNode node) {
+        if (node.virtual() || !node.isMap()) return Collections.emptyMap();
+
+        Map<String, Object> map = new HashMap<>();
+        for (Map.Entry<Object, ? extends ConfigurationNode> entry : node.childrenMap().entrySet()) {
+            map.put(String.valueOf(entry.getKey()), entry.getValue().raw());
+        }
+        return map;
+    }
+
+    static void serializeCustomData(ConfigurationNode node, Map<String, Object> customData) throws SerializationException {
+        if (customData == null || customData.isEmpty()) return;
+
+        for (Map.Entry<String, Object> entry : customData.entrySet()) {
+            node.node(entry.getKey()).raw(entry.getValue());
         }
     }
 

@@ -33,7 +33,8 @@ public class CaseSettingsSerializer implements TypeSerializer<CaseSettings> {
                 node.node("animation-settings"),
                 node.node("cooldown-before-animation").getInt(),
                 node.node("history-data-size").getInt(),
-                node.node("display-name").getString()
+                node.node("display-name").getString(),
+                CaseItemSerializer.deserializeCustomData(node.node("custom-data"))
         );
     }
 
@@ -52,6 +53,8 @@ public class CaseSettingsSerializer implements TypeSerializer<CaseSettings> {
         node.node("cooldown-before-animation").set(obj.cooldownBeforeAnimation());
         node.node("history-data-size").set(obj.historyDataSize());
         node.node("display-name").set(obj.displayName());
+
+        CaseItemSerializer.serializeCustomData(node.node("custom-data"), obj.customData());
     }
 
     public static class LevelGroups implements TypeSerializer<CaseSettings.LevelGroups> {
