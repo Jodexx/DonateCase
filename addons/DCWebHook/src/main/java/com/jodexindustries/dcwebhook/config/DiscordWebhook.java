@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @ConfigSerializable
 public class DiscordWebhook {
@@ -105,7 +106,7 @@ public class DiscordWebhook {
         String group = winItem.group() != null ? winItem.group() : winItem.name();
         String caseType = activeCase.caseType();
 
-        return DCTools.rt(
+        text = DCTools.rt(
                 text,
                 Placeholder.of("%player%", player),
                 Placeholder.of("%group%", group),
@@ -119,6 +120,19 @@ public class DiscordWebhook {
                         mappings.cases.getOrDefault(caseType, caseType)
                 )
         );
+
+        // Replace custom-data placeholders: %case_data:<key>% and %item_data:<key>%
+        Map<String, Object> caseCustomData = activeCase.definition().settings().customData();
+        Map<String, Object> itemCustomData = winItem.customData();
+
+        for (Map.Entry<String, Object> entry : caseCustomData.entrySet()) {
+            text = text.replace("%case_data:" + entry.getKey() + "%", String.valueOf(entry.getValue()));
+        }
+        for (Map.Entry<String, Object> entry : itemCustomData.entrySet()) {
+            text = text.replace("%item_data:" + entry.getKey() + "%", String.valueOf(entry.getValue()));
+        }
+
+        return text;
     }
 
     private String readFully(InputStream inputStream) throws IOException {

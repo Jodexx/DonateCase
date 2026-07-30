@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.spongepowered.configurate.ConfigurationNode;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,13 @@ public class CaseSettings implements Cloneable {
 
     private String displayName;
 
+    private Map<String, Object> customData;
+
     public CaseSettings(String type, String defaultMenu, String animation, Hologram hologram, LevelGroups levelGroups, List<String> noKeyActions, OpenType openType, ConfigurationNode animationSettings, int cooldownBeforeAnimation, int historyDataSize, String displayName) {
+        this(type, defaultMenu, animation, hologram, levelGroups, noKeyActions, openType, animationSettings, cooldownBeforeAnimation, historyDataSize, displayName, Collections.emptyMap());
+    }
+
+    public CaseSettings(String type, String defaultMenu, String animation, Hologram hologram, LevelGroups levelGroups, List<String> noKeyActions, OpenType openType, ConfigurationNode animationSettings, int cooldownBeforeAnimation, int historyDataSize, String displayName, Map<String, Object> customData) {
         this.type = type;
         this.defaultMenu = defaultMenu;
         this.animation = animation;
@@ -49,6 +56,7 @@ public class CaseSettings implements Cloneable {
         this.cooldownBeforeAnimation = cooldownBeforeAnimation;
         this.historyDataSize = historyDataSize;
         this.displayName = displayName;
+        this.customData = customData != null ? customData : Collections.emptyMap();
     }
 
     @Override

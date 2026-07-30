@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,7 +37,13 @@ public class CaseItem implements Cloneable {
 
     private Map<String, RandomAction> randomActions;
 
+    private Map<String, Object> customData;
+
     public CaseItem(String name, @Nullable String group, double chance, int index, CaseMaterial material, GiveType giveType, List<String> actions, List<String> alternativeActions, Map<String, RandomAction> randomActions) {
+        this(name, group, chance, index, material, giveType, actions, alternativeActions, randomActions, Collections.emptyMap());
+    }
+
+    public CaseItem(String name, @Nullable String group, double chance, int index, CaseMaterial material, GiveType giveType, List<String> actions, List<String> alternativeActions, Map<String, RandomAction> randomActions, Map<String, Object> customData) {
         this.name = name;
         this.group = group;
         this.chance = chance;
@@ -45,6 +53,7 @@ public class CaseItem implements Cloneable {
         this.actions = actions;
         this.alternativeActions = alternativeActions;
         this.randomActions = randomActions;
+        this.customData = customData != null ? customData : Collections.emptyMap();
     }
 
     public RandomAction getRandomAction() {
