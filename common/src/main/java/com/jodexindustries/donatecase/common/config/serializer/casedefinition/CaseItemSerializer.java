@@ -64,22 +64,16 @@ public class CaseItemSerializer implements TypeSerializer<CaseItem> {
         serializeCustomData(node.node("custom-data"), obj.customData());
     }
 
+    @SuppressWarnings("unchecked")
     static Map<String, Object> deserializeCustomData(ConfigurationNode node) {
-        if (node.virtual() || !node.isMap()) return Collections.emptyMap();
-
-        Map<String, Object> map = new HashMap<>();
-        for (Map.Entry<Object, ? extends ConfigurationNode> entry : node.childrenMap().entrySet()) {
-            map.put(String.valueOf(entry.getKey()), entry.getValue().raw());
-        }
-        return map;
+        if (node.virtual()) return Collections.emptyMap();
+        Object raw = node.raw();
+        return raw instanceof Map ? (Map<String, Object>) raw : Collections.emptyMap();
     }
 
     static void serializeCustomData(ConfigurationNode node, Map<String, Object> customData) throws SerializationException {
         if (customData == null || customData.isEmpty()) return;
-
-        for (Map.Entry<String, Object> entry : customData.entrySet()) {
-            node.node(entry.getKey()).raw(entry.getValue());
-        }
+        node.raw(customData);
     }
 
     public static class RandomAction implements TypeSerializer<CaseItem.RandomAction> {
