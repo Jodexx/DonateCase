@@ -11,6 +11,7 @@ import com.jodexindustries.donatecase.api.data.storage.CaseInfo;
 import com.jodexindustries.donatecase.api.event.player.CaseInteractEvent;
 import com.jodexindustries.donatecase.api.event.player.GuiClickEvent;
 import com.jodexindustries.donatecase.api.event.player.JoinEvent;
+import com.jodexindustries.donatecase.api.event.player.LeaveEvent;
 import com.jodexindustries.donatecase.api.platform.DCPlayer;
 import com.jodexindustries.donatecase.api.tools.DCTools;
 import com.jodexindustries.donatecase.common.gui.items.OPENItemClickHandlerImpl;
@@ -33,6 +34,7 @@ public class EventListener implements Subscriber {
     @Subscribe
     public void onPlayerJoin(JoinEvent event) {
         DCPlayer player = event.player();
+        DCAPI.getInstance().getGUIManager().getMap().remove(player.getUniqueId());
         if (player.hasPermission("donatecase.admin")) {
             api.getUpdateChecker().getVersion().thenAcceptAsync(version -> {
                 if (version.isNew()) {
@@ -47,6 +49,11 @@ public class EventListener implements Subscriber {
                 }
             });
         }
+    }
+
+    @Subscribe
+    public void onPlayerLeave(LeaveEvent event) {
+        DCAPI.getInstance().getGUIManager().getMap().remove(event.player().getUniqueId());
     }
 
     @Subscribe

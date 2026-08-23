@@ -49,7 +49,6 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onAdminJoined(PlayerJoinEvent event) {
-        DCAPI.getInstance().getGUIManager().getMap().remove(event.getPlayer().getUniqueId());
         backend.getAPI().getEventBus().post(new JoinEvent(BukkitUtils.fromBukkit(event.getPlayer())));
     }
 
@@ -131,7 +130,7 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent e) {
-        DCAPI.getInstance().getGUIManager().getMap().remove(e.getPlayer().getUniqueId());
+        backend.getAPI().getEventBus().post(new com.jodexindustries.donatecase.api.event.player.LeaveEvent(BukkitUtils.fromBukkit(e.getPlayer())));
     }
 
     @EventHandler
