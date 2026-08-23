@@ -129,6 +129,11 @@ public class EventListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent e) {
+        backend.getAPI().getEventBus().post(new com.jodexindustries.donatecase.api.event.player.LeaveEvent(BukkitUtils.fromBukkit(e.getPlayer())));
+    }
+
+    @EventHandler
     public void BlockBreak(BlockBreakEvent e) {
         CaseLocation location = BukkitUtils.fromBukkit(e.getBlock().getLocation());
         if (DCAPI.getInstance().getConfigManager().getCaseStorage().has(location)) {
