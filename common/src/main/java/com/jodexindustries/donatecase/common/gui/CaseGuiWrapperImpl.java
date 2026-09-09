@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.logging.Level;
@@ -121,6 +122,19 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         return future;
     }
 
+    private void resetMaterial(CaseMenu.Item temp) {
+        CaseMenu.Item original = menu.items().get(temp.name());
+        if (original == null) return;
+
+        CaseMaterial material = temp.material();
+        String originalId = original.material().id();
+
+        if (Objects.equals(material.id(), originalId)) return;
+
+        material.id(originalId);
+        material.itemStack(null);
+    }
+
     private void updateMeta(CaseMenu.Item temp) {
         CaseMaterial original = getOriginal(temp.name());
         CaseMaterial material = temp.material();
@@ -153,8 +167,10 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
             Optional<TypedItem> typedItem = platform.getAPI().getGuiTypedItemManager().getFromString(itemType);
             if (typedItem.isPresent()) {
                 TypedItemHandler handler = typedItem.get().handler();
-                if (handler != null)
+                if (handler != null) {
+                    resetMaterial(item);
                     item = handler.handle(this, item);
+                }
                 if (typedItem.get().updateMeta())
                     updateMeta(item);
             }
