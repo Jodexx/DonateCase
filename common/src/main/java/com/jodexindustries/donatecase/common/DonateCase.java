@@ -74,6 +74,7 @@ public class DonateCase extends DCAPI {
         hologramManager.load(); // async
         updateChecker.check();
         database.connect();
+        database.warmUpCache();
         eventBus.register(eventListener);
         addonManager.enable(PowerReason.DONATE_CASE);
 

@@ -3,8 +3,8 @@ package com.jodexindustries.donatecase.api.caching;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SimpleCache<K, V> {
 
@@ -20,7 +20,7 @@ public class SimpleCache<K, V> {
      * @param maxAge in ticks
      */
     public SimpleCache(long maxAge) {
-        this.cache = new HashMap<>();
+        this.cache = new ConcurrentHashMap<>();
         this.maxAge = maxAge;
     }
 

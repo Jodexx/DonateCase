@@ -18,9 +18,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.util.UUID;
 
 public class ToolsImpl extends DCToolsBukkit {
+
+    private static final Duration SKULL_CACHE_EXPIRE = Duration.ofHours(6);
 
     private final BukkitBackend backend;
     private final SkullAPI skullAPI;
@@ -29,7 +32,11 @@ public class ToolsImpl extends DCToolsBukkit {
         this.backend = backend;
 
         Plugin plugin = backend.getPlugin();
-        this.skullAPI = LiteSkullBuilder.builder().bukkitScheduler(plugin).logger(plugin.getLogger()).build();
+        this.skullAPI = LiteSkullBuilder.builder()
+                .bukkitScheduler(plugin)
+                .logger(plugin.getLogger())
+                .cacheExpireAfterWrite(SKULL_CACHE_EXPIRE)
+                .build();
     }
 
     @Override

@@ -22,6 +22,8 @@ import com.jodexindustries.donatecase.common.database.entities.PlayerKeysTable;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -34,6 +36,7 @@ public class CaseDatabaseImpl extends CaseDatabase {
 
     private final DonateCase api;
     private final Logger logger;
+    private final Map<String, DCFuture<List<CaseData.History>>> refreshing = new HashMap<>();
     private DatabaseType databaseType;
 
     public CaseDatabaseImpl(DonateCase api) {
@@ -488,36 +491,57 @@ public class CaseDatabaseImpl extends CaseDatabase {
 
     @Override
     public List<CaseData.History> getCache() {
-        if (databaseType == DatabaseType.SQLITE) return getHistoryData().join();
-
-        List<CaseData.History> cachedList = cache.get("all!");
-
-        if (cachedList != null) {
-            return cachedList;
-        }
-
-        List<CaseData.History> previousList = cache.getPrevious("all!");
-
-        getHistoryData().thenAcceptAsync(historyData -> cache.put("all!", historyData));
-
-        return (previousList != null) ? previousList : getHistoryData().join();
+        return getCache("all!", this::getHistoryData);
     }
 
     @Override
     public List<CaseData.History> getCache(String caseType) {
-        if (databaseType == DatabaseType.SQLITE) return getHistoryData(caseType).join();
+        return getCache(caseType, () -> getHistoryData(caseType));
+    }
 
-        List<CaseData.History> cachedList = cache.get(caseType);
+    private List<CaseData.History> getCache(String key, Supplier<DCFuture<List<CaseData.History>>> supplier) {
+        List<CaseData.History> cachedList = cache.get(key);
 
         if (cachedList != null) {
             return cachedList;
         }
 
-        List<CaseData.History> previousList = cache.getPrevious(caseType);
+        DCFuture<List<CaseData.History>> future = refresh(key, supplier);
 
-        getHistoryData(caseType).thenAcceptAsync(historyData -> cache.put(caseType, historyData));
+        List<CaseData.History> previousList = cache.getPrevious(key);
+        if (previousList != null) return previousList;
 
-        return (previousList != null) ? previousList : getHistoryData(caseType).join();
+        return future.join();
+    }
+
+    private DCFuture<List<CaseData.History>> refresh(String key, Supplier<DCFuture<List<CaseData.History>>> supplier) {
+        synchronized (refreshing) {
+            DCFuture<List<CaseData.History>> existing = refreshing.get(key);
+            if (existing != null) return existing;
+
+            DCFuture<List<CaseData.History>> future = supplier.get();
+            refreshing.put(key, future);
+
+            future.whenComplete((historyData, throwable) -> {
+                synchronized (refreshing) {
+                    refreshing.remove(key);
+                }
+
+                if (historyData != null) cache.put(key, historyData);
+            });
+
+            return future;
+        }
+    }
+
+    @Override
+    public void warmUpCache() {
+        refresh("all!", this::getHistoryData);
+
+        api.getCaseManager().definitions().forEach(definition -> {
+            String caseType = definition.settings().type();
+            refresh(caseType, () -> getHistoryData(caseType));
+        });
     }
 
     @Override
