@@ -23,6 +23,8 @@ import java.util.*;
  */
 public class HISTORYItemHandlerImpl implements TypedItemHandler {
 
+    private static final String GLOBAL_CASE_TYPE = "GLOBAL";
+
     @NotNull
     @Override
     public CaseMenu.Item handle(@NotNull CaseGuiWrapper caseGui, @NotNull CaseMenu.Item item)
@@ -53,26 +55,25 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
     private boolean handleHistoryItem(DCPlayer player, CaseDefinition definition, CaseMenu.Item item,
                                       List<CaseData.History> globalHistoryData) {
         CaseMaterial itemMaterial = item.material();
-        String[] typeArgs = item.type().split("-");
+        String[] typeArgs = item.type().split("-", 3);
 
         if (typeArgs.length < 2) return false;
 
         int index = parseIndex(typeArgs[1]);
         if (index < 0) return false;
 
-        String caseType = (typeArgs.length >= 3) ? typeArgs[2] : definition.settings().type();
-        boolean isGlobal = caseType.equalsIgnoreCase("GLOBAL");
+        String rawCaseTypes = (typeArgs.length >= 3 && !typeArgs[2].trim().isEmpty())
+                ? typeArgs[2]
+                : definition.settings().type();
+        boolean isGlobal = rawCaseTypes.equalsIgnoreCase(GLOBAL_CASE_TYPE);
 
-        CaseDefinition historyCaseData = getHistoryDefinition(caseType, isGlobal);
-        if (historyCaseData == null && !isGlobal) return false;
+        List<String> caseTypes = isGlobal ? Collections.emptyList() : DCTools.splitCaseTypes(rawCaseTypes);
+        if (!isGlobal && caseTypes.isEmpty()) return false;
 
-        CaseData.History history = getHistoryData(caseType, isGlobal, globalHistoryData, index);
+        CaseData.History history = getHistoryData(caseTypes, isGlobal, globalHistoryData, index);
         if (history == null) return false;
 
-        if (isGlobal) {
-            historyCaseData = DCAPI.getInstance().getCaseManager().getByType(history.caseType()).orElse(null);
-        }
-
+        CaseDefinition historyCaseData = getHistoryDefinition(history.caseType());
         if (historyCaseData == null) return false;
 
         CaseItem historyItem = historyCaseData.items().getItem(history.item());
@@ -92,11 +93,8 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
         }
     }
 
-    private CaseDefinition getHistoryDefinition(String caseType, boolean isGlobal) {
-        if (isGlobal) return null;
-
-        Optional<CaseDefinition> optional = DCAPI.getInstance().getCaseManager().getByType(caseType);
-        return optional.map(CaseDefinition::clone).orElse(null);
+    private CaseDefinition getHistoryDefinition(String caseType) {
+        return DCAPI.getInstance().getCaseManager().getByType(caseType).orElse(null);
     }
 
 
@@ -147,13 +145,13 @@ public class HISTORYItemHandlerImpl implements TypedItemHandler {
                 .orElse("random_action_not_found");
     }
 
-    private CaseData.History getHistoryData(String caseType, boolean isGlobal,
+    private CaseData.History getHistoryData(List<String> caseTypes, boolean isGlobal,
                                             List<CaseData.History> globalHistoryData, int index) {
         if (isGlobal) {
             return index < globalHistoryData.size() ? globalHistoryData.get(index) : null;
         }
 
-        List<CaseData.History> filtered = DCTools.sortHistoryDataByCase(globalHistoryData, caseType);
+        List<CaseData.History> filtered = DCTools.sortHistoryDataByCase(globalHistoryData, caseTypes);
         return (index < filtered.size()) ? filtered.get(index) : null;
     }
 }

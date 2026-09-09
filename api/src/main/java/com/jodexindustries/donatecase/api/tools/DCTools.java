@@ -275,10 +275,23 @@ public abstract class DCTools {
      * sorted in descending order of time.
      */
     public static List<CaseData.History> sortHistoryDataByCase(List<CaseData.History> historyData, String caseType) {
+        return sortHistoryDataByCase(historyData, Collections.singletonList(caseType));
+    }
+
+    /**
+     * Sorts and filters case history data based on several case types.
+     *
+     * @param historyData the list of {@link CaseData.History} objects to sort and
+     *                    filter.
+     * @param caseTypes   the types of cases to filter by.
+     * @return a sorted list of {@link CaseData.History}, filtered by the specified
+     * case types, sorted in descending order of time.
+     */
+    public static List<CaseData.History> sortHistoryDataByCase(List<CaseData.History> historyData, Collection<String> caseTypes) {
         List<CaseData.History> list = new ArrayList<>();
         for (CaseData.History data : historyData) {
             if (data != null) {
-                if (data.caseType().equals(caseType)) {
+                if (caseTypes.contains(data.caseType())) {
                     list.add(data);
                 }
             }
@@ -286,6 +299,29 @@ public abstract class DCTools {
 
         list.sort(Comparator.comparingLong(object -> ((CaseData.History) object).time()).reversed());
         return list;
+    }
+
+    /**
+     * Splits a raw case type string into separate case types.
+     * <p>
+     * Case types are separated by a comma, for example
+     * <code>btcsmall,btcbig</code>. Blank entries are ignored.
+     *
+     * @param rawCaseTypes the raw string to split.
+     * @return an immutable list of case types, without duplicates.
+     */
+    public static List<String> splitCaseTypes(String rawCaseTypes) {
+        if (rawCaseTypes == null) return Collections.emptyList();
+
+        List<String> caseTypes = new ArrayList<>();
+        for (String caseType : rawCaseTypes.split(",")) {
+            String trimmed = caseType.trim();
+            if (!trimmed.isEmpty() && !caseTypes.contains(trimmed)) {
+                caseTypes.add(trimmed);
+            }
+        }
+
+        return Collections.unmodifiableList(caseTypes);
     }
 
     public static List<CaseData.History> sortHistoryDataByDate(List<CaseData.History> list) {
