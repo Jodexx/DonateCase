@@ -33,6 +33,7 @@ import com.jodexindustries.donatecase.spigot.tools.Metrics;
 import com.jodexindustries.donatecase.spigot.tools.ToolsImpl;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -173,6 +174,19 @@ public class BukkitBackend extends BackendPlatform {
     @Override
     public DCPlayer[] getOnlinePlayers() {
         return Bukkit.getOnlinePlayers().stream().map(BukkitUtils::fromBukkit).toArray(DCPlayer[]::new);
+    }
+
+    @Override
+    public boolean isValidSound(@NotNull String sound) {
+        try {
+            Sound.valueOf(sound.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        } catch (Throwable e) {
+            // Sound is not an enum on newer server versions, leave the check to the platform
+            return true;
+        }
     }
 
     @Override

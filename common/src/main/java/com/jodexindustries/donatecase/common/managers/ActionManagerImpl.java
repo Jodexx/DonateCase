@@ -56,6 +56,12 @@ public class ActionManagerImpl implements ActionManager {
                         .addon(platform)
                         .executor(new SoundActionExecutorImpl())
                         .description("Sends a sound to the player")
+                        .build(),
+                CaseAction.builder()
+                        .name("[broadcastsound]")
+                        .addon(platform)
+                        .executor(new BroadcastSoundActionExecutorImpl())
+                        .description("Sends a sound to the players")
                         .build()
         );
 
