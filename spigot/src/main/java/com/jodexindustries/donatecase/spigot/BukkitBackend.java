@@ -312,7 +312,7 @@ public class BukkitBackend extends BackendPlatform {
                 CaseMaterial.builder()
                         .id("HEAD")
                         .addon(this)
-                        .handler(new HEADMaterialHandlerImpl())
+                        .handler(new HEADMaterialHandlerImpl(this))
                         .description("Default Minecraft heads by nickname")
                         .build()
         );
