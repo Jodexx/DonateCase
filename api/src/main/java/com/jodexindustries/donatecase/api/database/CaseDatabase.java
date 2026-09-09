@@ -27,6 +27,13 @@ public abstract class CaseDatabase {
     public abstract void connect();
 
     /**
+     * Loads case history into the cache, so the first reader does not have to
+     * wait for the database.
+     */
+    public void warmUpCache() {
+    }
+
+    /**
      * Connects to a SQLite database.
      *
      * @param path absolute path to the SQLite database file
