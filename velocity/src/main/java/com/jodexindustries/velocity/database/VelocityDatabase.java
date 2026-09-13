@@ -22,21 +22,6 @@ public final class VelocityDatabase {
         this.logger = logger;
     }
 
-    @Deprecated
-    public void connect(String path) {
-        if (path == null || path.isBlank()) {
-            logger.error("SQLite path is empty");
-            return;
-        }
-        connect(Path.of(path), VelocityDatabaseType.SQLITE, null);
-    }
-
-    @Deprecated
-    public void connect(String database, int port, String host, String user, String password) {
-        VelocityDatabaseSettings settings = new VelocityDatabaseSettings(host, port, database, user, password);
-        connect(null, VelocityDatabaseType.MYSQL, settings);
-    }
-
     public void connect(Path dataFolder, VelocityDatabaseType type, VelocityDatabaseSettings settings) {
         this.databaseType = type;
 

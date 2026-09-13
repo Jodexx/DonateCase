@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api.event.animation;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
@@ -22,10 +21,5 @@ public class AnimationPreStartEvent extends DCEvent {
 
     @NotNull
     private CaseItem winItem;
-
-    @Deprecated
-    public CaseData getCaseData() {
-        return CaseData.fromDefinition(definition);
-    }
 
 }

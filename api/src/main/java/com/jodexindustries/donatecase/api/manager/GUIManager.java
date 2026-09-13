@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api.manager;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseMenu;
@@ -15,19 +14,6 @@ import java.util.UUID;
  * Interface responsible for managing and displaying case GUIs.
  */
 public interface GUIManager {
-
-    /**
-     * Opens a case GUI using legacy {@link CaseData}.
-     *
-     * @param player   The player who is opening the GUI.
-     * @param caseData The case data instance containing configuration and rewards.
-     * @param location The physical or logical location where the case is being opened.
-     * @deprecated Use {@link #open(DCPlayer, CaseDefinition, CaseLocation)} instead.
-     */
-    @Deprecated
-    default void open(@NotNull DCPlayer player, @NotNull CaseData caseData, @NotNull CaseLocation location) {
-        open(player, CaseData.toDefinition(caseData), location);
-    }
 
     /**
      * Opens the default GUI of a case.

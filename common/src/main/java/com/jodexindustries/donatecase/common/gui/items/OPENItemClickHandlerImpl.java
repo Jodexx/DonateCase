@@ -2,7 +2,6 @@ package com.jodexindustries.donatecase.common.gui.items;
 
 import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItemClickHandler;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
@@ -59,11 +58,6 @@ public class OPENItemClickHandlerImpl implements TypedItemClickHandler {
                 DCAPI.getInstance().getActionManager().execute(player, definition.settings().noKeyActions());
             }
         });
-    }
-
-    @Deprecated
-    public static void executeOpen(@NotNull CaseData caseData, @NotNull DCPlayer player, @NotNull CaseLocation location) {
-        executeOpen(CaseData.toDefinition(caseData), player, location);
     }
 
     public static void executeOpenWithoutEvent(DCPlayer player, CaseLocation location, CaseDefinition definition, boolean ignoreKeys) {

@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.common.gui;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGui;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseGuiWrapper;
 import com.jodexindustries.donatecase.api.data.casedata.gui.CaseInventory;
 import com.jodexindustries.donatecase.api.data.casedata.gui.typeditem.TypedItem;
@@ -223,22 +222,9 @@ public class CaseGuiWrapperImpl implements CaseGuiWrapper {
         return player;
     }
 
-    @Deprecated
-    @NotNull
-    @Override
-    public CaseData getCaseData() {
-        return CaseData.fromDefinition(definition);
-    }
-
     @Override
     public @NotNull CaseDefinition getDefinition() {
         return definition;
-    }
-
-    @Deprecated
-    @Override
-    public CaseGui getTemporary() {
-        return CaseGui.fromMenu(menu);
     }
 
     @NotNull

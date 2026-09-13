@@ -1,6 +1,5 @@
 package com.jodexindustries.donatecase.api.event.player;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
 import com.jodexindustries.donatecase.api.event.DCEvent;
@@ -27,11 +26,6 @@ public class OpenCaseEvent extends DCEvent implements Cancellable {
     private final CaseDefinition definition;
     private final CaseLocation block;
     private boolean cancelled;
-
-    @Deprecated
-    public CaseData getCaseData() {
-        return CaseData.fromDefinition(definition);
-    }
 
     @Override
     public boolean cancelled() {

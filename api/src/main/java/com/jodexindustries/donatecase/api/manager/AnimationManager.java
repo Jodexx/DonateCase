@@ -3,8 +3,6 @@ package com.jodexindustries.donatecase.api.manager;
 import com.jodexindustries.donatecase.api.addon.Addon;
 import com.jodexindustries.donatecase.api.data.ActiveCase;
 import com.jodexindustries.donatecase.api.data.animation.CaseAnimation;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
@@ -57,55 +55,11 @@ public interface AnimationManager {
     DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseDefinition definition, boolean keyRemoved, int delay);
 
     /**
-     * Starts an animation at a specified location.
-     *
-     * @param player   The player who triggered the animation.
-     * @param location The location where the animation should start.
-     * @param caseData The case data associated with the animation.
-     * @return A {@link DCFuture} that completes when the animation starts.
-     */
-    @Deprecated
-    default DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData) {
-        return start(player, location, CaseData.toDefinition(caseData));
-    }
-
-    /**
-     * Starts an animation at a specified location after a delay.
-     *
-     * @param player   The player who triggered the animation.
-     * @param location The location where the animation should start.
-     * @param caseData The case data associated with the animation.
-     * @param delay    The delay in ticks before starting the animation.
-     * @return A {@link DCFuture} that completes when the animation starts.
-     */
-    @Deprecated
-    default DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, int delay) {
-        return start(player, location, CaseData.toDefinition(caseData), delay);
-    }
-
-    @Deprecated
-    default DCFuture<UUID> start(@NotNull DCPlayer player, @NotNull CaseLocation location, @NotNull CaseData caseData, boolean keyRemoved, int delay) {
-        return start(player, location, CaseData.toDefinition(caseData), keyRemoved, delay);
-    }
-
-    /**
      * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
      *
      * @param uuid The unique ID of the active case.
      */
     void preEnd(UUID uuid);
-
-    /**
-     * Prepares for the end of an animation by granting rewards, sending messages, or performing other actions.
-     *
-     * @param caseData The case data associated with the animation.
-     * @param player   The player interacting with the animation (can be offline).
-     * @param item     The item data associated with the animation's result.
-     */
-    @Deprecated
-    default void preEnd(CaseData caseData, DCPlayer player, CaseDataItem item) {
-        preEnd(CaseData.toDefinition(caseData), player, CaseDataItem.toItem(item));
-    }
 
     void preEnd(CaseDefinition definition, DCPlayer player, CaseItem item);
 

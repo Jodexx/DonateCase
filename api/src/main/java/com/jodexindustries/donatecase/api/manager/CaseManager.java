@@ -1,12 +1,9 @@
 package com.jodexindustries.donatecase.api.manager;
 
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -41,29 +38,4 @@ public interface CaseManager {
     @NotNull
     Collection<CaseDefinition> definitions();
 
-    /**
-     * Retrieves legacy case data for the given type.
-     * <p>
-     * This method exists for backward compatibility with older systems that rely on {@link CaseData}.
-     * It is recommended to use {@link #getByType(String)} and work with {@link CaseDefinition} going forward.
-     *
-     * @param type the case type identifier
-     * @return the corresponding {@link CaseData}, or {@code null} if not available
-     * @deprecated Legacy API — use {@link #getByType(String)} with {@link CaseDefinition} instead
-     */
-    @Nullable
-    @Deprecated
-    CaseData get(@NotNull String type);
-
-    /**
-     * Retrieves a complete map of legacy case data.
-     * <p>
-     * This method is intended for backward compatibility only. Use {@link #definitions()} and
-     * transform data as needed for modern use cases.
-     *
-     * @return a map where the key is the case type and the value is {@link CaseData}
-     * @deprecated Legacy API — use {@link #definitions()} instead
-     */
-    @Deprecated
-    Map<String, CaseData> getMap();
 }

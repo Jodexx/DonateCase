@@ -34,26 +34,6 @@ public abstract class CaseDatabase {
     }
 
     /**
-     * Connects to a SQLite database.
-     *
-     * @param path absolute path to the SQLite database file
-     */
-    @Deprecated
-    public abstract void connect(String path);
-
-    /**
-     * Connects to a MySQL database.
-     *
-     * @param database database name
-     * @param port     port number
-     * @param host     host address
-     * @param user     username
-     * @param password password
-     */
-    @Deprecated
-    public abstract void connect(String database, int port, String host, String user, String password);
-
-    /**
      * Retrieves the number of keys the player has for all case types.
      *
      * @param player the player's name

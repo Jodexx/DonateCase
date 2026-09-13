@@ -22,7 +22,6 @@ import com.jodexindustries.donatecase.common.database.entities.PlayerKeysTable;
 
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -42,34 +41,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     public CaseDatabaseImpl(DonateCase api) {
         this.api = api;
         this.logger = api.getPlatform().getLogger();
-    }
-
-    @Deprecated
-    @Override
-    public void connect(String path) {
-        DatabaseType databaseType = DatabaseType.SQLITE;
-
-        try {
-            connect(databaseType, new JdbcConnectionSource("jdbc:sqlite:" + path + "/database.db"));
-        } catch (SQLException e) {
-            logger.log(
-                    java.util.logging.Level.SEVERE, "Error while building url connection (" + databaseType + ")", e
-            );
-        }
-    }
-
-    @Deprecated
-    @Override
-    public void connect(String database, int port, String host, String user, String password) {
-        DatabaseType databaseType = DatabaseType.MYSQL;
-
-        try {
-            connect(databaseType, new JdbcConnectionSource("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password));
-        } catch (SQLException e) {
-            logger.log(
-                    java.util.logging.Level.SEVERE, "Error while building url connection (" + databaseType + ")", e
-            );
-        }
     }
 
     @Override

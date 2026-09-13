@@ -20,14 +20,8 @@ public interface CaseGuiWrapper {
     @NotNull
     DCPlayer getPlayer();
 
-    @Deprecated
-    CaseData getCaseData();
-
     @NotNull
     CaseDefinition getDefinition();
-
-    @Deprecated
-    CaseGui getTemporary();
 
     @NotNull
     CaseMenu getMenu();

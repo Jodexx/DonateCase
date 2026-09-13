@@ -1,7 +1,6 @@
 package com.jodexindustries.donatecase.common.tools;
 
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.tools.DCTools;
@@ -45,26 +44,6 @@ public class LocalPlaceholder extends Placeholder {
                 of("%casetype%", data.caseType()),
                 of("%casename%", data.caseType()), // outdated
                 of("%time%", time)));
-    }
-
-    /**
-     * @deprecated Use {@link #of(CaseDefinition)} instead.
-     */
-    @Deprecated
-    public static Set<LocalPlaceholder> of(CaseData caseData) {
-        return new HashSet<>(Arrays.asList(
-                of("%casetype%", caseData.caseType()),
-                of("%casename%", caseData.caseType()), // outdated
-                of("%casedisplayname%", caseData.caseDisplayName()),
-                of("%casetitle%", caseData.caseGui() != null ? caseData.caseGui().title() : ""),
-                of("%animation%", caseData.animation())));
-    }
-
-    @Deprecated
-    public static Set<LocalPlaceholder> of(CaseDataItem item) {
-        return new HashSet<>(Arrays.asList(
-                of("%group%", item.group()),
-                of("%groupdisplayname%", item.material().displayName())));
     }
 
     @Override

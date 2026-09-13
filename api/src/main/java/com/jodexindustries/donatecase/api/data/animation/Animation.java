@@ -1,8 +1,6 @@
 package com.jodexindustries.donatecase.api.data.animation;
 
 import com.jodexindustries.donatecase.api.DCAPI;
-import com.jodexindustries.donatecase.api.data.casedata.CaseData;
-import com.jodexindustries.donatecase.api.data.casedata.CaseDataItem;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseDefinition;
 import com.jodexindustries.donatecase.api.data.casedefinition.CaseItem;
 import com.jodexindustries.donatecase.api.data.storage.CaseLocation;
@@ -106,23 +104,4 @@ public abstract class Animation {
         DCAPI.getInstance().getAnimationManager().end(getUuid());
     }
 
-    /**
-     * @return a temporary {@link CaseData} representation built from the case definition.
-     * @deprecated This method creates a new {@link CaseData} from the definition and should
-     *             be avoided for performance reasons. Use {@link #definition} directly instead.
-     */
-    @Deprecated
-    public CaseData getCaseData() {
-        return CaseData.fromDefinition(definition);
-    }
-
-    /**
-     * @return a temporary {@link CaseDataItem} representation of the winning item.
-     * @deprecated This method creates a new {@link CaseDataItem} from the winning {@link CaseItem}
-     *             and should be avoided in performance-critical paths.
-     */
-    @Deprecated
-    public CaseDataItem getWinItem() {
-        return CaseDataItem.fromItem(item);
-    }
 }
