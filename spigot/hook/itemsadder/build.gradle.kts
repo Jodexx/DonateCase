@@ -9,7 +9,7 @@ java {
 }
 
 repositories {
-    maven("https://maven.devs.beer/")
+    maven("https://repo.loohpjames.com/repository/")
 }
 
 dependencies {
