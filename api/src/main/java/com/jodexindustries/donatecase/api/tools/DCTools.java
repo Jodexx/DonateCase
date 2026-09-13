@@ -69,7 +69,7 @@ public abstract class DCTools {
     }
 
     @NotNull
-    public static DCFuture<@NotNull String> formatPlayerName(String name) {
+    public static DCFuture<String> formatPlayerName(String name) {
         String trimmed = name.trim();
 
         return DCFuture.supplyAsync(() -> {
