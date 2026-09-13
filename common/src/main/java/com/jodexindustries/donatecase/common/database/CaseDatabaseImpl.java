@@ -108,17 +108,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
         }
     }
 
-    private synchronized void ensureConnected() {
-        try {
-            if (connectionSource == null || !connectionSource.isOpen("")) {
-                logger.warning("Database connection lost, reconnecting...");
-                connect();
-            }
-        } catch (Exception e) {
-            logger.warning("Failed to check/restore database connection: " + e.getMessage());
-        }
-    }
-
     private void init() throws SQLException {
         com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.WARNING);
 
@@ -133,7 +122,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<Map<String, Integer>> getKeys(String player) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             Map<String, Integer> keys = new HashMap<>();
             try {
                 List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
@@ -154,7 +142,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<Integer> getKeys(String name, String player) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             int keys = 0;
             try {
                 List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
@@ -177,7 +164,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<DatabaseStatus> setKeys(String name, String player, int keys) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             try {
                 List<PlayerKeysTable> results = playerKeysTables.queryBuilder()
                         .where()
@@ -209,7 +195,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
 
     public DCFuture<DatabaseStatus> setKeysBulk(String caseName, Map<String, Integer> playerKeysMap) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             try {
                 playerKeysTables.callBatchTasks(() -> {
                     for (Map.Entry<String, Integer> entry : playerKeysMap.entrySet()) {
@@ -253,7 +238,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<Integer> getOpenCount(String player, String caseType) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             try {
                 List<OpenInfoTable> results = openInfoTables.queryBuilder()
                         .where()
@@ -273,7 +257,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<Map<String, Integer>> getOpenCount(String player) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             Map<String, Integer> opens = new HashMap<>();
             try {
                 List<OpenInfoTable> results = openInfoTables.queryBuilder()
@@ -293,7 +276,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<Map<String, Map<String, Integer>>> getGlobalOpenCount() {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             Map<String, Map<String, Integer>> globalMap = new HashMap<>();
             try {
                 List<OpenInfoTable> results = openInfoTables.queryForAll();
@@ -312,7 +294,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<Map<String, Integer>> getGlobalOpenCount(String caseType) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             Map<String, Integer> opens = new HashMap<>();
             try {
                 List<OpenInfoTable> results = openInfoTables.queryBuilder()
@@ -334,7 +315,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<DatabaseStatus> setCount(String caseType, String player, int count) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             try {
                 List<OpenInfoTable> results = openInfoTables.queryBuilder()
                         .where()
@@ -367,7 +347,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<DatabaseStatus> addHistory(String caseType, CaseData.History newEntry, int maxSize) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             try {
                 List<CaseData.History> entries = historyDataTables.queryBuilder().orderBy("time", true)
                         .where()
@@ -409,7 +388,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<DatabaseStatus> setHistoryData(String caseType, int index, CaseData.History data) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             try {
                 QueryBuilder<CaseData.History, String> queryBuilder = historyDataTables.queryBuilder();
                 queryBuilder.where().eq("case_type", caseType);
@@ -428,7 +406,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<DatabaseStatus> removeHistoryData(String caseType) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             try {
                 DeleteBuilder<CaseData.History, String> deleteBuilder = historyDataTables.deleteBuilder();
                 deleteBuilder.where().eq("case_type", caseType);
@@ -444,7 +421,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<DatabaseStatus> removeHistoryData(String caseType, int index) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             try {
                 DeleteBuilder<CaseData.History, String> deleteBuilder = historyDataTables.deleteBuilder();
                 deleteBuilder.where().eq("case_type", caseType).and().eq("id", index);
@@ -461,7 +437,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     public DCFuture<List<CaseData.History>> getHistoryData() {
         List<CaseData.History> result = new ArrayList<>();
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             try {
                 result.addAll(historyDataTables.queryForAll());
             } catch (SQLException e) {
@@ -475,7 +450,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     public DCFuture<List<CaseData.History>> getHistoryData(String caseType) {
         List<CaseData.History> result = new ArrayList<>();
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             try {
                 result.addAll(historyDataTables.queryBuilder().orderBy("time", true)
                         .where()
@@ -547,7 +521,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<DatabaseStatus> delAllKeys() {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             try {
                 playerKeysTables.deleteBuilder().delete();
             } catch (SQLException e) {
@@ -561,7 +534,6 @@ public class CaseDatabaseImpl extends CaseDatabase {
     @Override
     public DCFuture<DatabaseStatus> delKeys(String caseType) {
         return DCFuture.supplyAsync(() -> {
-            ensureConnected();
             try {
                 DeleteBuilder<PlayerKeysTable, String> deleteBuilder = playerKeysTables.deleteBuilder();
                 deleteBuilder.where().eq("case_name", caseType);
