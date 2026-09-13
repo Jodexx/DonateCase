@@ -8,12 +8,10 @@ import com.jodexindustries.donatecase.api.platform.Platform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SoundActionExecutorImpl implements ActionExecutor {
+public class BroadcastSoundActionExecutorImpl implements ActionExecutor {
 
     @Override
     public void execute(@Nullable DCPlayer player, @NotNull String context) throws ActionException {
-        if (player == null) return;
-
         String[] args = context.split(" ");
         String sound = args[0];
 
@@ -37,6 +35,10 @@ public class SoundActionExecutorImpl implements ActionExecutor {
             throw new ActionException("Invalid sound: " + sound.toUpperCase());
         }
 
-        player.playSound(args[0], volume, pitch);
+        for (DCPlayer target : platform.getOnlinePlayers()) {
+            if (target.hasPermission("donatecase.notify")) {
+                target.playSound(sound, volume, pitch);
+            }
+        }
     }
 }

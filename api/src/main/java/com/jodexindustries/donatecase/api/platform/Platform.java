@@ -45,4 +45,17 @@ public interface Platform extends Addon {
     boolean isWorldLoaded(String world);
 
     int getSpawnRadius();
+
+    /**
+     * Checks that a sound name is known to the platform.
+     * <p>
+     * Used to validate a sound before it is played to several players at once,
+     * so that an invalid name fails before anyone hears it.
+     *
+     * @param sound the sound name to check.
+     * @return true if the sound can be played, false otherwise.
+     */
+    default boolean isValidSound(@NotNull String sound) {
+        return true;
+    }
 }
