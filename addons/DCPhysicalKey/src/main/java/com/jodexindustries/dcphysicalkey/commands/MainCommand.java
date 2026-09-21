@@ -2,6 +2,7 @@ package com.jodexindustries.dcphysicalkey.commands;
 
 import com.jodexindustries.dcphysicalkey.bootstrap.MainAddon;
 import com.jodexindustries.dcphysicalkey.tools.ItemManager;
+import com.jodexindustries.donatecase.api.DCAPI;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommand;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandExecutor;
 import com.jodexindustries.donatecase.api.data.subcommand.SubCommandTabCompleter;
@@ -30,11 +31,11 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
     }
 
     public void register() {
-        commandName = config.get().getString("command", "physicalkey");
+        commandName = config.node("command").getString("physicalkey");
         SubCommand subCommand = SubCommand.builder()
                 .name(commandName)
                 .addon(addon)
-                .permission(config.get().getString("permissions.give", "dcphysicalkey.give"))
+                .permission(config.node("permissions", "give").getString("dcphysicalkey.give"))
                 .description("&2Gives physical key to specific player")
                 .args(new String[]{
                         "givekey",
@@ -45,11 +46,11 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
                 .executor(this)
                 .tabCompleter(this)
                 .build();
-        MainAddon.api.getSubCommandManager().register(subCommand);
+        DCAPI.getInstance().getSubCommandManager().register(subCommand);
     }
 
     public void unregister() {
-        if(commandName != null) MainAddon.api.getSubCommandManager().unregister(commandName);
+        if (commandName != null) DCAPI.getInstance().getSubCommandManager().unregister(commandName);
     }
 
     @Override
@@ -58,11 +59,8 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
             return false;
         }
 
-        if (args[0].equalsIgnoreCase("givekey")) {
-            if (sender.hasPermission(config.get().getString("permissions.give", "dcphysicalkey.give"))) {
-                handleGiveKeyCommand(sender, args);
-            }
-        }
+        // args[0] = givekey
+        handleGiveKeyCommand(sender, args);
 
         return true;
     }
@@ -79,14 +77,14 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
         try {
             amount = Integer.parseInt(args[3]);
         } catch (NumberFormatException e) {
-            sender.sendMessage(rc(config.get().getString("messages.invalid-number", "")));
+            sender.sendMessage(rc(config.node("messages", "invalid-number").getString("")));
             return;
         }
 
         Player targetPlayer = Bukkit.getServer().getPlayer(playerName);
         if (targetPlayer == null) {
             sender.sendMessage(rc(
-                    config.get().getString("messages.player-not-found", "")
+                    config.node("messages", "player-not-found").getString("")
                             .replace("%player%", playerName)
             ));
             return;
@@ -95,7 +93,7 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
         ItemStack itemStack = ItemManager.items.get(keyName);
 
         if (itemStack == null) {
-            sender.sendMessage(rc(config.get().getString("messages.key-not-found", "")));
+            sender.sendMessage(rc(config.node("messages", "key-not-found").getString("")));
             return;
         }
 
@@ -104,7 +102,7 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
         targetPlayer.getInventory().addItem(itemStack);
 
         sender.sendMessage(rc(
-                config.get().getString("messages.give-key", "")
+                config.node("messages", "give-key").getString("")
                         .replace("%player%", playerName)
                         .replace("%amount%", String.valueOf(amount))
         ));
@@ -117,14 +115,14 @@ public class MainCommand implements SubCommandExecutor, SubCommandTabCompleter {
         if (args.length == 1) {
             completions.add("givekey");
         } else {
-            if(args[0].equalsIgnoreCase("givekey")) {
+            if (args[0].equalsIgnoreCase("givekey")) {
                 if (args.length == 2) {
                     for (Player p : Bukkit.getOnlinePlayers()) {
                         completions.add(p.getName());
                     }
                 }
 
-                if(args.length == 3) {
+                if (args.length == 3) {
                     completions.addAll(ItemManager.items.keySet());
                 }
             }

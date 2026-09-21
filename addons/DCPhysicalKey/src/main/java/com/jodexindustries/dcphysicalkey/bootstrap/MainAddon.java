@@ -18,16 +18,14 @@ import java.util.Objects;
 
 public class MainAddon extends InternalJavaAddon {
 
-    public static final DCAPI api = DCAPI.getInstance();
-
+    @NotNull
+    public static final NamespacedKey NAMESPACED_KEY = Objects.requireNonNull(NamespacedKey.fromString("dcphysicalkey:key"));
     @Getter
     private Config config;
+    @Getter
     private ItemManager itemManager;
     private EventListener eventListener;
     private MainCommand mainCommand;
-
-    @NotNull
-    public static final NamespacedKey NAMESPACED_KEY = Objects.requireNonNull(NamespacedKey.fromString("dcphysicalkey:key"));
 
     @Override
     public void onLoad() {
@@ -41,7 +39,7 @@ public class MainAddon extends InternalJavaAddon {
     public void onEnable() {
         mainCommand.register();
         itemManager.load();
-        api.getEventBus().register(eventListener);
+        DCAPI.getInstance().getEventBus().register(eventListener);
 
         Bukkit.getServer().getPluginManager().registerEvents(eventListener, BukkitUtils.getDonateCase());
     }
@@ -49,7 +47,7 @@ public class MainAddon extends InternalJavaAddon {
     @Override
     public void onDisable() {
         mainCommand.unregister();
-        api.getEventBus().unregister(eventListener);
+        DCAPI.getInstance().getEventBus().unregister(eventListener);
         HandlerList.unregisterAll(eventListener);
     }
 

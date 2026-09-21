@@ -27,8 +27,9 @@ public class EventListener implements Listener, Subscriber {
 
     @Subscribe
     public void onReload(DonateCaseReloadEvent e) {
-        if(e.type() == DonateCaseReloadEvent.Type.CONFIG) {
-            addon.getConfig().reloadConfig();
+        if (e.type() == DonateCaseReloadEvent.Type.CONFIG) {
+            addon.getConfig().load();
+            addon.getItemManager().load();
         }
     }
 
@@ -41,13 +42,13 @@ public class EventListener implements Listener, Subscriber {
         for (ItemStack item : player.getInventory().getContents()) {
             if (item != null && item.hasItemMeta()) {
                 ItemMeta meta = item.getItemMeta();
-                if(meta == null) continue;
+                if (meta == null) continue;
 
                 PersistentDataContainer container = meta.getPersistentDataContainer();
-                if(!container.has(NAMESPACED_KEY, PersistentDataType.STRING)) continue;
+                if (!container.has(NAMESPACED_KEY, PersistentDataType.STRING)) continue;
 
                 String caseType = container.get(NAMESPACED_KEY, PersistentDataType.STRING);
-                if(event.definition().settings().type().equals(caseType)) {
+                if (event.definition().settings().type().equals(caseType)) {
                     event.ignoreKeys(true);
                     item.setAmount(item.getAmount() - 1);
                     break;
@@ -59,7 +60,7 @@ public class EventListener implements Listener, Subscriber {
     @EventHandler
     public void onCaseKeyPlace(BlockPlaceEvent event) {
         ItemStack item = event.getItemInHand();
-        
+
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
             if (meta == null) return;

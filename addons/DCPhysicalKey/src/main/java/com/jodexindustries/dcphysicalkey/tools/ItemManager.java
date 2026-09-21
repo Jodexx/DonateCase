@@ -1,24 +1,24 @@
 package com.jodexindustries.dcphysicalkey.tools;
 
 import com.jodexindustries.dcphysicalkey.bootstrap.MainAddon;
-import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
+import com.jodexindustries.donatecase.api.DCAPI;
+import com.jodexindustries.donatecase.api.data.casedefinition.CaseMaterial;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import static com.jodexindustries.dcphysicalkey.bootstrap.MainAddon.NAMESPACED_KEY;
-import static com.jodexindustries.donatecase.api.tools.DCTools.rc;
 
 public class ItemManager {
 
-    private final MainAddon addon;
-
     public static final Map<String, ItemStack> items = new HashMap<>();
+    private final MainAddon addon;
 
     public ItemManager(MainAddon addon) {
         this.addon = addon;
@@ -26,42 +26,64 @@ public class ItemManager {
 
     public void load() {
         items.clear();
-        ConfigurationSection section = addon.getConfig().get().getConfigurationSection("keys");
-        if (section == null) return;
+        ConfigurationNode node = addon.getConfig().node("keys");
+        if (node.virtual()) return;
 
-        for (String key : section.getKeys(false)) {
-            ConfigurationSection keySection = section.getConfigurationSection(key);
-            if (keySection == null) return;
+        Map<Object, ? extends ConfigurationNode> map = node.childrenMap();
 
-            Material material = Material.getMaterial(keySection.getString("material", "STONE"));
-            if (material == null) {
-                addon.getLogger().warning("Key " + key + ": Material not found. Skipping this key.");
-                continue;
-            }
+        for (Map.Entry<Object, ? extends ConfigurationNode> entry : map.entrySet()) {
+            String key = String.valueOf(entry.getKey());
 
-            String caseType = keySection.getString("case-type", "");
-            if (caseType.isEmpty()) {
+            ConfigurationNode keyNode = entry.getValue();
+            if (keyNode.virtual()) return;
+
+            String caseType = keyNode.node("case-type").getString();
+            if (caseType == null || caseType.isEmpty()) {
                 addon.getLogger().warning("Key " + key + ": Case type is empty. Skipping this key.");
                 continue;
             }
 
-            if (!MainAddon.api.getCaseManager().hasByType(caseType)) {
+            CaseMaterial material;
+
+            try {
+                ConfigurationNode idNode = keyNode.node("id");
+
+                // if "id" node is virtual, check "material" node
+                if (idNode.virtual()) {
+                    idNode.set(keyNode.node("material").raw());
+                }
+
+                material = keyNode.get(CaseMaterial.class);
+                if (material == null)
+                    throw new SerializationException("Item configuration is null");
+
+                if (material.id() == null) {
+                    throw new SerializationException("Item id is null");
+                }
+            } catch (SerializationException e) {
+                addon.getLogger().log(Level.WARNING, "Error with deserialization for key: " + key, e);
+                continue;
+            }
+
+            if (!DCAPI.getInstance().getCaseManager().hasByType(caseType)) {
                 addon.getLogger().warning("Key " + key + ": Case type \"" + caseType + "\" not found. Skipping this key.");
                 continue;
             }
 
-            String displayName = keySection.getString("display-name", "");
-            List<String> lore = keySection.getStringList("lore");
-
-            ItemStack itemStack = new ItemStack(material);
-            ItemMeta meta = itemStack.getItemMeta();
-            if (meta == null) {
-                addon.getLogger().warning("Key " + key + ": Item meta is null. Skipping this key.");
+            ItemStack itemStack = (ItemStack) material.itemStack();
+            if (itemStack == null) {
+                addon.getLogger().warning("Key " + key + ": Material id \"" + material.id() + "\" not found. Skipping this key.");
                 continue;
             }
 
-            meta.setDisplayName(rc(displayName));
-            meta.setLore(rc(lore));
+            ItemMeta meta = itemStack.getItemMeta();
+            if (meta == null) {
+                continue;
+            }
+
+            // very important
+            material.updateMeta();
+
             meta.getPersistentDataContainer().set(NAMESPACED_KEY, PersistentDataType.STRING, caseType);
             itemStack.setItemMeta(meta);
 
