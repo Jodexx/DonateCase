@@ -40,7 +40,7 @@ tasks {
 }
 
 tasks.runServer {
-    version("26.2")
+    version("26.3")
     javaLauncher = javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(25))
     }
