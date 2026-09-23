@@ -103,41 +103,47 @@ public class DonateCaseExpansion extends PlaceholderExpansion {
 
     private String processHistory(@NotNull String params) {
         String[] parts = params.split("_");
-        if (parts.length >= 3) {
-            String caseType = parts[0];
-            int index = parseInt(parts[1]);
-            if(index >= 0) {
-                List<CaseData.History> list = backend.getAPI().getDatabase().getCache(caseType);
-                if(list.size() > index) {
-                    CaseData.History history = list.get(index);
-                    String type = parts[2].toLowerCase();
+        if (parts.length < 3) {
+            return null;
+        }
 
-                    switch (type) {
-                        case "player" : {
-                            return history.playerName();
-                        }
+        String caseType = parts[0];
+        int index = parseInt(parts[1]);
+        if (index < 0) {
+            return null;
+        }
 
-                        case "casetype" : {
-                            return history.caseType();
-                        }
+        List<CaseData.History> list = backend.getAPI().getDatabase().getCache(caseType);
+        if (list.size() <= index) {
+            return "";
+        }
 
-                        case "group" : {
-                            return history.group();
-                        }
+        CaseData.History history = list.get(index);
+        String type = parts[2].toLowerCase();
 
-                        case "action" : {
-                            return history.action();
-                        }
+        switch (type) {
+            case "player": {
+                return history.playerName();
+            }
 
-                        case "item" : {
-                            return history.item();
-                        }
+            case "casetype": {
+                return history.caseType();
+            }
 
-                        case "time" : {
-                            return DCTools.getDateFormat().format(new Date(history.time()));
-                        }
-                    }
-                }
+            case "group": {
+                return history.group();
+            }
+
+            case "action": {
+                return history.action();
+            }
+
+            case "item": {
+                return history.item();
+            }
+
+            case "time": {
+                return DCTools.getDateFormat().format(new Date(history.time()));
             }
         }
 
