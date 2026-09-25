@@ -39,3 +39,9 @@ jobs:
       uses: actions/upload-artifact@v4.4.3
       with:
         path: "spigot/jar/build/libs"
+
+    - name: Upload Addons Artifact
+      uses: actions/upload-artifact@v4.4.3
+      with:
+        name: addons
+        path: "addons/*/build/libs"
