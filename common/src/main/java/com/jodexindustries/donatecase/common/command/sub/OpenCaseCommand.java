@@ -15,9 +15,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 public class OpenCaseCommand extends DefaultCommand {
+
+    private static final Set<String> opening = ConcurrentHashMap.newKeySet();
 
     private final DCAPI api;
 
@@ -28,44 +33,62 @@ public class OpenCaseCommand extends DefaultCommand {
 
     @Override
     public boolean execute(@NotNull DCCommandSender sender, @NotNull String label, String[] args) {
-        if (args.length < 1)
+        if (args.length < 1) {
             return false;
-
-        if (sender instanceof DCPlayer) {
-            String playerName = sender.getName();
-            DCPlayer player = (DCPlayer) sender;
-
-            String caseType = args[0];
-            Optional<CaseDefinition> optional = api.getCaseManager().getByType(caseType);
-
-            if (optional.isPresent()) {
-                CaseDefinition definition = optional.get();
-                CaseAnimation animation = api.getAnimationManager().get(definition.settings().animation());
-                if (animation == null)
-                    return true;
-
-                api.getCaseKeyManager().getAsync(caseType, playerName).thenAccept((keys) -> {
-                    if (keys >= 1) {
-                        api.getCaseKeyManager().remove(caseType, playerName, 1).thenAccept(status -> {
-                            if (status == DatabaseStatus.COMPLETE) {
-                                if (animation.isRequireBlock()) {
-                                    api.getAnimationManager().preEnd(definition, player,
-                                            definition.items().getRandomItem());
-                                } else {
-                                    api.getAnimationManager().start(player, player.getLocation(), definition);
-                                }
-                            }
-                        });
-                    } else {
-                        sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("no-keys")));
-                    }
-                });
-            } else {
-                sender.sendMessage(DCTools.prefix(DCTools.rt(
-                        api.getConfigManager().getMessages().getString("case-does-not-exist"),
-                        LocalPlaceholder.of("%casetype%", caseType))));
-            }
         }
+
+        if (!(sender instanceof DCPlayer)) {
+            return true;
+        }
+
+        DCPlayer player = (DCPlayer) sender;
+        String playerName = sender.getName();
+        String caseType = args[0];
+
+        Optional<CaseDefinition> optional = api.getCaseManager().getByType(caseType);
+        if (!optional.isPresent()) {
+            sender.sendMessage(DCTools.prefix(DCTools.rt(
+                    api.getConfigManager().getMessages().getString("case-does-not-exist"),
+                    LocalPlaceholder.of("%casetype%", caseType))));
+            return true;
+        }
+
+        CaseDefinition definition = optional.get();
+        CaseAnimation animation = api.getAnimationManager().get(definition.settings().animation());
+        if (animation == null) {
+            return true;
+        }
+
+        if (!opening.add(playerName)) {
+            return true;
+        }
+
+        api.getCaseKeyManager().take(caseType, playerName, 1).whenComplete((status, ex) -> {
+            try {
+                if (ex != null) {
+                    api.getPlatform().getLogger().log(Level.WARNING, "Failed to take key", ex);
+                    return;
+                }
+
+                if (status == DatabaseStatus.NOT_ENOUGH) {
+                    sender.sendMessage(DCTools.prefix(api.getConfigManager().getMessages().getString("no-keys")));
+                    return;
+                }
+
+                if (status != DatabaseStatus.COMPLETE) {
+                    return;
+                }
+
+                if (animation.isRequireBlock()) {
+                    api.getAnimationManager().preEnd(definition, player, definition.items().getRandomItem());
+                } else {
+                    api.getAnimationManager().start(player, player.getLocation(), definition);
+                }
+            } finally {
+                opening.remove(playerName);
+            }
+        });
+
         return true;
     }
 
