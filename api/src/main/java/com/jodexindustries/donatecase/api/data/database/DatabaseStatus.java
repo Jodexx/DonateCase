@@ -15,6 +15,9 @@ public enum DatabaseStatus {
      */
     CANCELLED,
 
+    NOT_ENOUGH,
+
+
     /**
      * Indicates that the database operation failed.
      */

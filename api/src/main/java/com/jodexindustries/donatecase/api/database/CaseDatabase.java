@@ -75,6 +75,10 @@ public abstract class CaseDatabase {
      */
     public abstract DCFuture<DatabaseStatus> delKeys(String caseType);
 
+    public abstract DCFuture<DatabaseStatus> takeKeys(String caseType, String player, int amount);
+
+    public abstract DCFuture<DatabaseStatus> addKeys(String caseType, String player, int amount);
+
     /**
      * Retrieves the number of times a player has opened a specific case type.
      *

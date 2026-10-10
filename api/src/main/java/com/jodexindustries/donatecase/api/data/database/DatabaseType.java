@@ -44,4 +44,8 @@ public enum DatabaseType {
         pool.setTestBeforeGet(true);
         return pool;
     }
+
+    public boolean noCache() {
+        return this == SQLITE;
+    }
 }

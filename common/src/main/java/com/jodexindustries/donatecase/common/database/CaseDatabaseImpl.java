@@ -7,21 +7,25 @@ import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.TableUtils;
 import com.jodexindustries.donatecase.api.config.converter.ConvertOrder;
-import com.jodexindustries.donatecase.api.data.config.ConfigData;
-import com.jodexindustries.donatecase.api.scheduler.DCFuture;
-import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.api.data.casedata.CaseData;
+import com.jodexindustries.donatecase.api.data.config.ConfigData;
 import com.jodexindustries.donatecase.api.data.database.DatabaseStatus;
 import com.jodexindustries.donatecase.api.data.database.DatabaseType;
 import com.jodexindustries.donatecase.api.database.CaseDatabase;
+import com.jodexindustries.donatecase.api.scheduler.DCFuture;
+import com.jodexindustries.donatecase.common.DonateCase;
 import com.jodexindustries.donatecase.common.config.ConfigManagerImpl;
 import com.jodexindustries.donatecase.common.database.entities.OpenInfoTable;
 import com.jodexindustries.donatecase.common.database.entities.PlayerKeysTable;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -162,6 +166,55 @@ public class CaseDatabaseImpl extends CaseDatabase {
             }
             return DatabaseStatus.COMPLETE;
         });
+    }
+
+    @Override
+    public DCFuture<DatabaseStatus> takeKeys(String caseType, String player, int amount) {
+        return DCFuture.supplyAsync(() -> {
+            try {
+                return adjustKeys(caseType, player, -amount) > 0
+                        ? DatabaseStatus.COMPLETE : DatabaseStatus.NOT_ENOUGH;
+            } catch (SQLException e) {
+                warning(e);
+                return DatabaseStatus.FAIL;
+            }
+        });
+    }
+
+    @Override
+    public DCFuture<DatabaseStatus> addKeys(String caseType, String player, int amount) {
+        return DCFuture.supplyAsync(() -> {
+            try {
+                if (adjustKeys(caseType, player, amount) > 0) return DatabaseStatus.COMPLETE;
+
+                PlayerKeysTable row = new PlayerKeysTable();
+                row.setPlayer(player);
+                row.setCaseType(caseType);
+                row.setKeys(amount);
+                try {
+                    playerKeysTables.create(row);
+                } catch (SQLException duplicate) {
+                    if (adjustKeys(caseType, player, amount) == 0) throw duplicate;
+                }
+                return DatabaseStatus.COMPLETE;
+            } catch (SQLException e) {
+                warning(e);
+                return DatabaseStatus.FAIL;
+            }
+        });
+    }
+
+    private int adjustKeys(String caseType, String player, int delta) throws SQLException {
+        StringBuilder col = new StringBuilder();
+        connectionSource.getDatabaseType().appendEscapedEntityName(col, "keys");
+
+        UpdateBuilder<PlayerKeysTable, String> ub = playerKeysTables.updateBuilder();
+        ub.updateColumnExpression("keys", col + (delta >= 0 ? " + " : " - ") + Math.abs(delta));
+        Where<PlayerKeysTable, String> where = ub.where()
+                .eq("player", player).and()
+                .eq("case_name", caseType);
+        if (delta < 0) where.and().ge("keys", -delta);
+        return ub.update();
     }
 
     public DCFuture<DatabaseStatus> setKeysBulk(String caseName, Map<String, Integer> playerKeysMap) {

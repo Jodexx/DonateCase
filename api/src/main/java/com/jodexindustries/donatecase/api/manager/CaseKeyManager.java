@@ -25,6 +25,8 @@ public abstract class CaseKeyManager {
      */
     public abstract DCFuture<DatabaseStatus> set(String caseType, String player, int keys);
 
+    public abstract DCFuture<DatabaseStatus> take(String caseType, String player, int amount);
+
     /**
      * Modify case keys for a specific player
      *
